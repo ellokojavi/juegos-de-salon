@@ -144,6 +144,7 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
 .splash-cart-sticker { display: flex; align-items: center; justify-content: center; padding: 0 2px; line-height: 1; }
 .splash-cart-sticker b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--yellow); text-shadow: 2px 2px 0 var(--pink-deep); }
 .splash-cart--cyan .splash-cart-sticker b { color: var(--cyan); text-shadow: 2px 2px 0 #0b5f57; }
+.splash-item .splash-cart-texto, .splash-cart-texto { display: block; -webkit-line-clamp: none; overflow: visible; margin: 0; font-size: 0.84rem; line-height: 1.35; color: var(--muted); text-align: center; }
 .splash-cart .splash-jugar { margin: auto 0 0; width: 100%; box-sizing: border-box; }
 .splash-cart-pines { position: absolute; left: 14%; right: 14%; bottom: -26px; height: 26px; border: 2px solid rgba(255, 255, 255, 0.18); border-top: 0;
   border-radius: 0 0 6px 6px; background: linear-gradient(180deg, #2a0f4a, #1d0835); }
@@ -158,4 +159,5 @@ a.splash-cart:hover, a.splash-cart:focus-visible { transform: translateY(-3px); 
 @media (max-width: 440px) {
   .splash-cart { padding: 16px 7px 8px; }
   .splash-cart-sticker b { font-size: 1.15rem; }
+  .splash-cart-texto { font-size: 0.78rem; }
 }

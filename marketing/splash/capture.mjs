@@ -6,7 +6,8 @@
 //   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges|shinobi|babel]
 //
 // A skill game (`cover`) is not played by the script: its waiting room already plays itself (the cover's
-// demo, drawn by the game's own scene), so the clip is that canvas for `duration` ms.
+// demo, drawn by the game's own scene), so the clip is that canvas for `duration` ms, recorded in the page
+// itself (canvas.captureStream and MediaRecorder): real time and smooth, where screenshots manage ~6 a second.
 //
 // Output: public/assets/splash/<game>.mp4 and <game>.jpg (the last frame: the board solved).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -119,6 +120,33 @@ try {
       if (!(await b.until(g.ready, 10000))) throw new Error(`${name}: the board did not appear`);
     } else if (!(await b.until(`!!document.querySelector('${g.cover}')`, 8000))) throw new Error(`${name}: no cover demo`);
     await sleep(600);
+    if (g.cover) {
+      const b64 = await ev(`new Promise(done => {
+        // The demo's canvas is transparent (it draws over the page's night): a video has no alpha, so
+        // each frame is drawn over the page's own night colors first, or the night turns black
+        const c = document.querySelector('${g.cover}');
+        const o = document.createElement('canvas'); o.width = c.width; o.height = c.height;
+        const x = o.getContext('2d'), sky = x.createLinearGradient(0, 0, 0, o.height);
+        sky.addColorStop(0, '#2a0f4a'); sky.addColorStop(1, '#1a0b2e');
+        let on = true;
+        const frame = () => { if (!on) return; x.fillStyle = sky; x.fillRect(0, 0, o.width, o.height); x.drawImage(c, 0, 0); requestAnimationFrame(frame); };
+        frame();
+        const rec = new MediaRecorder(o.captureStream(30), { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 8e6 });
+        const parts = [];
+        rec.ondataavailable = e => parts.push(e.data);
+        rec.onstop = () => { on = false; const r = new FileReader(); r.onload = () => done(String(r.result).split(',')[1]); r.readAsDataURL(new Blob(parts, { type: 'video/webm' })); };
+        rec.start(); setTimeout(() => rec.stop(), ${g.duration});
+      })`);
+      const webm = `${frames}/clip.webm`;
+      writeFileSync(webm, Buffer.from(b64, 'base64'));
+      const mp4 = join(DEST, `${name}.mp4`);
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', webm, '-vf', `fps=30,scale=${g.native}:-2:flags=lanczos,format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
+      // Its first frame is the poster; a frame near the end, the still for reduced motion
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', mp4, '-frames:v', '1', '-q:v', '5', join(DEST, `${name}-start.jpg`)]);
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-sseof', '-1', '-i', mp4, '-frames:v', '1', '-q:v', '5', join(DEST, `${name}.jpg`)]);
+      console.log(`✓ ${name}: ${g.duration} ms recorded → ${mp4}`);
+      continue;
+    }
     // The board, with a margin, as a square
     const r = JSON.parse(await ev(`JSON.stringify(document.querySelector('${g.cover || g.board}').getBoundingClientRect())`));
     const side = Math.max(r.width, r.height) + 16;
