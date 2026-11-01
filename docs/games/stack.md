@@ -128,7 +128,7 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
 
 ## Background music (experiment, flag `babel-music`)
 
-From the countdown until 5 s after the game is lost, when it fades out over 2 s (leaving the page sooner stops it), one of four retro tracks at random each game
+From the countdown until 7 s after the game is lost, when it fades out over 2 s (leaving the page sooner stops it), one of four retro tracks at random each game
 (Pixabay: The Mountain, Bransboynd, Hitslab, DeepMusicEveryday), at 22% volume through a Web Audio gain so the sound effects play over it;
 it follows the mute button. `public/assets/js/music.js`, hooked only in Babel's `ui.js` (the cover's «Empezar», `montar`, the end), so a
 change to it tests only Babel; a La Copa day has no cover, so there it starts with the tower.

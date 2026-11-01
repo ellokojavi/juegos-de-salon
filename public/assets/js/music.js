@@ -1,7 +1,7 @@
 /**
  * Background music for a game (an experiment, behind its lab flag): one track picked at random each
  * game, looped and kept low, so the sound effects (sound.js, Web Audio) still sound on top of it.
- * `start()` on the countdown; `fadeOutLater()` when the game is lost (5 s later it fades out over 2 s);
+ * `start()` on the countdown; `fadeOutLater()` when the game is lost (7 s later it fades out over 2 s);
  * `stop()` when the player leaves the result screen before that. Respects the mute
  * button (`juegos-de-salon:muted`). The tracks are royalty-free (Pixabay), re-encoded at 64 kbps mono.
  */
@@ -42,7 +42,7 @@ export function start(tracks) {
 }
 
 /** The game is lost: `afterMs` later the music fades out over `seconds`, on the result screen. */
-export function fadeOutLater(afterMs = 5000, seconds = 2) {
+export function fadeOutLater(afterMs = 7000, seconds = 2) {
   if (!audio) return;
   clearTimeout(later);
   later = setTimeout(() => stop(seconds), afterMs);

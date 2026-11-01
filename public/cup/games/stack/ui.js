@@ -245,7 +245,7 @@ export function montar(raiz, ctx) {
     const e = estado();
     ctx.guardar?.(e);
     ctx.pararReloj?.(e);
-    fadeOutLater();   // the music fades out 5 s after the end
+    fadeOutLater();   // the music fades out 7 s after the end
     const listo = motivo === 'tope';
     if (recien) {
       if (listo) { SFX.win?.(); vibrate([30, 50, 30]); if (!QUIETO()) confetti({ count: 120, duration: 1600 }); }
