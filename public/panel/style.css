@@ -399,3 +399,12 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 /* 💬 Feedback: the whole message, as written */
 .fb-texto { margin: 4px 0; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
 .fb .que small a { color: var(--yellow); }
+
+/* 🗄️ Archived campaigns: a quiet list at the bottom of Campaigns */
+.campana-archivar { flex: 1 0 100%; margin-top: 4px; padding: 6px 10px; border-radius: 12px; border: 1px dashed var(--glass-border); background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
+.campana-archivar:hover, .campana-archivar:focus-visible { color: var(--ink); border-color: var(--cyan); outline: none; }
+.campanas-archivadas { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+.campanas-archivadas h3 { margin: 0 0 4px; font-size: 1rem; color: var(--muted); }
+.campana-archivada { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; padding: 8px 8px 8px 8px; border-radius: 18px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.02); color: var(--muted); }
+.campana-archivada .campana-emoji { width: 36px; height: 36px; font-size: 1.2rem; filter: grayscale(1); opacity: 0.7; }
+.campana-archivada .campana-titulo { flex: 1; min-width: 0; font-size: 0.95rem; }

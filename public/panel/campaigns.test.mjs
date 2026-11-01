@@ -1,6 +1,6 @@
 // 📣 Campaigns in the panel (D-454): the switches, where each one stands, overlaps and order.
 import assert from 'node:assert/strict';
-import { switches, status, overlaps, move, toRemote, span, dayPlus, campaignStats, supportStats } from './campaigns.js';
+import { switches, archive, status, overlaps, move, toRemote, span, dayPlus, campaignStats, supportStats } from './campaigns.js';
 import { fromRemote } from '../assets/js/splash.js';
 
 const campaigns = { a: {}, b: {}, c: {} };
@@ -111,3 +111,11 @@ assert.equal(supportStats({ 10: {} }, { from: 10, to: 12 }), null, 'nothing coun
   assert.equal(out.c.label, 'Mine');
   assert.equal('label' in out.a, false);
 }
+
+// Archive: switched off, sent to the end, kept on save and read back; unarchive brings it back off
+const arch = archive(rows, 'a');
+assert.deepEqual(arch.map(s => [s.id, s.on, !!s.archived, s.order]), [['b', true, false, 0], ['c', false, false, 1], ['a', false, true, 2]]);
+const back = switches({ remote: toRemote(arch, 1), campaigns });
+assert.deepEqual(back.map(s => [s.id, s.archived]), [['b', false], ['c', false], ['a', true]]);
+assert.equal(fromRemote(toRemote(arch, 1)).some(c => c.id === 'a'), false, 'an archived campaign is not shown');
+assert.deepEqual(archive(arch, 'a', false).find(s => s.id === 'a'), { ...arch[2], archived: false, order: 2 });
