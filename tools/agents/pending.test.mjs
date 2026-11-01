@@ -23,7 +23,7 @@ assert.match(br({ mergedPr: 558 }), /pushed after #558 merged/, 'commits after t
 assert.equal(br({ lastDate: ago(3) }), null, 'pushed this morning: its PR may be on the way');
 assert.equal(br({ ahead: 0 }), null, 'everything already on main');
 assert.equal(br({ openPr: true }), null, 'its PR is open: the PR rules apply');
-for (const name of ['main', 'gh-pages', 'reserve/D-441', 'reserva/D-300']) assert.equal(br({ name }), null, `${name} is never stranded`);
+for (const name of ['main', 'gh-pages', 'failure-log', 'reserve/D-441', 'reserva/D-300']) assert.equal(br({ name }), null, `${name} is never stranded`);
 
 const body = issueBody({ prs: [{ number: 9, title: 'X', why: ['red for 20 h: tests'] }], branches: [{ name: 'claude/a-b', why: '1 commit(s) not on main' }] });
 assert.match(body, /#9 X: red for 20 h/);

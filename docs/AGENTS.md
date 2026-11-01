@@ -42,6 +42,14 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
   Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | settle <issue> <n> "why" | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
+  **CI failures reach it by themselves** (D-518): `.github/workflows/failure-log.yml` records every red `tests` or
+  `end-to-end` run of a PR on the `failure-log` branch (one record per failing test: PR, branch, commit, check, test,
+  error excerpt, date) and closes the records when the PR goes green, with the fixing commit's diff stat, or as flaky when
+  it passes on the same commit. `tools/agents/failures.mjs` groups them by a deterministic signature (test + error with
+  paths, line numbers, hashes and times stripped; no model): `check` (also a section of `processes.mjs check`) lists the
+  signatures seen on two PRs or more without a mechanism and the flaky ones apart; `promote <signature> <key>` makes one a
+  `processes.mjs pattern`, so `mechanism` closes it; `classify [log]` shows a log's signatures. Records older than 90
+  days whose pattern has a mechanism move to the branch's `archive.json`.
 - **Support** (D-318): triages the emails to hola@juegosdesalon.cl, which a Cloudflare Worker
   (`tools/cloudflare/inbox-worker.js`) keeps in Firebase `buzon/`. The `inbox-watch` job on the Mac mini
   launches it headless within 5 minutes of an email (D-365); the processes agent, if `processes.mjs check` still counts emails. It runs only `node tools/agents/inbox.mjs list | ingest <id> - --lang <xx> | skip <id> "<reason>"` (the text on stdin; its session has Bash for that tool and nothing else, #838),
