@@ -741,6 +741,15 @@
         uadListo.then(guardarFoto);
         // ▶ Jugar hoy only for a day the server does not have played (another phone, a late read)
         if (param('test') === null) m.confirmCupCard(copa, { lang, wait, context }).then(c => c && uadListo.then(guardarFoto));
+        // Back from the cup's day (bfcache) the page is as it was, ▶ Jugar el día N included: drawn
+        // again from what the cup kept on finishing, then confirmed with the server
+        const otraVez = () => {
+          m.redrawCupCard(copa, { lang, wait, context });
+          uadListo.then(guardarFoto);
+          if (param('test') === null) m.confirmCupCard(copa, { lang, wait, context }).then(c => c && uadListo.then(guardarFoto));
+        };
+        addEventListener('pageshow', e => { if (e.persisted) otraVez(); });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) otraVez(); });
       })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
