@@ -119,11 +119,20 @@ export function titulo({ el, J }) {
   if (document.body?.dataset.suelto === 'stack') labAccess().then(ok => {
     if (!ok || !cabeza.isConnected) return;
     const pisos = el('input', { type: 'number', min: 4, max: 200, value: 51, class: 'sk-sim-n', id: 'sk-sim-n', 'aria-label': 'Pisos' });
-    cabeza.append(el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,
-      el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-simular', onClick: () => {
-        simulacion = Math.max(4, Math.min(200, Math.round(Number(pisos.value) || 51)));
-        document.getElementById('btn-empezar')?.click();
-      } }, '🧪 Simular final')));
+    // A folded tab on the screen's left edge, over no control, so the cover looks as players see it (the owner's call)
+    document.getElementById('sk-lab')?.remove();
+    const tab = el('details', { class: 'sk-lab', id: 'sk-lab' },
+      el('summary', { 'aria-label': 'Laboratorio' }, '🧪'),
+      el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,
+        el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-simular', onClick: () => {
+          simulacion = Math.max(4, Math.min(200, Math.round(Number(pisos.value) || 51)));
+          tab.remove();
+          document.getElementById('btn-empezar')?.click();
+        } }, '🧪 Simular final')));
+    document.body.append(tab);
+    // Gone as soon as the cover is: a game, the result or another screen
+    const fuera = new MutationObserver(() => { if (!cabeza.isConnected) { tab.remove(); fuera.disconnect(); } });
+    fuera.observe(document.body, { childList: true, subtree: true });
   }).catch(() => {});
   return cabeza;
 }

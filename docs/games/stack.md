@@ -14,7 +14,8 @@
 > reads «N pisos» (no blocks stamp); «Continuar» sits on a blurred strip over the tower, and the tour starts from the game's last frame, the top gliding up to just under «Fin del juego». No tour
 > with reduced motion.
 >
-> **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button on the cover.
+> **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button in a folded 🧪 tab on
+> the screen's left edge (`#sk-lab`), off the cover so it always shows what players see (the owner's call).
 > The game starts with the tower already built to that height minus three, the last three blocks drop
 > on their own and the next one misses, so the owner sees the end without playing it. Taps do nothing
 > meanwhile; «Continuar» reloads the cover instead of opening the result, so it is never ranked

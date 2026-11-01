@@ -60,8 +60,8 @@ export function stop(seconds = 0.5) {
 }
 
 // Leaving the page (or hiding it) silences it; coming back to a game resumes it
-document.addEventListener('visibilitychange', () => {
+globalThis.document?.addEventListener('visibilitychange', () => {
   if (!audio) return;
   if (document.hidden) audio.pause(); else audio.play().catch(() => {});
 });
-addEventListener('pagehide', stop);
+globalThis.addEventListener?.('pagehide', stop);
