@@ -367,7 +367,7 @@ export function montar(raiz, ctx) {
 
 /** The result: the cup's 0–100 (engine.js `puntaje`), the card, the game's own points, and the time played. */
 export function resultado(e) {
-  return { s: puntaje(e), t: tarjeta(e), resumen: `🥷 ${Number(e?.score) || 0}`, ...(e?.ms ? { ms: e.ms } : {}) };
+  return { s: puntaje(e), t: tarjeta(e), resumen: String(Number(e?.score) || 0), ...(e?.ms ? { ms: e.ms } : {}) };
 }
 
 /** How the score was reached (D-106): the pillars crossed, the flags and their bonus, the longest streak. */
