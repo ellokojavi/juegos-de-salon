@@ -81,15 +81,14 @@ public/<carpeta>/
 - **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
-  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT).
+  - **Each button carries only its flag** (🇪🇸, 🇬🇧, 🇧🇷), without the ES/EN/PT code (D-524),
+    at least 44 × 44 px (C-8), so the toggle stays narrow on any screen.
     La bandera identifica el idioma, no el país de quien juega: el español va con 🇪🇸 (D-244). Salen de `BANDERAS` en `i18n.js`, en emoji, nunca
-    en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
-    en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
-    que el toggle no crezca.
-  - El elegido, en amarillo (`--yellow`, texto `#3a1200`) y apenas más grande; los otros, en `--muted`.
+    en SVG: en Windows se ve como dos letras y se acepta (D-231).
+  - The chosen one sits on yellow (`--yellow`) and slightly larger; the others on a transparent background.
   - Cada botón mide al menos 44 px de alto (C-8), dice su idioma en su propio idioma a quien
-    no ve la bandera (`NOMBRES_IDIOMA`, como `aria-label` y `title`), y la bandera es decorativa
-    (`aria-hidden`).
+    no ve la bandera (`NOMBRES_IDIOMA`, como `aria-label` y `title`): with no code beside it, that name is what
+    screen readers and a hover give.
   - Un idioma nuevo trae su bandera y su nombre: la prueba de paridad lo exige.
 - Las traducciones se adaptan, no se calcan: los chistes y las referencias locales se reemplazan por equivalentes. El portugués es el de Brasil, informal ("você", "celular", "rolê"), y los nombres de los juegos se traducen (Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo) igual que en inglés (D-48).
 - **En La Copa, lo personal va en tu idioma y lo del grupo en el de la copa** (D-170): la pantalla

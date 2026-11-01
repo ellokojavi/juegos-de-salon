@@ -253,8 +253,6 @@ details.panel summary::-webkit-details-marker { display: none; }
 .lang-toggle .flag { font-size: 1.4rem; }
 .lang-toggle button.on { background: var(--yellow); transform: scale(1.04); }
 .lang-toggle button:active { transform: scale(0.96); }
-  .lang-toggle:has(> :nth-child(4)) .flag { font-size: 1.25rem; }
-}
 .topbar .tools:has(> #lang-slot) { flex-wrap: wrap; justify-content: flex-end; }
 
 /* --- Botones redondos de la barra de arriba (sonido, rankings, compartir) --- */
