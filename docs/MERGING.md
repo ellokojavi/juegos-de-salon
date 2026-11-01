@@ -6,20 +6,10 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
 
 ## Before proposing a merge
 
-1. **The usability and documentation agents, together**, in the same message
-   (`.claude/agents/usability.md` and `documentation.md`, D-132, D-172): one looks at the app and the other
-   at the documents. Both fix things on the same PR's branch (D-213), in local commits that the
-   session pushes with its own in a single push (D-303). How much usability depends on the game's stage
-   (D-304); `node tools/agents/covers.mjs check` says it on its first line:
-   - **Lab-only PR** (everything in `public/` is under `public/labs/`): the **fast lane** (D-413):
-     no agents; the session makes the change itself, looks at the changed screens at 320 px, runs
-     only the tests for what changed and writes the `changelog/` entry. A lab PR that also touches
-     shared code or Firebase rules gets both agents.
-   - **PR that takes a game out of the lab** (it loses `labs: true`, or its folder leaves
-     `public/labs/`): a **full usability pass** over the whole game —all its screens, the
-     three languages, 320 px, its home page and its place on the main home page— and documentation with the
-     README and the social card.
-   - **Everything else:** both, as always.
+1. **The lane** (D-519, [LANES.md](LANES.md)): `node tools/agents/lanes.mjs check` says the PR's lane
+   (🟢/🟡/🔴), the files that set it, the stage (D-304) and what that lane requires before merging: which
+   agents run (the usability and documentation agents together, `.claude/agents/usability.md` and
+   `documentation.md`, D-132, D-172, fixing on the same branch, D-213, D-303) and whether it may auto-merge.
 2. **Is anyone playing?** `node tools/firebase/in-progress.mjs` (exits with 3 if there are live rooms
    or Cups in progress; needs the owner's key).
 3. **No merge without ✅ on GitHub in `tests` and in `end-to-end`** (D-143,
@@ -34,7 +24,8 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
    leaves an "Intermitente" (flaky) notice (D-299). Each later push tests only what changed since the PR's
    last commit that passed end-to-end (`tools/e2e/since-passed.mjs`, D-392): fix a red run in one push,
    because until something passes every push retests the whole PR.
-4. **Auto-merge by default** (D-216, the owner's request): when the PR is ready to merge
+4. **Auto-merge by default** (D-216, the owner's request), **except a 🔴 PR** (D-519: it waits for the
+   owner's `approve-pr` tick, see LANES.md): when the PR is ready to merge
    —the agents are done and their fixes are pushed, and the `changelog/<branch>.md` entry is already
    on the branch (D-300)—, GitHub's auto-merge is turned on instead of waiting for the ✅ by hand:
    ```bash

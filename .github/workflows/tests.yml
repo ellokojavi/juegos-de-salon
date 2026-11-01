@@ -78,3 +78,24 @@ jobs:
 
       - name: Social cards up to date
         run: node tools/release/og.mjs check
+
+  # Merge lanes by blast radius (D-519, docs/LANES.md): a 🔴 PR gets the needs-owner label, a red
+  # owner-approval status and a one-tap decision; 🟢/🟡 get owner-approval green at once.
+  # The job itself always passes: the gate is the owner-approval status, required on main.
+  lane:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      statuses: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/agents/lanes.mjs ci

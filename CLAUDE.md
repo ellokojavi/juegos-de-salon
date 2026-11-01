@@ -78,11 +78,11 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 
 ## Before proposing a merge (detail in [docs/MERGING.md](docs/MERGING.md))
 
-1. Usability and documentation agents together (D-132, D-172), scaled by `node tools/agents/covers.mjs check`:
-   lab-only PR → fast lane, no agents (D-413); taking a game out of the lab → full usability pass; else both.
+1. The lane (D-519): `node tools/agents/lanes.mjs check` says 🟢/🟡/🔴 and what it requires
+   (agents, auto-merge or not): [docs/LANES.md](docs/LANES.md).
 2. `node tools/firebase/in-progress.mjs` (is anyone playing?).
 3. No merge without ✅ `tests` and `end-to-end` on GitHub (D-143, D-216).
-4. Ready → `gh pr merge <n> --auto --merge` (D-216), unless the owner said not to (D-419) or is
+4. Ready → `gh pr merge <n> --auto --merge` (D-216), unless the PR is 🔴 (the owner approves it, D-519), the owner said not to (D-419) or is
    reviewing round by round on the preview (D-429).
 5. Then `node tools/agents/wait-pr.mjs <n>` in the background (D-400); on `merged`, check GitHub and go on.
 
