@@ -57,33 +57,46 @@ export function escena(canvas, { zoom = 1 } = {}) {
   };
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
 
-  /** A box: its top (with a soft shine) and the two sides that face the viewer (+x on the right, +z on the left). */
+  /**
+   * The sides of a footprint that face the viewer, as the view turns: each with its two bottom corners
+   * and its shade (0.72 for the right one, 0.55 for the left one at yaw 0, blending as it turns).
+   */
+  function caras(x0, x1, z0, z1) {
+    const yaw = fija?.yaw || giro, c = Math.cos(yaw), sn = Math.sin(yaw);
+    return [[1, 0, [x1, z0], [x1, z1]], [0, 1, [x0, z1], [x1, z1]], [-1, 0, [x0, z1], [x0, z0]], [0, -1, [x1, z0], [x0, z0]]]
+      .map(([nx, nz, a, b]) => ({ a, b, vx: nx * c - nz * sn, vz: nx * sn + nz * c }))
+      .filter(f => f.vx + f.vz > 1e-6)
+      .map(f => ({ a: f.a, b: f.b, k: 0.635 + 0.085 * (f.vx - f.vz) }));
+  }
+  const borde = (x0, x1, z0, z1, y) => caras(x0, x1, z0, z1).map(f => [pt(f.a[0], y, f.a[1]), pt(f.b[0], y, f.b[1])]);
+  const trazo = (segs, color, ancho) => {
+    ctx.beginPath(); for (const [[ax, ay], [bx, by]] of segs) { ctx.moveTo(ax, ay); ctx.lineTo(bx, by); }
+    ctx.strokeStyle = color; ctx.lineWidth = ancho; ctx.lineCap = 'round'; ctx.stroke();
+  };
+
+  /** A box: its top (with a soft shine) and the sides that face the viewer. */
   function caja(s, y0, y1, c, alpha = 1) {
     const x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2;
     ctx.globalAlpha = alpha;
-    poly([pt(x1, y0, z0), pt(x1, y0, z1), pt(x1, y1, z1), pt(x1, y1, z0)], rgb(sombra(c, 0.72)));
-    poly([pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, y1, z1), pt(x0, y1, z1)], rgb(sombra(c, 0.55)));
+    for (const f of caras(x0, x1, z0, z1)) poly([pt(f.a[0], y0, f.a[1]), pt(f.b[0], y0, f.b[1]), pt(f.b[0], y1, f.b[1]), pt(f.a[0], y1, f.a[1])], rgb(sombra(c, f.k)));
     const [ax, ay] = pt(x0, y1, z0), [bx, by] = pt(x1, y1, z1);
     const brillo = ctx.createLinearGradient(ax, ay, bx, by);
     brillo.addColorStop(0, rgb(claro(c, 0.45))); brillo.addColorStop(1, rgb(claro(c, 0.08)));
     poly([pt(x0, y1, z0), pt(x1, y1, z0), pt(x1, y1, z1), pt(x0, y1, z1)], brillo);
     // A faint line under each slab, so the layers read apart
-    ctx.beginPath(); [pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, y0, z0)].forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-    ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.lineWidth = 1; ctx.stroke();
+    trazo(borde(x0, x1, z0, z1, y0), 'rgba(0,0,0,0.18)', 1);
     ctx.globalAlpha = 1;
   }
 
   /** The base: a purple column whose sides fade into the night going down. */
   function columna(s) {
     const x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2, y0 = -3;
-    const lado = (pts, k) => {
-      const [, top] = pt(x1, 0, z1), [, bot] = pt(x1, y0, z1);
-      const gr = ctx.createLinearGradient(0, top, 0, bot);
+    const [, top] = pt(x1, 0, z1), [, bot] = pt(x1, y0, z1);
+    for (const f of caras(x0, x1, z0, z1)) {
+      const gr = ctx.createLinearGradient(0, top, 0, bot), k = 0.75 + (f.k - 0.55) / 0.17 * 0.25;
       gr.addColorStop(0, rgb(sombra(BASE_COLOR, k))); gr.addColorStop(1, rgb(sombra(BASE_COLOR, k), 0));
-      poly(pts, gr);
-    };
-    lado([pt(x1, y0, z0), pt(x1, y0, z1), pt(x1, 0, z1), pt(x1, 0, z0)], 1);
-    lado([pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, 0, z1), pt(x0, 0, z1)], 0.75);
+      poly([pt(f.a[0], y0, f.a[1]), pt(f.b[0], y0, f.b[1]), pt(f.b[0], 0, f.b[1]), pt(f.a[0], 0, f.a[1])], gr);
+    }
     poly([pt(x0, 0, z0), pt(x1, 0, z0), pt(x1, 0, z1), pt(x0, 0, z1)], rgb(claro(BASE_COLOR, 0.25)));
   }
 
@@ -108,10 +121,19 @@ export function escena(canvas, { zoom = 1 } = {}) {
     // The base, then the slabs (only the ones in sight)
     if (camY < 4) columna(g.slabs[0]);
     const desde = fija || gira ? 1 : Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
-    for (let i = desde; i <= n; i++) caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, colorDe(i));
+    // The tour's cuts go between the slabs: the plane under the slab above it (which hides its far half),
+    // and the cut's glowing line around that slab's foot, so the tower reads sliced
+    const cortes = new Map((vista?.marcas || []).map(m => [m.k, m]));
+    for (let i = desde; i <= n; i++) {
+      const m = cortes.get(i - 1);
+      if (m) plano(m);
+      caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, colorDe(i));
+      if (m) linea(g.slabs[i], m);
+    }
+    if (cortes.has(n)) { plano(cortes.get(n)); linea(g.slabs[n], cortes.get(n)); }
 
     piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
-    if (vista) vista.marcas.forEach(m => corte(m.k, m.luz));
+    if (vista) vista.marcas.forEach(rotulo);
 
     // A perfect drop: a neon outline that opens around the slab, glowing, and fades
     for (let i = anillos.length - 1; i >= 0; i--) {
@@ -140,22 +162,34 @@ export function escena(canvas, { zoom = 1 } = {}) {
     if (g.moving) caja(movingAt(g, reloj), n * SLAB, (n + 1) * SLAB, colorDe(n + 1));
   }
 
-  /**
-   * A cut every ten levels: a glowing plane across the tower, wider than the base, with its number on
-   * the right. `luz` (0 to 1) is how bright it is: full when the camera reaches it, then it settles.
-   */
-  function corte(k, luz) {
-    const y = k * SLAB, m = 0.78, a = 0.35 + 0.65 * luz;
-    const pts = [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)];
+  /** A cut every ten levels: a glowing plane across the tower, wider than the base. `luz` (0 to 1): full as the camera passes it. */
+  const ANCHO = 0.78;
+  function plano({ k, luz }) {
+    const y = k * SLAB, m = ANCHO;
     ctx.save();
-    ctx.beginPath(); pts.forEach(([x, yy], i) => (i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy))); ctx.closePath();
-    ctx.fillStyle = `rgba(46,230,214,${0.08 + 0.14 * luz})`; ctx.fill();
+    ctx.beginPath(); [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)].forEach(([x, yy], i) => (i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy))); ctx.closePath();
+    ctx.fillStyle = `rgba(46,230,214,${0.1 + 0.16 * luz})`; ctx.fill();
     ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 6 + 14 * luz;
-    ctx.strokeStyle = `rgba(160,255,248,${a})`; ctx.lineWidth = 1.5 + 1.5 * luz; ctx.stroke();
-    const [lx, ly] = pts[1];
+    ctx.strokeStyle = `rgba(160,255,248,${0.35 + 0.65 * luz})`; ctx.lineWidth = 1.5 + 1.5 * luz; ctx.stroke();
+    ctx.restore();
+  }
+  /** Where the plane meets the tower: a dark slit and a bright line around the slab's foot. */
+  function linea(s, { k, luz }) {
+    const y = k * SLAB, x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2;
+    ctx.save();
+    trazo(borde(x0, x1, z0, z1, y + SLAB * 0.18), 'rgba(10,0,30,0.55)', 3);
+    ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 8 + 16 * luz;
+    trazo(borde(x0, x1, z0, z1, y), `rgba(220,255,252,${0.6 + 0.4 * luz})`, 2 + 2 * luz);
+    ctx.restore();
+  }
+  /** The cut's number, beside the plane's right corner (whichever is rightmost as the view turns). */
+  function rotulo({ k, luz }) {
+    const y = k * SLAB, m = ANCHO;
+    const [lx, ly] = [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)].reduce((a, b) => (b[0] > a[0] ? b : a));
+    ctx.save();
     ctx.font = `${Math.round(18 + 8 * luz)}px Bangers, system-ui, sans-serif`;
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillText(String(k), lx + 10, ly);
+    ctx.fillStyle = `rgba(255,255,255,${0.45 + 0.55 * luz})`; ctx.fillText(String(k), lx + 10, ly);
     ctx.restore();
   }
 
@@ -181,37 +215,33 @@ export function escena(canvas, { zoom = 1 } = {}) {
   };
 }
 
-const VIAJE_MS = 650, ALTO_MS = 380;   // the tour: each ten levels' trip, and the stop at each cut
-const suave = k => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2);
+const BAJA_MS = n => Math.max(2800, n * 95);   // the tour: the way down (and up), longer for a taller tower
+const ABAJO_MS = 700;                            // the rest at the base before going back up
+const RAMPA = 0.12;                              // only the first and last bit of each way speed up and slow down
+/** Progress at `u` (0 to 1) at a steady speed, easing in and out only at the ends. */
+const avance = u => {
+  u = Math.min(1, Math.max(0, u));
+  const k = 2 * RAMPA * (1 - RAMPA);
+  return u < RAMPA ? u * u / k : u > 1 - RAMPA ? 1 - (1 - u) ** 2 / k : (u - RAMPA / 2) / (1 - RAMPA);
+};
 /**
- * Where the tour's camera is at `t` ms on a tower of `n` levels, and which cuts it has passed: the stops
- * are the top, each multiple of ten below it and the base (0); the camera goes down them and back up.
+ * Where the tour's camera is at `t` ms on a tower of `n` levels: it goes down from the top to the base
+ * at a steady pace while the tower turns a full circle, rests, and goes back up turning the other way.
+ * A cut every ten levels shows once the camera has reached it, glowing as it passes.
  */
 export function tour(n, t) {
   t = Math.max(0, t);
-  const paradas = [n];
-  for (let k = Math.floor((n - 1) / 10) * 10; k >= 0; k -= 10) paradas.push(k);
-  if (n <= 0) paradas.length = 1;
-  const ida = paradas.concat(paradas.slice(0, -1).reverse());
-  const tramo = VIAJE_MS + ALTO_MS, total = (ida.length - 1) * tramo;
-  const marcas = paradas.filter(k => k % 10 === 0).map(k => ({ k, luz: 0, visto: false }));
-  let y = ida[0] * SLAB;
-  if (t >= total) y = n * SLAB;
-  else {
-    const i = Math.floor(t / tramo), r = t - i * tramo;
-    const a = ida[i], b = ida[i + 1];
-    y = (r < ALTO_MS ? a : a + (b - a) * suave((r - ALTO_MS) / VIAJE_MS)) * SLAB;
+  const D = BAJA_MS(n), total = 2 * D + ABAJO_MS;
+  let nivel, yaw;
+  if (t < D) { const p = avance(t / D); nivel = n * (1 - p); yaw = 2 * Math.PI * p; }
+  else if (t < D + ABAJO_MS) { nivel = 0; yaw = 0; }
+  else { const p = avance((t - D - ABAJO_MS) / D); nivel = n * p; yaw = -2 * Math.PI * p; }
+  const marcas = [];
+  for (let k = 0; k <= n; k += 10) {
+    if (t < D && k < nivel - 0.01) continue;
+    marcas.push({ k, luz: Math.max(0, 1 - Math.abs(nivel - k) / 3) });
   }
-  // A cut lights up when the camera reaches it (on the way down or up) and settles after
-  for (const m of marcas) {
-    let ultimo = -Infinity;
-    ida.forEach((k, j) => { const en = j * tramo; if (k === m.k && en <= t) ultimo = en; });
-    if (ultimo === -Infinity) continue;
-    m.visto = true; m.luz = Math.max(0, 1 - (t - ultimo) / 900);
-  }
-    // The camera also turns around the tower, there and back (under 45°, the same two sides in view)
-  const yaw = t >= total ? 0 : 0.7 * Math.sin((t / total) * Math.PI * 2);
-  return { y, yaw, total, marcas: marcas.filter(m => m.visto) };
+  return { y: nivel * SLAB, yaw: t >= total ? 0 : yaw, total, marcas };
 }
 
 /** The moment of a tap, on performance.now()'s clock (an old browser's epoch timestamp is not trusted). */
