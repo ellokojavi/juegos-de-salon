@@ -9,22 +9,26 @@ import { el } from './ui.js';
 import { openTesterSheet } from './tester-badge.js';
 
 const T = {
-  es: { tab: 'Tester', info: 'Qué es ser tester', labs: 'Ir a Labs', none: 'Nada que activar en esta pantalla' },
-  en: { tab: 'Tester', info: 'What being a tester means', labs: 'Go to Labs', none: 'Nothing to turn on in this screen' },
-  pt: { tab: 'Tester', info: 'O que é ser tester', labs: 'Ir para o Labs', none: 'Nada para ativar nesta tela' },
+  es: { tab: 'Tester', info: 'Qué es ser tester', labs: 'Ir a Labs' },
+  en: { tab: 'Tester', info: 'What being a tester means', labs: 'Go to Labs' },
+  pt: { tab: 'Tester', info: 'O que é ser tester', labs: 'Ir para o Labs' },
 };
 export const RIBBON_TEXTS = T;
 
 const CSS = `
 .tr { position: fixed; right: 0; z-index: 40; display: flex; align-items: flex-start; top: var(--tr-top, calc(70px + var(--safe-top))); font-family: var(--font-body); color: var(--ink); }
 .tr-tab { position: relative; overflow: hidden; flex: none; width: 38px; height: 46px; border: 0; padding: 0; cursor: pointer;
-  border-radius: 14px 0 0 14px; color: #fff; font: 400 1.6rem/1 var(--font-display); text-shadow: 0 2px 0 rgba(21,7,38,0.55);
+  border-radius: 14px 0 0 14px; color: var(--bg1); font: 400 1.75rem/1 var(--font-display);
+  text-shadow: 0 0 1px #fff, 0 0 6px rgba(255,255,255,0.9), 0 1px 0 rgba(255,255,255,0.8);
   background: linear-gradient(135deg, var(--pink), var(--purple), var(--cyan), var(--lime), var(--yellow), var(--pink));
   background-size: 400% 400%; animation: tr-iri 6s ease-in-out infinite;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.35) inset, 0 6px 18px rgba(138,77,255,0.45); }
 .tr-tab::after { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.75) 48%, transparent 62%);
   background-size: 260% 100%; animation: tr-brillo 3.2s ease-in-out infinite; }
+.tr-tab-wrap { position: relative; flex: none; }
+.tr-punto { position: absolute; top: -4px; left: -4px; z-index: 1; width: 13px; height: 13px; border-radius: 999px; background: var(--red); border: 2px solid var(--bg1); box-shadow: 0 0 8px rgba(224,36,60,0.8); pointer-events: none; }
+.tr:not(.con-ctx) .tr-punto, .tr:not(.con-ctx) .tr-ctx { display: none; }
 .tr-tab:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 @keyframes tr-iri { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 @keyframes tr-brillo { 0%, 55% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
@@ -39,7 +43,6 @@ const CSS = `
 .tr-labs { color: var(--cyan); font-weight: 900; text-decoration: none; display: flex; justify-content: space-between; min-height: 32px; align-items: center; }
 .tr-ctx { border-top: 1px solid var(--glass-border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
 .tr-sim { display: flex; flex-direction: column; gap: 8px; }
-.tr-ctx-nada { color: var(--muted); font-size: 0.9rem; }
 .tr-ctx small { color: var(--muted); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.68rem; }
 .tr-fila { display: flex; gap: 8px; align-items: center; }
 .tr-fila input { width: 4.2em; padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: inherit; font: 800 1rem var(--font-num); text-align: center; }
@@ -58,7 +61,9 @@ function place() {
 function drawContext() {
   if (!ribbon) return;
   const box = ribbon.querySelector('.tr-ctx');
-  box.replaceChildren(ctx || el('span', { class: 'tr-ctx-nada' }, t.none));
+  box.replaceChildren(...(ctx ? [ctx] : []));
+  // The red dot on the folded tab: this screen has something to try. Without it, only (i) and Labs
+  ribbon.classList.toggle('con-ctx', !!ctx);
 }
 
 /** Shows the ribbon (once). The caller has already checked the key and the flag. */
@@ -72,7 +77,7 @@ export function testerRibbon({ lang = 'es', labsUrl = new URL('../../labs/', imp
       el('button', { type: 'button', class: 'tr-info', id: 'tr-info', 'aria-label': t.info, onClick: () => openTesterSheet(lang, labsUrl) }, 'i')),
     el('a', { class: 'tr-labs', id: 'tr-labs', href: labsUrl }, t.labs, el('span', { 'aria-hidden': 'true' }, '›')),
     el('div', { class: 'tr-ctx', id: 'tr-ctx' }));
-  ribbon = el('div', { class: 'tr', id: 'tester-ribbon' }, tab, panel);
+  ribbon = el('div', { class: 'tr', id: 'tester-ribbon' }, el('div', { class: 'tr-tab-wrap' }, tab, el('span', { class: 'tr-punto', 'aria-hidden': 'true' })), panel);
   const toggle = open => { ribbon.classList.toggle('abierto', open); tab.setAttribute('aria-expanded', String(open)); };
   tab.addEventListener('click', () => toggle(!ribbon.classList.contains('abierto')));
   // Folds again on a tap outside it or Escape: it acts over the page, it never stays in the way
