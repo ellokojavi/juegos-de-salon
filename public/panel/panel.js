@@ -1884,7 +1884,7 @@ function vistaSplash(today) {
       archivadas.map(s => el('div', { class: 'campana-archivada', id: `campana-${s.id}` },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, CAMPAIGNS[s.id].emoji || '📣'),
         el('strong', { class: 'campana-titulo' }, nombreDe(s.id)),
-        el('button', { type: 'button', class: 'campana-preview', 'aria-label': `Unarchive ${nombreDe(s.id)}`,
+        el('button', { type: 'button', class: 'campana-preview campana-desarchivar', 'aria-label': `Unarchive ${nombreDe(s.id)}`,
           onClick: () => guardarCampanas(archive(todas, s.id, false)) }, '↩︎ Unarchive')))) : null,
   ];
 }
