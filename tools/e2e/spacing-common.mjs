@@ -45,7 +45,8 @@ export const lacksSpacing = rows => rows.filter(f => f.spacing < MIN_SPACING).ma
  * A button is a visible `button` or `a.btn` of the active screen (or the open dialog). Floating
  * ones (position fixed or sticky: the chat bubble, a toast) float on purpose and are left out, as is
  * a button inside another one. Two overlap when they share more than MIN_OVERLAP px in both
- * directions. An element marked `data-overlap-ok` (a deliberate stack) is left out too.
+ * directions. Only what the screenshot shows counts: a button outside the viewport, or one whose
+ * centre another layer covers (under an open sheet), is left out. An element marked `data-overlap-ok` (a deliberate stack) is left out too.
  */
 export const MIN_OVERLAP = 4;
 
@@ -56,7 +57,13 @@ export const measureOverlap = `(()=>{
   const visible = x => { const s = getComputedStyle(x); const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && Number(s.opacity) > 0 && x.closest('[aria-hidden="true"]') === null; };
   const scopes = [root, ...document.querySelectorAll('dialog[open], .confirm')].filter((x, i, a) => a.indexOf(x) === i);
   const buttons = [...new Set(scopes.flatMap(s => [...s.querySelectorAll('button, a.btn')]))]
-    .filter(x => visible(x) && !floating(x) && !x.closest('[data-overlap-ok]') && !x.parentElement.closest('button, a.btn'));
+    .filter(x => visible(x) && !floating(x) && !x.closest('[data-overlap-ok]') && !x.parentElement.closest('button, a.btn'))
+    // A button under an open sheet or dialog is not on this screen: one whose own centre another
+    // layer covers is left out (the sheet's buttons over the result screen's are not an overlap)
+    .filter(x => { const r = x.getBoundingClientRect(); const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      // Only what the screenshot shows: a button outside the viewport cannot be hit-tested
+      if (cx < 0 || cy < 0 || cx > innerWidth || cy > innerHeight) return false;
+      const hit = document.elementFromPoint(cx, cy); return !hit || x.contains(hit) || hit.contains(x); });
   const label = x => (x.textContent || x.getAttribute('aria-label') || x.className || x.tagName).toString().trim().replace(/\\s+/g, ' ').slice(0, 20);
   const pairs = [];
   for (let i = 0; i < buttons.length; i++) for (let j = i + 1; j < buttons.length; j++) {
