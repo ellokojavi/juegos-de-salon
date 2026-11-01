@@ -150,6 +150,23 @@ export function titulo({ el, J }) {
     const pisos = el('input', { type: 'number', min: 4, max: 200, value: 51, class: 'sk-sim-n', id: 'sk-sim-n', 'aria-label': 'Pisos' });
     // A folded tab on the screen's left edge, over no control, so the cover looks as players see it (the owner's call)
     document.getElementById('sk-lab')?.remove();
+    // With the tester ribbon (lab flag tester-ribbon), the same control goes in the ribbon instead of the tab
+    flag('tester-ribbon').then(on => {
+      if (!on || !cabeza.isConnected) return;
+      return import('../../../assets/js/tester-ribbon.js').then(({ testerRibbon, setTesterContext, foldTesterRibbon }) => {
+        document.getElementById('sk-lab')?.remove();
+        testerRibbon({ lang: document.documentElement.lang || 'es', labsUrl: new URL('../../../labs/', import.meta.url).href });
+        const n = el('input', { type: 'number', min: 4, max: 200, value: 51, id: 'tr-sim-n', 'aria-label': 'Pisos' });
+        setTesterContext(el('div', { class: 'tr-sim' }, el('small', {}, '🗼 Simular final'),
+          el('div', { class: 'tr-fila' }, n, el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'tr-simular', onClick: () => {
+            simulacion = Math.max(4, Math.min(200, Math.round(Number(n.value) || 51)));
+            foldTesterRibbon(); setTesterContext(null);
+            document.getElementById('btn-empezar')?.click();
+          } }, 'Simular'))));
+        const fuera = new MutationObserver(() => { if (!cabeza.isConnected) { setTesterContext(null); fuera.disconnect(); } });
+        fuera.observe(document.body, { childList: true, subtree: true });
+      });
+    }).catch(() => {});
     const tab = el('details', { class: 'sk-lab', id: 'sk-lab' },
       el('summary', { 'aria-label': 'Laboratorio' }, '🧪'),
       el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,

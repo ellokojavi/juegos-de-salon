@@ -83,3 +83,5 @@ export async function testerBadge(title, { lang = 'es', labsUrl = new URL('../..
 }
 
 export const TESTER_TEXTS = T;
+/** The same sheet, for the tester ribbon's (i) (tester-ribbon.js). */
+export const openTesterSheet = (lang = 'es', labsUrl = new URL('../../labs/', import.meta.url).href) => sheet(T[lang] || T.es, labsUrl);

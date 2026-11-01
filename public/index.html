@@ -644,7 +644,10 @@
     // Only for lab key holders, like everything still in development (D-395)
     // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada
     // «tester» under the title, only with a lab key: it opens what the key gives (tester-badge.js)
-    import('./assets/js/tester-badge.js').then(({ testerBadge }) => testerBadge(document.querySelector('.hero h1'), { lang })).catch(() => {});
+    // The tester ribbon replaces the «tester» chip when its lab flag is on. lab: #seccion-tester-ribbon
+    import('./assets/js/flags.js').then(({ flag }) => flag('tester-ribbon')).then(on => on
+      ? import('./assets/js/tester-ribbon.js').then(({ testerRibbon }) => testerRibbon({ lang }))
+      : import('./assets/js/tester-badge.js').then(({ testerBadge }) => testerBadge(document.querySelector('.hero h1'), { lang }))).catch(() => {});
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
     // The copy of the list the next visit draws at once (D-435): only of the whole list, never a
