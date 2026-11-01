@@ -4,3 +4,4 @@ level: minor
 - **Los filtros de la portada caben en una línea con cinco tipos**: en un celular angosto los tipos van en columnas iguales, «Cartas/Dados» pasa a llamarse «🎲 Dados» (los juegos de cartas ya no están en la portada), y con ⭐ Favoritos los atajos de arriba se acortan a Nuevo · Pop · Favs en vez de bajar a otra línea.
 - **La ventana de lanzamiento de 🥷 Shinobi y 🗼 Babel**: «¿Cansado de pensar?», con los dos juegos como cartuchos de consola, un HUD pixel y «Compatible con 🏆 La Copa y 📅 Uno al Día». Se enciende en el panel y aparece recién cuando los dos juegos se publican.
 - **La ventana de 🥷 Shinobi y 🗼 Babel**: los clips ahora se mueven a la velocidad real de los juegos, y bajo cada uno hay una frase que invita a probarlo.
+- **Ventana de 🥷 Shinobi**: «¿Le apuntas a la bandera?» en vez de «¿Le achuntas…?».
