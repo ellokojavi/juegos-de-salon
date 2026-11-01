@@ -5,3 +5,4 @@ level: patch
   tracks at random (`public/assets/music/babel/`, 64 kbps mono); «🎵 Música: sí / no» on the cover turns it
   off, remembered on the phone, looped and low so the game's sounds stay on
   top; the mute button silences it too (`public/assets/js/music.js`).
+  The end screen credits the track and its author, linked to Pixabay.

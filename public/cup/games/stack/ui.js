@@ -29,10 +29,25 @@ import { getLang } from '../../../assets/js/i18n.js';
 import TEXTOS from './texts.js';
 import { labAccess } from '../../../assets/js/lab-access.js';
 import { flag } from '../../../assets/js/flags.js';
-import { musicOn, setMusicOn, start as musicStart, fadeOutLater, playing } from '../../../assets/js/music.js';
+import { musicOn, setMusicOn, start as musicStart, fadeOutLater, playing, lastTrack } from '../../../assets/js/music.js';
 
 /** Background music, an experiment behind the flag babel-music: one of four tracks at random each game. */
 const TRACKS = [1, 2, 3, 4].map(n => new URL(`../../../assets/music/babel/track-${n}.mp3`, import.meta.url).href);
+/** Each track's credit on the end screen, with its Pixabay page (track-n.mp3 is CREDITS[n - 1]). */
+const CREDITS = [
+  { name: 'Retro Game', by: 'The Mountain', url: 'https://pixabay.com/music/video-games-retro-game-593063/' },
+  { name: 'Retro Game', by: 'Bransboynd', url: 'https://pixabay.com/music/video-games-retro-game-402454/' },
+  { name: 'Game Gaming Music', by: 'Hitslab', url: 'https://pixabay.com/music/video-games-game-gaming-music-295075/' },
+  { name: 'Game Music', by: 'DeepMusicEveryDay', url: 'https://pixabay.com/music/video-games-game-music-7408/' },
+];
+/** «Música: Retro Game, de The Mountain» linked to Pixabay, for the track this game played; null with no music. */
+function creditoMusica(el, T) {
+  const i = TRACKS.indexOf(lastTrack()), c = CREDITS[i];
+  if (!c) return null;
+  const [antes, despues] = String(T.skMusicCredit).split('{tema}');
+  return el('p', { class: 'sk-musica-credito muted', id: 'sk-musica-credito' }, antes,
+    el('a', { href: c.url, target: '_blank', rel: 'noopener' }, String(T.skMusicBy).replace('{name}', c.name).replace('{by}', c.by)), despues || '');
+}
 const musica = () => flag('babel-music').then(si => { if (si && !playing()) musicStart(TRACKS); }).catch(() => {});
 // It starts with the countdown: «Empezar» (or «Simular final») on Babel's cover
 globalThis.document?.addEventListener('click', ev => {
@@ -116,11 +131,17 @@ export function titulo({ el, J }) {
   // The background music's switch (flag babel-music), remembered on this phone
   flag('babel-music').then(si => {
     if (!si || !cabeza.isConnected) return;
-    const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
-    const pintar = () => { const on = musicOn(); boton.textContent = on ? UI().skMusicOn : UI().skMusicOff; boton.setAttribute('aria-pressed', String(on)); };
+    const boton = el('button', { type: 'button', class: 'sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
+    // Only the icon, beside the languages; its name is in the label and the tooltip
+    const pintar = () => { const on = musicOn(), nombre = on ? UI().skMusicOn : UI().skMusicOff; boton.textContent = on ? '🎵' : '🔇'; boton.setAttribute('aria-label', nombre); boton.title = nombre; boton.classList.toggle('apagada', !on); boton.setAttribute('aria-pressed', String(on)); };
     boton.addEventListener('click', () => { setMusicOn(!musicOn()); pintar(); });
     pintar();
-    cabeza.append(boton);
+    // Above the title, as a header: the language toggle on the left, the music switch on its right
+    const hero = cabeza.closest('.intro-hero'), idioma = hero && [...hero.children].find(n => n !== cabeza && n.querySelector?.('.lang-toggle'));
+    const fila = el('div', { class: 'sk-cabecera', id: 'sk-cabecera' });
+    if (idioma) fila.append(...idioma.childNodes);
+    fila.append(boton);
+    if (hero) { idioma?.remove(); hero.prepend(fila); } else cabeza.append(fila);
   }).catch(() => {});
   // Only for a lab key, on Babel's own page: the owner's way to see a game's last blocks and its end
   // without playing (it never reaches a ranking: «See results» comes back here). lab: #seccion-stack
@@ -266,7 +287,7 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(boton);
+      fin.replaceChildren(boton, creditoMusica(el, T) || '');
       requestAnimationFrame(() => {
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
         if (r.height) sc.deslizar(antes - r.top, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 900);

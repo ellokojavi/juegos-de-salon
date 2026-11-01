@@ -132,4 +132,7 @@ From the countdown until 7 s after the game is lost, when it fades out over 2 s 
 (Pixabay: The Mountain, Bransboynd, Hitslab, DeepMusicEveryday), at 22% volume through a Web Audio gain so the sound effects play over it;
 it follows the mute button. `public/assets/js/music.js`, hooked only in Babel's `ui.js` (the cover's «Empezar», `montar`, the end), so a
 change to it tests only Babel; a La Copa day has no cover, so there it starts with the tower.
-The cover has «🎵 Música: sí / no» (`#btn-musica`), kept on the phone in `juegos-de-salon:music`.
+The cover has a 🎵 / 🔇 switch (`#btn-musica`, named «Música: sí / no» in its label) right of the language toggle, both
+moved above the tower as a header (`#sk-cabecera`, the owner's call); kept on the phone in `juegos-de-salon:music`.
+The end screen credits the track that played under «Continuar»: «🎵 Música: Retro Game, de The Mountain, en Pixabay»,
+linked to its Pixabay page (`CREDITS` in `ui.js`; the four authors: The Mountain, Bransboynd, Hitslab, DeepMusicEveryDay).
