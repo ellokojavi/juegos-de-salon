@@ -1,3 +1,3 @@
 level: patch
 
-- **Babel**: the drawing learns an end-of-game tour (down the tower at a steady pace to the base, a full turn around it, a glowing cut every ten levels with its number lying on it, and back up; the tower now draws from any side), not yet shown in the game: awaiting the owner's review.
+- **Babel** (lab, flag `stack-tour`): when a game ends, the tower takes the whole screen and the camera tours it, down to the base at a calm, steady pace while turning a full circle, a glowing cut every ten floors with its number lying on it, and back up; up top it reads «51 floors» instead of the blocks seal, and «See results» sits on a blurred strip.

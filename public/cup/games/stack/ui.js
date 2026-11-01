@@ -26,6 +26,7 @@ import { confetti } from '../../../assets/js/ui.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { getLang } from '../../../assets/js/i18n.js';
+import { flag } from '../../../assets/js/flags.js';
 import TEXTOS from './texts.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
@@ -129,6 +130,10 @@ export function montar(raiz, ctx) {
   const juego = el('div', { class: 'sk-juego' }, escenario, fin);
   raiz.append(juego);
   const sc = escena(lienzo);
+  // The end's tour (flag stack-tour, lab: #seccion-stack-tour): the camera goes down the finished tower
+  // turning a full circle, a cut every ten floors, and back up; the tower takes the whole screen
+  let gira = false;
+  const conGira = flag('stack-tour').then(on => (gira = !!on)).catch(() => false);
 
   /** The game as it is saved and handed to the cup. */
   const estado = () => ({
@@ -211,11 +216,22 @@ export function montar(raiz, ctx) {
       if (vez !== partidas || !raiz.isConnected) return;
       juego.classList.add('terminado');
       const n = e.n;
-      fin.replaceChildren(
-        el('p', { class: 'sk-sello', id: 'sk-sello' }, fmt(T.skBlocks[forma(n)], { n })),
-        el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults));
+      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
+      if (!gira) { fin.replaceChildren(el('p', { class: 'sk-sello', id: 'sk-sello' }, fmt(T.skBlocks[forma(n)], { n })), boton); return; }
+      // The tour: «51 floors» up top instead of the seal, the tower under a blurred strip with the button,
+      // its top resting halfway between «Game over» and the button
+      juego.classList.add('gira');
+      marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
+      fin.replaceChildren(boton);
+      requestAnimationFrame(() => {
+        const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
+        if (r.height) sc.enfocar(Math.min(0.7, Math.max(0.3, ((a + b) / 2 - r.top) / r.height)));
+        if (!QUIETO()) sc.recorrer(n);
+        despertar();
+      });
     };
-    if (recien) setTimeout(mostrar, QUIETO() ? 400 : FIN_MS); else mostrar();
+    const espera = recien ? new Promise(r => setTimeout(r, QUIETO() ? 400 : FIN_MS)) : Promise.resolve();
+    Promise.all([espera, Promise.race([conGira, new Promise(r => setTimeout(r, 1600))])]).then(mostrar);
   }
 
   const paso = now => {
@@ -223,7 +239,7 @@ export function montar(raiz, ctx) {
     sc.draw(S.g, now, S.pausa || now);
     // Paused for a second (effects done), or finished and the last piece fallen: the loop sleeps until
     // the tap back, so a game left on the table does not burn battery (#892)
-    if ((S.pausa && now - S.pausa > 1000) || (S.fin && now - S.finEn > 3000)) { S.dormido = true; return; }
+    if ((S.pausa && now - S.pausa > 1000) || (S.fin && now - S.finEn > 3000 && !sc.recorriendo(now))) { S.dormido = true; return; }
     requestAnimationFrame(paso);
   };
   function despertar() { if (S.dormido) { S.dormido = false; requestAnimationFrame(paso); } }
