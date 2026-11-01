@@ -35,6 +35,8 @@ export const LABEL = 'processes';
 export const LABELS = [LABEL, 'procesos'];
 /** The workflows a checkbox may re-run on main. */
 export const WORKFLOWS = ['e2e.yml', 'publish.yml'];
+/** The commit status a 🔴 PR needs from the owner (docs/LANES.md); the lane job sets it red. */
+export const APPROVAL = 'owner-approval';
 
 /* ------------------------------------------------------------------ */
 /* Pure logic (tested by tools/agents/approve.test.mjs)               */
@@ -123,6 +125,8 @@ export function invalidAction(action) {
     case 'comment': return n(a.on) && typeof a.text === 'string' && a.text.trim() ? null : 'comment without a target or text';
     case 'run': return WORKFLOWS.includes(a.workflow) ? null : `run: only ${WORKFLOWS.join(' or ')}`;
     case 'queue': return typeof a.task === 'string' && a.task.trim() ? null : 'queue without a task';
+    // The owner's tick on a 🔴 PR (docs/LANES.md): green owner-approval status on that exact commit
+    case 'approve-pr': return n(a.pr) && /^[0-9a-f]{40}$/.test(a.sha || '') ? null : 'approve-pr without a PR number and a full commit sha';
     case 'nothing': return null;
     default: return `unknown action: ${a.type}`;
   }
@@ -231,6 +235,14 @@ function perform(action, repo) {
     case 'run':
       gh('workflow', 'run', a.workflow, ...R, '--ref', 'main');
       return a.workflow === 'publish.yml' ? 'the site is being published' : 'running the end-to-end tests';
+    case 'approve-pr': {
+      // Only the commit the owner was asked about: a push after the question needs a new tick
+      const pr = JSON.parse(gh('pr', 'view', String(a.pr), ...R, '--json', 'state,headRefOid'));
+      if (pr.state !== 'OPEN') throw new Error(`#${a.pr} is not open`);
+      if (pr.headRefOid !== a.sha) throw new Error(`#${a.pr} changed since the question (${a.sha.slice(0, 7)} → ${pr.headRefOid.slice(0, 7)}): its lane job asks again`);
+      gh('api', '-X', 'POST', `repos/${repo}/statuses/${a.sha}`, '-f', 'state=success', '-f', `context=${APPROVAL}`, '-f', 'description=Approved by the owner');
+      return `#${a.pr} approved by the owner`;
+    }
     case 'queue':
       return `queued for the next round: ${a.task}`;
     case 'nothing':
