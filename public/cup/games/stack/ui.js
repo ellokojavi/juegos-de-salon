@@ -31,7 +31,7 @@ import { labAccess } from '../../../assets/js/lab-access.js';
 import { flag } from '../../../assets/js/flags.js';
 import { musicOn, setMusicOn, start as musicStart, fadeOutLater, playing, lastTrack } from '../../../assets/js/music.js';
 
-/** Background music, an experiment behind the flag babel-music: one of four tracks at random each game. */
+/** Background music, behind Babel's own flag `stack` (it launches with the game): one of four tracks at random each game. */
 const TRACKS = [1, 2, 3, 4].map(n => new URL(`../../../assets/music/babel/track-${n}.mp3`, import.meta.url).href);
 /** Each track's credit on the end screen, with its Pixabay page (track-n.mp3 is CREDITS[n - 1]). */
 const CREDITS = [
@@ -48,7 +48,7 @@ function creditoMusica(el, T) {
   return el('p', { class: 'sk-musica-credito muted', id: 'sk-musica-credito' }, antes,
     el('a', { href: c.url, target: '_blank', rel: 'noopener' }, String(T.skMusicBy).replace('{name}', c.name).replace('{by}', c.by)), despues || '');
 }
-const musica = () => flag('babel-music').then(si => { if (si && !playing()) musicStart(TRACKS); }).catch(() => {});
+const musica = () => flag('stack').then(si => { if (si && !playing()) musicStart(TRACKS); }).catch(() => {});
 // It starts with the countdown: «Empezar» (or «Simular final») on Babel's cover
 globalThis.document?.addEventListener('click', ev => {
   if (ev.target?.closest?.('#btn-empezar') && document.querySelector('.sk-cabeza')) musica();
@@ -128,8 +128,8 @@ export function titulo({ el, J }) {
       el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
       el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
-  // The background music's switch (flag babel-music), remembered on this phone
-  flag('babel-music').then(si => {
+  // The background music's switch (with Babel, flag stack), remembered on this phone
+  flag('stack').then(si => {
     if (!si || !cabeza.isConnected) return;
     const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
     // In words, «Música: sí / no»: an icon alone looked like the sound effects' 🔊 (the owner's call)

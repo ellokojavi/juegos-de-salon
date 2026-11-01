@@ -274,8 +274,8 @@
           // With the night's totals (D-500, lab), this player's row in the month's tabs carries the same
           // total as the big number above it, today's pending points included
           const ajustar = async v => {
-            const R = await red, yo = leerYo()?.jid;
-            return yo && (await R.nocheTotales()) ? R.tablaConMiCuenta(v, { jid: yo, w: walk(leer().dias, estado().hoy, { gifts: leer().regalos || [], late: tarde }), hoy: estado().hoy }) : v;
+            const R = await red, quien = leerYo(), yo = quien?.jid;
+            return yo && (await R.nocheTotales()) ? R.tablaConMiCuenta(v, { jid: yo, yo: quien, w: walk(leer().dias, estado().hoy, { gifts: leer().regalos || [], late: tarde }), hoy: estado().hoy }) : v;
           };
           rk = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap, rapido: true, ajustar });
           // Sharing the ranking: its picture, a short line and the link to play (owner's request)

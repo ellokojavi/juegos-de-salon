@@ -37,6 +37,13 @@ permissions:
 jobs:
   tests:
     uses: ./.github/workflows/tests.yml
+    # A called workflow may ask for no more than its caller grants: tests.yml's `lane` job (D-519,
+    # skipped on a push) asks for these, and without them every Publish run failed to start
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      statuses: write
 
   # Did this tree already pass the end-to-end run? (D-308) Looks for the mark e2e.yml leaves when it
   # passes. If asking fails, it says no, and the end-to-end run goes whole.

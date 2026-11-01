@@ -1,7 +1,7 @@
 // La Copa's ▶ Jugar hoy on the home page (flag copa-hoy): which cup and day it opens, from what La Copa kept
 import assert from 'node:assert/strict';
-import { nuevaMeta, porJugar } from '../../cup/engine.js';
-import { pendingCup, nextCupDay, untilText, finalPlayed } from './cup-today.js';
+import { nuevaMeta, porJugar, recorteLista } from '../../cup/engine.js';
+import { pendingCup, nextCupDay, untilText, finalPlayed, activeCups } from './cup-today.js';
 
 const H = 60 * 60 * 1000;
 const meta = nuevaMeta({ nombre: 'Copa', dias: 7, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
@@ -63,4 +63,34 @@ console.log('cup-today: ok');
     'juegos-de-salon:copa:lista:K7Q2X': JSON.stringify({ results: { 1: { bbbbbb: 1 } } }),
   };
   assert.equal(pendingCup({ getItem: k => m[k] ?? null }, dia(0)), null, 'played per the kept copy: no ▶ Jugar hoy');
+}
+
+// Flag copa-contexto: what the card says of each cup, from the copy La Copa keeps with the place
+{
+  const L2 = { meta, players, results: { 1: { aaaaaa: { s: 5, ms: 1 }, bbbbbb: { s: 3, ms: 1 } } } };
+  const r = recorteLista(L2, 'bbbbbb', dia(1));
+  assert.deepEqual(r.place, { at: 2, of: 2, leader: 'Ana', gap: r.place.gap }, 'second of two, behind Ana');
+  assert.ok(r.place.gap > 0, 'by some points');
+  assert.equal(r.games.length, 7, "each day's game");
+  assert.equal(recorteLista(L2, 'bbbbbb').place, undefined, 'without now, as before');
+  const kept = (pid, at) => {
+    const m = {
+      'juegos-de-salon:copa:mias': JSON.stringify([{ code: 'K7Q2X' }]),
+      'juegos-de-salon:copa:sesion:K7Q2X': JSON.stringify({ pid }),
+      'juegos-de-salon:copa:hoy:K7Q2X': JSON.stringify(porJugar(L2, pid, at)),
+      'juegos-de-salon:copa:lista:K7Q2X': JSON.stringify(recorteLista(L2, pid, at)),
+    };
+    return { getItem: k => m[k] ?? null };
+  };
+  const [c] = activeCups(kept('bbbbbb', dia(1)), dia(1));
+  assert.equal(c.code, 'K7Q2X');
+  assert.equal(c.day, 2, 'day 2 open');
+  assert.ok(c.open, 'to play');
+  assert.deepEqual(c.played, [1]);
+  assert.equal(c.final, false);
+  assert.equal(c.place.at, 2);
+  assert.equal(activeCups(kept('bbbbbb', dia(1)), meta.end + 1).length, 0, 'over: no cup');
+  assert.equal(activeCups({ getItem: () => null }, dia(1)).length, 0, 'no cups: nothing');
+  const [f] = activeCups(kept('bbbbbb', dia(6)), dia(6));
+  assert.ok(f.final && f.day === 7, 'the last day is the final');
 }

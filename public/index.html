@@ -85,6 +85,12 @@
   <link rel="modulepreload" href="assets/js/back-guard.js">
   <style>
     .hero { text-align: center; padding: 28px 0 18px; }
+    /* «tester», only with a lab key (tester-badge.js): a sticker on the title's corner, out of the flow, so
+       the page is laid out exactly as a standard player sees it; it opens what the key gives */
+    .hero { position: relative; }
+    .tester-chip { position: absolute; z-index: 2; transform: rotate(8deg); margin: 0; padding: 3px 10px; min-height: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.35); border-radius: 999px; border: 1px solid rgba(43, 217, 254, 0.55); background: rgba(21, 7, 38, 0.85); color: var(--cyan, #2bd9fe); font: 800 0.66rem/1 var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+    .tester-chip::after { content: ''; position: absolute; inset: -10px; } /* a 44 px tap, the sticker stays small */
+    .tester-chip:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
     .hero .emoji { font-size: 3.2rem; display: block; margin-bottom: 6px; }
     .emoji-swap { display: inline-block; transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
     .emoji-swap.out { opacity: 0; transform: scale(0.3) rotate(-40deg); }
@@ -419,12 +425,31 @@
     /* Beside One a Day's played box (#1 and its points), La Copa's chip is as wide and as tall (#1029) */
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta { align-self: end; justify-self: stretch; width: 100%; }
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta .copa-hoy-chip { width: 100%; flex: 1 1 100%; border-radius: 18px; min-height: calc(14px + 2.1rem * 0.95 + 0.78rem * 1.1); }
+    /* La Copa's card with its context (lab flag copa-contexto): the cup's name in a pill on the border like
+       One a Day's month, in the Cup's gold; a bar of its days; a louder ▶ (yellow to orange, pressed edge) */
+    .game-card.torneo.copa-ctx { position: relative; overflow: visible; }
+    .game-card.torneo.copa-ctx .texto, .game-card.torneo.copa-ctx .tag { min-width: 0; max-width: 100%; }
+    .game-card.torneo .copa-mes { position: absolute; top: -11px; right: 12px; z-index: 3; max-width: calc(100% - 40px); box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 209, 102, 0.6); background: #2a1a4f; color: var(--yellow); font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
+    .fila-alta:has(.copa-mes) { margin-top: 14px; }
+    .game-card.torneo .copa-dias { display: flex; gap: 4px; margin-top: 8px; }
+    .game-card.torneo .copa-dias i { flex: 1; height: 6px; border-radius: 3px; background: rgba(0, 0, 0, 0.32); }
+    .game-card.torneo .copa-dias i.ok { background: rgba(255, 255, 255, 0.7); }
+    .game-card.torneo .copa-dias i.hoy { background: var(--yellow); }
+    .game-card.torneo .copa-dias i.hoy:last-child { box-shadow: 0 0 6px var(--yellow); }
+    .game-card.torneo .copa-fila { display: flex; min-width: 0; white-space: nowrap; font-size: 0.95em; }
+    .game-card.torneo .copa-fila + .copa-dias { margin-top: 4px; }
+    .game-card.torneo .copa-dias + .copa-fila { margin-top: 8px; }
+    .game-card.torneo .copa-fila b { min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
+    .game-card.torneo .copa-fila span { flex: none; padding-left: 0.25em; }
+    .game-card.torneo.copa-ctx .meta .copa-hoy-chip:not(.espera) { font-size: clamp(0.95rem, 3.4vw, 1.15rem); color: #1a0d00; background: linear-gradient(180deg, #ffe066, var(--orange)); box-shadow: 0 4px 0 #b34a00, 0 6px 18px rgba(255, 122, 26, 0.45); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
     .uad-card .uad-card-mes { position: absolute; top: -11px; right: 12px; z-index: 3; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 46, 136, 0.6); background: #2a1a4f; color: #ff8cc0; font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
     .fila-alta:has(.uad-card-mes) { margin-top: 14px; }
     .uad-card.invita .uad-card-mes { background: #ff2e88; color: #fff; border-color: #ff8cc0; }
     .uad-card.hecho .uad-card-mes { border-color: rgba(46, 230, 214, 0.6); color: #5ee6d8; }
+    html.filtrado .uad-card { display: none !important; }
+    html.filtrado .fila-alta:has(.uad-card-mes) { margin-top: 0; }
     .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
     .uad-card-link:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
     .uad-card.dos .meta { position: relative; z-index: 2; flex-wrap: wrap; align-items: center; }
@@ -615,6 +640,8 @@
     // The lab's experiments bar (D-363): opened from /labs/home/ with ?lab, on the real home page
     // Only for lab key holders, like everything still in development (D-395)
     // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada
+    // «tester» under the title, only with a lab key: it opens what the key gives (tester-badge.js)
+    import('./assets/js/tester-badge.js').then(({ testerBadge }) => testerBadge(document.querySelector('.hero h1'), { lang })).catch(() => {});
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
     // The copy of the list the next visit draws at once (D-435): only of the whole list, never a
@@ -701,13 +728,16 @@
     }
     // La Copa's card says what to do today (flag copa-hoy): ▶ Jugar hoy with a day to play. lab: #seccion-copa-hoy
     // With today's day played, Día N en Xh Ym (flag copa-espera). lab: #seccion-copa-espera
+    // Which cup, your place, the day's game and a bar of its days (flag copa-contexto). lab: #seccion-copa-contexto
     // The top bar's buttons as pills of one height (flag home-pill-bar, #1027). lab: #seccion-home-pill-bar
     import('./assets/js/flags.js').then(({ flag }) => flag('home-pill-bar')).then(on => on && document.documentElement.classList.add('pill-bar')).catch(() => {});
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
-      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => {
-        m.decorateCupCard(copa, { lang, wait });
+      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => Promise.all([flag('copa-espera'), flag('copa-contexto')])).then(([wait, context]) => {
+        m.decorateCupCard(copa, { lang, wait, context });
+        // The copy the next visit draws (D-435) is the card as decorated, not as it was before
+        uadListo.then(guardarFoto);
         // ▶ Jugar hoy only for a day the server does not have played (another phone, a late read)
-        if (param('test') === null) m.confirmCupCard(copa, { lang, wait });
+        if (param('test') === null) m.confirmCupCard(copa, { lang, wait, context }).then(c => c && uadListo.then(guardarFoto));
       })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
@@ -839,6 +869,8 @@
         acomodarFav();
         const filtrado = !!filtro.tipo || !!busca.ids;
         cuenta.hidden = !filtrado || n === 0;
+        // One a Day is not a game of any kind: with a filter or a search on, it steps aside
+        document.documentElement.classList.toggle('filtrado', filtrado);
         cuenta.replaceChildren(el('span', {}, T.shown.replace('{n}', n).replace('{total}', tarjetas.length)),
           el('button', { class: 'link-btn', type: 'button', onClick: limpiar }, T.clearFilters));
         // ?jugadores= era el filtro de cuántos juegan (D-142): un link viejo lo pierde sin ruido.

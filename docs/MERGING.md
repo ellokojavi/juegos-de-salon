@@ -4,6 +4,10 @@
 
 From a finished branch to the live site: the review agents, the checks, auto-merge, waiting for the merge, the version, the Firebase rules and the README. CLAUDE.md keeps the checklist; this is the detail.
 
+**The owner's defaults** (2026-11-01): every PR gets auto-merge as soon as it is ready, unless an exception
+below holds; and a PR whose checks fail is fixed by the session that owns it, on its own: read the failing
+job's log, find the cause, fix it on the branch and push, without asking the owner first.
+
 ## Before proposing a merge
 
 1. **The lane** (D-519, [LANES.md](LANES.md)): `node tools/agents/lanes.mjs check` says the PR's lane

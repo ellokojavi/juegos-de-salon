@@ -28,3 +28,15 @@ only**: a later push asks again. For 🟢/🟡 the job sets `owner-approval` gre
 A session never turns on auto-merge for a 🔴 PR; it says in the PR that it waits for the owner.
 Storing something new about players is 🔴 too even when no red file changes: the privacy page
 changes in the same PR (CLAUDE.md), which makes it red.
+
+**What the owner reads before deciding.** The owner approves or rejects a 🔴 PR in one tap, so the
+session gives them the decision ready to take, in plain Spanish with no jargon, at the top of the PR
+description and in its chat reply:
+
+- **Qué cambia**: one sentence, in player or owner terms (not file names).
+- **Si sale mal**: the concrete worst case (who notices it, what is lost or sent).
+- **¿Se puede deshacer?**: yes / partly / no, and how.
+- **Riesgo**: bajo / medio / alto, with one line on why.
+- **Recomendación**: aprobar or rechazar, in one line.
+
+Five short lines, nothing more; the technical detail goes below them.

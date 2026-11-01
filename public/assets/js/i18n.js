@@ -178,7 +178,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}' },
+    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}', join: 'Crea o únete a una Copa', place: 'Vas {pos} de {n}.', behind: 'Vas {pos}, a {pts} pts de {name}.', today: 'Hoy: {game}.', next: 'Sigue: {game}.', cups: '{n} copas', more: 'y {n} más', final: 'Final', playDay: 'Jugar el día {day}', playFinal: 'Jugar la final' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy', unirse: 'Únete al mes',
@@ -329,6 +329,7 @@ export const COMMON = {
       error: 'No se pudo cargar el ranking. Revisa tu conexión.',
       empty: 'Todavía nadie. ¡Sé el primero!',
       emptyFriends: 'Aquí salen tus amigos de La Copa que entraron con su nombre y PIN.',
+      todayGameOnly: 'Solo el puntaje del juego de hoy. El bono de racha se suma en Mes.',
       emptyFriendsToday: 'Aquí salen tus amigos de La Copa y los que invitaste a Uno al día o que te invitaron, si entraron con su nombre y PIN.',
       you: 'tú',
       joinTitle: '🏅 Entra para aparecer en el ranking',
@@ -426,7 +427,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}' },
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}', join: 'Create or join a Cup', place: "You're {pos} of {n}.", behind: "You're {pos}, {pts} pts behind {name}.", today: 'Today: {game}.', next: 'Next: {game}.', cups: '{n} cups', more: 'and {n} more', final: 'Final', playDay: 'Play day {day}', playFinal: 'Play the final' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today', unirse: 'Join this month',
@@ -575,6 +576,7 @@ export const COMMON = {
       error: 'Couldn\'t load the leaderboard. Check your connection.',
       empty: 'Nobody yet. Be the first!',
       emptyFriends: 'Your friends from The Cup show up here once they sign in with their name and PIN.',
+      todayGameOnly: "Today's game score only. The streak bonus is added in Month.",
       emptyFriendsToday: 'Your friends from The Cup and the ones you invited to One a Day, or who invited you, show up here once they sign in with their name and PIN.',
       you: 'you',
       joinTitle: '🏅 Sign in to get on the leaderboard',
@@ -672,7 +674,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}' },
+    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}', join: 'Crie ou entre em uma Copa', place: 'Você está em {pos} lugar de {n}.', behind: 'Você está em {pos} lugar, a {pts} pts de {name}.', today: 'Hoje: {game}.', next: 'Depois: {game}.', cups: '{n} copas', more: 'e mais {n}', final: 'Final', playDay: 'Jogar o dia {day}', playFinal: 'Jogar a final' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje', unirse: 'Entre no mês',
@@ -821,6 +823,7 @@ export const COMMON = {
       error: 'Não deu para carregar o ranking. Confira sua conexão.',
       empty: 'Ninguém ainda. Seja o primeiro!',
       emptyFriends: 'Aqui aparecem seus amigos da Copa que entraram com nome e PIN.',
+      todayGameOnly: 'Só a pontuação do jogo de hoje. O bônus de sequência entra em Mês.',
       emptyFriendsToday: 'Aqui aparecem seus amigos da Copa e os que você convidou para o Um por dia ou que te convidaram, se entraram com nome e PIN.',
       you: 'você',
       joinTitle: '🏅 Entre para aparecer no ranking',
