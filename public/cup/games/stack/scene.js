@@ -36,6 +36,7 @@ export function escena(canvas, { zoom = 1 } = {}) {
   const piezas = [];   // falling pieces: { slab, y, vy, color }
   const anillos = [];  // the glow of a perfect drop: { slab, y, born }
   const chispas = [];  // its sparks: { x, y, z, vx, vy, vz, born, color }
+  let gira = null, giro = 0;     // the end's tour: { n, born } (recorrer)
 
   const medir = () => {
     const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
@@ -50,7 +51,8 @@ export function escena(canvas, { zoom = 1 } = {}) {
   // The yaw turns the view around the tower (the teaser's; the game's is 0). Under 45° either way the
   // same two sides keep facing the viewer
   const pt = (x, y, z) => {
-    if (fija?.yaw) { const c = Math.cos(fija.yaw), s = Math.sin(fija.yaw); [x, z] = [x * c - z * s, x * s + z * c]; }
+    const yaw = fija?.yaw || giro;
+    if (yaw) { const c = Math.cos(yaw), s = Math.sin(yaw); [x, z] = [x * c - z * s, x * s + z * c]; }
     return [W / 2 + (x - z) * COS30 * u, H * 0.56 + (x + z) * SIN30 * u - (y - camY) * u];
   };
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
@@ -92,7 +94,9 @@ export function escena(canvas, { zoom = 1 } = {}) {
     const n = score(g);
     // The camera follows the top of the tower, smoothly
     const meta = n * SLAB;
-    camY = fija ? fija.y : dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
+    const vista = gira && tour(gira.n, now - gira.born);
+    giro = vista ? vista.yaw : 0;
+    camY = fija ? fija.y : vista ? vista.y : dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
     ctx.clearRect(0, 0, W, H);
 
     // The pieces behind the tower first, the ones in front after it
@@ -103,10 +107,11 @@ export function escena(canvas, { zoom = 1 } = {}) {
 
     // The base, then the slabs (only the ones in sight)
     if (camY < 4) columna(g.slabs[0]);
-    const desde = fija ? 1 : Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
+    const desde = fija || gira ? 1 : Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
     for (let i = desde; i <= n; i++) caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, colorDe(i));
 
     piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
+    if (vista) vista.marcas.forEach(m => corte(m.k, m.luz));
 
     // A perfect drop: a neon outline that opens around the slab, glowing, and fades
     for (let i = anillos.length - 1; i >= 0; i--) {
@@ -135,7 +140,30 @@ export function escena(canvas, { zoom = 1 } = {}) {
     if (g.moving) caja(movingAt(g, reloj), n * SLAB, (n + 1) * SLAB, colorDe(n + 1));
   }
 
+  /**
+   * A cut every ten levels: a glowing plane across the tower, wider than the base, with its number on
+   * the right. `luz` (0 to 1) is how bright it is: full when the camera reaches it, then it settles.
+   */
+  function corte(k, luz) {
+    const y = k * SLAB, m = 0.78, a = 0.35 + 0.65 * luz;
+    const pts = [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)];
+    ctx.save();
+    ctx.beginPath(); pts.forEach(([x, yy], i) => (i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy))); ctx.closePath();
+    ctx.fillStyle = `rgba(46,230,214,${0.08 + 0.14 * luz})`; ctx.fill();
+    ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 6 + 14 * luz;
+    ctx.strokeStyle = `rgba(160,255,248,${a})`; ctx.lineWidth = 1.5 + 1.5 * luz; ctx.stroke();
+    const [lx, ly] = pts[1];
+    ctx.font = `${Math.round(18 + 8 * luz)}px Bangers, system-ui, sans-serif`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillText(String(k), lx + 10, ly);
+    ctx.restore();
+  }
+
   return {
+    /** The end's tour (`n` levels): from the top down to the base, a cut every ten, and back up. */
+    recorrer(n, now = performance.now()) { gira = { n, born: now }; },
+    /** Whether the tour is still moving (the loop keeps drawing while it is). */
+    recorriendo(now = performance.now()) { return !!gira && now - gira.born < tour(gira.n, 0).total + 200; },
     /** Sets the camera by hand: its height and its yaw (the teaser); `null` gives it back to the tower. */
     camara(c) { fija = c; },
     draw,
@@ -151,6 +179,39 @@ export function escena(canvas, { zoom = 1 } = {}) {
     },
     cerrar() { ro.disconnect(); },
   };
+}
+
+const VIAJE_MS = 650, ALTO_MS = 380;   // the tour: each ten levels' trip, and the stop at each cut
+const suave = k => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2);
+/**
+ * Where the tour's camera is at `t` ms on a tower of `n` levels, and which cuts it has passed: the stops
+ * are the top, each multiple of ten below it and the base (0); the camera goes down them and back up.
+ */
+export function tour(n, t) {
+  t = Math.max(0, t);
+  const paradas = [n];
+  for (let k = Math.floor((n - 1) / 10) * 10; k >= 0; k -= 10) paradas.push(k);
+  if (n <= 0) paradas.length = 1;
+  const ida = paradas.concat(paradas.slice(0, -1).reverse());
+  const tramo = VIAJE_MS + ALTO_MS, total = (ida.length - 1) * tramo;
+  const marcas = paradas.filter(k => k % 10 === 0).map(k => ({ k, luz: 0, visto: false }));
+  let y = ida[0] * SLAB;
+  if (t >= total) y = n * SLAB;
+  else {
+    const i = Math.floor(t / tramo), r = t - i * tramo;
+    const a = ida[i], b = ida[i + 1];
+    y = (r < ALTO_MS ? a : a + (b - a) * suave((r - ALTO_MS) / VIAJE_MS)) * SLAB;
+  }
+  // A cut lights up when the camera reaches it (on the way down or up) and settles after
+  for (const m of marcas) {
+    let ultimo = -Infinity;
+    ida.forEach((k, j) => { const en = j * tramo; if (k === m.k && en <= t) ultimo = en; });
+    if (ultimo === -Infinity) continue;
+    m.visto = true; m.luz = Math.max(0, 1 - (t - ultimo) / 900);
+  }
+    // The camera also turns around the tower, there and back (under 45°, the same two sides in view)
+  const yaw = t >= total ? 0 : 0.7 * Math.sin((t / total) * Math.PI * 2);
+  return { y, yaw, total, marcas: marcas.filter(m => m.visto) };
 }
 
 /** The moment of a tap, on performance.now()'s clock (an old browser's epoch timestamp is not trusted). */
