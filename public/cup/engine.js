@@ -584,10 +584,24 @@ export function porJugar(L, pid, now) {
  * early close, and only `pid`'s own player, starts and results. The list draws from it at once
  * and then reads the cup again.
  */
-export function recorteLista(L, pid) {
+export function recorteLista(L, pid, now) {
   if (!L?.meta || !L.players?.[pid]) return null;
   const mio = x => Object.fromEntries(Object.entries(x || {}).filter(([, v]) => v?.[pid]).map(([d]) => [d, { [pid]: 1 }]));
-  return { meta: L.meta, ...(L.fin ? { fin: L.fin } : {}), players: { [pid]: L.players[pid] }, started: mio(L.started), results: mio(L.results) };
+  return { meta: L.meta, ...(L.fin ? { fin: L.fin } : {}), players: { [pid]: L.players[pid] }, started: mio(L.started), results: mio(L.results), ...(now == null ? {} : lugarEnLista(L, pid, now)) };
+}
+
+/**
+ * For the home page card (flag copa-contexto): `pid`'s place as the board shows it to them, how many
+ * play, and who leads and by how much; and each day's game id. Without the scores of the others.
+ */
+function lugarEnLista(L, pid, now) {
+  const out = { games: calendario(L.meta) };
+  try {
+    const filas = tabla(L, pid, now).filter(f => !f.fuera);
+    const yo = filas.find(f => f.pid === pid);
+    if (yo && filas.length > 1) out.place = { at: yo.lugar, of: filas.length, ...(filas[0].pid !== pid ? { leader: filas[0].name, gap: filas[0].total - yo.total } : {}) };
+  } catch (_) { /* without the place */ }
+  return out;
 }
 
 /** Jugadores que cuentan: los inscritos que el admin no sacó. */
