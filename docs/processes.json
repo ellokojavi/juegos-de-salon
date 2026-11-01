@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a",
+  "checkedUpTo": "d2bb10d269a969ac7e7e4dc42d00e814190c308b",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -448,12 +448,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-31",
-      "to": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a"
+      "date": "2026-11-01",
+      "to": "d2bb10d269a969ac7e7e4dc42d00e814190c308b"
     },
     "usability": {
-      "date": "2026-10-31",
-      "to": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a"
+      "date": "2026-11-01",
+      "to": "d2bb10d269a969ac7e7e4dc42d00e814190c308b"
     },
     "ideas": {
       "date": "2026-10-28",
@@ -580,6 +580,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1069",
       "note": "catch-up; docs #1067, usability #1068"
+    },
+    {
+      "date": "2026-11-01",
+      "from": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a",
+      "to": "d2bb10d269a969ac7e7e4dc42d00e814190c308b",
+      "issue": null,
+      "pr": null,
+      "note": "docs #1105; usability running"
     }
   ],
   "ownerDecisions": [
