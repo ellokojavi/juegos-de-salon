@@ -14,7 +14,8 @@
 > reads «N pisos» (no blocks stamp); «Continuar» sits on a blurred strip over the tower, and the tour starts from the game's last frame, the top gliding up to just under «Fin del juego». No tour
 > with reduced motion.
 >
-> **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button on the cover.
+> **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button in a folded 🧪 tab on
+> the screen's left edge (`#sk-lab`), off the cover so it always shows what players see (the owner's call).
 > The game starts with the tower already built to that height minus three, the last three blocks drop
 > on their own and the next one misses, so the owner sees the end without playing it. Taps do nothing
 > meanwhile; «Continuar» reloads the cover instead of opening the result, so it is never ranked
@@ -124,3 +125,14 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
   three languages come when it leaves the lab.
 - **No 3, 2, 1 countdown:** the block waits 0.4 s at its side before it slides, and the game is the
   tower, not a clock.
+
+## Background music (experiment, flag `babel-music`)
+
+From the countdown until 7 s after the game is lost, when it fades out over 2 s (leaving the page sooner stops it), one of four retro tracks at random each game
+(Pixabay: The Mountain, Bransboynd, Hitslab, DeepMusicEveryday), at 22% volume through a Web Audio gain so the sound effects play over it;
+it follows the mute button. `public/assets/js/music.js`, hooked only in Babel's `ui.js` (the cover's «Empezar», `montar`, the end), so a
+change to it tests only Babel; a La Copa day has no cover, so there it starts with the tower.
+The cover has «🎵 Música: sí / 🔇 Música: no» (`#btn-musica`, in words: an icon alone looked like the sound effects' 🔊)
+right of the language toggle (under it when they do not fit), both above the tower as a header (`#sk-cabecera`, the owner's call); kept on the phone in `juegos-de-salon:music`.
+The end screen credits the track that played under «Continuar»: «🎵 Música: Retro Game, de The Mountain, en Pixabay»,
+linked to its Pixabay page (`CREDITS` in `ui.js`; the four authors: The Mountain, Bransboynd, Hitslab, DeepMusicEveryDay).

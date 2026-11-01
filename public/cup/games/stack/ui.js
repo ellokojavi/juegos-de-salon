@@ -28,6 +28,31 @@ import { loadCss } from '../../../assets/js/load-css.js';
 import { getLang } from '../../../assets/js/i18n.js';
 import TEXTOS from './texts.js';
 import { labAccess } from '../../../assets/js/lab-access.js';
+import { flag } from '../../../assets/js/flags.js';
+import { musicOn, setMusicOn, start as musicStart, fadeOutLater, playing, lastTrack } from '../../../assets/js/music.js';
+
+/** Background music, an experiment behind the flag babel-music: one of four tracks at random each game. */
+const TRACKS = [1, 2, 3, 4].map(n => new URL(`../../../assets/music/babel/track-${n}.mp3`, import.meta.url).href);
+/** Each track's credit on the end screen, with its Pixabay page (track-n.mp3 is CREDITS[n - 1]). */
+const CREDITS = [
+  { name: 'Retro Game', by: 'The Mountain', url: 'https://pixabay.com/music/video-games-retro-game-593063/' },
+  { name: 'Retro Game', by: 'Bransboynd', url: 'https://pixabay.com/music/video-games-retro-game-402454/' },
+  { name: 'Game Gaming Music', by: 'Hitslab', url: 'https://pixabay.com/music/video-games-game-gaming-music-295075/' },
+  { name: 'Game Music', by: 'DeepMusicEveryDay', url: 'https://pixabay.com/music/video-games-game-music-7408/' },
+];
+/** «Música: Retro Game, de The Mountain» linked to Pixabay, for the track this game played; null with no music. */
+function creditoMusica(el, T) {
+  const i = TRACKS.indexOf(lastTrack()), c = CREDITS[i];
+  if (!c) return null;
+  const [antes, despues] = String(T.skMusicCredit).split('{tema}');
+  return el('p', { class: 'sk-musica-credito muted', id: 'sk-musica-credito' }, antes,
+    el('a', { href: c.url, target: '_blank', rel: 'noopener' }, String(T.skMusicBy).replace('{name}', c.name).replace('{by}', c.by)), despues || '');
+}
+const musica = () => flag('babel-music').then(si => { if (si && !playing()) musicStart(TRACKS); }).catch(() => {});
+// It starts with the countdown: «Empezar» (or «Simular final») on Babel's cover
+globalThis.document?.addEventListener('click', ev => {
+  if (ev.target?.closest?.('#btn-empezar') && document.querySelector('.sk-cabeza')) musica();
+}, true);
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -103,16 +128,40 @@ export function titulo({ el, J }) {
       el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
       el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
+  // The background music's switch (flag babel-music), remembered on this phone
+  flag('babel-music').then(si => {
+    if (!si || !cabeza.isConnected) return;
+    const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
+    // In words, «Música: sí / no»: an icon alone looked like the sound effects' 🔊 (the owner's call)
+    const pintar = () => { const on = musicOn(); boton.textContent = on ? UI().skMusicOn : UI().skMusicOff; boton.classList.toggle('apagada', !on); boton.setAttribute('aria-pressed', String(on)); };
+    boton.addEventListener('click', () => { setMusicOn(!musicOn()); pintar(); });
+    pintar();
+    // Above the title, as a header: the language toggle on the left, the music switch on its right
+    const hero = cabeza.closest('.intro-hero'), idioma = hero && [...hero.children].find(n => n !== cabeza && n.querySelector?.('.lang-toggle'));
+    const fila = el('div', { class: 'sk-cabecera', id: 'sk-cabecera' });
+    if (idioma) fila.append(...idioma.childNodes);
+    fila.append(boton);
+    if (hero) { idioma?.remove(); hero.prepend(fila); } else cabeza.append(fila);
+  }).catch(() => {});
   // Only for a lab key, on Babel's own page: the owner's way to see a game's last blocks and its end
   // without playing (it never reaches a ranking: «See results» comes back here). lab: #seccion-stack
   if (document.body?.dataset.suelto === 'stack') labAccess().then(ok => {
     if (!ok || !cabeza.isConnected) return;
     const pisos = el('input', { type: 'number', min: 4, max: 200, value: 51, class: 'sk-sim-n', id: 'sk-sim-n', 'aria-label': 'Pisos' });
-    cabeza.append(el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,
-      el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-simular', onClick: () => {
-        simulacion = Math.max(4, Math.min(200, Math.round(Number(pisos.value) || 51)));
-        document.getElementById('btn-empezar')?.click();
-      } }, '🧪 Simular final')));
+    // A folded tab on the screen's left edge, over no control, so the cover looks as players see it (the owner's call)
+    document.getElementById('sk-lab')?.remove();
+    const tab = el('details', { class: 'sk-lab', id: 'sk-lab' },
+      el('summary', { 'aria-label': 'Laboratorio' }, '🧪'),
+      el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,
+        el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-simular', onClick: () => {
+          simulacion = Math.max(4, Math.min(200, Math.round(Number(pisos.value) || 51)));
+          tab.remove();
+          document.getElementById('btn-empezar')?.click();
+        } }, '🧪 Simular final')));
+    document.body.append(tab);
+    // Gone as soon as the cover is: a game, the result or another screen
+    const fuera = new MutationObserver(() => { if (!cabeza.isConnected) { tab.remove(); fuera.disconnect(); } });
+    fuera.observe(document.body, { childList: true, subtree: true });
   }).catch(() => {});
   return cabeza;
 }
@@ -126,6 +175,7 @@ let simulacion = 0;
 let partidas = 0;   // the game on screen; a new one stops the old one's loop
 
 export function montar(raiz, ctx) {
+  musica();   // a La Copa day has no cover: the music starts with the tower
   const { p = {}, T, el, SFX, vibrate } = ctx;
   const fmt = ctx.fmt || fmtLocal;
   const tope = p.tope || null;
@@ -216,6 +266,7 @@ export function montar(raiz, ctx) {
     const e = estado();
     ctx.guardar?.(e);
     ctx.pararReloj?.(e);
+    fadeOutLater();   // the music fades out 7 s after the end
     const listo = motivo === 'tope';
     if (recien) {
       if (listo) { SFX.win?.(); vibrate([30, 50, 30]); if (!QUIETO()) confetti({ count: 120, duration: 1600 }); }
@@ -239,6 +290,10 @@ export function montar(raiz, ctx) {
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
       fin.replaceChildren(boton);
+      // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
+      document.getElementById('sk-musica-credito')?.remove();
+      const credito = creditoMusica(el, T);
+      if (credito) fin.after(credito);
       requestAnimationFrame(() => {
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
         // First the top glides up while the cuts fade in, then the camera starts down
