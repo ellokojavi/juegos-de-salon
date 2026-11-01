@@ -37,7 +37,7 @@ import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KIND
 import { feedbackRows, countStages, STAGES, FILTERS } from './feedback.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
-import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
+import { switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
 import { stateOf as flagState } from '../assets/js/flags.js';
 import { FLAGS } from '../assets/js/flag-list.js';
@@ -1779,11 +1779,14 @@ function bloqueApoyo() {
 }
 
 function vistaSplash(today) {
-  const rows = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS });
-  const cambiar = (id, cambio) => guardarCampanas(rows.map(s => (s.id === id ? { ...s, ...cambio } : s)));
+  const todas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS });
+  // Archived campaigns (off for good) live in their own section at the bottom; the rest is the queue
+  const rows = todas.filter(s => !s.archived);
+  const archivadas = todas.filter(s => s.archived);
+  const cambiar = (id, cambio) => guardarCampanas(todas.map(s => (s.id === id ? { ...s, ...cambio } : s)));
   const vivas = rows.filter(s => campaignStatus(s, today) === 'live');
   // The owner's label first, else the title players read
-  const nombreDe = id => rows.find(r => r.id === id)?.label || CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es || id;
+  const nombreDe = id => todas.find(r => r.id === id)?.label || CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es || id;
   const cruces = overlaps(rows, today, 60);
 
   const resumen = el('div', { class: 'panel campanas-hoy' },
@@ -1860,19 +1863,29 @@ function vistaSplash(today) {
         })),
       el('footer', { class: 'campana-pie' },
         el('span', { class: 'campana-orden' },
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-vistas' },
           el('button', { type: 'button', class: 'campana-preview vistazo-btn', 'aria-expanded': S.campPeek.has(s.id) ? 'true' : 'false',
             onClick: () => { S.campPeek.has(s.id) ? S.campPeek.delete(s.id) : S.campPeek.add(s.id); render(); } }, 'Quick look 👀'),
-          el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎'))),
+          el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
+        el('button', { type: 'button', class: 'campana-archivar', 'aria-label': `Archive ${nombre}`,
+          onClick: () => { S.campOpen.delete(s.id); guardarCampanas(archive(todas, s.id, true)); } }, '🗄️ Archive')),
       S.campPeek.has(s.id) ? vistazo(s.id, nombre) : null);
   });
 
   return [
     el('p', { class: 'muted small' }, 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated, ordered and renamed (✏️, only you see the name).'),
-    resumen, tira, bloqueResultados(rows), tarjetas,
+    resumen, tira, bloqueResultados(todas), tarjetas,
+    archivadas.length ? el('section', { class: 'campanas-archivadas', 'aria-label': 'Archived campaigns' },
+      el('h3', {}, `🗄️ Archived (${archivadas.length})`),
+      el('p', { class: 'muted small' }, 'Off for good and out of the queue. Bring one back to switch it on again; it returns off, at the end of the list.'),
+      archivadas.map(s => el('div', { class: 'campana-archivada', id: `campana-${s.id}` },
+        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, CAMPAIGNS[s.id].emoji || '📣'),
+        el('strong', { class: 'campana-titulo' }, nombreDe(s.id)),
+        el('button', { type: 'button', class: 'campana-preview', 'aria-label': `Unarchive ${nombreDe(s.id)}`,
+          onClick: () => guardarCampanas(archive(todas, s.id, false)) }, '↩︎ Unarchive')))) : null,
   ];
 }
 
