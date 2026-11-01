@@ -178,7 +178,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}', join: 'Crea o únete a una Copa', place: 'Vas {pos} de {n}.', behind: 'Vas {pos}, a {pts} pts de {name}.', today: 'Hoy: {game}.', next: 'Sigue: {game}.', cups: '{n} copas', more: 'y {n} más', final: 'Final', playDay: 'Jugar el día {day}', playFinal: 'Jugar la final' },
+    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}', join: 'Crea o únete a una Copa', place: 'Vas {pos} de {n}.', behind: 'Vas {pos}, a {pts} pts de {name}.', today: 'Hoy: {game}.', dayOf: 'Día {day} de {days}.', next: 'Sigue: {game}.', cups: '{n} copas', more: 'y {n} más', final: 'Final', playDay: 'Jugar el día {day}', playFinal: 'Jugar la final' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy', unirse: 'Únete al mes',
@@ -427,7 +427,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}', join: 'Create or join a Cup', place: "You're {pos} of {n}.", behind: "You're {pos}, {pts} pts behind {name}.", today: 'Today: {game}.', next: 'Next: {game}.', cups: '{n} cups', more: 'and {n} more', final: 'Final', playDay: 'Play day {day}', playFinal: 'Play the final' },
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}', join: 'Create or join a Cup', place: "You're {pos} of {n}.", behind: "You're {pos}, {pts} pts behind {name}.", today: 'Today: {game}.', dayOf: 'Day {day} of {days}.', next: 'Next: {game}.', cups: '{n} cups', more: 'and {n} more', final: 'Final', playDay: 'Play day {day}', playFinal: 'Play the final' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today', unirse: 'Join this month',
@@ -674,7 +674,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}', join: 'Crie ou entre em uma Copa', place: 'Você está em {pos} lugar de {n}.', behind: 'Você está em {pos} lugar, a {pts} pts de {name}.', today: 'Hoje: {game}.', next: 'Depois: {game}.', cups: '{n} copas', more: 'e mais {n}', final: 'Final', playDay: 'Jogar o dia {day}', playFinal: 'Jogar a final' },
+    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}', join: 'Crie ou entre em uma Copa', place: 'Você está em {pos} lugar de {n}.', behind: 'Você está em {pos} lugar, a {pts} pts de {name}.', today: 'Hoje: {game}.', dayOf: 'Dia {day} de {days}.', next: 'Depois: {game}.', cups: '{n} copas', more: 'e mais {n}', final: 'Final', playDay: 'Jogar o dia {day}', playFinal: 'Jogar a final' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje', unirse: 'Entre no mês',

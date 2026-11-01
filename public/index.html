@@ -429,6 +429,8 @@
        One a Day's month, in the Cup's gold; a bar of its days; a louder ▶ (yellow to orange, pressed edge) */
     .game-card.torneo.copa-ctx { position: relative; overflow: visible; }
     .game-card.torneo.copa-ctx .texto, .game-card.torneo.copa-ctx .tag { min-width: 0; max-width: 100%; }
+    /* The card's grid puts its items at the start: the text must take the whole width, or with only the bar in it (a cup kept before the place was) it shrinks to nothing */
+    .game-card.torneo.copa-ctx .tag { justify-self: stretch; width: 100%; }
     .game-card.torneo .copa-mes { position: absolute; top: -11px; right: 12px; z-index: 3; max-width: calc(100% - 40px); box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 209, 102, 0.6); background: #2a1a4f; color: var(--yellow); font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
     .fila-alta:has(.copa-mes) { margin-top: 14px; }
     .game-card.torneo .copa-dias { display: flex; gap: 4px; margin-top: 8px; }

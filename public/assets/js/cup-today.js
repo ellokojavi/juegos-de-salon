@@ -260,7 +260,9 @@ export function contextCard(card, { lang = 'es', store = globalThis.localStorage
     const place = placeText(c, T, lang);
     // On the final the pill and the button already say it: no «Hoy: La Gran Final»
     const game = c.final && c.open ? [] : gameLine(c, T, lang);
-    body.replaceChildren(...[place, place && game.length && ' '].filter(Boolean), ...game, bar(c));
+    // A cup kept before the place and the games were (or one without them): at least which day it is
+    const words = place || game.length ? [...[place, place && game.length && ' '].filter(Boolean), ...game] : [fill(T.dayOf, { day: c.day, days: c.days })];
+    body.replaceChildren(...words, bar(c));
   } else {
     const rows = cups.slice(0, 2).flatMap(x => {
       const g = gameName(x, x.open ? x.day : x.next || x.day, lang);
