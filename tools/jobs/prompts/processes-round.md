@@ -30,4 +30,12 @@ tasks kept pointing at `procesos.md` after it was renamed, D-440).
    the tools the round needs (`tools/jobs/claude-task.mjs`): no MCP servers, no page fetching, no
    `curl`, and the machine's keys can't be read except by the repo's node tools; a step that fails on
    that is named in the report, never worked around.
-7. End with the report that `processes.md` asks for (3 to 8 lines, with links).
+7. **CI failures become mechanisms** (D-518). `processes.mjs check` has a "CI failures" section,
+   read from the `failure-log` branch that `.github/workflows/failure-log.yml` fills by itself. For
+   each signature marked ⚠️ ready (seen on two PRs or more): look at its occurrences and their fixes,
+   run `node tools/agents/failures.mjs promote <signature> <key>`, build the mechanism in the round's
+   PR and record it with `node tools/agents/processes.mjs mechanism <key> "…" --pr <url>`. Prefer a
+   test or a check that fails before the mistake lands; a line in a doc is the weaker mechanism, used
+   only when no test can catch it, and the report says so. A 🎲 flaky signature is its own pattern:
+   fix the test or quarantine it, never just rerun.
+8. End with the report that `processes.md` asks for (3 to 8 lines, with links).

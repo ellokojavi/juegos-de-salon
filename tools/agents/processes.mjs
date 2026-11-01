@@ -24,6 +24,7 @@
  *   - the unhandled 🐞 feedback (open `feedback` issues, D-275);
  *   - the decisions the owner approved as "queued" that are still not done;
  *   - the patterns seen twice or more that still have no mechanism;
+ *   - the CI failures seen on two PRs or more without a mechanism, and the flaky ones (D-518, failures.mjs);
  *   - whom to dispatch today (D-276): the documentation agent if something entered main since its
  *     last round, the usability agent if something in public/ changed since it was last launched,
  *     and the game-ideas agent once a week (D-360);
@@ -336,6 +337,13 @@ async function check() {
   heading('Patterns');
   for (const p of m.patterns) console.log(`- ${p.key} · seen ${p.seen.length} time(s) · ${p.mechanism ? `stopped: ${p.mechanism.what}` : p.seen.length >= 2 ? '⚠️ READY FOR A MECHANISM' : 'under observation'}: ${p.what}`);
   if (!m.patterns.length) console.log('None yet.');
+
+  // D-518: the red CI runs of PRs, grouped by signature, from the failure-log branch
+  heading('CI failures (D-518)');
+  try {
+    const { loadRemote, summarize, report } = await import('./failures.mjs');
+    for (const line of report(summarize(loadRemote(), m))) console.log(line);
+  } catch (e) { console.log(`- could not read the failure log: ${String(e.message).split('\n')[0]}`); }
 
   console.log(`\nWhen closing: node tools/agents/processes.mjs record --to ${tip.slice(0, 7)} [--issue <url>] [--pr <url>] [--note "…"]`);
 }
