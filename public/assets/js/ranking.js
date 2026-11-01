@@ -183,7 +183,7 @@ const PESTANAS = {
   copa: { rotulo: T => T.cup, leer: (J, juego) => J.tabla(tablaId(juego, VARIANTE_COPA), SIEMPRE) },
   // Uno al día (D-230): el desafío de hoy, la suma de la semana (de la fecha del jugador), la mejor
   // racha y los amigos en la semana
-  hoy: { rotulo: T => T.today, leer: (J, juego) => J.tabla(juego, periodoDia(numDia(fechaLocal()))) },
+  hoy: { rotulo: T => T.today, nota: T => T.todayGameOnly, leer: (J, juego) => J.tabla(juego, periodoDia(numDia(fechaLocal()))) },
   semanaDia: { rotulo: T => T.week, leer: (J, juego) => J.tabla(juego, semanaDe(fechaLocal())) },
   rachas: { rotulo: T => T.streaks, tabla: UAD_RACHA, leer: J => J.tabla(UAD_RACHA, SIEMPRE) },
   amigosSemana: { rotulo: T => T.friends, vacio: T => T.emptyFriendsToday, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
@@ -239,6 +239,7 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
   let turno = 0;
   // A list (or its empty line) is on screen for this tab, so a fast reload keeps it until the new one
   let pintado = false;
+  const conMes = pestanas.includes('mes');
   const guardada = () => `juegos-de-salon:rk-visto:${juego}:${actual}`;
   async function cargar() {
     const mio = ++turno;
@@ -279,6 +280,8 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
     caja.datos = { pestana: actual, rotulo: PESTANAS[actual].rotulo(T), top: v.top, vecinos: v.vecinos || [], yo, tipo, campeon };
     if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo, campeon)));
     if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
+    // Next to the month's points, the day's tab says its number is the game's alone (Mica's report)
+    if (conMes && PESTANAS[actual].nota) lista.append(el('p', { class: 'muted rk-centro rk-nota' }, PESTANAS[actual].nota(T)));
   }
   const caja = el('div', { class: 'panel rk-ranking', 'data-tabla': juego },
     el('p', { class: 'lead rk-titulo' }, titulo || T.title),

@@ -202,12 +202,20 @@ export function conMiCuenta({ filas, jid, w, hoy }) {
  * number shows (`conMiCuenta`), and the list ordered again, so the two never disagree. `v` is a read
  * table, `{ top, vecinos }`; a row among the neighbours only changes its points and place.
  */
-export function tablaConMiCuenta(v, { jid, w, hoy }) {
+export function tablaConMiCuenta(v, { jid, w, hoy, yo = null, leidos = 100 }) {
   const top = v?.top || [], vecinos = v?.vecinos || [];
   const c = conMiCuenta({ filas: [...top, ...vecinos], jid, w, hoy });
   const antes = [...top, ...vecinos].find(f => f.jid === jid);
-  // Not listed (no row before the rebuild counts a day) or nothing pending: the table as read
-  if (!antes || c.fila === antes) return v;
+  // Nothing pending: the table as read
+  if (c.fila === antes) return v;
+  if (!antes) {
+    // No row yet (the first day of a month, before the rebuild counts it): the phone's own row goes
+    // in when it fits in the list read, so the list never says "nobody yet" under "#1 of the month"
+    if (!c.fila?.s || (top.length >= leidos && c.fila.puesto > top.length)) return v;
+    const r = w.days.filter(d => d.played).at(-1)?.streak || 0;
+    const mia = { jid, n: yo?.n, ...(yo?.co ? { co: yo.co } : {}), s: c.fila.s, ms: 0, r };
+    return { ...v, top: ordenar([...top, mia]).slice(0, Math.max(leidos, top.length)) };
+  }
   if (vecinos.some(f => f.jid === jid)) return { ...v, vecinos: vecinos.map(f => (f.jid === jid ? { ...f, s: c.fila.s, puesto: c.fila.puesto } : f)) };
   return { ...v, top: ordenar(top.map(f => (f.jid === jid ? { ...f, s: c.fila.s, ms: 0 } : f))) };
 }

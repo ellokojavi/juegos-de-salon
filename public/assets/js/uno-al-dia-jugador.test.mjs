@@ -202,8 +202,16 @@ console.log('uno-al-dia-jugador: ok');
   // Nothing pending, or not in the list: the table as read
   const todo = { top: top.map(f => (f.jid === 'yoyoyoyo' ? { ...f, s: 165, u: String(numDia('2026-10-07')) } : f)) };
   assert.equal(tablaConMiCuenta(todo, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' }), todo);
+  // Not listed yet (the month's first day, before the rebuild): its own row goes in, in its place
   const otro = { top: top.slice(0, 2) };
-  assert.equal(tablaConMiCuenta(otro, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' }), otro);
+  const nuevo = tablaConMiCuenta(otro, { jid: 'yoyoyoyo', yo: { n: 'Yo', co: 'CL' }, w, hoy: '2026-10-07' });
+  assert.deepEqual(nuevo.top.map(f => [f.jid, f.s, f.puesto]), [['aaaaaaaa', 400, 1], ['yoyoyoyo', 165, 2], ['bbbbbbbb', 150, 3]]);
+  assert.deepEqual([nuevo.top[1].n, nuevo.top[1].co], ['Yo', 'CL']);
+  // An empty table (the owner's report: "nobody yet" under "#1 of the month")
+  assert.deepEqual(tablaConMiCuenta({ top: [] }, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' }).top.map(f => [f.jid, f.puesto]), [['yoyoyoyo', 1]]);
+  // A full list it would not reach: the table as read
+  const lleno = { top: [top[0], { ...top[1], s: 300 }] };
+  assert.equal(tablaConMiCuenta(lleno, { jid: 'yoyoyoyo', w, hoy: '2026-10-07', leidos: 2 }), lleno);
   // Among the neighbours: its points and place change, nothing moves
   const vec = tablaConMiCuenta({ top: top.slice(0, 2), vecinos: [top[2]] }, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
   assert.deepEqual([vec.vecinos[0].s, vec.vecinos[0].puesto], [165, 2]);
