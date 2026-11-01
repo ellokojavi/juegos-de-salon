@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (506)
+## In force (507)
 
 | D | Title | Status |
 |---|---|---|
@@ -565,6 +565,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-519](decisions/D-519.md) | Merge lanes by blast radius | current |
 | [D-520](decisions/D-520.md) | Measurable usability rules are tests; the usability agent judges the rest | current |
 | [D-521](decisions/D-521.md) | La Copa: the admin chooses its length (3 to 14 days) and its time zone | current |
+| [D-522](decisions/D-522.md) | Sessions always open the PR, without asking | current |
 
 ## No longer in force (12)
 
