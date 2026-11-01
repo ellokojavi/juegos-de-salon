@@ -170,18 +170,17 @@ export function escena(canvas, { zoom = 1 } = {}) {
     ctx.fillStyle = `rgba(46,230,214,${0.1 + 0.16 * luz})`; ctx.fill();
     ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 6 + 14 * luz;
     ctx.strokeStyle = `rgba(160,255,248,${0.35 + 0.65 * luz})`; ctx.lineWidth = 1.5 + 1.5 * luz; ctx.stroke();
-    // Its number, big and lying on the plane, its base along the front edge, in the corner past the
-    // tower's foot: it turns with the tower and reads straight when the view faces front
+    // Its number, big and lying on the plane, its base along an edge, in two opposite corners past the
+    // tower's foot, so one is always in sight as the tower turns; faint, always on
     const [ox, oy] = pt(0, y, 0), [ux, uy] = pt(1, y, 0), [vx, vy] = pt(0, y, 1), e = 1 / 100;
     const dpr = canvas.width / W;
-    ctx.setTransform(dpr * (ux - ox) * e, dpr * (uy - oy) * e, dpr * (vx - ox) * e, dpr * (vy - oy) * e, dpr * ox, dpr * oy);
     ctx.shadowBlur = 0;
-    // Behind the tower it would show through the slabs in front of it: it fades out as it goes round the
-    // back (its corner's depth toward the viewer: 2 straight in front, as it starts; -2 behind)
-    const cerca = 2 * Math.cos(fija?.yaw || giro);
-    ctx.globalAlpha = Math.min(1, Math.max(0, (cerca - 0.3) / 0.8));
     ctx.font = '26px Bangers, system-ui, sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = `rgba(220,255,252,${0.55 + 0.45 * luz})`; ctx.fillText(String(k), (m - 0.07) * 100, (m - 0.06) * 100);
+    ctx.fillStyle = `rgba(220,255,252,${0.35 + 0.35 * luz})`;
+    for (const sg of [1, -1]) {
+      ctx.setTransform(sg * dpr * (ux - ox) * e, sg * dpr * (uy - oy) * e, sg * dpr * (vx - ox) * e, sg * dpr * (vy - oy) * e, dpr * ox, dpr * oy);
+      ctx.fillText(String(k), (m - 0.07) * 100, (m - 0.06) * 100);
+    }
     ctx.restore();
   }
   /** Where the plane meets the tower: a dark slit and a bright line around the slab's foot. */
@@ -215,8 +214,8 @@ export function escena(canvas, { zoom = 1 } = {}) {
   };
 }
 
-const BAJA_MS = n => Math.max(2800, n * 95);   // the tour: the way down (and up), longer for a taller tower
-const ABAJO_MS = 700;                            // the rest at the base before going back up
+const BAJA_MS = n => Math.max(4000, n * 135);   // the tour: the way down (and up), longer for a taller tower
+const ABAJO_MS = 1000;                            // the rest at the base before going back up
 const RAMPA = 0.12;                              // only the first and last bit of each way speed up and slow down
 /** Progress at `u` (0 to 1) at a steady speed, easing in and out only at the ends. */
 const avance = u => {
