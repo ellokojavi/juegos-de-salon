@@ -2082,9 +2082,43 @@ function render() {
   else if (sec === 'feedback') nodos = vistaFeedback(now);
   else if (sec === 'campanas') nodos = vistaCampanas(now);
   else nodos = vistaResumen(now);
-  $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
+  pintarVista(nodos.flat().filter(Boolean));
   renderNav(now);
   $('#updated').textContent = `Updated ${horaLabel(now)} · ${ZONA_NOMBRE}`;
+}
+
+/**
+ * Draws the view. An open Quick look 👀 is an iframe, and an iframe taken out of the page reloads:
+ * with a redraw every 30 s and on each Firebase update, the splash restarted mid-loop and flashed.
+ * So a card whose Quick look is open stays in the page: its other parts are swapped around the
+ * preview, and the rest of the view is laid around the card.
+ */
+function pintarVista(nodos) {
+  const vista = $('#vista');
+  const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(':scope > .vistazo-marco')).map(a => [a.id, a]));
+  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco'));
+  const enOrden = quedan.map(n => n.id).join() === [...viejos.keys()].filter(id => quedan.some(n => n.id === id)).join();
+  if (!quedan.length || !enOrden) { vista.replaceChildren(...nodos); return; }
+  const fijos = new Set();
+  const lista = nodos.map(n => {
+    const viejo = quedan.includes(n) ? viejos.get(n.id) : null;
+    if (!viejo) return n;
+    const marco = viejo.querySelector(':scope > .vistazo-marco');
+    [...viejo.childNodes].forEach(c => { if (c !== marco) c.remove(); });
+    const hijos = [...n.childNodes];
+    const k = hijos.findIndex(c => c.classList?.contains('vistazo-marco'));
+    marco.before(...hijos.slice(0, k));
+    marco.after(...hijos.slice(k + 1));
+    viejo.className = n.className;
+    fijos.add(viejo);
+    return viejo;
+  });
+  [...vista.childNodes].forEach(c => { if (!fijos.has(c)) c.remove(); });
+  let antes = null;
+  for (const n of lista) {
+    if (!fijos.has(n)) { if (antes) antes.after(n); else vista.prepend(n); }
+    antes = n;
+  }
 }
 
 /** La URL cambió (un enlace, Atrás, una dirección pegada): se dibuja esa vista desde arriba. */
