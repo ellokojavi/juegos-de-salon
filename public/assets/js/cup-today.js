@@ -107,6 +107,18 @@ function decorate(card, { lang, store, now, wait }) {
 }
 
 /**
+ * The card as it was, then decorated again from what this phone keeps now: back from a cup's day
+ * (bfcache) the page comes as it was, ▶ Jugar el día N included, though that day is played.
+ */
+export function redrawCupCard(card, { lang = 'es', store = globalThis.localStorage, now = Date.now(), wait = false, context = false } = {}) {
+  if (card?.__original) {
+    card.href = card.__original.href; card.classList.remove('copa-hoy'); card.removeAttribute('aria-label');
+    card.querySelector('.meta')?.replaceWith(card.__original.meta.cloneNode(true)); restoreContext(card);
+  }
+  return decorateCupCard(card, { lang, store, now, wait, context });
+}
+
+/**
  * The ▶ Jugar hoy chip, confirmed with the server (`torneos/<code>/results/<day>/<pid>`, public over
  * REST, D-470): a day played on another phone, or whose result reached the server after this phone
  * last read the cup, leaves this phone's list of days to play, and the card is drawn again from
@@ -122,9 +134,7 @@ export async function confirmCupCard(card, { lang = 'es', store = globalThis.loc
     if (!r.ok || (await r.json()) == null) return false;
     const days = JSON.parse(store.getItem(`${PREFIX}hoy:${p.code}`) || '[]').filter(([d]) => d !== p.dia);
     if (days.length) store.setItem(`${PREFIX}hoy:${p.code}`, JSON.stringify(days)); else store.removeItem(`${PREFIX}hoy:${p.code}`);
-    // The card as it was, then decorated again from what is left
-    if (card.__original) { card.href = card.__original.href; card.classList.remove('copa-hoy'); card.removeAttribute('aria-label'); card.querySelector('.meta')?.replaceWith(card.__original.meta.cloneNode(true)); restoreContext(card); }
-    decorateCupCard(card, { lang, store, wait, context });
+    redrawCupCard(card, { lang, store, wait, context });
     // Another day of another cup may still be open: confirm that one too
     await confirmCupCard(card, { lang, store, wait, context, fetchFn, base });
     return true;

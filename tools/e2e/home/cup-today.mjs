@@ -36,6 +36,15 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X&day=1')`), `${width}px: it opens the day left (day 1, in its grace day)`);
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), `${width}px: as tall as One a Day's card`);
     ok(await ev(`${card}.scrollWidth <= ${card}.clientWidth + 1`), `${width}px: nothing overflows the card`);
+    if (width === 390) {
+      // Back from the cup's day (bfcache, or the tab shown again): the page was as it was, ▶ included;
+      // La Copa kept the day played on finishing, and the card is drawn again from it (owner's report)
+      await ev(`localStorage.setItem('juegos-de-salon:copa:hoy:K7Q2X', ${JSON.stringify(JSON.stringify(porJugar(jugada, 'aaaaaa', Date.now())))});
+        localStorage.setItem('juegos-de-salon:copa:lista:K7Q2X', ${JSON.stringify(JSON.stringify(jugada))});
+        document.dispatchEvent(new Event('visibilitychange')); 1`);
+      ok(await waitFor(`/^✅ Día 3 en/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'back after playing: the card says ✅ Día 3, not ▶ Jugar');
+      ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'back after playing: it opens the cup, not the day played');
+    }
   } else if (cup === final) {
     ok(await waitFor(`/^✅ Final · cierra en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'final played: ✅ Final · cierra en…');
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'final played: it opens the cup');
