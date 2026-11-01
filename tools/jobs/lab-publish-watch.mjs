@@ -6,7 +6,7 @@
  * claude-task.mjs, with the round's tools, following tools/jobs/prompts/lab-publish.md: one
  * request per session, the oldest first. A request the session claimed but left without a PR
  * fails here, so the card on /labs/ never waits forever. A PR that stayed in conflict with main
- * (sync marks it, lab-publish.mjs CONFLICT_MS) gets one session that brings it up to date
+ * or with red checks (sync marks it, lab-publish.mjs CONFLICT_MS) gets one session that brings it up to date
  * (tools/jobs/prompts/lab-publish-conflict.md), started only on the sync that marks it.
  *
  *   node tools/jobs/lab-publish-watch.mjs     # usually run by `jobs.mjs run lab-publish-watch`
