@@ -249,7 +249,7 @@ export function contextCard(card, { lang = 'es', store = globalThis.localStorage
   card.classList.add('copa-ctx');
   const chip = card.querySelector('#copa-hoy-chip');
   if (!cups.length) {
-    if (!chip) meta.replaceChildren(el('span', { class: 'copa-hoy-chip', id: 'copa-hoy-chip' }, T.join));
+    if (!chip) meta.replaceChildren(el('span', { class: 'copa-hoy-chip invita', id: 'copa-hoy-chip' }, T.join));
     return true;
   }
   const one = cups.length === 1, c = cups[0];
