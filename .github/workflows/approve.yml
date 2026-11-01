@@ -20,7 +20,7 @@ permissions:
   issues: write
   actions: write
   checks: read
-  statuses: read
+  statuses: write   # approve-pr: the owner-approval status (docs/LANES.md)
 
 # One decision at a time per issue, and the running one is not cancelled
 concurrency:

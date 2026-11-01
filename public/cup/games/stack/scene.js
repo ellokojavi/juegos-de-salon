@@ -37,15 +37,19 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   const anillos = [];  // the glow of a perfect drop: { slab, y, born }
   const chispas = [];  // its sparks: { x, y, z, vx, vy, vz, born, color }
   let gira = null, giro = 0;
-  let alto = null;     // the top's height set in pixels, gliding from one to another: { de, a, t0, ms } (enfocar)     // the end's tour: { n, born } (recorrer)
+  let alto = null;     // the top's height set in pixels, gliding from one to another: { de, a, t0, ms } (deslizar)
+  let previo = null, entrada = 1;   // the last frame drawn ({ g, reloj }), drawn again at once when the canvas is resized
 
   const medir = () => {
     const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
     W = r.width; H = r.height;
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // The base takes about half the width, and never so much that the slide leaves a short screen
-    u = Math.min(W * 0.3, H * 0.28) * zoom;
+    // The base takes about half the width, and never so much that the slide leaves a short screen.
+    // Not while the end glides or tours: the canvas growing must not rescale the tower
+    if (!alto && !gira) u = Math.min(W * 0.3, H * 0.28) * zoom;
+    // Resizing clears the canvas: the same frame again, so no blank frame shows
+    if (previo) draw(previo.g, performance.now(), previo.reloj);
   };
   const ro = new ResizeObserver(medir); ro.observe(canvas); medir();
 
@@ -110,7 +114,10 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
     const meta = n * SLAB;
     if (alto) { const k = Math.min(1, Math.max(0, (now - alto.t0) / Math.max(1, alto.ms))); focoY = alto.de + (alto.a - alto.de) * (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2); }
     else focoY = H * foco;
+    previo = { g, reloj };
     const vista = gira && tour(gira.n, now - gira.born);
+    // The cuts fade in as the tour begins, instead of appearing at once
+    entrada = gira ? Math.min(1, Math.max(0, (now - gira.desde) / 700)) : 1;
     giro = vista ? vista.yaw : 0;
     camY = fija ? fija.y : vista ? vista.y : dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
     ctx.clearRect(0, 0, W, H);
@@ -169,6 +176,7 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   function plano({ k, luz }) {
     const y = k * SLAB, m = ANCHO;
     ctx.save();
+    ctx.globalAlpha = entrada;
     ctx.beginPath(); [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)].forEach(([x, yy], i) => (i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy))); ctx.closePath();
     ctx.fillStyle = `rgba(46,230,214,${0.1 + 0.16 * luz})`; ctx.fill();
     ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 6 + 14 * luz;
@@ -190,6 +198,7 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   function linea(s, { k, luz }) {
     const y = k * SLAB, x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2;
     ctx.save();
+    ctx.globalAlpha = entrada;
     trazo(borde(x0, x1, z0, z1, y + SLAB * 0.18), 'rgba(10,0,30,0.55)', 3);
     ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 8 + 16 * luz;
     trazo(borde(x0, x1, z0, z1, y), `rgba(220,255,252,${0.6 + 0.4 * luz})`, 2 + 2 * luz);
@@ -203,7 +212,7 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
     /** Moves the top of the tower to `a` pixels from the canvas's top, from `de`, gliding over `ms`. */
     deslizar(de, a, ms = 900, now = performance.now()) { alto = { de, a, t0: now, ms }; },
     /** The end's tour (`n` levels): from the top down to the base, a cut every ten, and back up. */
-    recorrer(n, now = performance.now()) { gira = { n, born: now }; },
+    recorrer(n, now = performance.now(), espera = 0) { gira = { n, born: now + espera, desde: now }; },
     /** Whether the tour is still moving (the loop keeps drawing while it is). */
     recorriendo(now = performance.now()) { return !!gira && now - gira.born < tour(gira.n, 0).total + 200; },
     /** Sets the camera by hand: its height and its yaw (the teaser); `null` gives it back to the tower. */

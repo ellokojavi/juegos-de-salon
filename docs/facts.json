@@ -1411,12 +1411,14 @@
     "tools/agents/decision.test.mjs",
     "tools/agents/document.test.mjs",
     "tools/agents/english.test.mjs",
+    "tools/agents/failures.test.mjs",
     "tools/agents/feedback-templates.test.mjs",
     "tools/agents/feedback.test.mjs",
     "tools/agents/ideas.test.mjs",
     "tools/agents/inbox.test.mjs",
     "tools/agents/lab-publish.test.mjs",
     "tools/agents/labs-key.test.mjs",
+    "tools/agents/lanes.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/agents/pending.test.mjs",
     "tools/agents/popularity.test.mjs",
@@ -1614,6 +1616,10 @@
     {
       "path": "docs/DECISIONS.md",
       "title": "Decisions"
+    },
+    {
+      "path": "docs/LANES.md",
+      "title": "Merge lanes (D-519)"
     },
     {
       "path": "docs/MERGING.md",

@@ -1,0 +1,47 @@
+{
+  "_": "Merge lanes by blast radius (docs/LANES.md). Each file takes the lane of the FIRST rule whose glob matches it; a file no rule matches is yellow, never green. A PR's lane is the highest of its files. Read by tools/agents/lanes.mjs; `**` crosses folders, `*` does not.",
+  "lanes": {
+    "green": {
+      "icon": "🟢",
+      "name": "Contained, reversible",
+      "requires": "No agents (D-413). Auto-merge when tests and end-to-end pass."
+    },
+    "yellow": {
+      "icon": "🟡",
+      "name": "Wide but reversible",
+      "requires": "Usability and documentation agents, scaled by the stage below (D-132, D-304), then auto-merge when tests and end-to-end pass."
+    },
+    "red": {
+      "icon": "🔴",
+      "name": "Hard to reverse",
+      "requires": "Never auto-merges, whatever the agents say: the PR gets the needs-owner label, the lane job opens a one-tap decision, and the owner-approval status stays red until the owner ticks it (approve-pr). Agents as for yellow."
+    }
+  },
+  "rules": [
+    { "glob": "firebase/*.rules*", "lane": "red", "reason": "database rules: who may read and write the players' data" },
+    { "glob": "tools/firebase/**", "lane": "red", "reason": "scripts that write, migrate or delete stored data" },
+    { "glob": "public/privacy/**", "lane": "red", "reason": "what players are told we keep (D-463)" },
+    { "glob": "tools/agents/send-mail.py", "lane": "red", "reason": "sends email to players" },
+    { "glob": "tools/agents/feedback.mjs", "lane": "red", "reason": "feedback reply sends email to players" },
+    { "glob": "tools/push/**", "lane": "red", "reason": "sends push notifications" },
+    { "glob": ".github/**", "lane": "red", "reason": "workflows: secrets, permissions, publishing" },
+    { "glob": "tools/release/set-version.py", "lane": "red", "reason": "release tooling: what publish.yml stamps" },
+    { "glob": "tools/release/pages-5xx.mjs", "lane": "red", "reason": "release tooling: the Pages deploy" },
+    { "glob": "tools/agents/approve.mjs", "lane": "red", "reason": "the one-tap actions run with the workflow token" },
+    { "glob": "tools/agents/lanes.*", "lane": "red", "reason": "the lane gate itself" },
+
+    { "glob": "public/labs/**", "lane": "green", "reason": "lab: few players, the owner checks it (D-413)" },
+    { "glob": "docs/**", "lane": "green", "reason": "documentation" },
+    { "glob": "changelog/**", "lane": "green", "reason": "changelog entries (D-300)" },
+    { "glob": "CHANGELOG.md", "lane": "green", "reason": "changelog" },
+    { "glob": "marketing/**", "lane": "green", "reason": "marketing assets" },
+    { "glob": "*.md", "lane": "green", "reason": "README, CONTRIBUTING, CLAUDE.md" },
+    { "glob": "**/*.test.mjs", "lane": "green", "reason": "a test" },
+    { "glob": "**/*.test.py", "lane": "green", "reason": "a test" },
+
+    { "glob": "public/**", "lane": "yellow", "reason": "the published site: games, home page, shared JS, i18n" },
+    { "glob": "tools/e2e/**", "lane": "yellow", "reason": "end-to-end tooling" },
+    { "glob": "tools/**", "lane": "yellow", "reason": "workshop tooling" },
+    { "glob": ".claude/**", "lane": "yellow", "reason": "agent definitions and skills" }
+  ]
+}
