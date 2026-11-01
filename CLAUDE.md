@@ -66,6 +66,7 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
   someone would otherwise undo. Small adjustments go only in the changelog entry. Reserve the number
   first: `node tools/agents/decision.mjs reserve` (D-301); one file each in `docs/decisions/`, the index
   `docs/DECISIONS.md` is generated (`decision.mjs index`), never hand-edited (D-394).
+- **Always open the PR** once the work is pushed, without asking the owner first (the owner's standing order).
 - **A single push at the end** (D-303), with the agents' fixes included.
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`) and listed in
