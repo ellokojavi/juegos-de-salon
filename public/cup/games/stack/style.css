@@ -80,7 +80,7 @@
 .sk-musica { flex: none; white-space: nowrap; width: auto; margin: 0; }
 .sk-musica.apagada { opacity: 0.7; }
 .sk-musica-credito { text-align: center; }
-.sk-musica-credito { font-size: 0.78rem; margin: 2px 0 0; }
+.sk-musica-credito { font-size: 0.78rem; margin: 8px 0 0; }
 .sk-musica-credito a { color: inherit; }
 .sk-lab { position: fixed; left: 0; top: 38%; z-index: 30; background: rgba(20,8,40,0.85); border: 1px solid rgba(255,255,255,0.25); border-left: 0; border-radius: 0 12px 12px 0; padding: 4px 6px; backdrop-filter: blur(6px); }
 .sk-lab > summary { list-style: none; cursor: pointer; font-size: 1.1rem; opacity: 0.7; }

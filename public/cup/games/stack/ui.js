@@ -287,7 +287,11 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(boton, creditoMusica(el, T) || '');
+      fin.replaceChildren(boton);
+      // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
+      document.getElementById('sk-musica-credito')?.remove();
+      const credito = creditoMusica(el, T);
+      if (credito) fin.after(credito);
       requestAnimationFrame(() => {
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
         if (r.height) sc.deslizar(antes - r.top, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 900);
