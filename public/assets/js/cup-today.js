@@ -188,11 +188,19 @@ export function activeCups(store = globalThis.localStorage, now = Date.now()) {
     const day = open?.[0] || opened || 1;
     const played = [];
     for (let d = 1; d <= m.days; d++) if (L.results?.[d]?.[pid]) played.push(d);
-    out.push({ code, name: m.name || '', days: m.days, day, played, place: L.place || null, open: !!open, next, final: day === m.days, games: L.games || [], names: L.names || [], first: pending?.code === code });
+    out.push({ code, name: m.name || '', days: m.days, day, played, place: L.place || null, open: !!open, next, final: day === m.days, games: L.games || calendarIds(m.cal), names: L.names || [], first: pending?.code === code });
   }
   // The cup the button opens goes first
   return out.sort((a, b) => b.first - a.first);
 }
+
+/**
+ * Each day's game id from the cup's calendar (`meta.cal`), for a copy kept before `recorteLista` saved
+ * `games`: as cup/engine.js `calendario` reads it (`id:variant`, a trio day `a+b+c`, two old ids
+ * replaced), without loading La Copa (D-378).
+ */
+const OLD_IDS = { solitario: 'reinas', dudo: 'letras' };
+export const calendarIds = cal => String(cal || '').split(',').filter(Boolean).map(x => { if (x.includes('+')) return 'trio'; const id = x.split(':')[0]; return OLD_IDS[id] || id; });
 
 const ordinal = (n, lang) => {
   if (lang !== 'en') return `${n}.º`;
@@ -201,7 +209,10 @@ const ordinal = (n, lang) => {
 };
 const fill = (t, v) => t.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? '');
 /** The name of day `d`'s game: the one La Copa kept, or the site's list's. */
-const gameName = (c, d, lang) => { const g = c.games[d - 1] && gameById(c.games[d - 1]); return c.names[d - 1] || (g ? g.name[lang] || g.name.es : ''); };
+const gameName = (c, d, lang) => {
+  const id = c.games[d - 1], g = id && gameById(id);
+  return c.names[d - 1] || (g ? g.name[lang] || g.name.es : (COMMON[lang] || COMMON.es).cupToday.games?.[id] || '');
+};
 
 /** The day bar: played days, the day it speaks of, the rest. */
 function bar(c) {
@@ -260,7 +271,10 @@ export function contextCard(card, { lang = 'es', store = globalThis.localStorage
     const place = placeText(c, T, lang);
     // On the final the pill and the button already say it: no «Hoy: La Gran Final»
     const game = c.final && c.open ? [] : gameLine(c, T, lang);
-    body.replaceChildren(...[place, place && game.length && ' '].filter(Boolean), ...game, bar(c));
+    // Without the place (a cup kept before it was saved, or with nobody else yet): which day it is
+    const lead = place || fill(T.dayOf, { day: c.day, days: c.days });
+    const words = [lead, game.length ? ' ' : '', ...game].filter(Boolean);
+    body.replaceChildren(...words, bar(c));
   } else {
     const rows = cups.slice(0, 2).flatMap(x => {
       const g = gameName(x, x.open ? x.day : x.next || x.day, lang);

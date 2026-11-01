@@ -1,7 +1,8 @@
 // La Copa's ▶ Jugar hoy on the home page (flag copa-hoy): which cup and day it opens, from what La Copa kept
 import assert from 'node:assert/strict';
 import { nuevaMeta, porJugar, recorteLista } from '../../cup/engine.js';
-import { pendingCup, nextCupDay, untilText, finalPlayed, activeCups } from './cup-today.js';
+import { pendingCup, nextCupDay, untilText, finalPlayed, activeCups, calendarIds } from './cup-today.js';
+import { calendario } from '../../cup/engine.js';
 
 const H = 60 * 60 * 1000;
 const meta = nuevaMeta({ nombre: 'Copa', dias: 7, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
@@ -93,4 +94,9 @@ console.log('cup-today: ok');
   assert.equal(activeCups({ getItem: () => null }, dia(1)).length, 0, 'no cups: nothing');
   const [f] = activeCups(kept('bbbbbb', dia(6)), dia(6));
   assert.ok(f.final && f.day === 7, 'the last day is the final');
+}
+
+// A copy kept before `games` was saved: the ids come from the calendar, read as La Copa reads it
+for (const cal of ['linea,numero,agentes,reinas,letras,anio,final', 'solitario,dudo:x,a+b+c,final', '']) {
+  assert.deepEqual(calendarIds(cal), cal ? calendario({ cal }) : [], `calendar ${cal || '(none)'}`);
 }
