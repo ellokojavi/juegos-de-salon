@@ -34,7 +34,8 @@ ok(await ev(`!document.getElementById('games').classList.contains('foto') && win
 await b.go(`${SITE}/?test`, 300);
 ok(await waitFor(drawn), 'the second visit draws the list');
 ok(await ev(`window.__before === true`), 'the copy was on screen before the module drew');
-ok(await ev(`JSON.parse(localStorage.getItem('${FOTO}')).html === document.getElementById('games').innerHTML`), 'the real cards are the same as the copy');
+// La Copa's card is decorated after the list is drawn (flags copa-hoy, copa-contexto), and the copy is saved again then
+ok(await waitFor(`JSON.parse(localStorage.getItem('${FOTO}')).html === document.getElementById('games').innerHTML`), 'the real cards are the same as the copy');
 ok(await ev(`document.querySelectorAll('#games .game-card').length === document.querySelectorAll('#games .game-slot, #games > .game-card, #games .fila-alta > *').length && document.querySelectorAll('#btn-uno-al-dia').length === 1`), 'no card twice: the copy\'s went away');
 ok(await ev(`getComputedStyle(document.querySelector('#games .game-card:not(.torneo)')).animationName === 'none'`), 'over the copy the real cards come in still');
 

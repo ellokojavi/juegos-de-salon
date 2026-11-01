@@ -4,6 +4,8 @@
  * with today's day played and another to come (lab flag `copa-espera`), a ✅ Día N en Xh chip that counts down;
  * with the final played and nothing else to come, ✅ Final jugada · cierra en X h Y min (same flag);
  * with nothing left, the card stays as it always was.
+ * With lab flag `copa-contexto`, the card also says which cup, the player's place and the day's game,
+ * with a bar of the cup's days, and invites to create or join one when there is none (`contextCard`).
  *
  * It reads only what La Copa keeps on this phone each time a cup is opened (cup/cuenta.js
  * `porJugar`: the days left, with when each opens and closes, written again the moment a day's
@@ -13,6 +15,7 @@
  */
 import { el } from './ui.js';
 import { COMMON } from './i18n.js';
+import { gameById } from './games.js';
 
 const PREFIX = 'juegos-de-salon:copa:';
 
@@ -81,12 +84,18 @@ export function untilText(ms) {
 }
 
 /** Puts the chip on La Copa's card when a day is waiting; returns whether it did. */
-export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wait = false } = {}) {
+export function decorateCupCard(card, { lang = 'es', store = globalThis.localStorage, now = Date.now(), wait = false, context = false } = {}) {
+  const done = decorate(card, { lang, store, now, wait });
+  if (context) contextCard(card, { lang, store, now });
+  return done;
+}
+
+function decorate(card, { lang, store, now, wait }) {
   const p = pendingCup(store, now);
   const meta = card?.querySelector('.meta');
   if (!meta) return false;
   // How the card was before any chip, to draw it again once the server says a day is played
-  card.__original ||= { href: card.getAttribute('href'), meta: meta.cloneNode(true) };
+  card.__original ||= { href: card.getAttribute('href'), meta: meta.cloneNode(true), tag: card.querySelector('.tag')?.cloneNode(true) };
   const T = (COMMON[lang] || COMMON.es).cupToday;
   if (!p) return wait && (waitChip(card, meta, T, nextCupDay(store, now), now) || finalChip(card, meta, T, finalPlayed(store, now), now));
   card.href = `${card.getAttribute('href')}?${p.code}&day=${p.dia}`;
@@ -103,7 +112,7 @@ export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wa
  * last read the cup, leaves this phone's list of days to play, and the card is drawn again from
  * it. `fetchFn` and `base` are for node. Resolves true when it changed the card.
  */
-export async function confirmCupCard(card, { lang = 'es', store = globalThis.localStorage, wait = false, fetchFn = (...a) => globalThis.fetch(...a), base } = {}) {
+export async function confirmCupCard(card, { lang = 'es', store = globalThis.localStorage, wait = false, context = false, fetchFn = (...a) => globalThis.fetch(...a), base } = {}) {
   try {
     const p = pendingCup(store);
     const pid = p && JSON.parse(store.getItem(`${PREFIX}sesion:${p.code}`) || 'null')?.pid;
@@ -114,10 +123,10 @@ export async function confirmCupCard(card, { lang = 'es', store = globalThis.loc
     const days = JSON.parse(store.getItem(`${PREFIX}hoy:${p.code}`) || '[]').filter(([d]) => d !== p.dia);
     if (days.length) store.setItem(`${PREFIX}hoy:${p.code}`, JSON.stringify(days)); else store.removeItem(`${PREFIX}hoy:${p.code}`);
     // The card as it was, then decorated again from what is left
-    if (card.__original) { card.href = card.__original.href; card.classList.remove('copa-hoy'); card.removeAttribute('aria-label'); card.querySelector('.meta')?.replaceWith(card.__original.meta.cloneNode(true)); }
-    decorateCupCard(card, { lang, store, wait });
+    if (card.__original) { card.href = card.__original.href; card.classList.remove('copa-hoy'); card.removeAttribute('aria-label'); card.querySelector('.meta')?.replaceWith(card.__original.meta.cloneNode(true)); restoreContext(card); }
+    decorateCupCard(card, { lang, store, wait, context });
     // Another day of another cup may still be open: confirm that one too
-    await confirmCupCard(card, { lang, store, wait, fetchFn, base });
+    await confirmCupCard(card, { lang, store, wait, context, fetchFn, base });
     return true;
   } catch (_) { return false; }
 }
@@ -153,5 +162,115 @@ function finalChip(card, meta, T, f, now) {
     if (Date.now() >= f.at) { clearInterval(tick); meta.replaceWith(old); return; }
     chip.textContent = text(Date.now());
   }, 30000);
+  return true;
+}
+
+/**
+ * The cups of this phone still on, as the card tells them (flag copa-contexto): `{ code, name, days,
+ * day, played, place, game, next, final }`. `day` is the day the card speaks of (the one to play, or
+ * else the last opened), `played` the days already played. Read from the "Tus copas" copy, which La Copa
+ * writes with the place and each day's game (cup/engine.js `recorteLista`). Pure, for node.
+ */
+export function activeCups(store = globalThis.localStorage, now = Date.now()) {
+  const read = k => { try { return JSON.parse(store?.getItem(PREFIX + k) || 'null'); } catch (_) { return null; } };
+  const pending = pendingCup(store, now);
+  const out = [];
+  for (const code of cupCodes(store, read)) {
+    const L = read(`lista:${code}`), m = L?.meta, pid = read(`sesion:${code}`)?.pid || Object.keys(L?.players || {})[0];
+    if (!m?.win || !m.days || !pid || L.players?.[pid]?.out) continue;
+    const end = Math.min(m.end ?? Infinity, L.fin ?? Infinity);
+    if (now >= end || now < (m.win[1]?.a ?? Infinity) - 24 * 3600e3) continue;
+    const days = read(`hoy:${code}`) || [];
+    const open = days.find(([d, a, b]) => now >= a && now < b && !L.results?.[d]?.[pid]);
+    let opened = 0;
+    for (let d = 1; d <= m.days; d++) if (now >= (m.win[d]?.a ?? Infinity)) opened = d;
+    const next = days.find(([, a]) => a > now)?.[0] || null;
+    const day = open?.[0] || opened || 1;
+    const played = [];
+    for (let d = 1; d <= m.days; d++) if (L.results?.[d]?.[pid]) played.push(d);
+    out.push({ code, name: m.name || '', days: m.days, day, played, place: L.place || null, open: !!open, next, final: day === m.days, games: L.games || [], names: L.names || [], first: pending?.code === code });
+  }
+  // The cup the button opens goes first
+  return out.sort((a, b) => b.first - a.first);
+}
+
+const ordinal = (n, lang) => {
+  if (lang !== 'en') return `${n}.º`;
+  const s = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th';
+  return `${n}${s}`;
+};
+const fill = (t, v) => t.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? '');
+/** The name of day `d`'s game: the one La Copa kept, or the site's list's. */
+const gameName = (c, d, lang) => { const g = c.games[d - 1] && gameById(c.games[d - 1]); return c.names[d - 1] || (g ? g.name[lang] || g.name.es : ''); };
+
+/** The day bar: played days, the day it speaks of, the rest. */
+function bar(c) {
+  return el('div', { class: 'copa-dias', 'aria-hidden': 'true' },
+    ...Array.from({ length: c.days }, (_, i) => el('i', { class: c.played.includes(i + 1) ? 'ok' : i + 1 === c.day && !c.played.includes(c.day) ? 'hoy' : '' })));
+}
+
+/** «Vas 2.º de 6.», on the final «Vas 2.º, a 40 pts de Ana.»; empty without a place. */
+function placeText(c, T, lang) {
+  const p = c.place;
+  if (!p?.at || !p.of) return '';
+  const pos = ordinal(p.at, lang);
+  return c.final && p.leader && p.gap > 0 ? fill(T.behind, { pos, pts: p.gap, name: p.leader }) : fill(T.place, { pos, n: p.of });
+}
+
+/** «Hoy: Conexiones.» (or the next day's game, once today's is played), bold. */
+function gameLine(c, T, lang) {
+  const d = c.open ? c.day : c.next;
+  const g = d && gameName(c, d, lang);
+  if (!g) return [];
+  const [a, b] = (c.open ? T.today : T.next).split('{game}');
+  return [a, el('b', {}, g), b];
+}
+
+/** Puts back the card's text as it was before `contextCard`. */
+function restoreContext(card) {
+  card.querySelector('.copa-mes')?.remove();
+  card.classList.remove('copa-ctx');
+  if (card.__original?.tag) card.querySelector('.tag')?.replaceWith(card.__original.tag.cloneNode(true));
+}
+
+/**
+ * Flag copa-contexto: the cup's name in a pill on the border (One a Day's month), the place first and
+ * then the game, the day bar and the button saying which day; with two or more cups one line each
+ * (two at most, then «y N más»); with none, ▶ Crea o únete a una Copa. Long names end in «…».
+ */
+export function contextCard(card, { lang = 'es', store = globalThis.localStorage, now = Date.now() } = {}) {
+  const meta = card?.querySelector('.meta'), tag = card?.querySelector('.tag');
+  if (!meta || !tag) return false;
+  card.__original ||= { href: card.getAttribute('href'), meta: meta.cloneNode(true), tag: tag.cloneNode(true) };
+  card.__original.tag ||= tag.cloneNode(true);
+  restoreContext(card);
+  const T = (COMMON[lang] || COMMON.es).cupToday;
+  const cups = activeCups(store, now);
+  card.classList.add('copa-ctx');
+  const chip = card.querySelector('#copa-hoy-chip');
+  if (!cups.length) {
+    if (!chip) meta.replaceChildren(el('span', { class: 'copa-hoy-chip', id: 'copa-hoy-chip' }, T.join));
+    return true;
+  }
+  const one = cups.length === 1, c = cups[0];
+  const pill = one ? (c.final ? `🏆 ${T.final} · ${c.name}` : c.name) : fill(T.cups, { n: cups.length });
+  card.prepend(el('span', { class: 'copa-mes', title: pill }, pill));
+  const body = card.querySelector('.tag');
+  if (one) {
+    const place = placeText(c, T, lang);
+    // On the final the pill and the button already say it: no «Hoy: La Gran Final»
+    const game = c.final && c.open ? [] : gameLine(c, T, lang);
+    body.replaceChildren(...[place, place && game.length && ' '].filter(Boolean), ...game, bar(c));
+  } else {
+    const rows = cups.slice(0, 2).flatMap(x => {
+      const g = gameName(x, x.open ? x.day : x.next || x.day, lang);
+      const tail = [x.place?.at && ordinal(x.place.at, lang), g].filter(Boolean).join(' · ');
+      return [el('div', { class: 'copa-fila' }, el('b', {}, x.name), tail ? el('span', {}, `· ${tail}`) : ''), bar(x)];
+    });
+    if (cups.length > 2) rows.push(el('div', { class: 'copa-fila mas' }, fill(T.more, { n: cups.length - 2 })));
+    body.replaceChildren(...rows);
+  }
+  // The ▶ button says which day of the first cup, the one it opens
+  if (chip && !chip.classList.contains('espera')) chip.textContent = `▶ ${c.final ? T.playFinal : fill(T.playDay, { day: c.day })}`;
   return true;
 }

@@ -4,6 +4,9 @@
 
 What each agent (`.claude/agents/`) and owner tool does, and the command it runs. Read the entry before using one.
 
+**Run them without asking** (the owner, 2026-11-01): when the work calls for an agent (usability, documentation,
+or any other here), launch it and report what it found; do not ask the owner first.
+
 ## The owner's agents and tools
 
 - **Usability** (D-132): reviews each PR and does its round when the processes agent launches it (D-276).

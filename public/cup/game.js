@@ -343,7 +343,7 @@ function portada() {
     try {
       Lc ||= await st.leer(c.code);
       if (!Lc) return;
-      cuenta.lista.guardar(c.code, recorteLista(Lc, pid));
+      cuenta.lista.guardar(c.code, copiaLista(Lc, pid, st.now()));
       cuenta.porJugar.guardar(c.code, porJugar(Lc, pid, st.now()));
       ponerEstado(c.code, Lc, pid, st.now());
       repintar();
@@ -537,7 +537,7 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
     L = conCierre(L);
     S.L = L;
     // Kept for the "Tus copas" line, so the list shows it straight away on the way back
-    if (cuenta.quien(code) && L?.meta) { cuenta.lista.guardar(code, recorteLista(L, cuenta.quien(code))); cuenta.porJugar.guardar(code, porJugar(L, cuenta.quien(code), st.now())); }
+    if (cuenta.quien(code) && L?.meta) { cuenta.lista.guardar(code, copiaLista(L, cuenta.quien(code), st.now())); cuenta.porJugar.guardar(code, porJugar(L, cuenta.quien(code), st.now())); }
     if (!L || !L.meta) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
       if (S.eliminando) return;
@@ -1116,6 +1116,16 @@ function toast(texto) {
 }
 
 /**
+ * The copy of a cup kept on this phone (`recorteLista`), with each day's game named in this page's
+ * language, for the home page card (flag copa-contexto): the home page does not load La Copa (D-378).
+ */
+function copiaLista(L, pid, now) {
+  const r = recorteLista(L, pid, now);
+  if (r?.games) try { r.names = r.games.map(id => G().J[id]?.nombre || ''); } catch (_) { /* without names */ }
+  return r;
+}
+
+/**
  * La invitación promocional (D-127): el reto, cuándo parte, cuánto toma y quiénes ya están.
  * Los juegos no se nombran: son sorpresa.
  */
@@ -1586,7 +1596,7 @@ async function enviar(d, fin, envio = null) {
   }
   // The home page's card knows at once that this day is played, even if the player leaves before
   // the listener brings the cup back (it said ▶ Jugar hoy for a day already played)
-  if (Lc?.meta) { cuenta.lista.guardar(S.code, recorteLista(Lc, S.yo)); cuenta.porJugar.guardar(S.code, porJugar(Lc, S.yo, Date.now())); }
+  if (Lc?.meta) { cuenta.lista.guardar(S.code, copiaLista(Lc, S.yo, Date.now())); cuenta.porJugar.guardar(S.code, porJugar(Lc, S.yo, Date.now())); }
   resultado(d, { recien: true, det: fin.det });
 }
 
