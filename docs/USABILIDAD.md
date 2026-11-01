@@ -6,7 +6,7 @@ issue, para no volver a preguntarla.
 
 Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
 (1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing; la U-36,
-la portada al día, va con los textos, and U-39, the start button above the fold, with the screens, and U-40, promotional material looks like the app, with marketing): U-9 y U-19 nunca se usaron, y no se renumera.
+la portada al día, va con los textos, and U-39, the start button above the fold, with the screens, and U-40, promotional material looks like the app, with marketing, and U-41, visual proposals as images, with the owner's answers): U-9 y U-19 nunca se usaron, y no se renumera.
 
 **Checked or judged (D-520):** each rule is marked 🤖 when a program checks it and fails loudly, 👁
 when it needs judgment, and 🤖👁 when a program checks the measurable part and the agent judges the
@@ -305,3 +305,7 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 - **Toque y Fama's two Cup days follow one pattern** (#830, option A): the number day is "Toque y Fama:
   Número" (Number, Número, Zahl), like "Toque y Fama: Palabra" and the home page's Número / Palabra
   toggle; the rules under the name say what to guess. Renamed on a day no cup was playing either game (U-21).
+- 👁 **U-41 · Visual proposals come as images:** when the owner asks for visual treatments, mock them up
+  on the real page (serve `public/`, change the DOM with Playwright using the page's own CSS classes and
+  tokens, screenshot) and send the image, not only text. A mockup with its own styles does not count:
+  it must look like the card or screen it changes, next to what surrounds it.
