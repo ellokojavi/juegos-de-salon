@@ -1,0 +1,61 @@
+# Publishes flags and splash campaigns at a set time (D-527): what the owner switches by hand on a
+# /labs/ card or in the panel's 📣 Campaigns. A scheduled task dispatches it at the hour;
+# tools/firebase/launch.mjs writes nothing before `not_before`, so an early run is harmless.
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218).
+
+name: Launch
+
+on:
+  workflow_dispatch:
+    inputs:
+      flags:
+        description: 'Flags to switch to all, space-separated (stick stack)'
+        type: string
+        default: ''
+      splash:
+        description: 'Splash campaigns to turn on, space-separated'
+        type: string
+        default: ''
+      not_before:
+        description: 'Write nothing before this moment (ISO, UTC)'
+        type: string
+        default: ''
+      dry_run:
+        description: 'Only say what it would write'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: launch
+  cancel-in-progress: false
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Launch
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          FLAGS: ${{ inputs.flags }}
+          SPLASH: ${{ inputs.splash }}
+          NOT_BEFORE: ${{ inputs.not_before }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then echo "::error::The FIREBASE_ADMIN_JSON secret is missing"; exit 1; fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          args=()
+          for f in $FLAGS; do args+=(--flag "$f"); done
+          for s in $SPLASH; do args+=(--splash "$s"); done
+          [ -n "$NOT_BEFORE" ] && args+=(--not-before "$NOT_BEFORE")
+          [ "$DRY" = "true" ] || args+=(--apply)
+          node tools/firebase/launch.mjs "${args[@]}"
