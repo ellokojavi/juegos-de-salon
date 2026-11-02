@@ -1,3 +1,43 @@
 {
-  "records": []
+  "records": [
+    {
+      "run": 41478507231,
+      "check": "end-to-end",
+      "pr": 1133,
+      "branch": "processes-2026-11-02",
+      "commit": "b9af079493cdcb40290c09ddf62e9eb6d1f92661",
+      "test": "favorites.mjs",
+      "error": "✗ es at 900 px: ⭐ Favoritos in the row, the types in one row and nothing overflows ({\"shape\":\"picks with name\",\"first\":true,\"above\":true,\"tap\":true,\"rows\":1,\"overflows\":true,\"width\":900,\"outside\":[]})",
+      "signature": "a4b6416585",
+      "date": "2026-11-02T16:18:15.726Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 41478507231,
+      "check": "end-to-end",
+      "pr": 1133,
+      "branch": "processes-2026-11-02",
+      "commit": "b9af079493cdcb40290c09ddf62e9eb6d1f92661",
+      "test": "home/instant.mjs",
+      "error": "✗ with no copy, the list is the module's",
+      "signature": "11abe49be9",
+      "date": "2026-11-02T16:18:15.726Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 41478507231,
+      "check": "end-to-end",
+      "pr": 1133,
+      "branch": "processes-2026-11-02",
+      "commit": "b9af079493cdcb40290c09ddf62e9eb6d1f92661",
+      "test": "Run echo \"list: success · scripts: failure\"",
+      "error": "end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T16:17:53.6073786Z ##[group]Run echo \"list: success · scripts: failure\"\n^[[36;1mecho \"list: success · scripts: failure\"^[[0m\n^[[36;1mcase \"failure\" in success|skipped) ;; *) exit 1 ;; esac^[[0m",
+      "signature": "61a35d3903",
+      "date": "2026-11-02T16:18:15.726Z",
+      "fix": null,
+      "flaky": false
+    }
+  ]
 }
