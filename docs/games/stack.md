@@ -100,7 +100,7 @@ and, after a line, the comment form.
 
 The numbers at the top of `engine.js`: the swing (`RANGE`), the perfect margin (`PERFECT`), when and how
 much a streak grows the block (`GROW_FROM`, `GROW`) and the speed (`SPEED_START`, `SPEED_STEP`,
-`SPEED_MAX`). If it goes to La Copa, the height needs a 0-to-100 score.
+`SPEED_MAX`). The score is `puntos(kinds)` in `cup/games/stack/engine.js` (D-525, see the top of this file).
 
 ## The teaser
 
