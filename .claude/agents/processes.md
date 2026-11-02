@@ -171,6 +171,14 @@ that (after a new game, after a big text change), saying why.
    - **Resolved, duplicate or already an open dilemma:** you close it naming where it was resolved
      or the issue that covers it.
    - **Can't be understood or isn't about the app:** you close it saying why.
+   **A bug report starts with a failing test** (D-527): for a `feedback:problem` report you can
+   reproduce, before touching code write the smallest test that shows it (an e2e in
+   `tools/e2e/<game>/` or a `*.test.mjs` next to the game), named after the issue (`issue-<n>` in the
+   file name, `#<n>` inside it), and commit it first so CI shows it red; then the fix, which touches
+   only that game, turns it green. Record it with `node tools/agents/feedback.mjs repro <n> <test>`.
+   `reply` refuses a bug report without it; if it can't be reproduced (device-specific, not enough
+   detail), reply with `--no-repro "<why>"` and the issue keeps the reason. Example: #1103,
+   `public/cup/games/stick/issue-1103.test.mjs`.
    **The email reply (D-317, owner's request).** A report whose issue shows `**Email:**` (a mask
    like `j********n@g********m`, D-366) wants to hear back. When you resolve it (fixed in your PR, queued
    by the owner's Yes, already done, or answered), you email the player. **One email per player
