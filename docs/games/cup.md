@@ -152,7 +152,7 @@ con la tabla final, el lugar de cada uno después de cada día y el detalle de c
 Todo el contenido de un día sale de una semilla `código:día:sal` (D-97): es idéntico para todos
 sin que nada viaje por la red.
 
-Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es el lugar de cada día.
+Todos los juegos puntúan **de 0 a 100** (D-113), salvo 🗼 Babel y 🥷 Shinobi, sin tope (D-525): la Gran Final y Uno al día los topan en 100 (`Math.min(100, s)`). Igual lo que decide la copa es el lugar de cada día.
 
 | Día | Juego | Puntaje (0 a 100) | Reusa |
 |---|---|---|---|

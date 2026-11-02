@@ -20,7 +20,7 @@
  *
  * The trial (`p.tope`, engine.js BLOQUES_ENSAYO) ends on its own after that many blocks.
  */
-import { newGame, perfectTime, pause, score, puntaje, tarjeta, drop, speed } from './engine.js';
+import { newGame, perfectTime, pause, score, puntaje, puntos, tarjeta, drop, speed } from './engine.js';
 import { escena, soltar, momento } from './scene.js';
 import { confetti } from '../../../assets/js/ui.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
@@ -373,20 +373,21 @@ export function montar(raiz, ctx) {
   globalThis.__stack = { S, soltarEn: caer, pausar, perfecto: () => perfectTime(S.g, performance.now()), estado };
 }
 
-/** What goes to the cup and to the result: 0 to 100 (2 a block), its card, and the playing time without pauses. */
+/** What goes to the cup and to the result: the points (floors and streak bonuses, no cap), its card, and the playing time without pauses. */
 export function resultado(e) {
   const s = puntaje(e);
-  return { s, t: tarjeta(e), resumen: `${s}/100`, ms: Number.isFinite(e?.ms) ? Math.round(e.ms) : undefined };
+  return { s, t: tarjeta(e), resumen: String(s), ms: Number.isFinite(e?.ms) ? Math.round(e.ms) : undefined };
 }
 
-/** How the score was reached (D-106): the blocks, the perfect drops and the longest streak. */
+/** How the score was reached (D-106): the floors, the streak bonuses, and the longest streak. */
 export function desglose(e, { T, fmt = fmtLocal }) {
   if (!e) return [];
-  const n = Math.max(0, e.n | 0), pf = Math.max(0, e.perfects | 0), best = Math.max(0, e.best | 0);
+  const p = Array.isArray(e.kinds) && e.kinds.length ? puntos(e.kinds) : { floors: Math.max(0, e.n | 0), streaks: 0, streakBonus: 0, lengthBonus: 0 };
+  const best = Math.max(0, e.best | 0);
   return [
-    fmt(T.skBdBlocks[forma(n)], { n, p: puntaje(e) }),
-    puntaje(e) >= 100 ? T.skBdCap : null,
-    fmt(T.skBdPerfects[forma(pf)], { n: pf }),
+    fmt(T.skBdBlocks[forma(p.floors)], { n: p.floors }),
+    p.streaks ? fmt(T.skBdStreaks[forma(p.streaks)], { n: p.streaks, p: p.streakBonus }) : null,
+    p.lengthBonus ? fmt(T.skBdLength, { p: p.lengthBonus }) : null,
     best > 1 ? fmt(T.skBdStreak, { n: best }) : null,
   ].filter(Boolean);
 }

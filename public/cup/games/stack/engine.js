@@ -137,6 +137,31 @@ export function card(kinds) {
   return rows.reverse().join('\n');
 }
 
+/**
+ * The game's own points (the owner's rule, 2026-11-01), with no cap: every floor is 1 point, and the
+ * perfect streaks add two bonuses. A streak is STREAK_FROM or more perfect drops in a row.
+ * - for each streak: +STREAK_BONUS once, when it reaches STREAK_FROM;
+ * - for its length: each perfect from the STREAK_FROM-th on adds its place in the streak minus
+ *   (STREAK_FROM − 1), +1, +2, +3… up to +LENGTH_MAX a block.
+ * `kinds` is each block's kind in order ('perfect' | 'cut'). Returns `{ floors, streaks, streakBonus,
+ * lengthBonus, total }`.
+ */
+export const STREAK_FROM = 3;
+export const STREAK_BONUS = 3;
+export const LENGTH_MAX = 5;
+export function puntos(kinds) {
+  const ks = Array.isArray(kinds) ? kinds : [];
+  let run = 0, streaks = 0, lengthBonus = 0;
+  for (const k of ks) {
+    if (k !== 'perfect') { run = 0; continue; }
+    run++;
+    if (run === STREAK_FROM) streaks++;
+    if (run >= STREAK_FROM) lengthBonus += Math.min(LENGTH_MAX, run - (STREAK_FROM - 1));
+  }
+  const floors = ks.length, streakBonus = streaks * STREAK_BONUS;
+  return { floors, streaks, streakBonus, lengthBonus, total: floors + streakBonus + lengthBonus };
+}
+
 /* ------------------------------------------------------------------ */
 /* La Copa                                                            */
 /* ------------------------------------------------------------------ */
@@ -146,8 +171,6 @@ export function card(kinds) {
  * slide, the cut and a perfect drop, short enough not to tire before the real game.
  */
 export const BLOQUES_ENSAYO = 8;
-/** Each block is worth 2 points: 50 blocks reach the 100 of La Copa. */
-export const PUNTOS_BLOQUE = 2;
 
 /**
  * The day's game. Every game starts the same (nothing is random: the slide only depends on the time),
@@ -162,10 +185,12 @@ export function generarDia(codigo, dia, { variante = null, sal = '', ensayo = fa
 const bloques = e => Math.max(0, Math.floor(Number(e?.n) || 0));
 
 /**
- * The score, 0 to 100: `Math.min(100, 2 * blocks)`, two points a block up to 50 blocks. Perfect drops
- * and streaks do not add points: they keep the slab wide, which is what lets the tower go on.
+ * The score, with no cap (the owner's rule, 2026-11-01, replacing D-517's two a block up to 100): the
+ * floors plus the streak bonuses (`puntos`). La Copa ranks a day by position (D-95), so the number has
+ * no scale to fit; where a 0–100 is averaged (the Grand Final's rounds, Uno al día) the cup caps it.
+ * A game saved before the rule without `kinds` counts its blocks.
  */
-export const puntaje = e => Math.min(100, PUNTOS_BLOQUE * bloques(e));
+export const puntaje = e => (Array.isArray(e?.kinds) && e.kinds.length ? puntos(e.kinds).total : bloques(e));
 
 /** The share card: the tower's last twenty blocks (🟩 perfect, 🟨 cut), and 💥 if none was placed. */
 export function tarjeta(e) {

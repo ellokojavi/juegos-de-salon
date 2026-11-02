@@ -2,7 +2,7 @@
 
 > **Ready to launch (D-517).** The game is now **🥷 Shinobi**, a La Copa game in `public/cup/games/stick/`
 > (engine, scene, screen, texts in es, en and pt) that serves its page `/shinobi/`, Uno al día (from the
-> deck shuffled on 2026-11-08) and La Copa (score 0–100). It stays hidden until the owner switches the
+> deck shuffled on 2026-11-08) and La Copa. **Score (D-525):** its own points, no cap (the cup caps at 100 only in the Grand Final and Uno al día). It stays hidden until the owner switches the
 > flag `stick` on its /labs/ card. The cover credits the original with a link, as every inspired game
 > does. What follows describes the English lab prototype, still at `/labs/stick/` until the cleanup PR;
 > the play is the same in the new module. End to end: `tools/e2e/stick/game.mjs`.

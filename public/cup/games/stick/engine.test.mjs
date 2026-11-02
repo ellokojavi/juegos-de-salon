@@ -261,7 +261,7 @@ assert.equal(card(Array(15).fill('land')).split('\n').length, 2);
   assert.equal(puntaje({ score: 0 }), 0);
   assert.equal(puntaje({ score: 37 }), 37);
   assert.equal(puntaje({ score: 100 }), 100);
-  assert.equal(puntaje({ score: 260 }), 100, 'past 100, 100');
+  assert.equal(puntaje({ score: 260 }), 260, 'no cap');
   const g = newGame(5);
   let t = 0;
   for (let k = 0; k < 4; k++) t = bridge(g, t, 0).t;

@@ -139,15 +139,13 @@ assert.equal(card(Array(12).fill('perfect')).split('\n').length, 2);
   assert.equal(JSON.parse(JSON.stringify(a)).semilla, a.semilla, 'it survives being saved');
 }
 
-// The score: two points a block, from 0 up to 100
+// The score (2026-11-01): the floors plus streak bonuses, no cap; an old save without kinds counts its blocks
 {
   assert.equal(puntaje({ n: 0 }), 0);
-  assert.equal(puntaje({ n: 1 }), 2);
-  assert.equal(puntaje({ n: 37 }), 74);
-  assert.equal(puntaje({ n: 50 }), 100);
-  assert.equal(puntaje({ n: 200 }), 100, 'never over 100');
+  assert.equal(puntaje({ n: 37 }), 37);
+  assert.equal(puntaje({ n: 200 }), 200, 'no cap');
+  assert.equal(puntaje({ n: 3, kinds: ['perfect', 'perfect', 'perfect'] }), 7);
   assert.equal(puntaje(null), 0); assert.equal(puntaje({ n: -3 }), 0); assert.equal(puntaje({ n: 'x' }), 0);
-  for (let n = 0; n < 300; n++) { const s = puntaje({ n }); assert.ok(s >= 0 && s <= 100 && Number.isInteger(s)); }
 }
 
 // The share card, from a finished game
@@ -160,3 +158,18 @@ assert.equal(card(Array(12).fill('perfect')).split('\n').length, 2);
 }
 
 console.log('✓ stack engine');
+
+// The owner's points (2026-11-01): 1 a floor, +3 a streak of 3+, and +1, +2… up to +5 for its length
+{
+  const { puntos } = await import('./engine.js');
+  const assert = (await import('node:assert/strict')).default;
+  const P = 'perfect', C = 'cut';
+  assert.deepEqual(puntos([]), { floors: 0, streaks: 0, streakBonus: 0, lengthBonus: 0, total: 0 });
+  assert.equal(puntos([P, P, C]).total, 3);                       // no streak below 3
+  assert.equal(puntos([P, P, P]).total, 3 + 3 + 1);                // a streak: +3, the 3rd adds +1
+  assert.equal(puntos(Array(10).fill(P)).lengthBonus, 1 + 2 + 3 + 4 + 5 + 5 + 5 + 5); // capped at +5
+  const two = puntos([P, P, P, C, P, P, P, P]);
+  assert.equal(two.streaks, 2); assert.equal(two.total, 8 + 6 + 1 + 1 + 2);
+  assert.equal(puntos(Array(100).fill(C)).total, 100);             // 100 floors, 100 points
+  console.log('puntos ok');
+}
