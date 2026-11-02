@@ -241,7 +241,8 @@
     var yo = d.currentScript;
     if (yo && yo.src && w.location.pathname.indexOf('/panel/') < 0) {
       var boot = function () {
-        var m = d.createElement('script'); m.type = 'module'; m.src = yo.src.replace(/vigia\.js.*$/, 'tester-boot.js');
+        var m = d.createElement('script'); m.type = 'module';
+        m.src = new URL('tester-boot.js', yo.src).href; // next to vigía (and seen by the e2e scope graph)
         d.head.appendChild(m);
       };
       if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', boot); else boot();
