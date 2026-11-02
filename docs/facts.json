@@ -1116,6 +1116,7 @@
     "public/assets/js/support.js",
     "public/assets/js/teclado.js",
     "public/assets/js/tester-badge.js",
+    "public/assets/js/tester-boot.js",
     "public/assets/js/tester-ribbon.js",
     "public/assets/js/time-format.js",
     "public/assets/js/transport/best-effort.js",
