@@ -42,7 +42,7 @@ const delLab = (id, motor, ui) => ({
   ...juego(motor, ui),
   generar: (c, d, o = {}) => motor.generarDia(c, d, o),
   ensayo: (c, d, o = {}) => motor.generarDia(codigoEnsayo(c), d, { ...o, sal: 'ensayo', ensayo: true }),
-  variantes: VARIANTES[id] || null, selector: ui.selector, desglose: ui.desglose,
+  variantes: VARIANTES[id] || null, selector: ui.selector, desglose: ui.desglose, puntajeDia: motor.puntajeDia,
 });
 
 const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, titulo: ui.titulo, entrada: ui.entrada, pruebaCompleta: !!ui.pruebaCompleta, caro: !!ui.caro, pantallaCompleta: !!ui.pantallaCompleta, clock: !!ui.clock, ensayo });

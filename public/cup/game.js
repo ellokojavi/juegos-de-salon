@@ -1998,7 +1998,9 @@ function resultadoEnsayo(id, r, volver, variante = null) {
 function resultadoPractica(id, semilla, r, variante = null) {
   const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
-  const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: Math.min(100, r.s), ms: r.ms }) : null;
+  // A game with no cap brings its own 0–100 curve (D-526); the rest are already 0–100
+  const sDia = JUEGOS[id]?.puntajeDia ? JUEGOS[id].puntajeDia(r.s) : Math.min(100, r.s);
+  const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: sDia, ms: r.ms }) : null;
   if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-433)
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
@@ -2036,6 +2038,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       el('h2', { class: 'display display--md' }, J.nombre),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
+      hoy?.primera && JUEGOS[id]?.puntajeDia ? el('p', { class: 'muted', id: 'puntaje-dia' }, fmt(T.dailyScaled, { n: sDia })) : null,
       ...bajoElPuntaje(r.t, r.ms, id)),
     // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
     hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss, grid: id === 'agentes' && !gridsNuevos ? null : shareGrid(id, r.t) }) : null,

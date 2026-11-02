@@ -258,3 +258,10 @@ export const puntaje = e => Math.max(0, Math.round(Number(e?.score) || 0));
 
 /** The share card of a finished run (its saved state): the last bridges, as `card` draws them. */
 export const tarjeta = e => card(Array.isArray(e?.kinds) ? e.kinds : []);
+
+/**
+ * Uno al día's score, 0 to 100 (D-526): a soft curve over the points, `100 × (1 − e^(−points/K))`,
+ * so the best keep standing apart (50 → 46, 100 → 71, 200 → 92) instead of all tying at 100.
+ */
+export const DIA_K = 80;
+export const puntajeDia = s => Math.max(0, Math.min(100, Math.round(100 * (1 - Math.exp(-(Number(s) || 0) / DIA_K)))));

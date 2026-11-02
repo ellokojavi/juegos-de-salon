@@ -173,3 +173,12 @@ console.log('✓ stack engine');
   assert.equal(puntos(Array(100).fill(C)).total, 100);             // 100 floors, 100 points
   console.log('puntos ok');
 }
+
+// Uno al día's curve (D-526)
+{
+  const { puntajeDia } = await import('./engine.js');
+  const assert = (await import('node:assert/strict')).default;
+  assert.equal(puntajeDia(0), 0); assert.equal(puntajeDia(50), 46); assert.equal(puntajeDia(100), 71); assert.equal(puntajeDia(200), 92);
+  assert.ok(puntajeDia(1000) <= 100 && puntajeDia(150) > puntajeDia(149) - 1);
+  console.log('puntajeDia ok');
+}
