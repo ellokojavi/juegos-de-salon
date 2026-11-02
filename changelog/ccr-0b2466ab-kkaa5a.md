@@ -1,3 +1,3 @@
 level: patch
 
-- **Tester tab breathes and glides**: the folded tester ribbon sits 22 px below the top bar on every screen, and as the page scrolls it climbs to the top edge with a soft transition instead of staying put or jumping.
+- **Tester ribbon, for good**: it no longer depends on its lab flag; every tester key shows it on every screen, and the home page no longer asks the flag itself (with the flag on *all* it would have shown the ribbon to players without a key). The old «tester» chip on the home page goes.
