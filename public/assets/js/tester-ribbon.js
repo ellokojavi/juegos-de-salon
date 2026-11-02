@@ -3,7 +3,7 @@
  * screen's right edge, just under the top bar, over the page and never pushing it. Opened, it gives
  * what the key gives: (i) the tester sheet, a link to Labs, and the control the current screen
  * registers with `setTesterContext` (Babel's «Simular final»). It replaces the home page's «tester»
- * chip and Babel's 🧪 tab on the left edge. Texts in the three languages (C-3). lab: #seccion-tester-ribbon
+ * chip and Babel's 🧪 tab on the left edge. On every screen (tester-boot.js), hidden while playing. Texts in the three languages (C-3). lab: #seccion-tester-ribbon
  */
 import { el } from './ui.js';
 import { openTesterSheet } from './tester-badge.js';
@@ -28,6 +28,8 @@ const CSS = `
   background-size: 260% 100%; animation: tr-brillo 3.2s ease-in-out infinite; }
 .tr-tab-wrap { position: relative; flex: none; }
 .tr-punto { position: absolute; top: -4px; left: -4px; z-index: 1; width: 13px; height: 13px; border-radius: 999px; background: var(--red); border: 2px solid var(--bg1); box-shadow: 0 0 8px rgba(224,36,60,0.8); pointer-events: none; }
+/* Hidden while a game is played (back-guard.js marks it), unless the screen has a test control */
+html[data-en-juego] .tr:not(.con-ctx), body.jugando .tr:not(.con-ctx) { display: none; }
 .tr:not(.con-ctx) .tr-punto, .tr:not(.con-ctx) .tr-ctx { display: none; }
 .tr-tab:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 @keyframes tr-iri { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }

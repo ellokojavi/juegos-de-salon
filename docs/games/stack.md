@@ -2,7 +2,7 @@
 
 > **Ready to launch (D-517).** The game is now **🗼 Babel**, a La Copa game in `public/cup/games/stack/`
 > (engine, scene, screen, texts in es, en and pt) that serves its page `/babel/`, Uno al día (from the
-> deck shuffled on 2026-11-08) and La Copa. **Score (D-525):** 1 a floor, +3 a streak of 3+ perfects, and +1, +2… up to +5 for each further perfect in it; no cap (the cup caps at 100 only in the Grand Final and Uno al día). It stays hidden until the owner switches the
+> deck shuffled on 2026-11-08) and La Copa. **Score (D-525):** 1 a floor, +3 a streak of 3+ perfects, and +1, +2… up to +5 for each further perfect in it; no cap (the Grand Final caps at 100; Uno al día uses a soft curve, D-526). It stays hidden until the owner switches the
 > flag `stack` on its /labs/ card. The cover credits the original with a link, as every inspired game
 > does. What follows describes the English lab prototype, still at `/labs/stack/` until the cleanup PR;
 > the play is the same in the new module. End to end: `tools/e2e/stack/game.mjs`.

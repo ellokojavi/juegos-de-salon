@@ -274,3 +274,10 @@ assert.equal(tarjeta({ kinds: ['perfect', 'land', 'fall'] }), '🎯🟩🕳️')
 assert.equal(tarjeta({}), '');
 
 console.log('✓ stick engine');
+
+// Uno al día's curve (D-526)
+{
+  const { puntajeDia } = await import('./engine.js');
+  const assert = (await import('node:assert/strict')).default;
+  assert.equal(puntajeDia(100), 71); assert.equal(puntajeDia(null), 0);
+}

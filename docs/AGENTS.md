@@ -75,6 +75,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   anything tried on a page players visit turns on only for a lab key holder: it asks its runtime
   flag, `flag('<id>')` (`public/assets/js/flags.js`, D-498; its name a row of `FLAGS` in `flag-list.js`, D-515), *lab* until the owner flips Firebase
   `flags/<id>` to *all* (on its `/labs/` card: 🧪 / 🚀 / ⚪), with no PR; previews keep `labAccess()`. It goes to production for everyone only once validated in the lab.
+  A flag or a splash campaign can also be switched at a set hour: the `launch` workflow (`tools/firebase/launch.mjs`, D-529), dispatched by a scheduled task.
   A whole finished game can wait the same way: `lanza: '<flag>'` in its manifest entry hides it until the flag is *all* (D-517, [ADD-GAME](ADD-GAME.md) step 2).
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
   the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The

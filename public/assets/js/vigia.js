@@ -235,6 +235,20 @@
     enviar(cambios);
   };
 
+  // The tester ribbon on every screen (lab flag tester-ribbon): vigía is the one script every page
+  // loads, so it only adds the module next to itself; the module checks the key and the flag
+  try {
+    var yo = d.currentScript;
+    if (yo && yo.src && w.location.pathname.indexOf('/panel/') < 0) {
+      var boot = function () {
+        var m = d.createElement('script'); m.type = 'module';
+        m.src = new URL('tester-boot.js', yo.src).href; // next to vigía (and seen by the e2e scope graph)
+        d.head.appendChild(m);
+      };
+      if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', boot); else boot();
+    }
+  } catch (_) { /* never in the way of the watcher */ }
+
   // Para las pruebas con node: las mismas cuentas que usa la página
   V._ = { entorno: entorno, pagina: pagina, navegador: navegador, ruta: ruta, limpio: limpio, firma: firma, tramo: tramo, lugarDelStack: lugarDelStack, BASE: BASE };
   w.__vigia = V;
