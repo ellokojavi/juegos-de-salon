@@ -76,6 +76,32 @@
       "date": "2026-11-02T19:00:49.627Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 41515830190,
+      "check": "end-to-end",
+      "pr": 1144,
+      "branch": "bodega-stick",
+      "commit": "16e381c58efc682ddd40acff8851656c240f24e0",
+      "test": "Scripts",
+      "error": "✗ the lab keeps the English prototype under Juegos en prueba, beside Shinobi (D-517)\n✗ 1 failure(s)\n##[warning]stick/lab.mjs failed on the first attempt (2 check(s) red); repeating it once (D-299)",
+      "signature": "16f831ead1",
+      "date": "2026-11-02T20:13:41.679Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 41515830190,
+      "check": "end-to-end",
+      "pr": 1144,
+      "branch": "bodega-stick",
+      "commit": "16e381c58efc682ddd40acff8851656c240f24e0",
+      "test": "Run echo \"list: success · scripts: failure\"",
+      "error": "end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T20:13:19.1112141Z ##[group]Run echo \"list: success · scripts: failure\"\n^[[36;1mecho \"list: success · scripts: failure\"^[[0m\n^[[36;1mcase \"failure\" in success|skipped) ;; *) exit 1 ;; esac^[[0m",
+      "signature": "61a35d3903",
+      "date": "2026-11-02T20:13:41.679Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
