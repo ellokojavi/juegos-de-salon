@@ -57,6 +57,7 @@ export function createBackGuard({ win = globalThis.window, ask = askLeave } = {}
   }
   function off() {
     armed = false;
+    if (win.document?.documentElement) delete win.document.documentElement.dataset.enJuego;
     win.removeEventListener('popstate', onPop);
     win.document?.removeEventListener('click', onClick);
   }
@@ -65,6 +66,8 @@ export function createBackGuard({ win = globalThis.window, ask = askLeave } = {}
     arm() {
       if (armed || !win?.history?.pushState) return;
       armed = true;
+      // While a game is played: the tester ribbon hides (tester-ribbon.js)
+      if (win.document?.documentElement) win.document.documentElement.dataset.enJuego = '';
       if (!ours()) push();
       win.addEventListener('popstate', onPop);
       win.document?.addEventListener('click', onClick);
