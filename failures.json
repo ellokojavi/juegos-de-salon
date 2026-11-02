@@ -10,7 +10,11 @@
       "error": "✗ es at 900 px: ⭐ Favoritos in the row, the types in one row and nothing overflows ({\"shape\":\"picks with name\",\"first\":true,\"above\":true,\"tap\":true,\"rows\":1,\"overflows\":true,\"width\":900,\"outside\":[]})",
       "signature": "a4b6416585",
       "date": "2026-11-02T16:18:15.726Z",
-      "fix": null,
+      "fix": {
+        "commit": "a1667b6d3c2fadc65cf8538e0a8609adfaaeb00b",
+        "date": "2026-11-02T16:47:39.849Z",
+        "stat": "4 file(s) +8 −4: changelog/ccr-c3b66138-adetlc.md, docs/CANONES.md, public/index.html, tools/e2e/home/instant.mjs"
+      },
       "flaky": false
     },
     {
@@ -23,7 +27,11 @@
       "error": "✗ with no copy, the list is the module's",
       "signature": "11abe49be9",
       "date": "2026-11-02T16:18:15.726Z",
-      "fix": null,
+      "fix": {
+        "commit": "a1667b6d3c2fadc65cf8538e0a8609adfaaeb00b",
+        "date": "2026-11-02T16:47:39.849Z",
+        "stat": "4 file(s) +8 −4: changelog/ccr-c3b66138-adetlc.md, docs/CANONES.md, public/index.html, tools/e2e/home/instant.mjs"
+      },
       "flaky": false
     },
     {
@@ -36,7 +44,11 @@
       "error": "end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T16:17:53.6073786Z ##[group]Run echo \"list: success · scripts: failure\"\n^[[36;1mecho \"list: success · scripts: failure\"^[[0m\n^[[36;1mcase \"failure\" in success|skipped) ;; *) exit 1 ;; esac^[[0m",
       "signature": "61a35d3903",
       "date": "2026-11-02T16:18:15.726Z",
-      "fix": null,
+      "fix": {
+        "commit": "a1667b6d3c2fadc65cf8538e0a8609adfaaeb00b",
+        "date": "2026-11-02T16:47:39.849Z",
+        "stat": "4 file(s) +8 −4: changelog/ccr-c3b66138-adetlc.md, docs/CANONES.md, public/index.html, tools/e2e/home/instant.mjs"
+      },
       "flaky": false
     }
   ]
