@@ -23,8 +23,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 
 | Topic | Today's rule | Decisions |
 |---|---|---|
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528 |
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-529 |
+| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529 |
 | Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442 |
@@ -56,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (511)
+## In force (513)
 
 | D | Title | Status |
 |---|---|---|
@@ -568,11 +567,10 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-521](decisions/D-521.md) | La Copa: the admin chooses its length (3 to 14 days) and its time zone | current |
 | [D-522](decisions/D-522.md) | Sessions always open the PR and drive it to merge, without asking | current |
 | [D-524](decisions/D-524.md) | The language selector shows only the flags | current |
-| [D-525](decisions/D-525.md) | Babel and Shinobi score with no cap; Babel rewards streaks | current |
-| [D-527](decisions/D-527.md) | A bug report starts with a failing test | current |
-| [D-528](decisions/D-528.md) | Lab readiness is measured: a flag's card says when it is ready to publish | current |
 | [D-525](decisions/D-525.md) | Babel and Shinobi score with no cap; Babel rewards streaks | amended by D-526 |
 | [D-526](decisions/D-526.md) | Uno al día scores Babel and Shinobi on a soft curve, not a cap | current |
+| [D-527](decisions/D-527.md) | A bug report starts with a failing test | current |
+| [D-528](decisions/D-528.md) | Lab readiness is measured: a flag's card says when it is ready to publish | current |
 | [D-529](decisions/D-529.md) | A launch can be scheduled: the `launch` workflow flips flags and splash at the hour | current |
 
 ## No longer in force (12)
