@@ -1998,7 +1998,7 @@ function resultadoEnsayo(id, r, volver, variante = null) {
 function resultadoPractica(id, semilla, r, variante = null) {
   const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
-  const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
+  const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: Math.min(100, r.s), ms: r.ms }) : null;
   if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-433)
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)

@@ -250,11 +250,11 @@ export function generarDia(codigo, dia, { sal = '', ensayo = false } = {}) {
 }
 
 /**
- * A run's score for La Copa, from 0 to 100: the game's own points (a bridge is 1, a flag adds its streak
- * bonus, +1 up to +5), capped at 100 — `Math.min(100, score)`. Past 100 the run goes on and its points
- * still show on screen and in the summary, but La Copa counts 100.
+ * A run's score: the game's own points (a bridge is 1, a flag adds its streak bonus, +1 up to +5), with
+ * no cap (the owner's rule, 2026-11-01, replacing D-517's cap at 100). La Copa ranks a day by position
+ * (D-95); where a 0–100 is averaged (the Grand Final, Uno al día) the cup caps it.
  */
-export const puntaje = e => Math.max(0, Math.min(100, Math.round(Number(e?.score) || 0)));
+export const puntaje = e => Math.max(0, Math.round(Number(e?.score) || 0));
 
 /** The share card of a finished run (its saved state): the last bridges, as `card` draws them. */
 export const tarjeta = e => card(Array.isArray(e?.kinds) ? e.kinds : []);

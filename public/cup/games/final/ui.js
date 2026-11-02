@@ -89,7 +89,7 @@ export function montar(raiz, ctx) {
     poner(raiz, el('p', { class: 'muted center', style: 'margin:0 0 8px' }, `${fmt(R.roundOf, { i: J.ronda + 1, n })} · ${M.emoji} ${M.nombre}`), caja);
     const ultima = J.ronda === n - 1;
     // A game played whole scores with its own result (0 to 100) the moment its board ends (D-150)
-    const puntos = e => (corta ? final.puntosRonda[r](e) : mod.resultado(e).s);
+    const puntos = e => (corta ? final.puntosRonda[r](e) : Math.min(100, mod.resultado(e).s));
     const anotar = e => { if (!corta && e) J.pts[r] = puntos(e); };
     if (!corta) ctx.pantallaCompleta?.(mod.pantallaCompleta);
     // Solo la última ronda detiene el reloj de la final (D-130), y con ella sale el resultado de

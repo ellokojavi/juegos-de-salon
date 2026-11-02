@@ -44,7 +44,6 @@ const ES = {
     snBdFlags1: '🚩 1 bandera: +{b} de bono.',
     snBdFlags: '🚩 {n} banderas: +{b} de bono.',
     snBdStreak: '🔥 Racha más larga de banderas: {n}.',
-    snBdCap: '⭐ {n} puntos en el juego: en la copa cuentan hasta 100.',
   },
 };
 
@@ -89,7 +88,6 @@ const EN = {
     snBdFlags1: '🚩 1 flag: +{b} bonus.',
     snBdFlags: '🚩 {n} flags: +{b} bonus.',
     snBdStreak: '🔥 Longest flag streak: {n}.',
-    snBdCap: '⭐ {n} points in the game: the cup counts up to 100.',
   },
 };
 
@@ -134,7 +132,6 @@ const PT = {
     snBdFlags1: '🚩 1 bandeira: +{b} de bônus.',
     snBdFlags: '🚩 {n} bandeiras: +{b} de bônus.',
     snBdStreak: '🔥 Maior sequência de bandeiras: {n}.',
-    snBdCap: '⭐ {n} pontos no jogo: a copa conta até 100.',
   },
 };
 

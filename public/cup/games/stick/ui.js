@@ -365,7 +365,7 @@ export function montar(raiz, ctx) {
   };
 }
 
-/** The result: the cup's 0–100 (engine.js `puntaje`), the card, the game's own points, and the time played. */
+/** The result: the points, no cap (engine.js `puntaje`), the card, the game's own points, and the time played. */
 export function resultado(e) {
   return { s: puntaje(e), t: tarjeta(e), resumen: `🥷 ${Number(e?.score) || 0}`, ...(e?.ms ? { ms: e.ms } : {}) };
 }
@@ -379,6 +379,5 @@ export function desglose(e, { T, fmt }) {
     f === 0 ? T.snBdFlags0 : f === 1 ? fmt(T.snBdFlags1, { b }) : fmt(T.snBdFlags, { n: f, b }),
   ];
   if ((e.bestStreak | 0) > 1) lineas.push(fmt(T.snBdStreak, { n: e.bestStreak }));
-  if ((e.score | 0) > 100) lineas.push(fmt(T.snBdCap, { n: e.score }));
   return lineas;
 }
