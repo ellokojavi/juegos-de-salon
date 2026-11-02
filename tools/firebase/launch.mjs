@@ -1,5 +1,5 @@
 /**
- * Publishes at a set time what the owner would switch by hand (D-527): flags to *all* (as their
+ * Publishes at a set time what the owner would switch by hand (D-529): flags to *all* (as their
  * /labs/ card does, `flags/<id>` = { state: 'all', at }) and splash campaigns on (as the panel's
  * 📣 Campaigns does, `splash/<id>` patched with { on: true, at }). Run by the `launch` workflow,
  * which a scheduled task dispatches at the hour.

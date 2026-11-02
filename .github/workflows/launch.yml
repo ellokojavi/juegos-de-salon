@@ -1,4 +1,4 @@
-# Publishes flags and splash campaigns at a set time (D-527): what the owner switches by hand on a
+# Publishes flags and splash campaigns at a set time (D-529): what the owner switches by hand on a
 # /labs/ card or in the panel's 📣 Campaigns. A scheduled task dispatches it at the hour;
 # tools/firebase/launch.mjs writes nothing before `not_before`, so an early run is harmless.
 # It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218).
