@@ -84,6 +84,12 @@ or any other here), launch it and report what it found; do not ask the owner fir
   Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
   `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main` or with red checks, the watcher sends
   one more session to bring it up to date, rerun or fix it (at most twice), or fails the request after an hour (D-486).
+  **Lab readiness is measured** (D-528): a flag on for a lab key holder counts its loads, finished loads, loads with
+  a failure and distinct keys (aggregate, `labsUso/`, `public/assets/js/lab-usage.js`; a page may call `flagDone(id)`
+  when its flagged path is used to the end). The Mac mini's hourly `lab-ready` job (`node tools/agents/lab-ready.mjs check | list | news`)
+  weighs them against `READY` / `READY_BY` in `flag-list.js` (default ≥5 finished by ≥2 keys over ≥3 days, 0 errors,
+  since the flag was last switched) and writes `flagsListas/`; the card then says **✅ Listo para 🚀** with the numbers.
+  The processes round tells the owner once (`news`); the owner still presses 🚀.
 - **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
