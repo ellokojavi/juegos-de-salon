@@ -1442,6 +1442,7 @@
     "tools/e2e/scope.test.mjs",
     "tools/e2e/since-passed.test.mjs",
     "tools/firebase/archive.test.mjs",
+    "tools/firebase/launch.test.mjs",
     "tools/firebase/rankings-history.test.mjs",
     "tools/firebase/rename-player.test.mjs",
     "tools/firebase/room-sweep.test.mjs",
