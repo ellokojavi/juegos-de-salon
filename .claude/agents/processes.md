@@ -92,6 +92,10 @@ that (after a new game, after a big text change), saying why.
   para todos requests. The `lab-publish-watch` job on the Mac mini takes them within 5 minutes; one
   still `requested` after hours means the job failed or is not installed (look at its log), and a
   `failed` one goes in your report to the owner with its reason, so they can ask again from the card.
+- **Lab flags ready to publish (D-528):** `node tools/agents/lab-ready.mjs news` prints each flag that the
+  hourly `lab-ready` job found ready (enough real lab use, no errors) and was not yet told, then marks it
+  told: put those lines in your report once, never again for the same readiness. The owner publishes
+  from the card's 🚀; you never flip a flag.
 - **`documentation`, round mode:** "Do your daily round according to your guide, from
   `origin/main` and in your own worktree (`git worktree add`); PR base `main`." Criteria: its PR
   open (or "nothing to document" if nothing entered), `document.mjs check` with no new ✗ and
