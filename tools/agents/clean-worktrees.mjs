@@ -17,6 +17,12 @@
  * screenshots inside. A `tools/e2e/` script run without an output folder left it (today
  * `tools/e2e/output.mjs` prevents it). When the worktree is removed, it goes with it.
  *
+ * **Generated files** do not count either: screenshots (`docs/screenshots/`), promo video renders
+ * (`marketing/promo-video/output/`) and splash teaser videos (`public/assets/splash/*.mp4`). Almost
+ * every session regenerates them without committing, so a merged worktree never looked clean and
+ * piled up. They are rebuilt from the code; a worktree whose only changes are these is removed
+ * with them.
+ *
  * And the **local branches without a worktree** (D-315), which piled up by the dozen in the main
  * folder: it deletes those that already entered `main` and those that have no branch on GitHub
  * (the remote one was deleted on merge, or never pushed) but whose commits are all on GitHub. One
@@ -78,14 +84,24 @@ export function isLitter(path, name) {
   return only(resolve(path, name));
 }
 
-/** `git status --porcelain` → { real, litter }: the litter is untracked folders at the root. */
+/** Paths that are rebuilt from the code: a change there is never work to keep. */
+export const GENERATED = /^(docs\/screenshots\/|marketing\/promo-video\/output\/|public\/assets\/splash\/[^/]+\.mp4$)/;
+
+/**
+ * `git status --porcelain` → { real, litter, generated }: the litter is untracked folders at the
+ * root; the generated, changes under GENERATED.
+ */
 export function readStatus(text, path, litter = isLitter) {
-  const realChanges = [], thrown = [];
+  const realChanges = [], thrown = [], generated = [];
   for (const line of String(text).split('\n').filter(Boolean)) {
     const m = /^\?\? ([^/]+)\/$/.exec(line);
-    if (m && litter(path, m[1])) thrown.push(m[1]); else realChanges.push(line);
+    if (m && litter(path, m[1])) thrown.push(m[1]);
+    // The path after the status code (the first line may come trimmed, " M" as "M"); git quotes
+    // a path with accents ("…configuraci\\303\\263n.png")
+    else if (GENERATED.test(line.trim().replace(/^\S+\s+"?/, ''))) generated.push(line);
+    else realChanges.push(line);
   }
-  return { real: realChanges, litter: thrown };
+  return { real: realChanges, litter: thrown, generated };
 }
 
 /**
@@ -153,7 +169,7 @@ function main() {
   const status = path => {
     if (!statuses.has(path)) {
       const text = attempt(() => git(path, 'status', '--porcelain'));
-      statuses.set(path, text == null ? { real: ['?'], litter: [] } : readStatus(text, path));
+      statuses.set(path, text == null ? { real: ['?'], litter: [], generated: [] } : readStatus(text, path));
     }
     return statuses.get(path);
   };
@@ -183,7 +199,9 @@ function main() {
     if (w.what === 'abandoned' && !attempt(() => { git(root, 'push', '-q', 'origin', `${w.branch}:refs/heads/${w.branch}`); return true; })) continue;
     // Test litter goes with the worktree: with it, `worktree remove` does not let go
     for (const n of status(w.path).litter) attempt(() => rmSync(resolve(w.path, n), { recursive: true, force: true }));
-    const ok = attempt(() => { git(root, 'worktree', 'remove', w.path); git(root, 'branch', '-D', w.branch); return true; });
+    // Only generated files left (real changes never get here): --force lets them go
+    const force = status(w.path).generated.length ? ['--force'] : [];
+    const ok = attempt(() => { git(root, 'worktree', 'remove', ...force, w.path); git(root, 'branch', '-D', w.branch); return true; });
     if (ok) (w.what === 'abandoned' ? saved : removed).push(w);
   }
   if (!SHOW) attempt(() => git(root, 'worktree', 'prune'));
