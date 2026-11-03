@@ -59,6 +59,8 @@ export function signature(test, error) {
 
 /** A line of `gh run view --log-failed` is "job<TAB>step<TAB>time text": the text alone. */
 const text = line => line.replace(/^[^\t]*\t[^\t]*\t\S+Z ?/, '');
+/** End-to-end's summary job, which fails whenever any script did. */
+const GATE = /^Run echo "list: \S+ · scripts: /;
 const NOISE = /^\s+at |^Node\.js v|^\s*\^?\s*$|^##\[(endgroup|group)\]/;
 const ERRORISH = /✗|\bERROR\b|Error\b|AssertionError|assert|expected|FAIL|Cannot|not defined|not a function|Timeout/i;
 
@@ -95,8 +97,11 @@ export function parseLog(log) {
   }
   // A step with no test of its own counts only when no test failed: end-to-end's gate job ("Run echo
   // \"list: success · scripts: failure\"") fails whenever a script does, and is not a failure of its own
-  const tests = failures.filter(f => !f.bare);
-  return (tests.length ? tests : failures).map(({ test, error }) => ({ test, error }));
+  // The gate alone is not recorded either: its signature is the same for every script that ever fails
+  // (61a35d3903 grouped #1133 and #1144, two unrelated breaks, as one "pattern")
+  const kept = failures.filter(f => !(f.bare && GATE.test(f.step || '')));
+  const tests = kept.filter(f => !f.bare);
+  return (tests.length ? tests : kept).map(({ test, error }) => ({ test, error }));
 }
 
 /** The first three lines that look like an error, or the last three lines when none does. */

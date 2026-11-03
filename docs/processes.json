@@ -370,6 +370,43 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "e2e-gate-signature",
+      "what": "CI end-to-end: Run echo \"list: success · scripts: failure\" · end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T16:17:53.6073786Z ##[group]Run echo \"list: success · scripts: failure\"",
+      "seen": [
+        {
+          "date": "2026-11-02T16:18:15.726Z",
+          "what": "#1133 end-to-end: Run echo \"list: success · scripts: failure\"",
+          "commit": "b9af079493cdcb40290c09ddf62e9eb6d1f92661"
+        },
+        {
+          "date": "2026-11-02T19:00:49.627Z",
+          "what": "#1144 end-to-end: Run echo \"list: success · scripts: failure\"",
+          "commit": "c3167165f8892fde2f8d9ecdfe6095a871448771"
+        },
+        {
+          "date": "2026-11-02T20:13:41.679Z",
+          "what": "#1144 end-to-end: Run echo \"list: success · scripts: failure\"",
+          "commit": "16e381c58efc682ddd40acff8851656c240f24e0"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "61a35d3903"
+      ]
+    },
+    {
+      "key": "babel-branch-no-pr",
+      "what": "Branch ccr-bedc08fa-e4itbx (Babel scoring, D-523) pushed with no PR for a day",
+      "seen": [
+        {
+          "date": "2026-11-03",
+          "what": "Branch ccr-bedc08fa-e4itbx (Babel scoring, D-523) pushed with no PR for a day",
+          "commit": "7a5d76b3"
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -460,12 +497,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-02",
-      "to": "72dec3ab7932ab55de5f9da4d0f93f1d3ebaf329"
+      "date": "2026-11-03",
+      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
     },
     "usability": {
-      "date": "2026-11-02",
-      "to": "72dec3ab7932ab55de5f9da4d0f93f1d3ebaf329"
+      "date": "2026-11-03",
+      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
     },
     "ideas": {
       "date": "2026-10-28",

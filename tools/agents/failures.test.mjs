@@ -38,6 +38,8 @@ assert.deepEqual(parseLog(e2eLog), [{ test: 'cup/tournament.mjs:cup', error: '�
 const gate = ['end-to-end\tRun echo "list: success · scripts: failure"\t2026-11-02T16:17:53.6Z list: success · scripts: failure',
   'end-to-end\tRun echo "list: success · scripts: failure"\t2026-11-02T16:17:53.7Z ##[error]Process completed with exit code 1.'].join('\n');
 assert.deepEqual(parseLog(e2eLog + '\n' + gate), [{ test: 'cup/tournament.mjs:cup', error: '✗ the ones left out stay outside' }]);
+// ...and alone (its own job's log) it is not recorded at all
+assert.deepEqual(parseLog(gate), []);
 
 // Capturing: one record per failing test, a run seen twice is not doubled
 const store = { records: [] };
