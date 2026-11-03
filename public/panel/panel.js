@@ -394,8 +394,18 @@ const datos = pares => el('dl', { class: 'datos' }, ...pares.filter(Boolean).map
 /* Reading a number (D-348): change, bands, versions and CSV           */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The change against the period before. In "Today" the day is not over and most numbers are daily
+ * counters with no hour (only rooms and The Cup carry one), so a percent against yesterday's whole
+ * day would read every partial day as a drop: it says yesterday's number instead, with no verdict.
+ */
+function vs(ahora, antes) {
+  return S.range === 'today' ? { ayer: antes || 0 } : variacion(ahora, antes);
+}
+
 /** "▲ 12 % vs. the period before", green when it improves and pink when it worsens. */
 function marcaCambio(c, menosEsMejor = false) {
+  if (c && typeof c === 'object') return el('span', { class: 'cambio' }, `yesterday, whole day: ${n(c.ayer)}`);
   if (c === null) return el('span', { class: 'cambio' }, 'new in the period');
   if (c === 0) return el('span', { class: 'cambio' }, '= previous period');
   const mejor = menosEsMejor ? c < 0 : c > 0;
@@ -664,10 +674,10 @@ function vistaCopa(now) {
     ...titulo(`${torneoLabel} · ${tituloRango()}`, 'The cups that were open in the range, test ones included: they are not split by environment.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(rc.copas, 'active cups', { onClick: verTodas, cambio: variacion(rc.copas, rca.copas) }),
-      tile(rc.nuevas, 'new cups', { cambio: variacion(rc.nuevas, rca.nuevas) }),
+      tile(rc.copas, 'active cups', { onClick: verTodas, cambio: vs(rc.copas, rca.copas) }),
+      tile(rc.nuevas, 'new cups', { cambio: vs(rc.nuevas, rca.nuevas) }),
       tile(rc.inscripciones, 'players signed up'),
-      tile(rc.jugadas, 'games played', { cambio: variacion(rc.jugadas, rca.jugadas) }),
+      tile(rc.jugadas, 'games played', { cambio: vs(rc.jugadas, rca.jugadas) }),
       tile(part === null ? '—' : `${part}%`, 'participation', { info: 'played out of those that could be played, on closed days' }),
       tile(rc.abandonos, 'games left unfinished'),
     ),
@@ -1341,17 +1351,17 @@ function vistaResumen(now) {
     ...titulo(`📊 Summary · ${tituloRango()}`, 'The analyst\'s front page (D-348): the main metric, one card per domain against the previous period of the same length, and what is being played now. Each domain has three bands: pulse, diagnosis and trend. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(norte, '⭐ games finished', { cambio: variacion(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and The Cup games' }),
-      tile(u.semana || '—', 'browsers active in 7 days', { href: ir('usuarios'), cambio: u.semana ? variacion(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'since D-349' }),
+      tile(norte, '⭐ games finished', { cambio: vs(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and The Cup games' }),
+      tile(u.semana || '—', 'browsers active in 7 days', { href: ir('usuarios'), cambio: u.semana ? vs(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'since D-349' }),
       tile(vivas + sinRed + jugandoCopa, '🟢 playing now', { href: ir('ahora'), info: `${n(vivas)} rooms · ${n(sinRed)} offline · ${n(jugandoCopa)} in cups` }),
     ),
     el('div', { class: 'tiles' },
-      tarjeta('grupo', pd.grupo.total, 'games', variacion(pd.grupo.total, pda.grupo.total)),
-      tarjeta('individuales', pd.individual.total, 'games', variacion(pd.individual.total, pda.individual.total), 'One a Day included'),
-      tarjeta('torneo', rc.jugadas, 'games played', variacion(rc.jugadas, rca.jugadas), `participation ${pctTxt(pct(rc.participacion))}`),
-      tarjeta('unoaldia', uad.partidas, 'games', variacion(uad.partidas, uada.partidas), `back the next day ${pctTxt(uad.d1)}`),
-      tarjeta('usuarios', u.diario || '—', 'active per day', u.diario ? variacion(u.diario, ua.diario) : undefined, u.pegajosidad === null ? '' : `stickiness ${u.pegajosidad}%`),
-      tarjeta('trafico', t.visitas, 'visits', variacion(t.visitas, ta.visitas), `${pctTxt(pctDe(t.juegan, t.visitas))} go on to play · ${n(sg.compartidos)} shares`),
+      tarjeta('grupo', pd.grupo.total, 'games', vs(pd.grupo.total, pda.grupo.total)),
+      tarjeta('individuales', pd.individual.total, 'games', vs(pd.individual.total, pda.individual.total), 'One a Day included'),
+      tarjeta('torneo', rc.jugadas, 'games played', vs(rc.jugadas, rca.jugadas), `participation ${pctTxt(pct(rc.participacion))}`),
+      tarjeta('unoaldia', uad.partidas, 'games', vs(uad.partidas, uada.partidas), `back the next day ${pctTxt(uad.d1)}`),
+      tarjeta('usuarios', u.diario || '—', 'active per day', u.diario ? vs(u.diario, ua.diario) : undefined, u.pegajosidad === null ? '' : `stickiness ${u.pegajosidad}%`),
+      tarjeta('trafico', t.visitas, 'visits', vs(t.visitas, ta.visitas), `${pctTxt(pctDe(t.juegan, t.visitas))} go on to play · ${n(sg.compartidos)} shares`),
       tarjeta('salud', pctTxt(fallas), 'loads with failures', fallas === null || fallasA === null ? undefined : fallas - fallasA, h.total.arranque ? `⛔ ${n(h.total.arranque)} did not start` : 'all started', true),
     ),
     franja('tend'),
@@ -1385,8 +1395,8 @@ function vistaGrupo(now) {
     ...titulo(`👥 Group · ${tituloRango()}`, 'Games for several people: on two phones (rooms), on one phone and vs. the phone. A game counts when it starts; a room, only if an opponent joined. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(pd.total, 'group games', { cambio: variacion(pd.total, pda.total) }),
-      tile(conRival, 'rooms with an opponent', { cambio: variacion(conRival, conRivalA) }),
+      tile(pd.total, 'group games', { cambio: vs(pd.total, pda.total) }),
+      tile(conRival, 'rooms with an opponent', { cambio: vs(conRival, conRivalA) }),
       tile(pctTxt(pctDe(conRival, creadas)), 'rooms an opponent joined', { info: `${n(creadas - conRival)} were left alone` }),
       tile(pctTxt(pctDe(term, conRival)), 'rooms that reached the end', { info: 'with a winner or a tie' }),
       tile(f.otras, 'rematches and "again"', { info: 'all offline games: not split by domain' }),
@@ -1431,7 +1441,7 @@ function vistaIndividuales(now) {
     ...titulo(`🧍 Individual · ${tituloRango()}`, 'Games for one person: The Cup\'s standalone games, the solo ones and One a Day. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(pd.total, 'individual games', { cambio: variacion(pd.total, pda.total) }),
+      tile(pd.total, 'individual games', { cambio: vs(pd.total, pda.total) }),
       tile(pctTxt(pctDe(term, pd.total)), 'finished', { info: 'since D-348' }),
       tile(pctTxt(pctDe(ab, emp)), 'abandoned halfway', { info: 'no ending and an hour without signal', hot: emp > 0 && ab / emp > 0.3 }),
       tile(f.otras, '"again"', { info: 'all offline games: not split by domain' }),
@@ -1459,8 +1469,8 @@ function vistaUnoAlDia(now) {
     ...titulo(`📅 One a Day · ${tituloRango()}`, 'The game of the day, the same for everyone (D-230). UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(u.partidas, 'games', { cambio: variacion(u.partidas, ua.partidas) }),
-      tile(u.jugadores, 'players with a name', { cambio: variacion(u.jugadores, ua.jugadores) }),
+      tile(u.partidas, 'games', { cambio: vs(u.partidas, ua.partidas) }),
+      tile(u.jugadores, 'players with a name', { cambio: vs(u.jugadores, ua.jugadores) }),
       tile(pctTxt(u.d1), 'back the next day'),
       tile(pctTxt(u.d7), 'back after 7 days'),
     ),
@@ -1492,7 +1502,7 @@ function vistaUsuarios(now) {
     desde ? el('p', { class: 'muted small' }, desde) : null,
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(u.diario, 'active per day', { cambio: u.diario ? variacion(u.diario, ua.diario) : undefined }),
+      tile(u.diario, 'active per day', { cambio: u.diario ? vs(u.diario, ua.diario) : undefined }),
       tile(u.semana, 'active in 7 days'),
       tile(u.mes, 'active in 30 days'),
       tile(u.pegajosidad === null ? '—' : `${u.pegajosidad}%`, 'stickiness', { info: 'active per day over active in 30 days' }),
@@ -1615,8 +1625,8 @@ function vistaTimeline(now) {
   return [
     ...titulo(`🕑 Timeline · ${tituloRango()}`, `The moments of truth, one by one: every game that reached its end, every cup created, joined or finished, every feedback message, and every campaign seen (a splash, or the donation card opened; skins are always on and are not here). Opening a page, starting a game or leaving it halfway is not here. Rooms and offline games follow the environment above; cups and feedback have none. ${ZONA_NOMBRE}, Pacific dates.`),
     el('div', { class: 'tiles' },
-      tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: variacion(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
-      ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: variacion(cuenta[k], cuentaA[k]) }))),
+      tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: vs(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
+      ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: vs(cuenta[k], cuentaA[k]) }))),
     el('p', { class: 'muted small' }, 'Tap a kind to see only it; tap more to add them; tap the last one again to see them all.'),
     el('div', { class: 'grid2' },
       bloque('When', elegido ? `Showing ${elegido.label} below. Tap it again to see the whole range.` : 'Tap a period to see only its events below.',
