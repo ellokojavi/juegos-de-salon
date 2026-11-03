@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.247.8 — 2026-11-02
+- **Labs**: the 🧪 Ribbon de tester card, already on for everyone, moves to La Bodega under ✨ Mejoras lanzadas.
+
+## 0.247.7 — 2026-11-02
+- **🥷 Shinobi: a stick too short falls.** It no longer hangs in the air over the gap: with nothing under its tip it swings on down into the gap, and the ninja runs to the pillar's edge and drops after it.
+- **🥷 Shinobi: from night to day.** Every 15 points the sky moves on: the night turns to dawn with the moon setting and the sun rising behind the mountains, then the morning, and from 45 points the full day.
+- **🥷 Shinobi: a rope that looks like rope.** After a lost life the grapple's rope flies with soft bends, and the ninja climbs it hanging out in the gap, away from the pillar's wall.
+- **🥷 Shinobi: a moving pillar no longer jumps after a fall.** It keeps sliding through the fall and the climb back, from where it was.
+
+## 0.247.6 — 2026-11-02
+- **🗼 Babel's lab card moves to La Bodega** (✨ Mejoras lanzadas, 🚀 Lanzado): the owner already published it for everyone from /labs/; the card keeps the play button, the Ketchapp credit and the English prototype.
+
+## 0.247.5 — 2026-11-02
+- **Tester ribbon, for good**: it no longer depends on its lab flag; every tester key shows it on every screen, and the home page no longer asks the flag itself (with the flag on *all* it would have shown the ribbon to players without a key). The old «tester» chip on the home page goes.
+
+## 0.247.4 — 2026-11-02
+- **🗼 Babel**: a lab key's «Simular final» no longer counts as a game played: it sends no usage signal to the panel, does not use up the Uno al día attempt and saves nothing.
+
+## 0.247.3 — 2026-11-02
+- **Home page order**: games are sorted again by how often they were finished in the last four weeks.
+
+## 0.247.2 — 2026-11-02
+- 🔴 PRs: the owner's Yes now also merges the PR once `tests` and `end-to-end` pass, publishes the site, and closes its approval issue. Before, an approval only turned the check green: the PR waited for someone to merge it, and six approval issues were left open after their PRs merged.
+
 ## 0.247.1 — 2026-11-02
 - **Shinobi and Babel** keep the «Nuevo» label 10 days from their launch, until 2026-11-11 (the owner's request); a game can now set its own length with `diasNuevo`.
 
