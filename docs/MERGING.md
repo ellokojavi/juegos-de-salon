@@ -71,7 +71,7 @@ job's log, find the cause, fix it on the branch and push, without asking the own
   `/?splash=<id>`; a lab game `/labs/<game>/`; a flag `/labs/`; a panel change `/panel/#/<section>`.
   Without the line it is worked out from the files (`destination` in release.mjs). Report to the
   owner only once it is live, with that same link: a merged PR is not live yet.
-- The entry goes without a number in `changelog/<branch>.md` (D-300). Today's version is the first
+- The entry goes without a number in `changelog/<branch>.md` (D-300), with its level by D-530: `patch` for fixes and internal work, `minor` for something new a player sees, `major` only when the owner asks. Today's version is the first
   entry of `CHANGELOG.md` bumped once for each `changelog/` entry not yet collected,
   in the order they reached `main`; the processes agent collects them into `CHANGELOG.md`, with their
   number, in its round (`collect`), and that does not change the version. The `tests` check blocks a PR that
