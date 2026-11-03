@@ -1352,7 +1352,7 @@ function vistaResumen(now) {
     franja('pulso'),
     el('div', { class: 'tiles' },
       tile(norte, '⭐ games finished', { cambio: vs(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and The Cup games' }),
-      tile(u.semana || '—', 'browsers active in 7 days', { href: ir('usuarios'), cambio: u.semana ? vs(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'since D-349' }),
+      tile(u.semana || '—', 'browsers active in 7 days', { href: ir('usuarios'), cambio: u.semana ? variacion(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'since D-349' }),
       tile(vivas + sinRed + jugandoCopa, '🟢 playing now', { href: ir('ahora'), info: `${n(vivas)} rooms · ${n(sinRed)} offline · ${n(jugandoCopa)} in cups` }),
     ),
     el('div', { class: 'tiles' },
