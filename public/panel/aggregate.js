@@ -79,6 +79,18 @@ export function rangeOf(id, now = Date.now()) {
   return { ...r, from: Math.min(desde, hoy), to: hoy };
 }
 
+/**
+ * How far into the "Today" range we are: the UTC day started at midnight UTC, which in Pacific
+ * time is 16:00 (17:00 in summer) the day before. Shown next to the selector so a partial day
+ * reads at its real size: "5h 20m of 24 · since 16:00 Mon, Pacific time".
+ */
+export function hoyUtcLabel(now = Date.now()) {
+  const inicio = dayOf(now) * DAY;
+  const min = Math.floor((now - inicio) / 60000);
+  const dia = new Date(inicio).toLocaleDateString('en-US', { weekday: 'short', timeZone: ZONA_PANEL });
+  return `${Math.floor(min / 60)}h ${min % 60}m of 24 · since ${horaLabel(inicio)} ${dia}, ${ZONA_NOMBRE}`;
+}
+
 /** Lunes de la semana de ese día, en número de día: el día 0 fue jueves. */
 const lunesDe = d => d - ((d + 3) % 7);
 

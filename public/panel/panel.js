@@ -29,7 +29,7 @@ import { $, el } from '../assets/js/ui.js';
 import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
 import {
   DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
-  paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
+  paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf, hoyUtcLabel,
   groupDays, periodLabel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
@@ -2062,6 +2062,8 @@ async function copaSuelta(q) {
 
 function render() {
   const now = Date.now();
+  // "Today" is the UTC day: say how much of it has gone by, in the owner's time
+  $('#range-note').textContent = S.range === 'today' ? hoyUtcLabel(now) : '';
   // A date being picked is not redrawn under the finger: it saves on change, and that redraws
   if (S.ruta.sec === 'campanas' && document.activeElement?.closest?.('#vista input')) return;
   MARCAS = versiones(S.days);
