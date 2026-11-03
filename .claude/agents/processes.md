@@ -352,7 +352,9 @@ that (after a new game, after a big text change), saying why.
    merged, empty and abandoned worktrees (with whatever test junk they have) and the local
    branches that already entered `main` or no longer have a branch on GitHub; it names what it
    leaves. What it deleted and what it left, with the why, goes in your report. If it leaves a
-   worktree "merged but with uncommitted changes" or a branch "with commits that are not on GitHub", you look at it and
+   worktree "merged but with uncommitted changes" (regenerated files under
+   `docs/screenshots/`, `marketing/promo-video/output/` and `public/assets/splash/*.mp4` do not count:
+   those worktrees are removed) or a branch "with commits that are not on GitHub", you look at it and
    report it; you don't force it (`--force`, `-D`) without knowing what it has, and you never
    touch what's ignored in the main folder (`arte-original/`, `settings.local.json` in `.claude/`,
    `.DS_Store`): it's the owner's.
