@@ -51,6 +51,7 @@ export const diaPanel = ts => new Date(ts).toLocaleDateString('en-CA', { timeZon
  * adelante.
  */
 export const RANGOS = [
+  { id: 'today', etiqueta: 'Today', titulo: 'Today', dias: 1, grano: 'dia' },
   { id: '7d', etiqueta: '7 days', titulo: 'Last 7 days', dias: 7, grano: 'dia' },
   { id: '30d', etiqueta: '30 days', titulo: 'Last 30 days', dias: 30, grano: 'dia' },
   { id: '60d', etiqueta: '60 days', titulo: 'Last 60 days', dias: 60, grano: 'semana' },

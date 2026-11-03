@@ -250,7 +250,8 @@ assert.equal(ninguna.ajenas.length, 3);
   const hoy = Math.floor(ahora / DAY);
   const largo = id => { const r = rangeOf(id, ahora); return r.to - r.from + 1; };
 
-  assert.deepEqual(RANGOS.map(r => r.id), ['7d', '30d', '60d', '90d', '1y', 'ytd'], 'los seis rangos, en orden');
+  assert.deepEqual(RANGOS.map(r => r.id), ['today', '7d', '30d', '60d', '90d', '1y', 'ytd'], 'los siete rangos, en orden');
+  assert.equal(largo('today'), 1, 'hoy: el día UTC en curso');
   assert.equal(largo('7d'), 7);
   assert.equal(largo('30d'), 30);
   assert.equal(largo('60d'), 60);
