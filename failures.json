@@ -61,7 +61,11 @@
       "error": "✗ the lab keeps the English prototype under Juegos en prueba, beside Shinobi (D-517)\n✗ 1 failure(s)\n##[warning]stick/lab.mjs failed on the first attempt (2 check(s) red); repeating it once (D-299)",
       "signature": "16f831ead1",
       "date": "2026-11-02T19:00:49.627Z",
-      "fix": null,
+      "fix": {
+        "commit": "ba5059a34ed02faedc66e44ce8b9a3f1fbb84251",
+        "date": "2026-11-03T17:59:37.736Z",
+        "stat": "40 file(s) +520 −198: .claude/agents/processes.md, CHANGELOG.md, CONTRIBUTING.md, changelog/README.md, changelog/ccr-2f0fe074-62xfhg.md, …"
+      },
       "flaky": false
     },
     {
@@ -74,7 +78,11 @@
       "error": "end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T19:00:28.0247375Z ##[group]Run echo \"list: success · scripts: failure\"\n^[[36;1mecho \"list: success · scripts: failure\"^[[0m\n^[[36;1mcase \"failure\" in success|skipped) ;; *) exit 1 ;; esac^[[0m",
       "signature": "61a35d3903",
       "date": "2026-11-02T19:00:49.627Z",
-      "fix": null,
+      "fix": {
+        "commit": "ba5059a34ed02faedc66e44ce8b9a3f1fbb84251",
+        "date": "2026-11-03T17:59:37.736Z",
+        "stat": "40 file(s) +520 −198: .claude/agents/processes.md, CHANGELOG.md, CONTRIBUTING.md, changelog/README.md, changelog/ccr-2f0fe074-62xfhg.md, …"
+      },
       "flaky": false
     },
     {
@@ -87,7 +95,11 @@
       "error": "✗ the lab keeps the English prototype under Juegos en prueba, beside Shinobi (D-517)\n✗ 1 failure(s)\n##[warning]stick/lab.mjs failed on the first attempt (2 check(s) red); repeating it once (D-299)",
       "signature": "16f831ead1",
       "date": "2026-11-02T20:13:41.679Z",
-      "fix": null,
+      "fix": {
+        "commit": "ba5059a34ed02faedc66e44ce8b9a3f1fbb84251",
+        "date": "2026-11-03T17:59:37.736Z",
+        "stat": "30 file(s) +342 −125: .claude/agents/processes.md, CHANGELOG.md, CONTRIBUTING.md, changelog/README.md, changelog/bodega-stack.md, …"
+      },
       "flaky": false
     },
     {
@@ -100,7 +112,11 @@
       "error": "end-to-end\tRun echo \"list: success · scripts: failure\"\t﻿2026-11-02T20:13:19.1112141Z ##[group]Run echo \"list: success · scripts: failure\"\n^[[36;1mecho \"list: success · scripts: failure\"^[[0m\n^[[36;1mcase \"failure\" in success|skipped) ;; *) exit 1 ;; esac^[[0m",
       "signature": "61a35d3903",
       "date": "2026-11-02T20:13:41.679Z",
-      "fix": null,
+      "fix": {
+        "commit": "ba5059a34ed02faedc66e44ce8b9a3f1fbb84251",
+        "date": "2026-11-03T17:59:37.736Z",
+        "stat": "30 file(s) +342 −125: .claude/agents/processes.md, CHANGELOG.md, CONTRIBUTING.md, changelog/README.md, changelog/bodega-stack.md, …"
+      },
       "flaky": false
     }
   ]
