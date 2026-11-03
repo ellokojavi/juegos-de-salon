@@ -12,8 +12,27 @@ modules: no build, no npm and no account for anything to work on it.
 4. The owner reviews it, merges it and publishes it. `main` is protected: nothing goes in without a PR, and
    what goes into `main` goes out right away on https://juegosdesalon.cl/.
 
+### As an invited collaborator
+
+If the owner invited you (Settings → Collaborators, **Write** role), you do not need a fork:
+
+1. Accept the invitation (email or https://github.com/notifications).
+2. Clone `ellokojavi/juegos-de-salon` directly and create your **topic branch** from an up-to-date `main`
+   (`git fetch origin && git switch -c <topic> origin/main`).
+3. Push your branch and open the PR to `main`. Never push to `main` directly (it is protected), and do not
+   push to someone else's branch without asking them.
+4. Same as a fork from here on: green `tests` and `end-to-end`, and the owner merges. What is listed in
+   "What the owner does on merge" stays with the owner, also for collaborators.
+
 A big idea (a new game, a rules change) is worth discussing first in an issue,
 so as not to do work that later does not fit.
+
+## Language
+
+Everything in the repo is **English**: code, comments, docs, commits, PR titles and descriptions, issues
+(D-316). The exceptions are what the player reads (Spanish, English and Portuguese, below) and persisted
+keys (game ids like `'ahorcado'`, Firebase paths, `localStorage` keys), which never change. New file
+names in Spanish fail `english.test.mjs`.
 
 ## Running it
 
@@ -63,6 +82,19 @@ node tools/release/og.mjs check
 The end-to-end tests (`tools/e2e/`) play complete games in Chrome; see their README.
 To look at a single screen: `node tools/e2e/look.mjs <game> <screen> --width 320`.
 
+## Checklist before opening the PR
+
+- [ ] Topic branch, up to date with `main`.
+- [ ] Changelog entry without a number in `changelog/<your-branch>.md`
+      (`node tools/release/changelog.mjs new patch` or `minor`).
+- [ ] Player-facing texts in the three languages; buttons ≥ 44 px; no horizontal scroll at 320 px.
+- [ ] Anything new on a player page sits behind its lab flag (`flag('<id>')`, `public/assets/js/flags.js`)
+      and is listed in `/labs/` (D-395, D-498): the owner turns it on, not the PR.
+- [ ] If the game changed, its `docs/games/<folder>.md` says so.
+- [ ] All `*.test.mjs` / `*.test.py` pass locally, plus the end-to-end script of the screen you touched.
+- [ ] Nothing over 5 MB in git (D-494).
+- [ ] The PR description says what changed, why, and how to see it (the PR gets a preview, D-429).
+
 ## What the owner does on merge (do not do it in your PR)
 
 - **The version number** (D-205, D-300): assigned on its own on merge, in the order the PRs
@@ -81,6 +113,11 @@ To look at a single screen: `node tools/e2e/look.mjs <game> <screen> --width 320
 If you work with Claude Code, just read `CLAUDE.md`: it has the same rules and the
 tools. Some parts belong to the owner (merging, publishing rules, reading reports and the panel
 with the owner's key); in a fork, Claude stops at opening the PR.
+
+## Questions
+
+Open an issue, or ask in the PR itself. Feedback the players send from the app also arrives as issues:
+they are a good place to find something to work on.
 
 ## License
 
