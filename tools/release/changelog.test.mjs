@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync, readFileSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { bump, parseEntry, compute, collect, newEntries, levelBetween, checkPR, arrivalOrder, pending, todayVersion, firstVersion, archive, ROOT } from './changelog.mjs';
+import { bump, parseEntry, compute, collect, newEntries, levelBetween, checkPR, suggestLevel, levelWarning, arrivalOrder, pending, todayVersion, firstVersion, archive, ROOT } from './changelog.mjs';
 
 // Bump and parse
 assert.equal(bump('0.167.3', 'patch'), '0.167.4');
@@ -45,6 +45,18 @@ assert.deepEqual(pr([{ status: 'M', file: 'CHANGELOG.md' }, { status: 'D', file:
 assert.equal(pr([{ status: 'M', file: 'public/index.html' }]).warnings.length, 1, 'public/ without an entry: warning');
 assert.deepEqual(pr([{ status: 'M', file: 'public/index.html' }, { status: 'A', file: 'changelog/x.md' }]), { errors: [], warnings: [] });
 assert.deepEqual(pr([{ status: 'M', file: 'tools/agents/processes.mjs' }]), { errors: [], warnings: [] }, 'without public/, no warning');
+
+// The level the changes call for (D-530)
+const G = "  {\n    id: 'copa',\n  },\n";
+const sug = (files, o = {}) => suggestLevel({ changes: files.map(file => ({ file })), gamesBefore: G, gamesNow: G, ...o });
+assert.equal(sug(['tools/x.mjs', 'docs/a.md']).level, 'patch', 'nothing for players: patch');
+assert.equal(sug(['public/labs/stick/game.js']).why, 'nothing a player sees changes', 'the lab is not the player');
+assert.equal(sug(['public/hangman/game.js']).level, 'patch', 'a fix players see: still patch');
+assert.equal(sug(['public/assets/js/games.js'], { gamesNow: G + "  {\n    id: 'nuevo',\n  },\n" }).level, 'minor', 'a new game: minor');
+assert.equal(sug(['public/labs/index.html'], { branch: 'publish-stick' }).level, 'minor', 'a lab feature out for everyone: minor');
+assert.equal(levelWarning('patch', { level: 'patch', why: '' }), null);
+assert.match(levelWarning('major', { level: 'patch', why: 'x' }), /owner/);
+assert.match(levelWarning('minor', { level: 'patch', why: 'x' }), /only a warning/);
 
 // The order is the order of arrival to main, not by name or by creation
 const dir = mkdtempSync(join(tmpdir(), 'changelog-'));

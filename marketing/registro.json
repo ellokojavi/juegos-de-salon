@@ -50,8 +50,8 @@
       ],
       "estado": "v8 built 2026-10-26, not uploaded yet: the owner uploads it. On YouTube today, the v7 Shorts (ES https://youtube.com/shorts/zM9v2UwEsM8, EN https://youtube.com/shorts/UubTGcUoQD8) in the home page share sheet (D-410)",
       "revision": {
-        "fecha": "2026-10-31",
-        "app": "0.239.1",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": false,
         "pendiente": [
           "The home page's La Copa card now says '▶ Jugar hoy' or 'Día N en Xh Ym' and the Uno al día card carries a month badge, which the video's home shots predate."
@@ -124,8 +124,8 @@
         "caso"
       ],
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }
@@ -165,8 +165,8 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }
@@ -216,8 +216,8 @@
         "agentes"
       ],
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       },
@@ -258,8 +258,8 @@
         "numeros-explosivos"
       ],
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }
@@ -305,8 +305,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }
@@ -448,8 +448,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       },
@@ -491,8 +491,8 @@
         "public/assets/email/header.jpg"
       ],
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }
@@ -532,8 +532,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-29",
-        "app": "0.234.20",
+        "fecha": "2026-11-03",
+        "app": "0.247.8",
         "al_dia": true,
         "pendiente": []
       }

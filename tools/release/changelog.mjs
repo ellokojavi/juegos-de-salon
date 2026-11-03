@@ -8,7 +8,7 @@
 // number (`collect`) in a PR, and collecting them does not change the version.
 //
 // Usage:
-//   node tools/release/changelog.mjs new [patch|minor]    # creates changelog/<branch>.md to write in
+//   node tools/release/changelog.mjs new [patch|minor]    # creates changelog/<branch>.md; no level: the one the changes call for (D-530)
 //   node tools/release/changelog.mjs version              # today's version (the one that gets published)
 //   node tools/release/changelog.mjs show                 # the pending ones, with the number each gets
 //   node tools/release/changelog.mjs check [--base <ref>] # the format; with --base, what the PR brings
@@ -33,6 +33,7 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 export const FOLDER = 'changelog';
+const GAMES = 'public/assets/js/games.js';
 export const LEVELS = ['patch', 'minor', 'major'];
 /** Level names of entries written in Spanish, before D-316. */
 const OLD_LEVELS = { parche: 'patch', menor: 'minor', mayor: 'major' };
@@ -192,6 +193,31 @@ export function checkPR({ changelogBase, changelogNow, changes }) {
   return { errors, warnings };
 }
 
+/** The game ids listed in a games.js text (public/assets/js/games.js). */
+export const gameIds = text => new Set([...(text || '').matchAll(/^\s*id:\s*'([^']+)'/gm)].map(m => m[1]));
+
+/**
+ * The level a PR's changes call for (D-530): `{ level, why }`. A heuristic, so `check` only warns.
+ * - minor: a new game in the catalog (an id added to games.js), or a `publish-<id>` branch (the lab
+ *   gate comes off: the feature is everyone's for good).
+ * - patch: everything else, and always when nothing outside public/labs/ reaches the player.
+ * - never major: that one is the owner's call, not the diff's.
+ */
+export function suggestLevel({ changes, gamesBefore = '', gamesNow = '', branch = '' }) {
+  const fresh = [...gameIds(gamesNow)].filter(id => !gameIds(gamesBefore).has(id));
+  if (fresh.length) return { level: 'minor', why: `new game in the catalog: ${fresh.join(', ')}` };
+  if (/^publish-/.test(branch)) return { level: 'minor', why: 'a lab feature comes out for everyone' };
+  const player = changes.some(c => c.file.startsWith('public/') && !c.file.startsWith('public/labs/') && !/\.test\.mjs$/.test(c.file));
+  return { level: 'patch', why: player ? 'a fix or adjustment players see' : 'nothing a player sees changes' };
+}
+
+/** The warning when the declared level is not the suggested one, or null. */
+export function levelWarning(declared, { level, why }) {
+  if (!declared || declared === level) return null;
+  if (declared === 'major') return `level: major is only for when the owner asks for a new major version (D-530); the changes alone call for ${level} (${why})`;
+  return `level: ${declared}, but the changes call for ${level} (${why}). Keep it if you know better (D-530): it is only a warning`;
+}
+
 /* ------------------------------------------------------------------ */
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -211,7 +237,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`CHANGELOG.md: ${base}. Pending: ${entries.length}. Today's version: ${version}.`);
     for (const e of entries) console.log(`\n### ${e.version} — ${e.date} (${e.file}, ${e.level})\n${e.body}`);
   } else if (cmd === 'new') {
-    const level = normalLevel(args[0] || 'patch');
+    let level = normalLevel(args[0] || 'patch');
+    if (!args[0]) {
+      // No level given: the one the branch's changes so far call for (D-530)
+      try {
+        const base = git(ROOT, 'merge-base', 'origin/main', 'HEAD').trim();
+        const changes = git(ROOT, 'diff', '--name-status', '--no-renames', base).split('\n').filter(Boolean).map(l => ({ file: l.split('\t')[1] }));
+        const s = suggestLevel({ changes, gamesBefore: inGit(base, GAMES), gamesNow: read(GAMES), branch: branch() });
+        level = s.level; console.log(`level ${level}: ${s.why} (D-530; pass patch|minor to choose)`);
+      } catch (_) { /* no origin/main: patch */ }
+    }
     if (!level) { console.error(`level: ${LEVELS.join(', ')}`); process.exit(1); }
     const r = branch();
     if (r === 'main' || r === 'HEAD') { console.error('on a topic branch, not on main'); process.exit(1); }
@@ -230,6 +265,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         .map(l => { const [status, file] = l.split('\t'); return { status: status[0], file }; });
       const { errors, warnings } = checkPR({ changelogBase: inGit(base, 'CHANGELOG.md'), changelogNow: read('CHANGELOG.md'), changes });
       for (const e of errors) { console.log(`✗ ${e}`); bad++; }
+      const mine = changes.find(c => c.status === 'A' && c.file.startsWith(`${FOLDER}/`) && c.file !== `${FOLDER}/README.md`);
+      const declared = mine && existsSync(join(ROOT, mine.file)) ? parseEntry(read(mine.file)).level : null;
+      const w = levelWarning(declared, suggestLevel({ changes, gamesBefore: inGit(base, GAMES), gamesNow: read(GAMES), branch: process.env.GITHUB_HEAD_REF || branch() }));
+      if (w) warnings.push(w);
       for (const w of warnings) console.log(process.env.GITHUB_ACTIONS ? `::warning title=CHANGELOG::${w}` : `⚠️ ${w}`);
     }
     if (bad) process.exit(1);

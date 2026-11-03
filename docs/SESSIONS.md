@@ -52,6 +52,8 @@ Several Claude sessions may be working in this repo at the same time:
   `--parte/` with only Chrome profiles and screenshots) does not count as a change and goes with the worktree.
   It also deletes **local branches** without a worktree that already reached `main` or that no longer have a branch
   on GitHub holding all their commits; one with commits that exist only here is named and left alone.
+  Regenerated screenshots (`docs/screenshots/`), promo video renders and splash teaser videos do not
+  count as changes either: a merged worktree with only those is removed with them.
   Besides the hook, **the processes agent's round runs it every day** and counts it in its report
   (D-315). The scripts in `tools/e2e/` take their output folder with `output()`, never from
   `process.argv[2]` by hand.
