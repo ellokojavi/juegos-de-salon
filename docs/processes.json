@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "72dec3ab7932ab55de5f9da4d0f93f1d3ebaf329",
+  "checkedUpTo": "22f095b567371e5e701ca4367b24e80cd55c36c6",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -391,7 +391,11 @@
           "commit": "16e381c58efc682ddd40acff8851656c240f24e0"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-03",
+        "what": "failures.mjs parseLog never records end-to-end's gate job (failures.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155"
+      },
       "signatures": [
         "61a35d3903"
       ]
@@ -487,6 +491,12 @@
       "key": "memory-bad-sha",
       "what": "record/dispatch resolve the commit to a full sha on origin/main, else refuse (processes.test.mjs)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1069"
+    },
+    {
+      "date": "2026-11-03",
+      "key": "e2e-gate-signature",
+      "what": "failures.mjs parseLog never records end-to-end's gate job (failures.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155"
     }
   ],
   "queueDone": [
@@ -645,6 +655,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1132",
       "note": "docs #1132 merged; usability clean (476 ok), no PR; collected 21 entries; home order updated"
+    },
+    {
+      "date": "2026-11-03",
+      "from": "72dec3ab7932ab55de5f9da4d0f93f1d3ebaf329",
+      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1154",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155",
+      "note": "docs #1152, usability #1153"
     }
   ],
   "ownerDecisions": [
