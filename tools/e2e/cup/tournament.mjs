@@ -622,9 +622,10 @@ if (runs('cup')) {
   const days = SEVEN ? 7 : 3;
   // Levels per day so the table moves: [Cata, Javi, Pancho]
   const LEVELS = [[2, 1, 0], [0, 2, 1], [1, 0, 2], [2, 1, 0], [1, 2, 0], [1, 0, 2], [1, 0, 2]];
-  // A day and three hours, to reach tomorrow's day 1 even on a 25-hour day (summer time ends: on
-  // 2026-11-01 a plain day after 00:30 in Los Angeles was still today, and day 1 never opened)
-  await ev(`__copa.store.adelantar(${DAY + 3 * 3600e3}); 1`);
+  // To 03:00 on the start day, in the cup's zone: a fixed jump depends on the hour the test runs.
+  // A plain day after 00:30 in Los Angeles was still today when summer time ended (2026-11-01), and
+  // a day and three hours after 21:00 there landed on day 2, so the reminder and the grace day missed
+  await ev(`(async()=>{const E=await import('/cup/engine.js');const m=__copa.estado.copa.meta;__copa.store.adelantar(E.medianoche(m.start,m.tz)+3*3600e3-__copa.store.now());return 1})()`);
 
   for (let d = 1; d <= days; d++) {
     for (let j = 0; j < PLAYERS.length; j++) {

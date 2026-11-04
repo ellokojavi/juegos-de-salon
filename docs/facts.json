@@ -1264,6 +1264,9 @@
     "public/labs/dominorama/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
+    "public/labs/flap/engine.js",
+    "public/labs/flap/game.js",
+    "public/labs/flap/scene.js",
     "public/labs/fourth-king/engine.js",
     "public/labs/fourth-king/game.js",
     "public/labs/fourth-king/rules.js",
@@ -1394,6 +1397,7 @@
     "public/labs/code/engine.test.mjs",
     "public/labs/dominorama/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/flap/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
     "public/labs/julep/engine.test.mjs",
     "public/labs/listed.test.mjs",
@@ -1498,6 +1502,7 @@
     "code/lab.mjs",
     "contact-sheet.mjs",
     "cup-games/languages.mjs",
+    "cup/again.mjs",
     "cup/archived.mjs",
     "cup/back-board.mjs",
     "cup/create-week.mjs",
@@ -1522,6 +1527,7 @@
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
     "feedback-prod.mjs",
+    "flap/lab.mjs",
     "fourth-king/game.mjs",
     "fourth-king/lab.mjs",
     "fourth-king/languages.mjs",
@@ -1631,6 +1637,10 @@
       "title": "Merge lanes (D-519)"
     },
     {
+      "path": "docs/LEARNING.md",
+      "title": "The learning programme: AI in the game, and what the owner learns building it"
+    },
+    {
       "path": "docs/MERGING.md",
       "title": "Merging and publishing"
     },
@@ -1719,6 +1729,10 @@
       "title": "💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)"
     },
     {
+      "path": "docs/games/flap.md",
+      "title": "🐤 Aletazo (lab prototype, in Juegos en prueba)"
+    },
+    {
       "path": "docs/games/fourth-king.md",
       "title": "Especificación: Cuarto Rey"
     },
@@ -1761,6 +1775,30 @@
     {
       "path": "docs/games/timeline.md",
       "title": "Diseño: Línea de Tiempo"
+    },
+    {
+      "path": "docs/learning/01-content-pipeline.md",
+      "title": "Piece 1 · Endless content with quality control"
+    },
+    {
+      "path": "docs/learning/02-factory-metrics.md",
+      "title": "Piece 2 · The factory's dashboard"
+    },
+    {
+      "path": "docs/learning/03-taste-model.md",
+      "title": "Piece 3 · The owner's taste as data"
+    },
+    {
+      "path": "docs/learning/04-earned-autonomy.md",
+      "title": "Piece 4 · Earned autonomy"
+    },
+    {
+      "path": "docs/learning/05-hypothesis-loop.md",
+      "title": "Piece 5 · Closing the hypothesis loop"
+    },
+    {
+      "path": "docs/learning/06-model-placement.md",
+      "title": "Piece 6 · Where the model lives: one judge in three places"
     },
     {
       "path": "firebase/README.md",

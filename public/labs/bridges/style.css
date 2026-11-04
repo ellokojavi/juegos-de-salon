@@ -1,7 +1,6 @@
 /* 🚅 Tren en Vilo (lab demo): the cover, the board on a canvas, its bar and the result */
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-tv { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; text-align: center; }
-.titulo-tv .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .titulo-tv .tren { font-size: 2.3rem; display: inline-block; animation: tv-vaiven 1.4s ease-in-out infinite; }
 .titulo-tv.chico .display { font-size: 1.6rem; }
 .titulo-tv.chico .tren { font-size: 1.5rem; }

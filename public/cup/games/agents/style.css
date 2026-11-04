@@ -1,6 +1,5 @@
 /* 🕵️ Agentes (D-286, D-421): its own styles, every class prefixed `ag-` so La Copa's are not touched */
 .ag-titulo { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
-.ag-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .ag-lupa { font-size: 2.4rem; display: inline-block; animation: ag-mira 3.6s ease-in-out infinite; }
 @keyframes ag-mira { 0%, 100% { transform: translateX(-2px) rotate(-6deg); } 50% { transform: translateX(3px) rotate(6deg); } }
 .ag-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }

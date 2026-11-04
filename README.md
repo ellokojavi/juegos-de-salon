@@ -474,6 +474,7 @@ node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/dominorama/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
+node public/labs/flap/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
 node public/labs/stack/engine.test.mjs
@@ -804,6 +805,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [La Copa](docs/games/cup.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
+- [🐤 Aletazo (lab prototype, in Juegos en prueba)](docs/games/flap.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)
 - [Diseño: El Ahorcado](docs/games/hangman.md)
@@ -819,6 +821,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
 - [Merge lanes (D-519)](docs/LANES.md)
+- [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
 - [Merging and publishing](docs/MERGING.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
@@ -828,4 +831,10 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
+- [Piece 1 · Endless content with quality control](docs/learning/01-content-pipeline.md)
+- [Piece 2 · The factory's dashboard](docs/learning/02-factory-metrics.md)
+- [Piece 3 · The owner's taste as data](docs/learning/03-taste-model.md)
+- [Piece 4 · Earned autonomy](docs/learning/04-earned-autonomy.md)
+- [Piece 5 · Closing the hypothesis loop](docs/learning/05-hypothesis-loop.md)
+- [Piece 6 · Where the model lives: one judge in three places](docs/learning/06-model-placement.md)
 <!-- /generated -->

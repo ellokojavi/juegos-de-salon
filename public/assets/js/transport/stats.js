@@ -338,6 +338,10 @@ export function nombreDelCelular(game, storage = globalThis.localStorage) {
   let copa = '';
   try { copa = JSON.parse(leer('juegos-de-salon:copa:nombre') || '""') || ''; } catch (_) { /* nada */ }
   if (copa) return String(copa);
+  // A Cup entered with a player link or by picking the name keeps it only in its list of cups (cup/cuenta.js `mias`)
+  try { const m = JSON.parse(leer('juegos-de-salon:copa:mias') || '[]'); const n = Array.isArray(m) && m.find(c => c?.nombre)?.nombre; if (n) return String(n); } catch (_) { /* nada */ }
+  // The rankings identity (jugador.js)
+  try { const y = JSON.parse(leer('juegos-de-salon:jugador') || 'null'); if (y?.n) return String(y.n); } catch (_) { /* nada */ }
   try {
     for (let i = 0; i < (storage?.length || 0); i++) {
       const k = storage.key(i);

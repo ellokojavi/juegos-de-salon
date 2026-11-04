@@ -44,7 +44,11 @@ assert.deepEqual(noGh.map(r => r.what), ['merged', 'unknown'], 'without gh, only
 
 // Test litter (D-315): only with a lost-argument name and only profiles and screenshots
 const status = readStatus(' M a.js\n?? undefined/\n?? --parte/\n?? notas/\n?? null/\n', '/r', (_, n) => n !== 'notas' && n !== 'null');
-assert.deepEqual(status, { real: [' M a.js', '?? notas/', '?? null/'], litter: ['undefined', '--parte'] });
+assert.deepEqual(status, { real: [' M a.js', '?? notas/', '?? null/'], litter: ['undefined', '--parte'], generated: [] });
+// Generated files (screenshots, promo renders, splash teasers) do not count as a change either
+const gen = readStatus('M docs/screenshots/hangman/05-veredicto.png\n?? docs/screenshots/battleship/\n?? marketing/promo-video/output/promo.mp4\n?? public/assets/splash/ninja-teaser.mp4\n?? "docs/screenshots/hangman/02-configuraci\\303\\263n.png"\n M public/assets/splash/splash.js\n', '/r', () => false);
+assert.deepEqual(gen.real, [' M public/assets/splash/splash.js']);
+assert.equal(gen.generated.length, 5);
 
 // A real repository: an origin, the main folder and four worktrees
 const base = mkdtempSync(join(tmpdir(), 'limpiar-'));

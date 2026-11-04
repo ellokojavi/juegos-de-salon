@@ -3,7 +3,7 @@
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
 import { $, con, conEmoji, el, vibrate } from '../assets/js/ui.js';
-import { ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, zonaDeIdioma } from './engine.js';
+import { ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, tieneFinal, zonaDeIdioma } from './engine.js';
 import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { SFX } from '../assets/js/sound.js';
@@ -424,6 +424,8 @@ function controlDuracion(alCambiar) {
     nodo: el('div', { class: 'dur-campo' }, el('div', { class: 'dur', id: 'dur' }, menos, el('div', { class: 'dur-num', 'aria-live': 'polite' }, num, rango), mas), atajos, filaFinal, aviso),
     get valor() { return n; },
     get final() { return n >= FINAL_DESDE && final; },
+    /** The length and final of a cup to repeat (#1165): what the finished cup had. */
+    poner(k, f) { n = Math.max(DIAS_MIN, Math.min(DIAS_MAX, k)); final = f; pintar(); alCambiar(); },
     rango,
   };
 }
@@ -433,15 +435,27 @@ const ZONA_PUBLICO = { cl: 'America/Santiago', br: 'America/Sao_Paulo' };
 const BANDERA_PUBLICO = { cl: '🇨🇱', br: '🇧🇷' };
 const zonaDelTelefono = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone; return z && z.length <= 40 ? z : ZONA; } catch (_) { return ZONA; } };
 
-async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
+/**
+ * `desde`: the meta of a finished cup to play again with the same group (#1165, the admin's «Otra copa con
+ * este grupo»): the screen comes filled with its name, days, final, language, audience and zone, the
+ * admin's name (`quien`), tomorrow as the start and a new week of games, and says so at the top; nothing
+ * is created until the admin checks it and taps Crear la copa. The link is not repeated (the old cup keeps it).
+ */
+async function pantallaCrearCopa({ nombreInicial = '', desde = null, quien = '' } = {}) {
   const nuevo = await formularioNuevo();
   mostrar('crear');
   const body = $('#crear-body');
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
-  // From an archived cup's memorial (D-476): the same name, ready to change
-  if (nombreInicial) { nombre.input.value = String(nombreInicial).slice(0, COPA_MAX); nombre.input.dispatchEvent(new Event('input')); }
+  // From an archived cup's memorial (D-476) or a finished cup (#1165): the same name, ready to change
+  const nombrePuesto = desde?.name || nombreInicial;
+  if (nombrePuesto) { nombre.input.value = String(nombrePuesto).slice(0, COPA_MAX); nombre.input.dispatchEvent(new Event('input')); }
+  // What the finished cup had, where the screen offers it: the screen of before only has the 7-day cup (and the 3-day one with ?three)
+  const diasPrevios = desde && (desde.days === 7 || (desde.days === 3 && TRES)) ? desde.days : null;
+  const langPrevia = desde && LANGS.includes(desde.lang || 'es') ? desde.lang || 'es' : LANG;
+  const audPrevia = desde && ['global', 'cl', 'br'].includes(desde.aud) ? desde.aud : { es: 'cl', pt: 'br' }[LANG] || 'global';
+  const notaDesde = desde ? el('div', { class: 'panel', id: 'crear-desde' }, el('p', { class: 'muted', style: 'margin:0' }, fmt(T.againNote, { copa: desde.name }))) : null;
   // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
   // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
@@ -464,21 +478,22 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
     if (v === 'finde') { fechas(); return; }
     if (nuevo) { juegos.dias(v); fechas(); return; }
     juegos.sortear(v);
-  }, { inicial: nuevo ? 7 : null });
+  }, { inicial: nuevo ? 7 : diasPrevios });
   // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
   // La hora de la copa sigue al idioma de sus palabras (D-194): en alemán, la de Europa central
-  const notaZona = el('small', { class: 'muted crear-zona', id: 'crear-zona' }, fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(LANG)) }));
+  const notaZona = el('small', { class: 'muted crear-zona', id: 'crear-zona' }, fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(langPrevia)) }));
   const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })),
-    l => { if (!nuevo) notaZona.textContent = fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(l)) }); resumir(); fechas(); }, { inicial: LANG });
+    l => { if (!nuevo) notaZona.textContent = fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(l)) }); resumir(); fechas(); }, { inicial: langPrevia });
   // El público (D-187): global, Chile o Brasil. Parte en el del idioma de quien la crea
   const PUBLICOS = { global: T.audGlobal, cl: T.audCl, br: T.audBr };
   const alcance = opciones(Object.entries(PUBLICOS).map(([valor, titulo]) => ({ valor, titulo })), () => { resumir(); pintarZona(); fechas(); },
-    { inicial: { es: 'cl', pt: 'br' }[LANG] || 'global' });
+    { inicial: audPrevia });
   alcance.nodo.classList.add('tres');
   // The cup's zone (D-521, new screen): suggested by the audience or the phone, the admin can change it;
   // the screen of before keeps the language's zone (D-113, D-194)
-  let zonaElegida = null;
+  // A finished cup's zone is kept when it was not the one its audience or this phone suggests (#1165)
+  let zonaElegida = nuevo && desde?.tz && desde.tz !== (ZONA_PUBLICO[audPrevia] || zonaDelTelefono()) ? desde.tz : null;
   const zonaCopa = () => (nuevo ? zonaElegida || ZONA_PUBLICO[alcance.valor] || zonaDelTelefono() : zonaDeIdioma(idioma.valor));
   const nombreZona = tz => (T.zones[tz] || T.zonesMore[tz] || fmt(T.zoneOther, { tz: tz.split('/').pop().replace(/_/g, ' ') })).replace(/\s*\(.*\)$/, '');
   const zonaSel = el('select', { class: 'zona-sel', id: 'crear-zona-sel', 'aria-label': T.zonePick, hidden: true });
@@ -500,11 +515,12 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   const otraFecha = campoFecha(hoyCrear);
   // On the new screen (D-425, the owner's review) Today is Now, and each says its day of the week: "Ahora (jue)"
   const conDia = (titulo, n) => (nuevo ? `${titulo} (${diaCorto(sumarDias(hoyCrear, n))})` : titulo);
+  // Playing again (#1165) starts tomorrow, so the group gets the link today; the admin can still say Now
   const inicio = opciones([{ valor: 0, titulo: conDia(nuevo ? T.startNow : T.startToday, 0) }, { valor: 1, titulo: conDia(T.startTomorrow, 1) }, { valor: 'otra', titulo: T.startOther }],
-    v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); fechas(); });
+    v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); fechas(); }, { inicial: desde ? 1 : null });
   inicio.nodo.classList.add('tres');
   otraFecha.input.addEventListener('change', () => fechas());
-  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: cuenta.nombre.get() || leerYo()?.n || '' }, { contador: true });
+  const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: quien || cuenta.nombre.get() || leerYo()?.n || '' }, { contador: true });
   // The new screen asks for the PIN once, with 👁 to see it (D-425)
   const pin1 = campoPin(T.fPin), pin2 = nuevo ? null : campoPin(T.fPin2);
   if (nuevo) {
@@ -610,7 +626,10 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
     campoIdioma, campoAlcance, link.nodo) : null;
   resumir();
   pintarZona(); fechas();
-  if (nuevo) return poner(body,
+  // The finished cup's length and final (#1165), once everything the change redraws exists
+  if (desde && nuevo) modo.poner(desde.days, tieneFinal(desde));
+  else if (diasPrevios) { juegos.sortear(diasPrevios); juegos.nodo.hidden = false; }
+  if (nuevo) return poner(body, notaDesde,
     el('div', { class: 'panel' }, nombre.nodo,
       // When it starts goes first, then how long (the owner's review, D-521)
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona),
@@ -618,7 +637,7 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
     juegos.nodo, finde?.nodo,
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
     mas, err, boton, lineaFechas, volver);
-  poner(body, 
+  poner(body, notaDesde,
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),

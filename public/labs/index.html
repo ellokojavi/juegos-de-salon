@@ -94,14 +94,6 @@
           <a class="btn btn--yellow" id="btn-camaleon" href="chameleon/">🦎 Jugar El Camaleón</a>
         </section>
 
-        <section class="panel seccion" id="seccion-stick">
-          <h2>🥷 Shinobi</h2>
-          <p class="muted" style="margin:0">Inspirado en <a href="https://www.ketchappgames.com/" target="_blank" rel="noopener">Stick Hero</a>, de Ketchapp. Mantén el dedo para estirar el palo y suéltalo para tender el puente. Si la punta cae en la bandera, es perfecto y suma más. Tres vidas, y el recorrido de hoy es el mismo para todos.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Listo para lanzar (D-517): en los tres idiomas, con su página <a href="../shinobi/">/shinobi/</a>, ranking, La Copa y Uno al día (desde el mazo del 8 de noviembre). Publicar para todos lo muestra al instante en la portada, la búsqueda y las copas nuevas; Volver al laboratorio lo vuelve a esconder.</p>
-          <a class="btn btn--yellow" id="btn-stick" href="../shinobi/">🥷 Jugar Shinobi</a>
-          <a class="link-btn" id="btn-stick-lab" href="stick/">El prototipo, en inglés</a>
-        </section>
-
 
 
         <section class="panel seccion" id="seccion-memorice">
@@ -123,6 +115,13 @@
           <p class="muted" style="margin:0">Inspirado en <a href="https://easybrain.com/numbermatch" target="_blank" rel="noopener">Number Match</a>: haz estallar de a pares los números iguales o que suman 10, si están juntos en línea, hasta dejar el tablero limpio. Si te quedas sin pares, ➕ copia abajo los que quedan.</p>
           <p class="muted" style="margin:0;font-size:0.85rem">Es el tablero del día, el mismo para todos; al terminar se puede jugar otro.</p>
           <a class="btn btn--yellow" id="btn-explosivos" href="exploding-numbers/">💥 Jugar Números explosivos</a>
+        </section>
+
+        <section class="panel seccion" id="seccion-aletazo">
+          <h2>🐤 Aletazo</h2>
+          <p class="muted" style="margin:0">Inspirado en <a href="https://es.wikipedia.org/wiki/Flappy_Bird" target="_blank" rel="noopener">Flappy Bird</a>, de Dong Nguyen. Un toque, un aletazo: cada toque hace subir al pájaro y la gravedad lo baja. Pasa por los aros (justo al medio vale doble) y por los huecos de los muros, sin chocar. Cada 5 pasadas sube de nivel: más rápido y más justo. Tienes 3 vidas.</p>
+          <p class="muted" style="margin:0;font-size:0.85rem">En los tres idiomas, para uno solo.</p>
+          <a class="btn btn--yellow" id="btn-aletazo" href="flap/">🐤 Jugar Aletazo</a>
         </section>
 
       </section>
@@ -215,6 +214,25 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-cup-again" data-launched="2026-11-04">
+            <details>
+              <summary><h2>🏆 La Copa: otra copa con el mismo grupo</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando una copa termina, bajo el podio el administrador ve «🏆 Otra copa con este grupo». Abre la pantalla de crear ya llena con lo de esa copa: el nombre, cuántos días dura y si tiene final, el idioma, el público, la zona horaria y su nombre, con juegos nuevos y partiendo mañana. Arriba dice de dónde viene todo; revisa, cambia lo que quieras y confirma con Crear la copa. Queda en Administrar con la invitación lista para mandarla al mismo grupo.</p>
+                <a class="btn btn--yellow" id="btn-cup-again" href="../cup/?test&amp;demo=podium-admin">🏆 Ver el podio del administrador</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-stick" data-launched="2026-11-02">
+            <details>
+              <summary><h2>🥷 Shinobi</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Shinobi, inspirado en <a href="https://www.ketchappgames.com/" target="_blank" rel="noopener">Stick Hero</a>, de Ketchapp, es para todos: mantén el dedo para estirar el palo y suéltalo para tender el puente; si la punta cae en la bandera, es perfecto y suma más. Está en la portada, la búsqueda, las copas nuevas, su ranking y Uno al día, en los tres idiomas, en <a href="../shinobi/">/shinobi/</a>.</p>
+                <a class="btn btn--yellow" id="btn-stick" href="../shinobi/">🥷 Jugar Shinobi</a>
+                <a class="link-btn" id="btn-stick-lab" href="stick/">El prototipo, en inglés</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-tester-ribbon" data-launched="2026-11-02">
             <details>
               <summary><h2>🧪 Ribbon de tester</h2><span class="flecha" aria-hidden="true">›</span></summary>
