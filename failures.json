@@ -129,7 +129,11 @@
       "error": "no failing test found in the log",
       "signature": "f2f83772a2",
       "date": "2026-11-04T05:43:53.353Z",
-      "fix": null,
+      "fix": {
+        "commit": "4ea8a1c9638109d736f56126074669f84f53e5e8",
+        "date": "2026-11-04T06:04:46.186Z",
+        "stat": "2 file(s) +5 −3: changelog/ccr-39f25020-dvv611.md, tools/e2e/cup/tournament.mjs"
+      },
       "flaky": false
     },
     {
@@ -142,7 +146,11 @@
       "error": "✗ the reminder says who is missing",
       "signature": "9199ef943c",
       "date": "2026-11-04T05:49:22.079Z",
-      "fix": null,
+      "fix": {
+        "commit": "4ea8a1c9638109d736f56126074669f84f53e5e8",
+        "date": "2026-11-04T06:04:46.186Z",
+        "stat": "2 file(s) +5 −3: changelog/ccr-39f25020-dvv611.md, tools/e2e/cup/tournament.mjs"
+      },
       "flaky": false
     },
     {
