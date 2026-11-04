@@ -170,6 +170,7 @@ const contexto = () => ({
 /** The cover: the card over a demo that flies itself, above the card when there is room. */
 function toCover() {
   result.hidden = true; hud.hidden = true; cover.hidden = false;
+  document.body.classList.remove('jugando');
   texts();
   g = newGame({ W, mode: 'demo', band: demoBand() });
   scene.clear();
@@ -185,6 +186,8 @@ function startGame() {
   counting = true;
   unlockAudio();
   cover.hidden = true; result.hidden = true; hud.hidden = true;
+  // The game's screen, like Stack's and Stick's: the tester ribbon's «T» hides, so it never covers the HUD's level
+  document.body.classList.add('jugando');
   g = newGame({ W, mode: 'demo' });
   scene.clear();
   stage.classList.add('contando');
@@ -202,7 +205,7 @@ function showResult() {
   const n = g.score, isBest = n > best;
   if (isBest) { best = n; try { localStorage.setItem(BEST_KEY, String(best)); } catch (_) { /* not kept */ } }
   trackFinish({ detalle: `${n} pts · ${g.passed} gates · ${g.perfects} center · ${g.walls} walls · level ${g.level} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
-  hud.hidden = true;
+  hud.hidden = true; document.body.classList.remove('jugando');
   const stamp = $('res-sello');
   stamp.textContent = isBest ? L.record : L.fin; stamp.className = `sello ${isBest ? 'record' : 'fin'}`;
   $('res-puntos').textContent = n;
