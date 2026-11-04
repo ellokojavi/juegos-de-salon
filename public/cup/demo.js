@@ -78,6 +78,8 @@ export const ESCENAS = {
   // El último día, con gente que todavía no juega la final: el admin puede terminarla antes (D-161)
   'final-admin': { inicio: 6, jugadores: 5, jugaron: 6, yo: 'cata01', pantalla: 'admin' },
   podium: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
+  // The finished cup seen by its admin (#1165): «Otra copa con este grupo» under the podium
+  'podium-admin': { inicio: 7, jugadores: 5, jugaron: 7, yo: 'cata01', pantalla: 'tablero' },
   // La máxima densidad del gráfico y de la imagen que se comparte (D-141): 7 días, 10 jugadores
   full: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
   // Out of the cup (D-347): whoever looks missed days 1 and 2; Tere missed day 3, one away from it

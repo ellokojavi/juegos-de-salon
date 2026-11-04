@@ -39,6 +39,14 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
   link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
+- **Another cup with the same group** (#1165, lab, flag `cup-again`): under a finished cup's podium the admin, and only the admin, sees
+  **🏆 Otra copa con este grupo** (after Compartir el resumen, before the way out). It opens the create screen filled from that
+  cup (`crearCopa({ desde: meta, quien })` in `create.js`): the name, the days and the 🏁 final (`modo.poner`), the language, the
+  audience, the zone when it was not the one the audience or the phone suggests, the admin's name, **Mañana** as the start so the group
+  gets the link today, and a **new week** drawn as always; the link is not repeated. A note on top (`#crear-desde`, `againNote`)
+  says it comes from «that cup» and asks to check it: nothing is created until Crear la copa, which lands on Administrar with the
+  invite. The screen of before (the test store without `&lab`) comes filled too, with the 7-day cup. Demo `podium-admin`
+  (the podium seen by the admin) and `tools/e2e/cup/again.mjs`.
 - **On the site's home page** (lab, flag `copa-hoy`): La Copa's card shows **▶ Jugar hoy** and opens `/cup/?<code>&day=<n>` when one of this phone's cups has a day to play (the days left, `porJugar` in `engine.js`, which the cup keeps on the phone each time it is read; `assets/js/cup-today.js` reads them without loading La Copa, D-378); with nothing to play it stays as always. A day played on another phone shows until this phone opens the cup again (`tools/e2e/home/cup-today.mjs`).
 - **Its context on the home page** (lab, flag `copa-contexto`): the card adds the cup's name in a pill on its border (One a Day's month, in gold), the player's place first and then the day's game, a bar of the cup's days, and a yellow-to-orange ▶ that names the day (`Jugar el día N`, `Jugar la final`); two cups or more get a line each (two, then «y N más»); with none, «▶ Crea o únete a una Copa» in the plain yellow pill, like One a Day's «▶ Únete al mes». It reads the copy the cup keeps on the phone: `recorteLista` now adds the place (`place: { at, of, leader, gap }`, from `tabla`, without the others' scores) and each day's game (`games`, and `names` in the page's language from `game.js`), so the home page still does not load La Copa (D-378). Long names end in «…» (`contextCard` in `assets/js/cup-today.js`). A cup kept before that (no `games` or `place` in its copy) still shows «Día N de M. Hoy: <game>», the game read from the calendar the copy keeps (`meta.cal`, via `calendarIds`).
 

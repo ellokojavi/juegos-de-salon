@@ -587,6 +587,9 @@ const ES = {
   medalComeback: '🚀 La remontada',
   medalLast: '📉 Al descenso',
   shareSummary: '📤 Compartir el resumen',
+  // «Otra copa con este grupo» (#1165): the button the admin sees under the podium, and the note on the create screen it fills
+  againBtn: '🏆 Otra copa con este grupo',
+  againNote: 'Viene armada como «{copa}»: el mismo nombre, los mismos días, idioma y público, y una semana nueva de juegos. Revisa que esté todo bien, cambia lo que quieras y toca Crear la copa.',
 
   // Admin
   adminTitle: 'Administrar la copa',
@@ -1464,6 +1467,8 @@ const EN = {
   medalComeback: '🚀 The comeback',
   medalLast: '📉 Relegated',
   shareSummary: '📤 Share the summary',
+  againBtn: '🏆 Another cup with this group',
+  againNote: 'It comes set up like “{copa}”: the same name, days, language and audience, and a new week of games. Check that everything is right, change what you want and tap Create the cup.',
 
   // Admin
   adminTitle: 'Manage the cup',
@@ -2332,6 +2337,8 @@ const PT = {
   medalComeback: '🚀 A virada',
   medalLast: '📉 Rebaixado',
   shareSummary: '📤 Compartilhar o resumo',
+  againBtn: '🏆 Outra copa com este grupo',
+  againNote: 'Vem montada como «{copa}»: o mesmo nome, os mesmos dias, idioma e público, e uma semana nova de jogos. Confira se está tudo certo, mude o que quiser e toque em Criar a copa.',
 
   // Admin
   adminTitle: 'Administrar a copa',

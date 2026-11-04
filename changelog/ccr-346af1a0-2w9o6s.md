@@ -1,0 +1,3 @@
+level: minor
+
+- **La Copa: «🏆 Otra copa con este grupo»** (#1165, in the lab behind the flag `cup-again`): when a cup ends, its admin sees the button under the podium. It opens the create screen already filled from that cup (the name, how many days and whether it has a final, the language, the audience, the time zone and the admin's name), with a new week of games and starting tomorrow, and a note on top saying where it all comes from. The admin checks it, changes what they want and confirms with Crear la copa; the new cup opens on Administrar with the invite ready for the same group. Nothing is created without that tap.
