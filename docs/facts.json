@@ -1502,6 +1502,7 @@
     "code/lab.mjs",
     "contact-sheet.mjs",
     "cup-games/languages.mjs",
+    "cup/again.mjs",
     "cup/archived.mjs",
     "cup/back-board.mjs",
     "cup/create-week.mjs",
