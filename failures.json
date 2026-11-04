@@ -203,6 +203,19 @@
         "stat": "1 file(s) +11 −6: tools/e2e/flap/lab.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 41878770165,
+      "check": "tests",
+      "pr": 1176,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "bc3ab329d33d53d917e508de5d5c97f1314f401b",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/LEARNING.md\", \"title\": \"The learning programm, {\"path\": \"docs/learning/01-content-pipeline.md\", \"title\": \"P, {\"path\": \"docs/learning/02-factory-metrics.md\", \"title\": \"Pi, {\"path\": \"docs/learning/03-taste-model.md\", \"title\": \"Piece , {\"path\": \"docs/learning/04-earned-autonomy.md\", \"title\": \"Pi, {\"path\": \"docs/learning/05-hypothesis-loop.md\", \"title\": \"Pi, {\"path\": \"docs/learni",
+      "signature": "b685488c44",
+      "date": "2026-11-04T17:50:20.307Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
