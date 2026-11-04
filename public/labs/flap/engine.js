@@ -38,7 +38,7 @@ export function rng(seed = Math.random() * 2 ** 32) {
 export const fit = W => clamp(W / 0.9, 0.68, 1);
 export const levelOf = passed => 1 + Math.floor(passed / LEVEL_EVERY);
 /** Points between one time of day and the next (day, afternoon, night, then day again). */
-export const SKY_EVERY = 30;
+export const SKY_EVERY = 20;
 /**
  * The time of day a game is at, counting up without wrapping (0 day, 1 afternoon, 2 night, 3 day…):
  * the cover's demo is always night, a game starts by day and moves on every SKY_EVERY points.
@@ -154,20 +154,46 @@ function cross(g, gate) {
 }
 
 /**
- * The demo on the cover flies itself on a smooth path through the middle of every hoop: between the last
- * gate behind and the next one ahead it eases from one's center to the other's, so it never touches a rim.
- * It beats its wings while it climbs.
+ * The demo on the cover flies like a player: the game's own gravity and flaps, never a scripted path.
+ * Far from the next hoop it flaps whenever it sinks below the hoop's middle. Once a flap's arc can reach
+ * the hoop, it looks ahead: it simulates the flight with and without a flap now, and flaps only when
+ * not flapping would take it under the safe window and flapping would not take it over. So it crosses
+ * every hoop clear of both rims, with flaps and hops like a real game.
  */
-export function autopilot(g, dt = 0) {
-  const b = g.bird, ahead = g.gates.find(h => h.x > b.x);
-  if (!ahead) return;
-  const behind = [...g.gates].reverse().find(h => h.x <= b.x);
-  const x0 = behind ? behind.x : b.x - 0.6, y0 = behind ? behind.y : b.y;
-  const k = Math.min(1, Math.max(0, (b.x - x0) / Math.max(0.01, ahead.x - x0))), e = k * k * (3 - 2 * k);
-  const y = y0 + (ahead.y - y0) * e;
-  b.vy = dt > 0 ? (y - b.y) / dt : 0; b.y = y;
-  b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
-  if (b.vy < -0.05 && b.flapT <= 0) b.flapT = 1;
+const DEMO_GAP = 0.12;
+const HOP = FLAP * FLAP / (2 * G);   // how high a flap lifts it from where it was (0.12)   // the least time between two of the demo's flaps, like a quick thumb
+export function autopilot(g) {
+  const b = g.bird, h = g.gates.find(z => z.x > b.x - BR);
+  if (!h || g.clock - (g.lastFlapAt ?? -1) < DEMO_GAP) return;
+  const sp = g.speed || 0.5, T = (h.x - b.x + BR + RIM) / sp;
+  // How far from the middle it would be at worst, over the stretch level with the rims, if it flaps
+  // once after `d` seconds (never, for d = Infinity)
+  // The next hoop too: a late flap must not send it into that one's top rim (too low there is fine: a
+  // flap fixes that, too high is not)
+  const h2 = g.gates.find(z => z.x > h.x), T2 = h2 ? (h2.x - b.x + BR + RIM) / sp : T;
+  const off = d => {
+    let y = b.y, vy = b.vy, x = b.x, worst = -1, flapped = false;
+    for (let t = 0; t < T2 + 0.02; t += 1 / 120) {
+      if (!flapped && t >= d) { vy = -FLAP; flapped = true; }
+      vy = Math.min(MAX_FALL, vy + G / 120); y += vy / 120; x += sp / 120;
+      if (y < BR) { y = BR; vy = Math.max(0, vy); }
+      if (Math.abs(x - h.x) < BR + RIM) worst = Math.max(worst, Math.abs(y - h.y));
+      else if (h2 && Math.abs(x - h2.x) < BR + RIM) worst = Math.max(worst, h2.y - y);
+    }
+    return worst;
+  };
+  let go;
+  if (T > 0.6) go = b.vy > 0 && b.y > h.y + HOP / 2;   // still far: hop up and down around the hoop's height
+  else {
+    // The best single flap from now to the hoop, or none: flap now only if now is the best moment
+    let best = off(Infinity), when = Infinity;
+    if (best < 0) go = b.vy > 0 && b.y > h.y + HOP / 2;
+    else {
+      for (let d = 0; d < T; d += 1 / 60) { const o = off(d); if (o < best - 0.002) { best = o; when = d; } }
+      go = when === 0 && best < off(Infinity);
+    }
+  }
+  if (go) { flap(g); g.lastFlapAt = g.clock; }
 }
 
 /** Advances the game `dt` seconds. Modes: 'demo' (the cover's), 'glide' (the countdown's), 'ready', 'play', 'dying' and 'over'. */
@@ -186,13 +212,11 @@ export function step(g, dt) {
   if (g.mode === 'glide') { g.hoverY += (0.45 - g.hoverY) * Math.min(1, dt); b.y = g.hoverY + Math.sin(g.clock * 1.3) * 0.05; b.vy = Math.cos(g.clock * 1.3) * 0.065; b.rot = clamp(b.vy * 1.5, -0.12, 0.12); return; }
   const live = g.mode === 'play';
 
-  if (g.mode === 'demo') autopilot(g, dt);
-  else {
-    b.vy = Math.min(MAX_FALL, b.vy + G * dt);
-    b.y += b.vy * dt;
-    if (b.y < BR) { b.y = BR; b.vy = Math.max(0, b.vy); }
-    b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
-  }
+  if (g.mode === 'demo') autopilot(g);
+  b.vy = Math.min(MAX_FALL, b.vy + G * dt);
+  b.y += b.vy * dt;
+  if (b.y < BR) { b.y = BR; b.vy = Math.max(0, b.vy); }
+  b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
   if (g.shield > 0) g.shield -= dt;
 
   if (g.mode === 'dying') {

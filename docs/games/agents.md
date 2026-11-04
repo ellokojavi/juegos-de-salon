@@ -80,7 +80,12 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   Easter (JULIO is winter in Santiago and summer in Madrid). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
   VOLANTÍN) becomes the language's own (POPCORN, PIPA, DRACHEN), and a clue that does not work becomes
   another (TIEMPO is also the weather, so in Portuguese it is CALENDÁRIO). A new word is thought of as a
-  player: the association has to be seen without explaining it.
+  player: the association has to be seen without explaining it. **The rule the whole deck follows**
+  (made explicit by the owner in the learning programme, piece 1, 2026-11-04): the `si` words share
+  one relation with the clue (part of, instance of, happens at, cause of, symbol of) and each
+  temptation relates to it in another way, so the clue's number fits only one group and the player
+  deduces instead of guessing. It is told to nobody: the first board teaches it. The rubric that
+  judges new clues is in [docs/learning/01-content-pipeline.md](../learning/01-content-pipeline.md).
 - **What only one country knows** (D-187): the clues marked `local: 'cl'` (CHILE, DIECIOCHO, FERIA)
   or `'br'` (BRASIL, ARRAIAL) and the words in each deck's `LOCALES` (COCHE, TACO, ONCE, CABRITAS…;
   PIX, CEP, BRIGADEIRO…) stay out of a cup for another audience: `mazoPara(lang, aud)` in `engine.js`.

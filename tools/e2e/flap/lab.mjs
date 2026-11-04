@@ -1,6 +1,6 @@
 // Aletazo in the lab end to end, at /labs/flap/: the lab offers it under Active projects; the cover
-// has the tagline, three steps, the language toggle and a yellow Jugar over a demo that flies itself through the
-// middle of every hoop, above the card on a tall phone; Jugar runs the 3, 2, 1… ¡A jugar! over the bird gliding blurred, then waits
+// has the tagline, three steps, the language toggle and a yellow Jugar over a demo that flies itself like a player
+// (flaps and gravity) without touching a hoop, above the card on a tall phone; Jugar runs the 3, 2, 1… ¡A jugar! over the bird gliding blurred, then waits
 // for the first tap («Toca para aletear») and the tap starts the game; real taps on the stage, timed like a player's,
 // get it through a level (the «Nivel 2» banner, the HUD's level and score); without taps the bird
 // falls, loses its three lives and the result card shows the stamp, the score, a line about how it
@@ -46,11 +46,11 @@ ok(await ev(`(() => { const g = __aletazo.g, s = document.getElementById('escena
 const x0 = await ev(`__aletazo.g.gates[0].x`);
 await sleep(700);
 ok(await ev(`__aletazo.g.mode`) === 'demo' && await ev(`__aletazo.g.gates[0].x`) < x0, 'behind it, the demo flies itself');
-// A perfect flight: every hoop crossed through its middle, none touched (the owner's call)
+// A real flight, flaps and hops like a game, that never touches a hoop (the owner's call)
 ok(await ev(`new Promise(res => { const seen = new Set(), off = []; const t0 = performance.now();
   (function f() { const g = __aletazo.g; for (const h of g.gates) if (h.done && !seen.has(h)) { seen.add(h); off.push(Math.abs(g.bird.y - h.y) / h.r); }
     if (g.gates.some(h => h.hit)) return res(false);
-    if (performance.now() - t0 < 4000) requestAnimationFrame(f); else res(seen.size >= 2 && off.every(d => d < 0.2)); })(); })`), 'through the middle of every hoop, never touching one');
+    if (performance.now() - t0 < 4000) requestAnimationFrame(f); else res(seen.size >= 2 && off.every(d => d < 0.5)); })(); })`), 'flapping through every hoop, never touching one');
 ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'no sideways scroll at 375 px');
 await b.shot('01-cover');
 

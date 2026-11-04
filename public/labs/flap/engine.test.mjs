@@ -148,25 +148,26 @@ assert.deepEqual([0, 5, 6, 15, 16, 30, 31, 50, 51, 200].map(verdictOf), [0, 0, 1
   assert.ok(events(g, 'walls').length <= 1);
 }
 
-// The time of day: the cover is night, a game starts by day and moves on every 30 points
+// The time of day: the cover is night, a game starts by day and moves on every 20 points
 {
   const { skyOf } = await import('./engine.js');
   assert.equal(skyOf({ mode: 'demo', score: 0 }), 2);
-  assert.equal(skyOf({ mode: 'play', score: 29 }), 0); assert.equal(skyOf({ mode: 'play', score: 30 }), 1);
-  assert.equal(skyOf({ mode: 'over', score: 95 }), 3);
+  assert.equal(skyOf({ mode: 'play', score: 19 }), 0); assert.equal(skyOf({ mode: 'play', score: 20 }), 1);
+  assert.equal(skyOf({ mode: 'over', score: 65 }), 3);
 }
 
-// The cover's demo goes through the middle of every hoop, never touching a rim
+// The cover's demo flies like a player, with flaps and gravity, and never touches a rim
 {
   const g = newGame({ W: 0.55, random: rng(7), mode: 'demo', band: [0.15, 0.5] });
   let crossed = 0;
   for (let i = 0; i < 1200; i++) {
     const before = g.gates.filter(h => !h.done);
     step(g, 1 / 60);
-    for (const h of before) if (h.done) { crossed++; assert.ok(Math.abs(g.bird.y - h.y) < h.r * 0.3, 'off the middle'); }
+    for (const h of before) if (h.done) { crossed++; assert.ok(Math.abs(g.bird.y - h.y) < h.r * 0.5, 'off the middle'); }
     assert.ok(!g.gates.some(h => h.hit), 'touched a rim');
   }
   assert.ok(crossed >= 5);
+  assert.ok(g.bird.flapT >= 0);
 }
 
 // A tester's start: from a level, with its speed and points

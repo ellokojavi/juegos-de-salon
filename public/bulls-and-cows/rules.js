@@ -67,7 +67,7 @@ const ES = {
 };
 
 const EN = {
-  docTitle: 'Bulls and Cows 🔢 · Party Games', gameChip: '🔢 Bulls and Cows', menu: '‹ Menu',
+  docTitle: 'Bulls and Cows 🔢 · Parlor Games', gameChip: '🔢 Bulls and Cows', menu: '‹ Menu',
   title: 'Bulls and Cows',
   lead: 'Each player picks a secret number with no repeated digits. Crack your rival\'s number before they crack yours.',
   howTitle: '🧠 How to play',

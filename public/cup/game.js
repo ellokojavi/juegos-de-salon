@@ -271,6 +271,10 @@ const zonaTexto = tz => T.zones[tz] || T.zonesMore?.[tz] || fmt(T.zoneOther, { t
 let horaPropia = false;
 // A board already drawn when the flag arrives is drawn again, with the viewer's hours
 flag('copa-crear').then(v => { horaPropia = v; if (v && L()?.meta && document.getElementById('tablero-body')?.childElementCount && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
+// «Otra copa con este grupo» under a finished cup's podium, for its admin (#1165): the create screen comes
+// filled from that cup, for the admin to check and confirm. lab: #seccion-cup-again
+let otraCopa = false;
+flag('cup-again').then(v => { otraCopa = v; if (v && L()?.meta && document.querySelector('#tablero-body .podio') && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
 const zonaPropia = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) { return null; } })();
 const horaEn = (ms, tz) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
 const otraHora = meta => horaPropia && !!zonaPropia && !!meta?.tz && horaEn(Date.now(), meta.tz) !== horaEn(Date.now(), zonaPropia);
@@ -1079,6 +1083,10 @@ function podio() {
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
     medalla(T.medalLast, m.farolito),
     el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', id: 'btn-resumen', onClick: ev => conBoton(ev, compartirTabla) }, T.shareSummary),
+    // The admin starts the next cup with the same group (#1165): the create screen opens filled from this
+    // one (name, days, final, language, audience, zone, their name; a new week; tomorrow as the start),
+    // with a note to check it before Crear la copa. A cup ended early by the admin offers it too.
+    otraCopa && esAdmin() ? el('button', { class: 'btn btn--yellow btn--sm', style: 'width:100%', id: 'btn-otra-copa', onClick: () => { SFX.tap(); crearCopa({ desde: Lc.meta, quien: Lc.players?.[S.yo]?.name || '' }); } }, T.againBtn) : null,
     // The Cup is over: its way out, right under the podium (C-19)
     salidasFin('podio', { lang: LANG, raiz: RAIZ }));
 }

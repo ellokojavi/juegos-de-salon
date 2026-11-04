@@ -587,6 +587,9 @@ const ES = {
   medalComeback: '🚀 La remontada',
   medalLast: '📉 Al descenso',
   shareSummary: '📤 Compartir el resumen',
+  // «Otra copa con este grupo» (#1165): the button the admin sees under the podium, and the note on the create screen it fills
+  againBtn: '🏆 Otra copa con este grupo',
+  againNote: 'Viene armada como «{copa}»: el mismo nombre, idioma y público, dura lo mismo y trae juegos nuevos. Revisa que esté todo bien, cambia lo que quieras y toca Crear la copa.',
 
   // Admin
   adminTitle: 'Administrar la copa',
@@ -1464,6 +1467,8 @@ const EN = {
   medalComeback: '🚀 The comeback',
   medalLast: '📉 Relegated',
   shareSummary: '📤 Share the summary',
+  againBtn: '🏆 Another cup with this group',
+  againNote: 'It comes set up like “{copa}”: the same name, language and audience, the same length, and new games. Check that everything is right, change what you want and tap Create the cup.',
 
   // Admin
   adminTitle: 'Manage the cup',
@@ -1762,10 +1767,10 @@ const EN = {
   avChange: "Change",
   avReady: "All set. You'll get a notification for this cup in the morning when a day opens, and before it closes if you haven't played.",
   avError: "Notifications couldn't be turned on. Try again.",
-  avStep3: "Open **Party Games** from the new icon, enter The Cup with the code **{code}**, your name and your PIN, and tap **Turn on notifications** again.",
+  avStep3: "Open **Parlor Games** from the new icon, enter The Cup with the code **{code}**, your name and your PIN, and tap **Turn on notifications** again.",
   avInstalled: "I added it",
   avInstalledNext: "Now open it from the icon on your home screen and follow step 3. The PIN is the one you chose for this cup.",
-  avOtherLead: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in Safari and tap **Turn on notifications** again.",
+  avOtherLead: "You're inside another app, and from there Parlor Games can't be added to the home screen. Copy the link, open it in Safari and tap **Turn on notifications** again.",
   avCopied: "Link copied.",
   avSetTitle: "Notifications for this cup",
   avSetDay: "When a day opens",
@@ -2332,6 +2337,8 @@ const PT = {
   medalComeback: '🚀 A virada',
   medalLast: '📉 Rebaixado',
   shareSummary: '📤 Compartilhar o resumo',
+  againBtn: '🏆 Outra copa com este grupo',
+  againNote: 'Vem montada como «{copa}»: o mesmo nome, idioma e público, a mesma duração e jogos novos. Confira se está tudo certo, mude o que quiser e toque em Criar a copa.',
 
   // Admin
   adminTitle: 'Administrar a copa',

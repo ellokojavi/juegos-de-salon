@@ -68,9 +68,9 @@ export const TEXTS = {
   },
   en: {
     link: '☕ Buy me a coffee',
-    end: 'Party Games is free and has no ads. If you enjoy it, you can support it.',
+    end: 'Parlor Games is free and has no ads. If you enjoy it, you can support it.',
     title: 'Buy me a coffee',
-    lead: 'Party Games is free and has no ads, and it will stay that way. Your support helps me keep it running and build new games.',
+    lead: 'Parlor Games is free and has no ads, and it will stay that way. Your support helps me keep it running and build new games.',
     points: ['You choose how much. You pay through Stripe (card, Apple Pay or Google Pay), and I never see your card details.'],
     pay: '☕ Buy a coffee',
     payNote: "Opens Stripe's payment page.",

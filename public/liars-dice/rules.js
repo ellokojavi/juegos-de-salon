@@ -127,7 +127,7 @@ const EN = {
   pintaOne: { 1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six' },
   pintaMany: { 1: 'aces', 2: 'twos', 3: 'threes', 4: 'fours', 5: 'fives', 6: 'sixes' },
   ui: {
-    docTitle: 'Liar\'s Dice 🎲 · Party Games', gameChip: '🎲 Liar\'s Dice', menu: '‹ Menu',
+    docTitle: 'Liar\'s Dice 🎲 · Parlor Games', gameChip: '🎲 Liar\'s Dice', menu: '‹ Menu',
     title: 'Liar\'s Dice', lead: 'Bid how many dice are on the whole table while seeing only your own.',
     rulesSummary: '🎲 How do you play?',
     modesTitle: 'How are you playing?',
