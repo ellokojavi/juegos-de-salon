@@ -1274,6 +1274,10 @@
     "public/labs/julep/engine.js",
     "public/labs/julep/game.js",
     "public/labs/julep/rules.js",
+    "public/labs/memory/engine.js",
+    "public/labs/memory/game.js",
+    "public/labs/memory/rules.js",
+    "public/labs/memory/sprites.js",
     "public/labs/publish.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
@@ -1401,6 +1405,7 @@
     "public/labs/fourth-king/engine.test.mjs",
     "public/labs/julep/engine.test.mjs",
     "public/labs/listed.test.mjs",
+    "public/labs/memory/engine.test.mjs",
     "public/labs/stack/engine.test.mjs",
     "public/labs/stick/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -1567,6 +1572,7 @@
     "liars-dice/rooms-classic.mjs",
     "liars-dice/shake-clock.mjs",
     "look.mjs",
+    "memory/lab.mjs",
     "narrow.mjs",
     "narrow.test.mjs",
     "output.mjs",
@@ -1751,6 +1757,10 @@
     {
       "path": "docs/games/liars-dice.md",
       "title": "Diseño: Dudo"
+    },
+    {
+      "path": "docs/games/memory.md",
+      "title": "👀 Memorice (lab prototype, in Games being tried)"
     },
     {
       "path": "docs/games/paint-mines.md",
