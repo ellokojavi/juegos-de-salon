@@ -287,7 +287,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   para que se vea qué arreglar (#135). In both cases the red, its sound and the counter wait 1.5 s
   (`ROJO_MS`, restarted by each tap, D-337), because players found the instant red too abrupt. La casilla con sol es ámbar y la de luna azul noche, con la luna
   plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
-  vivo (el sol, además, el borde entero) y un candado chico (#61).
+  vivo (el sol, además, el borde entero) y un candado chico (#61). The given sun's amber is dark and
+  saturated, not yellow: on a yellow cell the yellow ☀️ emoji nearly vanished (the owner reported it),
+  and every sun carries a soft drop shadow that lifts it off its cell.
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
   secreta sale de la lista del idioma de la copa (`games/word/palabras.js`: 120 en español, 185 en
