@@ -19,7 +19,7 @@ contributor, round by round on a playable prototype, before entering the lab.
 
 ## Cover
 
-A glass card over a demo that flies itself (the engine's autopilot): the title with a 🐤 that sways,
+A glass card over a demo that flies itself (the engine's autopilot, a smooth path through the middle of every hoop, never touching a rim): the title with a 🐤 that sways,
 the tagline («Un toque, un aletazo.»), the credit («Inspirado en Flappy Bird, de Dong Nguyen.», with the link), three steps, the
 language toggle, a yellow «🐤 Jugar» (like Shinobi's and Babel's Empezar) and the best score on this phone, in C-5's order
 (language toggle before the button). The owner's changes after trying it on the PR preview:
@@ -44,7 +44,7 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 ## How it is played
 
 - **The start:** «🐤 Jugar» (and «Jugar otra vez») runs the shared 3, 2, 1… ¡A jugar! (`cuentaRegresiva`,
-  D-102, D-105) over the bird flying on its own, blurred and darkened; on «¡A jugar!» the blur fades as the
+  D-102, D-105) over the bird gliding on its own (wings still, no hoops to cross: the engine's `'glide'` mode), blurred and darkened; on «¡A jugar!» the blur fades as the
   overlay leaves and the game starts from the bird where it is, easing to the middle and hovering level,
   with «👆 Toca para aletear» pulsing under it until the first tap. Neither the countdown nor the wait is
   play time: the clock starts with the first tap.
@@ -99,3 +99,27 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 and skipped hoop, the shield, the end after 3 lives, levels every 5, the course: no walls in level 1,
 no spike beside a wall, openings always within reach, and the cover's demo never charging anything).
 End to end: `tools/e2e/flap/lab.mjs`.
+
+## The sky
+
+The city goes through the day as the score climbs: a game starts by day (blue sky, sun, white clouds, flocks
+of far birds), turns to afternoon at 30 points (a low orange sun, pink clouds, windows and street lamps
+lighting up) and to night at 60 (the moon, stars, lit windows, the antennas' blinking tips), then day
+again at 90, and so on (`SKY_EVERY` and `skyOf` in `engine.js`). The change eases over about two
+seconds. The cover's demo is always night; the countdown is the coming game's day.
+The ground is a street: a tiled sidewalk, a neon curb and flecked asphalt with its lane, lit by the lamps
+from the afternoon on (`ground()` in `scene.js`). In the afternoon it fades into the sea (`sea()`): a seawall,
+waves and the low sun glittering on the water; the night brings the street back.
+
+## Its type
+
+A skill game: when it leaves the lab and enters the catalog (`games.js`), it goes with `tipos: ['skill']`
+(🎯 Pulso on the home page's filters), like Shinobi and Babel.
+
+
+## Tester's start
+
+With a lab key, the tester ribbon (the «T» on the right edge) offers «🐤 Empezar en nivel»: the level and
+points the next game starts from (`newGame({ level, score })`), then the usual countdown. It is for trying
+the levels and the times of day without playing up to them; a test game keeps no best and sends no stats.
+Its texts are only for testers, in Spanish, like Babel's «Simular final».
