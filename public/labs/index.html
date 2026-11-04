@@ -123,11 +123,6 @@
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
         <p class="muted mejoras-vacio">Ahora no hay ninguna en prueba: las lanzadas están en La Bodega.</p>
-        <section class="panel seccion" id="seccion-cup-again">
-          <h2>🏆 La Copa: otra copa con el mismo grupo</h2>
-          <p class="muted" style="margin:0">Cuando una copa termina, bajo el podio el administrador ve «🏆 Otra copa con este grupo». Abre la pantalla de crear ya llena con lo de esa copa: el nombre, cuántos días dura y si tiene final, el idioma, el público, la zona horaria y su nombre, con juegos nuevos y partiendo mañana. Arriba dice de dónde viene todo; revisa, cambia lo que quieras y confirma con Crear la copa. Queda en Administrar con la invitación lista para mandarla al mismo grupo. Para verlo: <code>/cup/?test&amp;lab&amp;demo=podium-admin</code>.</p>
-          <a class="btn btn--yellow" id="btn-cup-again" href="../cup/?test&amp;lab&amp;demo=podium-admin">🏆 Ver el podio del administrador</a>
-        </section>
         <section class="panel seccion" id="seccion-cup-podium-early">
           <h2>🏆 La Copa: el podio se anuncia el último día</h2>
           <p class="muted" style="margin:0">El último día de la copa, cuando lo que falta por jugar ya no puede cambiar los tres primeros lugares, el tablero lo anuncia arriba con el podio tal como va a quedar: «¡Cata ya ganó la copa!». Cuenta solo con lo que cada jugador puede ver: si todavía no jugaste el último día, los resultados de los demás siguen ocultos y el anuncio espera. Ante la duda, espera: los puntos de un día que sigue abierto todavía pueden bajar cuando lo juegan los demás, y un comodín sin usar puede doblar un día. No reemplaza el podio con sus medallas ni el aviso del cierre, que llegan igual cuando la copa termina. Para verlo: <code>/cup/?test&amp;lab&amp;demo=decided</code>.</p>
@@ -217,6 +212,15 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-cup-again" data-launched="2026-11-04">
+            <details>
+              <summary><h2>🏆 La Copa: otra copa con el mismo grupo</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando una copa termina, bajo el podio el administrador ve «🏆 Otra copa con este grupo». Abre la pantalla de crear ya llena con lo de esa copa: el nombre, cuántos días dura y si tiene final, el idioma, el público, la zona horaria y su nombre, con juegos nuevos y partiendo mañana. Arriba dice de dónde viene todo; revisa, cambia lo que quieras y confirma con Crear la copa. Queda en Administrar con la invitación lista para mandarla al mismo grupo.</p>
+                <a class="btn btn--yellow" id="btn-cup-again" href="../cup/?test&amp;demo=podium-admin">🏆 Ver el podio del administrador</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-stick" data-launched="2026-11-02">
             <details>
               <summary><h2>🥷 Shinobi</h2><span class="flecha" aria-hidden="true">›</span></summary>
