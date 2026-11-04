@@ -4,7 +4,6 @@
 
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-torre { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
-.titulo-torre .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .titulo-torre .logo { font-size: 2.2rem; animation: torre-mece 3s ease-in-out infinite; }
 .titulo-torre.chico .display { font-size: 1.6rem; }
 .titulo-torre.chico .logo { font-size: 1.5rem; }

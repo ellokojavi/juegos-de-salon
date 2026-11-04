@@ -103,7 +103,6 @@
 
 /* ---------- Portada y título ---------- */
 .titulo-clave { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; }
-.titulo-clave .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .titulo-clave .candado { font-size: 1.6rem; line-height: 1; display: inline-block; transform-origin: 50% 80%; animation: cl-candado 3.4s ease-in-out infinite; filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.45)); }
 .titulo-clave.grande .candado { font-size: 2.6rem; }
 @keyframes cl-candado { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg) translateY(-2px); } }

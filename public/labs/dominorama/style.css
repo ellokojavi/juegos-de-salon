@@ -12,7 +12,6 @@ body {
 
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-dominorama { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
-.titulo-dominorama .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .titulo-dominorama .logo { --t: 26px; transform: rotate(-12deg); animation: dominorama-mece 3s ease-in-out infinite; }
 .titulo-dominorama.chico .display { font-size: 1.6rem; }
 .titulo-dominorama.chico .logo { --t: 18px; }
