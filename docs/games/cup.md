@@ -43,7 +43,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   **🏆 Otra copa con este grupo** (after Compartir el resumen, before the way out). It opens the create screen filled from that
   cup (`crearCopa({ desde: meta, quien })` in `create.js`): the name, the days and the 🏁 final (`modo.poner`), the language, the
   audience, the zone when it was not the one the audience or the phone suggests, the admin's name, **Mañana** as the start so the group
-  gets the link today, and a **new week** drawn as always; the link is not repeated. A note on top (`#crear-desde`, `againNote`)
+  gets the link today, and **new games** drawn as always (a week when the cup is one); the link is not repeated. A note on top (`#crear-desde`, `againNote`)
   says it comes from «that cup» and asks to check it: nothing is created until Crear la copa, which lands on Administrar with the
   invite. A cup the admin ended early (D-161) shows its podium too, so it offers it as well. The screen of before (the test store without `&lab`) comes filled too, with the 7-day cup. Demo `podium-admin`
   (the podium seen by the admin) and `tools/e2e/cup/again.mjs`.
