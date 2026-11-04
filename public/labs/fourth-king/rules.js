@@ -198,7 +198,7 @@ const EN = {
     'Never have I ever been more than an hour late to something important.', 'Never have I ever made up a medical excuse.', 'Never have I ever danced alone in front of the mirror.', 'Never have I ever been on a blind date.',
   ],
   ui: {
-    docTitle: 'Fourth King 👑 · Party Games', gameChip: '👑 Fourth King', menu: '‹ Menu',
+    docTitle: 'Fourth King 👑 · Parlor Games', gameChip: '👑 Fourth King', menu: '‹ Menu',
     title: 'Fourth King', lead: 'Draw a card, do what it says, and hope you don\'t get the fourth king.',
     beforeTitle: '🍹 Before you start',
     beforeText: 'Everyone with a full glass. From then on <b>nobody drinks</b> unless a card says so. The phone is the deck and goes around to the right.',
