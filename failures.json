@@ -118,6 +118,19 @@
         "stat": "30 file(s) +342 −125: .claude/agents/processes.md, CHANGELOG.md, CONTRIBUTING.md, changelog/README.md, changelog/bodega-stack.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 41780310252,
+      "check": "end-to-end",
+      "pr": 1163,
+      "branch": "ccr-39f25020-dvv611",
+      "commit": "9e58b88832f6f1f5dac451783719ea9a4b860354",
+      "test": "(end-to-end)",
+      "error": "no failing test found in the log",
+      "signature": "f2f83772a2",
+      "date": "2026-11-04T05:43:53.353Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
