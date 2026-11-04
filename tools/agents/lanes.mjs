@@ -134,8 +134,19 @@ async function ci() {
   const body = JSON.parse(gh('api', `repos/${repo}/issues/${n}`)).body || '';
   if (body.includes(`${APPROVAL_START}`) && body.includes(sha)) { console.log('The question for this commit is already in the PR.'); }
   else gh('api', '-X', 'PATCH', `repos/${repo}/issues/${n}`, '-f', `body=${withApproval(body, approvalBlock(decisionsBody(decision(n, sha, pr.title, result.by))))}`);
+  const open = JSON.parse(gh('issue', 'list', '-R', repo, '--state', 'open', '--label', 'processes', '--search', `"Owner approval: PR #${n}" in:title`, '--json', 'number,body'));
+  // Until main's approve.yml listens to PR edits (the PR that brings D-531 itself), the tick in the
+  // description would do nothing: the old issue is still opened, and its Yes works as before
+  const mainApprove = Buffer.from(gh('api', `repos/${repo}/contents/.github/workflows/approve.yml?ref=main`, '--jq', '.content'), 'base64').toString('utf8');
+  if (!mainApprove.includes('pull_request_target')) {
+    if (open.some(i => i.body.includes(sha))) return;
+    for (const i of open) gh('issue', 'close', String(i.number), '-R', repo, '--comment', `Replaced: the PR changed to ${sha.slice(0, 7)}.`);
+    const d = decision(n, sha, pr.title, result.by);
+    const url = gh('issue', 'create', '-R', repo, '--title', d.title, '--label', 'processes', '--body', decisionsBody(d)).trim();
+    gh('pr', 'comment', String(n), '-R', repo, '--body', `🔴 **Red lane**: main does not read the tick in the description yet, so this time approve it here: ${url}`);
+    return;
+  }
   // Questions opened as issues before the decision moved into the PR (D-531)
-  const open = JSON.parse(gh('issue', 'list', '-R', repo, '--state', 'open', '--label', 'processes', '--search', `"Owner approval: PR #${n}" in:title`, '--json', 'number'));
   for (const i of open) gh('issue', 'close', String(i.number), '-R', repo, '--comment', `Moved: the approval is now in PR #${n}'s description.`);
 }
 
