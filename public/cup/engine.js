@@ -730,6 +730,76 @@ export function desempate(filas, meta = null) {
 }
 
 /**
+ * The podium that nothing can change any more, as `yo` sees it: on the last day, once no result still
+ * to come (the last day, the day before in its grace day, and what `yo` cannot see yet) can move the
+ * first three places, the board announces them before the cup closes. Each player gets the worst and
+ * the best they can still end with (points, days won, place on the last day); a place is decided when
+ * everyone above it, at their worst, still beats everyone below, at their best. A played day that is
+ * still open can drop (whoever has not played it may pass them), a day `yo` has not played counts
+ * as open for everyone, and a free wildcard may still double one day. It never says more than the
+ * table shows, so it errs on the side of waiting. Null until then, and once the cup is over: the podium
+ * itself takes over. Returns the rows with a place up to 3, as `tabla` gives them.
+ */
+export function podioDecidido(L, yo, now) {
+  const { meta } = L;
+  if (terminada(meta, now) || diaActual(meta, now) !== meta.days) return null;
+  const filas = tabla(L, yo, now);
+  if (filas.length < MIN_JUGADORES) return null;
+  const pendientes = {};   // per open day, who may still play it
+  for (let d = 1; d <= meta.days; d++) if (seAbrio(meta, d, now) && abierto(meta, d, now)) pendientes[d] = faltan(L, d, now).map(j => j.pid);
+  const peor = PUNTOS.length;
+  const limites = Object.fromEntries(filas.map(f => {
+    const fijo = f.fuera ? 0 : 1;
+    let minT = f.total, maxT = f.total, minG = f.ganados, maxG = f.ganados, minP = f.finalPos, maxP = f.finalPos;
+    if (!f.fuera) {
+      // A day still to come for them: not played, and open (or hidden from `yo`, who has not played it either)
+      const porJugar = d => { const x = f.dias[d]; return !!x && !x.jugo && (!!x.oculto || !!pendientes[d]?.includes(f.pid)); };
+      const w = comodinEfectivo(L, f.pid, now);
+      // A wildcard that landed on its own may still move to a day they started and have not finished
+      const movible = w.auto && Object.keys(f.dias).some(k => Number(k) <= ultimoDiaComodin(meta) && porJugar(Number(k)));
+      const libre = !w.dia || movible;
+      let dobla = 0;   // the most the wildcard can still add
+      for (const [k, x] of Object.entries(f.dias)) {
+        const d = Number(k);
+        const final = esFinal(meta, d);
+        const vale = libre && d <= ultimoDiaComodin(meta);
+        const otros = (pendientes[d] || []).filter(p => p !== f.pid).length;
+        if (x.oculto || porJugar(d)) {
+          // Anything from nothing (at least the last place if they played) to the day's win
+          const mult = final ? 2 : 1;
+          if (x.jugo) minT += PUNTOS[peor - 1] * mult;
+          maxT += PUNTOS[0] * mult; maxG += 1;
+          if (vale && !final) dobla = Math.max(dobla, PUNTOS[0]);
+          if (d === meta.days) { minP = 99; maxP = 1; }
+        } else if (x.jugo) {
+          // Played: whoever has not played the day yet may still pass them
+          const pos = Math.min(peor, x.pos + otros);
+          const mult = movible && d === w.dia ? 1 : x.x;
+          minT += PUNTOS[pos - 1] * mult - x.pts;
+          if (x.pos === 1 && otros) minG -= 1;
+          if (d === meta.days && otros) minP = pos;
+          if (vale && x.x === 1) dobla = Math.max(dobla, x.pts);
+        }
+      }
+      maxT += dobla;
+    }
+    return [f.pid, { min: [fijo, minT, minG, -minP], max: [fijo, maxT, maxG, -maxP] }];
+  }));
+  const mayor = (a, b) => { for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return a[i] > b[i] ? 1 : -1; return 0; };
+  const igual = (a, b) => mayor(a, b) === 0;
+  const podio = filas.filter(f => f.lugar <= 3);
+  for (const a of podio) for (const b of filas) {
+    if (filas.indexOf(b) <= filas.indexOf(a)) continue;
+    const A = limites[a.pid], B = limites[b.pid];
+    if (mayor(A.min, B.max) > 0) continue;
+    // Tied for good: both settled and equal, so they share the place
+    if (a.lugar === b.lugar && igual(A.min, A.max) && igual(B.min, B.max) && igual(A.min, B.min)) continue;
+    return null;
+  }
+  return podio;
+}
+
+/**
  * Cómo fue cambiando la tabla, día por día, tal como la ve `yo`: el lugar de cada jugador
  * después de cada día que ya puede ver (los que jugó o los cerrados). Para el gráfico de
  * progreso del tablero. Devuelve { dias: [1, 2, …], filas: [{ pid, name, lugares: [..] }] }.
