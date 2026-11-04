@@ -37,6 +37,13 @@ export function rng(seed = Math.random() * 2 ** 32) {
 /** A narrow (portrait) stage sees less ahead: the world slows and tightens with it, so gates come at the same pace. */
 export const fit = W => clamp(W / 0.9, 0.68, 1);
 export const levelOf = passed => 1 + Math.floor(passed / LEVEL_EVERY);
+/** Points between one time of day and the next (day, afternoon, night, then day again). */
+export const SKY_EVERY = 30;
+/**
+ * The time of day a game is at, counting up without wrapping (0 day, 1 afternoon, 2 night, 3 day…):
+ * the cover's demo is always night, a game starts by day and moves on every SKY_EVERY points.
+ */
+export const skyOf = g => (g.mode === 'demo' ? 2 : Math.floor(g.score / SKY_EVERY));
 /** Difficulty from 0 up, never reaching 1: level 1 = 0, 3 ≈ 0.33, 6 ≈ 0.63, 11 ≈ 0.86. */
 export const diff = level => 1 - Math.exp(-(level - 1) / 5);
 /** Each level is clearly faster for the first ten, then keeps climbing slower, never stopping. */
@@ -46,7 +53,8 @@ export const verdictOf = score => (score >= 51 ? 4 : score >= 31 ? 3 : score >= 
 
 /**
  * A new game on a stage `W` wide, ready to fly: the bird hovers until the first flap. `mode: 'demo'`
- * flies itself (the cover, the countdown); `band` ([top, bottom], in heights) keeps a demo's hoops in
+ * flies itself (the cover); `mode: 'glide'` is the countdown's: the bird glides on, wings still, with no
+ * gates to cross; `band` ([top, bottom], in heights) keeps a demo's hoops in
  * the free strip above the cover's card, smaller and whole. `y` starts the bird where a demo left it.
  */
 export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band = null, y = 0.45 } = {}) {
@@ -58,7 +66,7 @@ export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band =
     wallsSeen: false, events: [],
   };
   g.speed = targetSpeed(1, W);
-  while (needSpawn(g)) spawn(g);
+  if (mode !== 'glide') while (needSpawn(g)) spawn(g);
   return g;
 }
 
@@ -147,7 +155,7 @@ export function autopilot(g) {
   if (next && g.bird.vy > 0 && g.bird.y > next.y + 0.015) flap(g);
 }
 
-/** Advances the game `dt` seconds. Modes: 'demo' (the cover's), 'ready', 'play', 'dying' and 'over'. */
+/** Advances the game `dt` seconds. Modes: 'demo' (the cover's), 'glide' (the countdown's), 'ready', 'play', 'dying' and 'over'. */
 export function step(g, dt) {
   const b = g.bird;
   g.clock += dt;
@@ -159,6 +167,8 @@ export function step(g, dt) {
   // Waiting for the first flap: the bird eases from where the countdown's flight left it to the middle, level
   if (g.mode === 'ready') { g.hoverY += (0.45 - g.hoverY) * Math.min(1, dt * 3); b.y = g.hoverY + Math.sin(g.clock * 3.2) * 0.022; b.vy = 0; b.rot = 0; return; }
   if (g.mode === 'over') return;
+  // The countdown: the city scrolls by and the bird glides, wings still, rising and sinking slowly; no gates
+  if (g.mode === 'glide') { g.hoverY += (0.45 - g.hoverY) * Math.min(1, dt); b.y = g.hoverY + Math.sin(g.clock * 1.3) * 0.05; b.vy = Math.cos(g.clock * 1.3) * 0.065; b.rot = clamp(b.vy * 1.5, -0.12, 0.12); return; }
   if (g.mode === 'demo') autopilot(g);
   const live = g.mode === 'play';
 

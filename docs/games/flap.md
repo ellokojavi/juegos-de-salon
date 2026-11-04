@@ -44,7 +44,7 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 ## How it is played
 
 - **The start:** «🐤 Jugar» (and «Jugar otra vez») runs the shared 3, 2, 1… ¡A jugar! (`cuentaRegresiva`,
-  D-102, D-105) over the bird flying on its own, blurred and darkened; on «¡A jugar!» the blur fades as the
+  D-102, D-105) over the bird gliding on its own (wings still, no hoops to cross: the engine's `'glide'` mode), blurred and darkened; on «¡A jugar!» the blur fades as the
   overlay leaves and the game starts from the bird where it is, easing to the middle and hovering level,
   with «👆 Toca para aletear» pulsing under it until the first tap. Neither the countdown nor the wait is
   play time: the clock starts with the first tap.
@@ -99,3 +99,17 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 and skipped hoop, the shield, the end after 3 lives, levels every 5, the course: no walls in level 1,
 no spike beside a wall, openings always within reach, and the cover's demo never charging anything).
 End to end: `tools/e2e/flap/lab.mjs`.
+
+## The sky
+
+The city goes through the day as the score climbs: a game starts by day (blue sky, sun, white clouds, flocks
+of far birds), turns to afternoon at 30 points (a low orange sun, pink clouds, windows and street lamps
+lighting up) and to night at 60 (the moon, stars, lit windows, the antennas' blinking tips), then day
+again at 90, and so on (`SKY_EVERY` and `skyOf` in `engine.js`). The change eases over about two
+seconds. The cover's demo is always night; the countdown is the coming game's day.
+
+## Its type
+
+A skill game: when it leaves the lab and enters the catalog (`games.js`), it goes with `tipos: ['skill']`
+(🎯 Pulso on the home page's filters), like Shinobi and Babel.
+

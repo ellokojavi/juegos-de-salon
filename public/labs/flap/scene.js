@@ -1,31 +1,48 @@
 /**
- * Aletazo's drawing: the night city, the gates, the spikes, the bird and what celebrates, on one
+ * Aletazo's drawing: the city by day, afternoon or night, the gates, the spikes, the bird and what celebrates, on one
  * canvas. The canvas is transparent: it stands on the app's own night (base.css).
  *
  * Nothing here uses `shadowBlur`: on a 3× phone screen it cost ~50 ms a frame. The neon glow is a wide
  * see-through stroke under each line, and the bird and the spike are drawn once into small canvases
  * (sprites) and stamped every frame.
  */
-import { BR, RIM, GROUND, WALL } from './engine.js';
+import { BR, RIM, GROUND, WALL, skyOf } from './engine.js';
 
 const QUIET = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const rnd = (a, b) => a + Math.random() * (b - a);
 const SPARK = ['#ffd23f', '#fff3a6', '#ff2e88', '#2ee6d6'];
 
-/** The stars and two strips of city 4 heights long, repeated as the course scrolls. */
+/**
+ * The sky, 4 heights long and repeated as the course scrolls: stars, clouds, flocks of far birds, two
+ * strips of city (the far one with antennas whose tips blink) and the street lamps.
+ */
 function skyline() {
-  const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * 4, y: Math.random() * 0.8, s: rnd(0.002, 0.005), p: Math.random() * 6 }));
-  const city = (hmin, hmax) => {
+  const stars = Array.from({ length: 70 }, () => ({ x: Math.random() * 4, y: Math.random() * 0.7, s: rnd(0.002, 0.005), p: Math.random() * 6 }));
+  const clouds = Array.from({ length: 7 }, (_, i) => ({ x: i * 0.57 + rnd(0, 0.3), y: rnd(0.08, 0.42), w: rnd(0.12, 0.24) }));
+  const flocks = Array.from({ length: 8 }, (_, i) => ({ x: i * 0.5 + rnd(0, 0.3), y: rnd(0.12, 0.45), n: 2 + ((Math.random() * 3) | 0), p: Math.random() * 6 }));
+  const city = (hmin, hmax, lit) => {
     const out = []; let x = 0;
     while (x < 4) {
       const w = rnd(0.08, 0.22), h = rnd(hmin, hmax), wins = [];
-      if (Math.random() < 0.6) for (let wy = 0.025; wy < h - 0.02; wy += 0.04) for (let wx = 0.02; wx < w - 0.02; wx += 0.035) if (Math.random() < 0.6) wins.push(wx, wy);
-      out.push({ x, w, h, wins }); x += w + rnd(0, 0.05);
+      if (Math.random() < lit) for (let wy = 0.025; wy < h - 0.02; wy += 0.04) for (let wx = 0.02; wx < w - 0.02; wx += 0.035) if (Math.random() < 0.6) wins.push(wx, wy);
+      out.push({ x, w, h, wins, mast: h > hmax * 0.8 && Math.random() < 0.6, p: Math.random() * 6 }); x += w + rnd(0, 0.05);
     }
     return out;
   };
-  return { stars, far: city(0.12, 0.32), near: city(0.06, 0.18) };
+  return { stars, clouds, flocks, far: city(0.12, 0.32, 0.85), near: city(0.06, 0.18, 0.8) };
 }
+
+/**
+ * The three times of day the course goes through, one every SKY_EVERY points (engine.js): day, the
+ * afternoon and the night, then day again. Colors are [r, g, b, a]; the scene blends from one to the next.
+ */
+const SKIES = [
+  { top: [104, 170, 255, 0.9], low: [255, 196, 228, 0.9], far: [150, 120, 215, 0.5], farWin: [255, 255, 255, 0.3], near: [84, 46, 148, 0.85], win: [200, 230, 255, 0.25], cloud: [255, 255, 255, 0.75], bird: [60, 30, 100, 0.7], stars: 0, lamps: 0 },
+  { top: [88, 40, 150, 0.9], low: [255, 128, 92, 0.9], far: [130, 50, 140, 0.55], farWin: [255, 210, 63, 0.35], near: [48, 14, 70, 0.88], win: [255, 210, 63, 0.7], cloud: [255, 150, 180, 0.55], bird: [40, 10, 60, 0.6], stars: 0.25, lamps: 0.7 },
+  { top: [14, 5, 32, 0.55], low: [70, 22, 100, 0.55], far: [138, 77, 255, 0.2], farWin: [255, 210, 63, 0.4], near: [21, 7, 38, 0.8], win: [255, 210, 63, 0.75], cloud: [180, 150, 255, 0.1], bird: [0, 0, 0, 0], stars: 1, lamps: 1 },
+];
+const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+const css = c => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${c[3].toFixed(3)})`;
 
 /**
  * A scene on a canvas. `draw(g)` paints one frame of the game `g`; `fx(event, g)` plays what an engine
@@ -38,6 +55,7 @@ export function escena(canvas) {
   let birdSprite, glowSprite, spikeSprite;
   const sky = skyline();
   let parts = [], pulses = [], floats = [], flashT = 0, glow = 0, shake = 0, trailT = 0;
+  let skyT = null, lastClock = 0;   // the time of day shown, easing to the game's (skyOf)
 
   function sprite(size, paint) {
     const px = Math.max(8, Math.ceil(size * CH * dpr)), c = document.createElement('canvas');
@@ -122,7 +140,7 @@ export function escena(canvas) {
     flashT = Math.max(0, flashT - dt); glow = Math.max(0, glow - dt / 0.6);
     pulses = pulses.filter(p => g.clock - p.born < 0.75);
     // A trail of little sparkles behind the bird while it flies
-    if (!QUIET && (g.mode === 'play' || g.mode === 'demo') && (trailT -= dt) <= 0) {
+    if (!QUIET && (g.mode === 'play' || g.mode === 'demo' || g.mode === 'glide') && (trailT -= dt) <= 0) {
       trailT = 0.045;
       const b = g.bird;
       parts.push({ x: b.x - BR * 1.3, y: b.y + rnd(-0.4, 0.4) * BR, vx: rnd(-0.25, -0.1), vy: rnd(-0.08, 0.08), life: 0.45, max: 0.45, c: SPARK[(Math.random() * 4) | 0], s: rnd(0.006, 0.011), star: true, rot: Math.random() * 3, float: true });
@@ -132,7 +150,7 @@ export function escena(canvas) {
     for (const f of floats) f.life -= dt;
     floats = floats.filter(f => f.life > 0);
   }
-  function clear() { parts = []; pulses = []; floats = []; flashT = 0; glow = 0; shake = 0; }
+  function clear() { skyT = null; lastClock = 0; parts = []; pulses = []; floats = []; flashT = 0; glow = 0; shake = 0; }
 
   /* --- drawing --- */
   const stamp = (sp, x, y, a) => { ctx.save(); ctx.translate(x, y); if (a) ctx.rotate(a); ctx.drawImage(sp.c, -sp.size / 2, -sp.size / 2, sp.size, sp.size); ctx.restore(); };
@@ -143,22 +161,78 @@ export function escena(canvas) {
     ctx.fill(); ctx.restore();
   }
   function background(g) {
-    for (const s of sky.stars) {
+    // The time of day eases to the game's over about two seconds; a new game starts on its own at once
+    const want = skyOf(g), dt = Math.max(0, Math.min(0.1, g.clock - lastClock)); lastClock = g.clock;
+    if (skyT === null || skyT > want) skyT = want; else skyT += Math.min(want - skyT, QUIET ? 1 : dt * 0.5);
+    const i = Math.floor(skyT), k = skyT - i, A = SKIES[i % 3], B = SKIES[(i + 1) % 3];
+    const P = {}; for (const key in A) P[key] = typeof A[key] === 'number' ? A[key] + (B[key] - A[key]) * k : mix(A[key], B[key], k);
+    const w = [0, 0, 0]; w[i % 3] += 1 - k; w[(i + 1) % 3] += k;   // how much of day, afternoon and night
+    const t = QUIET ? 0 : g.clock;
+
+    const grad = ctx.createLinearGradient(0, 0, 0, GROUND);
+    grad.addColorStop(0, css(P.top)); grad.addColorStop(1, css(P.low));
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, W, GROUND);
+    // The sun high by day, low and orange in the afternoon; the moon at night, with its craters
+    const body = (x, y, r, c, a) => {
+      if (a <= 0.01) return;
+      ctx.globalAlpha = a * 0.2; ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r * 1.5, 0, 7); ctx.fill();
+      ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    };
+    body(W * 0.78, 0.16, 0.06, '#fff3a6', w[0]);
+    body(W * 0.72, 0.5, 0.075, '#ff9a4a', w[1]);
+    if (w[2] > 0.01) {
+      body(W * 0.8, 0.14, 0.055, '#fff6d8', w[2]);
+      ctx.globalAlpha = w[2] * 0.35; ctx.fillStyle = '#d9c9a0';
+      for (const [dx, dy, r] of [[-0.015, -0.012, 0.011], [0.018, 0.01, 0.008], [-0.006, 0.02, 0.006]]) { ctx.beginPath(); ctx.arc(W * 0.8 + dx, 0.14 + dy, r, 0, 7); ctx.fill(); }
+    }
+    if (P.stars > 0.01) for (const s of sky.stars) {
       const x = ((s.x - g.scroll * 0.03) % 4 + 4) % 4; if (x > W + 0.1) continue;
-      ctx.globalAlpha = QUIET ? 0.5 : 0.35 + 0.35 * Math.sin(g.clock * 2 + s.p);
+      ctx.globalAlpha = P.stars * (QUIET ? 0.5 : 0.35 + 0.35 * Math.sin(t * 2 + s.p));
       ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x, s.y, s.s, 0, 7); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    const strip = (list, k, fill, winC) => {
+    // Clouds drift slower than the city
+    ctx.fillStyle = css(P.cloud);
+    for (const c of sky.clouds) {
+      const x = ((c.x - g.scroll * 0.06) % 4 + 4) % 4 - 0.3; if (x > W + 0.1) continue;
+      ctx.beginPath(); ctx.ellipse(x, c.y, c.w, c.w * 0.22, 0, 0, 7); ctx.ellipse(x - c.w * 0.35, c.y + 0.005, c.w * 0.45, c.w * 0.2, 0, 0, 7); ctx.ellipse(x + c.w * 0.2, c.y - c.w * 0.12, c.w * 0.4, c.w * 0.25, 0, 0, 7); ctx.fill();
+    }
+    // Far birds in small flocks, beating their wings, by day and in the afternoon
+    if (P.bird[3] > 0.01) {
+      ctx.strokeStyle = css(P.bird); ctx.lineWidth = 0.004; ctx.lineCap = 'round';
+      for (const f of sky.flocks) {
+        const x0 = ((f.x - g.scroll * 0.09 - t * 0.03) % 4 + 4) % 4 - 0.2; if (x0 > W + 0.1) continue;
+        for (let j = 0; j < f.n; j++) {
+          const x = x0 + j * 0.035, y = f.y + (j % 2) * 0.02 + Math.sin(t * 0.8 + f.p) * 0.01, s = 0.011, up = Math.sin(t * 7 + f.p + j) * 0.006;
+          ctx.beginPath(); ctx.moveTo(x - s, y - up); ctx.quadraticCurveTo(x - s * 0.4, y - s * 0.5, x, y); ctx.quadraticCurveTo(x + s * 0.4, y - s * 0.5, x + s, y - up); ctx.stroke();
+        }
+      }
+    }
+    const strip = (list, k, fill, winC, masts) => {
       const off = (g.scroll * k) % 4;
       for (const rep of [0, 4]) for (const b of list) {
         const x = b.x - off + rep; if (x > W || x + b.w < 0) continue;
         ctx.fillStyle = fill; ctx.fillRect(x, GROUND - b.h, b.w, b.h + 0.01);
+        if (masts && b.mast) {
+          ctx.fillRect(x + b.w / 2 - 0.002, GROUND - b.h - 0.05, 0.004, 0.05);
+          ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 3 + b.p); ctx.fillStyle = '#ff2e88';
+          ctx.beginPath(); ctx.arc(x + b.w / 2, GROUND - b.h - 0.05, 0.005, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+        }
         if (winC && b.wins.length) { ctx.fillStyle = winC; const top = GROUND - b.h; for (let i = 0; i < b.wins.length; i += 2) ctx.fillRect(x + b.wins[i], top + b.wins[i + 1], 0.012, 0.014); }
       }
     };
-    strip(sky.far, 0.12, 'rgba(138,77,255,0.20)', 'rgba(255,210,63,0.18)');
-    strip(sky.near, 0.3, 'rgba(21,7,38,0.75)', null);
+    strip(sky.far, 0.12, css(P.far), css(P.farWin), true);
+    strip(sky.near, 0.3, css(P.near), P.win[3] > 0.01 ? css(P.win) : null, false);
+    // Street lamps along the ground, lit from the afternoon on
+    const lo = (g.scroll * 0.6) % 0.4;
+    for (let x = -lo; x < W + 0.1; x += 0.4) {
+      ctx.fillStyle = 'rgba(21,7,38,0.9)'; ctx.fillRect(x, GROUND - 0.07, 0.005, 0.07); ctx.fillRect(x - 0.004, GROUND - 0.072, 0.02, 0.005);
+      if (P.lamps > 0.01) {
+        ctx.globalAlpha = P.lamps * 0.18; ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x + 0.014, GROUND - 0.066, 0.03, 0, 7); ctx.fill();
+        ctx.globalAlpha = P.lamps; ctx.fillStyle = '#fff3a6'; ctx.beginPath(); ctx.arc(x + 0.014, GROUND - 0.066, 0.006, 0, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
     // The ground: a neon line and dashes that run with the speed
     ctx.fillStyle = 'rgba(14,5,28,0.92)'; ctx.fillRect(0, GROUND, W, 1 - GROUND);
     ctx.strokeStyle = 'rgba(255,46,136,0.25)'; ctx.lineWidth = 0.022;

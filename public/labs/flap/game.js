@@ -176,8 +176,8 @@ function toCover() {
   scene.clear();
 }
 /**
- * Jugar and Jugar otra vez: the classic 3, 2, 1… ¡A jugar! (D-102, D-105) over the bird flying on its
- * own, blurred; on «¡A jugar!» the blur fades as the overlay leaves and the real game starts from the
+ * Jugar and Jugar otra vez: the classic 3, 2, 1… ¡A jugar! (D-102, D-105) over the bird gliding on its
+ * own (wings still, no hoops), blurred; on «¡A jugar!» the blur fades as the overlay leaves and the real game starts from the
  * bird where it is, hovering level with «Toca para aletear» until the first tap. The countdown is not
  * play time: the clock starts with that tap.
  */
@@ -188,7 +188,7 @@ function startGame() {
   cover.hidden = true; result.hidden = true; hud.hidden = true;
   // The game's screen, like Stack's and Stick's: the tester ribbon's «T» hides, so it never covers the HUD's level
   document.body.classList.add('jugando');
-  g = newGame({ W, mode: 'demo' });
+  g = newGame({ W, mode: 'glide' });
   scene.clear();
   stage.classList.add('contando');
   cuentaRegresiva({ titulo: `🐤 ${L.nombre}`, ya: L.aJugar }).then(ms => {

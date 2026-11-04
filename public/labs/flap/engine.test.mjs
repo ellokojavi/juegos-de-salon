@@ -148,6 +148,22 @@ assert.deepEqual([0, 5, 6, 15, 16, 30, 31, 50, 51, 200].map(verdictOf), [0, 0, 1
   assert.ok(events(g, 'walls').length <= 1);
 }
 
+// The time of day: the cover is night, a game starts by day and moves on every 30 points
+{
+  const { skyOf } = await import('./engine.js');
+  assert.equal(skyOf({ mode: 'demo', score: 0 }), 2);
+  assert.equal(skyOf({ mode: 'play', score: 29 }), 0); assert.equal(skyOf({ mode: 'play', score: 30 }), 1);
+  assert.equal(skyOf({ mode: 'over', score: 95 }), 3);
+}
+
+// The countdown's glide: no gates, the bird never flaps and stays in the sky
+{
+  const g = newGame({ W: 0.55, random: rng(3), mode: 'glide' });
+  run(g, 5);
+  assert.equal(g.gates.length, 0); assert.equal(g.bird.flapT, 0); assert.equal(g.events.length, 0);
+  assert.ok(g.bird.y > 0.3 && g.bird.y < 0.6); assert.equal(g.mode, 'glide');
+}
+
 // The cover's demo flies itself and never charges lives or points
 {
   const g = newGame({ W: 0.55, random: rng(12) });
