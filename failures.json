@@ -144,6 +144,19 @@
       "date": "2026-11-04T05:49:22.079Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 41781657618,
+      "check": "end-to-end",
+      "pr": 1162,
+      "branch": "aletazo-lab",
+      "commit": "e6a7ee59f0d8fc909dd0d6c8159bf443393fb484",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the reminder says who is missing",
+      "signature": "9199ef943c",
+      "date": "2026-11-04T05:57:13.610Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
