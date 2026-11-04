@@ -169,6 +169,19 @@
         "stat": "4 file(s) +14 −9: docs/games/flap.md, public/labs/flap/game.js, public/labs/flap/style.css, tools/e2e/flap/lab.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 41867575626,
+      "check": "tests",
+      "pr": 1169,
+      "branch": "ccr-67ba64dd-nb295o",
+      "commit": "96283bbd3d1ff9a3daeec87172213b856ff42362",
+      "test": "(tests)",
+      "error": "no failing test found in the log",
+      "signature": "36309b2e9c",
+      "date": "2026-11-04T16:31:26.930Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
