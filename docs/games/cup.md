@@ -11,7 +11,8 @@ serie de partidas en el tiempo (un macro-juego). El diseño completo, con la rev
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
-  que todavía no entra al pozo (D-262).
+  que todavía no entra al pozo (D-262). Since D-498, La Copa's improvements on trial do sit there as cards
+  behind a flag (`copa-crear`, `cup-again`, `cup-podium-early`…), each described in its bullet or row below.
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días
   en la pantalla de antes, D-100, D-262, D-437) · `?test` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
@@ -181,7 +182,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `podium-admin` (the finished cup seen by its admin, #1165), `full`, `out` and `risk` for D-347, and `last-day` for D-444 (day 6 not played, the wildcard unused: its notice); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
+`final-admin`, `podium`, `podium-admin` (the finished cup seen by its admin, #1165), `full`, `out` and `risk` for D-347, `last-day` for D-444 (day 6 not played, the wildcard unused: its notice), `last-day-three` (the same in a 3-day cup without a final, D-438), `played` (whoever looks already played today's day) and `decided` (the last day with the first three places beyond reach, for the lab flag `cup-podium-early`); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`): recién ahí aparece el tablero, y
