@@ -162,7 +162,7 @@ export const CAMPAIGNS = {
     title: { es: '¿Cansado de pensar?', en: 'Tired of thinking?', pt: 'Cansado de pensar?' },
     lead: {
       es: 'Llegó el momento de demostrar destreza: los dos primeros juegos de habilidad de Juegos de Salón.',
-      en: 'Time to show some skill: the first two skill games on Party Games.',
+      en: 'Time to show some skill: the first two skill games on Parlor Games.',
       pt: 'Chegou a hora de mostrar destreza: os dois primeiros jogos de habilidade do Jogos de Salão.',
     },
     // «COMPATIBLE CON 🏆 La Copa Y 📅 Uno al Día»: one sentence, the joiners in the HUD's pixel type
@@ -212,12 +212,12 @@ export const CAMPAIGNS = {
       title: { es: 'Gracias por jugar', en: 'Thanks for playing', pt: 'Obrigado por jogar' },
       text: {
         es: 'Por cada partida, cada risa y cada revancha. Juegos de Salón es gratis y lo seguirá siendo. Si quieres devolver el brindis, puedes apoyarlo desde US$1.',
-        en: 'To every game, every laugh and every rematch. Party Games is free and always will be. If you would like to return the toast, you can support it from US$1.',
+        en: 'To every game, every laugh and every rematch. Parlor Games is free and always will be. If you would like to return the toast, you can support it from US$1.',
         pt: 'A cada partida, cada risada e cada revanche. O Jogos de Salão é grátis e sempre vai ser. Se quiser retribuir o brinde, pode apoiá-lo a partir de US$ 1.',
       },
       // Straight to Stripe's checkout, not through the support card (the owner's request)
       href: PAYMENT_LINK || '?support=open',
-      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Party Games', pt: '💙 Apoiar o Jogos de Salão' },
+      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Parlor Games', pt: '💙 Apoiar o Jogos de Salão' },
     }],
   },
 };

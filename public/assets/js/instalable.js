@@ -1,7 +1,7 @@
 /**
  * La app instalable (D-221). Lo importa cada página que lleva el manifest:
  *
- * - Le pone a la app el nombre del idioma elegido (D-222): "Juegos de Salón", "Party Games",
+ * - Le pone a la app el nombre del idioma elegido (D-222): "Juegos de Salón", "Parlor Games",
  *   "Jogos de Salão" o "Salonspiele". Android lo toma del manifest, que hay uno por idioma
  *   (`manifest.<idioma>.webmanifest`; el español es `manifest.webmanifest`), y el iPhone de
  *   `apple-mobile-web-app-title`, que si no está usa el título de la página ("El Ahorcado 🪢 · …").

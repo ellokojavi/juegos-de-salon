@@ -96,7 +96,7 @@ const ES = {
 };
 
 const EN = {
-  docTitle: 'Hangman 🪢 · Party Games', gameChip: '🪢 Hangman', menu: '‹ Menu',
+  docTitle: 'Hangman 🪢 · Parlor Games', gameChip: '🪢 Hangman', menu: '‹ Menu',
   title: 'Hangman',
   lead: 'Each player cracks their own word.',
   howTitle: '🧠 How to play',

@@ -47,7 +47,7 @@ const ES = {
 };
 
 const EN = {
-  docTitle: 'Battleship ⚓ · Party Games', gameChip: '⚓ Battleship', menu: '‹ Menu',
+  docTitle: 'Battleship ⚓ · Parlor Games', gameChip: '⚓ Battleship', menu: '‹ Menu',
   title: 'Battleship',
   lead: 'Hide your fleet and sink your rival\'s before they sink yours.',
   howTitle: '🧭 How to play',

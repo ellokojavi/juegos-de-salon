@@ -681,7 +681,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 <!-- generated: languages · written by python3 tools/release/readme.py update -->
 | Español | English | Português |
 |---|---|---|
-| Juegos de Salón | Party Games | Jogos de Salão |
+| Juegos de Salón | Parlor Games | Jogos de Salão |
 | La Copa | The Cup | A Copa |
 | Línea de Tiempo | Timeline | Linha do Tempo |
 | Toque y Fama | Bulls and Cows | Toque e Fama |
