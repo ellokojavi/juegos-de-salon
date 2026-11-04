@@ -29,7 +29,8 @@ function skyline() {
     }
     return out;
   };
-  return { stars, clouds, flocks, far: city(0.12, 0.32, 0.85), near: city(0.06, 0.18, 0.8) };
+  const flecks = Array.from({ length: 40 }, () => ({ x: Math.random(), y: Math.random(), s: rnd(0.002, 0.005) }));
+  return { flecks, stars, clouds, flocks, far: city(0.12, 0.32, 0.85), near: city(0.06, 0.18, 0.8) };
 }
 
 /**
@@ -233,13 +234,48 @@ export function escena(canvas) {
         ctx.globalAlpha = 1;
       }
     }
-    // The ground: a neon line and dashes that run with the speed
-    ctx.fillStyle = 'rgba(14,5,28,0.92)'; ctx.fillRect(0, GROUND, W, 1 - GROUND);
-    ctx.strokeStyle = 'rgba(255,46,136,0.25)'; ctx.lineWidth = 0.022;
-    ctx.beginPath(); ctx.moveTo(0, GROUND); ctx.lineTo(W, GROUND); ctx.stroke();
-    ctx.strokeStyle = '#ff2e88'; ctx.lineWidth = 0.006; ctx.stroke();
-    ctx.fillStyle = 'rgba(46,230,214,0.45)';
-    const off = g.scroll % 0.16; for (let x = -off; x < W; x += 0.16) ctx.fillRect(x, GROUND + 0.035, 0.07, 0.008);
+    ground(g, P);
+  }
+  /**
+   * The street, scrolling at the course's speed: a sidewalk of tiles with a lit curb, then the asphalt,
+   * flecked, with its lane's dashes and, from the afternoon on, the lamps' glow on it.
+   */
+  function ground(g, P) {
+    const Y = GROUND, side = 0.028, curb = 0.007, road = Y + side + curb;
+    const dusk = P.lamps;
+    // The sidewalk: lighter by day, tiles whose seams run with the speed
+    const sw = ctx.createLinearGradient(0, Y, 0, Y + side);
+    sw.addColorStop(0, css(mix([120, 92, 170, 1], [40, 18, 66, 1], dusk))); sw.addColorStop(1, css(mix([88, 64, 138, 1], [28, 11, 50, 1], dusk)));
+    ctx.fillStyle = sw; ctx.fillRect(0, Y, W, side);
+    ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fillRect(0, Y, W, 0.002);
+    ctx.fillStyle = 'rgba(14,5,28,0.35)';
+    const to = g.scroll % 0.06; for (let x = -to; x < W; x += 0.06) ctx.fillRect(x, Y, 0.0025, side);
+    // The curb: a neon edge, its glow a wide see-through line
+    ctx.fillStyle = 'rgba(255,46,136,0.22)'; ctx.fillRect(0, Y + side - 0.004, W, curb + 0.008);
+    ctx.fillStyle = '#ff2e88'; ctx.fillRect(0, Y + side, W, curb * 0.6);
+    ctx.fillStyle = 'rgba(21,7,38,0.9)'; ctx.fillRect(0, Y + side + curb * 0.6, W, curb * 0.4);
+    // The asphalt, darker toward the bottom, with flecks that scroll
+    const as = ctx.createLinearGradient(0, road, 0, 1);
+    as.addColorStop(0, css(mix([52, 34, 84, 1], [22, 9, 40, 1], dusk))); as.addColorStop(1, css(mix([30, 18, 52, 1], [10, 4, 20, 1], dusk)));
+    ctx.fillStyle = as; ctx.fillRect(0, road, W, 1 - road);
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    const fo = (g.scroll % 1 + 1) % 1;
+    for (const f of sky.flecks) { const x = ((f.x - fo) % 1 + 1) % 1 * (W + 0.1) - 0.05; ctx.fillRect(x, road + f.y * (1 - road), f.s, f.s * 0.6); }
+    // The lamps' pools of light on the road, from the afternoon on
+    if (dusk > 0.01) {
+      const lo = (g.scroll * 0.6) % 0.4;
+      for (let x = -lo; x < W + 0.1; x += 0.4) {
+        ctx.globalAlpha = dusk * 0.14; ctx.fillStyle = '#ffd23f';
+        ctx.beginPath(); ctx.ellipse(x + 0.014, road + 0.012, 0.06, 0.008, 0, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    // The lane: dashes with a soft glow, at the speed of the course
+    const ly = road + (1 - road) * 0.5, off = g.scroll % 0.16;
+    for (let x = -off; x < W; x += 0.16) {
+      ctx.fillStyle = 'rgba(46,230,214,0.18)'; ctx.fillRect(x - 0.003, ly - 0.004, 0.076, 0.014);
+      ctx.fillStyle = 'rgba(46,230,214,0.7)'; ctx.fillRect(x, ly, 0.07, 0.006);
+    }
   }
   function wall(h) {
     if (!h.wall) return;

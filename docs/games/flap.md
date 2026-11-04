@@ -107,6 +107,8 @@ of far birds), turns to afternoon at 30 points (a low orange sun, pink clouds, w
 lighting up) and to night at 60 (the moon, stars, lit windows, the antennas' blinking tips), then day
 again at 90, and so on (`SKY_EVERY` and `skyOf` in `engine.js`). The change eases over about two
 seconds. The cover's demo is always night; the countdown is the coming game's day.
+The ground is a street: a tiled sidewalk, a neon curb and flecked asphalt with its lane, lit by the lamps
+from the afternoon on (`ground()` in `scene.js`).
 
 ## Its type
 
