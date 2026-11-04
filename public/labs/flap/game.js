@@ -290,11 +290,11 @@ labAccess().then(ok => {
   return import('../../assets/js/tester-ribbon.js').then(({ testerRibbon, setTesterContext, foldTesterRibbon }) => {
     testerRibbon({ lang, labsUrl: new URL('../', import.meta.url).href });
     const num = (id, label, value, max) => el('input', { type: 'number', min: id === 'tr-nivel' ? 1 : 0, max, value, id, 'aria-label': label, inputmode: 'numeric' });
-    const nivel = num('tr-nivel', 'Nivel', 6, 40), puntos = num('tr-puntos', 'Puntos', 28, 999);
+    const nivel = num('tr-nivel', 'Nivel', 6, 40), puntos = num('tr-puntos', 'Puntos', 18, 999);
     const fila = (txt, input) => el('label', { class: 'tr-fila' }, el('span', {}, txt), input);
     setTesterContext(el('div', { class: 'tr-sim' }, el('small', {}, '🐤 Empezar en nivel'),
       fila('Nivel', nivel), fila('Puntos', puntos),
-      el('p', { class: 'muted', style: 'margin:0;font-size:0.8rem' }, 'Cada 30 puntos cambia la hora: 0 día, 30 tarde, 60 noche.'),
+      el('p', { class: 'muted', style: 'margin:0;font-size:0.8rem' }, 'Cada 20 puntos cambia la hora: 0 día, 20 tarde, 40 noche.'),
       el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'tr-empezar', onClick: () => {
         const n = (inp, lo, hi, d) => Math.max(lo, Math.min(hi, Math.round(Number(inp.value)) || d));
         desde = { level: n(nivel, 1, 40, 1), score: n(puntos, 0, 999, 0) };
