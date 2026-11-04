@@ -13,6 +13,7 @@ import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
+import { labAccess } from '../../assets/js/lab-access.js';
 import { newGame, step, flap, verdictOf, LIVES, BR } from './engine.js';
 import { escena } from './scene.js';
 
@@ -131,6 +132,9 @@ function demoBand() {
 let best = 0;
 try { best = Number(localStorage.getItem(BEST_KEY)) || 0; } catch (_) { /* no storage: no best kept */ }
 let g = null, paused = false, startedAt = 0, counting = false;
+// A tester's start (the tester ribbon): the level and points the next game starts from, then a test game
+// that keeps no best and sends no stats. lab: #seccion-aletazo
+let desde = null, prueba = false;
 
 function say(text, shine = false) {
   aviso.textContent = text;
@@ -194,7 +198,9 @@ function startGame() {
   cuentaRegresiva({ titulo: `🐤 ${L.nombre}`, ya: L.aJugar }).then(ms => {
     stage.style.setProperty('--sale', `${ms}ms`);
     stage.classList.remove('contando');
-    g = newGame({ W, y: Math.max(0.3, Math.min(0.6, g.bird.y)) });
+    prueba = !!desde;
+    g = newGame({ W, y: Math.max(0.3, Math.min(0.6, g.bird.y)), ...(desde || {}) });
+    desde = null;
     counting = false;
     hud.hidden = false; paintHud(); say('');
     pista.textContent = L.pista; pista.hidden = false; pista.classList.remove('fuera');
@@ -202,9 +208,9 @@ function startGame() {
   });
 }
 function showResult() {
-  const n = g.score, isBest = n > best;
+  const n = g.score, isBest = !prueba && n > best;
   if (isBest) { best = n; try { localStorage.setItem(BEST_KEY, String(best)); } catch (_) { /* not kept */ } }
-  trackFinish({ detalle: `${n} pts · ${g.passed} gates · ${g.perfects} center · ${g.walls} walls · level ${g.level} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
+  if (!prueba) trackFinish({ detalle: `${n} pts · ${g.passed} gates · ${g.perfects} center · ${g.walls} walls · level ${g.level} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
   hud.hidden = true; document.body.classList.remove('jugando');
   const stamp = $('res-sello');
   stamp.textContent = isBest ? L.record : L.fin; stamp.className = `sello ${isBest ? 'record' : 'fin'}`;
@@ -223,7 +229,7 @@ function press(e) {
   e?.preventDefault();
   if (!g) return;
   if (paused) { paused = false; pauseEl.hidden = true; last = performance.now(); return; }
-  if (g.mode === 'ready') { pista.classList.add('fuera'); startedAt = Date.now(); trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); }
+  if (g.mode === 'ready') { pista.classList.add('fuera'); startedAt = Date.now(); if (!prueba) trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); }
   if (g.mode === 'ready' || g.mode === 'play') flap(g);
 }
 stage.addEventListener('pointerdown', e => { if (e.target.closest('.capa')) return; press(e); });
@@ -272,6 +278,31 @@ function frame(now) {
   if (g) scene.draw(g);
   requestAnimationFrame(frame);
 }
+
+/**
+ * For a lab key: «Empezar en nivel» in the tester ribbon (the «T» on the right edge), to try the levels and
+ * the times of day without playing up to them. The level and the points the game starts from, then the
+ * usual countdown; a test game keeps no best and sends no stats. Texts only for testers, in Spanish like
+ * Babel's «Simular final».
+ */
+labAccess().then(ok => {
+  if (!ok) return;
+  return import('../../assets/js/tester-ribbon.js').then(({ testerRibbon, setTesterContext, foldTesterRibbon }) => {
+    testerRibbon({ lang, labsUrl: new URL('../', import.meta.url).href });
+    const num = (id, label, value, max) => el('input', { type: 'number', min: id === 'tr-nivel' ? 1 : 0, max, value, id, 'aria-label': label, inputmode: 'numeric' });
+    const nivel = num('tr-nivel', 'Nivel', 6, 40), puntos = num('tr-puntos', 'Puntos', 28, 999);
+    const fila = (txt, input) => el('label', { class: 'tr-fila' }, el('span', {}, txt), input);
+    setTesterContext(el('div', { class: 'tr-sim' }, el('small', {}, '🐤 Empezar en nivel'),
+      fila('Nivel', nivel), fila('Puntos', puntos),
+      el('p', { class: 'muted', style: 'margin:0;font-size:0.8rem' }, 'Cada 30 puntos cambia la hora: 0 día, 30 tarde, 60 noche.'),
+      el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'tr-empezar', onClick: () => {
+        const n = (inp, lo, hi, d) => Math.max(lo, Math.min(hi, Math.round(Number(inp.value)) || d));
+        desde = { level: n(nivel, 1, 40, 1), score: n(puntos, 0, 999, 0) };
+        foldTesterRibbon();
+        startGame();
+      } }, 'Empezar')));
+  });
+}).catch(() => {});
 
 $('sound-slot').append(soundToggle());
 $('lang-slot').append(langToggle());

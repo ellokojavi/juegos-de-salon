@@ -10,3 +10,5 @@ level: patch
   waves that run with the speed and the low sun glittering on the water; at night it is the street again.
 - **Aletazo (lab): the cover's bird flies through the middle.** The demo behind the cover follows a smooth
   path through the center of every hoop, instead of bumping the top of some.
+- **Aletazo (lab): start from a level, for testers.** With a lab key, the tester ribbon's «Empezar en nivel»
+  starts a test game from a chosen level and points, to try the levels and the times of day.

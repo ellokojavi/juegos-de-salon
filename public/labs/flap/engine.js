@@ -55,9 +55,10 @@ export const verdictOf = score => (score >= 51 ? 4 : score >= 31 ? 3 : score >= 
  * A new game on a stage `W` wide, ready to fly: the bird hovers until the first flap. `mode: 'demo'`
  * flies itself (the cover); `mode: 'glide'` is the countdown's: the bird glides on, wings still, with no
  * gates to cross; `band` ([top, bottom], in heights) keeps a demo's hoops in
- * the free strip above the cover's card, smaller and whole. `y` starts the bird where a demo left it.
+ * the free strip above the cover's card, smaller and whole. `y` starts the bird where a demo left it;
+ * `level` and `score` start a tester's game further on (its gates and speed, and its sky).
  */
-export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band = null, y = 0.45 } = {}) {
+export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band = null, y = 0.45, level = 1, score = 0 } = {}) {
   const g = {
     W, random, mode, band, clock: 0, speed: 0, scroll: 0, hoverY: y,
     bird: { x: Math.min(0.45, W * 0.3), y, vy: 0, flapT: 0, rot: 0, spin: 0 },
@@ -65,7 +66,10 @@ export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band =
     score: 0, passed: 0, perfects: 0, walls: 0, hearts: LIVES, shield: 0, level: 1, dieT: 0,
     wallsSeen: false, events: [],
   };
-  g.speed = targetSpeed(1, W);
+  // A tester's start (game.js): from a level, as if its gates had been passed, and with points for the sky
+  if (level > 1) { g.level = level; g.passed = (level - 1) * LEVEL_EVERY; g.gateCount = g.passed; }
+  g.score = score;
+  g.speed = targetSpeed(g.level, W);
   if (mode !== 'glide') while (needSpawn(g)) spawn(g);
   return g;
 }

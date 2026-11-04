@@ -116,3 +116,10 @@ waves and the low sun glittering on the water; the night brings the street back.
 A skill game: when it leaves the lab and enters the catalog (`games.js`), it goes with `tipos: ['skill']`
 (🎯 Pulso on the home page's filters), like Shinobi and Babel.
 
+
+## Tester's start
+
+With a lab key, the tester ribbon (the «T» on the right edge) offers «🐤 Empezar en nivel»: the level and
+points the next game starts from (`newGame({ level, score })`), then the usual countdown. It is for trying
+the levels and the times of day without playing up to them; a test game keeps no best and sends no stats.
+Its texts are only for testers, in Spanish, like Babel's «Simular final».

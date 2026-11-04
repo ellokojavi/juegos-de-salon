@@ -169,6 +169,13 @@ assert.deepEqual([0, 5, 6, 15, 16, 30, 31, 50, 51, 200].map(verdictOf), [0, 0, 1
   assert.ok(crossed >= 5);
 }
 
+// A tester's start: from a level, with its speed and points
+{
+  const g = newGame({ W: 0.55, random: rng(5), level: 7, score: 61 });
+  assert.equal(g.level, 7); assert.equal(g.passed, 30); assert.equal(g.score, 61);
+  assert.ok(g.speed > newGame({ W: 0.55 }).speed);
+}
+
 // The countdown's glide: no gates, the bird never flaps and stays in the sky
 {
   const g = newGame({ W: 0.55, random: rng(3), mode: 'glide' });
