@@ -131,6 +131,19 @@
       "date": "2026-11-04T05:43:53.353Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 41780310252,
+      "check": "end-to-end",
+      "pr": 1163,
+      "branch": "ccr-39f25020-dvv611",
+      "commit": "9e58b88832f6f1f5dac451783719ea9a4b860354",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the reminder says who is missing",
+      "signature": "9199ef943c",
+      "date": "2026-11-04T05:49:22.079Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
