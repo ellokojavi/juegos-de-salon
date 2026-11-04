@@ -214,7 +214,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/LEARNING.md\", \"title\": \"The learning programm, {\"path\": \"docs/learning/01-content-pipeline.md\", \"title\": \"P, {\"path\": \"docs/learning/02-factory-metrics.md\", \"title\": \"Pi, {\"path\": \"docs/learning/03-taste-model.md\", \"title\": \"Piece , {\"path\": \"docs/learning/04-earned-autonomy.md\", \"title\": \"Pi, {\"path\": \"docs/learning/05-hypothesis-loop.md\", \"title\": \"Pi, {\"path\": \"docs/learni",
       "signature": "b685488c44",
       "date": "2026-11-04T17:50:20.307Z",
-      "fix": null,
+      "fix": {
+        "commit": "fc2758b6230441bd1387a938a5437fcabf7d817a",
+        "date": "2026-11-04T17:51:18.822Z",
+        "stat": "2 file(s) +35 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
