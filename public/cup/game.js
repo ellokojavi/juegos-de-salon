@@ -1109,6 +1109,8 @@ function podioAdelantado(filas) {
     el('h2', { class: 'display display--md center' }, titulo),
     el('div', { class: 'escalones' }, [1, 0, 2].map(i => top[i] ? el('div', { class: `escalon e${i + 1}` },
       el('span', { class: 'medal' }, ['🥇', '🥈', '🥉'][i]), el('b', {}, top[i].name)) : null)),
+    // A shared first place for good: the steps give one medal each, so the line names them both, as the podium does
+    primeros.length > 1 ? el('div', { class: 'medalla' }, el('b', {}, T.medalChamp), el('span', {}, primeros.map(f => f.name).join(', '))) : null,
     el('p', { class: 'muted center', style: 'margin:0' }, T.earlyNote));
 }
 
