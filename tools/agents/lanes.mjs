@@ -12,7 +12,7 @@
  * lanes.json: the first glob that matches a file gives its lane, no match is yellow.
  *
  * In CI, a 🔴 PR gets the `needs-owner` label, a red `owner-approval` status on its head commit and
- * a one-tap decision issue whose Yes is `approve-pr` (approve.mjs) for that commit; 🟢/🟡 get a
+ * a one-tap decision at the top of its own description (D-531) whose Yes is `approve-pr` (approve.mjs) for that commit; 🟢/🟡 get a
  * green `owner-approval` at once. A push after the owner's tick asks again.
  */
 import { execFileSync } from 'node:child_process';
@@ -79,6 +79,21 @@ export function decision(pr, sha, title, by) {
   };
 }
 
+export const APPROVAL_START = '<!-- owner-approval:start -->';
+export const APPROVAL_END = '<!-- owner-approval:end -->';
+
+/** The decision as it sits at the top of a 🔴 PR's description, between its markers. */
+export function approvalBlock(decisionText) {
+  return [APPROVAL_START, '## 🔴 Owner approval', '', decisionText, APPROVAL_END].join('\n');
+}
+
+/** The PR's description with its approval block put first, or replacing the one of an earlier push. */
+export function withApproval(body = '', block) {
+  const a = body.indexOf(APPROVAL_START), b = body.indexOf(APPROVAL_END);
+  if (a >= 0 && b > a) return body.slice(0, a) + block + body.slice(b + APPROVAL_END.length);
+  return body.trim() ? `${block}\n\n${body}` : block;
+}
+
 /* ------------------------------------------------------------------ */
 
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...opts });
@@ -114,14 +129,14 @@ async function ci() {
   try { gh('label', 'create', LABEL, '-R', repo, '--color', 'B60205', '--description', 'Red lane: needs the owner\'s approval (docs/LANES.md)'); } catch { /* exists */ }
   gh('pr', 'edit', String(n), '-R', repo, '--add-label', LABEL);
   status('failure', 'red lane: waiting for the owner tick');
-  // One open question per commit: the issue title names the PR, the body the commit
-  const open = JSON.parse(gh('issue', 'list', '-R', repo, '--state', 'open', '--label', 'processes', '--search', `"Owner approval: PR #${n}" in:title`, '--json', 'number,body'));
-  if (open.some(i => i.body.includes(sha))) { console.log('The question for this commit is already open.'); return; }
+  // The decision rides in the PR's own description (docs/LANES.md): one place, replaced on every push
   const { decisionsBody } = await import('./processes.mjs');
-  const d = decision(n, sha, pr.title, result.by);
-  for (const i of open) gh('issue', 'close', String(i.number), '-R', repo, '--comment', `Replaced: the PR changed to ${sha.slice(0, 7)}.`);
-  const url = gh('issue', 'create', '-R', repo, '--title', d.title, '--label', 'processes', '--body', decisionsBody(d)).trim();
-  gh('pr', 'comment', String(n), '-R', repo, '--body', `🔴 **Red lane** (docs/LANES.md): this PR does not merge until the owner approves it: ${url}`);
+  const body = JSON.parse(gh('api', `repos/${repo}/issues/${n}`)).body || '';
+  if (body.includes(`${APPROVAL_START}`) && body.includes(sha)) { console.log('The question for this commit is already in the PR.'); }
+  else gh('api', '-X', 'PATCH', `repos/${repo}/issues/${n}`, '-f', `body=${withApproval(body, approvalBlock(decisionsBody(decision(n, sha, pr.title, result.by))))}`);
+  // Questions opened as issues before the decision moved into the PR (D-531)
+  const open = JSON.parse(gh('issue', 'list', '-R', repo, '--state', 'open', '--label', 'processes', '--search', `"Owner approval: PR #${n}" in:title`, '--json', 'number'));
+  for (const i of open) gh('issue', 'close', String(i.number), '-R', repo, '--comment', `Moved: the approval is now in PR #${n}'s description.`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
