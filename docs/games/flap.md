@@ -56,6 +56,8 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
   through.
 - **Lives:** 3 ❤️. Hitting a hoop's end, a wall, a spike or the ground costs one, and so does skipping a
   hoop. After a hit the bird blinks for 1.3 s and can't be hurt again. The ground bounces it back up.
+- **The HUD:** the hearts, the score and the level in words («Nivel 2», never abbreviated). From Jugar to the
+  result the page is marked as in play (`body.jugando`, like Stack and Shinobi), so the testers' «T» tab hides.
 - **Levels:** a new one every 5 gates, announced in big letters («Nivel 3»). Each of the first ten is
   10 % of the starting speed faster; after that it keeps climbing, slower, and never stops. Hoops get
   smaller and further apart in height; from 6 gates in some move up and down (a faint dotted track
