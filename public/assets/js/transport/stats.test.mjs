@@ -359,6 +359,8 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:toque-y-fama:name': 'Javi', 'juegos-de-salon:copa:nombre': '"Otro"' })), 'Javi', 'primero el de este juego');
   assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:copa:nombre': '"Cata"' })), 'Cata', 'si no, el de La Copa');
   assert.equal(nombreDelCelular('toque-y-fama', almacen({ 'juegos-de-salon:dudo:name': 'Pancho', 'juegos-de-salon:dudo:session': '{}' })), 'Pancho', 'si no, el de cualquier juego');
+  assert.equal(nombreDelCelular('', almacen({ 'juegos-de-salon:copa:mias': '[{"code":"ab","nombre":"Pepe"}]' })), 'Pepe', 'the name of a Cup this phone plays');
+  assert.equal(nombreDelCelular('', almacen({ 'juegos-de-salon:jugador': '{"jid":"x","n":"Ana"}' })), 'Ana', 'the rankings name');
   assert.equal(nombreDelCelular('toque-y-fama', almacen({})), '', 'nunca se inventa uno');
   assert.equal(nombreDelCelular('x', { getItem() { throw new Error('bloqueado'); } }), '');
   assert.equal(nombresDe(['Javi', ' Cata ', '', 'Javi', null]), 'Javi, Cata');
