@@ -46,16 +46,16 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427, D-482, D-485, D-508 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-503, D-504, D-509, D-528 |
-| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506, D-519, D-530 |
+| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506, D-519, D-530, D-531 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316, D-506 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496, D-506, D-515, D-516, D-518 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499, D-517, D-521, D-525 |
-| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463, D-472, D-480, D-486, D-497, D-518, D-519, D-520, D-522, D-527, D-532 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463, D-472, D-480, D-486, D-497, D-518, D-519, D-520, D-522, D-527, D-531, D-532 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-464, D-465, D-470, D-476, D-478, D-492, D-499, D-500, D-513 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (515)
+## In force (516)
 
 | D | Title | Status |
 |---|---|---|
@@ -562,7 +562,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-516](decisions/D-516.md) | A change to a module runs only the pages that use what it changed | current |
 | [D-517](decisions/D-517.md) | A game can launch by flag: Shinobi and Babel wait, finished, for the owner's 🚀 | amended by D-525 |
 | [D-518](decisions/D-518.md) | CI failures are logged and promoted to mechanisms automatically | current |
-| [D-519](decisions/D-519.md) | Merge lanes by blast radius | current |
+| [D-519](decisions/D-519.md) | Merge lanes by blast radius | amended by D-531 |
 | [D-520](decisions/D-520.md) | Measurable usability rules are tests; the usability agent judges the rest | current |
 | [D-521](decisions/D-521.md) | La Copa: the admin chooses its length (3 to 14 days) and its time zone | current |
 | [D-522](decisions/D-522.md) | Sessions always open the PR and drive it to merge, without asking | current |
@@ -573,6 +573,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-528](decisions/D-528.md) | Lab readiness is measured: a flag's card says when it is ready to publish | current |
 | [D-529](decisions/D-529.md) | A launch can be scheduled: the `launch` workflow flips flags and splash at the hour | current |
 | [D-530](decisions/D-530.md) | Version 1.0: from here the three numbers mean major, minor and patch | current |
+| [D-531](decisions/D-531.md) | A red PR is approved in its own description | current |
 | [D-532](decisions/D-532.md) | A learning programme: AI in the game only where it costs nothing per use, and the owner's learning recorded as a deliverable | current |
 
 ## No longer in force (12)

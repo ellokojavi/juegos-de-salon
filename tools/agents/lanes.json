@@ -14,7 +14,7 @@
     "red": {
       "icon": "🔴",
       "name": "Hard to reverse",
-      "requires": "Never auto-merges, whatever the agents say: the PR gets the needs-owner label, the lane job opens a one-tap decision, and the owner-approval status stays red until the owner ticks it (approve-pr). Agents as for yellow."
+      "requires": "Never auto-merges, whatever the agents say: the PR gets the needs-owner label, the lane job writes a one-tap decision at the top of the PR description (D-531), and the owner-approval status stays red until the owner ticks it (approve-pr). Agents as for yellow."
     }
   },
   "rules": [
