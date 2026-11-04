@@ -11,7 +11,8 @@ serie de partidas en el tiempo (un macro-juego). El diseño completo, con la rev
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
-  que todavía no entra al pozo (D-262).
+  que todavía no entra al pozo (D-262). Since D-498, La Copa's improvements on trial do sit there as cards
+  behind a flag (`copa-crear`, `cup-again`, `cup-podium-early`…), each described in its bullet or row below.
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días
   en la pantalla de antes, D-100, D-262, D-437) · `?test` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
@@ -73,6 +74,7 @@ panel del dueño (D-137).
 | Inscripción | Abierta hasta que empieza la final (in a cup without one, the last day; whoever arrives later reads "Esta copa ya está en su último día…", D-438), salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
 | Out of the cup | Whoever lets **2 days in a row** close without playing them (each with its grace day) is out (D-347). Their points stay in the table, faded with 🚪, below everyone still playing, the days they will not play turned into one "Eliminado" pill; their line fades in the chart, and the shared image draws them faded with 🚪 and ELIMINADO (D-376); they can't play any more days, the final included, and nobody waits for them (the "missing" lists, the provisional table, the notifications). The day before, the board and the "Before closing" notification warn them. Only days that closed after they signed up count, and the last two days never do: they close with the cup. The admin can **bring them back** («Devolver a la copa»): the days missed before that are forgiven. It is not the admin removing someone (`out`). |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final (in the 3-day cup, on the last day, D-438); si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
+| Podio anticipado | In the lab, flag `cup-podium-early`: on the last day, once nothing left to play can change the first three places, the board announces them above the days («¡Cata ya ganó la copa!», the three steps without points, and why it is known), as the viewer sees the table: a day they have not played counts as open for everyone, the points of a day still open may drop as others play it, a free wildcard may still double a day, so it waits when in doubt (`podioDecidido` in `engine.js`). The podium with its medals, the closing notice and the splash come as always when the cup closes. Demo `decided`. |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
 ### Cuenta: nombre y PIN
@@ -180,7 +182,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `podium-admin` (the finished cup seen by its admin, #1165), `full`, `out` and `risk` for D-347, and `last-day` for D-444 (day 6 not played, the wildcard unused: its notice); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
+`final-admin`, `podium`, `podium-admin` (the finished cup seen by its admin, #1165), `full`, `out` and `risk` for D-347, `last-day` for D-444 (day 6 not played, the wildcard unused: its notice), `last-day-three` (the same in a 3-day cup without a final, D-438), `played` (whoever looks already played today's day) and `decided` (the last day with the first three places beyond reach, for the lab flag `cup-podium-early`); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`): recién ahí aparece el tablero, y

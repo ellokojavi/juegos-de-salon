@@ -24,7 +24,7 @@ import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../asset
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, ultimoDiaComodin, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, podioDecidido, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
   findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista, porJugar,
 } from './engine.js';
@@ -275,6 +275,10 @@ flag('copa-crear').then(v => { horaPropia = v; if (v && L()?.meta && document.ge
 // filled from that cup, for the admin to check and confirm. lab: #seccion-cup-again
 let otraCopa = false;
 flag('cup-again').then(v => { otraCopa = v; if (v && L()?.meta && document.querySelector('#tablero-body .podio') && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
+// On the last day, once nothing left to play can change the first three places, the board announces the
+// podium before the cup closes (`podioDecidido`); the podium and the closing notice come as always. lab: #seccion-cup-podium-early
+let podioAnticipado = false;
+flag('cup-podium-early').then(v => { podioAnticipado = v; if (v && L()?.meta && document.getElementById('tablero-body')?.childElementCount && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
 const zonaPropia = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) { return null; } })();
 const horaEn = (ms, tz) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
 const otraHora = meta => horaPropia && !!zonaPropia && !!meta?.tz && horaEn(Date.now(), meta.tz) !== horaEn(Date.now(), zonaPropia);
@@ -997,6 +1001,7 @@ function tablero() {
   }
 
   if (terminada(meta, now)) poner(body, podio());
+  else if (podioAnticipado) { const decidido = podioDecidido(Lc, S.yo, now); if (decidido) poner(body, podioAdelantado(decidido)); }
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
 
   // Out of the cup, or one missed day away from it (D-347): said before the days
@@ -1089,6 +1094,24 @@ function podio() {
     otraCopa && esAdmin() ? el('button', { class: 'btn btn--yellow btn--sm', style: 'width:100%', id: 'btn-otra-copa', onClick: () => { SFX.tap(); crearCopa({ desde: Lc.meta, quien: Lc.players?.[S.yo]?.name || '' }); } }, T.againBtn) : null,
     // The Cup is over: its way out, right under the podium (C-19)
     salidasFin('podio', { lang: LANG, raiz: RAIZ }));
+}
+
+/**
+ * The podium announced on the last day (`podioDecidido`, lab flag `cup-podium-early`): the first three
+ * places as they will stay, without points (what is left to play may still move them), and a line saying
+ * why it is already known. The real podium, with its medals and confetti, still comes when the cup closes.
+ */
+function podioAdelantado(filas) {
+  const top = filas.slice(0, 3);
+  const primeros = filas.filter(f => f.lugar === 1);
+  const titulo = primeros.length === 1 ? fmt(T.earlyTitle, { name: primeros[0].name }) : T.earlyTie;
+  return el('div', { class: 'panel podio podio--anticipado', id: 'podio-anticipado' },
+    el('h2', { class: 'display display--md center' }, titulo),
+    el('div', { class: 'escalones' }, [1, 0, 2].map(i => top[i] ? el('div', { class: `escalon e${i + 1}` },
+      el('span', { class: 'medal' }, ['🥇', '🥈', '🥉'][i]), el('b', {}, top[i].name)) : null)),
+    // A shared first place for good: the steps give one medal each, so the line names them both, as the podium does
+    primeros.length > 1 ? el('div', { class: 'medalla' }, el('b', {}, T.medalChamp), el('span', {}, primeros.map(f => f.name).join(', '))) : null,
+    el('p', { class: 'muted center', style: 'margin:0' }, T.earlyNote));
 }
 
 /* ------------------------------------------------------------------ */
