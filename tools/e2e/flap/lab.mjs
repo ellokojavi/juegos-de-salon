@@ -65,7 +65,7 @@ ok(await ev(`document.getElementById('pista').classList.contains('fuera')`), 'an
 const passed = await ev(PLAY(`g.passed >= 6`, 40000));
 ok(passed >= 6, `taps get it through the gates (${passed})`);
 ok(await waitFor(`/Nivel 2/.test(document.getElementById('aviso').textContent)`, 1500) || await ev(`__aletazo.g.level`) >= 2, 'a new level after 5 gates, announced');
-ok(await ev(`document.getElementById('nivel').textContent`) === 'Nv 2' || await ev(`__aletazo.g.level`) > 2, 'the HUD says the level');
+ok(await ev(`document.getElementById('nivel').textContent`) === 'Nivel 2' || await ev(`__aletazo.g.level`) > 2, 'the HUD says the level');
 ok(+await ev(`document.getElementById('marcador').textContent`) === await ev(`__aletazo.g.score`) && await ev(`__aletazo.g.score`) >= passed, 'and the score: +1 a gate, +2 through the middle');
 await b.shot('02-play');
 

@@ -31,7 +31,7 @@ const LOCALES = {
       ['❤️', '3 vidas. Si chocas o te saltas un aro, pierdes una.'],
     ],
     comoSeJuega: 'Cómo se juega', jugar: '🐤 Jugar', aJugar: '¡A jugar!', pista: '👆 Toca para aletear', muros: '¡Muros! Pasa por el hueco',
-    nivel: 'Nivel {n}', nivelCorto: 'Nv {n}', vidas: '{n} vidas',
+    nivel: 'Nivel {n}', vidas: '{n} vidas',
     record: '🏆 ¡Nuevo récord!', fin: '¡Se acabó!', tuMejor: 'Tu mejor: {n}', mejor: 'Récord: {n}',
     veredictos: ['Recién saliendo del nido 🐣', 'Ya le estás agarrando el vuelo', '¡Vuelas bonito! ✨', '¡Pájaro de altura! 🦅', '¡Dueño del cielo! 👑'],
     otraVez: 'Jugar otra vez', pausa: 'En pausa', seguir: 'Toca para seguir', laboratorio: '‹ Laboratorio',
@@ -48,10 +48,10 @@ const LOCALES = {
       ['❤️', '3 lives. Crash or skip a hoop and you lose one.'],
     ],
     comoSeJuega: 'How to play', jugar: '🐤 Play', aJugar: 'Let\'s play!', pista: '👆 Tap to flap', muros: 'Walls! Go through the gap',
-    nivel: 'Level {n}', nivelCorto: 'Lv {n}', vidas: '{n} lives',
+    nivel: 'Level {n}', vidas: '{n} lives',
     record: '🏆 New best!', fin: 'Game over!', tuMejor: 'Your best: {n}', mejor: 'Best: {n}',
     veredictos: ['Fresh out of the nest 🐣', 'Getting the hang of it', 'Flying pretty! ✨', 'High flyer! 🦅', 'King of the sky! 👑'],
-    otraVez: 'Play again', pausa: 'Paused', seguir: 'Tap to go on', laboratorio: '‹ Lab',
+    otraVez: 'Play again', pausa: 'Paused', seguir: 'Tap to continue', laboratorio: '‹ Lab',
     comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us if the flap felt right, if it got hard too fast and what you would change.', ph: 'For example: the walls come too soon.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
   },
@@ -65,7 +65,7 @@ const LOCALES = {
       ['❤️', '3 vidas. Se bater ou pular um aro, perde uma.'],
     ],
     comoSeJuega: 'Como se joga', jugar: '🐤 Jogar', aJugar: 'Vamos jogar!', pista: '👆 Toque para bater as asas', muros: 'Muros! Passe pela brecha',
-    nivel: 'Nível {n}', nivelCorto: 'Nv {n}', vidas: '{n} vidas',
+    nivel: 'Nível {n}', vidas: '{n} vidas',
     record: '🏆 Novo recorde!', fin: 'Acabou!', tuMejor: 'Seu melhor: {n}', mejor: 'Recorde: {n}',
     veredictos: ['Acabou de sair do ninho 🐣', 'Pegando o jeito', 'Voando bonito! ✨', 'Voo de altura! 🦅', 'Dono do céu! 👑'],
     otraVez: 'Jogar de novo', pausa: 'Pausado', seguir: 'Toque para continuar', laboratorio: '‹ Laboratório',
@@ -141,7 +141,7 @@ function paintHud() {
   $('marcador').textContent = g.score;
   $('vidas').replaceChildren(...Array.from({ length: LIVES }, (_, i) => el('span', { class: i < g.hearts ? '' : 'off' }, '❤️')));
   $('vidas').setAttribute('aria-label', fmt(L.vidas, g.hearts));
-  $('nivel').textContent = fmt(L.nivelCorto, g.level);
+  $('nivel').textContent = fmt(L.nivel, g.level);
 }
 
 function texts() {
