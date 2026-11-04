@@ -4,7 +4,6 @@
 
 /* The waiting room: the title with a brush that paints, the cover game, the credit */
 .pm-titulo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
-.pm-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .pm-titulo .pm-brocha { font-size: 2.3rem; display: inline-block; animation: pm-pinta 2.8s ease-in-out infinite; }
 @keyframes pm-pinta { 0%, 100% { transform: rotate(-12deg) translateX(-2px); } 50% { transform: rotate(10deg) translateX(3px); } }
 .pm-portada { display: grid; gap: 6px; justify-items: center; }

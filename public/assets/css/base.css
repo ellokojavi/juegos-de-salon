@@ -120,10 +120,13 @@ body {
  * El degradado se pinta dentro de la caja del texto, y con line-height 0.95 los acentos sobre
  * mayúscula quedan fuera: la Ó de SALÓN y la Ã de SALÃO salían cortadas, y en alemán se perdían
  * las diéresis de casi cada título (Ä, Ö, Ü). El relleno arriba agranda la caja pintada y el
- * margen negativo deja el título donde estaba (D-191).
+ * margen negativo deja el título donde estaba (D-191). The same on the right: the display font
+ * slants, so a title's last letter (the O of ALETAZO) went past the painted box and was cut; each
+ * game used to add that right padding on its own title. It goes on both sides, so a centered
+ * title stays centered.
  */
 .rainbow {
-  padding-top: 0.2em; margin-top: -0.2em;
+  padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0;
   background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
   background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;

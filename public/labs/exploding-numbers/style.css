@@ -12,7 +12,6 @@ body {
 
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-ne { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; text-align: center; }
-.titulo-ne .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .titulo-ne .bomba { font-size: 2.3rem; display: inline-block; animation: ne-late 1.6s ease-in-out infinite; }
 .titulo-ne.chico .display { font-size: 1.6rem; }
 .titulo-ne.chico .bomba { font-size: 1.5rem; }
