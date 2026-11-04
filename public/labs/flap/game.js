@@ -12,7 +12,8 @@ import { getLang, langToggle } from '../../assets/js/i18n.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
-import { newGame, step, flap, verdictOf, LIVES } from './engine.js';
+import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
+import { newGame, step, flap, verdictOf, LIVES, BR } from './engine.js';
 import { escena } from './scene.js';
 
 trackVisit();   // the site's traffic (D-208)
@@ -29,7 +30,7 @@ const LOCALES = {
       ['⭕', 'Pasa por aros y huecos. Al medio vale doble.'],
       ['❤️', '3 vidas. Si chocas o te saltas un aro, pierdes una.'],
     ],
-    jugar: '🐤 Jugar', listo: 'Toca para volar', muros: '¡Muros! Pasa por el hueco',
+    comoSeJuega: 'Cómo se juega', jugar: '🐤 Jugar', aJugar: '¡A jugar!', pista: '👆 Toca para aletear', muros: '¡Muros! Pasa por el hueco',
     nivel: 'Nivel {n}', nivelCorto: 'Nv {n}', vidas: '{n} vidas',
     record: '🏆 ¡Nuevo récord!', fin: '¡Se acabó!', tuMejor: 'Tu mejor: {n}', mejor: 'Récord: {n}',
     veredictos: ['Recién saliendo del nido 🐣', 'Ya le estás agarrando el vuelo', '¡Vuelas bonito! ✨', '¡Pájaro de altura! 🦅', '¡Dueño del cielo! 👑'],
@@ -46,7 +47,7 @@ const LOCALES = {
       ['⭕', 'Fly through hoops and gaps. Dead center counts double.'],
       ['❤️', '3 lives. Crash or skip a hoop and you lose one.'],
     ],
-    jugar: '🐤 Play', listo: 'Tap to fly', muros: 'Walls! Go through the gap',
+    comoSeJuega: 'How to play', jugar: '🐤 Play', aJugar: 'Let\'s play!', pista: '👆 Tap to flap', muros: 'Walls! Go through the gap',
     nivel: 'Level {n}', nivelCorto: 'Lv {n}', vidas: '{n} lives',
     record: '🏆 New best!', fin: 'Game over!', tuMejor: 'Your best: {n}', mejor: 'Best: {n}',
     veredictos: ['Fresh out of the nest 🐣', 'Getting the hang of it', 'Flying pretty! ✨', 'High flyer! 🦅', 'King of the sky! 👑'],
@@ -63,7 +64,7 @@ const LOCALES = {
       ['⭕', 'Passe por aros e brechas. No centro vale dobrado.'],
       ['❤️', '3 vidas. Se bater ou pular um aro, perde uma.'],
     ],
-    jugar: '🐤 Jogar', listo: 'Toque para voar', muros: 'Muros! Passe pela brecha',
+    comoSeJuega: 'Como se joga', jugar: '🐤 Jogar', aJugar: 'Vamos jogar!', pista: '👆 Toque para bater as asas', muros: 'Muros! Passe pela brecha',
     nivel: 'Nível {n}', nivelCorto: 'Nv {n}', vidas: '{n} vidas',
     record: '🏆 Novo recorde!', fin: 'Acabou!', tuMejor: 'Seu melhor: {n}', mejor: 'Recorde: {n}',
     veredictos: ['Acabou de sair do ninho 🐣', 'Pegando o jeito', 'Voando bonito! ✨', 'Voo de altura! 🦅', 'Dono do céu! 👑'],
@@ -108,14 +109,28 @@ const SOUND = {
 /* ------------------------------------------------------------------ */
 /* The page                                                            */
 /* ------------------------------------------------------------------ */
-const stage = $('escenario'), hud = $('hud'), cover = $('portada'), result = $('resultado'), pauseEl = $('pausa'), aviso = $('aviso');
+const stage = $('escenario'), hud = $('hud'), cover = $('portada'), result = $('resultado'), pauseEl = $('pausa'), aviso = $('aviso'), pista = $('pista');
 const scene = escena($('lienzo'));
 let W = scene.measure();
-new ResizeObserver(() => { W = scene.measure(); if (g) g.W = W; }).observe(stage);
+new ResizeObserver(() => { W = scene.measure(); if (g) { g.W = W; if (g.mode === 'demo' && !cover.hidden) g.band = demoBand(); } }).observe(stage);
+new ResizeObserver(() => { if (g?.mode === 'demo' && !cover.hidden) g.band = demoBand(); }).observe($('tarjeta-portada'));
+
+/**
+ * Where the cover's demo flies: the free strip above the card, measured from the card's top (in stage
+ * heights), so the bird and its hoops show whole instead of half behind the card. Null when the strip is
+ * too thin to fly in (a short phone): there the demo is only a background behind the card.
+ */
+const DEMO_R = 0.17 * 0.7;   // a demo hoop's radius above the card (engine.js: r × 0.7)
+function demoBand() {
+  const s = stage.getBoundingClientRect(), c = $('tarjeta-portada').getBoundingClientRect();
+  if (!s.height) return null;
+  const top = DEMO_R + 0.03, bottom = (c.top - s.top) / s.height - DEMO_R - BR;
+  return bottom >= top ? [top, bottom] : null;
+}
 
 let best = 0;
 try { best = Number(localStorage.getItem(BEST_KEY)) || 0; } catch (_) { /* no storage: no best kept */ }
-let g = null, paused = false, startedAt = 0;
+let g = null, paused = false, startedAt = 0, counting = false;
 
 function say(text, shine = false) {
   aviso.textContent = text;
@@ -135,6 +150,7 @@ function texts() {
   $('lema').textContent = L.lema;
   // The credit to the game it comes from, like Shinobi's and Babel's to Ketchapp
   $('credito').replaceChildren(L.credito[0], el('a', { href: L.wiki, target: '_blank', rel: 'noopener', id: 'link-flappy-bird' }, 'Flappy Bird'), L.credito[1]);
+  $('btn-como').textContent = `${L.comoSeJuega} ▾`;
   $('pasos').replaceChildren(...L.como.map(([e, t]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, e), el('span', {}, t))));
   $('btn-jugar').textContent = L.jugar;
   $('mejor-portada').replaceChildren(...(best ? [fmt(L.mejor, ''), el('b', {}, String(best))] : []));
@@ -151,20 +167,36 @@ const contexto = () => ({
   pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
-/** The cover: the card over a demo that flies itself. */
+/** The cover: the card over a demo that flies itself, above the card when there is room. */
 function toCover() {
-  g = newGame({ W }); g.mode = 'demo';
-  scene.clear();
   result.hidden = true; hud.hidden = true; cover.hidden = false;
   texts();
-}
-function startGame() {
-  unlockAudio();
-  g = newGame({ W });
+  g = newGame({ W, mode: 'demo', band: demoBand() });
   scene.clear();
-  cover.hidden = true; result.hidden = true; hud.hidden = false;
-  paintHud(); say(L.listo);
-  stage.focus({ preventScroll: true });
+}
+/**
+ * Jugar and Jugar otra vez: the classic 3, 2, 1… ¡A jugar! (D-102, D-105) over the bird flying on its
+ * own, blurred; on «¡A jugar!» the blur fades as the overlay leaves and the real game starts from the
+ * bird where it is, hovering level with «Toca para aletear» until the first tap. The countdown is not
+ * play time: the clock starts with that tap.
+ */
+function startGame() {
+  if (counting) return;
+  counting = true;
+  unlockAudio();
+  cover.hidden = true; result.hidden = true; hud.hidden = true;
+  g = newGame({ W, mode: 'demo' });
+  scene.clear();
+  stage.classList.add('contando');
+  cuentaRegresiva({ titulo: `🐤 ${L.nombre}`, ya: L.aJugar }).then(ms => {
+    stage.style.setProperty('--sale', `${ms}ms`);
+    stage.classList.remove('contando');
+    g = newGame({ W, y: Math.max(0.3, Math.min(0.6, g.bird.y)) });
+    counting = false;
+    hud.hidden = false; paintHud(); say('');
+    pista.textContent = L.pista; pista.hidden = false; pista.classList.remove('fuera');
+    stage.focus({ preventScroll: true });
+  });
 }
 function showResult() {
   const n = g.score, isBest = n > best;
@@ -188,7 +220,7 @@ function press(e) {
   e?.preventDefault();
   if (!g) return;
   if (paused) { paused = false; pauseEl.hidden = true; last = performance.now(); return; }
-  if (g.mode === 'ready') { say(''); aviso.className = 'aviso fuera'; startedAt = Date.now(); trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); }
+  if (g.mode === 'ready') { pista.classList.add('fuera'); startedAt = Date.now(); trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); }
   if (g.mode === 'ready' || g.mode === 'play') flap(g);
 }
 stage.addEventListener('pointerdown', e => { if (e.target.closest('.capa')) return; press(e); });
@@ -199,6 +231,12 @@ addEventListener('keydown', e => {
 document.addEventListener('visibilitychange', () => { if (document.hidden && g?.mode === 'play') { paused = true; pauseEl.hidden = false; } });
 $('btn-jugar').addEventListener('click', startGame);
 $('btn-otra').addEventListener('click', startGame);
+// A short phone folds the three steps under «Cómo se juega ▾», so Jugar stays in the first screen (U-39)
+$('btn-como').addEventListener('click', () => {
+  const card = $('tarjeta-portada'), open = card.classList.toggle('abierta');
+  $('btn-como').setAttribute('aria-expanded', String(open));
+  $('btn-como').textContent = `${L.comoSeJuega} ${open ? '▴' : '▾'}`;
+});
 
 /* ------------------------------------------------------------------ */
 /* The loop: a fixed step, so the feel is the same on every phone      */

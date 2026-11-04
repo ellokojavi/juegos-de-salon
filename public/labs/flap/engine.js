@@ -44,11 +44,15 @@ export const targetSpeed = (level, W) => (0.55 + 0.055 * Math.min(level - 1, 10)
 /** The result's line, by score: 0 nest, 1 getting the hang, 2 flying pretty, 3 high flyer, 4 king of the sky. */
 export const verdictOf = score => (score >= 51 ? 4 : score >= 31 ? 3 : score >= 16 ? 2 : score >= 6 ? 1 : 0);
 
-/** A new game on a stage `W` wide, ready to fly: the bird hovers until the first flap. */
-export function newGame({ W = 0.55, random = Math.random } = {}) {
+/**
+ * A new game on a stage `W` wide, ready to fly: the bird hovers until the first flap. `mode: 'demo'`
+ * flies itself (the cover, the countdown); `band` ([top, bottom], in heights) keeps a demo's hoops in
+ * the free strip above the cover's card, smaller and whole. `y` starts the bird where a demo left it.
+ */
+export function newGame({ W = 0.55, random = Math.random, mode = 'ready', band = null, y = 0.45 } = {}) {
   const g = {
-    W, random, mode: 'ready', clock: 0, speed: 0, scroll: 0,
-    bird: { x: Math.min(0.45, W * 0.3), y: 0.45, vy: 0, flapT: 0, rot: 0, spin: 0 },
+    W, random, mode, band, clock: 0, speed: 0, scroll: 0, hoverY: y,
+    bird: { x: Math.min(0.45, W * 0.3), y, vy: 0, flapT: 0, rot: 0, spin: 0 },
     gates: [], spikes: [], gateCount: 0,
     score: 0, passed: 0, perfects: 0, walls: 0, hearts: LIVES, shield: 0, level: 1, dieT: 0,
     wallsSeen: false, events: [],
@@ -72,14 +76,16 @@ export function spawn(g) {
   const x = last ? last.x + gap * rnd(0.92, 1.08) : g.bird.x + 0.75;
   const r = (0.17 - 0.075 * d) * rnd(0.95, 1.05);
   const maxDy = g.gateCount < 3 ? 0.08 : 0.18 + 0.3 * d;   // the first hoops are a warm-up
-  const baseY = last ? clamp(last.baseY + rnd(-maxDy, maxDy), 0.22, 0.72) : 0.45;
+  const band = g.mode === 'demo' && g.band;
+  let baseY = last ? clamp(last.baseY + rnd(-maxDy, maxDy), 0.22, 0.72) : 0.45;
+  if (band) baseY = rnd(band[0], band[1]);   // the cover's demo: only above the card
   const moving = g.passed >= 6 && R() < 0.15 + 0.6 * d;
   const amp = moving ? clamp(0.03 + 0.11 * d, 0, Math.min(baseY - 0.18, 0.78 - baseY)) : 0;
   const wall = g.gateCount >= 5 && g.passed >= LEVEL_EVERY && !(last?.wall && R() < 0.5) && R() < Math.min(0.55, 0.25 + 0.45 * d);
   const bare = wall && R() < 0.35 + 0.3 * d;
   const gate = {
     x: wall && last ? x + 0.08 : x, baseY, y: baseY,
-    r: bare ? (0.15 - 0.045 * d) * rnd(0.95, 1.05) : r,
+    r: bare ? (0.15 - 0.045 * d) * rnd(0.95, 1.05) : band ? r * 0.7 : r,
     amp: wall ? (d > 0.45 ? amp * 0.6 : 0) : amp, w: rnd(1.4, 2.4), ph: R() * 6,
     color: NEON[g.gateCount % NEON.length], wall, bare,
     done: false, hit: false, ok: 0, flash: 0,
@@ -150,7 +156,8 @@ export function step(g, dt) {
   g.scroll += sp * dt;
   b.flapT = Math.max(0, b.flapT - dt / 0.2);
 
-  if (g.mode === 'ready') { b.y = 0.45 + Math.sin(g.clock * 3.2) * 0.022; b.vy = 0; b.rot = 0; return; }
+  // Waiting for the first flap: the bird eases from where the countdown's flight left it to the middle, level
+  if (g.mode === 'ready') { g.hoverY += (0.45 - g.hoverY) * Math.min(1, dt * 3); b.y = g.hoverY + Math.sin(g.clock * 3.2) * 0.022; b.vy = 0; b.rot = 0; return; }
   if (g.mode === 'over') return;
   if (g.mode === 'demo') autopilot(g);
   const live = g.mode === 'play';

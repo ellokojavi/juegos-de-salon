@@ -157,4 +157,23 @@ assert.deepEqual([0, 5, 6, 15, 16, 30, 31, 50, 51, 200].map(verdictOf), [0, 0, 1
   assert.ok(g.bird.y > 0 && g.bird.y < GROUND);
 }
 
+// Above the cover's card, the demo's hoops stay in the free strip, smaller, and the bird with them
+{
+  const band = [0.15, 0.22], g = newGame({ W: 0.55, random: rng(5), mode: 'demo', band, y: 0.18 });
+  run(g, 20);
+  assert.ok(g.gates.length > 2 && g.gates.every(h => h.baseY >= band[0] && h.baseY <= band[1] && h.r < 0.13 && !h.wall));
+  assert.equal(g.spikes.length, 0);
+  assert.equal(g.score, 0); assert.equal(g.hearts, LIVES);
+}
+
+// After the countdown the game starts where the bird was and eases it to the middle, level, until the first flap
+{
+  const g = newGame({ W: 0.55, random: rng(6), y: 0.3 });
+  assert.equal(g.mode, 'ready'); assert.equal(g.bird.y, 0.3);
+  const x0 = g.gates[0].x;
+  run(g, 3);
+  assert.ok(Math.abs(g.bird.y - 0.45) < 0.03 && g.bird.vy === 0 && g.gates[0].x === x0, 'it hovers in the middle and the course waits');
+  flap(g); assert.equal(g.mode, 'play');
+}
+
 console.log('aletazo engine: ok');

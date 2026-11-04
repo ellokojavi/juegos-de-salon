@@ -20,8 +20,20 @@ contributor, round by round on a playable prototype, before entering the lab.
 ## Cover
 
 A glass card over a demo that flies itself (the engine's autopilot): the title with a 🐤 that sways,
-the tagline («Un toque, un aletazo.»), the credit («Inspirado en Flappy Bird, de Dong Nguyen.», with the link), three steps, «🐤 Jugar», the best score on this phone and the
-language toggle. The steps:
+the tagline («Un toque, un aletazo.»), the credit («Inspirado en Flappy Bird, de Dong Nguyen.», with the link), three steps, the
+language toggle, a yellow «🐤 Jugar» (like Shinobi's and Babel's Empezar) and the best score on this phone, in C-5's order
+(language toggle before the button). The owner's changes after trying it on the PR preview:
+
+- **The demo flies above the card** when there is room (390 px and taller): `demoBand()` in `game.js`
+  measures the free strip from the card's top, and the engine keeps the demo's hoops in it, at 70 % of their
+  size, so the bird and the hoop show whole instead of half behind the card. Where the strip is too thin
+  (a short phone), the demo is only a background.
+- **On a short screen** (`max-height: 640px`) the steps fold under «Cómo se juega ▾», after Jugar, so Jugar
+  stays in the first screen (U-39); opened, they unfold below it and the card scrolls inside, so the
+  language toggle never leaves the view.
+- **The title's last O is not clipped**: the slanted font goes past `.rainbow`'s box, fixed as in Shinobi.
+
+The steps:
 
 1. 👆 Toca para subir un poco.
 2. ⭕ Pasa por aros y huecos. Al medio vale doble.
@@ -31,8 +43,13 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 
 ## How it is played
 
-- **The tap:** anywhere on the stage (or the space bar, or ↑). The first one starts the game; until
-  then the bird hovers and «Toca para volar» says what to do.
+- **The start:** «🐤 Jugar» (and «Jugar otra vez») runs the shared 3, 2, 1… ¡A jugar! (`cuentaRegresiva`,
+  D-102, D-105) over the bird flying on its own, blurred and darkened; on «¡A jugar!» the blur fades as the
+  overlay leaves and the game starts from the bird where it is, easing to the middle and hovering level,
+  with «👆 Toca para aletear» pulsing under it until the first tap. Neither the countdown nor the wait is
+  play time: the clock starts with the first tap.
+- **The tap:** anywhere on the stage (or the space bar, or ↑). The first one starts the game, gravity and
+  the clock, and the hint fades out.
 - **Gates:** a **hoop** (+1, or **+2 through its middle**: within 30 % of its radius); a **hoop set in
   a wall**, the only way through; or a **bare gap** in a wall, its lips lit cyan (+1). Each hoop is
   drawn in two halves, the back one before the bird and the front one after it, so the bird flies
