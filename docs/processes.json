@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "22f095b567371e5e701ca4367b24e80cd55c36c6",
+  "checkedUpTo": "e44291b1f43b60d74678a089aa03fccf7cec8615",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -411,6 +411,18 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "e2e-clock-assumption",
+      "what": "Cup e2e assumed a fixed 27 h to day 1; failed when the cup's zone moved day 1 (#1163, #1162)",
+      "seen": [
+        {
+          "date": "2026-11-04",
+          "what": "Cup e2e assumed a fixed 27 h to day 1; failed when the cup's zone moved day 1 (#1163, #1162)",
+          "commit": "4ea8a1c9"
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -507,16 +519,16 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-03",
-      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
+      "date": "2026-11-04",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615"
     },
     "usability": {
-      "date": "2026-11-03",
-      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
+      "date": "2026-11-04",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615"
     },
     "ideas": {
-      "date": "2026-10-28",
-      "to": "dae3ca8"
+      "date": "2026-11-04",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615"
     }
   },
   "rounds": [
@@ -663,6 +675,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1154",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155",
       "note": "docs #1152, usability #1153"
+    },
+    {
+      "date": "2026-11-04",
+      "from": "22f095b567371e5e701ca4367b24e80cd55c36c6",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
+      "pr": null,
+      "note": "dispatched 3; collected 8 changelog entries; tournament signature 9199ef9 shared by 2 PRs with different causes, no mechanism"
     }
   ],
   "ownerDecisions": [
