@@ -19,7 +19,7 @@ contributor, round by round on a playable prototype, before entering the lab.
 
 ## Cover
 
-A glass card over a demo that flies itself (the engine's autopilot, a smooth path through the middle of every hoop, never touching a rim): the title with a 🐤 that sways,
+A glass card over a demo that flies itself (the engine's autopilot: the game's own gravity and flaps, like a player, planning each flap so it never touches a rim): the title with a 🐤 that sways,
 the tagline («Un toque, un aletazo.»), the credit («Inspirado en Flappy Bird, de Dong Nguyen.», with the link), three steps, the
 language toggle, a yellow «🐤 Jugar» (like Shinobi's and Babel's Empezar) and the best score on this phone, in C-5's order
 (language toggle before the button). The owner's changes after trying it on the PR preview:
@@ -103,9 +103,9 @@ End to end: `tools/e2e/flap/lab.mjs`.
 ## The sky
 
 The city goes through the day as the score climbs: a game starts by day (blue sky, sun, white clouds, flocks
-of far birds), turns to afternoon at 30 points (a low orange sun, pink clouds, windows and street lamps
-lighting up) and to night at 60 (the moon, stars, lit windows, the antennas' blinking tips), then day
-again at 90, and so on (`SKY_EVERY` and `skyOf` in `engine.js`). The change eases over about two
+of far birds), turns to afternoon at 20 points (a low orange sun, pink clouds, windows and street lamps
+lighting up) and to night at 40 (the moon, stars, lit windows, the antennas' blinking tips), then day
+again at 60, and so on (`SKY_EVERY` and `skyOf` in `engine.js`). The change eases over about two
 seconds. The cover's demo is always night; the countdown is the coming game's day.
 The ground is a street: a tiled sidewalk, a neon curb and flecked asphalt with its lane, lit by the lamps
 from the afternoon on (`ground()` in `scene.js`). In the afternoon it fades into the sea (`sea()`): a seawall,
