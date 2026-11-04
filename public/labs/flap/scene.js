@@ -38,9 +38,9 @@ function skyline() {
  * afternoon and the night, then day again. Colors are [r, g, b, a]; the scene blends from one to the next.
  */
 const SKIES = [
-  { top: [104, 170, 255, 0.9], low: [255, 196, 228, 0.9], far: [150, 120, 215, 0.5], farWin: [255, 255, 255, 0.3], near: [84, 46, 148, 0.85], win: [200, 230, 255, 0.25], cloud: [255, 255, 255, 0.75], bird: [60, 30, 100, 0.7], stars: 0, lamps: 0 },
-  { top: [88, 40, 150, 0.9], low: [255, 128, 92, 0.9], far: [130, 50, 140, 0.55], farWin: [255, 210, 63, 0.35], near: [48, 14, 70, 0.88], win: [255, 210, 63, 0.7], cloud: [255, 150, 180, 0.55], bird: [40, 10, 60, 0.6], stars: 0.25, lamps: 0.7 },
-  { top: [14, 5, 32, 0.55], low: [70, 22, 100, 0.55], far: [138, 77, 255, 0.2], farWin: [255, 210, 63, 0.4], near: [21, 7, 38, 0.8], win: [255, 210, 63, 0.75], cloud: [180, 150, 255, 0.1], bird: [0, 0, 0, 0], stars: 1, lamps: 1 },
+  { top: [104, 170, 255, 0.9], low: [255, 196, 228, 0.9], far: [150, 120, 215, 0.5], farWin: [255, 255, 255, 0.3], near: [84, 46, 148, 0.85], win: [200, 230, 255, 0.25], cloud: [255, 255, 255, 0.75], bird: [60, 30, 100, 0.7], stars: 0, lamps: 0, sea: 0 },
+  { top: [88, 40, 150, 0.9], low: [255, 128, 92, 0.9], far: [130, 50, 140, 0.55], farWin: [255, 210, 63, 0.35], near: [48, 14, 70, 0.88], win: [255, 210, 63, 0.7], cloud: [255, 150, 180, 0.55], bird: [40, 10, 60, 0.6], stars: 0.25, lamps: 0.7, sea: 1 },
+  { top: [14, 5, 32, 0.55], low: [70, 22, 100, 0.55], far: [138, 77, 255, 0.2], farWin: [255, 210, 63, 0.4], near: [21, 7, 38, 0.8], win: [255, 210, 63, 0.75], cloud: [180, 150, 255, 0.1], bird: [0, 0, 0, 0], stars: 1, lamps: 1, sea: 0 },
 ];
 const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
 const css = c => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${c[3].toFixed(3)})`;
@@ -234,7 +234,37 @@ export function escena(canvas) {
         ctx.globalAlpha = 1;
       }
     }
-    ground(g, P);
+    if (P.sea < 0.99) ground(g, P);
+    if (P.sea > 0.01) { ctx.globalAlpha = P.sea; sea(g, P, w); ctx.globalAlpha = 1; }
+  }
+  /**
+   * The sea, the afternoon's ground: the street fades into it and back. A seawall with its neon edge, the
+   * water taking the sky's colors, waves that run with the speed and the low sun's path glittering on it.
+   */
+  function sea(g, P, w) {
+    const Y = GROUND, A = ctx.globalAlpha, t = QUIET ? 0 : g.clock;
+    ctx.fillStyle = 'rgba(21,7,38,0.95)'; ctx.fillRect(0, Y, W, 0.012);
+    ctx.globalAlpha = A * 0.25; ctx.fillStyle = '#2ee6d6'; ctx.fillRect(0, Y - 0.002, W, 0.01);
+    ctx.globalAlpha = A; ctx.fillStyle = '#2ee6d6'; ctx.fillRect(0, Y, W, 0.003);
+    const top = Y + 0.012, wat = ctx.createLinearGradient(0, top, 0, 1);
+    wat.addColorStop(0, css(mix(P.low, [40, 20, 90, 1], 0.45))); wat.addColorStop(1, css(mix(P.top, [12, 4, 30, 1], 0.6)));
+    ctx.fillStyle = wat; ctx.fillRect(0, top, W, 1 - top);
+    // The low sun's path on the water, made of short glints
+    const sx = W * 0.72;
+    for (let r = 0; r < 7; r++) {
+      const y = top + 0.008 + r * 0.011, half = 0.02 + r * 0.008;
+      ctx.globalAlpha = A * w[1] * (0.55 - r * 0.06) * (0.75 + 0.25 * Math.sin(t * 3 + r * 1.7));
+      ctx.fillStyle = r % 2 ? '#ffd23f' : '#ff9a4a';
+      ctx.fillRect(sx - half + Math.sin(t * 2 + r) * 0.006, y, half * 2, 0.004);
+    }
+    // Waves: short light crests in three rows, the nearer ones faster
+    ctx.fillStyle = 'rgba(255,255,255,1)';
+    for (let r = 0; r < 3; r++) {
+      const y = top + 0.018 + r * 0.024, gap = 0.09 + r * 0.03, k = 0.5 + r * 0.35, off = ((g.scroll * k) % gap + gap) % gap;
+      ctx.globalAlpha = A * (0.16 + r * 0.06);
+      for (let x = -off + (r % 2) * gap / 2; x < W; x += gap) ctx.fillRect(x, y + Math.sin(t * 2 + x * 9) * 0.002, 0.03 + r * 0.008, 0.0035);
+    }
+    ctx.globalAlpha = A;
   }
   /**
    * The street, scrolling at the course's speed: a sidewalk of tiles with a lit curb, then the asphalt,
