@@ -197,7 +197,11 @@
       "error": "✗ behind it, the demo flies itself",
       "signature": "39937ad351",
       "date": "2026-11-04T16:38:21.884Z",
-      "fix": null,
+      "fix": {
+        "commit": "e52181c9f58b0f09172f92add7bd8466a4d26f94",
+        "date": "2026-11-04T16:45:20.674Z",
+        "stat": "1 file(s) +11 −6: tools/e2e/flap/lab.mjs"
+      },
       "flaky": false
     }
   ]
