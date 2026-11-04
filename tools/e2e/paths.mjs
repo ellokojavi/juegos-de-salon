@@ -239,6 +239,8 @@ export const PATHS = {
     'wild-today': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
     'wild-today-cover': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-empezar')?.scrollIntoView({ block: 'end' })`],
     'wild-today-three': [`location.href='/cup/?test&demo=last-day-three'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
+    // The podium announced on the last day (lab flag `cup-podium-early`): the board of the `decided` demo
+    'podium-early': [`location.href='/cup/?test&lab&demo=decided'`, `1`, `1`, `document.getElementById('podio-anticipado')?.scrollIntoView({ block: 'start' })`],
     'wild-auto': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `document.querySelector('.mis-dias')?.scrollIntoView({ block: 'end' })`],
     'wild-auto-result': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `[...document.querySelectorAll('.md-fila')][5].click()`, `1`],
     // Out of the cup (D-347): the notice on top of the board, and the grey row in the table

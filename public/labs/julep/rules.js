@@ -160,7 +160,7 @@ const EN = {
   paloNames: { '♠': 'spades', '♥': 'hearts', '♦': 'diamonds', '♣': 'clubs' },
   rankNames: { A: 'ace', K: 'king', Q: 'queen', J: 'jack' },
   ui: {
-    docTitle: 'Julep 🍹 · Party Games', gameChip: '🍹 Julep', menu: '‹ Menu',
+    docTitle: 'Julep 🍹 · Parlor Games', gameChip: '🍹 Julep', menu: '‹ Menu',
     title: 'Julep', lead: 'If you go in and don\'t win two of the five tricks, you drink the whole pot.',
     leadExplain: 'A game has several hands. Each hand is five tricks of one card per player.',
     rulesSummary: '🍹 How do you play?',

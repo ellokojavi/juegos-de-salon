@@ -1,8 +1,8 @@
 // Merge lanes by blast radius (docs/LANES.md, D-519): the glob table and the PR lane.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { laneOf, laneOfPr, globRe, decision, report, CONFIG, ORDER } from './lanes.mjs';
-import { invalidAction, closesWhenDone } from './approve.mjs';
+import { laneOf, laneOfPr, globRe, decision, report, CONFIG, ORDER, approvalBlock, withApproval, APPROVAL_START } from './lanes.mjs';
+import { invalidAction, closesWhenDone, plan, OWNER } from './approve.mjs';
 import { decisionsBody } from './processes.mjs';
 
 // Globs
@@ -67,5 +67,32 @@ assert.ok(!closesWhenDone('Pending work') && !closesWhenDone('Owner approval: PR
 const body = decisionsBody(d);
 assert.ok(body.includes(sha), 'the body names the commit, so a push asks again');
 assert.match(body, /approve-pr/);
+
+// The decision rides at the top of the PR's own description (D-531), replaced on every push
+const block = approvalBlock(body);
+const prBody = withApproval('What the PR does.', block);
+assert.ok(prBody.startsWith(APPROVAL_START) && prBody.endsWith('What the PR does.'));
+const sha2 = 'c'.repeat(40), block2 = approvalBlock(decisionsBody(decision(12, sha2, 'T', red.by)));
+const pushed = withApproval(prBody, block2);
+assert.ok(pushed.includes(sha2) && !pushed.includes(sha), 'a push replaces the question, it does not pile up');
+assert.equal(pushed.split(APPROVAL_START).length, 2);
+assert.ok(pushed.endsWith('What the PR does.'));
+assert.equal(withApproval('', block), block);
+
+// The owner's tick in the PR description is carried out, only for that PR and only by the owner
+const tick = b => b.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [x]$1');
+const prEvent = (before, after, extra = {}) => ({
+  action: 'edited', sender: { login: OWNER },
+  pull_request: { number: 12, state: 'open', user: { login: 'someone' }, labels: [{ name: 'needs-owner' }], body: after },
+  changes: { body: { from: before } }, ...extra,
+});
+assert.deepEqual(plan(prEvent(prBody, tick(prBody))).plans[0].actions.map(a => a.type), ['approve-pr', 'merge']);
+assert.match(plan({ ...prEvent(prBody, tick(prBody)), sender: { login: 'someone' } }).ignore, /not ellokojavi/);
+assert.match(plan(prEvent(prBody, tick(prBody), { pull_request: { ...prEvent(prBody, tick(prBody)).pull_request, labels: [] } })).ignore, /needs-owner/);
+// A PR body is written by whoever pushes: it cannot decide another PR or anything else
+const other = approvalBlock(decisionsBody(decision(99, sha, 'T', red.by)));
+assert.match(plan(prEvent(other, tick(other))).warnings[0], /only decides that PR \(#12\)/);
+const closing = approvalBlock(decisionsBody({ decisions: [{ question: 'Q', yes: [{ type: 'close-issue', issue: 5 }] }] }));
+assert.match(plan(prEvent(closing, tick(closing))).warnings[0], /not allowed in a PR/);
 
 console.log('lanes ok');

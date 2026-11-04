@@ -13,6 +13,10 @@ name: Approve
 on:
   issues:
     types: [edited]
+  # A 🔴 PR carries its approval in its own description (D-531, docs/LANES.md). pull_request_target
+  # runs main's copy of this file and of approve.mjs, never the PR's: a PR cannot rewrite who obeys
+  pull_request_target:
+    types: [edited]
 
 permissions:
   contents: write
@@ -24,18 +28,21 @@ permissions:
 
 # One decision at a time per issue, and the running one is not cancelled
 concurrency:
-  group: approve-${{ github.event.issue.number }}
+  group: approve-${{ github.event.issue.number || github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
   approve:
     # The first filter, so as not to start a machine for every edit of any issue. `procesos` is
     # the label's name before D-316, for issues opened before it was renamed
-    if: github.event.sender.login == 'ellokojavi' && (contains(github.event.issue.labels.*.name, 'processes') || contains(github.event.issue.labels.*.name, 'procesos'))
+    if: github.event.sender.login == 'ellokojavi' && (contains(github.event.issue.labels.*.name, 'processes') || contains(github.event.issue.labels.*.name, 'procesos') || contains(github.event.pull_request.labels.*.name, 'needs-owner'))
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
+      # main, also on pull_request_target (its default): never the PR's code
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 24

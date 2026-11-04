@@ -97,7 +97,7 @@ const ES = {
 const EN = {
   cat: { 1: 'Ones', 2: 'Twos', 3: 'Threes', 4: 'Fours', 5: 'Fives', 6: 'Sixes', escalera: 'Straight', full: 'Full house', poker: 'Four of a kind', generala: 'Generala', doble: 'Double generala' },
   ui: {
-    docTitle: 'Generala 📝 · Party Games', gameChip: '📝 Generala', menu: '‹ Menu',
+    docTitle: 'Generala 📝 · Parlor Games', gameChip: '📝 Generala', menu: '‹ Menu',
     title: 'Generala', lead: 'Roll a straight, a full house, four of a kind or a generala with five dice. After 11 turns, the highest total wins.',
     rulesSummary: '🎲 How do you play?',
     modeLocal: '📱 One phone', modeLocalHint: '2 to 6 players, passing the phone every turn.',

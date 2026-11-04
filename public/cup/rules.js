@@ -579,6 +579,10 @@ const ES = {
   // Final
   podiumTitle: '¡{name} ganó la copa!',
   podiumTie: '¡Empate en la copa!',
+  // The podium announced on the last day, before the cup closes (lab flag `cup-podium-early`)
+  earlyTitle: '¡{name} ya ganó la copa!',
+  earlyTie: 'El podio ya está decidido',
+  earlyNote: 'Lo que falta por jugar ya no cambia el podio. El podio oficial, con sus medallas, llega cuando cierre la copa.',
   tieDays: '⚖️ Empate en {pts} puntos: desempató quien ganó más días.',
   tieFinal: '⚖️ Empate en {pts} puntos: desempató quien quedó mejor en la final.',
   tieLast: '⚖️ Empate en {pts} puntos: desempató quien quedó mejor el último día.',
@@ -1459,6 +1463,9 @@ const EN = {
   // Final
   podiumTitle: '{name} won the cup!',
   podiumTie: 'It\'s a tie for the cup!',
+  earlyTitle: '{name} has already won the cup!',
+  earlyTie: 'The podium is already decided',
+  earlyNote: 'What is left to play can no longer change the podium. The official podium, with its medals, comes when the cup closes.',
   tieDays: '⚖️ Tied on {pts} points: the one who won more days goes ahead.',
   tieFinal: '⚖️ Tied on {pts} points: the one who did better in the final goes ahead.',
   tieLast: '⚖️ Tied on {pts} points: the one who did better on the last day goes ahead.',
@@ -1767,10 +1774,10 @@ const EN = {
   avChange: "Change",
   avReady: "All set. You'll get a notification for this cup in the morning when a day opens, and before it closes if you haven't played.",
   avError: "Notifications couldn't be turned on. Try again.",
-  avStep3: "Open **Party Games** from the new icon, enter The Cup with the code **{code}**, your name and your PIN, and tap **Turn on notifications** again.",
+  avStep3: "Open **Parlor Games** from the new icon, enter The Cup with the code **{code}**, your name and your PIN, and tap **Turn on notifications** again.",
   avInstalled: "I added it",
   avInstalledNext: "Now open it from the icon on your home screen and follow step 3. The PIN is the one you chose for this cup.",
-  avOtherLead: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in Safari and tap **Turn on notifications** again.",
+  avOtherLead: "You're inside another app, and from there Parlor Games can't be added to the home screen. Copy the link, open it in Safari and tap **Turn on notifications** again.",
   avCopied: "Link copied.",
   avSetTitle: "Notifications for this cup",
   avSetDay: "When a day opens",
@@ -2329,6 +2336,9 @@ const PT = {
   // Final
   podiumTitle: '{name} ganhou a copa!',
   podiumTie: 'Empate na copa!',
+  earlyTitle: '{name} já ganhou a copa!',
+  earlyTie: 'O pódio já está decidido',
+  earlyNote: 'O que falta jogar já não muda o pódio. O pódio oficial, com suas medalhas, chega quando a copa fechar.',
   tieDays: '⚖️ Empate em {pts} pontos: desempatou quem ganhou mais dias.',
   tieFinal: '⚖️ Empate em {pts} pontos: desempatou quem foi melhor na final.',
   tieLast: '⚖️ Empate em {pts} pontos: desempatou quem foi melhor no último dia.',

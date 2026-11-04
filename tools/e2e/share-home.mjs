@@ -15,7 +15,7 @@ let bad = 0;
 const check = (ok, what) => { console.log(`${ok ? '✓' : '✗'} ${what}`); if (!ok) bad++; };
 const EXPECTED = {
   es: { photo: 'menu.jpg', head: '🎲 *Juegos de Salón* · ', file: 'juegos-de-salon.jpg' },
-  en: { photo: 'menu-en.jpg', head: '🎲 *Party Games* · ', file: 'party-games.jpg' },
+  en: { photo: 'menu-en.jpg', head: '🎲 *Parlor Games* · ', file: 'parlor-games.jpg' },
   pt: { photo: 'menu-pt.jpg', head: '🎲 *Jogos de Salão* · ', file: 'jogos-de-salao.jpg' },
 };
 // A phone that shares files: keeps what reached the menu and how many cards were requested

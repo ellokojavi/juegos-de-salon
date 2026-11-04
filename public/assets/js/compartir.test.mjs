@@ -130,7 +130,7 @@ await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma 
   const { titulo, texto } = compartirApp({ C: COMMON.en, lang: 'en', juegos: 15 });
   assert.equal(await compartir({ titulo, texto, url: 'https://juegosdesalon.cl/en/', imagen: f }), 'shared');
   assert.deepEqual(r.compartido[0].files, [f]);
-  assert.ok(r.compartido[0].text.startsWith('🎲 *Party Games* · 15 games'));
+  assert.ok(r.compartido[0].text.startsWith('🎲 *Parlor Games* · 15 games'));
   assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/en/?from=link'));
 });
 

@@ -263,6 +263,8 @@ ol.como li { line-height: 1.45; }
 .escalon .medal { font-size: 2rem; }
 .escalon.e1 { padding-top: 26px; background: rgba(255, 210, 63, 0.18); }
 .escalon.e2 { padding-top: 16px; }
+/* The podium announced on the last day, before the cup closes: the same steps, framed in gold */
+.podio--anticipado { border: 1px solid rgba(255, 210, 63, 0.45); }
 .medalla { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }
 .medalla span { color: var(--muted); font-weight: 700; }
 

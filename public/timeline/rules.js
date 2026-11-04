@@ -75,7 +75,7 @@ const ES = {
 };
 
 const EN = {
-  docTitle: 'Timeline ⏳ · Party Games', gameChip: '⏳ Timeline', menu: '‹ Menu',
+  docTitle: 'Timeline ⏳ · Parlor Games', gameChip: '⏳ Timeline', menu: '‹ Menu',
   title: 'Timeline',
   lead: 'Place each milestone on the timeline without seeing its year.',
   howTitle: '🧭 How do you play?',

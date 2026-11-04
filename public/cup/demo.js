@@ -93,6 +93,9 @@ export const ESCENAS = {
   'last-day': { inicio: 5, jugadores: 5, jugaron: 5, yo: 'javi02', pantalla: 'tablero' },
   // The same in a 3-day cup without a final (D-438): its last day is the one the wildcard lands on
   'last-day-three': { inicio: 2, jugadores: 5, jugaron: 2, yo: 'javi02', pantalla: 'tablero', cal: ['linea', 'numero', 'reinas'] },
+  // The last day with the first three places beyond reach (lab flag `cup-podium-early`): whoever looks
+  // already played the final, Vale and Nico have not, and nothing they score can move the podium
+  decided: { inicio: 6, jugadores: 5, jugaron: 6, yo: 'javi02', pantalla: 'tablero', alDia: true, hoyFaltan: ['vale04', 'nico05'], fuerza: { cata01: 0.95, javi02: 0.8, panc03: 0.65, vale04: 0.3, nico05: 0.2 }, faltas: { vale04: [2, 5], nico05: [4] } },
   // Whoever looks already played today's day: nothing left until tomorrow's opens
   played: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', alDia: true },
 };
@@ -148,9 +151,11 @@ export function escena(nombre, { now, uid = 'demo' }) {
   for (let d = 1; e.jugaron > 0 && d <= Math.min(e.jugaron + 1, meta.days); d++) {
     for (const j of jug) {
       const hoyEsEste = d === e.jugaron + 1;
-      if (hoyEsEste && (j.pid === e.yo ? !e.alDia : azar(j.pid, d) < 0.5)) continue;
+      // Who has not played today: the scene's own list, or whoever looks (unless `alDia`) and half the others
+      if (hoyEsEste && (e.hoyFaltan ? e.hoyFaltan.includes(j.pid) : j.pid === e.yo ? !e.alDia : azar(j.pid, d) < 0.5)) continue;
       if (e.faltas && (e.faltas === true ? FALTAS : e.faltas)[j.pid]?.includes(d)) continue;
-      const k = 0.35 + 0.6 * azar(j.pid, d);
+      // `fuerza` fixes how well a player does every day, for a scene whose table must come out one way
+      const k = e.fuerza?.[j.pid] ?? 0.35 + 0.6 * azar(j.pid, d);
       const r = PUNTAJE[cal[d - 1]](k);
       const at = Math.min(now - 3600000, meta.win[d].a + 3600000 * (8 + 10 * azar(j.pid, -d)));
       (L.started[d] ||= {})[j.pid] = at - 120000;

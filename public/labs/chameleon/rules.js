@@ -87,7 +87,7 @@ const ES = {
 };
 
 const EN = {
-  docTitle: 'Chameleon 🦎 · Party Games',
+  docTitle: 'Chameleon 🦎 · Parlor Games',
   menu: '‹ Menu', gameChip: '🦎 Chameleon', title: 'Chameleon',
   lead: 'Everyone knows the secret word except one. Find the chameleon before it gets away.',
   credit: 'Inspired by The Chameleon, by Big Potato Games.',

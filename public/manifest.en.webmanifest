@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Party Games",
-  "short_name": "Party Games",
+  "name": "Parlor Games",
+  "short_name": "Parlor Games",
   "description": "Short tabletop, logic and skill games to play alone or with friends.",
   "start_url": "./?pwa",
   "scope": "./",
