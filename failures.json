@@ -186,6 +186,19 @@
         "stat": "3 file(s) +2 −2: changelog/ccr-67ba64dd-nb295o.md, public/assets/og/huellas.json, public/assets/og/menu-en.jpg"
       },
       "flaky": false
+    },
+    {
+      "run": 41868333525,
+      "check": "end-to-end",
+      "pr": 1168,
+      "branch": "ccr-6bae98e9-9b9bc3",
+      "commit": "1df4e6db47f3bac1816d253b7d731366b9d995e3",
+      "test": "flap/lab.mjs",
+      "error": "✗ behind it, the demo flies itself",
+      "signature": "39937ad351",
+      "date": "2026-11-04T16:38:21.884Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
