@@ -1,3 +1,3 @@
 level: patch
 
-- **A learning programme** (D-532): `docs/LEARNING.md` and `docs/learning/` record the plan to put AI in the games only where it costs nothing per use (build time, the player's device or the owner's own server, never the owner's Claude plan), in six pieces that each leave what the owner learned written down. Nothing changes for players yet.
+- **Learning programme, piece 1**: the owner labelled 20 of 🕵️ Agentes' Spanish clues and the rubric for judging generated clues is drafted from those labels in `docs/learning/01-content-pipeline.md`, with a measured finding: in 51 of 300 generated boards a clue has as many of its temptations as agents. Nothing changes for players.
