@@ -19,7 +19,7 @@ contributor, round by round on a playable prototype, before entering the lab.
 
 ## Cover
 
-A glass card over a demo that flies itself (the engine's autopilot): the title with a 🐤 that sways,
+A glass card over a demo that flies itself (the engine's autopilot, a smooth path through the middle of every hoop, never touching a rim): the title with a 🐤 that sways,
 the tagline («Un toque, un aletazo.»), the credit («Inspirado en Flappy Bird, de Dong Nguyen.», with the link), three steps, the
 language toggle, a yellow «🐤 Jugar» (like Shinobi's and Babel's Empezar) and the best score on this phone, in C-5's order
 (language toggle before the button). The owner's changes after trying it on the PR preview:

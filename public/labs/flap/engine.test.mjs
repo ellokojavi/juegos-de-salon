@@ -156,6 +156,19 @@ assert.deepEqual([0, 5, 6, 15, 16, 30, 31, 50, 51, 200].map(verdictOf), [0, 0, 1
   assert.equal(skyOf({ mode: 'over', score: 95 }), 3);
 }
 
+// The cover's demo goes through the middle of every hoop, never touching a rim
+{
+  const g = newGame({ W: 0.55, random: rng(7), mode: 'demo', band: [0.15, 0.5] });
+  let crossed = 0;
+  for (let i = 0; i < 1200; i++) {
+    const before = g.gates.filter(h => !h.done);
+    step(g, 1 / 60);
+    for (const h of before) if (h.done) { crossed++; assert.ok(Math.abs(g.bird.y - h.y) < h.r * 0.3, 'off the middle'); }
+    assert.ok(!g.gates.some(h => h.hit), 'touched a rim');
+  }
+  assert.ok(crossed >= 5);
+}
+
 // The countdown's glide: no gates, the bird never flaps and stays in the sky
 {
   const g = newGame({ W: 0.55, random: rng(3), mode: 'glide' });

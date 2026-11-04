@@ -149,10 +149,21 @@ function cross(g, gate) {
   if (lv > g.level) { g.level = lv; g.events.push({ type: 'level', level: lv }); }
 }
 
-/** The demo on the cover flies itself: flap whenever it drops below the next opening. */
-export function autopilot(g) {
-  const next = g.gates.find(h => h.x > g.bird.x - 0.02) || g.gates[0];
-  if (next && g.bird.vy > 0 && g.bird.y > next.y + 0.015) flap(g);
+/**
+ * The demo on the cover flies itself on a smooth path through the middle of every hoop: between the last
+ * gate behind and the next one ahead it eases from one's center to the other's, so it never touches a rim.
+ * It beats its wings while it climbs.
+ */
+export function autopilot(g, dt = 0) {
+  const b = g.bird, ahead = g.gates.find(h => h.x > b.x);
+  if (!ahead) return;
+  const behind = [...g.gates].reverse().find(h => h.x <= b.x);
+  const x0 = behind ? behind.x : b.x - 0.6, y0 = behind ? behind.y : b.y;
+  const k = Math.min(1, Math.max(0, (b.x - x0) / Math.max(0.01, ahead.x - x0))), e = k * k * (3 - 2 * k);
+  const y = y0 + (ahead.y - y0) * e;
+  b.vy = dt > 0 ? (y - b.y) / dt : 0; b.y = y;
+  b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
+  if (b.vy < -0.05 && b.flapT <= 0) b.flapT = 1;
 }
 
 /** Advances the game `dt` seconds. Modes: 'demo' (the cover's), 'glide' (the countdown's), 'ready', 'play', 'dying' and 'over'. */
@@ -169,13 +180,15 @@ export function step(g, dt) {
   if (g.mode === 'over') return;
   // The countdown: the city scrolls by and the bird glides, wings still, rising and sinking slowly; no gates
   if (g.mode === 'glide') { g.hoverY += (0.45 - g.hoverY) * Math.min(1, dt); b.y = g.hoverY + Math.sin(g.clock * 1.3) * 0.05; b.vy = Math.cos(g.clock * 1.3) * 0.065; b.rot = clamp(b.vy * 1.5, -0.12, 0.12); return; }
-  if (g.mode === 'demo') autopilot(g);
   const live = g.mode === 'play';
 
-  b.vy = Math.min(MAX_FALL, b.vy + G * dt);
-  b.y += b.vy * dt;
-  if (b.y < BR) { b.y = BR; b.vy = Math.max(0, b.vy); }
-  b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
+  if (g.mode === 'demo') autopilot(g, dt);
+  else {
+    b.vy = Math.min(MAX_FALL, b.vy + G * dt);
+    b.y += b.vy * dt;
+    if (b.y < BR) { b.y = BR; b.vy = Math.max(0, b.vy); }
+    b.rot = clamp(b.vy * 0.55, -0.45, 1.1);
+  }
   if (g.shield > 0) g.shield -= dt;
 
   if (g.mode === 'dying') {

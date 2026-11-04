@@ -8,3 +8,5 @@ level: patch
   with its lane's dashes, where the lamps' light falls from the afternoon on.
 - **Aletazo (lab): the afternoon by the sea.** In the afternoon the street fades into the sea: a seawall,
   waves that run with the speed and the low sun glittering on the water; at night it is the street again.
+- **Aletazo (lab): the cover's bird flies through the middle.** The demo behind the cover follows a smooth
+  path through the center of every hoop, instead of bumping the top of some.
