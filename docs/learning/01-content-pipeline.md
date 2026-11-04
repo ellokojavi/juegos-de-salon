@@ -151,22 +151,36 @@ never a child") with a more general one: what matters is **consistency**, not a 
   OFICINA is not).
 - J5. **The trio is coherent.** The three temptations are of one kind (PISCINA among RÍO and
   LAGO is not). Softer than J3 and J4: it cost MAR a grade, not CINE.
-- J6, candidate. **Variety among the `si`.** Parts, actions, places and traits mixed read richer
-  than nine objects. The owner has not said whether it is a criterion.
+- J6. **Variety among the `si`, subordinate to J2.** Parts, actions, places and traits mixed
+  read richer than nine objects. It only raises a grade, never saves one: variety that brings a
+  second relation (ALTURA) is a J2 failure, not a J6 merit. For the generator it is an explicit
+  instruction; for the judge, a bonus.
 
 **Grades:** good = passes all; so-so = fails J2, J4 or J5, or one weak `si` word; bad = fails
 J1 on two or more words, or J3 on any temptation, or M2.
 
-**Open for the owner:** whether J6 enters; whether M3 should be enforced by the generator (a
-flag, measured) or only reported; whether the hidden rule the deck follows (one relation inside,
-another outside) should be told to the player somewhere.
+**The owner's answers (2026-11-04), which close the concept:**
+
+- **J6 enters**, as above: variety is welcome as long as it does not break deducing over guessing.
+- **M3 is enforced by the generator, behind a flag, and measured.** The engine already prefers
+  neutrals from other clues than the assassin's; the flag `agents-m3` turns that preference into a
+  rule on the lab's boards, and the panel's numbers for Agentes (mean score, assassin touches,
+  abandons) say whether deducing got easier. If it changes nothing, it closes with that result.
+  This is the hypothesis loop (piece 5) rehearsed small: hypothesis, a change behind a flag, a
+  verdict by number.
+- **The hidden rule is not told to the player.** The first board teaches it (touching ROSADO on
+  ROJO costs 15 and explains more than a sentence), in line with U-18 and the house taste for
+  puzzles whose rule is discovered by playing. The waiting room's drawing already hints it (the
+  assassin shown is a sibling of the clue, RÍO for MAR). The rule is written for the factory
+  instead: `docs/games/agents.md` and criterion J3, so every new clue, human or generated,
+  follows it.
 
 ## Plan
 
 | Step | Kind | What | Done when |
 |---|---|---|---|
 | 1.1 | concept | This page; the owner answers the decision | The rubric's criteria are in this file, edited by the owner |
-| 1.2 | build | `tools/generators/clues/` with the mechanical checks as a script and its test; the eval cases file (`cases.json`: the 100 clues plus deliberately bad ones, each labelled) | The script runs on the existing clues and flags nothing wrong, or what it flags is a real defect |
+| 1.2 | build | `tools/generators/clues/` with the mechanical checks M1 to M3 as a script and its test; the eval cases file (`cases.json`: the 20 labelled clues, the rest of the deck unlabelled, and deliberately bad ones, each labelled); the flag `agents-m3` making the engine enforce M3 on lab boards, with its `/labs/` card | The script runs on the existing clues and flags nothing wrong, or what it flags is a real defect; a lab key plays an M3 board |
 | 1.3 | build ⚖️ | The judge: the rubric as a prompt, the model called from a session (not a job) on the cases; the agreement with the labels printed | Agreement ≥ 9 in 10 on the labelled cases, or the rubric is revised and the step repeats |
 | 1.4 | build | The generator: a session produces 100 new clues per language against the current board rules (D-288), the judge filters, the result lands as a lab deck behind the flag `clues-generated` with its `/labs/` card | The card shows the counts; the owner plays a generated board with a lab key |
 | 1.5 | learnings | The owner reviews a sample, the number is recorded, the *Learnings* section is written; `lab-ready` (D-528) says when the deck may be published | Learnings written, the flag's card says ✅ or why not |
@@ -180,8 +194,34 @@ generator and judge are deleted and the eval cases stay as documentation of why.
 ## Status
 
 - 2026-11-04 · 1.1 concept written in the planning session; the owner chose C.
-- 2026-11-04 · 20 clues labelled by the owner in conversation, criteria drafted from the labels; waiting for the owner's edits (J6, M3, the hidden rule).
+- 2026-11-04 · 20 clues labelled by the owner in conversation, criteria drafted from the labels (PR #1177).
+- 2026-11-04 · The owner answered J6, M3 and the hidden rule; **1.1 closed**. Next: 1.2.
 
 ## Learnings
 
-*(written with the owner when a step ends)*
+**1.1, the concept (2026-11-04).** In the owner's words where they gave them.
+
+- **The rubric was already in the deck, unwritten.** Twenty labels made explicit a rule every
+  hand-written clue followed and nobody had stated: the `si` words share one relation with the
+  clue and each temptation has another. An eval starts by writing down what the humans were
+  already doing.
+- **The owner generalised past the session's rule.** The session proposed "agents are children
+  of the clue, temptations are siblings"; it fitted every case seen. The owner asked why fix the
+  level at all: "if the group is children, a sibling is out; if the group is siblings, a child is
+  out". Consistency, not level. An eval measures against the rule it is given and cannot make
+  that move by itself; that is what the person in the loop is for.
+- **Deducing needs the count.** Once the level is free, what lets the player deduce instead of
+  guess is that the clue's number fits only one relation. That turned a feeling ("two decoys of
+  the same clue feel dangerous") into a board rule (M3) and a measured number: 51 of 300 boards
+  break it today.
+- **Quality lives in different halves for different clue kinds.** Classic clues weaken in their
+  temptations; idea clues weaken in their agents. The owner is lenient on idea temptations
+  (SILENCIO for PAZ) and strict on idea agents (NOBEL). A judge calibrated on one kind is wrong
+  on the other: the eval cases must cover both.
+- **A good deck has no bad cases.** Sixteen good, four so-so, zero bad: the eval needs failures
+  made on purpose, or the judge is never tested on what matters.
+- **Not every observation is a criterion.** The owner noticed variety of word kinds and liked
+  it, but it had not moved any label. It entered as a bonus subordinate to the deducing rule,
+  and as an instruction to the generator rather than a verdict of the judge.
+- **A rule for the factory is not a rule for the player.** The deduction rule goes into the
+  game's doc and the rubric, not into the instructions: the first board teaches it better.
