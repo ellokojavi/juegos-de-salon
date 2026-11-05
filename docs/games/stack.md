@@ -14,7 +14,7 @@
 > reads «N pisos» (no blocks stamp); «Continuar» sits on a blurred strip over the tower, and the tour starts from the game's last frame, the top gliding up to just under «Fin del juego». No tour
 > with reduced motion. The rules panel hides at the end (no time to read it), and the tower's height
 > shrinks to whatever keeps the whole end above the fold, with no vertical scroll. Over «Continuar» the
-> score adds itself up (`cuentaPuntos` in `ui.js`): «9 pisos + 3 🔥 racha + 15 📏 por lo largo = 27 puntos»,
+> score adds itself up (`cuentaPuntos` in `ui.js`, its figures and the one gap around every sign fitted to the width by `encajar`): «9 pisos + 3 🔥 racha + 15 📏 por lo largo = 27 puntos»,
 > each bonus slamming in while the total rolls up, which pops (confetti when there were bonuses);
 > all at once with reduced motion or a finished game reopened.
 >
