@@ -237,6 +237,19 @@
         "stat": "52 file(s) +398 −97: .github/workflows/approve.yml, README.md, changelog/ccr-67ba64dd-approve-in-pr.md, changelog/ccr-67ba64dd-nb295o.md, changelog/claude-cup-winners-announcement-hhohpw.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 41949938954,
+      "check": "end-to-end",
+      "pr": 1184,
+      "branch": "claude/incremental-memory-game-p9nlrr",
+      "commit": "15d252932da425200f1fc1bca7ceedbcd7a27adc",
+      "test": "structured-data.mjs",
+      "error": "✗ /year/: the FAQPage says what «Cómo se juega» does not show (or not in that order): «Un jugador, 2–5 minutos. Gratis, sin instalar nada y sin cuenta.»",
+      "signature": "4093c7fcb2",
+      "date": "2026-11-05T01:43:38.586Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
