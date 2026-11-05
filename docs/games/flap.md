@@ -123,3 +123,7 @@ With a lab key, the tester ribbon (the «T» on the right edge) offers «🐤 Em
 points the next game starts from (`newGame({ level, score })`), then the usual countdown. It is for trying
 the levels and the times of day without playing up to them; a test game keeps no best and sends no stats.
 Its texts are only for testers, in Spanish, like Babel's «Simular final».
+
+## Migrated to the design system (D-533, #1193)
+
+The stylesheet dropped its copy of the shell's `.link-btn` («Cómo se juega ▾» is now `.tarjeta .como` over the shell's button) and writes the rest (the stage, the HUD, the cover and result cards, the countdown, the pause) on the tokens; the page's one-screen layout is written on `#app`. The design lint reports zero on it beyond one escape: the cover's 🐤 and the short-phone title at 2.2 rem, sized together so 🐤 Jugar stays in view at 320×568 (U-39); the stage's sky and the hint's drop are the game's own tokens (`--aletazo-cielo`, `--aletazo-sombra`). What the player may notice: the pause title takes `.display--lg` (it was 2.6 rem), the steps and the best score are 0.9 rem (were 0.95, so each step fits one line at 320 px), the stamp is 1.4 rem (was 1.3), the lives, the notice, the hint and the verdict move up to the nearer text step, the short phone's 🐤 is 1.6 rem (was 1.7).
