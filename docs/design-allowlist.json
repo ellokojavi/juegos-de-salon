@@ -300,6 +300,12 @@
       "rule": "radius",
       "what": "border-radius: 3px",
       "reason": "A plank of the wood left (`.tv-tablones span`), 14 px tall and a few px wide when the stage gives many meters: an 8 px corner would turn each plank into a pill; a shape of the board, not a size on the corner scale."
+    },
+    {
+      "file": "public/cup/games/agents/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.4rem",
+      "reason": "The clue's word (`.ag-pista .ag-palabra`): the one word the whole table reads, the board's own size between the text steps and the title steps (like Ahorcado's word)."
     }
   ]
 }

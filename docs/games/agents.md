@@ -111,3 +111,7 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
 ## Exceptions to the canons
 
 None.
+
+## Migrated to the design system (D-533, #1193)
+
+Agentes' sheet (`public/cup/games/agents/style.css`) had no copies of the shell and is now written on the tokens: 43 lint hits to 0 beyond one escape in `docs/design-allowlist.json` and DESIGN.md §4 (the clue's word at 2.4 rem). The four clue colours stay as `--g` triplets, now also on the notice (`.ag-aviso.gN`, which read them as `rgb()` literals), so `palette.test.mjs` still reads and passes them; the assassin, the stamps' reds, the flash and the stamps' night are tokens at the top of the sheet, every value unchanged. What the player may notice: the clue panel's corner is 16 px (was 18), the stamps' padding 4 px (was 3), and the sizes between two steps took the nearer one (🔍 2.4 → 2 rem, the demo's magnifier 1.9 → 2, the end stamp 1.7 → 1.6, the stamps 0.95/0.72 → 0.9/0.75, the demo cards 0.78 → 0.75, a card's clue line 0.72 → 0.75).
