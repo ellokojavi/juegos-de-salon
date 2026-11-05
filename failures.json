@@ -339,6 +339,19 @@
         "stat": "21 file(s) +207 −22: CLAUDE.md, README.md, changelog/labs-launched-to-bodega.md, docs/ADD-GAME.md, docs/AGENTS.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42050770578,
+      "check": "end-to-end",
+      "pr": 1207,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "b4a5533762cfc698f4ddb5b018f16015a80306c1",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\nError: Chrome didn't open its port in 60 s (CHROME=/home/runner/work/_temp/chrome)",
+      "signature": "e72c46fdf3",
+      "date": "2026-11-05T15:16:28.847Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
