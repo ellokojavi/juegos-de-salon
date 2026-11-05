@@ -94,3 +94,6 @@ in `localStorage`), the pictures found, the level reached and the time; share (t
 
 - Lab game, outside `games.js`, La Copa and Uno al día; no ranking (D-212).
 - `window.__memory` exposes the state (the round's answer) for the end-to-end script.
+- **The 6×6 tiles are under 44 px at 320 px wide** (C-8): 37 px at 320×568 and 43 px at 320×640; from
+  360 px wide they measure 48 px or more. Everyone plays the same board with the same heading on every
+  phone, so neither the layout nor the difficulty changes with the screen.
