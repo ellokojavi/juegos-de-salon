@@ -1695,6 +1695,10 @@
       "title": "Guía de usabilidad"
     },
     {
+      "path": "docs/design/cup-unification.md",
+      "title": "La Copa inside the design system: the analysis (phase 7, #1196)"
+    },
+    {
       "path": "docs/games/agents.md",
       "title": "🕵️ Agentes"
     },

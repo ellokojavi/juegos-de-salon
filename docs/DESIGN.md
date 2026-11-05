@@ -11,7 +11,7 @@ experience of the site, La Copa and its mini-games included: not only how a butt
 a screen starts, passes the phone, confirms, shares and shows a result. Nothing is a game's own
 without an escape in §4 with its reason. La Copa behaves today as a system apart (`cup/style.css`,
 its own controls in `cup/game.js`); that is a defect the plan dissolves (phase 7, #1196), not a
-boundary the system respects.
+boundary the system respects. The analysis: [design/cup-unification.md](design/cup-unification.md).
 
 **Who keeps it:** the usability agent (`.claude/agents/usability.md`). It owns this document, the
 design lint (`tools/agents/design-lint.mjs`, phase 2 of #1188), and the components page
