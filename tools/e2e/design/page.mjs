@@ -20,7 +20,7 @@ ok(/^0 hits/m.test(lint), 'the page\'s own stylesheet has zero design-lint hits 
 for (const W of [320, 390]) {
   var b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844 });
   await b.go(`${SITE}/labs/`);
-  ok(await ev(`document.querySelector('#mejoras #seccion-design #btn-design')?.getAttribute('href')`) === 'design/', `${W}: the lab offers the design system under Mejoras en prueba`);
+  ok(await ev(`document.querySelector('#activos #seccion-design #btn-design')?.getAttribute('href')`) === 'design/', `${W}: the lab offers the design system among the active projects`);
   await b.go(`${SITE}/labs/design/`, 800);
   ok(await waitFor(`(window.__design?.tokens || 0) > 30`), `${W}: the tokens are read from base.css`);
   ok(await ev(`document.querySelectorAll('#ds-muestras .ds-muestra').length`) >= 16, `${W}: the colour swatches are drawn`);

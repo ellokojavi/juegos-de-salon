@@ -9,7 +9,8 @@ the games.
 ## Summary
 
 - **Where:** `https://juegosdesalon.cl/labs/design/`, behind the lab's door (D-281), `noindex`; its
-  card in `/labs/` under ✨ Mejoras en prueba (`#seccion-design`). Not in `games.js`, not on the
+  card in `/labs/` among the active projects (`#seccion-design`; not a game, but ✨ Mejoras en prueba
+  is for a flag a page outside the lab asks, `bodega.test.mjs`). Not in `games.js`, not on the
   home page: it is the owner's and the agents', never a player's.
 - **Language:** Spanish, the lab's (D-191); most of what it shows are token names.
 - **What it shows:** the colour tokens as swatches with their value, the space, corner and text
