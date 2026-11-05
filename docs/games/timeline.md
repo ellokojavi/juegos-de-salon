@@ -302,3 +302,7 @@ Tests del motor: `node public/timeline/engine.test.mjs`. Gancho de pruebas (C-14
   resultado de una jugada por su cuenta y no hay nada que comprometer con hash. Quien abra la
   consola se arruina el juego solo. En modo un celular no hace falta tapar la pantalla, solo anunciar
   el turno (C-9 sin `showCover`).
+
+## Migrated to the design system (D-533, #1193)
+
+Línea de Tiempo was the first game migrated after the pilot, following DESIGN.md §6: its stylesheet lost its copies of the game shell (screens, the cover's hero, modes, fields, the segmented control, player rows, the room, whose turn, the result's hero), which live once in `base.css`, and what is its own (the deck cards, the score chips, the ranking, the solo bar and its result) is written on the tokens; the hand, the line and the verdict were already in `assets/css/linea.css`. The design lint reports zero on it beyond one escape (the deck card's emoji at 1.8 rem, the same card as Ahorcado's). What changed for the player, all intended: the shell's `.seg` padding (4 px, not 5) and the dealing selector's tighter gap and smaller label (so the three names fit in one line at 390 px), the shell's "whose turn" title (one step smaller), the player row's input in the shell's font with the ✕ at 44 px (U-10), and the sizes that sat between two text steps moved to the nearer one (the ranking's position and detail, the solo title and clock).

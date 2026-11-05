@@ -60,6 +60,12 @@
       "rule": "text-size",
       "what": "font-size: 1.9rem",
       "reason": "The revealed word on the verdict's card (`.verdict .word-big span`): the board's own size."
+    },
+    {
+      "file": "public/timeline/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.8rem",
+      "reason": "The deck card's emoji (`.theme-card .em`), the same card and size as Ahorcado's theme card: a board's own size, between the text steps and the title steps; the card is a candidate shell component."
     }
   ]
 }
