@@ -514,11 +514,18 @@ async function pantallaCrearCopa({ nombreInicial = '', desde = null, quien = '' 
   const hoyCrear = fechaEn(Date.now(), zonaCopa());
   const otraFecha = campoFecha(hoyCrear);
   // On the new screen (D-425, the owner's review) Today is Now, and each says its day of the week: "Ahora (jue)"
-  const conDia = (titulo, n) => (nuevo ? `${titulo} (${diaCorto(sumarDias(hoyCrear, n))})` : titulo);
+  const conDia = (titulo, n, hoy = hoyCrear) => (nuevo ? `${titulo} (${diaCorto(sumarDias(hoy, n))})` : titulo);
   // Playing again (#1165) starts tomorrow, so the group gets the link today; the admin can still say Now
   const inicio = opciones([{ valor: 0, titulo: conDia(nuevo ? T.startNow : T.startToday, 0) }, { valor: 1, titulo: conDia(T.startTomorrow, 1) }, { valor: 'otra', titulo: T.startOther }],
     v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); fechas(); }, { inicial: desde ? 1 : null });
   inicio.nodo.classList.add('tres');
+  // The days on the buttons follow the cup's zone: at 9 pm in Los Angeles it is already tomorrow in
+  // Chile, so changing the zone or the audience (or midnight passing) renames Now and Tomorrow
+  function pintarDias(hoy) {
+    if (!nuevo) return;
+    const [ahora, manana] = inicio.nodo.querySelectorAll('.opcion b');
+    ahora.textContent = conDia(T.startNow, 0, hoy); manana.textContent = conDia(T.startTomorrow, 1, hoy);
+  }
   otraFecha.input.addEventListener('change', () => fechas());
   const yo = campo(T.fYou, { placeholder: T.fYouPh, maxlength: '20', value: quien || cuenta.nombre.get() || leerYo()?.n || '' }, { contador: true });
   // The new screen asks for the PIN once, with 👁 to see it (D-425)
@@ -540,6 +547,7 @@ async function pantallaCrearCopa({ nombreInicial = '', desde = null, quien = '' 
   function fechas() {
     if (!nuevo) return;
     const hoy = fechaEn(Date.now(), zonaCopa());
+    pintarDias(hoy);
     const desde = inicio.valor === 'otra' ? (otraFecha.valida() ? otraFecha.input.value : null) : inicio.valor === null ? null : sumarDias(hoy, inicio.valor);
     lineaFechas.textContent = desde ? fmt(T.startsLine, { inicio: fechaDia(desde), fin: fechaDia(sumarDias(desde, diasDe(modo.valor) - 1)) }) : '';
     if (modo.rango) {
