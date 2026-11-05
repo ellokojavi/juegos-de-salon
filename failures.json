@@ -380,7 +380,11 @@
       "error": "ERROR · appeared games.copa.files: public/cup/games/case/style.css\nERROR · appeared modules: public/assets/js/waiting.js",
       "signature": "42a68438ad",
       "date": "2026-11-05T23:05:37.491Z",
-      "fix": null,
+      "fix": {
+        "commit": "558dddd6639c6aa4f8302e98304759cd410df5d5",
+        "date": "2026-11-05T23:28:43.630Z",
+        "stat": "4 file(s) +5 −3: README.md, docs/design/cup-unification.md, docs/facts.json, docs/games/cup.md"
+      },
       "flaky": false
     }
   ]
