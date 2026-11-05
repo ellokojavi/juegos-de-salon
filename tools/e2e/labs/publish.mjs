@@ -59,7 +59,8 @@ const trying = await ev(`[...document.querySelectorAll('#mejoras > .seccion')].m
 if (trying) {
   await ev(`__pub.render({}, { ${JSON.stringify(trying)}: { state: 'all', at: ${Date.now()} } }), 1`); await sleep(200);
   ok(/pasa a La Bodega la próxima vez/.test(await ev(`document.querySelector('#seccion-${trying} .publicar-estado')?.textContent || ''`)), 'just launched under ✨ Mejoras en prueba, the line says the card moves on the next open');
-  // its three buttons (↩️ · ⚪ · 📦) wrap: no sideways scroll (U-10) and each label on one line (U-17)
+  ok(!/Enviar a La Bodega/.test(await ev(`document.querySelector('#seccion-${trying} .publicar')?.textContent || ''`)), 'a launched card has no 📦: it moves to La Bodega on its own (D-534)');
+  // its buttons (↩️ · ⚪) wrap: no sideways scroll (U-10) and each label on one line (U-17)
   ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'with the three buttons the page does not scroll sideways at 320 px');
   ok(await ev(`[...document.querySelectorAll('#seccion-${trying} .publicar .btn-row .btn')].every(b => b.getBoundingClientRect().height < 70)`), 'and each of its labels fits on one line');
   await ev(`document.querySelector('#seccion-${trying} .publicar').scrollIntoView({ block: 'center' }), 1`); await b.shot('flag-all-trying');

@@ -169,7 +169,8 @@ export function render(r = requests, fl = flags, li = listas) {
       const box = el('div', { class: 'publicar' }, el('div', { class: `publicar-estado publicar-estado--${fs.ready ? 'ok' : fs.tone}`, role: 'status' },
         ...fs.lines.map(l => el('p', {}, l)),
         el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)),
-          inBodega ? null : toBodega())));
+          // 📦 only while the flag is not live: on *all* the card moves to La Bodega on its own (D-534)
+          inBodega || stateOf(flags, f) === 'all' ? null : toBodega())));
       ($('.detalle', card) || card).append(box);
       continue;
     }
