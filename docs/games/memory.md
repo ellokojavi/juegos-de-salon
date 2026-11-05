@@ -29,7 +29,7 @@ mixed groups and asks after the first standard rounds.
 | File | What |
 |---|---|
 | `public/labs/memory/engine.js` | The rules, no DOM: the levels, a round, a tap, a game |
-| `public/labs/memory/sprites.js` | The 18 pictures, 8×8 pixels drawn with letters, turned into SVG |
+| `public/labs/memory/sprites.js` | The 45 pictures the owner picked from a board of 100 candidates (2026-11-05): Chilean favourites (flag, piscola, empanada, completo, moai, copihue…), pop and retro, food, symbols and 12 of the first set; 12×12 pixels drawn with letters, turned into SVG. No real people or logos |
 | `public/labs/memory/rules.js` | The texts, es / en / pt |
 | `public/labs/memory/game.js` | The screens and the animations |
 | `public/labs/memory/engine.test.mjs` | The intro, every level up to 80, rounds 1–40, a game, the pictures and the texts' parity |
@@ -67,10 +67,10 @@ it a bar for the time left and the prompt.
   with a picture are 2 + the level, up to half the board (18 on the 6×6); the groups are drawn at
   random, singles and pairs, and trios from the 5×5; what is asked is drawn too: a single, a pair or a
   trio, whatever the board holds.
-- **Time to look** (`lookMs`, the owner's request): 4 s at level 1, the longest it ever is, down evenly to 2 s at level 20,
-  then to 1.5 s at level 25, and 50 ms less each level after that down to 0.8 s (level 39), so that
+- **Time to look** (`lookMs`, the owner's request): 4.5 s in levels 1 and 2, 4 s in level 3 and down
+  evenly to 2 s at level 20, then to 1.5 s at level 25, and 50 ms less each level after that down to 0.8 s (level 39), so that
   sooner or later nobody can keep up. **Time to answer:** 4.5 s per copy at first; every level after
-  the intro is 3.5 % shorter, down to 2.5 s per copy.
+  the intro is 3.5 % shorter, down to 1.4 s per copy.
 
 **Lives:** 3. Five rounds cleared in a row without a miss give a lost one back. With no lives left the
 game ends.

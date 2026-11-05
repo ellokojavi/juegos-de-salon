@@ -1,15 +1,15 @@
 // Memorice: the levels, the rounds, a game and the texts (node public/labs/memory/engine.test.mjs)
 import assert from 'node:assert/strict';
 import { level, sizeOf, makeRound, newPlay, tap, newGame, currentRound, endRound, INTRO, LIVES, LIFE_EVERY, MAX_SIZE } from './engine.js';
-import { SPRITES, SPRITE_NAMES, PALETTE } from './sprites.js';
+import { SPRITES, SPRITE_NAMES, PALETTE, SIZE } from './sprites.js';
 import { LOCALES } from './rules.js';
 
 // The intro is the same for everyone: one picture, a pair, on the 3×3 then the 4×4
 assert.deepEqual([1, 2, 3, 4].map(n => makeRound('a', n).groups.map(g => g.count)), INTRO);
 assert.deepEqual([1, 2, 3, 4].map(n => makeRound('b', n).ask.cells.length), [1, 2, 1, 2]);
 assert.deepEqual([1, 2, 3, 4].map(sizeOf), [3, 3, 4, 4]);
-// The time to look: 4 s, 2 s at level 20, 1.5 s at 25, then down to 0.8 s, never longer than the level before
-assert.deepEqual([1, 20, 25, 30, 39, 60].map(n => level(n).showMs), [4000, 2000, 1500, 1250, 800, 800]);
+// The time to look: 4.5 s twice, 4 s, 2 s at level 20, 1.5 s at 25, then down to 0.8 s, never longer than the level before
+assert.deepEqual([1, 2, 3, 20, 25, 30, 39, 60].map(n => level(n).showMs), [4500, 4500, 4000, 2000, 1500, 1250, 800, 800]);
 for (let n = 2; n <= 60; n++) assert.ok(level(n).showMs <= level(n - 1).showMs, `${n}: never more time to look`);
 
 // The levels: the board grows to 6×6 and never shrinks, more tiles and less time, down to floors
@@ -78,11 +78,12 @@ for (let k = 0; k < LIFE_EVERY; k++) assert.equal(endRound(g, true).life, false,
 for (let k = 1; k < LIVES; k++) assert.equal(endRound(g, false).over, false);
 assert.equal(endRound(g, false).over, true);
 
-// The pictures: 8×8, only colours of the palette
+// The pictures: the owner's 45, 12×12, only colours of the palette
+assert.equal(SPRITE_NAMES.length, 45);
 for (const [name, rows] of Object.entries(SPRITES)) {
-  assert.equal(rows.length, 8, name);
+  assert.equal(rows.length, SIZE, name);
   for (const row of rows) {
-    assert.equal(row.length, 8, `${name}: ${row}`);
+    assert.equal(row.length, SIZE, `${name}: ${row}`);
     for (const ch of row) assert.ok(ch === '.' || PALETTE[ch], `${name}: ${ch}`);
   }
 }
