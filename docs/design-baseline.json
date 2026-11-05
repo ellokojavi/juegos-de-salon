@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 1664,
+  "total": 1711,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -12,14 +12,14 @@
       "colour": 9,
       "radius": 1,
       "space": 3,
-      "text-size": 11
+      "text-size": 15
     },
     "public/assets/css/month-end.css": {
       "token-colour": 7,
       "colour": 7,
       "radius": 1,
       "space": 7,
-      "text-size": 1
+      "text-size": 3
     },
     "public/assets/css/ranking.css": {
       "token-colour": 5,
@@ -41,7 +41,7 @@
       "token-colour": 15,
       "colour": 5,
       "space": 3,
-      "text-size": 5
+      "text-size": 6
     },
     "public/battleship/style.css": {
       "token-colour": 30,
@@ -49,60 +49,60 @@
       "radius": 4,
       "space": 5,
       "copied": 19,
-      "text-size": 10
+      "text-size": 14
     },
     "public/bulls-and-cows/style.css": {
       "token-colour": 17,
       "colour": 6,
       "space": 3,
       "copied": 19,
-      "text-size": 6
+      "text-size": 8
     },
     "public/cup/games/agents/style.css": {
       "token-colour": 14,
       "colour": 18,
       "radius": 1,
       "space": 1,
-      "text-size": 6
+      "text-size": 9
     },
     "public/cup/games/bridges/style.css": {
       "token-colour": 7,
       "colour": 21,
       "radius": 2,
       "space": 2,
-      "text-size": 4
+      "text-size": 8
     },
     "public/cup/games/paint-mines/style.css": {
       "token-colour": 16,
       "colour": 29,
       "radius": 4,
       "space": 2,
-      "text-size": 3
+      "text-size": 7
     },
     "public/cup/games/plots/style.css": {
       "token-colour": 14,
       "colour": 19,
       "radius": 1,
-      "text-size": 1
+      "text-size": 6
     },
     "public/cup/games/routes/style.css": {
       "token-colour": 9,
       "colour": 11,
       "radius": 1,
-      "text-size": 2
+      "text-size": 3
     },
     "public/cup/games/stack/style.css": {
       "token-colour": 7,
       "colour": 7,
       "space": 2,
-      "text-size": 3
+      "text-size": 6
     },
     "public/cup/games/stick/style.css": {
       "token-colour": 15,
       "colour": 5,
       "radius": 1,
       "space": 2,
-      "text-size": 6
+      "text-size": 10
     },
     "public/cup/style.css": {
       "token-colour": 137,
@@ -110,7 +110,7 @@
       "radius": 6,
       "space": 17,
       "copied": 11,
-      "text-size": 42
+      "text-size": 58
     },
     "public/generala/style.css": {
       "token-colour": 18,
@@ -118,21 +118,21 @@
       "radius": 2,
       "space": 5,
       "copied": 24,
-      "text-size": 10
+      "text-size": 13
     },
     "public/labs/bridges/style.css": {
       "token-colour": 8,
       "colour": 22,
       "radius": 2,
       "space": 6,
-      "text-size": 10
+      "text-size": 14
     },
     "public/labs/chameleon/style.css": {
       "token-colour": 3,
       "colour": 1,
       "space": 2,
       "copied": 9,
-      "text-size": 3
+      "text-size": 5
     },
     "public/labs/code/style.css": {
       "token-colour": 12,
@@ -140,14 +140,14 @@
       "radius": 1,
       "space": 2,
       "copied": 3,
-      "text-size": 5
+      "text-size": 8
     },
     "public/labs/dominorama/style.css": {
       "token-colour": 11,
       "colour": 18,
       "radius": 3,
       "copied": 1,
-      "text-size": 1
+      "text-size": 4
     },
     "public/labs/experiments.css": {
       "token-colour": 2,
@@ -160,13 +160,13 @@
       "radius": 4,
       "space": 1,
       "copied": 1,
-      "text-size": 3
+      "text-size": 7
     },
     "public/labs/flap/style.css": {
       "token-colour": 8,
       "colour": 7,
       "copied": 4,
-      "text-size": 9
+      "text-size": 15
     },
     "public/labs/fourth-king/style.css": {
       "token-colour": 23,
@@ -174,7 +174,7 @@
       "radius": 4,
       "space": 7,
       "copied": 22,
-      "text-size": 15
+      "text-size": 20
     },
     "public/labs/julep/style.css": {
       "token-colour": 25,
@@ -182,14 +182,14 @@
       "radius": 2,
       "space": 7,
       "copied": 24,
-      "text-size": 24
+      "text-size": 29
     },
     "public/labs/stack/style.css": {
       "token-colour": 7,
       "colour": 4,
       "radius": 1,
       "copied": 1,
-      "text-size": 3
+      "text-size": 9
     },
     "public/labs/stick/style.css": {
       "token-colour": 21,
@@ -197,7 +197,7 @@
       "radius": 2,
       "space": 3,
       "copied": 1,
-      "text-size": 7
+      "text-size": 15
     },
     "public/liars-dice/style.css": {
       "token-colour": 25,
@@ -205,7 +205,7 @@
       "radius": 5,
       "space": 8,
       "copied": 25,
-      "text-size": 17
+      "text-size": 21
     },
     "public/panel/style.css": {
       "token-colour": 26,
@@ -214,13 +214,6 @@
       "space": 12,
       "copied": 4,
       "text-size": 39
-    },
-    "public/timeline/style.css": {
-      "token-colour": 19,
-      "colour": 5,
-      "space": 5,
-      "copied": 21,
-      "text-size": 9
     }
   }
 }

@@ -35,6 +35,8 @@ test('rules(): selectors, declarations and their lines; comments, @font-face and
   assert.equal(r[0].line, 2);
   assert.equal(r[1].line, 3);
   assert.deepEqual([...definedClasses(css)].sort(), ['a', 'b', 'c', 'd']);
+  const after = rules('@media (max-width: 320px) { .m { gap: 8px } @keyframes k { from { top: 0 } } }\n.n { margin: 0 }');
+  assert.deepEqual(after.map(x => x.selector), ['.m', '.n'], 'a selector after an @media that ends in @keyframes keeps its own head');
 });
 
 test('token-colour: a token written by hand says which token', () => {
@@ -81,6 +83,7 @@ test('copied: a class of base.css or ranking.css redeclared, or a component phas
 test('text-size: a rem size between two steps is the wrong step; the shared sheets are exempt', () => {
   assert.equal(by(lintCss('.x { font-size: 0.95rem } .y { font-size: 0.9rem } .z { font-size: 14px }', 'public/g/style.css', T), 'text-size').length, 1);
   assert.equal(by(lintCss('.x { font-size: 0.95rem }', 'public/assets/css/base.css', T), 'text-size').length, 0);
+  assert.equal(by(lintCss('.x { font: 900 1.05rem/1.2 var(--font-body) } .y { font: 900 var(--fs-110) var(--font-num) } .z { font: 800 0.85rem var(--font-body) }', 'public/g/style.css', T), 'text-size').length, 1, 'the size inside a font shorthand');
 });
 
 test('the allowlist: every entry has a reason and names a file git knows; none is stale', () => {

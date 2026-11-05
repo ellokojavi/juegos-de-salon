@@ -19,7 +19,8 @@
  *   space          a padding, margin or gap in px that is not on the space scale (2 px grid up to 20, then 24, 28, 32).
  *   copied         a selector that redeclares a class of base.css or ranking.css (`.btn`, `.panel`, `.display--sm`…),
  *                  or one of the components phase 4 moves into base.css (`.player-row`, `.toggle-row`, `.link-btn`).
- *   text-size      a font-size in rem that is not one of the text steps (--fs-75 … --fs-200); the shared
+ *   text-size      a font-size in rem (or the size inside a `font:` shorthand) that is not one of the text steps
+ *                  (--fs-75 … --fs-200); the shared
  *                  sheets are exempt, their components' sizes are the system.
  *
  * A declaration of a custom property (`--mar: #0b1e3f`) is never a hit: that is how a game declares
@@ -106,8 +107,11 @@ export function rules(css) {
       const close = clean.indexOf('}', open);
       const nextOpen = clean.indexOf('{', open + 1);
       if (head.startsWith('@') && !/^@(media|supports|container|layer)/.test(head)) { // @font-face, @keyframes: skip the block
-        if (head.startsWith('@keyframes')) { let depth = 0, k = open; do { if (clean[k] === '{') depth++; else if (clean[k] === '}') depth--; k++; } while (depth && k < clean.length); i = k; continue; }
-        i = close + 1; continue;
+        if (head.startsWith('@keyframes')) { let depth = 0, k = open; do { if (clean[k] === '{') depth++; else if (clean[k] === '}') depth--; k++; } while (depth && k < clean.length); i = k; }
+        else i = close + 1;
+        // the closing brace(s) of an @media that held this block
+        for (;;) { while (/\s/.test(clean[i] || '')) i++; if (clean[i] === '}') i++; else break; }
+        continue;
       }
       if (head.startsWith('@')) { i = open + 1; continue; } // @media: flatten
       if (nextOpen >= 0 && nextOpen < close) { i = open + 1; continue; } // nested, be lenient
@@ -175,9 +179,10 @@ export function lintCss(css, file, T, shared = sharedClasses()) {
       if (SPACE_PROPS.test(d.prop)) {
         for (const n of new Set(pxOf(d.value))) if (!T.space.has(n)) hit('space', d.line, `${d.prop}: ${d.value}`, nearest(n, T.space, '--s-', T.map));
       }
-      if (d.prop === 'font-size' && !isShared) { // the shared components' own sizes are the system
-        const m = d.value.match(/^(\d*\.?\d+)rem$/);
-        if (m && !T.textSize.has(parseFloat(m[1]))) hit('text-size', d.line, `font-size: ${d.value}`, 'one of the steps --fs-75 … --fs-200, or a .display step for a title');
+      if ((d.prop === 'font-size' || d.prop === 'font') && !isShared) { // the shared components' own sizes are the system
+        // `font-size: 1.1rem`, or the size inside the shorthand `font: 900 1.1rem/1.2 var(--font-body)`
+        const m = d.prop === 'font-size' ? d.value.match(/^(\d*\.?\d+)rem$/) : d.value.match(/(?:^|\s)(\d*\.?\d+)rem(?:\/[\d.]+(?:rem|em|px)?)?(?=\s)/);
+        if (m && !T.textSize.has(parseFloat(m[1]))) hit('text-size', d.line, `${d.prop}: ${d.value}`, 'one of the steps --fs-75 … --fs-200, or a .display step for a title');
       }
     }
   }
