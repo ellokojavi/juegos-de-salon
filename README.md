@@ -570,6 +570,7 @@ node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
+node tools/agents/design-lint.test.mjs
 node tools/agents/document.test.mjs
 node tools/agents/english.test.mjs
 node tools/agents/failures.test.mjs
