@@ -360,6 +360,126 @@
       "rule": "token-colour",
       "what": "background: rgba(21, 7, 38, *)",
       "reason": "The Colocar bar's fade (`.place-row`) into the shell's night, written as a fixed colour, not var(--bg1): Pintaminas' hard mode redeclares --bg1…3 on La Copa's body, and a token here would retint the fade; whether it should follow the page's night is the owner's call."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "token-colour",
+      "what": "background: rgba(42, 10, 74, *)",
+      "reason": "The window's night (`.splash`), the shell's --bg2 written as a fixed colour: a splash also opens over pages that redeclare --bg1…3 on body (the lab's Números explosivos and Dominorama), and a token here would retint the window; whether it should follow the page's night is the owner's call."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "token-colour",
+      "what": "background: rgba(21, 7, 38, *)",
+      "reason": "The window's night, its lower stop (the shell's --bg1 as a fixed colour), for the same reason as its upper stop."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "text-size",
+      "what": "font-size: 3rem",
+      "reason": "The splash's emoji (`.splash-emoji`), a hero above the title on a computer: above the largest text step, like a cover's hero emoji."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "text-size",
+      "what": "font-size: 2.2rem",
+      "reason": "The splash's emoji on a phone (`.splash-emoji`), the hero compacted so three games and Play fit one screen; drawn to the title's height, like Aletazo's and Stack's covers."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "space",
+      "what": "padding: 0 34px",
+      "reason": "The heading's sides on a phone (`.splash-cabeza`): room for the 44 px ✕ in the corner so the title never runs under it; another element's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "space",
+      "what": "padding: 2px 50px 4px 4px",
+      "reason": "The cartridges' pixel HUD (`.splash-hud`): 50 px on the right is room for the 44 px ✕; another element's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "text-size",
+      "what": "font-size: 0.55rem",
+      "reason": "The cartridges' HUD in Press Start 2P (`.splash-hud`), a pixel font drawn on its own grid: at a text step its 8 px pixels would blur, and the HUD would overflow the window at 320 px."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "text-size",
+      "what": "font-size: 0.45rem",
+      "reason": "«COMPATIBLE CON» in Press Start 2P (`.splash-compat-nexo`), a pixel font on its own grid: the joining words of one sentence, smaller than any text step on purpose."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "radius",
+      "what": "border-radius: 14px 14px 6px 6px",
+      "reason": "A game cartridge's outline (`.splash-cart`): round on top, nearly square where the pins come out; a shape, not a corner on the scale."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "radius",
+      "what": "border-radius: 0 0 6px 6px",
+      "reason": "The cartridge's pin edge (`.splash-cart-pines`): the same shape as the cartridge's foot."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "radius",
+      "what": "border-radius: 3px",
+      "reason": "The cartridge's grip on top (`.splash-cart::before`), 8 px tall: a pill would turn its ridges into a capsule; a shape, not a corner on the scale."
+    },
+    {
+      "file": "public/assets/css/splash.css",
+      "rule": "radius",
+      "what": "border-radius: 0 0 3px 3px",
+      "reason": "The gold pins (`.splash-cart-pines::before`): square on top, barely round at the foot; a shape, not a corner on the scale."
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "token-colour",
+      "what": "background: rgba(42, 10, 74, *)",
+      "reason": "The chat button and sheets, the support tab and its sheet: the shell's night written as a fixed colour, not var(--bg1)/var(--bg2): Pintaminas' hard mode (cup), Números explosivos and Dominorama redeclare --bg1…3 on body, and a token here would retint this surface on those pages; whether it should follow the page's night is the owner's call"
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "token-colour",
+      "what": "background: rgba(21, 7, 38, *)",
+      "reason": "The chat and support sheets' lower stop: the shell's night written as a fixed colour, not var(--bg1)/var(--bg2): Pintaminas' hard mode (cup), Números explosivos and Dominorama redeclare --bg1…3 on body, and a token here would retint this surface on those pages; whether it should follow the page's night is the owner's call"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "text-size",
+      "what": "font-size: 4rem",
+      "reason": "the sign-in screen's 🔐 hero, the owner's own page: between the text steps and the shell's 4.2 rem, kept at its size"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.65rem",
+      "reason": "the hour labels under the 24-column chart (.hours .h): a column is ~11 px wide at 320 px, the smallest text step overflows it (C-8)"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "radius",
+      "what": "border-radius: 4px 4px 0 0",
+      "reason": "the hour chart's bars are ~11 px wide: a flat-bottomed bar with a 4 px top, an 8 px corner would round it into a pill"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "radius",
+      "what": "border-radius: 3px",
+      "reason": "the legend's 10 px colour swatch: an 8 px corner would make it a dot"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "space",
+      "what": "margin-left: 30px",
+      "reason": "the campaign strip's axis starts after the emoji column (22 px) and its gap (8 px): another element's size, not rhythm"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "space",
+      "what": "padding-right: 40px",
+      "reason": "room for the date's ✕ button (36 px at 4 px from the edge) beside the value: another element's size, not rhythm"
     }
   ]
 }
