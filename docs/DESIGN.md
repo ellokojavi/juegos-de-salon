@@ -225,6 +225,7 @@ after a migration), is in the lint's header.
 | Aletazo (lab) | the cover's 🐤 and, on a short phone, the title at 2.2 rem; the stage's sky `--aletazo-cielo` and the hint's drop `--aletazo-sombra` | the card keeps 🐤 Jugar in view at 320×568 (U-39); the sky and the drop are the stage's, under the canvas |
 | Stack (lab) | the cover's 🗼 at 2.2 rem (`.titulo-torre .logo`); the last word over the tower at 2.2 rem (`.aviso-torre.final`); the fade mask's opaque stop `--torre-opaco` | the emoji sits with the title; the end reads above the streak's 2 rem; a mask reads only alpha |
 | The lab's experiments bar (`labs/experiments.css`) | its surface `--barra-fondo` (near-black at 90 %) | the bar floats over the splash demo and the real home page: darker than any page's night so it reads over all of them |
+| Tren en Vilo's lab sheet (`labs/bridges/style.css`) | the planks' wood and steel and the strain gauge's plate (`--tv-*` at the top of the sheet); the cover's train at 2.3 rem; a plank's 3 px corner | thematic board colours (C-1); the train is drawn to the title's height; a plank is nearly square, the 8 px step makes it a pill (allowlisted) |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
 was a whole file. The rows above are the first entries of the allowlist, read from the baseline:

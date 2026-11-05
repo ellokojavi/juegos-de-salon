@@ -228,6 +228,18 @@
       "rule": "text-size",
       "what": "font: 2.2rem var(--font-display)",
       "reason": "The game's last word over the tower (`.aviso-torre.final`): one step above the streak's «Perfect ×n» (2 rem) so the end reads as the end, fixed over the canvas like the score above it."
+    },
+    {
+      "file": "public/labs/bridges/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.3rem",
+      "reason": "The cover's swaying train beside the title (`.titulo-tv .tren`): an emoji drawn to the title's height, a hero's own size above the text steps, like the shell's hero icon."
+    },
+    {
+      "file": "public/labs/bridges/style.css",
+      "rule": "radius",
+      "what": "border-radius: 3px",
+      "reason": "Each plank of the wood left (`.tv-tablones span`, 14 px tall and a few px wide): a plank's nearly square corner is its shape; the smallest corner step (8 px) turns the planks into pills."
     }
   ]
 }
