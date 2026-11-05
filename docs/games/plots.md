@@ -167,7 +167,7 @@ time counts from there, paused with the screen hidden (U-20); the ⏱ elapsed ti
   through the same path as the finger.
 - Tests: `engine.test.mjs` checks the validation, the solver (one, two and no solutions), that the
   boards of every stage (200 easy, 80 hard; Utilities 120 and 40) have one solution, are deduced
-  without guessing, pass the validation and are built quickly, that the numbers almost never touch,
+  without guessing, pass the validation and are built quickly, bounded by work counted in the engine's `trabajo` (candidate boards and search steps, about twice today's need) rather than by milliseconds, that the numbers almost never touch,
   that the hard ones are harder, the hint and the score; and `generarDia` (deterministic per code, day
   and variant, the variant changes the boards, the trial is shorter with other boards) and `partida`
   (draw, erase, hint, clear, undo, give up, boards that move on). End to end, `tools/e2e/plots/numbers.mjs`

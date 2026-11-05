@@ -3,7 +3,11 @@
 
 /* The explosion's own light (DESIGN.md §4): the white core of the flash and its warm halo, only on the
    board's effects */
-:root { --ne-luz: #fff; --ne-halo: rgba(255, 230, 150, 0.85); }
+:root {
+  --ne-luz: #fff; --ne-halo: rgba(255, 230, 150, 0.85);
+  /* An error written on this night: --red is ~3.5:1 here, this soft red ≥ 4.5:1 (WCAG AA for text) */
+  --ne-mal: #ff8a8a;
+}
 
 /* El fondo de la página: noche con brasas, naranja y rosado */
 body {
@@ -81,7 +85,7 @@ button.num:not(:disabled):active { transform: scale(0.9); }
 
 .marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-ne { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
-.aviso-ne.mal { color: var(--red); } .aviso-ne.ayuda, .aviso-ne.ojo { color: var(--yellow); }
+.aviso-ne.mal { color: var(--ne-mal); } .aviso-ne.ayuda, .aviso-ne.ojo { color: var(--yellow); }
 .aviso-ne.fila { color: var(--yellow); font: var(--fs-140) var(--font-display); letter-spacing: 0.05em; animation: pop 0.45s ease-out; }
 
 /* ➕, la ayuda y Rendirse: tres botones iguales en una fila (como los de Rutas), pegados abajo
@@ -92,7 +96,7 @@ button.num:not(:disabled):active { transform: scale(0.9); }
 .acciones-ne .btn { width: 100%; min-width: 0; min-height: 44px; padding: var(--s-4); font-size: var(--fs-90); line-height: 1.15; }
 .acciones-ne .btn:disabled { opacity: 0.4; }
 .acciones-ne .btn.armado { border-color: var(--yellow); color: var(--yellow); }
-.rendirse.armado { color: var(--red) !important; border-color: var(--red) !important; }
+.rendirse.armado { color: var(--ne-mal) !important; border-color: var(--ne-mal) !important; }
 /* Sin pares, ➕ se enciende para que se vea dónde seguir */
 #btn-mas.llama { border-color: var(--orange); color: var(--orange); animation: ne-llama 1.1s ease-in-out infinite; }
 @keyframes ne-llama { 50% { box-shadow: 0 0 0 3px rgb(from var(--orange) r g b / 0.35), 0 0 18px rgb(from var(--orange) r g b / 0.6); } }
@@ -116,7 +120,7 @@ button.num:not(:disabled):active { transform: scale(0.9); }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text); }
 .sello-ne { justify-self: center; margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
-.sello-ne.mal { color: var(--red); }
+.sello-ne.mal { color: var(--ne-mal); }
 .resultado .comentario { text-align: left; }
 .divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(from var(--ink) r g b / 0.45) 15%, rgb(from var(--ink) r g b / 0.45) 85%, transparent); }
 .desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }

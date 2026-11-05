@@ -39,8 +39,17 @@ for (const W of [320, 390]) {
   ok(await ev(`!!document.querySelector('[data-pieza="chat-hoja"] .chat-panel')?.offsetHeight && !!document.querySelector('[data-pieza="hoja"] .hoja')?.offsetHeight && !!document.querySelector('[data-pieza="cover"] .big')?.offsetHeight`), `${W}: the sheets are open and the cover says who gets the phone`);
   ok(await ev(`[...document.querySelectorAll('.btn')].every(x => x.getBoundingClientRect().height <= 64)`), `${W}: no button label wraps (U-17)`);
   ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: no sideways scroll`);
-  // `.back` (the topbar's link, 40 px tall) and `.switch` (34 px) are the system's own debts, noted in DESIGN.md §5; #tr-tab is not the page's
-  const small = await ev(`[...document.querySelectorAll('button, a.btn, .keypad button')].filter(x => x.offsetHeight && x.id !== 'tr-tab' && !x.classList.contains('switch') && (x.getBoundingClientRect().height < 44 || x.getBoundingClientRect().width < 44)).map(x => x.className || x.tagName).join(', ')`);
+  // the tap area is the box, or its invisible ::before band when it has one (`.back` and `.switch`, U-10); #tr-tab is not the page's
+  const small = await ev(`[...document.querySelectorAll('button, a.btn, .topbar .back, .keypad button')].filter(x => {
+    if (!x.offsetHeight || x.id === 'tr-tab') return false;
+    const r = x.getBoundingClientRect(), c = getComputedStyle(x), p = getComputedStyle(x, '::before');
+    let h = r.height, w = r.width;
+    if (p.content !== 'none' && p.position === 'absolute') {
+      h = Math.max(h, r.height - parseFloat(c.borderTopWidth) - parseFloat(c.borderBottomWidth) - parseFloat(p.top) - parseFloat(p.bottom));
+      w = Math.max(w, r.width - parseFloat(c.borderLeftWidth) - parseFloat(c.borderRightWidth) - parseFloat(p.left) - parseFloat(p.right));
+    }
+    return h < 43.5 || w < 43.5;
+  }).map(x => x.className || x.tagName).join(', ')`);
   ok(!small, `${W}: every tappable thing is 44 px or more${small ? ` (${small})` : ''}`);
   ok(await ev(`[...document.querySelectorAll('.btn')].every(x => x.scrollWidth <= x.clientWidth + 1)`), `${W}: every button label fits (U-17)`);
   await b.shot(`design-${W}`);

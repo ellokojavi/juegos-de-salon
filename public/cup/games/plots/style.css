@@ -83,7 +83,7 @@ body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hi
 .lt-cabeza { display: grid; justify-items: center; gap: var(--s-6); }
 .lt-n-etapa { margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.06em; }
 .lt-etapas { display: flex; gap: var(--s-8); }
-.lt-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--placeholder); box-sizing: border-box; }
+.lt-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-faint); box-sizing: border-box; }
 .lt-punto.actual { border-color: var(--ink); background: rgb(from var(--ink) r g b / 0.25); box-shadow: 0 0 8px rgb(from var(--ink) r g b / 0.5); }
 .lt-punto.hecha { background: var(--lime); border-color: var(--lime); }
 

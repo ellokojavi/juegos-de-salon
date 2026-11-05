@@ -49,10 +49,12 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--edge-pink`, `--edge-yellow`, `--edge-cyan` | darkened accents | the 3D edge under a button of that colour |
 | `--well`, `--well-deep` | black at 25 % and 30 % | a sunken surface on the dark background: rows, segmented controls (`--well`), inputs (`--well-deep`) |
 | `--placeholder` | white at 35 % | an input's placeholder |
+| `--line-faint` | white at 35 % | a faint line drawn on the dark background: an empty step's ring (Rutas rotas' and Loteo's stage dots). Same value as `--placeholder`, other meaning: change one, not both |
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
 relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
-the idiom for every `rgba(46, 230, 214, 0.6)` it meets. A white surface (`background: #fff`) is
+the idiom for every `rgba(46, 230, 214, 0.6)` it meets, and an alpha that moves is the same idiom:
+`rgb(from var(--cyan) r g b / calc(0.2 * var(--k)))` (the lint flags `rgba(…, calc(…))` too). A white surface (`background: #fff`) is
 not ink: it is `var(--card)` if it is a card, or an escape.
 
 A game may have thematic colours (the sea in Batalla Naval, a painting's palette in Pintaminas)
@@ -128,7 +130,7 @@ these uses the class; a game that needs something close to one asks for a varian
 |---|---|---|
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
-| Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is 40 px tall: a debt, §5 |
+| Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is drawn 40 px tall; an invisible `::before` band makes its tap area 44 px (U-10) |
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
 | Panel | `.panel`, `details.panel` | the glass card |
@@ -157,7 +159,7 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | Segmented control | `.seg`, `.seg button.on` | |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
-| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | |
+| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10) |
 | A link that is a button | `.link-btn` | |
 | The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
 | Whose turn | `.status`, `.who`, `.sub` | |
@@ -231,7 +233,7 @@ after a migration), is in the lint's header.
 | Stick Ninja (`labs/stick/style.css`) | the cover's 🥷 at 2.2 rem; black in the canvas' fade mask | the emoji is drawn to the title's height; a mask's black is opacity, not a colour (allowlisted) |
 | La clave (`labs/code/style.css`) | the sky's tinted stars and the cards' sheen (`--cl-*` at the top of the sheet); the cover's 🔐 at 4 rem and the padlock beside the title at 2.6 rem; the result's trophy at 3.6 rem and the opened code at 2.4 rem | thematic board colours (C-1); heroes' emoji and a figure read at a glance (D-30), above the text steps (allowlisted) |
 | Dominorama (`labs/dominorama/style.css`) | the dominoes' ivory, edge, middle line and dots (`--dm-*` at the top of the sheet); its own night (`--bg1…3`, `--fondo` redeclared on `body`) | thematic board colours (C-1); custom properties, not hits |
-| Números explosivos (lab) | the title's bomb emoji at 2.3 rem (`.titulo-ne .bomba`); the demo's «¡Limpio!» at 2.4 rem (`.demo-rotulo`); the explosion's light `--ne-luz`, `--ne-halo` | the emoji sits with the title; «¡Limpio!» fills the space the demo board leaves (C-8); the flash's white core and warm halo colour only the board's effects |
+| Números explosivos (lab) | the title's bomb emoji at 2.3 rem (`.titulo-ne .bomba`); the demo's «¡Limpio!» at 2.4 rem (`.demo-rotulo`); the explosion's light `--ne-luz`, `--ne-halo`; `--ne-mal` (#ff8a8a, an error written on the page: the notice, Give up armed, a bad stamp) | the emoji sits with the title; «¡Limpio!» fills the space the demo board leaves (C-8); the flash's white core and warm halo colour only the board's effects; `--red` is about 3.5:1 on this night, the soft red (Loteo's and Rutas rotas' alert) is 7:1 |
 | Aletazo (lab) | the cover's 🐤 and, on a short phone, the title at 2.2 rem; the stage's sky `--aletazo-cielo` and the hint's drop `--aletazo-sombra` | the card keeps 🐤 Jugar in view at 320×568 (U-39); the sky and the drop are the stage's, under the canvas |
 | Stack (lab) | the cover's 🗼 at 2.2 rem (`.titulo-torre .logo`); the last word over the tower at 2.2 rem (`.aviso-torre.final`); the fade mask's opaque stop `--torre-opaco` | the emoji sits with the title; the end reads above the streak's 2 rem; a mask reads only alpha |
 | The lab's experiments bar (`labs/experiments.css`) | its surface `--barra-fondo` (near-black at 90 %) | the bar floats over the splash demo and the real home page: darker than any page's night so it reads over all of them |
@@ -246,8 +248,8 @@ candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
 ## 5. Known debts of the system itself
 
-Found while building the components page (phase 3); each is a visible change on every page, so it
-is a decision for the owner, not a migration:
+Found while building the components page (phase 3). The 40 px `.back` and the 34 px `.switch` left
+this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible band, nothing moved.
 
 - `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
   the components page leaves it out of its check until it is decided.
@@ -258,6 +260,9 @@ is a decision for the owner, not a migration:
 - `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
+- `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
+  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
+  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
 
 ## 6. Migration recipe
 

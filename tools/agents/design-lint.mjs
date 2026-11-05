@@ -14,7 +14,8 @@
  * reports, per declaration:
  *   token-colour   a colour written by hand that is one of the tokens: `#2ee6d6` is `var(--cyan)`; at an alpha,
  *                  `rgba(46,230,214,0.6)` is `rgb(from var(--cyan) r g b / 0.6)` (a glow or a tint in a token colour).
- *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration.
+ *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration, a calc()
+ *                  alpha included: `rgba(143,247,238, calc(…))` is `rgb(from var(--own-token) r g b / calc(…))`.
  *   radius         a border-radius in px that is not on the corner scale (8, 10, 12, 14, 16, 22, 999).
  *   space          a padding, margin or gap in px that is not on the space scale (2 px grid up to 20, then 24, 28, 32).
  *   copied         a selector that redeclares a class of base.css or ranking.css (`.btn`, `.panel`, `.display--sm`…),
@@ -144,6 +145,8 @@ function withoutFormulas(value) {
 }
 const pxOf = value => [...withoutFormulas(value).matchAll(/(-?\d*\.?\d+)px\b/g)].map(m => Math.abs(parseFloat(m[1]))).filter(n => n !== 1);
 const COLOUR_LITERAL = /#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/gi;
+// `rgba(46, 230, 214, calc(0.2 * var(--k)))`: COLOUR_LITERAL stops at calc's first `)` and sees a var(), so it is caught here
+const CALC_ALPHA = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*calc\(/gi;
 
 /** The hits of one stylesheet, against the tokens. */
 export function lintCss(css, file, T, shared = sharedClasses()) {
@@ -161,6 +164,11 @@ export function lintCss(css, file, T, shared = sharedClasses()) {
     for (const d of r.decls) {
       if (d.prop.startsWith('--')) continue; // the game's own tokens (DESIGN.md §4), or base.css's
       if (/^(animation|transition|content|font-family|src|unicode-range)$/.test(d.prop)) continue;
+      for (const m of d.value.matchAll(CALC_ALPHA)) {
+        const rgb = normColour(`rgb(${m[1]}, ${m[2]}, ${m[3]})`);
+        if (T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}…)`, `rgb(from var(${T.colours[rgb]}) r g b / calc(…))`);
+        else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}…)`, 'rgb(from var(--token) r g b / calc(…)), with the game\'s own `--token` at the top of the file');
+      }
       const seen = new Set();
       for (const m of d.value.matchAll(COLOUR_LITERAL)) {
         if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5) and rgb(from var(--x) r g b / a): the colour is a token already

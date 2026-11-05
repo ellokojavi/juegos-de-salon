@@ -992,7 +992,7 @@ function renderSetup(mode, prefillCode = '') {
 
   // Vidas
   const livesLabels = { 5: T.livesHard, 6: T.livesNormal, 8: T.livesEasy };
-  const livesSeg = el('div', { class: 'seg' }, ...LIVES_OPTIONS.map(n => el('button', { type: 'button', class: n === config.lives ? 'on' : '', onClick: e => { config.lives = n; $$('button', livesSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${livesLabels[n]} · ${n}`)));
+  const livesSeg = el('div', { class: 'seg seg--lives' }, ...LIVES_OPTIONS.map(n => el('button', { type: 'button', class: n === config.lives ? 'on' : '', onClick: e => { config.lives = n; $$('button', livesSeg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, `${livesLabels[n]} · ${n}`)));
   if (!invitado) form.append(el('div', { class: 'field' }, el('label', {}, T.lives), livesSeg));
 
   // Comprar letras
