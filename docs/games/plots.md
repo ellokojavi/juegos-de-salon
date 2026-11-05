@@ -181,3 +181,7 @@ time counts from there, paused with the screen hidden (U-20); the ⏱ elapsed ti
   dragging over the whole grid, not tapping a small square.
 - Giving up asks for a second tap on the same button (as in the lab, the owner's request), not the
   cup's `confirm()` of Reinas: U-15 is met with the second tap.
+
+## Migrated to the design system (D-533, #1193)
+
+Loteo's sheet (`public/cup/games/plots/style.css`) had no copies of the shell and is now written on the tokens: 40 lint hits to 0 beyond one escape in `docs/design-allowlist.json` and DESIGN.md §4 (the demo's «¡Listo!» at 2.7 rem). Its own colours are five tokens at the top of the sheet (`--lt-noche`, `--lt-sombra`, `--lt-tinta`, `--lt-error`, `--lt-alerta`), each alpha written `rgb(from var(--x) r g b / a)`, every value unchanged; the plots' colours of both variants still come from `ui.js`. What the player may notice: a small board's plot corner is 8 px (was 7), the board's number 1.4 rem (was 1.35), the plot-size chip 0.9 rem (was 0.95), the stamp 1.2 rem (was 1.3) and the measuring and solved notices 1.1 rem (were 1.15).
