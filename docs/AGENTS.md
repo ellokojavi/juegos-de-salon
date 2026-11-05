@@ -14,6 +14,9 @@ or any other here), launch it and report what it found; do not ask the owner fir
   what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it first reads `node tools/agents/usability-lint.mjs` (the measurable rules, D-520: `tests` runs it too) and runs `node tools/agents/covers.mjs check [base]`,
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
+  It owns **the design system** (D-533, `docs/DESIGN.md`): the tokens and shared classes in `base.css`, the design lint
+  (`node tools/agents/design-lint.mjs`, from phase 2 of #1188) and the components page (`/labs/design/`, phase 3); a PR that
+  adds a token, a scale step or a shared class is reviewed by it, and it migrates one game per round when the round is quiet (#1193).
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
   request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability
   round's; it does not touch code, except the messages with which the app

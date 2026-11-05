@@ -15,6 +15,7 @@ development lives under `public/labs/` (D-395).
 
 Inside it, what the canons ask, using the shared modules and never one of its own:
 
+- **Styles** from the tokens and classes of `base.css` (C-1, D-533, [DESIGN.md](DESIGN.md)): no distance, corner or colour written by hand; thematic colours declared once at the top of `style.css` (the design lint, phase 2 of #1188).
 - **Texts** in `LOCALES = { es, en, pt }` in `rules.js` (C-3, parity test); instructions per U-18.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`.
