@@ -81,6 +81,9 @@ that seed's game, and the shared result links to it. Memorice is in no La Copa o
 that adds it passes everyone the same seed. A miss replays the level with the try number in the seed, so the board is
 new. `?test` runs every wait four times faster (the end-to-end script).
 
+**The clock** (U-20): every wait of a round runs on a clock in `game.js` that stops with the screen hidden
+or the comment card open, and the bar stops with it; the result's time counts only time played.
+
 ## Result
 
 "Fin del juego", the rounds cleared, a new best or the previous best (`juegos-de-salon:memory-best`
