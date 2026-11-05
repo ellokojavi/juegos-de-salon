@@ -212,7 +212,7 @@ after a migration), is in the lint's header.
 | Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
 | Generala | the kept-die tag (`.dado-btn .tag`) at 0.62 rem | "Guardado" under each of five dice must fit under a 50 px die at 320 px (C-8); the smallest text step overflows it |
 | Julepe (`labs/julep/style.css`) | the playing card's rank and suit at 1.35 and 1.15 rem (`.pcard .r`, `.pcard .s`), and the tiny card's at 0.8 and 0.7 rem (`.pcard--xs`) | a card's own sizes, scaled with the card (five fit in a row at 320 px, C-8): the card is `--card` on the dark table, no thematic token of its own |
-| `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
+| `base.css` (the chat bubble, the install bubble, the chat and support sheets) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px); the chat button's, the chat sheets' and the support tab's and sheet's night written as the shell's `--bg2`/`--bg1` values, `rgba(42, 10, 74, …)` and `rgba(21, 7, 38, …)` | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm; the night is fixed on purpose: Pintaminas' hard mode in La Copa, Números explosivos and Dominorama redeclare `--bg1…3` on `body`, so a token would retint it on those pages: whether it should follow the page's night is the owner's call (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 | Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
 | 🗼 Babel (`cup/games/stack`) | `--sk-hundido` (the score's drop, black at 35 %), `--sk-tira` (the end's strip), `--sk-pestana` (the lab tab); the messages over the tower at 1.9, 2.2 and 2.6 rem; the end's strip rising 110 px with 44 px for its fade; the masks' opaque `#000` | the tower's own colours (C-1); the messages are the board's, read over the moving tower; the strip's offsets are the tower's and the fade's sizes; a mask reads only the alpha (allowlisted) |
@@ -254,9 +254,9 @@ is a decision for the owner, not a migration:
   under 44 px tall: the row around it is tappable, the switch alone is not. A taller switch or a
   larger hit area is a visible change on six games' setup screens, so it is the owner's call; the
   components page's script leaves it out of its check until then.
-- `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
-  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
-  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
+- `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
+  bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
+  rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
 
 ## 6. Migration recipe
 

@@ -432,6 +432,18 @@
       "rule": "radius",
       "what": "border-radius: 0 0 3px 3px",
       "reason": "The gold pins (`.splash-cart-pines::before`): square on top, barely round at the foot; a shape, not a corner on the scale."
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "token-colour",
+      "what": "background: rgba(42, 10, 74, *)",
+      "reason": "The chat button and sheets, the support tab and its sheet: the shell's night written as a fixed colour, not var(--bg1)/var(--bg2): Pintaminas' hard mode (cup), Números explosivos and Dominorama redeclare --bg1…3 on body, and a token here would retint this surface on those pages; whether it should follow the page's night is the owner's call"
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "token-colour",
+      "what": "background: rgba(21, 7, 38, *)",
+      "reason": "The chat and support sheets' lower stop: the shell's night written as a fixed colour, not var(--bg1)/var(--bg2): Pintaminas' hard mode (cup), Números explosivos and Dominorama redeclare --bg1…3 on body, and a token here would retint this surface on those pages; whether it should follow the page's night is the owner's call"
     }
   ]
 }
