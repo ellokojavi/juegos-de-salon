@@ -1,62 +1,30 @@
 /* ==========================================================
    La Copa — estilos propios
    ========================================================== */
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
-
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-/* El contorno claro de un emoji oscuro (〰️) más el halo dorado de siempre */
-.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-.intro-hero .globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
+.globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
 .globo-portada canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* El globo aparece cuando llega la imagen satelital, sin pasar antes por el mapa dibujado */
 .globo-aparece { animation: globo-aparece 0.3s ease-out; }
 @keyframes globo-aparece { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .globo-aparece { animation: none; } }
-.intro-hero h1, .intro-hero h2 { margin: 4px 0 6px; overflow-wrap: anywhere; }
+.intro-hero h1, .intro-hero h2 { margin: var(--s-4) 0 var(--s-6); overflow-wrap: anywhere; }
 
 /* Formularios */
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
-.field label { font-weight: 900; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.field input, input.mini {
-  width: 100%; font: 900 1.15rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3);
-  border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; min-height: 48px;
+/* The fields are the shell's (.field, base.css); the admin's small input beside its buttons is the cup's */
+input.mini {
+  width: 100%; font: 900 var(--fs-110) var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none; min-height: 48px;
 }
-.field input:focus, input.mini:focus { border-color: var(--cyan); }
-.field input::placeholder { color: rgba(255,255,255,0.35); }
-.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
-.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+input.mini:focus { border-color: var(--cyan); }
 /* En Administrar el aviso va debajo del botón, al final del panel: vacío no deja un hueco (U-11) */
 #admin-body .panel > .form-error:empty { display: none; }
-.waiting { text-align: center; color: var(--muted); font-weight: 800; padding: 30px 0; }
-.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 8px auto 0; display: block; }
 .ok { color: var(--lime); font-weight: 900; margin: 4px 0; }
 
-.seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
-.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 1.05rem var(--font-body); padding: 10px; border-radius: 10px; cursor: pointer; min-height: 44px; }
-.seg button.on { background: var(--yellow); color: #3a1200; }
 
-.opciones { display: grid; gap: 8px; }
-.opciones.dos { grid-template-columns: 1fr 1fr; }
-.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
-.opciones.tres .opcion { text-align: center; padding-left: 6px; padding-right: 6px; }
-/* German hyphenates on its own (base.css): in three narrow columns that split "Mor-gen" and "Ande-res". Whole words, a bit smaller on a narrow phone (texts not cut, C-8) */
-.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
-@media (max-width: 374px) { .opciones.tres .opcion { padding-left: 4px; padding-right: 4px; } .opciones.tres .opcion b { font-size: 0.95rem; } }
-.opcion {
-  text-align: left; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 14px;
-  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
-}
-.opciones.dos .opcion { text-align: center; }
-.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
-.opcion .opcion-emoji { display: block; }
-/* A variant's name in one piece at 320 px, also «Anschlüsse» inside the cup's form (U-12) */
-.opciones.variantes .opcion { padding-left: 6px; padding-right: 6px; }
+/* The choice buttons are the shell's (.opciones, .opcion, base.css). A variant's name in one piece at 320 px,
+   also «Anschlüsse» inside the cup's form (U-12) */
+.opciones.variantes .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
 .opciones.variantes .opcion b { hyphens: manual; }
-.opcion small { color: var(--muted); font-weight: 700; }
-.opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 ol.como { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
 ol.como li { line-height: 1.45; }
@@ -81,10 +49,6 @@ ol.como li { line-height: 1.45; }
 
 /* Invitación */
 .nombres { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-/* El ×2 de la final, distinto del dorado del comodín (D-151) */
-.chip--final { background: var(--cyan); color: #03302c; border-color: transparent; }
-.chip-btn { border: 2px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 900 1rem var(--font-body); border-radius: 999px; padding: 8px 16px; min-height: 44px; cursor: pointer; }
-.chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
 /* Elegir los juegos al crear la copa (D-163): la mano y la línea de Línea de Tiempo (linea.css) */
@@ -130,11 +94,7 @@ ol.como li { line-height: 1.45; }
 .semana-cabeza { flex-wrap: wrap; }
 @media (max-width: 360px) { .btn-dado { font-size: 1.05rem; padding: 0 12px; } }
 .semana-estilos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.semana-estilos .estilo {
-  flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
-  font: 800 0.85rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border);
-}
-.semana-estilos .estilo.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.semana-estilos .chip-btn { flex: none; white-space: nowrap; }
 .semana-dias { display: grid; gap: 6px; }
 .semana-dia {
   display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 36px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
@@ -173,8 +133,6 @@ ol.como li { line-height: 1.45; }
 .hoja .field { margin: 0; }
 /* The version keeps the look of the cup's options: the sheet's own (.hoja .opcion, base.css) is a row with a check */
 #semana-hoja .opciones .opcion { display: block; text-align: center; padding: 12px 6px; }
-.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.hoja-cabeza h3 { margin: 0; font-size: 1.1rem; font-weight: 900; }
 .hoja-mover { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .hoja-mover .btn { width: 100%; font-size: 0.95rem; }
 .hoja-mover .btn:disabled { opacity: 0.35; }
@@ -193,9 +151,6 @@ ol.como li { line-height: 1.45; }
 .mas-opciones > summary { min-height: 44px; gap: 10px; }
 .mas-opciones .mas-t { display: grid; gap: 2px; min-width: 0; }
 .mas-opciones .mas-t small { font-weight: 700; font-size: 0.8rem; }
-.pin-fila { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 6px; }
-.ver-pin { min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
-.ver-pin[aria-pressed="true"] { border-color: var(--cyan); }
 .crear-fechas { display: block; text-align: center; margin-top: -4px; }
 @media (prefers-reduced-motion: reduce) { .semana-dia.baraja *, .semana-dia.cae { animation: none; } }
 .variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
@@ -268,12 +223,6 @@ ol.como li { line-height: 1.45; }
 .medalla { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }
 .medalla span { color: var(--muted); font-weight: 700; }
 
-/* Avisos */
-/* Centrado sin transform: la animación de entrada lo pisaba y el aviso quedaba corrido a la derecha */
-.toast { position: fixed; left: 16px; right: 16px; margin: 0 auto; width: fit-content; bottom: calc(24px + var(--safe-bottom)); background: #111; border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: 12px 18px; border-radius: 14px; z-index: 50; animation: slideUp 0.25s both; }
-.aviso { text-align: center; font-weight: 800; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); }
-.aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
-.aviso.mal { background: rgba(224, 36, 60, 0.22); color: #ffd0d6; }
 
 
 /* Jugar */
@@ -283,8 +232,6 @@ ol.como li { line-height: 1.45; }
 .cron.en-pausa { opacity: .55; }
 
 /* Resultado */
-.result-hero { text-align: center; }
-.result-hero .trophy { font-size: 4rem; display: inline-block; }
 .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-space: pre-wrap; margin: 0; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; overflow-wrap: anywhere; }
 /* A 320 px, los 10 cuadros de Zip (o una fila de 11 emojis) cabían con uno solo en la segunda línea (U-12) */
@@ -349,8 +296,6 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-hero .icon { animation: none; }
-  .screen.active { animation: none; }
 }
 
 /* Tus días (LIG-38): pasados y futuros deshabilitados, hoy como tarjeta grande */
@@ -452,9 +397,9 @@ button.md-fila { cursor: pointer; }
 .donde-fila { position: relative; display: flex; align-items: flex-end; gap: 8px; }
 .donde-fila .globo-pista { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
 .donde-accion { pointer-events: auto; gap: 8px; }
-.donde-accion .aviso { background: rgba(21,7,38,0.85); border: 1px solid var(--glass-border); }
-.donde-accion .aviso.bien { background: rgba(26,48,8,0.9); }
-.donde-accion .aviso.mal { background: rgba(70,8,20,0.9); }
+.donde-accion .notice { background: rgba(21,7,38,0.85); border: 1px solid var(--glass-border); }
+.donde-accion .notice--good { background: rgba(26,48,8,0.9); }
+.donde-accion .notice--bad { background: rgba(70,8,20,0.9); }
 .donde-accion .btn { box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
 
 /* La cáscara, cuando el juego pide pantalla completa: la página no se desplaza, la pantalla de
@@ -499,10 +444,10 @@ body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
 #jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
    una tarjeta del ancho de la ciudad que se desplaza por dentro y no tapa la acción */
-body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: 6px 14px; }
-body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; }
-body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; background: rgba(21,7,38,0.97); }
+body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; padding: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: var(--s-6) var(--s-14); margin: 0; gap: var(--s-6); }
+body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--s-16) var(--s-14); }
+body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; margin: 0 calc(-1 * var(--s-16)) var(--s-12); background: rgba(21,7,38,0.97); border-bottom: 1px solid var(--glass-border); }
 /* La brújula: la N y su punta roja apuntan al norte del mapa girado */
 .brujula-aguja { display: grid; justify-items: center; font: 900 0.8rem/1 var(--font-body); }
 .brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid #ff4d4d; margin-bottom: 2px; }
@@ -659,20 +604,13 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .explicacion-total { font-weight: 800; }
 
 /* Otra fecha de inicio y la copa de prueba (D-115) */
-input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 800 1rem var(--font-body); padding: 8px 12px; color-scheme: dark; }
 .fecha-campo { display: grid; gap: 8px; margin-top: 8px; }
-.btn-row.tres { flex-wrap: wrap; }
 #btn-inicio-otra.on { border-color: var(--yellow); color: var(--yellow); }
 .lab-panel { border: 1px dashed var(--cyan); }
 
-/* Eliminar la copa (D-117) */
-.peligro { border: 1px solid rgba(224, 36, 60, 0.55); }
-.btn--red { background: var(--red); color: #fff; box-shadow: 0 4px 0 #8a1024; }
 
 /* El largo del nombre a la vista (D-119), y los nombres largos que parten línea en vez de salirse */
-.field .contador { display: block; text-align: right; margin-top: 4px; font-size: 0.8rem; }
-.field .contador.lleno { color: var(--yellow); }
-.copa-head h1, .intro-hero h1, .intro-hero h2 { overflow-wrap: anywhere; }
+.copa-head h1 { overflow-wrap: anywhere; }
 
 /* El link propio (D-121) */
 .link-estado { display: block; margin-top: 6px; font-size: 0.85rem; overflow-wrap: anywhere; }
@@ -682,17 +620,13 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* Compartir como imagen: separado de la nota y centrado en la caja del gráfico (D-126) */
 #btn-imagen { display: flex; margin: 16px auto 4px; }
 
-/* Las reglas plegadas debajo del tablero (D-133): discretas hasta que se abren */
-#jugar-reglas { margin-top: 22px; }
-.reglas { padding: 0; background: rgba(0,0,0,0.18); }
-.reglas > summary { list-style: none; cursor: pointer; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; color: var(--muted); font-weight: 800; font-size: 0.95rem; }
-.reglas > summary::-webkit-details-marker { display: none; }
-.reglas > summary::after { content: '▾'; font-size: 0.85rem; transition: transform 0.2s; }
-.reglas[open] > summary::after { transform: rotate(180deg); }
-.reglas[open] > summary { color: var(--ink); border-bottom: 1px solid var(--glass-border); }
-.reglas > :not(summary) { margin-left: 16px; margin-right: 16px; }
-.reglas > :last-child { margin-bottom: 14px; }
-.reglas .lead { margin: 12px 16px 4px; }
+/* The rules folded under the board (D-133) are the shared folding panel (details.panel, base.css), the
+   same block as a home game's "Cómo se juega" (phase 7, #1196); under the board the summary keeps a
+   44 px target (U-10), since the panel's own summary is only its text's height (DESIGN.md §5) */
+#jugar-reglas { margin-top: var(--s-24); }
+#jugar-reglas .reglas > summary { min-height: 44px; }
+/* Its titles («Puntaje», the final's rounds) keep the air they had above them */
+#jugar-reglas .reglas .lead { margin: var(--s-12) 0 var(--s-4); }
 
 /* --- Avisos al celular (D-223): la oferta, la campana y sus hojas ---
    La hoja de abajo (.hoja) es de todo el sitio y vive en base.css: la usa también el globo de
@@ -701,135 +635,9 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .aviso-oferta .lead { margin: 0 0 4px; font-weight: 900; }
 .aviso-oferta .muted { margin: 0 0 12px; }
 .aviso-auto { text-align: center; margin: 4px 0; }
-/* A 320 px, en español y alemán, los botones lado a lado no caben: bajan a otra línea */
-.aviso-oferta .btn-row, .btn-row:has(> #btn-avisos) { flex-wrap: wrap; }
-.linkish { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
 .aviso-bloqueado { border-style: dashed; }
 .aviso-activo { color: var(--yellow); border-color: rgba(255, 210, 63, 0.6); }
-.btn--peligro { color: #ff8fbd; background: rgba(255, 46, 136, 0.16); border-color: transparent; }
 
-/* ---------- 🔍 El caso (D-257). La misma experiencia del prototipo del laboratorio (D-256) ---------- */
-/* El nombre en la antesala: la lupa al lado y los colores que se mueven, como en el prototipo */
-.cs-titulo { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-/* La letra inclinada se pasa del borde de su caja y el degradado solo pinta dentro: sin este relleno, la última letra salía cortada (la O de "O Caso", la E de "The Case") */
-.cs-titulo .rainbow { padding: 0.2em 0.15em 0 0; margin: -0.2em -0.15em 0 0; }
-.cs-lupa { font-size: 2.1rem; line-height: 1; display: inline-block; transform-origin: 70% 70%; animation: cs-lupa 3.2s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255, 210, 63, 0.45)); }
-@keyframes cs-lupa { 0%, 100% { transform: rotate(-8deg) translateX(0); } 50% { transform: rotate(10deg) translateX(3px); } }
-@media (prefers-reduced-motion: reduce) { .cs-lupa { animation: none; } }
-/* La portada de la antesala: cartas que se dan vuelta solas y una lupa que las recorre */
-.intro-hero .cs-portada { margin: 0 auto; }
-.cs-portada { position: relative; display: grid; grid-template-columns: repeat(4, 30px); gap: 5px; width: max-content; padding: 6px; }
-.cs-p-carta { width: 30px; height: 38px; perspective: 300px; }
-.cs-p-giro { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateY(180deg); animation: cs-p-giro 5.4s ease-in-out infinite; animation-delay: var(--d); }
-.cs-p-cara { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 7px; backface-visibility: hidden; -webkit-backface-visibility: hidden; font-size: 1rem; }
-.cs-p-cara.dorso { transform: rotateY(180deg); color: rgba(255, 210, 63, 0.8); font: 900 0.9rem var(--font-display); border: 1.5px solid rgba(255, 210, 63, 0.5);
-  background: repeating-linear-gradient(45deg, rgba(255, 210, 63, 0.18) 0 4px, rgba(255, 210, 63, 0.05) 4px 8px), #2a1450; }
-.cs-p-carta.inocente .frente { background: rgba(157, 255, 58, 0.3); border: 1.5px solid rgba(157, 255, 58, 0.8); }
-.cs-p-carta.criminal .frente { background: rgba(255, 61, 139, 0.35); border: 1.5px solid rgba(255, 61, 139, 0.85); }
-@keyframes cs-p-giro { 0%, 30% { transform: rotateY(180deg); } 40%, 75% { transform: rotateY(0); } 85%, 100% { transform: rotateY(180deg); } }
-.cs-p-lupa { position: absolute; left: 0; top: 0; font-size: 2rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); animation: cs-p-lupa 6s ease-in-out infinite; pointer-events: none; }
-@keyframes cs-p-lupa { 0% { transform: translate(-6px, -4px) rotate(-10deg); } 25% { transform: translate(110px, 10px) rotate(8deg); } 50% { transform: translate(70px, 62px) rotate(-6deg); } 75% { transform: translate(8px, 70px) rotate(6deg); } 100% { transform: translate(-6px, -4px) rotate(-10deg); } }
-.cs-portada.quieta .cs-p-giro, .cs-portada.quieta .cs-p-lupa { animation: none; }
-.cs-portada.quieta .cs-p-carta:nth-child(odd) .cs-p-giro { transform: none; }
-.cs-portada.quieta .cs-p-lupa { transform: translate(90px, 40px) rotate(-8deg); }
-
-/* El dibujo de las reglas */
-.cs-mini-fila { display: flex; gap: 6px; }
-.cs-mini { display: grid; justify-items: center; gap: 1px; width: 52px; padding: 5px 2px; border-radius: 9px; background: var(--glass); border: 2px solid transparent; font-size: 1.1rem; }
-.cs-mini b { font-size: 0.7rem; }
-.cs-mini.inocente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
-.cs-mini.criminal { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
-.cs-globo { max-width: 190px; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255, 210, 63, 0.55); font-weight: 800; font-size: 0.85rem; line-height: 1.3; }
-
-/* La grilla: las letras y los números van dentro de la misma grilla (C-8) */
-.cs-juego { gap: 8px; --gap-contenedor: 8px; }
-.cs-grilla { display: grid; grid-template-columns: 20px repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
-/* Las letras y los números de la grilla, grandes: las pistas los nombran ("en la fila 3", "en la columna B") */
-.cs-grilla .etq { display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); opacity: 0.85; }
-.cs-persona { position: relative; display: grid; padding: 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); cursor: pointer; min-width: 0; perspective: 700px; transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3), opacity 0.2s; -webkit-tap-highlight-color: transparent; }
-.cs-persona:disabled { cursor: default; }
-.cs-persona .giro { display: grid; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.3, 0.9, 0.3, 1.05); }
-.cs-persona .cara { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 2px solid transparent; min-height: 78px; }
-.cs-persona .frente { display: grid; justify-items: center; align-content: center; gap: 1px; padding: 5px 2px; background: var(--glass); transition: background 0.3s, border-color 0.3s, box-shadow 0.2s; }
-.cs-persona .dorso { display: grid; place-items: center; font-size: 1.5rem; transform: rotateY(180deg); border-color: rgba(255, 210, 63, 0.45);
-  background: repeating-linear-gradient(45deg, rgba(255, 210, 63, 0.16) 0 6px, rgba(255, 210, 63, 0.05) 6px 12px), #2a1450; }
-.cs-persona.tapada .giro { transform: rotateY(180deg); }
-.cs-persona .emo { font-size: 1.45rem; line-height: 1.1; }
-.cs-persona .nom { font-weight: 900; font-size: clamp(0.74rem, 3.8vw, 0.94rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cs-persona .ofi { font-weight: 700; font-size: 0.64rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cs-persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; display: none; }
-.cs-persona.marcada .dice { display: block; }
-.cs-persona.inocente .frente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
-.cs-persona.criminal .frente { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
-.cs-persona.inocente .ofi, .cs-persona.criminal .ofi { color: var(--ink); opacity: 0.8; }
-.cs-persona.equivoco .frente::after { content: '✕'; position: absolute; top: 2px; left: 6px; font-size: 0.72rem; color: var(--yellow); font-weight: 900; }
-.cs-persona.elegida { transform: scale(1.09); z-index: 2; }
-.cs-persona.elegida .frente { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(46, 230, 214, 0.5); }
-.cs-grilla.enfoque .cs-persona:not(.foco):not(.foco-b):not(.foco-ab):not(.habla):not(.elegida) { opacity: 0.32; }
-/* El segundo grupo de una comparación, en rosado; quien está en los dos, con los dos colores (#282) */
-.cs-persona.foco-b .frente { box-shadow: 0 0 0 3px #ff8fbf, 0 0 14px rgba(255, 61, 139, 0.5); }
-.cs-persona.foco-ab .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px #ff8fbf; }
-.cs-ga { color: var(--yellow); font-weight: 900; }
-.cs-gb { color: #ff8fbf; font-weight: 900; }
-.cs-persona.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.55); }
-.cs-persona.habla .frente { box-shadow: 0 0 0 3px var(--cyan), 0 0 14px rgba(46, 230, 214, 0.55); }
-.cs-persona.habla.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px var(--cyan); }
-.cs-persona .sello { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2.6rem; pointer-events: none; z-index: 3; animation: cs-sello 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-@keyframes cs-sello { 0% { transform: scale(2.4) rotate(-14deg); opacity: 0; } 35% { transform: scale(0.9) rotate(4deg); opacity: 1; } 55% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
-.cs-persona.acierto .giro { animation: cs-voltea 0.6s ease-out; }
-@keyframes cs-voltea { 0% { transform: rotateY(0); } 50% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
-.cs-persona.acierto.inocente .frente { animation: cs-brilla-verde 0.9s ease-out; }
-.cs-persona.acierto.criminal .frente { animation: cs-brilla-rosa 0.9s ease-out; }
-@keyframes cs-brilla-verde { 0%, 40% { box-shadow: 0 0 0 0 rgba(157, 255, 58, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(157, 255, 58, 0); } }
-@keyframes cs-brilla-rosa { 0%, 40% { box-shadow: 0 0 0 0 rgba(255, 61, 139, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(255, 61, 139, 0); } }
-.cs-persona.fallo { animation: shake 0.45s; }
-.cs-persona.fallo .frente { animation: cs-rojo 0.8s ease-out; }
-@keyframes cs-rojo { 0%, 30% { background: rgba(255, 40, 60, 0.75); border-color: #ff2840; } 100% { background: var(--glass); } }
-.cs-persona.duda .frente { animation: cs-duda 0.7s ease-out; }
-@keyframes cs-duda { 0%, 30% { border-color: var(--yellow); background: rgba(255, 210, 63, 0.25); } }
-
-/* Lo que se hace con la elegida, y el mensaje de la última marca */
-.cs-accion { display: grid; gap: 6px; min-height: 58px; }
-.cs-accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
-.btn.cs-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
-.btn.cs-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
-.cs-msg { display: grid; gap: 4px; align-content: center; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
-.cs-msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); }
-.cs-msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
-.cs-msg.falta { color: var(--yellow); }
-.cs-msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
-.cs-msg.ayuda { color: var(--yellow); border-color: rgba(255, 210, 63, 0.55); }
-.cs-pie { display: grid; justify-items: center; gap: 6px; }
-.cs-pie #btn-ayuda.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
-.cs-msg.se-va { opacity: 0; transition: opacity 0.35s; }
-.cs-msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
-.cs-msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; }
-.cs-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
-
-/* Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra */
-.cs-pistas { display: grid; gap: 7px; }
-.cs-pistas h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 4px 4px 0; }
-.cs-pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
-.cs-pista .texto { min-height: 44px; text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
-.cs-pista .de { font-weight: 900; color: var(--cyan); }
-.cs-pista .tachar { border: 0; border-left: 1px solid var(--glass-border); background: none; color: var(--muted); font: 900 1.1rem var(--font-body); cursor: pointer; }
-.cs-pista.ultima { border-color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
-.cs-pista.ultima .texto { font-size: 1.06rem; }
-.cs-pista .nueva-tag { display: inline-block; font: 900 0.68rem var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: #3a1200; background: var(--yellow); border-radius: 999px; padding: 2px 7px; margin-right: 6px; vertical-align: 2px; }
-.cs-pista.entra { animation: cs-entra 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-@keyframes cs-entra { 0% { transform: translateY(-10px) scale(0.97); opacity: 0; } 100% { transform: none; opacity: 1; } }
-.cs-pista.activa { box-shadow: 0 0 0 2px var(--cyan); }
-.cs-pista.guia { box-shadow: 0 0 0 2px var(--yellow); }
-.cs-pista.tachada .texto { opacity: 0.4; text-decoration: line-through; }
-.cs-pista.tachada .tachar { color: var(--lime); }
-
-@media (prefers-reduced-motion: reduce) {
-  .cs-persona, .cs-persona .giro { transition: none; }
-  .cs-persona.fallo, .cs-persona .giro, .cs-persona .frente, .cs-pista.entra { animation: none !important; }
-}
-/* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un
-   momento: la grilla lo recorta en el borde de la pantalla, no en el suyo (C-8) */
-.cs-juego { overflow-x: clip; margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
 /* a. C. next to the boxes while it is on, so the answer reads as a whole before OK */
 .anio-juego .entry { align-items: center; gap: 8px; }
 .anio-era-marca { font: 900 1.05rem var(--font-body); color: var(--yellow); white-space: nowrap; margin-left: 8px; }
@@ -857,19 +665,10 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .dur-num b { display: block; font-size: 1.9rem; line-height: 1.1; }
 .dur-num small { color: var(--muted); font-size: 0.82rem; }
 .dur-atajos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.dur-atajo { min-height: 44px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 0.85rem; font-weight: 800; color: #fff; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; display: inline-flex; align-items: center; }
-.dur-atajo.on { border-color: var(--yellow); color: var(--yellow); }
-.dur-final { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); }
-.dur-final .em { font-size: 1.6rem; }
-.dur-final .t { flex: 1; min-width: 0; }
-.dur-final .t b { display: block; }
-.dur-final .t small { color: var(--muted); font-size: 0.82rem; }
+/* The 🏁 row is the shell's .toggle-row with its .switch; under FINAL_DESDE days it fades and does not toggle */
+.dur-final { margin-top: var(--s-12); }
 .dur-final.off { opacity: 0.6; }
-.dur-switch { width: 52px; height: 30px; flex: none; border-radius: 999px; position: relative; border: 0; background: rgba(255, 255, 255, 0.2); cursor: pointer; transition: background 0.15s; }
-.dur-switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left 0.15s; }
-.dur-switch[aria-checked="true"] { background: var(--yellow); }
-.dur-switch[aria-checked="true"]::after { left: 25px; }
-.dur-switch:disabled { cursor: default; }
+.dur-final .switch:disabled { cursor: default; }
 .dur-aviso { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--glass); font-size: 0.85rem; font-weight: 700; }
 .dur-aviso[hidden] { display: none; }
 /* The cup's zone, one short line and who suggested it (D-521) */

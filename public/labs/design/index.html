@@ -71,13 +71,16 @@
         <button class="btn btn--ghost" type="button">Fantasma</button>
         <div class="btn-row"><button class="btn btn--sm" type="button">Pequeño</button><button class="btn btn--ghost btn--sm" type="button">👻 Pequeño</button></div>
         <button class="btn btn--yellow" type="button" disabled>Deshabilitado</button>
+        <button class="btn btn--danger" type="button">🗑️ Eliminar</button>
+        <button class="btn btn--ghost btn--danger" type="button">🔕 Silenciar</button>
         <div class="btn-row"><button class="btn btn--ghost" type="button">Dos</button><button class="btn btn--yellow" type="button">En fila</button></div>
         <div class="topbar" style="margin:0"><a class="back" href="#ds-botones">‹ Menú</a><div class="tools"><button class="icon-btn" type="button" aria-label="Icono">🔊</button><span class="lang-toggle"><button type="button" class="on"><span class="flag">🇨🇱</span></button><button type="button"><span class="flag">🇺🇸</span></button></span></div></div>
       </section>
 
       <section class="panel stack" id="ds-fichas">
         <h2 class="display display--sm">Fichas y paneles</h2>
-        <div class="chips"><span class="chip">🎲 Ficha</span><span class="chip chip--hot">🔥 Popular</span><span class="chip chip--gold">🏆 Oro</span></div>
+        <div class="chips"><span class="chip">🎲 Ficha</span><span class="chip chip--hot">🔥 Popular</span><span class="chip chip--gold">🏆 Oro</span><span class="chip chip--cyan">×2 Final</span></div>
+        <div class="chips"><button class="chip-btn on" type="button" aria-pressed="true">⚖️ Elegida</button><button class="chip-btn" type="button" aria-pressed="false">🧩 Otra</button><button class="chip-btn" type="button" aria-pressed="false">Cata</button></div>
         <details class="panel"><summary>Un panel desplegable</summary><p class="muted" style="margin:0">Lo que se pliega.</p></details>
         <div class="stack"><div class="ds-caja">.stack</div><div class="ds-caja">12 px entre hijos</div></div>
       </section>
@@ -90,6 +93,10 @@
         <div class="field"><label>Un campo</label><input type="text" placeholder="Escribe algo"><p class="sub">La ayuda bajo el campo.</p></div>
         <div class="field"><label>Tu nombre</label><input class="name" type="text" value="Javi"></div>
         <div class="field"><label>Código de sala</label><input class="code" type="text" value="ABCD"></div>
+        <div class="field"><label>Tu PIN</label><div class="pin-row"><input class="pin" type="password" inputmode="numeric" value="1234"><button class="pin-show" type="button" aria-pressed="false" aria-label="Ver">👁</button></div></div>
+        <div class="field"><label>Con un máximo</label><input type="text" value="Copa de la oficina" maxlength="20"><small class="counter muted">18 / 20</small></div>
+        <div class="field"><label>Una fecha</label><input type="date" value="2026-11-20"></div>
+        <p class="muted" style="margin:0">Un texto con <button class="link-inline" type="button">un link adentro</button>.</p>
         <div class="form-error">El error del formulario, en amarillo.</div>
         <div class="seg"><button type="button" class="on">Uno</button><button type="button">Dos</button><button type="button">Tres</button></div>
         <div class="opciones tres"><button class="opcion on" type="button"><b>Ahora</b></button><button class="opcion" type="button"><b>Mañana</b></button><button class="opcion" type="button"><b>Otra fecha</b></button></div>
@@ -103,6 +110,10 @@
         <div class="lobby-players"><span class="p me">🇨🇱 Javi</span><span class="p">Cata</span><span class="p off">Pedro</span></div>
         <p class="or">o</p>
         <p class="waiting">Esperando a los demás<span class="dots"></span></p>
+        <div class="notice">Un aviso: una línea que le dice algo al jugador.</div>
+        <div class="notice notice--good">🎉 ¡Lo lograste!</div>
+        <div class="notice notice--bad">Casi: te faltó una.</div>
+        <div class="snackbar" role="status" style="position:static;animation:none">Copiado (flota abajo un momento)</div>
         <div class="status"><div class="who">Le toca a Cata</div><div class="sub">Elige una letra</div></div>
         <div class="result-hero"><span class="trophy">🏆</span><h2 class="display display--md">Resultado</h2></div>
       </section>

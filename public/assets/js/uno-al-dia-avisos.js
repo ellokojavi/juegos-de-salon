@@ -202,7 +202,7 @@ async function hojaAjustes({ lang, alTocar, alCambiar }) {
   }
   hoja('hoja-uad-ajustes', el('h2', {}, T.avHoja), d.nodo, horas, r.nodo, w.nodo,
     el('button', { class: 'btn btn--ghost', id: 'btn-uad-probar', onClick: async () => { alTocar?.(); try { await avisoDePrueba({ titulo: T.avTitulo, texto: T.avPrueba, url: new URL('../../today/', import.meta.url).href }); } catch (_) { /* nada */ } } }, T.avProbar),
-    el('button', { class: 'btn btn--ghost btn--peligro', id: 'btn-uad-silenciar', onClick: async () => { alTocar?.(); await silenciar(); cerrar(); alCambiar?.(T.avSilenciado); } }, T.avSilenciar),
+    el('button', { class: 'btn btn--ghost btn--danger', id: 'btn-uad-silenciar', onClick: async () => { alTocar?.(); await silenciar(); cerrar(); alCambiar?.(T.avSilenciado); } }, T.avSilenciar),
     el('button', { class: 'btn btn--ghost', onClick: () => { alTocar?.(); cerrar(); } }, C.avClose));
 }
 

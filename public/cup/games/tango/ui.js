@@ -150,11 +150,11 @@ export function montar(raiz, ctx) {
       grilla.append(celda);
     }
     if (e.fin) {
-      caja.append(el('div', { class: 'aviso ' + (e.rendido ? 'mal' : 'bien') }, e.rendido ? T.queensGaveUp : `🎉 ${T.tangoOk}`),
+      caja.append(el('div', { class: 'notice notice--' + (e.rendido ? 'bad' : 'good') }, e.rendido ? T.queensGaveUp : `🎉 ${T.tangoOk}`),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
     }
     caja.append(grilla);
-    if (mal.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.tangoClash));
+    if (mal.size && !e.fin) caja.append(el('div', { class: 'notice notice--bad' }, T.tangoClash));
     if (errores || e.pistas) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.tangoCount, { e: errores, p: e.pistas })));
     if (!e.fin) {
       caja.append(el('div', { class: 'btn-row tango-acciones' },

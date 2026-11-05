@@ -135,7 +135,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
         tap();
         try { await avisoDePrueba({ titulo: titulo(), texto: T.avTestBody, url: copa().url }); } catch (_) { toast(T.avError); }
       } }, T.avTest),
-      el('button', { class: 'btn btn--ghost btn--peligro', id: 'btn-silenciar', onClick: async () => { tap(); await silenciar(); cerrar(); } }, T.avMute),
+      el('button', { class: 'btn btn--ghost btn--danger', id: 'btn-silenciar', onClick: async () => { tap(); await silenciar(); cerrar(); } }, T.avMute),
       botonCerrar());
   }
 
@@ -211,7 +211,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     // El celular ya dijo que sí en otra copa: esta los trae puestos, sin volver a preguntar
     if (leerCelular() && permiso() === 'granted' && camino === 'push') {
       const linea = el('p', { class: 'aviso-auto', id: 'aviso-auto' }, T.avAuto, ' ',
-        el('button', { class: 'linkish', onClick: () => { tap(); hojaAjustes(); } }, T.avChange));
+        el('button', { class: 'link-inline', onClick: () => { tap(); hojaAjustes(); } }, T.avChange));
       // La copa se redibuja seguido (cada minuto, y con cada jugada de otros): se suscribe una vez
       if (!enCurso.has(code)) {
         enCurso.add(code);
@@ -223,7 +223,7 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     const caja = el('div', { class: 'panel aviso-oferta', id: 'aviso-oferta' },
       el('p', { class: 'lead' }, pregunta),
       el('p', { class: 'muted' }, app ? T.avOfferAppSub : T.avOfferSub),
-      el('div', { class: 'btn-row' },
+      el('div', { class: 'btn-row btn-row--wrap' },
         // After a day's result the primary button is back to the board: this one stays secondary (C-19)
         el('button', { class: `btn ${dia ? 'btn--cyan' : 'btn--yellow'}`, id: 'btn-avisarme', onClick: pedir }, T.avYes),
         el('button', { class: 'btn btn--ghost', id: 'btn-ahora-no', onClick: () => { tap(); cuenta.avisos.guardar(code, { no: true }); caja.remove(); redibujar(); } }, T.avNo)));

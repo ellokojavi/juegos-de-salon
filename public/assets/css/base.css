@@ -47,6 +47,10 @@
   /* Shadows and the "edge" under a button, one per button colour (they were written by hand in .btn) */
   --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
   --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
+  /* Danger (phase 7, #1196, from La Copa): the red button's edge, and the soft pink of a ghost danger button's text */
+  --edge-red: #8a1024; --danger-soft: #ff8fbd;
+  /* A notice that went wrong: its pale pink text on the red tint; the snackbar's near-black (phase 7, from La Copa) */
+  --ink-bad: #ffd0d6; --snackbar-bg: #111111;
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
   /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
   --well: rgba(0, 0, 0, 0.25); --well-deep: rgba(0, 0, 0, 0.3);
@@ -185,10 +189,18 @@ p { line-height: 1.5; margin: 0 0 12px; }
 }
 .btn--ghost:active { transform: translateY(2px); box-shadow: none; }
 .btn--sm { font-size: 1.05rem; min-height: 44px; padding: 10px 16px; width: auto; }
+/* Danger (phase 7, #1196): red only to confirm a destructive step (deleting a cup); as a ghost, the soft
+   pink of a step that turns something off (silencing the notifications). Never a game action. */
+.btn--danger { background: var(--red); color: var(--ink); box-shadow: 0 4px 0 var(--edge-red); }
+.btn--ghost.btn--danger { background: rgb(from var(--pink) r g b / 0.16); color: var(--danger-soft); border-color: transparent; box-shadow: none; }
 /* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
 .btn.room-local { margin: 4px 0 18px; }
 .btn-row { display: flex; gap: 10px; }
 .btn-row .btn { flex: 1; }
+/* A row whose buttons go down a line when they do not fit side by side (at 320 px, or a long language) */
+.btn-row--wrap { flex-wrap: wrap; }
+/* A link inside a line of text: cyan, underlined, still 44 px to tap */
+.link-inline { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 var(--s-6); }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 
 /* --- Aire entre el tablero y sus botones (D-309, U-11) ---
@@ -215,6 +227,8 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .intro-hero { text-align: center; padding: var(--s-6) 0 var(--s-8); }
 .intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgb(from var(--yellow) r g b / 0.6)); }
 .intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgb(from var(--cyan) r g b / 0.6)); }
+/* A dark emoji (〰️, 🕵️) gets the light outline of .emoji-claro on top of the hero's golden glow */
+.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 18px rgb(from var(--yellow) r g b / 0.6)); }
 /* A mode to pick on the cover: title, a line under it and the › */
 .modes { display: grid; gap: var(--s-10); }
 .mode {
@@ -241,6 +255,17 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
 .field .sub { color: var(--muted); font-size: 0.78rem; font-weight: 700; margin: 0; }
 .field .sub.warn { color: var(--yellow); }
+/* A PIN: its digits spaced and centred; `.pin-row` puts a 👁 (`.pin-show`) beside it */
+.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.pin-row { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: var(--s-6); }
+.pin-show { min-height: 44px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); color: var(--ink); font-size: var(--fs-110); cursor: pointer; }
+.pin-show[aria-pressed="true"] { border-color: var(--cyan); }
+/* How many characters of the most (D-119): under the input, at the right; yellow when full */
+.field .counter { display: block; text-align: right; margin-top: var(--s-4); font-size: 0.8rem; }
+.field .counter.full { color: var(--yellow); }
+/* A date: the phone's own picker, in the dark scheme */
+.field input[type="date"] { min-height: 48px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); font: 800 var(--fs-100) var(--font-body); padding: var(--s-8) var(--s-12); color-scheme: dark; }
+.field input[type="date"]:focus { border-color: var(--cyan); }
 .form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: var(--s-6) 0; }
 /* A segmented control: one of two or three, the chosen one in yellow */
 .seg { display: flex; gap: var(--s-6); background: var(--well-deep); border-radius: var(--r-14); padding: var(--s-4); }
@@ -291,12 +316,20 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .lobby-players .p.me { background: var(--cyan); color: var(--ink-on-cyan); }
 .lobby-players .p.off { opacity: 0.45; }
 .waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting--screen { padding: var(--s-32) 0; }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 /* Whose turn, over the board: the name glowing cyan and a line under it */
 .status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
 .status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(from var(--cyan) r g b / 0.5); }
 .status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+/* A notice: one line that tells the player something, in a glass box; --good in lime, --bad on a red tint (phase 7, from La Copa) */
+.notice { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.notice--good { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
+.notice--bad { background: rgb(from var(--red) r g b / 0.22); color: var(--ink-bad); }
+/* The snackbar: a short message floating at the bottom for a moment ("Copiado"); centred without a
+   transform, because the entering animation would override it and push it to the right */
+.snackbar { position: fixed; left: var(--s-16); right: var(--s-16); margin: 0 auto; width: fit-content; bottom: calc(var(--s-24) + var(--safe-bottom)); background: var(--snackbar-bg); border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: var(--s-12) var(--s-18); border-radius: var(--r-14); z-index: 50; animation: slideUp 0.25s both; }
 /* The result's hero: the trophy popping above the title */
 .result-hero { text-align: center; padding: var(--s-2) 0 var(--s-6); }
 .result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
@@ -308,6 +341,8 @@ p { line-height: 1.5; margin: 0 0 12px; }
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   box-shadow: var(--shadow-panel);
 }
+/* A panel around a destructive step (deleting a cup): its border in red */
+.panel--danger { border-color: rgb(from var(--red) r g b / 0.55); }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 0.95rem;
@@ -316,6 +351,18 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .chip--hot { background: var(--pink); border-color: transparent; }
 .chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* A chip in the colour of the second meaning (La Copa's final ×2, D-151): cyan, as `--gold` is gold */
+.chip--cyan { background: var(--cyan); color: var(--ink-on-cyan); border-color: transparent; }
+/* A chip that is a choice (phase 7, #1196): a pill to tap, one or more on; on is yellow like .opcion.on (yellow is the choice) */
+.chip-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--s-6) var(--s-12);
+  border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--well); color: var(--ink);
+  font: 800 var(--fs-85) var(--font-body); cursor: pointer;
+}
+/* A sheet's head: its title and the ✕ */
+.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); }
+.hoja-cabeza h3 { margin: 0; font-size: var(--fs-110); font-weight: 900; }
+.chip-btn.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 /* --- Panel desplegable --- */
 details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }

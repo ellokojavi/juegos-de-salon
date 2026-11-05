@@ -40,7 +40,8 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--cyan` | `#2ee6d6` | the secondary accent: info, selection, "your turn" |
 | `--lime` | `#9dff3a` | success, correct, done |
 | `--purple` | `#8a4dff` | tertiary accent, used sparingly: the hidden digit of the keyboard, the owner's panel; a game does not need it |
-| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action (`.btn--red` lives in `cup/style.css` today, not in `base.css`: it moves with phase 7, #1196) |
+| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--danger`, deleting a cup), never a game action |
+| `--edge-red`, `--danger-soft` | `#8a1024`, `#ff8fbd` | the edge under `.btn--danger`; the soft pink text of a ghost danger button (`.btn--ghost.btn--danger`: silencing the notifications). From La Copa, phase 7 |
 | `--ink` | white | text on the dark background |
 | `--muted` | white at 72 % | secondary text on the dark background (`.muted`) |
 | `--glass`, `--glass-border` | white at 8 % and 16 % | panels, chips, ghost buttons: surfaces on the dark background |
@@ -50,6 +51,7 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--well`, `--well-deep` | black at 25 % and 30 % | a sunken surface on the dark background: rows, segmented controls (`--well`), inputs (`--well-deep`) |
 | `--placeholder` | white at 35 % | an input's placeholder |
 | `--line-faint` | white at 35 % | a faint line drawn on the dark background: an empty step's ring (Rutas rotas' and Loteo's stage dots). Same value as `--placeholder`, other meaning: change one, not both |
+| `--ink-bad`, `--snackbar-bg` | `#ffd0d6`, `#111111` | the pale pink text of `.notice--bad` on its red tint; the snackbar's near-black. From La Copa, phase 7 |
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
 relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
@@ -131,12 +133,13 @@ these uses the class; a game that needs something close to one asks for a varian
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
 | Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is drawn 40 px tall; an invisible `::before` band makes its tap area 44 px (U-10) |
-| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
+| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn--danger` (red: confirm a destructive step; with `--ghost`, the soft pink of turning something off), `.btn-row`, `.btn-row--wrap` (the buttons go down a line when they do not fit) | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
-| Panel | `.panel`, `details.panel` | the glass card |
-| Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chips` | |
+| Panel | `.panel`, `details.panel`, `.panel--danger` | the glass card; `--danger` frames a destructive step in red. `details.panel` is also the one how-to-play block, "🧠 Cómo se juega": folded on a home game's cover, open on a Cup day's cover, folded under a Cup game's board (phase 7) |
+| Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chip--cyan`, `.chips` | `--cyan` is the second meaning beside gold: La Copa's final ×2 (D-151) against the wildcard's gold |
+| A chip to choose | `.chip-btn`, `.chip-btn.on` | a pill to tap, 44 px tall; on is yellow like `.opcion.on` (yellow is the choice). La Copa's names to sit as, its week styles and its length shortcuts (phase 7) |
 | Stack | `.stack` | vertical rhythm of 12 px |
-| Sheet | `.hoja*` | the bottom sheet (D-232) |
+| Sheet | `.hoja*`, `.hoja-cabeza` | the bottom sheet (D-232); `.hoja-cabeza` its title with the ✕ |
 | Chat | `.chat*` | the room's chat bubble |
 | Random | `.azar*` | the random-game control (D-237) |
 | One a day | `.uad*` | |
@@ -152,16 +155,18 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | Component | Class | Notes |
 |---|---|---|
 | Screens | `.screen`, `.screen.active` | one visible, sliding up |
-| The cover's hero | `.intro-hero`, `.icon`, `.icon--cyan` | the emoji glowing above the title |
+| The cover's hero | `.intro-hero`, `.icon`, `.icon--cyan`, `.icon.emoji-claro` | the emoji glowing above the title; a dark emoji (〰️) gets a light outline too |
 | A mode to pick | `.modes`, `.mode`, `.mode .go`, `.mode .soon` | title, a line, the › |
-| A form field | `.field`, `label`, `input`, `input.name`, `input.code`, `.sub`, `.sub.warn` | the input in a well |
+| A form field | `.field`, `label`, `input`, `input.name`, `input.code`, `input.pin`, `input[type=date]`, `.sub`, `.sub.warn`, `.counter`, `.counter.full` | the input in a well; a PIN's digits spaced (`.pin-row` with its 👁 `.pin-show`), a date in the dark picker, "12 / 20" under a field with a maximum (D-119) |
 | The form's error | `.form-error` | |
 | Segmented control | `.seg`, `.seg button.on` | |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
-| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10) |
-| A link that is a button | `.link-btn` | |
-| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
+| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10); a `<button role="switch">` keeps `aria-checked` and `.on` in step (La Copa's 🏁 final) |
+| A link that is a button | `.link-btn`, `.link-inline` | `.link-btn` the small way out under a form; `.link-inline` a cyan link inside a line of text |
+| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.waiting--screen`, `.dots` | `--screen` gives a waiting line the room of a whole screen; `showWaiting()` in `assets/js/waiting.js` draws it, or the failure with Retry and a way home (from La Copa, phase 7) |
+| A notice | `.notice`, `.notice--good`, `.notice--bad` | one line that tells the player something, in a glass box; lime when it went well, a red tint when not (from La Copa, phase 7) |
+| A snackbar | `.snackbar` | a short message floating at the bottom for a moment ("Copiado"), `role="status"` |
 | Whose turn | `.status`, `.who`, `.sub` | |
 | The result's hero | `.result-hero`, `.trophy` | |
 
@@ -215,7 +220,8 @@ after a migration), is in the lint's header.
 | Generala | the kept-die tag (`.dado-btn .tag`) at 0.62 rem | "Guardado" under each of five dice must fit under a 50 px die at 320 px (C-8); the smallest text step overflows it |
 | Julepe (`labs/julep/style.css`) | the playing card's rank and suit at 1.35 and 1.15 rem (`.pcard .r`, `.pcard .s`), and the tiny card's at 0.8 and 0.7 rem (`.pcard--xs`) | a card's own sizes, scaled with the card (five fit in a row at 320 px, C-8): the card is `--card` on the dark table, no thematic token of its own |
 | `base.css` (the chat bubble, the install bubble, the chat and support sheets) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px); the chat button's, the chat sheets' and the support tab's and sheet's night written as the shell's `--bg2`/`--bg1` values, `rgba(42, 10, 74, …)` and `rgba(21, 7, 38, …)` | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm; the night is fixed on purpose: Pintaminas' hard mode in La Copa, Números explosivos and Dominorama redeclare `--bg1…3` on `body`, so a token would retint it on those pages: whether it should follow the page's night is the owner's call (allowlisted) |
-| La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
+| La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) | the same shape as `base.css`'s bubble tail (allowlisted) |
+| 🔍 El caso (`cup/games/case/style.css`) | the speech bubble's 4 px tail (`.cs-globo`) | the same tail as `base.css`'s chat bubble (allowlisted); the sheet moved out of `cup/style.css` in phase 7 and is not yet migrated |
 | Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
 | 🗼 Babel (`cup/games/stack`) | `--sk-hundido` (the score's drop, black at 35 %), `--sk-tira` (the end's strip), `--sk-pestana` (the lab tab); the messages over the tower at 1.9, 2.2 and 2.6 rem; the end's strip rising 110 px with 44 px for its fade; the masks' opaque `#000` | the tower's own colours (C-1); the messages are the board's, read over the moving tower; the strip's offsets are the tower's and the fade's sizes; a mask reads only the alpha (allowlisted) |
 | 🥷 Shinobi (`cup/games/stick`) | `--sn-hundido` (the score's drop, black at 35 %), `--sn-sombra` (the achievement banner's drop, black at 40 %); the pause's title at 2.6 rem; the masks' opaque `#000` | the night's own shadows (C-1); the pause's title is the board's message, as Babel's; a mask reads only the alpha (allowlisted) |
@@ -260,6 +266,10 @@ this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible
 - `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
+- `details.panel`'s summary, the folding panel's title ("🧠 Cómo se juega"), is only as tall as its
+  text (about 25 px): under U-10's 44 px. La Copa's rules under the board keep a 44 px summary of
+  their own (phase 7); a 44 px floor for every folding panel grows each game's cover by ~19 px, so it
+  is the owner's call.
 - `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
   its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
   phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.

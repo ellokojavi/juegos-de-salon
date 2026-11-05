@@ -127,6 +127,7 @@ medir (D-267). El panel lo muestra con su clave cruda (C-16).
 ```
 public/cup/games/case/engine.js   motor: genera el caso, el solver, la ayuda y el puntaje (sin DOM)
 public/cup/games/case/ui.js       pantalla: grilla, pistas, sellos, portada de la antesala
+public/cup/games/case/style.css   its stylesheet (`.cs-*`), loaded by ui.js with loadCss (D-468); out of cup/style.css since phase 7 (#1196)
 public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los tres idiomas
 public/cup/game.js                lo de `diario`: el caso del día, seguir al recargar y el final
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
