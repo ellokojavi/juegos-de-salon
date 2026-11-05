@@ -171,3 +171,7 @@ the game's name, what it is, that it is in Uno al día and La Copa, and ▶ Juga
   owner's tools, not player-facing URLs: the visitors' only work in the workshop or with a lab key.
 - The Gran Final skips it (`NOT_IN_FINAL`), the only game of the pool that does: seven minutes of building
   do not fit a round of the final.
+
+## Migrated to the design system (D-533, #1193)
+
+The lab's stylesheet, `public/labs/bridges/style.css` (read today only by the two lab sheets `/labs/bridges/trains/` and `/labs/bridges/visitors/`; the game itself is styled by `public/cup/games/bridges/style.css`), copied nothing of the game shell and is now written on the tokens: 52 lint hits to 0 beyond two escapes in `docs/design-allowlist.json` (the cover's train at 2.3 rem, a plank's 3 px corner). The planks' wood and steel and the strain gauge's plate are the game's own tokens (`--tv-*`) at the top of the sheet. Moved to a token, all intended: the heavy load in `--orange` and the hurried clock and the given-up stamp in `--pink` (were pale oranges and pinks of their own), the current stage's dot in `--ink`, the summary's veil and the neon gauge on `--bg1`, and sizes between two steps to the nearer one. The two lab sheets' computed styles are unchanged (none of their elements uses these classes).
