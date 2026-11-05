@@ -299,7 +299,11 @@
       "error": "AssertionError [ERR_ASSERTION]: #seccion-design is in ✨ Mejoras en prueba but no page asks the lab key for it any more: it reached everyone, so move it to La Bodega's ✨ Mejoras lanzadas (D-479)\ncode: 'ERR_ASSERTION',\nexpected: true,",
       "signature": "3b0f7f054c",
       "date": "2026-11-05T06:36:58.687Z",
-      "fix": null,
+      "fix": {
+        "commit": "6df601a1c9fbca517afa912173b984106744e593",
+        "date": "2026-11-05T06:40:58.591Z",
+        "stat": "6 file(s) +17 −9: README.md, changelog/ccr-9fd16d5f-jgf8sp.md, docs/facts.json, docs/games/design.md, public/labs/index.html, …"
+      },
       "flaky": false
     },
     {
@@ -312,7 +316,11 @@
       "error": "AssertionError [ERR_ASSERTION]: #seccion-design is in ✨ Mejoras en prueba but no page asks the lab key for it any more: it reached everyone, so move it to La Bodega's ✨ Mejoras lanzadas (D-479)\ncode: 'ERR_ASSERTION',\nexpected: true,",
       "signature": "3b0f7f054c",
       "date": "2026-11-05T06:38:49.597Z",
-      "fix": null,
+      "fix": {
+        "commit": "6df601a1c9fbca517afa912173b984106744e593",
+        "date": "2026-11-05T06:40:58.591Z",
+        "stat": "4 file(s) +11 −9: changelog/ccr-9fd16d5f-jgf8sp.md, docs/games/design.md, public/labs/index.html, tools/e2e/design/page.mjs"
+      },
       "flaky": false
     }
   ]
