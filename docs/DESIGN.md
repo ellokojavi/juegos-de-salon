@@ -11,7 +11,7 @@ experience of the site, La Copa and its mini-games included: not only how a butt
 a screen starts, passes the phone, confirms, shares and shows a result. Nothing is a game's own
 without an escape in §4 with its reason. La Copa behaves today as a system apart (`cup/style.css`,
 its own controls in `cup/game.js`); that is a defect the plan dissolves (phase 7, #1196), not a
-boundary the system respects.
+boundary the system respects. The analysis: [design/cup-unification.md](design/cup-unification.md).
 
 **Who keeps it:** the usability agent (`.claude/agents/usability.md`). It owns this document, the
 design lint (`tools/agents/design-lint.mjs`, phase 2 of #1188), and the components page
@@ -211,9 +211,11 @@ after a migration), is in the lint's header.
 | Ahorcado | the word's letters at 2.5, 2.1, 1.8 and 1.9 rem | a board's own sizes, between the title steps and the text steps, so a long word fits at 320 px (C-8) |
 | Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
 | Generala | the kept-die tag (`.dado-btn .tag`) at 0.62 rem | "Guardado" under each of five dice must fit under a 50 px die at 320 px (C-8); the smallest text step overflows it |
+| Julepe (`labs/julep/style.css`) | the playing card's rank and suit at 1.35 and 1.15 rem (`.pcard .r`, `.pcard .s`), and the tiny card's at 0.8 and 0.7 rem (`.pcard--xs`) | a card's own sizes, scaled with the card (five fit in a row at 320 px, C-8): the card is `--card` on the dark table, no thematic token of its own |
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 | Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
+| Dudo | the ace's gold (`--ace-light`, `--ace-deep`) and the shaking cloth's green (`--cloth`); the rivals' dice glyphs at 0.62 rem and the bid's quantity at 2.6 rem | thematic colours of the dice and the felt (D-447); a board's own sizes: five glyphs fit the rival card's 74 px, the figure is read across the table (both allowlisted) |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
 was a whole file. The rows above are the first entries of the allowlist, read from the baseline:

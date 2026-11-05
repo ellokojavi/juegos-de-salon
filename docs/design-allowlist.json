@@ -84,6 +84,42 @@
       "rule": "text-size",
       "what": "font-size: 0.62rem",
       "reason": "The kept-die tag (`.dado-btn .tag`, \"Guardado\") under each of five dice: the board's own size, so the word fits under a 50 px die at 320 px (C-8); the smallest text step overflows it."
+    },
+    {
+      "file": "public/liars-dice/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.62rem",
+      "reason": "The rivals' dice drawn as glyphs (`.rivals .rival .d`): five of them must fit in the rival card's 74 px, under the smallest text step; a board's own size."
+    },
+    {
+      "file": "public/liars-dice/style.css",
+      "rule": "text-size",
+      "what": "font: 900 2.6rem var(--font-num)",
+      "reason": "The bid's figure (`.amount-n`): a number the table reads from across the phone, the board's own size above the text steps (D-30: figures in --font-num)."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font: 900 1.35rem var(--font-num)",
+      "reason": "The playing card's rank (`.pcard .r`): the card's own size, sized with the card (38 to 58 px wide, five in a row at 320 px, C-8), not a text step."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.15rem",
+      "reason": "The playing card's suit (`.pcard .s`): the card's own size, under its rank."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.8rem",
+      "reason": "The tiny card's rank (`.pcard--xs .r`, 28 px wide, in the hand's review): the card's own size."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.7rem",
+      "reason": "The tiny card's suit (`.pcard--xs .s`): the card's own size, under its rank."
     }
   ]
 }

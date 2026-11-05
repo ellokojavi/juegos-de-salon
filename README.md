@@ -836,6 +836,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
+- [La Copa inside the design system: the analysis (phase 7, #1196)](docs/design/cup-unification.md)
 - [Piece 1 · Endless content with quality control](docs/learning/01-content-pipeline.md)
 - [Piece 2 · The factory's dashboard](docs/learning/02-factory-metrics.md)
 - [Piece 3 · The owner's taste as data](docs/learning/03-taste-model.md)
