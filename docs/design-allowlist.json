@@ -1,4 +1,11 @@
 {
   "_about": "Exceptions to the design lint (tools/agents/design-lint.mjs, D-533), each with its reason: none is silent. Entries { file, rule, what, reason }: `rule` is one of token-colour, colour, radius, space, copied, text-size or `*`; `what` matches the hit's declaration (`color: #ff8a8a`) or selector, `*` matching any run of characters. An entry that no longer hits fails design-lint.test.mjs as stale, so remove it when the stylesheet changes. The human-readable side is docs/DESIGN.md §4.",
-  "entries": []
+  "entries": [
+    { "file": "public/assets/css/base.css", "rule": "radius", "what": "border-radius: 16px 16px 4px 16px", "reason": "the chat bubble's tail: a 4 px corner is a shape (where the bubble points), not a size on the corner scale" },
+    { "file": "public/assets/css/base.css", "rule": "space", "what": "padding-bottom: 170px", "reason": "reserves the install bubble's height under the page while it floats (D-232): the size of another element, not rhythm" },
+    { "file": "public/assets/css/base.css", "rule": "space", "what": "padding-right: 30px", "reason": "room for the install bubble's ✕ (44 px, absolutely positioned) beside the text: the size of another element, not rhythm" },
+    { "file": "public/assets/css/base.css", "rule": "space", "what": "padding-right: 48px", "reason": "room for the install bubble's ✕ beside the button from 480 px: the size of another element, not rhythm" },
+    { "file": "public/cup/style.css", "rule": "radius", "what": "border-radius: 14px 14px 4px 4px", "reason": "the podium step (.escalon): flat 4 px feet so the three steps read as one podium; a shape, not a size on the scale" },
+    { "file": "public/cup/style.css", "rule": "radius", "what": "border-radius: 14px 14px 14px 4px", "reason": "the speech bubble's tail (.cs-globo), the same 4 px tail as base.css's chat bubble; a shape, not a size on the scale" }
+  ]
 }

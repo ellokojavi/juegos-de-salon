@@ -179,10 +179,26 @@ after a migration), is in the lint's header.
 | Pintaminas | each drawing's palette | the game is about those colours |
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
+| `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
+| La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 
-(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that was a whole file.)
+(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
+was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
+every other hit is a migration, not an escape. A 4 px tail used by three bubbles and a podium is a
+candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
-## 5. Migration recipe
+## 5. Known debts of the system itself
+
+Found while building the components page (phase 3); each is a visible change on every page, so it
+is a decision for the owner, not a migration:
+
+- `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
+  the components page leaves it out of its check until it is decided.
+- `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
+  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
+  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
+
+## 6. Migration recipe
 
 Written in phase 4 (#1192) from what the pilot (Ahorcado) teaches: what maps to what, what to look
 at in the screenshots, and how long one game takes.

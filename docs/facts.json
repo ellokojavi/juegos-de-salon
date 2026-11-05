@@ -1525,6 +1525,7 @@
     "daily-player.mjs",
     "daily-variants.mjs",
     "daily.mjs",
+    "design/page.mjs",
     "dominorama/lab.mjs",
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
@@ -1725,6 +1726,10 @@
     {
       "path": "docs/games/cup.md",
       "title": "La Copa"
+    },
+    {
+      "path": "docs/games/design.md",
+      "title": "🎨 The components page (the design system, in the lab)"
     },
     {
       "path": "docs/games/dominorama.md",
