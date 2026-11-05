@@ -47,7 +47,7 @@
 .rr-cabeza.entra { animation: pop 0.45s ease-out both; }
 .rr-n-etapa { margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.06em; }
 .rr-etapas { display: flex; gap: var(--s-8); }
-.rr-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--placeholder); box-sizing: border-box; }
+.rr-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-faint); box-sizing: border-box; }
 .rr-punto.actual { border-color: var(--ink); background: rgb(from var(--ink) r g b / 0.25); box-shadow: 0 0 8px rgb(from var(--ink) r g b / 0.5); }
 /* Like the share card: 🟩 at the minimum, 🟨 with extra turns */
 .rr-punto.hecha { background: var(--yellow); border-color: var(--yellow); }

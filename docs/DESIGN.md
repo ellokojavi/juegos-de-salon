@@ -49,6 +49,7 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--edge-pink`, `--edge-yellow`, `--edge-cyan` | darkened accents | the 3D edge under a button of that colour |
 | `--well`, `--well-deep` | black at 25 % and 30 % | a sunken surface on the dark background: rows, segmented controls (`--well`), inputs (`--well-deep`) |
 | `--placeholder` | white at 35 % | an input's placeholder |
+| `--line-faint` | white at 35 % | a faint line drawn on the dark background: an empty step's ring (Rutas rotas' and Loteo's stage dots). Same value as `--placeholder`, other meaning: change one, not both |
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
 relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names

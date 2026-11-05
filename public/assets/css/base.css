@@ -51,6 +51,7 @@
   /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
   --well: rgba(0, 0, 0, 0.25); --well-deep: rgba(0, 0, 0, 0.3);
   --placeholder: rgba(255, 255, 255, 0.35);
+  --line-faint: rgba(255, 255, 255, 0.35);
   --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
   /* Text sizes in hundredths of a rem: body is --fs-100; the steps every game picks from (titles use .display--xl…sm) */
   --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
