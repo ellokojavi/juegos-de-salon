@@ -352,6 +352,19 @@
       "date": "2026-11-05T15:16:28.847Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 42122540939,
+      "check": "tests",
+      "pr": 1236,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "5f802562893a1b34b7423c2249ecc79c2a35939d",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/conflict-markers.test.mjs",
+      "signature": "2b1467b5e1",
+      "date": "2026-11-05T22:35:56.997Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
