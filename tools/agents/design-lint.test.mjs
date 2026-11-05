@@ -35,6 +35,8 @@ test('rules(): selectors, declarations and their lines; comments, @font-face and
   assert.equal(r[0].line, 2);
   assert.equal(r[1].line, 3);
   assert.deepEqual([...definedClasses(css)].sort(), ['a', 'b', 'c', 'd']);
+  const after = rules('@media (max-width: 320px) { .m { gap: 8px } @keyframes k { from { top: 0 } } }\n.n { margin: 0 }');
+  assert.deepEqual(after.map(x => x.selector), ['.m', '.n'], 'a selector after an @media that ends in @keyframes keeps its own head');
 });
 
 test('token-colour: a token written by hand says which token', () => {

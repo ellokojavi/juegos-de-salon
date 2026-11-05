@@ -75,9 +75,6 @@
   @keyframes flashFade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
 }
 
-/* The shell's .status, with the hero's margin kept smaller here: the board needs the height */
-.status { margin: var(--s-2) 0 var(--s-4); }
-
 .board { position: relative; display: grid; grid-template-columns: 124px 1fr; gap: var(--s-10); align-items: start; margin: var(--s-2) 0 0; }
 .gallows svg { display: block; width: 100%; height: auto; max-height: 140px; }
 /* La horca está desde el principio, apagada; el monito se dibuja con cada error */

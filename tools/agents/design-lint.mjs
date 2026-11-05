@@ -107,8 +107,11 @@ export function rules(css) {
       const close = clean.indexOf('}', open);
       const nextOpen = clean.indexOf('{', open + 1);
       if (head.startsWith('@') && !/^@(media|supports|container|layer)/.test(head)) { // @font-face, @keyframes: skip the block
-        if (head.startsWith('@keyframes')) { let depth = 0, k = open; do { if (clean[k] === '{') depth++; else if (clean[k] === '}') depth--; k++; } while (depth && k < clean.length); i = k; continue; }
-        i = close + 1; continue;
+        if (head.startsWith('@keyframes')) { let depth = 0, k = open; do { if (clean[k] === '{') depth++; else if (clean[k] === '}') depth--; k++; } while (depth && k < clean.length); i = k; }
+        else i = close + 1;
+        // the closing brace(s) of an @media that held this block
+        for (;;) { while (/\s/.test(clean[i] || '')) i++; if (clean[i] === '}') i++; else break; }
+        continue;
       }
       if (head.startsWith('@')) { i = open + 1; continue; } // @media: flatten
       if (nextOpen >= 0 && nextOpen < close) { i = open + 1; continue; } // nested, be lenient
