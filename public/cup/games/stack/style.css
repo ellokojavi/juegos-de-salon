@@ -97,6 +97,14 @@
 
 /* The score's tally over «Continue» (ui.js cuentaPuntos): floors + bonuses = points, one term at a time */
 .sk-cuenta { display: flex; justify-content: center; align-items: flex-end; gap: 4px 10px; flex-wrap: wrap; width: 100%; }
+/* Three-digit figures: smaller numbers and tighter gaps, so the sum stays on one line at 320 px */
+.sk-cuenta.compacta { gap: var(--s-6); flex-wrap: nowrap; }
+.sk-cuenta.compacta .sk-valor { font-size: var(--fs-140); }
+.sk-cuenta.compacta .sk-signo { font-size: var(--fs-100); }
+.sk-cuenta.compacta small { white-space: normal; max-width: 6.5em; text-align: center; }
+.sk-cuenta.compacta .sk-termino:not(.pisos) { padding-left: 1.1em; }
+.sk-cuenta.compacta .sk-signo { transform: translate(-1.15em, 0.1em); }
+.sk-cuenta.compacta .total .sk-valor { --sk-corona: 1.1; transform-origin: 100% 80%; }
 .sk-termino { display: grid; justify-items: center; line-height: 1; opacity: 0; transform: translateY(14px) scale(0.6); }
 .sk-termino .sk-valor { font: 900 var(--fs-200)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); }
 .sk-termino small { font: 700 var(--fs-75) var(--font-body); color: var(--muted); margin-top: var(--s-2); white-space: nowrap; }
@@ -110,8 +118,8 @@
 .sk-termino.total.late .sk-valor { animation: sk-late 0.45s ease-out; }
 .sk-termino.total.final .sk-valor { animation: sk-corona 0.9s ease-out forwards; }
 .sk-cuenta.lista .sk-termino { opacity: 1; transform: none; animation: none; }
-.sk-cuenta.lista .total .sk-valor { transform: scale(1.3); }
+.sk-cuenta.lista .total .sk-valor { transform: scale(var(--sk-corona, 1.3)); }
 @keyframes sk-golpe { 0% { opacity: 0; transform: translateY(-26px) scale(1.8); } 60% { opacity: 1; transform: translateY(2px) scale(0.92); } 100% { opacity: 1; transform: none; } }
 @keyframes sk-late { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
-@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(1.7); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(1.3); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
+@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(calc(var(--sk-corona, 1.3) * 1.3)); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(var(--sk-corona, 1.3)); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
 @media (prefers-reduced-motion: reduce) { .sk-termino { opacity: 1; transform: none; animation: none !important; } }
