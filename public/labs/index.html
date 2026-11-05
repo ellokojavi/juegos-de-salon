@@ -123,11 +123,6 @@
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
         <p class="muted mejoras-vacio">Ahora no hay ninguna en prueba: las lanzadas están en La Bodega.</p>
-        <section class="panel seccion" id="seccion-cup-podium-early">
-          <h2>🏆 La Copa: el podio se anuncia el último día</h2>
-          <p class="muted" style="margin:0">El último día de la copa, cuando lo que falta por jugar ya no puede cambiar los tres primeros lugares, el tablero lo anuncia arriba con el podio tal como va a quedar: «¡Cata ya ganó la copa!». Cuenta solo con lo que cada jugador puede ver: si todavía no jugaste el último día, los resultados de los demás siguen ocultos y el anuncio espera. Ante la duda, espera: los puntos de un día que sigue abierto todavía pueden bajar cuando lo juegan los demás, y un comodín sin usar puede doblar un día. No reemplaza el podio con sus medallas ni el aviso del cierre, que llegan igual cuando la copa termina. Para verlo: <code>/cup/?test&amp;lab&amp;demo=decided</code>.</p>
-          <a class="btn btn--yellow" id="btn-cup-podium-early" href="../cup/?test&amp;lab&amp;demo=decided">🏆 Ver el tablero del último día</a>
-        </section>
         <section class="panel seccion" id="seccion-lab-ready">
           <h2>✅ Listo para publicar</h2>
           <p class="muted" style="margin:0">Cuenta cuánto usan los testers cada mejora en prueba: cuántas veces la abren, cuántas la usan hasta el final, cuántas fallan y con cuántas llaves distintas. Solo números, nada de quién. Cuando una pasa la vara (5 usos completos, 2 llaves, 3 días, sin errores), su tarjeta lo dice con las cifras, para que la publiques. Lo ves en las tarjetas de esta misma página, con tu sesión de dueño.</p>
@@ -212,6 +207,15 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-cup-podium-early" data-launched="2026-11-04">
+            <details>
+              <summary><h2>🏆 La Copa: el podio se anuncia el último día</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. El último día de la copa, cuando lo que falta por jugar ya no puede cambiar los tres primeros lugares, el tablero lo anuncia arriba con el podio tal como va a quedar: «¡Cata ya ganó la copa!». Cuenta solo con lo que cada jugador puede ver, así que si todavía no jugaste el último día, el anuncio espera. El podio con sus medallas y el aviso del cierre llegan igual cuando la copa termina.</p>
+                <a class="btn btn--yellow" id="btn-cup-podium-early" href="../cup/?test&amp;demo=decided">🏆 Ver el tablero del último día</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-cup-again" data-launched="2026-11-04">
             <details>
               <summary><h2>🏆 La Copa: otra copa con el mismo grupo</h2><span class="flecha" aria-hidden="true">›</span></summary>
