@@ -177,8 +177,8 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
 
 1. **A value the player sees comes from a token.** A colour, a distance, a corner, a shadow or a
    text size written by hand in a game's CSS is a lint hit (`node tools/agents/design-lint.mjs`).
-   The lint tells the file and the line; the fix is the token, or an escape with its reason. Until
-   phase 6 the lint reports and the ratchet holds (no file's count grows); then it gates.
+   The lint tells the file and the line; the fix is the token, or an escape with its reason. Since
+   phase 6 it is a gate: a hit not allowlisted fails the `tests` check (§6).
 2. **A component is used, not copied.** A class that exists in `base.css` or `ranking.css` is not
    redeclared in a game. A variant the game needs goes into `base.css`, with its place on the
    components page, in the same PR.
@@ -205,9 +205,7 @@ A game's own visual rules, with their reason. The design lint (`node tools/agent
 D-533) reads `docs/design-allowlist.json`, one entry per exception with its reason; this list is the
 human-readable side, kept in sync by the usability agent. A game's thematic colours declared as its
 own tokens at the top of its stylesheet (`--mar`, `--casco`) are not hits and need no entry: the
-lint never reads a `--token:` declaration. What the lint measures today, and the ratchet
-(`docs/design-baseline.json`: a file's count never grows, `design-lint.mjs baseline` rewrites it
-after a migration), is in the lint's header.
+lint never reads a `--token:` declaration. What the lint measures today is in the lint's header.
 
 | Game | What | Why |
 |---|---|---|
@@ -247,8 +245,8 @@ after a migration), is in the lint's header.
 | 🚇 Rutas rotas (`cup/games/routes`) | `--rr-noche` (the board at night, #0b0f1d), `--rr-sombra` (its drop, black at 40 %), `--rr-alerta` (a soft red, #ff8a8a: the last minute, Give up armed, a bad stamp) | the subway map's own colours, declared at the top of its sheet (C-1) |
 | The owner's panel (`panel/style.css`) | `--pn-fila` (a row's well, black at 22 %), `--pn-pestana` (the campaign kinds' tabs, black at 18 %), `--pn-marco` (the Quick look's phone frame, `#000`); the sign-in 🔐 at 4 rem; the hour chart's 0.65 rem labels and its bars' 4 px top corners; the legend swatch's 3 px corner; the campaign strip's 30 px axis offset and the date's 40 px room for its ✕ | the owner's page, not a game: its wells sit a shade off `--well`; the hour chart has 24 columns of ~11 px at 320 px; the offsets are other elements' sizes (allowlisted) |
 
-(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
-was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
+(The table grows as migrations meet a legitimate exception; the measure of phase 2 found none that
+was a whole file. The rows above are the first entries of the allowlist, read from that measure:
 every other hit is a migration, not an escape. A 4 px tail used by three bubbles and a podium is a
 candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
@@ -261,10 +259,19 @@ folding panel's ~25 px summary left this list on 2026-11-05: the owner chose a 4
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
 - `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
-  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
-  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
+  its own components (the chat sheet, the ghost button, the folding panel's summary): the measure of
+  phase 2 counted them; they move to a step when base.css is migrated, in phase 5, with screenshots.
 
-## 6. Migration recipe
+## 6. The gate and the migration recipe
+
+**The gate (phase 6, #1188).** Every stylesheet under `public/` is on the tokens: the lint reports 0
+hits not allowlisted. `design-lint.test.mjs`, which the `tests` check runs with every `*.test.mjs`,
+fails on any hit not in `docs/design-allowlist.json` and on any stale entry;
+`node tools/agents/design-lint.mjs --gate` is the same check locally (exit 1). A new hit takes the
+token, a thematic `--token` of the game declared at the top of its sheet (§4), or an allowlist entry
+with its reason, reviewed by the usability agent. There is no count to keep: zero is the rule.
+
+The recipe below is how every game got there; it still serves a visual change to a game:
 
 From the pilot, Ahorcado (phase 4, #1192; 276 lines, 101 hits before, 0 after). One game per PR.
 
@@ -280,7 +287,7 @@ From the pilot, Ahorcado (phase 4, #1192; 276 lines, 101 hits before, 0 after). 
    or an escape; corners → `--r-*`; padding, gap, margin → `--s-*` (an odd value takes the nearer
    step; a negative margin is `calc(-1 * var(--s-18))`); rem sizes → `--fs-*` (the nearer step; a
    board's own letters, like the word of Ahorcado at 2.5 rem, are an escape with their reason).
-4. **Run** the lint on the file (zero, or escapes with a reason), `design-lint.mjs baseline`,
+4. **Run** the lint on the file (zero, or escapes with a reason), `design-lint.mjs --gate`,
    `design-lint.test.mjs`, the game's e2e scripts, and the "after" dump: diff it against the
    "before" and read every property that changed. The list of intended differences goes in the PR
    body with the two screenshots; anything not on the list is a bug.

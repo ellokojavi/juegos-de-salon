@@ -1,9 +1,8 @@
 // node tools/agents/design-lint.test.mjs — the design system's measurable rules (D-533, D-520): each
-// rule on its own, and the ratchet: no stylesheet's count grows past docs/design-baseline.json.
+// rule on its own, and the gate (phase 6): no stylesheet has a hit that is not allowlisted.
 // tests.yml runs it with every *.test.mjs.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { normColour, rules, definedClasses, lintCss, tokens, lint, ratchet, counts, sources, allowlist } from './design-lint.mjs';
+import { normColour, rules, definedClasses, lintCss, tokens, lint, sources, allowlist } from './design-lint.mjs';
 
 let n = 0;
 const test = (name, fn) => { try { fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
@@ -104,14 +103,15 @@ test('the allowlist: every entry has a reason and names a file git knows; none i
   assert.deepEqual(stale.map(e => `${e.file} ${e.rule} ${e.what}`), [], 'stale allowlist entries');
 });
 
-test('the ratchet: no stylesheet\'s count grows past docs/design-baseline.json (node tools/agents/design-lint.mjs baseline after a migration), and the baseline names no file that is gone', () => {
+test('the gate (phase 6): no stylesheet has a hit that is not allowlisted', () => {
   const { hits } = lint();
-  const { grew, gone } = ratchet(hits);
-  assert.deepEqual(grew.map(g => `${g.file} ${g.rule}: ${g.was} → ${g.now}`), [], 'a count grew: use the token or allowlist the hit with its reason (docs/DESIGN.md)');
-  assert.deepEqual(gone, [], 'the baseline names a stylesheet that is gone: rewrite it');
-  const base = JSON.parse(readFileSync(new URL('../../docs/design-baseline.json', import.meta.url), 'utf8'));
-  const total = Object.values(counts(hits)).reduce((a, r) => a + Object.values(r).reduce((x, y) => x + y, 0), 0);
-  assert.ok(total <= base.total, `the total grew: ${base.total} → ${total}`);
+  const open = hits.filter(h => !h.allowed).map(h => `${h.file}:${h.line} ${h.rule} ${h.what} → ${h.fix}`);
+  assert.deepEqual(open, [], 'use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate');
+});
+
+test('the gate fails a raw colour in a game sheet and passes its token', () => {
+  assert.ok(lintCss('.x { color: #123457; }', 'public/x/style.css', T).some(h => h.rule === 'colour'));
+  assert.ok(!lintCss('.x { color: var(--cyan); }', 'public/x/style.css', T).length);
 });
 
 console.log(`✓ design-lint: ${n} tests`);

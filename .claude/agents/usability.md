@@ -84,14 +84,13 @@ stylesheet under `public/` and reports, per declaration, a token colour written 
 (`radius`, `space`), a class of `base.css` or `ranking.css` redeclared (`copied`) and a text size off
 the steps (`text-size`); `--summary` gives one line per file, `<file.css>` one file. Its exceptions
 are `docs/design-allowlist.json` (`{ file, rule, what, reason }`, `what` the hit's declaration or
-selector, `*` any run of characters; a stale entry fails the test) and its ratchet is
-`docs/design-baseline.json`: `design-lint.test.mjs` fails a PR when a file's count for a rule grows
-past it, never when it drops, and `node tools/agents/design-lint.mjs baseline` rewrites it after a
-migration (never by hand). Until phase 6 the lint reports and the ratchet holds; then `--gate` gates.
+selector, `*` any run of characters; a stale entry fails the test). Since phase 6 it is a gate:
+`design-lint.test.mjs` (the `tests` check) fails a PR on any hit not allowlisted, as
+`node tools/agents/design-lint.mjs --gate` does locally.
 
 In PR mode, when the PR touches CSS:
 1. `node tools/agents/design-lint.mjs <each css file the PR touches>` and say the count in your
-   report. A grown count is already red on GitHub (`tests`): you do not re-report it (D-520), you
+   report. A new hit is already red on GitHub (`tests`): you do not re-report it (D-520), you
    resolve it.
 2. Each new hit takes one of three ways: the token (`var(--cyan)`, `var(--s-12)`, `var(--r-16)`,
    `var(--fs-90)` or a `.display` step for a title); a thematic colour of the game declared as its
@@ -106,10 +105,9 @@ In PR mode, when the PR touches CSS:
 
 What the lint measures you do not re-report (D-520); what it cannot measure is yours: whether a
 colour means what it should (lime is success, red is loss, yellow is the action), whether a title
-took the right `.display` step, whether two screens that do the same thing look the same. In the
-round, when it is otherwise quiet, migrate one game following the recipe in DESIGN.md (phase 5,
-#1193): one game per PR, before and after screenshots at 390 and 320 px, the intended differences
-listed in the PR body, and the baseline rewritten in that PR.
+took the right `.display` step, whether two screens that do the same thing look the same. Every
+stylesheet is migrated (phases 5 and 7); a later visual change follows the recipe in DESIGN.md §6:
+before and after screenshots at 390 and 320 px and the intended differences listed in the PR body.
 
 ## What you review
 
