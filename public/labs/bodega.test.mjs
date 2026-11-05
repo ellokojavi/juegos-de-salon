@@ -3,7 +3,8 @@
 // lab key, so some page names it with a `lab: #<id>` comment (D-409): a page outside /labs/ that asks
 // the key, or a page that lives in the lab itself (behind the door by construction, like the design
 // system's components page, D-533). Once the gate comes off, the card moves to ✨ Mejoras lanzadas in
-// the same PR.
+// the same PR (a flag on *all* already moves it when the page opens, launched.js, D-534: this checks
+// the HTML as written).
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';

@@ -52,7 +52,10 @@ public/<carpeta>/
   activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280), or once
   what it tried reached everyone (D-372): whatever is implemented for everyone moves to La Bodega in
   the same PR, folded, a game to 🎲 Juegos guardados and an improvement to ✨ Mejoras lanzadas
-  (D-479, `public/labs/bodega.test.mjs`). The owner sends a feature live from its own card with **🚀 Publicar para todos**,
+  (D-479, `public/labs/bodega.test.mjs`). An improvement behind a runtime flag does not wait for that
+  PR: when its flag goes to *all*, `/labs/` moves its card into ✨ Mejoras lanzadas on its own each
+  time it opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that
+  removes the gate moves its HTML for good. The owner sends a feature live from its own card with **🚀 Publicar para todos**,
   which a headless session on the Mac mini turns into a PR with auto-merge (D-480).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
