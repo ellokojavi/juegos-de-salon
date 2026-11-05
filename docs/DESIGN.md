@@ -212,6 +212,7 @@ after a migration), is in the lint's header.
 | Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
+| Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
 was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
