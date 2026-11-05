@@ -354,6 +354,12 @@
       "rule": "text-size",
       "what": "font: 900 4.2rem/1 var(--font-num)",
       "reason": "The place (`.me-lugar`, «#4»), the month's result: a figure read like a title (D-30), the size of the medal it stands in for."
+    },
+    {
+      "file": "public/assets/css/linea.css",
+      "rule": "token-colour",
+      "what": "background: rgba(21, 7, 38, *)",
+      "reason": "The Colocar bar's fade (`.place-row`) into the shell's night, written as a fixed colour, not var(--bg1): Pintaminas' hard mode redeclares --bg1…3 on La Copa's body, and a token here would retint the fade; whether it should follow the page's night is the owner's call."
     }
   ]
 }
