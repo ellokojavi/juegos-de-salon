@@ -14,3 +14,14 @@
 .ds-escala--texto .ds-paso { min-height: 0; }
 .ds-num { font-family: var(--font-num); font-weight: 900; font-variant-numeric: tabular-nums; color: var(--yellow); }
 .ds-caja { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--r-12); padding: var(--s-10) var(--s-14); }
+/* The full-screen pieces (phase 3b, #1200): a phone-sized frame, and .ds-marco pins the piece to it
+   (absolute, not fixed). isolation keeps their z-index inside the frame, overflow keeps them in it. */
+.ds-rotulo { margin: var(--s-8) 0 0; font-size: var(--fs-100); }
+.ds-telefono { position: relative; isolation: isolate; overflow: hidden; width: 100%; max-width: 360px; height: 560px; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: var(--r-22); background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3)); }
+.ds-telefono .ds-marco { position: absolute; }
+.ds-telefono--flujo { height: auto; }
+.ds-telefono--flujo > .panel { margin: 0; border: 0; }
+.ds-telefono--pie { padding: var(--s-8) var(--s-18) var(--s-32); }
+.ds-separa { margin-top: var(--s-18); }
+.ds-sin-margen { margin: 0; }
+.ds-quien { color: var(--yellow); }

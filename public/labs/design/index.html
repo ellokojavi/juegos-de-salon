@@ -126,6 +126,86 @@
         <div class="keypad"><button type="button">1</button><button type="button">2</button><button type="button" class="blocked">3</button><button type="button">4</button><button type="button" disabled>5</button><button type="button">6</button><button type="button" class="del" aria-label="Borrar">⌫</button><button type="button">0</button><button type="button" class="ok">OK</button></div></div>
       </section>
 
+      <!-- Not a .panel: its padding would make the frames narrower than a phone at 320 px -->
+      <section class="stack" id="ds-pantallas">
+        <h2 class="display display--sm">Pantallas completas</h2>
+        <p class="muted">Lo que en un juego tapa la pantalla entera, aquí dentro de un celular: el mismo marcado y las mismas clases de <code>base.css</code>; solo <code>.ds-marco</code> lo encierra en el marco en vez de fijarlo a la ventana.</p>
+
+        <h3 class="ds-rotulo">Pásale el celular · acierto</h3>
+        <div class="ds-telefono" data-pieza="handoff-bien"><div class="handoff ds-marco"><div class="stage">
+          <div class="title gold">¡Correcto!</div>
+          <div class="hint">La A está 2 veces</div>
+          <div class="stage"><div class="phone">📱</div><div class="hint" style="font-size:1.05rem">Pásale el celular a</div><div class="next-name">Cata</div><button class="btn btn--cyan" type="button">¡Lista!</button></div>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">Pásale el celular · error</h3>
+        <div class="ds-telefono" data-pieza="handoff-mal"><div class="handoff ds-marco"><div class="stage">
+          <div class="cheers"><span class="l">🍺</span><span class="r">🍺</span></div>
+          <div class="title">¡Fallaste!</div>
+          <div class="chips drinkers"><span class="chip">🍺 Javi toma</span></div>
+          <div class="hint">La Z no está</div>
+          <button class="btn btn--cyan" type="button">Seguir</button>
+        </div></div></div>
+        <p class="muted">Los estilos en línea son los de <code>handoff.js</code>. El fondo rojo del error es del Ahorcado (<code>.handoff.bad</code>, en su hoja), no del sistema.</p>
+
+        <h3 class="ds-rotulo">La pantalla opaca</h3>
+        <div class="ds-telefono" data-pieza="cover"><div class="cover ds-marco"><div>
+          <div class="eye">🙈</div><div class="hint" style="color:var(--muted);font-weight:800">Pásale el celular a</div><div class="big">Pedro</div>
+          <button class="btn btn--cyan ds-separa" type="button">Toca para ver</button>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">La cuenta regresiva</h3>
+        <div class="ds-telefono" data-pieza="cuenta"><div class="cuenta ds-marco" role="status"><p class="cuenta-juego">🎯 Tiro al blanco</p><span class="cuenta-num">3</span></div></div>
+
+        <h3 class="ds-rotulo">La hoja de abajo, abierta</h3>
+        <div class="ds-telefono" data-pieza="hoja"><div class="hoja-capa ds-marco"><div class="hoja-fondo"></div><div class="hoja" role="dialog">
+          <div class="hoja-asa" aria-hidden="true"></div>
+          <h2>Agrégalo al inicio</h2>
+          <p class="muted">Así vuelves en un toque.</p>
+          <div class="hoja-paso"><span class="hoja-num">1</span><div><p>Toca <b>Compartir</b></p><small class="muted">Abajo, al centro</small></div><span class="hoja-icono" aria-hidden="true">⬆️</span></div>
+          <div class="hoja-paso"><span class="hoja-num">2</span><div><p>Elige <b>Agregar a inicio</b></p></div><span class="hoja-icono" aria-hidden="true">+</span></div>
+          <button class="btn btn--ghost" type="button">Entendido</button>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">El chat de la sala: la burbuja</h3>
+        <div class="ds-telefono" data-pieza="chat-burbuja"><div class="chat ds-marco">
+          <div class="chat-peek"><span class="who ds-quien">Cata</span><span class="txt">¡Esa letra era obvia! 😂</span></div>
+          <button class="chat-fab has-unread" type="button" aria-label="Abrir el chat">💬<span class="chat-badge">2</span></button>
+        </div></div>
+
+        <h3 class="ds-rotulo">El chat de la sala: la hoja</h3>
+        <div class="ds-telefono" data-pieza="chat-hoja"><div class="chat ds-marco"><div class="chat-sheet"><div class="chat-scrim"></div><div class="chat-panel">
+          <div class="chat-head"><b>Chat</b><button class="chat-x" type="button" aria-label="Cerrar">✕</button></div>
+          <div class="chat-list">
+            <div class="chat-msg"><span class="who ds-quien">Cata</span><span class="txt">¿Quién empieza?</span></div>
+            <div class="chat-msg grouped"><span class="txt">Yo no 🙈</span></div>
+            <div class="chat-msg mine"><span class="who">Javi</span><span class="txt">Empiezo yo</span></div>
+          </div>
+          <form class="chat-form" onsubmit="return false"><input type="text" placeholder="Escribe…" aria-label="Mensaje"><button class="chat-send" type="submit" aria-label="Enviar">➤</button></form>
+        </div></div></div></div>
+
+        <h3 class="ds-rotulo">Juego al azar</h3>
+        <div class="ds-telefono" data-pieza="azar"><div class="azar-capa listo ds-marco" role="dialog" aria-label="Juego al azar">
+          <div class="azar-escena"><div class="azar-sombra"></div><div class="azar-salto"><div class="azar-sin-3d">🪢</div></div></div>
+          <div class="azar-nombre"><small>¡Te tocó!</small><b>Ahorcado</b></div>
+        </div></div>
+
+        <h3 class="ds-rotulo">Uno al día</h3>
+        <div class="ds-telefono ds-telefono--flujo" data-pieza="uad"><div class="panel uad-tarjeta">
+          <p class="uad-racha">🔥 3 días seguidos</p>
+          <p class="muted ds-sin-margen">Vuelve mañana por el día 4</p>
+          <p class="uad-comodin">🃏 Ganaste un comodín.</p>
+          <div class="uad-acciones"><button class="btn" type="button">📤 Compartir</button><button class="btn btn--yellow" type="button">🎲 Jugar otro</button></div>
+          <button class="link-btn" type="button">Repetir el de hoy</button>
+        </div></div>
+
+        <h3 class="ds-rotulo">El pie del sitio</h3>
+        <div class="ds-telefono ds-telefono--flujo ds-telefono--pie" data-pieza="pie"><footer class="atardecer">
+          <p class="footer-msg">Toma con responsabilidad y con agua a mano. 🚕</p>
+          <div class="footer-links tiles"><button type="button" class="buzon-link op-buzon"><span class="ic" aria-hidden="true">💌</span> <span>Buzón</span></button><button type="button" class="op-apoyo"><span class="ic" aria-hidden="true">☕</span> <span>Invítame un café</span></button></div>
+        </footer></div>
+      </section>
+
       <section class="panel stack" id="ds-escapes">
         <h2 class="display display--sm">Excepciones</h2>
         <p class="muted">Lo que un juego puede tener propio, con su motivo, está en DESIGN.md §4 y en <code>docs/design-allowlist.json</code>. Lo demás lo mide <code>node tools/agents/design-lint.mjs</code>.</p>
@@ -148,7 +228,10 @@
     scale('ds-escala-espacio', '--s-', (name, value) => { const r = el('div', 'ds-paso'); const bar = el('span', 'ds-barra'); bar.style.width = value; r.append(bar, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
     scale('ds-escala-esquinas', '--r-', (name, value) => { const r = el('div', 'ds-paso'); const box = el('span', 'ds-esquina'); box.style.borderRadius = value; r.append(box, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
     scale('ds-escala-texto', '--fs-', (name, value) => { const r = el('div', 'ds-paso'); const t = el('span', '', `${name.slice(2)} · ${value}`); t.style.fontSize = `var(${name})`; r.append(t); return r; });
-    window.__design = { tokens: tokens.length };
+    // Each full-screen piece in its frame: drawn, inside the frame, never wider than it
+    const marcos = [...document.querySelectorAll('.ds-telefono')].map(f => { const r = f.getBoundingClientRect(), p = f.firstElementChild.getBoundingClientRect();
+      return { pieza: f.dataset.pieza, dibuja: p.width > 0 && p.height > 0 && f.firstElementChild.childElementCount > 0, dentro: p.left >= r.left - 1 && p.right <= r.right + 1 && p.top >= r.top - 1 }; });
+    window.__design = { tokens: tokens.length, marcos };
   </script>
 </body>
 </html>
