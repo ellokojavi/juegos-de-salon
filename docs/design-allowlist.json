@@ -306,6 +306,60 @@
       "rule": "text-size",
       "what": "font-size: 2.4rem",
       "reason": "The clue's word (`.ag-pista .ag-palabra`): the one word the whole table reads, the board's own size between the text steps and the title steps (like Ahorcado's word)."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "margin: -450px 0 0 -450px",
+      "reason": "Centres the 900 px sunburst (`.me-rayos`) on the screen: half the rays' own size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "colour",
+      "what": "*mask: #000",
+      "reason": "The rays' radial fade (`.me-rayos`): a mask reads only the alpha, its black is opacity, not a colour."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "margin-top: 90px",
+      "reason": "Room above the podium's card for the medal hanging over it (`.me-p1…3 .me-tarjeta`): the medal's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "margin-top: -110px",
+      "reason": "Pulls the medal (`.me-medalla`, 177 px tall) up over the card's top edge: the medal's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "margin-top: 64px",
+      "reason": "The room for the smaller medal on a short phone (`.me-p1…3 .me-tarjeta`), so «Jugar» stays on screen: the medal's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "margin-top: -84px",
+      "reason": "Pulls the smaller medal (127 px tall) over the card on a short phone: the medal's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "space",
+      "what": "padding: 0 34px",
+      "reason": "The kicker's sides when there is no medal (`.me-resto .me-kicker`): room for the 44 px ✕ in the card's corner; another element's size, not rhythm."
+    },
+    {
+      "file": "public/assets/css/month-end.css",
+      "rule": "text-size",
+      "what": "font: 900 4.2rem/1 var(--font-num)",
+      "reason": "The place (`.me-lugar`, «#4»), the month's result: a figure read like a title (D-30), the size of the medal it stands in for."
+    },
+    {
+      "file": "public/assets/css/linea.css",
+      "rule": "token-colour",
+      "what": "background: rgba(21, 7, 38, *)",
+      "reason": "The Colocar bar's fade (`.place-row`) into the shell's night, written as a fixed colour, not var(--bg1): Pintaminas' hard mode redeclares --bg1…3 on La Copa's body, and a token here would retint the fade; whether it should follow the page's night is the owner's call."
     }
   ]
 }
