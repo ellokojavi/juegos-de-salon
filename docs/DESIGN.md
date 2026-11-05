@@ -209,7 +209,11 @@ after a migration), is in the lint's header.
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
 | Ahorcado | the word's letters at 2.5, 2.1, 1.8 and 1.9 rem | a board's own sizes, between the title steps and the text steps, so a long word fits at 320 px (C-8) |
+<<<<<<< HEAD
 | Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
+=======
+| Generala | the kept-die tag (`.dado-btn .tag`) at 0.62 rem | "Guardado" under each of five dice must fit under a 50 px die at 320 px (C-8); the smallest text step overflows it |
+>>>>>>> e29111da (The design system, phase 5: Generala migrated to the shell and the tokens (D-533, #1193))
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 | Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
