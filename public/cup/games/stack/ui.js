@@ -201,6 +201,10 @@ export function montar(raiz, ctx) {
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) && Number.isFinite(ctx.jugadas.n) ? ctx.jugadas : null;
   const vez = ++partidas;
   const sim = simulacion; simulacion = 0;
+  // The score's tally on the end screen, in the lab until the owner publishes it (flag babel-tally,
+  // D-498); asked now, so the answer is in long before the game ends. lab: #seccion-babel-tally
+  let conCuenta = false;
+  flag('babel-tally').then(v => { conCuenta = v; }).catch(() => {});
   const S = { g: newGame(performance.now() + 400), kinds: [], fin: false, pausa: 0, pausado: 0, inicio: performance.now(), finEn: 0, dormido: false, ms: 0 };
 
   const lienzo = el('canvas', { class: 'sk-lienzo', 'aria-hidden': 'true' });
@@ -308,7 +312,7 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(cuentaPuntos(e, { el, T, SFX, vibrate, recien }), boton);
+      fin.replaceChildren(conCuenta ? cuentaPuntos(e, { el, T, SFX, vibrate, recien }) : null, boton);
       // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
       document.getElementById('sk-musica-credito')?.remove();
       const credito = creditoMusica(el, T);
