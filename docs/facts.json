@@ -1634,6 +1634,10 @@
       "title": "Decisions"
     },
     {
+      "path": "docs/DESIGN.md",
+      "title": "The design system"
+    },
+    {
       "path": "docs/LANES.md",
       "title": "Merge lanes (D-519)"
     },
