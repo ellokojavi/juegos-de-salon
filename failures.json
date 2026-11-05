@@ -322,6 +322,19 @@
         "stat": "4 file(s) +11 −9: changelog/ccr-9fd16d5f-jgf8sp.md, docs/games/design.md, public/labs/index.html, tools/e2e/design/page.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 41984196809,
+      "check": "end-to-end",
+      "pr": 1201,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "c93a9ecfc4571d5ad27a812e1c5ed300da1e1e50",
+      "test": "home/cup-today.mjs",
+      "error": "✗ final played: ✅ Final · cierra en…",
+      "signature": "c715e9755b",
+      "date": "2026-11-05T07:11:08.814Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
