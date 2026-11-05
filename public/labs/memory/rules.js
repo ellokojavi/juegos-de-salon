@@ -59,7 +59,7 @@ const EN = {
   best: '🏆 Best: {n}',
   bestLabel: 'Your best',
   round: 'Round {n}',
-  look: '👀 Look closely!',
+  look: '👀 Look hard!',
   skip: '⏩ Cover now',
   hide: '🙈 Covering…',
   pairs: '✌️ Pairs round!',
