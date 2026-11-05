@@ -265,7 +265,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/DESIGN.md\", \"title\": \"The design system\"}",
       "signature": "3617a441bb",
       "date": "2026-11-05T06:09:54.928Z",
-      "fix": null,
+      "fix": {
+        "commit": "b489eb8af0832e52829994a22e156c219775906b",
+        "date": "2026-11-05T06:12:15.184Z",
+        "stat": "3 file(s) +6 −0: README.md, docs/ADD-GAME.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
