@@ -276,6 +276,18 @@
       "rule": "space",
       "what": "padding: 44px 0 24px",
       "reason": "The end's strip keeps 44 px above «Continue» for its 40 px melting top (the mask's ramp): the size of the fade, not rhythm."
+    },
+    {
+      "file": "public/cup/games/stick/style.css",
+      "rule": "colour",
+      "what": "*mask-image: #000",
+      "reason": "The opaque stops of the masks that melt the night into the page on every side: a mask reads only the alpha, black is not a colour the player sees."
+    },
+    {
+      "file": "public/cup/games/stick/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.6rem",
+      "reason": "The pause's title over the night (`.sn-pausa .display`): the board's own message, the floor of .display--xl fixed so it does not grow over the run on a wide screen (as Babel's)."
     }
   ]
 }

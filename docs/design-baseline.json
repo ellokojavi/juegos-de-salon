@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 876,
+  "total": 843,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -69,13 +69,6 @@
       "colour": 19,
       "radius": 1,
       "text-size": 6
-    },
-    "public/cup/games/stick/style.css": {
-      "token-colour": 15,
-      "colour": 5,
-      "radius": 1,
-      "space": 2,
-      "text-size": 10
     },
     "public/cup/style.css": {
       "token-colour": 137,
