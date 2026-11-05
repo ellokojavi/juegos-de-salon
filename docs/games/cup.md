@@ -573,7 +573,7 @@ their meaning.
 - **PR 4, notices, the snackbar and waiting:** La Copa's notices and toast are `base.css`'s now,
   under English names because two games already use the old ones for something else (Batalla
   Naval's `.toast`, Aletazo's `.aviso`): `.aviso` → `.notice`, `.aviso.bien` / `.aviso.mal` →
-  `.notice--good` / `.notice--bad` (in the cup's screens and its 13 mini-games' `ui.js`), `.toast` →
+  `.notice--good` / `.notice--bad` (in the cup's screens and 11 of its mini-games' `ui.js`), `.toast` →
   `.snackbar`; their two colours without a token are `base.css`'s `--ink-bad` and `--snackbar-bg`.
   `espera()` draws with the shared `showWaiting()` (`assets/js/waiting.js`), whose `.waiting--screen`
   replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended

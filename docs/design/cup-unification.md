@@ -111,7 +111,7 @@ is playing a changed screen, or behind a flag.
 | 1 | Delete the exact copies (`.screen`, `.form-error`, `.result-hero`, `.seg`, `.field` base rules) and move El caso's `.cs-*` to its own stylesheet | lowest: pixel-level differences only | no |
 | 2 | `.dur-switch` → `.switch` in `.toggle-row`; the three chip toggles → one `.chip-btn` in base; `.chip--final` → `.chip--cyan` | low: the create screen (admin only) | no, intended differences listed |
 | 3 | `.opciones` grid, `.field .pin`, `.field .contador`, date field, `.link-inline`, `.btn--danger`, `.btn-row--wrap` into base; the cup uses them | low–medium: join and create screens | no |
-| 4 | `.toast`, `.aviso`, `espera()` lifted to base / `assets/js/`; home online games may adopt them later | medium | no (a new component on the components page) |
+| 4 | `.toast`, `.aviso`, `espera()` lifted to base / `assets/js/` (done as `.snackbar`, `.notice`, `showWaiting()`); home online games may adopt them later | medium | no (a new component on the components page) |
 | 5 | One how-to-play block for home and Cup | medium: every Cup day's cover | **yes**: folding the Cup's open rules (U-16) changes what every player sees |
 | 6 | One start screen: drop the Cup mini-game's "Volver al menú" button, shared cover builder | medium–high: every Cup day and every solo Cup game | **yes**: removes a button players use (U-21) |
 | 7 | Tokenise the cup's own (table, calendar, podium, week builder, chart colours as `--token`s with their rows in DESIGN.md §4) | high in size, low in looks | **yes** for any colour whose meaning changes (the day blocks of D-131, the ×2 of D-151) |
