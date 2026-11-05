@@ -32,8 +32,8 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--yellow`, `--orange` | `#ffd23f`, `#ff7a1a` | the call to action (`.btn--yellow`), gold, the winner |
 | `--cyan` | `#2ee6d6` | the secondary accent: info, selection, "your turn" |
 | `--lime` | `#9dff3a` | success, correct, done |
-| `--purple` | `#8a4dff` | tertiary accent, neutral highlights |
-| `--red` | `#e0243c` | errors and losses, never for a button |
+| `--purple` | `#8a4dff` | tertiary accent, used sparingly: the hidden digit of the keyboard, the owner's panel; a game does not need it |
+| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action |
 | `--ink` | white | text on the dark background |
 | `--muted` | white at 72 % | secondary text on the dark background (`.muted`) |
 | `--glass`, `--glass-border` | white at 8 % and 16 % | panels, chips, ghost buttons: surfaces on the dark background |
@@ -84,7 +84,7 @@ about the board, not a size.
 | Token | Use |
 |---|---|
 | `--shadow-panel` | the panel and anything that floats over the background |
-| `--shadow-text` | the title's drop (`.display`) |
+| `--shadow-text` | the drop under a title; `.display` writes it with its glow on top |
 | `--edge-*` | under a button, with its glow written in the button class |
 
 A glow that signals a state (the selected card, the winning row) is written with the token colour
@@ -93,8 +93,9 @@ it glows in and is not a shadow token.
 ### Type
 
 Two families, three roles (C-1): `--font-display` (Bangers) for titles, names, words and room
-codes; `--font-body` (Nunito) for everything else; `--font-num` (Nunito 900, `tabular-nums`) for
-every figure the player reads or compares (D-30).
+codes; `--font-body` (Nunito) for everything else; `--font-num` for every figure the player reads or
+compares (D-30): the token is the family, and where it is used it is written at 900 with
+`font-variant-numeric: tabular-nums`.
 
 Titles take one of the four steps of `.display` (`--xl`, `--lg`, `--md`, `--sm`), never a size of
 their own. Body text takes one of the steps `--fs-xs` (0.75 rem), `--fs-sm` (0.85), `--fs-md` (1),
@@ -110,7 +111,7 @@ these uses the class; a game that needs something close to one asks for a varian
 |---|---|---|
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
-| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | at least 60 px tall, 44 for `--sm` (U-10); the label fits in one line at 320 px (U-17) |
+| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opcion` (today in `cup/style.css`; moves here in phase 4) | two or three options side by side, one on |
 | Panel | `.panel`, `details.panel` | the glass card |
 | Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chips` | |
@@ -137,7 +138,12 @@ toggle row (`.toggle-row`), the link button (`.link-btn`), the section title, th
 3. **Thematic colours are declared, not sprinkled.** A game's own palette sits at the top of its
    stylesheet as its own tokens, listed below, and colours only its board.
 4. **The scales do not grow for one case.** A new step in a scale is a decision (D-n) reviewed by
-   the usability agent, because the lint measures against it.
+   the usability agent, because the lint measures against it. The scales were drawn from
+   `base.css`, not from the games: phase 2's baseline is where they meet what the games write today
+   (the most common game radius is 14 px, which is not a step, and 0.9, 0.95 and 1.1 rem are
+   common text sizes between steps; `base.css` itself has `.lead` at 1.1 rem, `.btn--sm` at 1.05 and
+   the panel's 18 px padding). Whether a step is added or those values move is the owner's call,
+   taken once with the baseline in hand, not file by file.
 5. **Migration is per game, never two in one PR** (phase 5, #1193), with before and after
    screenshots at 390 and 320 px and the intended differences listed in the PR. A PR that touches a
    game's CSS for another reason migrates it in the same PR.
