@@ -55,6 +55,7 @@ for (let k = 1; k <= 3; k++) {
     ok(await waitFor(`!!document.getElementById('btn-tapar')`, 3000), 'the next round offers the button too');
     await ev(`document.getElementById('btn-tapar').click(); 1`);
     ok(await ev(`!document.getElementById('btn-tapar') && document.querySelectorAll('#tablero .tile.open').length === 0`), 'tapping it covers them at once and it goes');
+    ok(await ev(`!document.querySelector('.bar-ee').classList.contains('on')`), 'and the time to look stops');
   }
   await waitFor(`!!window.__memory.answer`, 10000);
   for (const c of await ev(`window.__memory.round.ask.cells`)) { await tapTile(c); await sleep(40); }

@@ -198,7 +198,7 @@ async function loop(run) {
     timeBar(round.showMs, 'look');
     await new Promise(done => {
       const clock = setTimeout(done, round.showMs * SPEED);
-      skip.addEventListener('click', () => { clearTimeout(clock); SFX.tap(); done(); });
+      skip.addEventListener('click', () => { clearTimeout(clock); stopBar(); SFX.tap(); done(); });
     });
     opening.forEach(clearTimeout);
     if (!alive()) return;
