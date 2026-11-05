@@ -209,7 +209,7 @@ after a migration), is in the lint's header.
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
 | Ahorcado | the word's letters at 2.5, 2.1, 1.8 and 1.9 rem | a board's own sizes, between the title steps and the text steps, so a long word fits at 320 px (C-8) |
-| Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`, written in a `font` shorthand the lint does not read) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
+| Línea de Tiempo | the deck card's emoji at 1.8 rem (`.theme-card .em`); the solo score at 3.2 rem (`.puntos b`) | the same deck card as Ahorcado's, a candidate shell component; the score is a figure read like a title, in `--font-num` (D-30) |
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 
