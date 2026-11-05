@@ -254,6 +254,19 @@
         "stat": "8 file(s) +57 −30: changelog/claude-incremental-memory-game-p9nlrr.md, docs/games/memory.md, public/labs/index.html, public/labs/memory/game.js, public/labs/memory/rules.js, …"
       },
       "flaky": false
+    },
+    {
+      "run": 41978368662,
+      "check": "tests",
+      "pr": 1195,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "5d05934540818e783866879a4ffadb5195b9a2dd",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/DESIGN.md\", \"title\": \"The design system\"}",
+      "signature": "3617a441bb",
+      "date": "2026-11-05T06:09:54.928Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
