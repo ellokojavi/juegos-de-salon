@@ -50,3 +50,13 @@ points, Play again (same players, from 0), Change players and Back to the menu (
 - The vote is counted by the table, not by the phone: one phone cannot take secret votes without passing
   it around again, and pointing on three is how the table game is played.
 - No result sharing in the prototype.
+
+## Migrated to the design system (D-533, #1193)
+
+The stylesheet lost its copies of the game shell (the screens, the cover's hero, the player rows, the form's
+error): each screen is now `.screen.stack` (the 12 px between blocks the old `.screen` gave), the cover's
+lizard is the shell's `.icon` and the end's is the `.result-hero`'s `.trophy`, and the rest (the topics,
+the secret card, the word grid, the table's steps, the points) is written on the tokens. The lizard keeps
+a green glow of its own (`--lime`, not the shell's yellow). The design lint reports zero on it beyond one
+escape: the chameleon's reveal at 5 rem (`.big-lizard`); the grid's cell text stays a `clamp` of its own
+(DESIGN.md §4).

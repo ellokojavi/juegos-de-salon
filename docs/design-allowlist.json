@@ -138,6 +138,12 @@
       "rule": "text-size",
       "what": "font-size: 0.55rem",
       "reason": "The small board's cell glyph and its labels (`.grid-wrap.small .cell`, `.fleets .grid .lbl`): the board's own size, under the smallest text step, so a 220 px board still shows its 💥 and its row numbers."
+    },
+    {
+      "file": "public/labs/chameleon/style.css",
+      "rule": "text-size",
+      "what": "font-size: 5rem",
+      "reason": "The chameleon's reveal on the secret card (`.big-lizard`): the one card without a word, so the lizard is bigger than the cover's icon (4.2 rem) and whoever holds the phone knows at once; a hero's own size, not a text step."
     }
   ]
 }

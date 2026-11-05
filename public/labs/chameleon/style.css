@@ -1,69 +1,57 @@
 /* ==========================================================
    El Camaleón — the game's own styles (lab, #898)
+   Migrated to the design system (D-533, phase 5 of #1193): the screens (each one a `.stack`, so
+   its blocks keep 12 px apart), the cover's hero and its icon, the player rows, the form's error
+   and the end's hero come from base.css; this file keeps what is the game's own (the lizard's
+   green glow, the topics, the secret card, the word grid, the table's steps, the points) on the tokens.
    ========================================================== */
 
-.screen { display: none; flex-direction: column; flex: 1; gap: 12px; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
-.center { text-align: center; }
-
 /* ---------- Intro ---------- */
-.intro-hero { text-align: center; padding: 10px 0 8px; }
-.lizard { font-size: 4.5rem; display: block; text-align: center; filter: drop-shadow(0 0 20px rgba(46, 230, 120, 0.6)); }
-.how { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
-.credito { font-size: 0.85rem; margin: 0; }
+/* The lizard glows green, not the shell's yellow: a chameleon is green (the lime token at an alpha) */
+.intro-hero .lizard, .lizard { filter: drop-shadow(0 0 20px rgb(from var(--lime) r g b / 0.6)); }
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
+.credito { font-size: var(--fs-85); margin: 0; }
 .credito a { color: inherit; }
 
 /* ---------- Setup ---------- */
 .setup-hint { text-align: center; color: var(--muted); margin: 0; }
-.players-form { display: grid; gap: 10px; }
-.player-row {
-  display: grid; grid-template-columns: 26px 1fr 44px; gap: 8px; align-items: center;
-  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px 8px;
-}
-.player-row .num { font: 900 1.2rem var(--font-num); color: var(--yellow); text-align: center; }
-.player-row input {
-  width: 100%; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
-  background: rgba(0, 0, 0, 0.25); border: 2px solid transparent; border-radius: 12px; padding: 11px 12px; outline: none;
-}
-.player-row input:focus { border-color: var(--cyan); }
-.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 44px; height: 44px; cursor: pointer; }
-.player-row .del:disabled { opacity: 0.2; }
+/* The rows come from the shell (each with its 6 px margin below); the form only groups them */
+.players-form { display: grid; }
 
 /* ---------- Topic ---------- */
 .round-label { margin: 0; }
-.topics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.topics { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-10); }
 .topics #btn-topic-random { grid-column: 1 / -1; }
 .topics .topic { min-height: 56px; }
 
 /* ---------- Card ---------- */
-.secret-card { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding-top: 24px; }
-.card-topic { font: 900 1.2rem var(--font-body); color: var(--muted); }
+.secret-card { display: flex; flex-direction: column; align-items: center; gap: var(--s-14); text-align: center; padding-top: var(--s-24); }
+.card-topic { font: 900 var(--fs-120) var(--font-body); color: var(--muted); }
 .secret-word { font-family: var(--font-display); font-size: clamp(2.2rem, 12vw, 3.4rem); color: var(--cyan); line-height: 1.05; overflow-wrap: anywhere; }
 .secret-word.chameleon { color: var(--yellow); font-size: clamp(1.8rem, 9vw, 2.6rem); }
+/* The chameleon's reveal: bigger than the cover's icon, read at once by whoever holds the phone (allowlisted) */
 .big-lizard { font-size: 5rem; }
 
 /* ---------- Table ---------- */
-.table-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.topic-name { font: 900 1.15rem var(--font-body); }
-/* 4 × 4 words: at 320 px each cell is ~68 px, so long words break with hyphens */
-.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.table-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-8); }
+.topic-name { font: 900 var(--fs-110) var(--font-body); }
+/* 4 × 4 words: at 320 px each cell is ~68 px, so long words break with hyphens; the cell's text
+   is a clamp of its own (0.68–0.9 rem by the width), the board's size, not a text step */
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-6); }
 .grid .cell {
-  min-height: 52px; display: grid; place-items: center; text-align: center; padding: 4px 3px;
-  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 10px;
+  min-height: 52px; display: grid; place-items: center; text-align: center; padding: var(--s-4) var(--s-2);
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--r-10);
   font: 800 clamp(0.68rem, 3.4vw, 0.9rem)/1.1 var(--font-body); color: var(--ink); hyphens: auto;
 }
 .grid.pick .cell { cursor: pointer; border-color: var(--cyan); }
 .grid.pick .cell:active { transform: scale(0.96); }
-.grid .cell.secret { background: var(--cyan); color: #03302c; }
-.grid .cell.miss { background: var(--pink); color: #fff; }
-.step { display: grid; gap: 8px; }
+.grid .cell.secret { background: var(--cyan); color: var(--ink-on-cyan); }
+.grid .cell.miss { background: var(--pink); color: var(--ink); }
+.step { display: grid; gap: var(--s-8); }
 .step p { margin: 0; }
-.suspects { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.suspects { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-8); }
 .secret-was b { color: var(--cyan); }
-.ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.ranking li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 2px; }
+.ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); }
+.ranking li { display: flex; justify-content: space-between; gap: var(--s-8); padding: var(--s-4) var(--s-2); }
 .ranking li:first-child { font-weight: 900; }
 .ranking .pts { font-family: var(--font-num); color: var(--yellow); }
-
-/* ---------- End ---------- */
-.finale { text-align: center; }
