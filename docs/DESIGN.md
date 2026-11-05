@@ -257,12 +257,6 @@ candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 Found while building the components page (phase 3). The 40 px `.back`, the 34 px `.switch` and the
 folding panel's ~25 px summary left this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible band, nothing moved.
 
-- `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
-  the components page leaves it out of its check until it is decided.
-- `.switch`, the toggle's switch (58 × 34 px in the six games that copied it, now in the shell), is
-  under 44 px tall: the row around it is tappable, the switch alone is not. A taller switch or a
-  larger hit area is a visible change on six games' setup screens, so it is the owner's call; the
-  components page's script leaves it out of its check until then.
 - `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
