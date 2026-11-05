@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 1390,
+  "total": 1300,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -42,14 +42,6 @@
       "colour": 5,
       "space": 3,
       "text-size": 6
-    },
-    "public/battleship/style.css": {
-      "token-colour": 30,
-      "colour": 18,
-      "radius": 4,
-      "space": 5,
-      "copied": 19,
-      "text-size": 14
     },
     "public/cup/games/agents/style.css": {
       "token-colour": 14,

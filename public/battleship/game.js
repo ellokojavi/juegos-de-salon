@@ -971,7 +971,7 @@ function renderSetup(mode, prefillCode = '') {
   if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2)); else form.append(nameField('A', T.yourName, savedName));
   // With Salvo on, the extra shot and the per-shot confirm do not apply: a volley has one ¡Fuego!
   const syncSalvo = () => $$('#setup-form [data-key="extraShot"], #setup-form [data-key="confirmShot"]').forEach(r => { r.hidden = !!config.salvo; });
-  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); syncSalvo(); SFX.tap(); } }); return el('div', { class: 'toggle-row', 'data-key': key }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
+  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); syncSalvo(); SFX.tap(); } }); return el('div', { class: 'toggle-row', 'data-key': key }, el('div', { class: 'txt' }, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(sw('extraShot', T.extraShot, T.extraShotHint), sw('confirmShot', T.confirmShot, T.confirmShotHint));
   // Salvo (#894) is behind its flag (D-498): while 'lab', only a lab key holder sees its switch. lab: #seccion-bn-salva

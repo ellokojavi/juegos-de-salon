@@ -204,7 +204,7 @@ after a migration), is in the lint's header.
 
 | Game | What | Why |
 |---|---|---|
-| Batalla Naval | the sea and the ships | thematic board colours (C-1) |
+| Batalla Naval | the sea and the ships (`--mar`, `--casco-*`, and the fire's edges and flash: `--tocado-borde`, `--hundido-borde`, `--fogonazo`, `--brasa`, `--espuma-luz`); the cell's 4 px corner (2 px on the small board and the chip's ship squares); the small board's 0.55 rem glyphs and labels | thematic board colours (C-1); a cell is a tile of a 10×10 grid, not a card; the result's 220 px boards still show their 💥 and row numbers (allowlisted) |
 | Pintaminas | each drawing's palette | the game is about those colours |
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |

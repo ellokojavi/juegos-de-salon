@@ -120,6 +120,24 @@
       "rule": "text-size",
       "what": "font-size: 0.7rem",
       "reason": "The tiny card's suit (`.pcard--xs .s`): the card's own size, under its rank."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "radius",
+      "what": "border-radius: 4px",
+      "reason": "The board's cell (`.cell`, and the flash over it): a tile of a 10×10 grid, not a card; 4 px keeps the sea reading as one surface with hairline gaps."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "radius",
+      "what": "border-radius: 2px",
+      "reason": "The same tile on the small board (`.grid-wrap.small .cell`, the fleets of the result) and the chip's ship squares (`.barco-tira .barco`): a 12 to 19 px tile takes a 2 px corner."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.55rem",
+      "reason": "The small board's cell glyph and its labels (`.grid-wrap.small .cell`, `.fleets .grid .lbl`): the board's own size, under the smallest text step, so a 220 px board still shows its 💥 and its row numbers."
     }
   ]
 }
