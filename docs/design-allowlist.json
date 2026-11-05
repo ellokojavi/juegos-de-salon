@@ -138,6 +138,12 @@
       "rule": "text-size",
       "what": "font-size: 0.55rem",
       "reason": "The small board's cell glyph and its labels (`.grid-wrap.small .cell`, `.fleets .grid .lbl`): the board's own size, under the smallest text step, so a 220 px board still shows its 💥 and its row numbers."
+    },
+    {
+      "file": "public/labs/memory/style.css",
+      "rule": "radius",
+      "what": "border-radius: 2px",
+      "reason": "The small diamond on a covered tile (`.face-cover::after`): a pixel-art shape, not a corner on the scale; at 8 px it would be a circle."
     }
   ]
 }

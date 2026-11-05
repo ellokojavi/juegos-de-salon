@@ -85,7 +85,7 @@ function board(size, { mini = false } = {}) {
   for (let i = 0; i < size * size; i++) {
     b.append(el(mini ? 'span' : 'button', {
       class: 'tile', 'data-i': i, ...(mini ? {} : { type: 'button', 'aria-label': T.covered, disabled: true }),
-    }, el('span', { class: 'inner' }, el('span', { class: 'face cover' }), el('span', { class: 'face pic' }))));
+    }, el('span', { class: 'inner' }, el('span', { class: 'face face-cover' }), el('span', { class: 'face pic' }))));
   }
   return b;
 }

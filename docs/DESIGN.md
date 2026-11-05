@@ -215,6 +215,7 @@ after a migration), is in the lint's header.
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 | Toque y Fama | the hero's emoji at 3.2 rem: the cover's icon on a short phone (under 600 px tall) and the solo result's trophy | between the shell's 4.2 rem and the text steps, so the first mode stays above the fold at 320×568 (`landing-fold.mjs`) and the solo result fits without scrolling (C-8) |
+| Memorice (`labs/memory/style.css`) | the tiles' purple and the miss's red (`--tile-top`, `--tile-bottom`, `--tile-face`, `--miss`, `--miss-text`, `--shade`); the 2 px corner of the diamond on a covered tile | thematic colours of the pixel-art tiles; a shape, not a corner on the scale (allowlisted) |
 | Dudo | the ace's gold (`--ace-light`, `--ace-deep`) and the shaking cloth's green (`--cloth`); the rivals' dice glyphs at 0.62 rem and the bid's quantity at 2.6 rem | thematic colours of the dice and the felt (D-447); a board's own sizes: five glyphs fit the rival card's 74 px, the figure is read across the table (both allowlisted) |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that

@@ -93,6 +93,7 @@ in `localStorage`), the pictures found, the level reached and the time; share (t
 ## Exceptions to the canons
 
 - Lab game, outside `games.js`, La Copa and Uno al día; no ranking (D-212).
+- **Design tokens** (D-533): the stylesheet uses the shared tokens and text steps; its own colours are the tokens at its top and the diamond's 2 px corner is allowlisted (`docs/DESIGN.md` §4). A tile's cover is `.face-cover`, since `.cover` is a shared class; it keeps the 24 px padding and the fade it had from that class, so the diamond keeps its size.
 - `window.__memory` exposes the state (the round's answer) for the end-to-end script.
 - **The 6×6 tiles are under 44 px at 320 px wide** (C-8): 37 px at 320×568 and 43 px at 320×640; from
   360 px wide they measure 48 px or more. Everyone plays the same board with the same heading on every
