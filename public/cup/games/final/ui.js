@@ -69,7 +69,7 @@ export function montar(raiz, ctx) {
     poner(raiz, el('div', { class: 'stack' },
       el('p', { class: 'muted center', style: 'margin:0' }, fmt(R.roundOf, { i: J.ronda + 1, n })),
       el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, M.emoji), el('h2', { class: 'display display--md' }, M.nombre)),
-      el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay),
+      el('details', { class: 'panel', open: true }, el('summary', {}, `🧠 ${T.howToPlay}`),
         RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x))),
         // A game played whole says how it scores, as each short round's text does (U-18)
         RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),

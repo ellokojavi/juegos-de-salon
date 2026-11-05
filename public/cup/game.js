@@ -1367,7 +1367,7 @@ function antesDeJugar(d) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('details', { class: 'panel', open: true }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
       CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
@@ -1819,7 +1819,7 @@ function practica(id, varianteElegida = null) {
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, el('p', { class: 'lead', id: 'como-titulo' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
+    el('details', { class: 'panel', open: true }, el('summary', { id: 'como-titulo' }, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });

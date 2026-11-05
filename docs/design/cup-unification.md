@@ -128,7 +128,7 @@ changed is in [docs/games/cup.md](../games/cup.md) ("In the design system").
 | 2 | done (branch `phase7-cup-2`) |
 | 3 | done (branch `phase7-cup-3`) |
 | 4 | done (branch `phase7-cup-4`): as `.notice` and `.snackbar`, because Batalla Naval's `.toast` and Aletazo's `.aviso` already mean something else |
-| 5 | to do |
+| 5 | done (branch `phase7-cup-5`): the rules are `details.panel`, open on the covers as before (folding them there is still the owner's call, U-16) |
 | 6 | declined by the owner, 2026-11-05 |
 | 7 | declined by the owner, 2026-11-05 |
 

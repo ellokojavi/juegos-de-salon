@@ -579,4 +579,15 @@ their meaning.
   replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended
   difference is the waiting line's room, 32 px above and below (was 30). `uno-al-dia-ui.js`'s intro line
   keeps `.aviso`: on the home games it has no style, and giving it one is their migration, not this one.
+- **PR 5, the rules in the shared block:** La Copa's own rules block (`.reglas`, the rules folded
+  under the board, D-133) is the shared folding panel, `details.panel`, the same block as a home
+  game's "🧠 Cómo se juega"; its eleven rules are gone from `cup/style.css` (the full-screen game's pill,
+  `body.pantalla-completa #jugar-reglas`, keeps its own placement). The covers' how-to-play (a day's
+  cover, a practice's cover, a final round) are the same `details.panel`, titled "🧠 Cómo se juega",
+  and stay **open** as before: whether to fold them like a home game's (U-16) is still the owner's
+  call. Intended differences, under the board: a glass panel with the panel's 18 px padding (was a
+  darker well, 18 % black, with no padding), the title at the left in ink, bold, 1.05 rem, with the
+  panel's ▾ (was centred, muted, 0.95 rem, with a line under it when open); its summary keeps a 44 px
+  target (was 48); 24 px above it (was 22). On the covers: the title is the summary ("🧠 Cómo se
+  juega", 1.05 rem bold, with ▾) instead of a `.lead` line, and it can be folded.
 

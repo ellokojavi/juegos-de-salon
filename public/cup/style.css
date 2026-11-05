@@ -444,10 +444,10 @@ body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
 #jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
    una tarjeta del ancho de la ciudad que se desplaza por dentro y no tapa la acción */
-body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: 6px 14px; }
-body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; }
-body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; background: rgba(21,7,38,0.97); }
+body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; padding: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: var(--s-6) var(--s-14); margin: 0; gap: var(--s-6); }
+body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--s-16) var(--s-14); }
+body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; margin: 0 calc(-1 * var(--s-16)) var(--s-12); background: rgba(21,7,38,0.97); border-bottom: 1px solid var(--glass-border); }
 /* La brújula: la N y su punta roja apuntan al norte del mapa girado */
 .brujula-aguja { display: grid; justify-items: center; font: 900 0.8rem/1 var(--font-body); }
 .brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid #ff4d4d; margin-bottom: 2px; }
@@ -620,17 +620,13 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 /* Compartir como imagen: separado de la nota y centrado en la caja del gráfico (D-126) */
 #btn-imagen { display: flex; margin: 16px auto 4px; }
 
-/* Las reglas plegadas debajo del tablero (D-133): discretas hasta que se abren */
-#jugar-reglas { margin-top: 22px; }
-.reglas { padding: 0; background: rgba(0,0,0,0.18); }
-.reglas > summary { list-style: none; cursor: pointer; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; color: var(--muted); font-weight: 800; font-size: 0.95rem; }
-.reglas > summary::-webkit-details-marker { display: none; }
-.reglas > summary::after { content: '▾'; font-size: 0.85rem; transition: transform 0.2s; }
-.reglas[open] > summary::after { transform: rotate(180deg); }
-.reglas[open] > summary { color: var(--ink); border-bottom: 1px solid var(--glass-border); }
-.reglas > :not(summary) { margin-left: 16px; margin-right: 16px; }
-.reglas > :last-child { margin-bottom: 14px; }
-.reglas .lead { margin: 12px 16px 4px; }
+/* The rules folded under the board (D-133) are the shared folding panel (details.panel, base.css), the
+   same block as a home game's "Cómo se juega" (phase 7, #1196); under the board the summary keeps a
+   44 px target (U-10), since the panel's own summary is only its text's height (DESIGN.md §5) */
+#jugar-reglas { margin-top: var(--s-24); }
+#jugar-reglas .reglas > summary { min-height: 44px; }
+/* Its titles («Puntaje», the final's rounds) keep the air they had above them */
+#jugar-reglas .reglas .lead { margin: var(--s-12) 0 var(--s-4); }
 
 /* --- Avisos al celular (D-223): la oferta, la campana y sus hojas ---
    La hoja de abajo (.hoja) es de todo el sitio y vive en base.css: la usa también el globo de

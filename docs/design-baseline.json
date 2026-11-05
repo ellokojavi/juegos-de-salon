@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 258,
+  "total": 255,
   "files": {
     "public/cup/games/case/style.css": {
       "token-colour": 27,
@@ -11,10 +11,10 @@
     },
     "public/cup/style.css": {
       "token-colour": 85,
-      "colour": 53,
+      "colour": 52,
       "radius": 4,
-      "space": 9,
-      "text-size": 37
+      "space": 8,
+      "text-size": 36
     }
   }
 }
