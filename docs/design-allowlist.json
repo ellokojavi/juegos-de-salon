@@ -198,6 +198,18 @@
       "rule": "text-size",
       "what": "font-size: 2.6rem",
       "reason": "The cover's padlock beside the title (`.titulo-clave.grande .candado`): an emoji drawn to the title's height, a hero's own size above the text steps."
+    },
+    {
+      "file": "public/labs/exploding-numbers/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.3rem",
+      "reason": "The title's bomb emoji (`.titulo-ne .bomba`), beating beside the game's title: an emoji sized to sit with the display title, between the text steps and the title steps."
+    },
+    {
+      "file": "public/labs/exploding-numbers/style.css",
+      "rule": "text-size",
+      "what": "font: 2.4rem var(--font-display)",
+      "reason": "The cover demo's «¡Limpio!» (`.demo-rotulo`): it fills the 260 × 56 px space the two cleared rows leave, in its place (the board's own size, fixed so it does not move with the viewport like a .display step)."
     }
   ]
 }
