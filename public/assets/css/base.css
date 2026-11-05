@@ -35,7 +35,22 @@
   --card: #fffdf7;
   --card-ink: #1a1a1a;
   --red: #e0243c;
-  --radius: 22px;
+  /* --- The design system's scales (D-533, docs/DESIGN.md): every distance, radius and shadow a game
+     writes comes from here. Named by value, so `--s-12` is 12 px and no table is needed. --- */
+  /* Space: a 2 px grid up to 16, then steps of 4. Padding, gap and margin take one of these. */
+  --s-2: 2px; --s-4: 4px; --s-6: 6px; --s-8: 8px; --s-10: 10px; --s-12: 12px; --s-14: 14px; --s-16: 16px;
+  --s-20: 20px; --s-24: 24px; --s-28: 28px; --s-32: 32px;
+  /* Corners: small (chips, cells), medium (rows, inputs), large (cards inside a panel), extra large
+     (the panel itself), pill (buttons). A circle is `50%`. */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+  --radius: var(--r-xl);
+  /* Shadows and the "edge" under a button, one per button colour (they were written by hand in .btn) */
+  --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
+  --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
+  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
+  /* Text sizes: body is 1rem; the steps every game picks from (titles use .display--xl…sm) */
+  --fs-xs: 0.75rem; --fs-sm: 0.85rem; --fs-md: 1rem; --fs-lg: 1.2rem; --fs-xl: 1.6rem; --fs-2xl: 2rem;
   --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
   /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
@@ -148,17 +163,17 @@ p { line-height: 1.5; margin: 0 0 12px; }
   text-transform: uppercase; color: #fff;
   padding: 16px 24px; border-radius: 999px;
   background: linear-gradient(180deg, var(--pink), var(--pink-deep));
-  box-shadow: 0 6px 0 #7a0f3a, 0 12px 24px rgba(255, 46, 136, 0.35);
+  box-shadow: 0 6px 0 var(--edge-pink), 0 12px 24px rgba(255, 46, 136, 0.35);
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s;
   width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   text-align: center; text-decoration: none; user-select: none; min-height: 60px;
 }
-.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a0f3a, 0 6px 12px rgba(255, 46, 136, 0.35); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--edge-pink), 0 6px 12px rgba(255, 46, 136, 0.35); }
 .btn:disabled { filter: grayscale(0.6) brightness(0.7); cursor: not-allowed; box-shadow: none; transform: none; }
-.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; box-shadow: 0 6px 0 #9a4a00, 0 12px 24px rgba(255, 210, 63, 0.35); }
-.btn--yellow:active { box-shadow: 0 2px 0 #9a4a00, 0 6px 12px rgba(255, 210, 63, 0.35); }
-.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: #03302c; box-shadow: 0 6px 0 #0b5f57, 0 12px 24px rgba(46, 230, 214, 0.35); }
-.btn--cyan:active { box-shadow: 0 2px 0 #0b5f57, 0 6px 12px rgba(46, 230, 214, 0.35); }
+.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); box-shadow: 0 6px 0 var(--edge-yellow), 0 12px 24px rgba(255, 210, 63, 0.35); }
+.btn--yellow:active { box-shadow: 0 2px 0 var(--edge-yellow), 0 6px 12px rgba(255, 210, 63, 0.35); }
+.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: var(--ink-on-cyan); box-shadow: 0 6px 0 var(--edge-cyan), 0 12px 24px rgba(46, 230, 214, 0.35); }
+.btn--cyan:active { box-shadow: 0 2px 0 var(--edge-cyan), 0 6px 12px rgba(46, 230, 214, 0.35); }
 .btn--ghost {
   background: var(--glass); border: 2px solid var(--glass-border); box-shadow: none; color: var(--ink);
   font-size: 1.15rem; min-height: 50px; padding: 12px 18px;
@@ -188,7 +203,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
   background: var(--glass); border: 1px solid var(--glass-border);
   border-radius: var(--radius); padding: 18px;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-panel);
 }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -196,7 +211,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
   background: rgba(255, 255, 255, 0.12); border: 1px solid var(--glass-border);
 }
 .chip--hot { background: var(--pink); border-color: transparent; }
-.chip--gold { background: var(--yellow); color: #3a1200; border-color: transparent; }
+.chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* --- Panel desplegable --- */

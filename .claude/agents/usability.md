@@ -74,6 +74,23 @@ not a habit.
   documentation agent: you touch the app, it touches the documents.
 - **Daily round:** everything below.
 
+## The design system is yours (D-533)
+
+`docs/DESIGN.md` and the tokens and shared classes in `public/assets/css/base.css` are the one
+visual language of the site, and you keep them: the document, the design lint
+(`node tools/agents/design-lint.mjs`, from phase 2 of #1188; its allowlist in `docs/`
+with a reason per entry, its baseline that never grows) and the components page (`/labs/design/`,
+phase 3). In PR mode, when the PR touches CSS: run the lint and say the count in your report; a new
+colour, distance, corner or text size written by hand is fixed with its token or allowlisted with its
+reason; a class copied from `base.css` is replaced by the class; a control the game invents that
+another game could use is proposed as a component (a dilemma if it changes a screen, otherwise your
+best proposal in `base.css` with its place on the components page). What the lint measures you do
+not re-report (D-520); what it cannot measure is yours: whether a colour means what it should
+(lime is success, red is loss, yellow is the action), whether a title took the right `.display`
+step, whether two screens that do the same thing look the same. In the round, when it is otherwise
+quiet, migrate one game following the recipe in DESIGN.md (phase 5, #1193): one game per PR, before
+and after screenshots at 390 and 320 px, the intended differences listed in the PR body.
+
 ## What you review
 
 1. **🐞 reports:** the processes agent handles them, as `feedback` issues (D-275). Look at them only
