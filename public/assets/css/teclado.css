@@ -35,6 +35,8 @@
 .keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: var(--fs-75); }
 .block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: var(--fs-75); font-weight: 700; line-height: 1.35; }
 .keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); border-color: transparent; box-shadow: 0 5px 0 var(--edge-yellow); font-family: var(--font-display); font-size: var(--fs-200); }
+/* At 320 px a key is ~89 px and «Probar» at 2 rem fills it edge to edge, its slant spilling over: one step down on narrow phones */
+@media (max-width: 374px) { .keypad button.ok { font-size: var(--fs-160); } }
 .keypad button.ok:disabled { opacity: 0.4; box-shadow: none; }
 .keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: var(--fs-120); }
 .boards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
