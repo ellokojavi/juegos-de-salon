@@ -179,8 +179,13 @@ after a migration), is in the lint's header.
 | Pintaminas | each drawing's palette | the game is about those colours |
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
+| `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
+| La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 
-(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that was a whole file.)
+(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
+was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
+every other hit is a migration, not an escape. A 4 px tail used by three bubbles and a podium is a
+candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
 ## 5. Migration recipe
 
