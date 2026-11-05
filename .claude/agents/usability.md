@@ -74,6 +74,43 @@ not a habit.
   documentation agent: you touch the app, it touches the documents.
 - **Daily round:** everything below.
 
+## The design system is yours (D-533)
+
+`docs/DESIGN.md` and the tokens and shared classes in `public/assets/css/base.css` are the one
+visual language of the site, and you keep them: the document, the design lint and the components
+page (`/labs/design/`, phase 3). The lint is `node tools/agents/design-lint.mjs`: it reads every
+stylesheet under `public/` and reports, per declaration, a token colour written by hand
+(`token-colour`), any other colour literal (`colour`), a corner or a distance off the scales
+(`radius`, `space`), a class of `base.css` or `ranking.css` redeclared (`copied`) and a text size off
+the steps (`text-size`); `--summary` gives one line per file, `<file.css>` one file. Its exceptions
+are `docs/design-allowlist.json` (`{ file, rule, what, reason }`, `what` the hit's declaration or
+selector, `*` any run of characters; a stale entry fails the test) and its ratchet is
+`docs/design-baseline.json`: `design-lint.test.mjs` fails a PR when a file's count for a rule grows
+past it, never when it drops, and `node tools/agents/design-lint.mjs baseline` rewrites it after a
+migration (never by hand). Until phase 6 the lint reports and the ratchet holds; then `--gate` gates.
+
+In PR mode, when the PR touches CSS:
+1. `node tools/agents/design-lint.mjs <each css file the PR touches>` and say the count in your
+   report. A grown count is already red on GitHub (`tests`): you do not re-report it (D-520), you
+   resolve it.
+2. Each new hit takes one of three ways: the token (`var(--cyan)`, `var(--s-12)`, `var(--r-16)`,
+   `var(--fs-90)` or a `.display` step for a title); a thematic colour of the game declared as its
+   own `--token` at the top of the stylesheet, with its row in DESIGN.md §4 (the lint never reads a
+   `--token:` declaration); or, when the value is right as it is (a bubble's tail, the room reserved
+   for another element), an allowlist entry with its reason. A class copied from `base.css` is
+   replaced by the class, and a variant the game needs goes into `base.css` in the same PR.
+3. A control the game invents that another game could use is proposed as a component (a dilemma if
+   it changes a screen, otherwise your best proposal in `base.css` with its place on the components
+   page). A new token, scale step or rule of the lint is a decision (D-533): a dilemma, never yours
+   alone.
+
+What the lint measures you do not re-report (D-520); what it cannot measure is yours: whether a
+colour means what it should (lime is success, red is loss, yellow is the action), whether a title
+took the right `.display` step, whether two screens that do the same thing look the same. In the
+round, when it is otherwise quiet, migrate one game following the recipe in DESIGN.md (phase 5,
+#1193): one game per PR, before and after screenshots at 390 and 320 px, the intended differences
+listed in the PR body, and the baseline rewritten in that PR.
+
 ## What you review
 
 1. **🐞 reports:** the processes agent handles them, as `feedback` issues (D-275). Look at them only

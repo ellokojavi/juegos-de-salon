@@ -1,0 +1,143 @@
+{
+  "_about": "Exceptions to the design lint (tools/agents/design-lint.mjs, D-533), each with its reason: none is silent. Entries { file, rule, what, reason }: `rule` is one of token-colour, colour, radius, space, copied, text-size or `*`; `what` matches the hit's declaration (`color: #ff8a8a`) or selector, `*` matching any run of characters. An entry that no longer hits fails design-lint.test.mjs as stale, so remove it when the stylesheet changes. The human-readable side is docs/DESIGN.md §4.",
+  "entries": [
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "radius",
+      "what": "border-radius: 16px 16px 4px 16px",
+      "reason": "the chat bubble's tail: a 4 px corner is a shape (where the bubble points), not a size on the corner scale"
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "space",
+      "what": "padding-bottom: 170px",
+      "reason": "reserves the install bubble's height under the page while it floats (D-232): the size of another element, not rhythm"
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "space",
+      "what": "padding-right: 30px",
+      "reason": "room for the install bubble's ✕ (44 px, absolutely positioned) beside the text: the size of another element, not rhythm"
+    },
+    {
+      "file": "public/assets/css/base.css",
+      "rule": "space",
+      "what": "padding-right: 48px",
+      "reason": "room for the install bubble's ✕ beside the button from 480 px: the size of another element, not rhythm"
+    },
+    {
+      "file": "public/cup/style.css",
+      "rule": "radius",
+      "what": "border-radius: 14px 14px 4px 4px",
+      "reason": "the podium step (.escalon): flat 4 px feet so the three steps read as one podium; a shape, not a size on the scale"
+    },
+    {
+      "file": "public/cup/style.css",
+      "rule": "radius",
+      "what": "border-radius: 14px 14px 14px 4px",
+      "reason": "the speech bubble's tail (.cs-globo), the same 4 px tail as base.css's chat bubble; a shape, not a size on the scale"
+    },
+    {
+      "file": "public/hangman/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.5rem",
+      "reason": "The word's letters on the board (`.word .ch`): the game's own size, between the title steps and the text steps, chosen so a long word fits at 320 px (C-8)."
+    },
+    {
+      "file": "public/hangman/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.8rem",
+      "reason": "The word's letters when the word is long (`.word.long .ch`) and the theme card's emoji: the board's own sizes."
+    },
+    {
+      "file": "public/hangman/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.1rem",
+      "reason": "The word's letters on a short screen (`.word .ch` under 780 px tall): the board's own size."
+    },
+    {
+      "file": "public/hangman/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.9rem",
+      "reason": "The revealed word on the verdict's card (`.verdict .word-big span`): the board's own size."
+    },
+    {
+      "file": "public/timeline/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.8rem",
+      "reason": "The deck card's emoji (`.theme-card .em`), the same card and size as Ahorcado's theme card: a board's own size, between the text steps and the title steps; the card is a candidate shell component."
+    },
+    {
+      "file": "public/timeline/style.css",
+      "rule": "text-size",
+      "what": "font: 900 3.2rem/1 var(--font-num)",
+      "reason": "The solo score (`.puntos b`): a figure the player reads at a glance, the board's own size above the text steps (D-30: figures in --font-num)."
+    },
+    {
+      "file": "public/bulls-and-cows/style.css",
+      "rule": "text-size",
+      "what": "font-size: 3.2rem",
+      "reason": "The hero's emoji at two moments the shell's 4.2 rem does not fit (C-8): the cover's icon on a short phone (under 600 px tall), so the Número / Palabra toggle and the first mode stay above the fold at 320×568 (landing-fold.mjs), and the solo result's trophy, so the score, the card and the final buttons fit without scrolling. Between the shell's size and the text steps: a hero's own size, not a text step."
+    },
+    {
+      "file": "public/generala/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.62rem",
+      "reason": "The kept-die tag (`.dado-btn .tag`, \"Guardado\") under each of five dice: the board's own size, so the word fits under a 50 px die at 320 px (C-8); the smallest text step overflows it."
+    },
+    {
+      "file": "public/liars-dice/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.62rem",
+      "reason": "The rivals' dice drawn as glyphs (`.rivals .rival .d`): five of them must fit in the rival card's 74 px, under the smallest text step; a board's own size."
+    },
+    {
+      "file": "public/liars-dice/style.css",
+      "rule": "text-size",
+      "what": "font: 900 2.6rem var(--font-num)",
+      "reason": "The bid's figure (`.amount-n`): a number the table reads from across the phone, the board's own size above the text steps (D-30: figures in --font-num)."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font: 900 1.35rem var(--font-num)",
+      "reason": "The playing card's rank (`.pcard .r`): the card's own size, sized with the card (38 to 58 px wide, five in a row at 320 px, C-8), not a text step."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 1.15rem",
+      "reason": "The playing card's suit (`.pcard .s`): the card's own size, under its rank."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.8rem",
+      "reason": "The tiny card's rank (`.pcard--xs .r`, 28 px wide, in the hand's review): the card's own size."
+    },
+    {
+      "file": "public/labs/julep/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.7rem",
+      "reason": "The tiny card's suit (`.pcard--xs .s`): the card's own size, under its rank."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "radius",
+      "what": "border-radius: 4px",
+      "reason": "The board's cell (`.cell`, and the flash over it): a tile of a 10×10 grid, not a card; 4 px keeps the sea reading as one surface with hairline gaps."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "radius",
+      "what": "border-radius: 2px",
+      "reason": "The same tile on the small board (`.grid-wrap.small .cell`, the fleets of the result) and the chip's ship squares (`.barco-tira .barco`): a 12 to 19 px tile takes a 2 px corner."
+    },
+    {
+      "file": "public/battleship/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.55rem",
+      "reason": "The small board's cell glyph and its labels (`.grid-wrap.small .cell`, `.fleets .grid .lbl`): the board's own size, under the smallest text step, so a 220 px board still shows its 💥 and its row numbers."
+    }
+  ]
+}

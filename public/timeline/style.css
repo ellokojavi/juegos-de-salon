@@ -1,123 +1,77 @@
 /* ==========================================================
    Línea de Tiempo — estilos propios
+   On the design system (D-533, phase 5 of #1188, #1193): the screens, the cover's hero, the
+   modes, the form fields and their error, the segmented control, the player rows, the room
+   (code, QR, players, "or", waiting), whose turn and the result's hero come from base.css; this
+   file keeps what is the game's own (the deck cards, the score chips, the ranking, the solo bar
+   and its result), on the tokens. The hand, the line and the verdict are in assets/css/linea.css.
    ========================================================== */
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
 
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-.modes { display: grid; gap: 10px; }
-.mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }
-.mode:active { transform: scale(0.98); }
-.mode:disabled { opacity: 0.5; cursor: not-allowed; }
-.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
-.mode small { color: var(--muted); font-weight: 700; }
-.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
-
-/* Setup */
-#screen-setup > h2 { margin-bottom: 16px; }
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
-.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.field input { width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; }
-.field input:focus { border-color: var(--cyan); }
-.field input::placeholder { color: rgba(255,255,255,0.35); }
+/* ---------- Setup: what is Línea de Tiempo's own on top of the shell ---------- */
+#screen-setup > h2 { margin-bottom: var(--s-16); }
 /* El nombre es lo único que el jugador escribe: grande y al centro */
-.field--name { margin-bottom: 16px; }
+.field--name { margin-bottom: var(--s-16); }
 .field--name label { text-align: center; }
-.field input.name { font: 900 1.5rem var(--font-body); text-align: center; padding: 14px 12px; border-color: var(--glass-border); }
-.field input.name:focus { border-color: var(--cyan); }
-.seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
-.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: 10px 4px; border-radius: 10px; cursor: pointer; }
-.seg button.on { background: var(--yellow); color: #3a1200; }
 /* Las tres formas de repartir, lado a lado (D-52). El emoji arriba y el nombre completo
    debajo: si no cabe en una línea parte en dos, que es mejor que abreviarlo (C-8). */
-.seg--cards button { display: grid; align-content: center; gap: 3px; padding: 8px 3px; min-height: 44px; font-size: 0.78rem; line-height: 1.15; text-wrap: balance; }
-.seg--cards .em { font-size: 1.3rem; line-height: 1; }
-.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.theme-card { display: grid; gap: 2px; justify-items: center; text-align: center; padding: 12px 8px; border-radius: 16px; background: rgba(0,0,0,0.3); border: 2px solid transparent; color: var(--ink); cursor: pointer; font-family: var(--font-body); }
+.seg--cards button { display: grid; align-content: center; gap: var(--s-2); padding: var(--s-8) var(--s-2); font-size: var(--fs-75); line-height: 1.15; text-wrap: balance; }
+.seg--cards .em { font-size: var(--fs-140); line-height: 1; }
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-8); }
+.theme-card { display: grid; gap: var(--s-2); justify-items: center; text-align: center; padding: var(--s-12) var(--s-8); border-radius: var(--r-16); background: var(--well-deep); border: 2px solid transparent; color: var(--ink); cursor: pointer; font-family: var(--font-body); }
 .theme-card .em { font-size: 1.8rem; }
-.theme-card b { font-size: 1rem; }
-.theme-card small { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-wrap: balance; }
-.theme-card.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.15); }
-.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 6px 10px; margin-bottom: 6px; }
-.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
-.player-row input { background: transparent; border: 0; padding: 10px 0; }
-.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 32px; height: 36px; cursor: pointer; }
-.player-row .del:disabled { opacity: 0.2; }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+.theme-card b { font-size: var(--fs-100); }
+.theme-card small { color: var(--muted); font-size: var(--fs-75); font-weight: 700; text-wrap: balance; }
+.theme-card.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.15); }
 
 /* ---------- Juego ---------- */
-.status { text-align: center; margin: 2px 0 6px; }
-.status .who { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
-.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
-.score { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 8px; }
-.score .p { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.25); font-weight: 800; font-size: 0.85rem; }
-.score .p.turn { background: var(--cyan); color: #03302c; }
-.score .p .n { font: 900 0.9rem var(--font-num); font-variant-numeric: tabular-nums; }
-
-/* Mano */
+.score { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-6); margin-bottom: var(--s-8); }
+.score .p { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-4) var(--s-10); border-radius: var(--r-pill); background: var(--well); font-weight: 800; font-size: var(--fs-85); }
+.score .p.turn { background: var(--cyan); color: var(--ink-on-cyan); }
+.score .p .n { font: 900 var(--fs-90) var(--font-num); font-variant-numeric: tabular-nums; }
 
 /* Línea de tiempo */
 /* La página se desplaza con normalidad y el botón de confirmar queda flotando abajo,
    así la línea puede crecer sin que se pierda el control (ver docs, canon C-8). */
-.line-wrap { padding: 2px; margin-top: 2px; padding-bottom: 4px; }
-#screen-play { padding-bottom: 4px; }
-
+.line-wrap { padding: var(--s-2); margin-top: var(--s-2); padding-bottom: var(--s-4); }
+#screen-play { padding-bottom: var(--s-4); }
 
 /* Resultado */
-.result-hero { text-align: center; padding: 2px 0 6px; }
-.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.ranking { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
-.ranking li { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 8px 12px; font-weight: 800; }
-.ranking li .pos { font-family: var(--font-display); font-size: 1.3rem; color: var(--yellow); }
+.ranking { list-style: none; padding: 0; margin: var(--s-8) 0 0; display: grid; gap: var(--s-6); }
+.ranking li { display: grid; grid-template-columns: 32px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-12); padding: var(--s-8) var(--s-12); font-weight: 800; }
+.ranking li .pos { font-family: var(--font-display); font-size: var(--fs-140); color: var(--yellow); }
 /* Una línea por jugador: el nombre se recorta antes que la fila se parta en dos */
 .ranking li .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ranking li .info { color: var(--cyan); font-size: 0.8rem; text-align: right; white-space: nowrap; }
-.ranking li .info .time { color: var(--muted); font: 900 0.78rem var(--font-num); font-variant-numeric: tabular-nums; }
-.ranking li.top { background: linear-gradient(90deg, rgba(255,210,63,0.28), rgba(255,46,136,0.28)); }
-.replay { margin-top: 10px; padding: 12px 16px; }
-.replay summary { font-size: 1rem; }
+.ranking li .info { color: var(--cyan); font-size: var(--fs-75); text-align: right; white-space: nowrap; }
+.ranking li .info .time { color: var(--muted); font: 900 var(--fs-75) var(--font-num); font-variant-numeric: tabular-nums; }
+.ranking li.top { background: linear-gradient(90deg, rgb(from var(--yellow) r g b / 0.28), rgb(from var(--pink) r g b / 0.28)); }
+.replay { margin-top: var(--s-10); padding: var(--s-12) var(--s-16); }
+.replay summary { font-size: var(--fs-100); }
 /* El aire con lo de arriba lo da el repaso o el panel marcado con data-tablero (D-309) */
 #screen-result #result-actions { margin-top: 0; }
 
-/* Sala (varios celulares) */
-#screen-lobby > h2 { margin-bottom: 16px; }
-.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
-.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
-.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 2px 0; padding-left: 0.25em; }
-.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
-.qr svg { display: block; width: min(46vw, 190px); height: auto; }
-.lobby-players { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
-.lobby-players .p { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.28); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2,0.9,0.3,1.4) both; }
-.lobby-players .p.me { background: var(--cyan); color: #03302c; }
-.lobby-players .p.off { opacity: 0.45; }
-.waiting { text-align: center; color: var(--muted); font-weight: 800; }
-.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
-@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
-
-
-/* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape los botones del final */
-
+/* Sala (varios celulares): the shell's room, with the title's air as in the setup */
+#screen-lobby > h2 { margin-bottom: var(--s-16); }
 
 /* ---------- Jugar solo: la ⏳ Línea Relámpago (D-142) ----------
    La mano, la línea y el veredicto vienen de assets/css/linea.css; aquí solo la barra con el
    reloj y la pantalla del resultado. */
-.solo-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 0 0 4px; }
-.solo-top b { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; }
-.solo-top .cron { font: 900 1.05rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); padding: 3px 10px; border-radius: 999px; background: rgba(0,0,0,0.3); }
-.aviso { text-align: center; font-weight: 800; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); }
-.aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
-#screen-solo-result .result-hero { display: grid; gap: 4px; justify-items: center; }
+.solo-top { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); margin: 0 0 var(--s-4); }
+.solo-top b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; }
+.solo-top .cron { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); padding: var(--s-4) var(--s-10); border-radius: var(--r-pill); background: var(--well-deep); }
+.aviso { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.aviso.bien { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
+#screen-solo-result .result-hero { display: grid; gap: var(--s-4); justify-items: center; }
 #screen-solo-result .result-hero .lead, #screen-solo-result .result-hero .muted { margin: 0; }
-/* El puntaje es una cifra que se compara: Nunito, no Bangers (C-1, D-30) */
-.puntos { display: flex; align-items: baseline; gap: 2px; }
-.puntos b { font: 900 3.2rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-.puntos small { font: 900 1.1rem var(--font-num); color: var(--muted); }
-.tarjeta { font-size: 1.3rem; letter-spacing: 0.08em; margin-top: 4px; }
-.solo-como { margin-top: 4px; }
-.solo-como summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 900; font-size: 1rem; }
-.solo-como .lead { margin: 8px 0 4px; font-size: 1rem; }
+/* El puntaje es una cifra que se compara: Nunito, no Bangers (C-1, D-30). Its 3.2 rem is the
+   score's own size, above the text steps, like a title (DESIGN.md §4). */
+.puntos { display: flex; align-items: baseline; gap: var(--s-2); }
+.puntos b { font: 900 3.2rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.35); }
+.puntos small { font: 900 var(--fs-110) var(--font-num); color: var(--muted); }
+.tarjeta { font-size: var(--fs-140); letter-spacing: 0.08em; margin-top: var(--s-4); }
+.solo-como { margin-top: var(--s-4); }
+.solo-como summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 900; font-size: var(--fs-100); }
+.solo-como .lead { margin: var(--s-8) 0 var(--s-4); font-size: var(--fs-100); }
 /* Terminada la línea, el aviso y "Ver resultado" van arriba: aire antes de la línea */
-#solo-juego .lt-juego > .stack:not(:empty) { margin-bottom: 12px; }
-.solo-como ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-weight: 700; font-size: 0.9rem; line-height: 1.4; }
-.solo-como .muted { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+#solo-juego .lt-juego > .stack:not(:empty) { margin-bottom: var(--s-12); }
+.solo-como ol { margin: 0; padding-left: var(--s-20); display: grid; gap: var(--s-4); font-weight: 700; font-size: var(--fs-90); line-height: 1.4; }
+.solo-como .muted { margin: 0; font-size: var(--fs-90); line-height: 1.4; }

@@ -31,6 +31,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | What | Where | When to read it |
 |---|---|---|
 | How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
+| The design system: tokens, scales, components (D-533) | [docs/DESIGN.md](docs/DESIGN.md), the tokens in `public/assets/css/base.css` | Before writing any CSS, or adding a control a game does not have |
 | Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions; **U-41** visual proposals as images | Before writing anything the player reads, or proposing a design |
 | Why it is this way (D-n) | [docs/DECISIONS.md](docs/DECISIONS.md), the index (by topic, then one row each), and `docs/decisions/D-<n>.md` for each one (D-394): read the index, open only the ones you need | Before changing something that looks odd |
 | A new game, step by step | [docs/ADD-GAME.md](docs/ADD-GAME.md) | When starting one |
@@ -74,7 +75,7 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`) and listed in
   `/labs/`; the owner publishes it by flipping `flags/<id>` to *all* on its `/labs/` card (the one place, D-498),
-  no PR; its card moves to La Bodega keeping its switch (D-510), and a later PR removes the gate. Details: [docs/AGENTS.md](docs/AGENTS.md).
+  no PR; its card moves to La Bodega on its own, keeping its switch (D-510, D-534), and a later PR removes the gate. Details: [docs/AGENTS.md](docs/AGENTS.md).
 - **Tests**: run every `*.test.mjs` / `*.test.py` before the PR (commands in [docs/SESSIONS.md](docs/SESSIONS.md));
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
   the `end-to-end` check on GitHub is the gate.

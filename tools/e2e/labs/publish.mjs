@@ -52,7 +52,19 @@ await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.te
 await ev(`__pub.render({}, { 'copa-crear': { state: 'all', at: ${Date.now()} } }), 1`); await sleep(200);
 ok(/Publicado para todos/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`))
   && /Volver al laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado button')?.textContent || ''`)), 'flag all: live, with ↩️ Volver al laboratorio');
+ok(/ya está en La Bodega/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`)), 'in La Bodega, the line says the card is already there');
 await ev(`document.querySelector('#seccion-copa-crear').scrollIntoView(), 1`); await b.shot('flag-all');
+// A flagged card still under ✨ Mejoras en prueba, just launched: it moves when the page next opens (D-534), and the line says so
+const trying = await ev(`[...document.querySelectorAll('#mejoras > .seccion')].map(c => __pub.flagOf(c.id)).find(Boolean) || ''`);
+if (trying) {
+  await ev(`__pub.render({}, { ${JSON.stringify(trying)}: { state: 'all', at: ${Date.now()} } }), 1`); await sleep(200);
+  ok(/pasa a La Bodega la próxima vez/.test(await ev(`document.querySelector('#seccion-${trying} .publicar-estado')?.textContent || ''`)), 'just launched under ✨ Mejoras en prueba, the line says the card moves on the next open');
+  ok(!/Enviar a La Bodega/.test(await ev(`document.querySelector('#seccion-${trying} .publicar')?.textContent || ''`)), 'a launched card has no 📦: it moves to La Bodega on its own (D-534)');
+  // its buttons (↩️ · ⚪) wrap: no sideways scroll (U-10) and each label on one line (U-17)
+  ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'with the three buttons the page does not scroll sideways at 320 px');
+  ok(await ev(`[...document.querySelectorAll('#seccion-${trying} .publicar .btn-row .btn')].every(b => b.getBoundingClientRect().height < 70)`), 'and each of its labels fits on one line');
+  await ev(`document.querySelector('#seccion-${trying} .publicar').scrollIntoView({ block: 'center' }), 1`); await b.shot('flag-all-trying');
+}
 await ev(`__pub.render({}, {}), 1`); await sleep(200);
 ok(/En el laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`)) && await ev(`document.querySelectorAll('#seccion-copa-crear .publicar-estado button').length`) === 2, 'flag lab: says so, with 🚀 and ⚪');
 await ev(`__pub.render({}, { 'copa-crear': { state: 'off', at: 1 } }), 1`); await sleep(200);

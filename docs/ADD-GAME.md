@@ -15,6 +15,7 @@ development lives under `public/labs/` (D-395).
 
 Inside it, what the canons ask, using the shared modules and never one of its own:
 
+- **Styles** from the tokens and classes of `base.css` (C-1, D-533, [DESIGN.md](DESIGN.md)): no distance, corner or colour written by hand; thematic colours declared once at the top of `style.css` (the design lint, phase 2 of #1188). The game shell (screens, the cover's hero, modes, fields, the segmented control, player and toggle rows, the room, the result's hero) lives once in `base.css` (DESIGN.md §2, phase 4): a new game starts from it and copies nothing; `style.css` holds only what is the game's own, on the tokens, and `node tools/agents/design-lint.mjs public/<folder>/style.css` should report zero.
 - **Texts** in `LOCALES = { es, en, pt }` in `rules.js` (C-3, parity test); instructions per U-18.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`.
@@ -45,7 +46,9 @@ all read it. `manifest.test.mjs` checks that nothing keeps a copy of its own.
 - `lanza: '<flag>'` only if the finished game waits for the owner's 🚀 (D-517): add its row to `FLAGS`
   in `flag-list.js` and point its /labs/ card to the page. Until the flag is *all* the entry carries
   `oculto` (off the home page, search, filters, /records/ and `POZO_ABIERTO`); `POZO`, `POZO_FIJO` and
-  One a Day's `desde` do not read the flag. The cleanup PR removes `lanza` and the row.
+  One a Day's `desde` do not read the flag. The cleanup PR removes `lanza` and the row, and moves
+  the card to 🎲 Juegos guardados (D-479): `/labs/` moves only improvement cards on its own when a
+  flag is *all* (`launched.js`, D-534), not a game's.
 
 ## 3. What stays elsewhere (code, not data)
 

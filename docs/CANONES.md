@@ -17,6 +17,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 - Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo. The fonts are served from `public/assets/fonts/` (never from Google Fonts), with their OFL license, and every page that links `base.css` preloads `nunito-latin.woff2` and `bangers-latin.woff2` (the title font, so titles do not flash in the fallback) right before it (#851, `public/assets/css/fonts-preload.test.mjs`).
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
+- **The design system** (D-533, [DESIGN.md](DESIGN.md)): every distance, corner, shadow and text size a game writes comes from the tokens in `base.css` (`--s-*`, `--r-*`, `--edge-*`, `--fs-*`), and a component that exists there is used, not copied. Thematic colours are declared once at the top of the game's stylesheet and listed in DESIGN.md's escapes. The usability agent owns the system; its lint (phase 2 of #1188) measures it.
 - Cada juego tiene un emoji propio que lo identifica en el menú, la pestaña y la barra superior.
 - Momentos de cierre con celebración: confeti y sonido al ganar o al terminar una partida.
 
@@ -28,7 +29,7 @@ en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-192), y siemp
 ```
 public/<carpeta>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
-  style.css       Solo lo específico del juego
+  style.css       Solo lo específico del juego: la carcasa (pantallas, portada, modos, campos, filas, sala, resultado) vive una vez en base.css (DESIGN.md §2, D-533)
   rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt, de }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
   engine.test.mjs Tests del motor (node public/<carpeta>/engine.test.mjs)
@@ -51,7 +52,10 @@ public/<carpeta>/
   activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280), or once
   what it tried reached everyone (D-372): whatever is implemented for everyone moves to La Bodega in
   the same PR, folded, a game to 🎲 Juegos guardados and an improvement to ✨ Mejoras lanzadas
-  (D-479, `public/labs/bodega.test.mjs`). The owner sends a feature live from its own card with **🚀 Publicar para todos**,
+  (D-479, `public/labs/bodega.test.mjs`). An improvement behind a runtime flag does not wait for that
+  PR: when its flag goes to *all*, `/labs/` moves its card into ✨ Mejoras lanzadas on its own each
+  time it opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that
+  removes the gate moves its HTML for good. The owner sends a feature live from its own card with **🚀 Publicar para todos**,
   which a headless session on the Mac mini turns into a PR with auto-merge (D-480).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone

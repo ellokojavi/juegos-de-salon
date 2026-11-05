@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101), y sin la llave no se entra (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sistema de diseño 🎨 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/ranking.css">
+  <link rel="stylesheet" href="../../assets/css/teclado.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- The components page of the design system (D-533, docs/DESIGN.md, phase 3 of #1188): every token
+       and every shared class of base.css, ranking.css and teclado.css drawn live, from those sheets
+       alone. The owner and the agents look here before a screen is designed, a new game copies from
+       here, and the usability agent's round compares it with the games. The tokens are read from
+       base.css itself (fetched and parsed), so a new token shows up by itself. lab: #seccion-design -->
+  <div class="app">
+    <header class="topbar">
+      <a class="back" href="../">‹ Laboratorio</a>
+      <div class="tools"><span class="chip">🎨 Sistema de diseño</span></div>
+    </header>
+
+    <main class="stack ds-pagina">
+      <h1 class="display display--lg rainbow center">Sistema de diseño</h1>
+      <p class="muted center">Cada token y cada componente de <code>base.css</code>, <code>ranking.css</code> y <code>teclado.css</code>, en vivo. Lo que un juego dibuja sale de aquí (D-533, <a href="https://github.com/ellokojavi/juegos-de-salon/blob/main/docs/DESIGN.md">DESIGN.md</a>).</p>
+
+      <section class="panel stack" id="ds-colores">
+        <h2 class="display display--sm">Colores</h2>
+        <p class="muted">Los tokens de <code>:root</code>. Un juego usa el nombre, nunca el valor.</p>
+        <div class="ds-muestras" id="ds-muestras"></div>
+      </section>
+
+      <section class="panel stack" id="ds-espacio">
+        <h2 class="display display--sm">Espacio</h2>
+        <p class="muted">Rejilla de 2 px hasta 20, luego de 4 en 4. Padding, gap y margin toman uno de estos.</p>
+        <div class="ds-escala" id="ds-escala-espacio"></div>
+      </section>
+
+      <section class="panel stack" id="ds-esquinas">
+        <h2 class="display display--sm">Esquinas</h2>
+        <p class="muted">8 fichas y celdas · 10 y 12 tarjetas e inputs · 14 filas · 16 hojas · 22 el panel · pastilla los botones.</p>
+        <div class="ds-escala ds-escala--esquinas" id="ds-escala-esquinas"></div>
+      </section>
+
+      <section class="panel stack" id="ds-tipografia">
+        <h2 class="display display--sm">Títulos y texto</h2>
+        <p class="display display--xl">Display XL</p>
+        <p class="display display--lg">Display LG</p>
+        <p class="display display--md">Display MD</p>
+        <p class="display display--sm">Display SM</p>
+        <p class="display display--md rainbow">Rainbow</p>
+        <div class="ds-escala ds-escala--texto" id="ds-escala-texto"></div>
+        <p><span class="lead">.lead</span> · <span class="muted">.muted</span> · cifras en <span class="ds-num">1 7 4 2</span> (<code>--font-num</code>, D-30)</p>
+      </section>
+
+      <section class="panel stack" id="ds-botones">
+        <h2 class="display display--sm">Botones</h2>
+        <p class="muted">60 px de alto (44 el pequeño, U-10); la etiqueta cabe en una línea a 320 px (U-17).</p>
+        <button class="btn" type="button">Botón</button>
+        <button class="btn btn--yellow" type="button">🏆 La acción</button>
+        <button class="btn btn--cyan" type="button">Secundario</button>
+        <button class="btn btn--ghost" type="button">Fantasma</button>
+        <div class="btn-row"><button class="btn btn--sm" type="button">Pequeño</button><button class="btn btn--ghost btn--sm" type="button">👻 Pequeño</button></div>
+        <button class="btn btn--yellow" type="button" disabled>Deshabilitado</button>
+        <div class="btn-row"><button class="btn btn--ghost" type="button">Dos</button><button class="btn btn--yellow" type="button">En fila</button></div>
+        <div class="topbar" style="margin:0"><a class="back" href="#ds-botones">‹ Menú</a><div class="tools"><button class="icon-btn" type="button" aria-label="Icono">🔊</button><span class="lang-toggle"><button type="button" class="on"><span class="flag">🇨🇱</span></button><button type="button"><span class="flag">🇺🇸</span></button></span></div></div>
+      </section>
+
+      <section class="panel stack" id="ds-fichas">
+        <h2 class="display display--sm">Fichas y paneles</h2>
+        <div class="chips"><span class="chip">🎲 Ficha</span><span class="chip chip--hot">🔥 Popular</span><span class="chip chip--gold">🏆 Oro</span></div>
+        <details class="panel"><summary>Un panel desplegable</summary><p class="muted" style="margin:0">Lo que se pliega.</p></details>
+        <div class="stack"><div class="ds-caja">.stack</div><div class="ds-caja">12 px entre hijos</div></div>
+      </section>
+
+      <section class="panel stack" id="ds-armazon">
+        <h2 class="display display--sm">El armazón de un juego</h2>
+        <p class="muted">Lo que toda pantalla de juego tiene y antes cada juego copiaba (D-533, fase 4): la portada, los modos, el formulario, las filas, el interruptor, la sala y el resultado.</p>
+        <div class="intro-hero"><span class="icon">🪢</span><h2 class="display display--md rainbow">Portada</h2></div>
+        <div class="modes"><button class="mode" type="button"><span><b>Un modo</b><small>Lo que hace, en una línea</small></span><span class="go">›</span></button><button class="mode" type="button" disabled><span><b>Pronto</b><small>Aún no se puede</small></span><span class="soon">pronto</span></button></div>
+        <div class="field"><label>Un campo</label><input type="text" placeholder="Escribe algo"><p class="sub">La ayuda bajo el campo.</p></div>
+        <div class="field"><label>Tu nombre</label><input class="name" type="text" value="Javi"></div>
+        <div class="field"><label>Código de sala</label><input class="code" type="text" value="ABCD"></div>
+        <div class="form-error">El error del formulario, en amarillo.</div>
+        <div class="seg"><button type="button" class="on">Uno</button><button type="button">Dos</button><button type="button">Tres</button></div>
+        <div class="opciones tres"><button class="opcion on" type="button"><b>Ahora</b></button><button class="opcion" type="button"><b>Mañana</b></button><button class="opcion" type="button"><b>Otra fecha</b></button></div>
+        <div class="opciones dos"><button class="opcion" type="button"><b>Sí</b><small>con detalle</small></button><button class="opcion on" type="button"><b>No</b><small>con detalle</small></button></div>
+        <div><div class="player-row"><span class="num">1</span><input type="text" value="Cata"><button class="del" type="button" aria-label="Quitar">✕</button></div><div class="player-row cpu"><span class="num">2</span><span class="cpu-name">🤖 La máquina</span><button class="del" type="button" aria-label="Quitar" disabled>✕</button></div></div>
+        <div class="toggle-row"><div class="txt"><b>Una opción con interruptor</b><small>Lo que cambia cuando está encendida.</small></div><button class="switch on" type="button" role="switch" aria-checked="true" aria-label="Opción"></button></div>
+        <div class="toggle-row"><div class="txt"><b>Apagada</b><small>Y su explicación.</small></div><button class="switch" type="button" role="switch" aria-checked="false" aria-label="Opción"></button></div>
+        <button class="link-btn" type="button">Un link que es botón</button>
+        <div class="code-big">KZMR</div>
+        <div class="qr"><svg viewBox="0 0 8 8" width="120" height="120" shape-rendering="crispEdges"><rect width="8" height="8" fill="#fff"/><path fill="#1a1a1a" d="M0 0h3v3H0zM5 0h3v3H5zM0 5h3v3H0zM4 1h1v1H4zM3 4h2v1H3zM6 4h1v2H6zM4 6h1v2H4zM6 7h2v1H6z"/></svg></div>
+        <div class="lobby-players"><span class="p me">🇨🇱 Javi</span><span class="p">Cata</span><span class="p off">Pedro</span></div>
+        <p class="or">o</p>
+        <p class="waiting">Esperando a los demás<span class="dots"></span></p>
+        <div class="status"><div class="who">Le toca a Cata</div><div class="sub">Elige una letra</div></div>
+        <div class="result-hero"><span class="trophy">🏆</span><h2 class="display display--md">Resultado</h2></div>
+      </section>
+
+      <section class="panel stack" id="ds-ranking">
+        <h2 class="display display--sm">Ranking</h2>
+        <div class="rk-lista">
+          <div class="rk-fila"><span class="rk-puesto">🥇</span><span class="rk-nombre"><span class="rk-n">🇨🇱 Cata</span></span><span class="rk-puntos">120</span><small class="rk-tiempo">1:02</small></div>
+          <div class="rk-fila yo"><span class="rk-puesto">🥈</span><span class="rk-nombre"><span class="rk-n">🇧🇷 Javi</span><small>(tú)</small></span><span class="rk-puntos">98</span><small class="rk-tiempo">1:15</small></div>
+          <div class="rk-fila"><span class="rk-puesto">3</span><span class="rk-nombre"><span class="rk-n">Un nombre muy largo que se corta</span></span><span class="rk-puntos">7</span><small class="rk-tiempo">🏆</small></div>
+        </div>
+        <p class="rk-record">🎉 ¡Nuevo récord!</p>
+        <div class="rk-seg" role="tablist"><button type="button" class="on">Semana</button><button type="button">Siempre</button><button type="button">Amigos</button></div>
+        <div class="rk-jugador"><label class="rk-campo"><span>Tu nombre</span><input type="text" value="Javi"></label><label class="rk-campo"><span>PIN</span><input type="password" class="rk-pin" value="1234"></label><button type="button" class="rk-link">Salir</button></div>
+      </section>
+
+      <section class="panel stack" id="ds-teclado">
+        <h2 class="display display--sm">Teclado</h2>
+        <!-- In a plain block: in a .stack (flex column) the keypad's `margin: 0 auto` would shrink it to its min-content -->
+        <div><div class="entry"><div class="box filled">4</div><div class="box active">7</div><div class="box hidden-digit">0</div><div class="box"></div></div>
+        <div class="keypad"><button type="button">1</button><button type="button">2</button><button type="button" class="blocked">3</button><button type="button">4</button><button type="button" disabled>5</button><button type="button">6</button><button type="button" class="del" aria-label="Borrar">⌫</button><button type="button">0</button><button type="button" class="ok">OK</button></div></div>
+      </section>
+
+      <section class="panel stack" id="ds-escapes">
+        <h2 class="display display--sm">Excepciones</h2>
+        <p class="muted">Lo que un juego puede tener propio, con su motivo, está en DESIGN.md §4 y en <code>docs/design-allowlist.json</code>. Lo demás lo mide <code>node tools/agents/design-lint.mjs</code>.</p>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    // The tokens, read from base.css itself: a new one shows up here without touching this page.
+    const css = await (await fetch('../../assets/css/base.css')).text();
+    const root = css.match(/:root\s*\{([\s\S]*?)\n\}/)[1].replace(/\/\*[\s\S]*?\*\//g, '');
+    const tokens = [...root.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(m => [m[1], m[2].trim()]);
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    const swatches = document.getElementById('ds-muestras');
+    for (const [name, value] of tokens.filter(([, v]) => /^#|^rgba?\(/.test(v))) {
+      const s = el('div', 'ds-muestra'); s.append(el('span', 'ds-muestra-color'), el('b', '', name.slice(2)), el('small', 'muted', value));
+      s.querySelector('.ds-muestra-color').style.background = `var(${name})`; swatches.append(s);
+    }
+    const scale = (id, prefix, draw) => { const box = document.getElementById(id); for (const [name, value] of tokens.filter(([n]) => n.startsWith(prefix))) box.append(draw(name, value)); };
+    scale('ds-escala-espacio', '--s-', (name, value) => { const r = el('div', 'ds-paso'); const bar = el('span', 'ds-barra'); bar.style.width = value; r.append(bar, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
+    scale('ds-escala-esquinas', '--r-', (name, value) => { const r = el('div', 'ds-paso'); const box = el('span', 'ds-esquina'); box.style.borderRadius = value; r.append(box, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
+    scale('ds-escala-texto', '--fs-', (name, value) => { const r = el('div', 'ds-paso'); const t = el('span', '', `${name.slice(2)} · ${value}`); t.style.fontSize = `var(${name})`; r.append(t); return r; });
+    window.__design = { tokens: tokens.length };
+  </script>
+</body>
+</html>

@@ -379,6 +379,15 @@ export const PATHS = {
       `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
       1, 1, 1, 1, 1,
     ],
+    // The same end with the sheet unfolded: the final table (every box, the total) at full width
+    'final-table': [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
+      1, 1, 1, 1, 1,
+      `(()=>{const d=document.getElementById('result-cards');d.open=true;d.scrollIntoView({block:'start'});return 1})()`,
+    ],
   },
   'cuarto-rey': {
     intro: [],
@@ -491,6 +500,8 @@ export const PATHS = {
    */
   'toque-y-fama': {
     intro: [],
+    // One phone: the setup with the Cifras control and both toggle rows (Derecho a réplica, Cero al inicio)
+    setup: [`document.querySelectorAll('.mode')[0].click()`],
     solo: [`document.querySelectorAll('.mode')[2].click()`],
     'solo-game': [`document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-result': [
@@ -513,6 +524,14 @@ export const PATHS = {
    */
   'linea-de-tiempo': {
     intro: [],
+    // One phone: the setup with the dealing selector (three labels side by side) in view, and the first turn
+    setup: [`document.querySelectorAll('.mode')[0].click()`, `document.querySelector('.seg--cards').scrollIntoView({block:'center'})`],
+    game: [
+      `document.querySelectorAll('.mode')[0].click()`,
+      `[...document.querySelectorAll('#setup-form .player-row input')].forEach((i,k)=>{i.value=['Javi','Cata'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
+      `document.querySelector('#setup-actions .btn').click()`,
+      `document.querySelector('#handoff .btn')?.click() ?? document.getElementById('handoff').click()`,
+    ],
     solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`],
     'solo-game': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-result': [

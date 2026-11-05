@@ -556,6 +556,7 @@ node public/cup/store.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
+node public/labs/launched.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
@@ -571,6 +572,7 @@ node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
+node tools/agents/design-lint.test.mjs
 node tools/agents/document.test.mjs
 node tools/agents/english.test.mjs
 node tools/agents/failures.test.mjs
@@ -748,7 +750,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
   agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
-  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
+  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534)
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
@@ -805,6 +807,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
+- [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
 - [🐤 Aletazo (lab prototype, in Juegos en prueba)](docs/games/flap.md)
@@ -823,6 +826,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
+- [The design system](docs/DESIGN.md)
 - [Merge lanes (D-519)](docs/LANES.md)
 - [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
 - [Merging and publishing](docs/MERGING.md)
@@ -834,6 +838,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
+- [La Copa inside the design system: the analysis (phase 7, #1196)](docs/design/cup-unification.md)
 - [Piece 1 · Endless content with quality control](docs/learning/01-content-pipeline.md)
 - [Piece 2 · The factory's dashboard](docs/learning/02-factory-metrics.md)
 - [Piece 3 · The owner's taste as data](docs/learning/03-taste-model.md)

@@ -186,3 +186,7 @@ Gancho de pruebas (C-14): `window.__generala` (`view`, `match`, `session`).
   as one) and what it is worth. It goes beyond the three points on the owner's request
   (2026-10-20): the boxes are the game's vocabulary, and the table usually learns them from someone
   who already knows.
+
+## Migrated to the design system (D-533, #1193)
+
+Generala's stylesheet lost its copies of the game shell (screens, the cover's hero, modes, the form field, player rows, the toggle and its switch, the room, whose turn, the result's hero), which live once in `base.css`, and the rest (the dice, the table, the scorecard, the podium, the final table) is written on the tokens. The design lint reports zero on it beyond one escape: the kept-die tag under each of five dice keeps 0.62 rem so "Guardado" fits at 320 px. Where the shell differed from the game's copy, the shell won: the toggle row has no margin above it, the ✕ of a player row is 44 px, a disabled mode is at 50 % opacity. The dice's edge and the drop under "servida" (black at 35 %) are `--well-deep` (30 %).
