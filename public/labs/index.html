@@ -14,6 +14,8 @@
   <link rel="preload" href="../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
+    /* ✨ Mejoras en prueba says it is empty only with no card left (D-510); the rule lived in experiments.css, which this page does not load */
+    #mejoras:has(> .seccion) .mejoras-vacio { display: none; }
     .hero { text-align: center; padding: 6px 0 4px; }
     .hero .icon { font-size: 3.6rem; display: block; }
     .hero h1 { margin: 4px 0; }
@@ -47,6 +49,9 @@
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
     /* 🚀 Publicar para todos (D-480): only the owner sees it, under each card being tried */
     .publicar { display: grid; gap: 10px; }
+    /* Its buttons wrap as the sheets' do (.hoja .btn-row in base.css): three in a row at 320 px scrolled the page sideways (U-10) and broke each label into three lines (U-17) */
+    .publicar .btn-row { flex-wrap: wrap; }
+    .publicar .btn-row .btn { flex: 1 0 auto; max-width: 100%; }
     .publicar-estado { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 210, 63, 0.5); }
     .publicar-estado--ok { border-color: rgba(120, 255, 160, 0.6); }
     .publicar-estado--bad { border-color: rgba(255, 110, 110, 0.7); }
@@ -712,8 +717,11 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
-    import('./bodega.js').then(m => m.start()); // ✨ Mejoras lanzadas by week and month, with search
-    import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
+    // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search,
+    // and the owner's 🚀 Publicar para todos (D-480) is drawn on each card where it already sits
+    const moved = import('./launched.js').then(m => m.move()).catch(() => {});
+    moved.then(() => import('./bodega.js')).then(m => m.start());
+    moved.then(() => import('./publish.js')).then(m => m.start());
   </script>
 </body>
 </html>

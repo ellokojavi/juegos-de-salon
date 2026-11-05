@@ -10,7 +10,8 @@
  *
  * A card behind a runtime flag (D-498, `assets/js/flags.js`) needs no PR: its 🚀 writes
  * `flags/<id>` = 'all' and everyone gets it on their next visit; ↩️ Volver al laboratorio takes it
- * back. A later cleanup PR removes the gate and moves the card to La Bodega (D-479).
+ * back. Its card moves to La Bodega on its own when /labs/ opens (`launched.js`, D-534), keeping its
+ * switch (D-510); a later cleanup PR removes the gate and moves the card's HTML for good.
  */
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
@@ -56,10 +57,15 @@ let db, requests = {}, flags = {}, listas = {};
 export const flagOf = id => { const f = id.replace(/^seccion-/, ''); return FLAGS[f] ? f : null; };
 const setFlag = (f, state) => set(ref(db, `flags/${f}`), { state, at: Date.now() });
 
-/** What a flagged card shows (D-498): its state and the buttons to the other two; /labs/ is the one place to switch them. */
-export function flagStatusOf(state, at, lista = null) {
+/**
+ * What a flagged card shows (D-498): its state and the buttons to the other two; /labs/ is the one place to switch them.
+ * `inBodega`: where the card is now. A card launched from ✨ Mejoras en prueba moves to La Bodega when the page next opens
+ * (launched.js, D-534), so until then the line says it will, not that it already is.
+ */
+export function flagStatusOf(state, at, lista = null, { inBodega = true } = {}) {
   const since = at ? ` desde el ${when(at)}` : '';
-  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Su tarjeta ya está en La Bodega; más adelante, un PR de limpieza quita la puerta del código.'], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
+  const card = inBodega ? 'Su tarjeta ya está en La Bodega' : 'Su tarjeta pasa a La Bodega la próxima vez que abras esta página';
+  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, `${card}; más adelante, un PR de limpieza quita la puerta del código.`], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
   if (state === 'off') return { tone: 'bad', lines: [`⚪ Apagado para todos${since}, también en el laboratorio.`], to: [['lab', '🧪 Encender en el laboratorio']] };
   return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.', ...readyLines(lista)], ready: !!lista?.ready, to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar para todos']] };
 }
@@ -159,7 +165,7 @@ export function render(r = requests, fl = flags, li = listas) {
     // a flagged card shows its switch, unless a 📦 request is on its way (until the card is in La Bodega)
     const sending = requests[card.id]?.kind === 'bodega' && !(inBodega && requests[card.id].state === 'merged');
     if (f && !sending) {
-      const fs = flagStatusOf(stateOf(flags, f), flags?.[f]?.at, listas?.[f]);
+      const fs = flagStatusOf(stateOf(flags, f), flags?.[f]?.at, listas?.[f], { inBodega });
       const box = el('div', { class: 'publicar' }, el('div', { class: `publicar-estado publicar-estado--${fs.ready ? 'ok' : fs.tone}`, role: 'status' },
         ...fs.lines.map(l => el('p', {}, l)),
         el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)),
