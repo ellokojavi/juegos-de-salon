@@ -301,6 +301,19 @@
       "date": "2026-11-05T06:36:58.687Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 41981646404,
+      "check": "tests",
+      "pr": 1198,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "1bc1867c758c2d05f2dcdd9a228cf07eba91718a",
+      "test": "public/labs/bodega.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: #seccion-design is in ✨ Mejoras en prueba but no page asks the lab key for it any more: it reached everyone, so move it to La Bodega's ✨ Mejoras lanzadas (D-479)\ncode: 'ERR_ASSERTION',\nexpected: true,",
+      "signature": "3b0f7f054c",
+      "date": "2026-11-05T06:38:49.597Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
