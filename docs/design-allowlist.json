@@ -240,6 +240,42 @@
       "rule": "radius",
       "what": "border-radius: 3px",
       "reason": "Each plank of the wood left (`.tv-tablones span`, 14 px tall and a few px wide): a plank's nearly square corner is its shape; the smallest corner step (8 px) turns the planks into pills."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "colour",
+      "what": "*mask-image: #000",
+      "reason": "The opaque stop of the masks that melt the tower into the night and the end's strip at its edges: a mask reads only the alpha, black is not a colour the player sees."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "text-size",
+      "what": "font: 1.9rem var(--font-display)",
+      "reason": "«Perfecto ×n» flashing over the tower (`.sk-aviso.brilla`): a board's own message, read over the moving tower, between the text steps and the title steps."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "text-size",
+      "what": "font: 2.2rem var(--font-display)",
+      "reason": "«Fin del juego» over the fallen tower (`.sk-aviso.final`): a board's own message, as large as the title's top step at 390 px."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.6rem",
+      "reason": "The pause's title over the tower (`.sk-pausa .display`): the board's own message, the floor of .display--xl fixed so it does not grow over the tower on a wide screen."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "space",
+      "what": "margin-top: -110px",
+      "reason": "The end's strip (`.sk-juego.gira .sk-fin`) rises 110 px over the tower so «Continue» floats on it: the overlap is the tower's, not rhythm."
+    },
+    {
+      "file": "public/cup/games/stack/style.css",
+      "rule": "space",
+      "what": "padding: 44px 0 24px",
+      "reason": "The end's strip keeps 44 px above «Continue» for its 40 px melting top (the mask's ramp): the size of the fade, not rhythm."
     }
   ]
 }
