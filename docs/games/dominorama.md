@@ -113,3 +113,7 @@ boards solved by taps, the help, the result, giving up).
 
 Those of every lab prototype (D-304): Spanish only, outside La Copa and Uno al día, reached only with a
 lab key.
+
+## Migrated to the design system (D-533, #1193)
+
+The lab's stylesheet, `public/labs/dominorama/style.css`, lost its copy of the shell's `.link-btn` (identical to `base.css`'s) and writes the rest on the tokens: 37 lint hits to 0, with no escape. The dominoes' ivory, edge, middle line and dots are the game's own tokens (`--dm-*`); black shadows at an alpha are `rgb(from var(--well) r g b / a)`. What changed for the player, all intended: a cell's and a rule diamond's corner is 8 px (was 6), the rule's number takes the nearer text step and the dots' ink, a broken rule and a wrong placement are `--red` (was `#ff3b3b`), the "wrong" notice and the given-up stamp are `--pink` (was a pale pink of their own), and the stamp is one step larger (1.4 rem, was 1.3).
