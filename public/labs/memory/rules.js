@@ -10,7 +10,6 @@ const ES = {
   name: 'Memorice',
   back: '‹ Laboratorio',
   tagline: 'Mira, recuerda y encuentra.',
-  today: 'La partida de hoy es igual para todos.',
   steps: [
     ['👀', 'Mira los dibujos antes de que se tapen.'],
     ['👆', 'Toca el que te piden: uno, par o trío.'],
@@ -21,6 +20,7 @@ const ES = {
   bestLabel: 'Tu récord',
   round: 'Ronda {n}',
   look: '👀 ¡Mira bien!',
+  skip: '⏩ Tapar ya',
   hide: '🙈 Se tapan…',
   pairs: '✌️ ¡Ronda de pares!',
   ask: '¿Dónde está?',
@@ -50,7 +50,6 @@ const EN = {
   name: 'Memorice',
   back: '‹ Lab',
   tagline: 'Look, remember, find.',
-  today: 'Today’s game is the same for everyone.',
   steps: [
     ['👀', 'Look at the pictures before they hide.'],
     ['👆', 'Tap the one asked for: one, a pair or a trio.'],
@@ -61,6 +60,7 @@ const EN = {
   bestLabel: 'Your best',
   round: 'Round {n}',
   look: '👀 Look closely!',
+  skip: '⏩ Cover now',
   hide: '🙈 Covering…',
   pairs: '✌️ Pairs round!',
   ask: 'Where is it?',
@@ -90,7 +90,6 @@ const PT = {
   name: 'Memorice',
   back: '‹ Laboratório',
   tagline: 'Olhe, lembre e encontre.',
-  today: 'A partida de hoje é igual para todos.',
   steps: [
     ['👀', 'Olhe os desenhos antes que sejam cobertos.'],
     ['👆', 'Toque o pedido: um, um par ou um trio.'],
@@ -101,6 +100,7 @@ const PT = {
   bestLabel: 'Seu recorde',
   round: 'Rodada {n}',
   look: '👀 Olhe bem!',
+  skip: '⏩ Cobrir já',
   hide: '🙈 Cobrindo…',
   pairs: '✌️ Rodada de pares!',
   ask: 'Onde está?',

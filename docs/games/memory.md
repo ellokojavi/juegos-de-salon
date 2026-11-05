@@ -41,7 +41,7 @@ The title with a 👀 that blinks and the tagline («Mira, recuerda y encuentra.
 is one, this phone's best shown like a result, a yellow pill «🏆 Tu récord · 7 rondas» (the owner
 asked for it up top, not under the steps); the language flags and a small 3×3 board that plays by
 itself (the pictures show, cover, and the one asked opens with a green ring; still with reduced
-motion). Then "👀 Jugar" and the three short steps (after the button, U-39) and today's note.
+motion). Then "👀 Jugar" and the three short steps (after the button, U-39).
 
 ## How it is played
 
@@ -49,7 +49,8 @@ The heading (name, best), the lives and the round on top; the board in the middl
 it a bar for the time left and the prompt.
 
 1. **Look.** The tiles flip and show the round's pictures; some repeat. The bar (lime to yellow) runs
-   out the time to look.
+   out the time to look. In every round "⏩ Tapar ya", beside the prompt, covers them at once and goes on
+   to the next step, so a good player reaches the hard rounds sooner (the owner's request).
 2. **Covered.** They flip back.
 3. **Find.** "¿Dónde está? [picture]", "Encuentra los dos:" or "Encuentra los tres:" asks for one
    picture; every copy of it must be tapped before the bar (pink to cyan) runs out. A right tile opens
@@ -60,7 +61,7 @@ it a bar for the time left and the prompt.
 
 **The levels** (`level(n)` and `makeRound` in the engine, endless):
 
-- **The intro**, the same for everyone (`INTRO`): 1. 3×3, two pictures, find one ("✌️ ¡Ronda de
+- **The intro**, the same groups for everyone, with the pictures and places of that game's seed (`INTRO`): 1. 3×3, two pictures, find one ("✌️ ¡Ronda de
   pares!" announces level 2); 2. 3×3, two pairs, find one pair; 3. 4×4, three pictures; 4. 4×4, two
   pairs and one picture, find a pair.
 - **Then mixed:** the board grows fast (4×4 to level 5, 5×5 to 8, then 6×6, never bigger); the tiles
@@ -70,13 +71,14 @@ it a bar for the time left and the prompt.
 - **Time to look** (`lookMs`, the owner's request): 4.5 s in levels 1 and 2, 4 s in level 3 and down
   evenly to 2 s at level 20, then to 1.5 s at level 25, and 50 ms less each level after that down to 0.8 s (level 39), so that
   sooner or later nobody can keep up. **Time to answer:** 4.5 s per copy at first; every level after
-  the intro is 3.5 % shorter, down to 1.4 s per copy.
+  the intro is 3.5 % shorter, down to 2.5 s per copy.
 
 **Lives:** 3. Five rounds cleared in a row without a miss give a lost one back. With no lives left the
 game ends.
 
-**Seed:** without `?seed=` the first game is today's (`day:<date>`), the same for everyone; "Jugar de
-nuevo" draws a random one. A miss replays the level with the try number in the seed, so the board is
+**Seed:** playing alone is a new game every time, a random seed (the owner's request); `?seed=` plays
+that seed's game, and the shared result links to it. Memorice is in no La Copa or Uno al día yet: one
+that adds it passes everyone the same seed. A miss replays the level with the try number in the seed, so the board is
 new. `?test` runs every wait four times faster (the end-to-end script).
 
 ## Result

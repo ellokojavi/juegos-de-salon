@@ -1,6 +1,7 @@
 // Memorice in the lab, end to end, at /labs/memory/: the lab offers it under Active projects;
-// the cover has Play, three steps and today's note, and its board plays by itself; Play shows two
-// pictures on a 3×3 board and covers them; tapping every copy of the picture asked (one, then a pair)
+// the cover has Play and three steps, and its board plays by itself; each game without a seed is a
+// new one; Play shows two pictures on a 3×3 board and covers them; the Cover now button covers them at
+// once and goes; tapping every copy of the picture asked (one, then a pair)
 // clears the round and goes up a level; a wrong tile shakes, shows where it was and costs a life;
 // letting the time run out costs one too; three misses end the game with the rounds cleared, share,
 // play again and the comment after a line. At 375 px.
@@ -21,16 +22,27 @@ ok(await ev(`document.querySelector('#activos #seccion-memorice #btn-memorice')?
 await b.go(`${SITE}/labs/memory/?test`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Jugar');
 ok(await ev(`document.querySelectorAll('.steps li').length`) === 3, 'three steps');
-ok(/igual para todos/.test(await ev(`document.body.textContent`)), 'without a seed it is today\'s game');
+ok(!/igual para todos/.test(await ev(`document.body.innerText`)), 'the cover does not promise the same game for everyone');
 ok(await waitFor(`document.querySelectorAll('.demo .tile.open').length >= 1`, 6000), 'the cover board shows pictures by itself');
 ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'no sideways scroll at 375 px');
 await b.shot('01-cover');
+
+// Without a seed, every game is a new one
+const seeds = [];
+for (let k = 0; k < 2; k++) {
+  await b.go(`${SITE}/labs/memory/?test`, 1200);
+  await waitFor(`!!document.getElementById('btn-jugar')`);
+  await ev(`document.getElementById('btn-jugar').click(); 1`);
+  seeds.push(await ev(`window.__memory.g.seed`));
+}
+ok(seeds[0] && seeds[0] !== seeds[1], `each game without a seed is a new one (${seeds})`);
 
 await b.go(`${SITE}/labs/memory/?seed=e2e&test`, 1200);
 await waitFor(`!!document.getElementById('btn-jugar')`);
 await ev(`document.getElementById('btn-jugar').click(); 1`);
 ok(await waitFor(`document.querySelectorAll('#tablero .tile.open svg').length === 2`, 3000), 'Jugar shows two pictures on a 3×3 board');
 ok(await ev(`document.querySelectorAll('#tablero .tile').length`) === 9, 'nine tiles');
+ok(await ev(`!!document.getElementById('btn-tapar')`), 'with the button to cover them now');
 await b.shot('02-look');
 ok(await waitFor(`!!window.__memory.answer`, 8000) && await ev(`document.querySelectorAll('#tablero .tile.open').length`) === 0, 'they get covered and it asks');
 ok(await ev(`document.querySelector('.bar-ee').classList.contains('answer')`), 'with a bar for the time to answer');
@@ -38,6 +50,12 @@ ok(await ev(`!!document.querySelector('#aviso .pic-icon svg')`), 'the prompt sho
 
 // Clear three rounds with the engine's answers (one picture, a pair, one picture): each one goes up a level
 for (let k = 1; k <= 3; k++) {
+  if (k === 2) {
+    // The button covers the pictures at once and goes
+    ok(await waitFor(`!!document.getElementById('btn-tapar')`, 3000), 'the next round offers the button too');
+    await ev(`document.getElementById('btn-tapar').click(); 1`);
+    ok(await ev(`!document.getElementById('btn-tapar') && document.querySelectorAll('#tablero .tile.open').length === 0`), 'tapping it covers them at once and it goes');
+  }
   await waitFor(`!!window.__memory.answer`, 10000);
   for (const c of await ev(`window.__memory.round.ask.cells`)) { await tapTile(c); await sleep(40); }
   ok(await waitFor(`window.__memory.g.level === ${k + 1}`, 3000), `round ${k} cleared: level ${k + 1}`);

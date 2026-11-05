@@ -10,7 +10,6 @@
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; text-align: left; }
 .steps li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; text-wrap: pretty; }
 .step-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
-.today-note { margin: 12px 0 0; font-size: 0.85rem; text-align: left; }
 .best-cover {
   display: inline-flex; align-items: baseline; gap: 10px; padding: 6px 16px 7px; border-radius: 999px;
   background: rgba(255, 210, 63, 0.12); border: 1.5px solid rgba(255, 210, 63, 0.55); animation: pop 0.4s ease-out;
@@ -83,6 +82,9 @@
 .prompt-ee.well { color: var(--lime); }
 .prompt-ee.bad { color: #ff8fa3; }
 .prompt-ee.ask { font-size: 1.25rem; }
+/* Cover the pictures early: it shares the prompt's line, so the board does not move */
+.skip-ee { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--cyan); background: var(--glass); color: #fff; font: 800 0.95rem var(--font-body); white-space: nowrap; cursor: pointer; }
+.skip-ee:active { transform: translateY(2px); }
 .pic-icon { width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 10px; background: #2d1b55; border: 2px solid var(--yellow); animation: pop 0.3s ease-out; }
 .pic-icon svg { width: 88%; height: 88%; }
 /* The time left to look */

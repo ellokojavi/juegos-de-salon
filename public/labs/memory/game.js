@@ -2,9 +2,9 @@
  * Memorice — lab prototype (the owner's idea): an endless, quick memory game. Each round some
  * pixel-art pictures show on a covered board, some repeated, and hide again; the player taps every
  * copy of the one picture asked for (one, a pair or a trio) before the time runs out. Rounds keep
- * getting harder until the three lives run out. Without `?seed=` it is today's game, the same for
- * everyone. The rules are in engine.js, the texts in rules.js, the pictures in sprites.js.
- * See docs/games/memory.md.
+ * getting harder until the three lives run out. Playing alone is a new game every time; `?seed=`
+ * plays that seed's game. The rules are in engine.js, the texts in rules.js, the pictures in
+ * sprites.js. See docs/games/memory.md.
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { getLang, langToggle, COMMON, SITIO } from '../../assets/js/i18n.js';
@@ -12,7 +12,6 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
-import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { mmss } from '../../assets/js/time-format.js';
 import { LIVES, newGame, currentRound, newPlay, tap, endRound, makeRound } from './engine.js';
@@ -106,8 +105,7 @@ function cover() {
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-jugar', onClick: () => { SFX.tap(); start(); } }, T.play),
     // The steps go after Play, so it is seen without scrolling on a small phone (U-39)
     el('div', { class: 'panel' },
-      el('ol', { class: 'steps' }, ...T.steps.map(([ico, x]) => el('li', {}, el('span', { class: 'step-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x)))),
-      SEED_URL ? null : el('p', { class: 'muted today-note' }, `📅 ${T.today}`)),
+      el('ol', { class: 'steps' }, ...T.steps.map(([ico, x]) => el('li', {}, el('span', { class: 'step-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
   );
   commentFoot('portada');
   demo(mini);
@@ -139,8 +137,9 @@ function demo(b) {
 /* ------------------------------------------------------------------ */
 
 let hud = null;
-/** A game: the first one is today's (or the link's seed); playing again draws a new one. */
-function start(seed = SEED_URL || `day:${fechaLocal()}`) {
+const newSeed = () => Math.random().toString(36).slice(2, 8);
+/** A game: the link's seed if it has one; otherwise, and when playing again, a new one (the owner's request). */
+function start(seed = SEED_URL || newSeed()) {
   demoRun++;
   S.g = newGame(seed);
   S.best = bestBefore();
@@ -191,12 +190,18 @@ async function loop(run) {
     });
     // 1. The first pairs round says so first
     if (round.intro && round.ask.cells.length === 2 && S.g.level === 2) { say(T.pairs, 'big'); SFX.turn(); await wait(900); if (!alive()) return; }
-    // 2. The pictures show
-    say(T.look);
+    // 2. The pictures show, and a good player can cover them early to reach the hard rounds sooner (the owner's request)
+    const skip = el('button', { type: 'button', class: 'skip-ee', id: 'btn-tapar' }, T.skip);
+    say([el('span', {}, T.look), skip]);
     SFX.flip();
-    round.board.forEach((s, i) => s && setTimeout(() => openTile(tileAt(b, i), s, false), anim(i * 12)));
+    const opening = round.board.map((s, i) => s && setTimeout(() => openTile(tileAt(b, i), s, false), anim(i * 12)));
     timeBar(round.showMs, 'look');
-    await wait(round.showMs); if (!alive()) return;
+    await new Promise(done => {
+      const clock = setTimeout(done, round.showMs * SPEED);
+      skip.addEventListener('click', () => { clearTimeout(clock); SFX.tap(); done(); });
+    });
+    opening.forEach(clearTimeout);
+    if (!alive()) return;
     // 3. They hide
     say(T.hide);
     closeAll(b);
@@ -292,8 +297,8 @@ function result() {
       el('li', {}, fmt(T.found, { n: g.found })),
       el('li', {}, fmt(T.reached, { n: g.level })),
       el('li', {}, fmt(T.time, { t: mmss(ms) }))),
-    botonResultadoSolo({ C, emoji: '👀', juego: T.name, puntaje: scoreText, tiempo: mmss(ms), url: `${SITIO}labs/memory/${link(g.seed.startsWith('day:') ? '' : g.seed)}`, alTocar: () => SFX.tap() }),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); start(Math.random().toString(36).slice(2, 8)); } }, T.again),
+    botonResultadoSolo({ C, emoji: '👀', juego: T.name, puntaje: scoreText, tiempo: mmss(ms), url: `${SITIO}labs/memory/${link(g.seed)}`, alTocar: () => SFX.tap() }),
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); start(newSeed()); } }, T.again),
     salidasFin('lab', { lang, raiz: '../../' }),
     // A line sets the game apart from the comment for those trying it, as in the other lab games
     el('hr', { class: 'divisor' }),
