@@ -39,7 +39,7 @@ The steps:
 2. ⭕ Pasa por aros y huecos. Al medio vale doble.
 3. ❤️ 3 vidas. Si chocas o te saltas un aro, pierdes una.
 
-Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-265).
+Under the stage, below the fold, the game's ranking (the `aletazo` table, Semana · Siempre · Amigos, with signing in, D-212, D-249), like every game played alone; the stage keeps the whole first screen. Then «💬 Dejar un comentario» opens the lab's comment form (D-265).
 
 ## How it is played
 
@@ -70,7 +70,7 @@ Under the stage, «💬 Dejar un comentario» opens the lab's comment form (D-26
 - **The end:** the bird falls with ✕ eyes, and a card shows the stamp («🏆 ¡Nuevo récord!» or «¡Se
   acabó!»), the score, a line about how it went (under 6: «Recién saliendo del nido 🐣»; 6–15: «Ya le
   estás agarrando el vuelo»; 16–30: «¡Vuelas bonito! ✨»; 31–50: «¡Pájaro de altura! 🦅»; 51 and up:
-  «¡Dueño del cielo! 👑»), «Tu mejor: n» when it is not a record, «Jugar otra vez» and back to the lab.
+  «¡Dueño del cielo! 👑»), «Tu mejor: n» when it is not a record, «Jugar otra vez» and back to the lab. Under the stage, the notice that saves the run to the ranking (or «¿Quieres que esta partida cuente?» without a player) and the table; a tester's start never counts.
   The owner chose this simple ending over one with a summary of the game.
 - **Paused:** leaving the tab mid-game (a call, another app) pauses it; a tap brings it back.
 

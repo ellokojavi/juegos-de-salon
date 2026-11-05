@@ -1,12 +1,15 @@
 /* Aletazo (lab). What is shared lives in assets/css/base.css: the night, the fonts, .btn, .display, .rainbow. */
 
 /* One screen: the top bar, the stage filling the rest, the comment link under it */
-.app { height: 100svh; min-height: 0; gap: 0; }
+.app { min-height: 100svh; gap: 0; }
 .pie { text-align: center; }
+/* The ranking, under the stage: the stage keeps the first screen, the table is below the fold */
+.ranking-aletazo { margin-top: 16px; }
+.ranking-aletazo:empty, body.jugando .ranking-aletazo { display: none; }
 
 /* The stage: a tap anywhere on it flaps. The canvas is transparent over the app's night */
 .escenario {
-  position: relative; flex: 1; min-height: 340px; overflow: hidden; border-radius: var(--radius);
+  position: relative; flex: none; height: calc(100svh - 76px); min-height: 340px; overflow: hidden; border-radius: var(--radius);
   border: 1px solid var(--glass-border); background: rgba(10, 4, 24, 0.35);
   box-shadow: inset 0 0 60px rgba(138, 77, 255, 0.18), 0 10px 30px rgba(0, 0, 0, 0.35);
   touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
