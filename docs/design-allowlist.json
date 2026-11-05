@@ -95,7 +95,7 @@
       "file": "public/liars-dice/style.css",
       "rule": "text-size",
       "what": "font: 900 2.6rem var(--font-num)",
-      "reason": "The bid's figure (`.bid-chip b` and its kin): a number the table reads from across the phone, the board's own size above the text steps (D-30: figures in --font-num)."
+      "reason": "The bid's figure (`.amount-n`): a number the table reads from across the phone, the board's own size above the text steps (D-30: figures in --font-num)."
     }
   ]
 }
