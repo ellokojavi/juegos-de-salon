@@ -73,7 +73,7 @@ The owner's Claude plan is the programme's only budget. Rules for a session on t
 | 3 | The owner's taste as data | [learning/03-taste-model.md](learning/03-taste-model.md) | planned | how often the ideas agent predicts the owner's answer |
 | 4 | Earned autonomy | [learning/04-earned-autonomy.md](learning/04-earned-autonomy.md) | planned | agreement between agent and owner in shadow mode |
 | 5 | Closing the hypothesis loop | [learning/05-hypothesis-loop.md](learning/05-hypothesis-loop.md) | planned | experiments closed with a verdict |
-| 6 | Where the model lives: a judge in three places | [learning/06-model-placement.md](learning/06-model-placement.md) | planned, after 1 | latency, quality and availability of the same judge in each place |
+| 6 | Where the model lives: a judge in three places | [learning/06-model-placement.md](learning/06-model-placement.md) | the server (6.0) built in the repo, the owner installs it; the game after 1 | latency, quality and availability of the same judge in each place |
 
 **Order**: 1 first (cheapest, and its eval is what every other piece needs to choose a model); 2
 in parallel because it needs no decision from the owner; 3, 4 and 5 once there is history to

@@ -1,3 +1,3 @@
 level: patch
 
-- **Learning programme, piece 1**: the concept is closed with the owner's answers (variety enters as a bonus, the board rule M3 will be enforced behind a flag and measured, the deduction rule is not told to the player) and its first learnings; `docs/games/agents.md` now states the rule the whole deck follows. Nothing changes for players yet.
+- **The referee** (learning programme, piece 6, D-532): `tools/referee/` is a gateway for an open model on the owner's Mac mini (Ollama on localhost, reached only through a Cloudflare tunnel), with templates instead of prompts, a lab key, limits, a timeout, a breaker and a cache, keeping no player text; `jobs.json` gains services kept alive by launchd (`service: true`), with the `referee` job. Nothing changes for players yet: no game asks it.

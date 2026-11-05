@@ -5,34 +5,73 @@
       "id": "inbox-watch",
       "where": "mac",
       "every": 300,
-      "command": ["node", "tools/jobs/inbox-watch.mjs"],
+      "command": [
+        "node",
+        "tools/jobs/inbox-watch.mjs"
+      ],
       "what": "Checks the hola@ inbox without Claude; only when an email is waiting it runs the support agent headless (Haiku) and uploads the reports as issues at once.",
-      "decisions": ["D-318", "D-365"]
+      "decisions": [
+        "D-318",
+        "D-365"
+      ]
     },
     {
       "id": "lab-publish-watch",
       "where": "mac",
       "every": 300,
       "timeout": 7200,
-      "command": ["node", "tools/jobs/lab-publish-watch.mjs"],
+      "command": [
+        "node",
+        "tools/jobs/lab-publish-watch.mjs"
+      ],
       "what": "Follows the PRs of the lab's 🚀 Publicar requests and, only when the owner asked for a feature to go live from /labs/, runs a headless Claude session that takes it out of the lab and opens its PR with auto-merge.",
-      "decisions": ["D-479", "D-480"]
+      "decisions": [
+        "D-479",
+        "D-480"
+      ]
     },
     {
       "id": "lab-ready",
       "where": "mac",
       "every": 3600,
-      "command": ["node", "tools/agents/lab-ready.mjs", "check"],
+      "command": [
+        "node",
+        "tools/agents/lab-ready.mjs",
+        "check"
+      ],
       "what": "Every hour, without Claude: weighs each lab flag's real use by lab key holders (labsUso/) against its threshold and writes flagsListas/, so its /labs/ card says ✅ Listo para 🚀 with the evidence.",
-      "decisions": ["D-528"]
+      "decisions": [
+        "D-528"
+      ]
     },
     {
       "id": "feedback-watch",
       "where": "mac",
       "every": 300,
-      "command": ["node", "tools/agents/feedback.mjs", "sync"],
+      "command": [
+        "node",
+        "tools/agents/feedback.mjs",
+        "sync"
+      ],
       "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues (reads with the owner's admin key; `gh` makes the issues). Each pass also deletes the reply emails left more than 90 days ago without a reply (D-463). `feedback.yml` stays as a manual fallback.",
-      "decisions": ["D-275", "D-382", "D-463"]
+      "decisions": [
+        "D-275",
+        "D-382",
+        "D-463"
+      ]
+    },
+    {
+      "id": "referee",
+      "where": "mac",
+      "service": true,
+      "command": [
+        "node",
+        "tools/referee/gateway.mjs"
+      ],
+      "what": "The referee gateway (piece 6 of the learning programme): the one door between the games and the open model on this Mac (Ollama on localhost), kept alive by launchd and reached only through the Cloudflare tunnel. Never the owner's Claude plan.",
+      "decisions": [
+        "D-532"
+      ]
     },
     {
       "id": "notifications",
@@ -40,7 +79,9 @@
       "workflow": "notifications.yml",
       "cron": "7,22,37,52 * * * *",
       "what": "Sends La Copa's Web Push notifications that are due.",
-      "decisions": ["D-224"]
+      "decisions": [
+        "D-224"
+      ]
     },
     {
       "id": "uad-rebuild",
@@ -48,7 +89,12 @@
       "workflow": "uad-rebuild.yml",
       "cron": "23 * * * *",
       "what": "Every hour: rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs, and the week's sums and best streaks, the only writer of them for phones in the night's totals lab (D-500); also writes the season's places by week (uadTemporada/). In the 08 UTC run, deletes the names in stats/ older than 24 months (stats-retention.mjs).",
-      "decisions": ["D-415", "D-424", "D-472", "D-500"]
+      "decisions": [
+        "D-415",
+        "D-424",
+        "D-472",
+        "D-500"
+      ]
     },
     {
       "id": "firebase-archive",
@@ -56,7 +102,9 @@
       "workflow": "firebase-archive.yml",
       "cron": "41 9 * * *",
       "what": "Moves finished Cups older than two years (podium saved), stats days older than two years, and daily tables and Uno al día day starts older than 35 days into archive/, copying and checking each one before deleting it. A dry run until the FIREBASE_ARCHIVE_APPLY variable is true.",
-      "decisions": ["D-476"]
+      "decisions": [
+        "D-476"
+      ]
     },
     {
       "id": "cup-podiums",
@@ -64,7 +112,10 @@
       "workflow": "cup-podiums.yml",
       "cron": "47 7,8 * * *",
       "what": "Saves the podium of every finished Cup, so its champions reach the medal table; since D-499 the app no longer saves podiums, so this is the only writer.",
-      "decisions": ["D-450", "D-499"]
+      "decisions": [
+        "D-450",
+        "D-499"
+      ]
     },
     {
       "id": "room-sweep",
@@ -72,7 +123,10 @@
       "workflow": "room-sweep.yml",
       "cron": "37 9 * * *",
       "what": "Deletes the expired rooms: sweeps every closed cleanup bucket of a past day, however old, deletes the expired rooms no bucket names and notes the live ones (room-sweep.mjs). Phones no longer sweep.",
-      "decisions": ["D-321", "D-499"]
+      "decisions": [
+        "D-321",
+        "D-499"
+      ]
     },
     {
       "id": "round-watch",
@@ -80,7 +134,9 @@
       "workflow": "round-watch.yml",
       "cron": "17 17 * * *",
       "what": "Opens the \"Processes round missed\" issue when a commit on main has gone more than a day without the processes round looking at it, and closes it when the round catches up.",
-      "decisions": ["D-440"]
+      "decisions": [
+        "D-440"
+      ]
     },
     {
       "id": "failure-log",
@@ -88,7 +144,9 @@
       "workflow": "failure-log.yml",
       "trigger": "workflow_run: Tests, End to end (completed, on PRs)",
       "what": "Records every red `tests` or `end-to-end` run of a PR on the `failure-log` branch, one record per failing test with its signature, and closes them when the PR goes green (fixed by that commit, or flaky on the same commit). `failures.mjs check` and `processes.mjs check` show the signatures seen on two PRs.",
-      "decisions": ["D-518"]
+      "decisions": [
+        "D-518"
+      ]
     },
     {
       "id": "pending-watch",
@@ -96,32 +154,61 @@
       "workflow": "pending-watch.yml",
       "cron": "47 17 * * *",
       "what": "Keeps the \"Pending work\" issue current with the open PRs that are stuck and the branches whose commits never reached main and have no PR; closes it when nothing is left.",
-      "decisions": ["D-441"]
+      "decisions": [
+        "D-441"
+      ]
     },
     {
       "id": "processes-round",
       "where": "mac",
-      "at": { "hour": 4, "minute": 30 },
+      "at": {
+        "hour": 4,
+        "minute": 30
+      },
       "timeout": 10800,
-      "command": ["node", "tools/jobs/claude-task.mjs", "tools/jobs/prompts/processes-round.md"],
+      "command": [
+        "node",
+        "tools/jobs/claude-task.mjs",
+        "tools/jobs/prompts/processes-round.md"
+      ],
       "what": "The processes agent's daily round at 4:30 (the Mac mini keeps Pacific time): a headless Claude session that follows its prompt, launching documentation, usability, support and ideas, handling feedback and collecting the changelog. round-watch checks it ran.",
-      "decisions": ["D-273", "D-276", "D-440", "D-451"]
+      "decisions": [
+        "D-273",
+        "D-276",
+        "D-440",
+        "D-451"
+      ]
     },
     {
       "id": "weekly-report",
       "where": "mac",
-      "at": { "weekday": 0, "hour": 8, "minute": 0 },
+      "at": {
+        "weekday": 0,
+        "hour": 8,
+        "minute": 0
+      },
       "timeout": 1800,
-      "command": ["node", "tools/jobs/claude-task.mjs", "tools/jobs/prompts/weekly-report.md"],
+      "command": [
+        "node",
+        "tools/jobs/claude-task.mjs",
+        "tools/jobs/prompts/weekly-report.md"
+      ],
       "what": "Sunday 8:00: a headless Claude session that runs `node tools/reports/weekly.mjs --send`, the week's PDF emailed to the owner.",
-      "decisions": ["D-352", "D-440", "D-451"]
+      "decisions": [
+        "D-352",
+        "D-440",
+        "D-451"
+      ]
     },
     {
       "id": "clean-worktrees",
       "where": "hook",
       "trigger": "SessionStart (.claude/settings.json)",
       "what": "Deletes merged, empty and abandoned worktrees at the start of every Claude session in this repo.",
-      "decisions": ["D-218", "D-252"]
+      "decisions": [
+        "D-218",
+        "D-252"
+      ]
     }
   ]
 }

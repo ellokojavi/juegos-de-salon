@@ -619,6 +619,7 @@ node tools/push/notify.test.mjs
 node tools/push/release.test.mjs
 node tools/push/schedule.test.mjs
 node tools/push/webpush.test.mjs
+node tools/referee/gateway.test.mjs
 node tools/release/changelog.test.mjs
 node tools/release/json-ld.test.mjs
 node tools/release/merge-report.test.mjs
