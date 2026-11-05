@@ -805,6 +805,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
+- [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
 - [🐤 Aletazo (lab prototype, in Juegos en prueba)](docs/games/flap.md)
