@@ -15,7 +15,7 @@ boundary the system respects. The analysis: [design/cup-unification.md](design/c
 
 **Who keeps it:** the usability agent (`.claude/agents/usability.md`). It owns this document, the
 design lint (`tools/agents/design-lint.mjs`, phase 2 of #1188), and the components page
-(`/labs/design/`, phase 3). A change to a token or a shared class is reviewed by it. A game does
+(`/labs/design/`, phase 3, with the full-screen pieces in phase 3b, #1200). A change to a token or a shared class is reviewed by it. A game does
 not get a visual rule of its own without an entry in the escapes section below.
 
 **Why it exists:** by November 2026 the 26 game stylesheets held 325 hex colours written by hand
