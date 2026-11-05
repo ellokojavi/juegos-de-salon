@@ -49,6 +49,9 @@
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
     /* 🚀 Publicar para todos (D-480): only the owner sees it, under each card being tried */
     .publicar { display: grid; gap: 10px; }
+    /* Its buttons wrap as the sheets' do (.hoja .btn-row in base.css): three in a row at 320 px scrolled the page sideways (U-10) and broke each label into three lines (U-17) */
+    .publicar .btn-row { flex-wrap: wrap; }
+    .publicar .btn-row .btn { flex: 1 0 auto; max-width: 100%; }
     .publicar-estado { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 210, 63, 0.5); }
     .publicar-estado--ok { border-color: rgba(120, 255, 160, 0.6); }
     .publicar-estado--bad { border-color: rgba(255, 110, 110, 0.7); }
