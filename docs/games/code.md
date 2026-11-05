@@ -89,3 +89,7 @@ tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choq
 
 - **C-3 (los textos en `i18n.js` o `rules.js`):** el prototipo trae su diccionario en `game.js`, en
   los tres idiomas, como lo hizo el de El caso (D-256).
+
+## Migrated to the design system (D-533, #1193)
+
+The lab's stylesheet, `public/labs/code/style.css`, lost its copies of the shell's `.link-btn` and `.btn { text-decoration: none }`, and writes the rest on the tokens: 37 lint hits to 0 beyond four escapes in `docs/design-allowlist.json` (the cover's 🔐 at 4 rem, the padlock beside the title at 2.6 rem, the result's trophy at 3.6 rem and the opened code at 2.4 rem). A card's stroke is now `.trazo` (in `game.js` too): it was `.seg`, the shell's segmented control, whose well, corner and padding the SVG lines inherited without showing them. The sky's tinted stars and the cards' sheen are the game's own tokens (`--cl-*`). What changed for the player, all intended: the board's corner is 16 px (was 18) and its well `--well` (25 %, was 22 %), a card's padding 6 px (was 7), the controls' labels and the letter keys on the nearer text step, the "wrong" notice in `--pink` (was a pale pink of its own) and a placed card's number in `--card-ink`.

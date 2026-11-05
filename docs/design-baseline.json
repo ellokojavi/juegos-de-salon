@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 1145,
+  "total": 1108,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -103,14 +103,6 @@
       "radius": 2,
       "space": 6,
       "text-size": 14
-    },
-    "public/labs/code/style.css": {
-      "token-colour": 12,
-      "colour": 11,
-      "radius": 1,
-      "space": 2,
-      "copied": 3,
-      "text-size": 8
     },
     "public/labs/dominorama/style.css": {
       "token-colour": 11,
