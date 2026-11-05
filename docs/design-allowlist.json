@@ -144,6 +144,12 @@
       "rule": "radius",
       "what": "border-radius: 2px",
       "reason": "The small diamond on a covered tile (`.face-cover::after`): a pixel-art shape, not a corner on the scale; at 8 px it would be a circle."
+    },
+    {
+      "file": "public/labs/chameleon/style.css",
+      "rule": "text-size",
+      "what": "font-size: 5rem",
+      "reason": "The chameleon's reveal on the secret card (`.big-lizard`): the one card without a word, so the lizard is bigger than the cover's icon (4.2 rem) and whoever holds the phone knows at once; a hero's own size, not a text step."
     }
   ]
 }

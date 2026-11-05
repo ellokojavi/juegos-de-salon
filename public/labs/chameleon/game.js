@@ -70,7 +70,7 @@ function renderPlayersForm() {
   draft.forEach((v, i) => {
     const input = el('input', {
       type: 'text', placeholder: fmt(T.playerPlaceholder, { n: i + 1 }), value: v, maxlength: 14, autocomplete: 'off', enterkeyhint: 'next',
-      onInput: e => { draft[i] = e.target.value; },
+      onInput: e => { draft[i] = e.target.value; $('#form-error').textContent = ''; },
       onKeydown: e => { if (e.key === 'Enter') { const next = $$('#players-form input')[i + 1]; next ? next.focus() : e.target.blur(); } },
     });
     form.append(el('div', { class: 'player-row' },
