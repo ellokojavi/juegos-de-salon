@@ -135,7 +135,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is drawn 40 px tall; an invisible `::before` band makes its tap area 44 px (U-10) |
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn--danger` (red: confirm a destructive step; with `--ghost`, the soft pink of turning something off), `.btn-row`, `.btn-row--wrap` (the buttons go down a line when they do not fit) | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
-| Panel | `.panel`, `details.panel`, `.panel--danger` | the glass card; `--danger` frames a destructive step in red. `details.panel` is also the one how-to-play block, "🧠 Cómo se juega": folded on a home game's cover, open on a Cup day's cover, folded under a Cup game's board (phase 7) |
+| Panel | `.panel`, `details.panel`, `.panel--danger` | the glass card; `details.panel`'s summary is drawn its text's height, an invisible `::before` band makes its tap area 44 px (U-10); `--danger` frames a destructive step in red. `details.panel` is also the one how-to-play block, "🧠 Cómo se juega": folded on a home game's cover, open on a Cup day's cover, folded under a Cup game's board (phase 7) |
 | Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chip--cyan`, `.chips` | `--cyan` is the second meaning beside gold: La Copa's final ×2 (D-151) against the wildcard's gold |
 | A chip to choose | `.chip-btn`, `.chip-btn.on` | a pill to tap, 44 px tall; on is yellow like `.opcion.on` (yellow is the choice). La Copa's names to sit as, its week styles and its length shortcuts (phase 7) |
 | Stack | `.stack` | vertical rhythm of 12 px |
@@ -254,8 +254,8 @@ candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
 ## 5. Known debts of the system itself
 
-Found while building the components page (phase 3). The 40 px `.back` and the 34 px `.switch` left
-this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible band, nothing moved.
+Found while building the components page (phase 3). The 40 px `.back`, the 34 px `.switch` and the
+folding panel's ~25 px summary left this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible band, nothing moved.
 
 - `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
   the components page leaves it out of its check until it is decided.
@@ -266,10 +266,6 @@ this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible
 - `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
-- `details.panel`'s summary, the folding panel's title ("🧠 Cómo se juega"), is only as tall as its
-  text (about 25 px): under U-10's 44 px. La Copa's rules under the board keep a 44 px summary of
-  their own (phase 7); a 44 px floor for every folding panel grows each game's cover by ~19 px, so it
-  is the owner's call.
 - `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
   its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
   phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.

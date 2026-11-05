@@ -39,8 +39,8 @@ for (const W of [320, 390]) {
   ok(await ev(`!!document.querySelector('[data-pieza="chat-hoja"] .chat-panel')?.offsetHeight && !!document.querySelector('[data-pieza="hoja"] .hoja')?.offsetHeight && !!document.querySelector('[data-pieza="cover"] .big')?.offsetHeight`), `${W}: the sheets are open and the cover says who gets the phone`);
   ok(await ev(`[...document.querySelectorAll('.btn')].every(x => x.getBoundingClientRect().height <= 64)`), `${W}: no button label wraps (U-17)`);
   ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: no sideways scroll`);
-  // the tap area is the box, or its invisible ::before band when it has one (`.back` and `.switch`, U-10); #tr-tab is not the page's
-  const small = await ev(`[...document.querySelectorAll('button, a.btn, .topbar .back, .keypad button')].filter(x => {
+  // the tap area is the box, or its invisible ::before band when it has one (`.back`, `.switch` and the folding panel's summary, U-10); #tr-tab is not the page's
+  const small = await ev(`[...document.querySelectorAll('button, a.btn, .topbar .back, .keypad button, details.panel > summary')].filter(x => {
     if (!x.offsetHeight || x.id === 'tr-tab') return false;
     const r = x.getBoundingClientRect(), c = getComputedStyle(x), p = getComputedStyle(x, '::before');
     let h = r.height, w = r.width;
