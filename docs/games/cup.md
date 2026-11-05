@@ -530,3 +530,20 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   «Tus copas»), so the button climbs one level at a time (#1040, C-19); the menu is one more tap.
   With `?labs` it goes to the lab. It carries a real `href`, so a long press or a new tab lands right
   too. Behind flag `cup-back-board`, published for everyone on 2026-10-30.
+
+## In the design system (D-533, phase 7, #1196)
+
+La Copa's stylesheet is dissolved into the shared one PR by PR, in the order of
+[docs/design/cup-unification.md](../design/cup-unification.md); the owner declined its PRs 6 and 7
+(2026-11-05), so "🏠 Volver al menú" stays on a Cup mini-game's cover and the cup's own colours keep
+their meaning.
+
+- **PR 1, the exact copies:** `cup/style.css` drops its copies of the game shell (`.screen`, the
+  `.field` rules, `.form-error`, `.seg`, `.result-hero`); the admin's small input (`input.mini`) keeps
+  its own rule on the tokens. 🔍 El caso's scene (`.cs-*`, ~120 lines) moves to
+  `games/case/style.css`, loaded by its `ui.js` with `loadCss()` like Babel's (D-468). The shell wins
+  where the copy differed: field labels at 0.9 rem (were 0.85), inputs at 1.1 rem (were 1.15) with no
+  48 px floor (they measure 52 px), the join screen's "Soy nuevo / Ya estoy inscrito" at the shell's
+  0.95 rem with 4 px padding (at 320 px both now fit in one line: the buttons were 66 px tall, now 44),
+  and the result's trophy at 4.2 rem on its own line (was 4 rem inline).
+

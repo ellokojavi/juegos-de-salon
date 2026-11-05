@@ -116,4 +116,20 @@ is playing a changed screen, or behind a flag.
 | 6 | One start screen: drop the Cup mini-game's "Volver al menú" button, shared cover builder | medium–high: every Cup day and every solo Cup game | **yes**: removes a button players use (U-21) |
 | 7 | Tokenise the cup's own (table, calendar, podium, week builder, chart colours as `--token`s with their rows in DESIGN.md §4) | high in size, low in looks | **yes** for any colour whose meaning changes (the day blocks of D-131, the ×2 of D-151) |
 
+**The owner's decision (2026-11-05):** PRs 1 to 5 go ahead, PR 5 as "fold La Copa's own rules into
+the shared classes". **PR 6 and PR 7 are declined**: the Cup mini-game's "🏠 Volver al menú" button
+stays, and the cup's own colours (the day blocks of D-131, the final's ×2 of D-151, the table, the
+calendar, the podium, the chart) keep their values and meanings as they are. What each done PR
+changed is in [docs/games/cup.md](../games/cup.md) ("In the design system").
+
+| # | Status |
+|---|---|
+| 1 | done (branch `phase7-cup-1`) |
+| 2 | to do |
+| 3 | to do |
+| 4 | to do |
+| 5 | to do |
+| 6 | declined by the owner, 2026-11-05 |
+| 7 | declined by the owner, 2026-11-05 |
+
 Done when `cup/style.css` holds only the cup's own, on tokens, under a third of its size (#1196).

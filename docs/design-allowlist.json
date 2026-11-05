@@ -32,7 +32,7 @@
       "reason": "the podium step (.escalon): flat 4 px feet so the three steps read as one podium; a shape, not a size on the scale"
     },
     {
-      "file": "public/cup/style.css",
+      "file": "public/cup/games/case/style.css",
       "rule": "radius",
       "what": "border-radius: 14px 14px 14px 4px",
       "reason": "the speech bubble's tail (.cs-globo), the same 4 px tail as base.css's chat bubble; a shape, not a size on the scale"
