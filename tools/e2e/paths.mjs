@@ -491,6 +491,8 @@ export const PATHS = {
    */
   'toque-y-fama': {
     intro: [],
+    // One phone: the setup with the Cifras control and both toggle rows (Derecho a réplica, Cero al inicio)
+    setup: [`document.querySelectorAll('.mode')[0].click()`],
     solo: [`document.querySelectorAll('.mode')[2].click()`],
     'solo-game': [`document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-result': [
