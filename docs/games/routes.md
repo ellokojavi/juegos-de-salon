@@ -123,3 +123,7 @@ Empezar goes through the cup's 3, 2, 1 countdown (D-105).
   irreversible hangs on it. The drag is the board's own (a rectangle between two cells), not `arrastre.js`,
   which moves pieces.
 - **Giving up is not 0 points** (unlike Reinas): the stages already done count, as in the lab.
+
+## Migrated to the design system (D-533, #1193)
+
+The first of La Copa's mini-games migrated: its sheet (`public/cup/games/routes/style.css`) had no copies of the shell and is now written on the tokens, 24 lint hits to 0, with no escape. Its own colours are three tokens at the top of the sheet, listed in DESIGN.md §4: the board at night (`--rr-noche`), its drop (`--rr-sombra`) and the soft red of the last minute, Give up armed and a bad stamp (`--rr-alerta`); white lines and borders are `--ink`, every value unchanged. What the player may notice: the three buttons' label is 0.9 rem (was 0.92), the stamp 1.2 rem (was 1.3), the solved notice 1.1 rem (was 1.15), and the small drawing's selection corner 8 px (was 6).
