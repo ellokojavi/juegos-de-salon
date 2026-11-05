@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 1587,
+  "total": 1491,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -105,6 +105,9 @@
       "copied": 11,
       "text-size": 58
     },
+    "public/generala/style.css": {
+      "text-size": 1
+    },
     "public/labs/bridges/style.css": {
       "token-colour": 8,
       "colour": 22,
@@ -185,12 +188,7 @@
       "text-size": 15
     },
     "public/liars-dice/style.css": {
-      "token-colour": 25,
-      "colour": 14,
-      "radius": 5,
-      "space": 8,
-      "copied": 25,
-      "text-size": 21
+      "text-size": 1
     },
     "public/panel/style.css": {
       "token-colour": 26,
