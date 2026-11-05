@@ -12,7 +12,7 @@ const ES = {
   tagline: 'Mira, recuerda y encuentra.',
   steps: [
     ['👀', 'Mira los dibujos antes de que se tapen.'],
-    ['👆', 'Toca el que te piden: uno, par o trío.'],
+    ['👆', 'Toca el que te piden: uno, un par o un trío.'],
     ['⏱️', `Cada ronda es más rápida. Tienes ${LIVES} vidas.`],
   ],
   play: '👀 Jugar',
@@ -92,7 +92,7 @@ const PT = {
   tagline: 'Olhe, lembre e encontre.',
   steps: [
     ['👀', 'Olhe os desenhos antes que sejam cobertos.'],
-    ['👆', 'Toque o pedido: um, um par ou um trio.'],
+    ['👆', 'Toque no desenho pedido: um, um par ou um trio.'],
     ['⏱️', `Cada rodada é mais rápida. Você tem ${LIVES} vidas.`],
   ],
   play: '👀 Jogar',
