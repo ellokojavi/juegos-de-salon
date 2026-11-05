@@ -72,6 +72,12 @@
       "rule": "text-size",
       "what": "font: 900 3.2rem/1 var(--font-num)",
       "reason": "The solo score (`.puntos b`): a figure the player reads at a glance, the board's own size above the text steps (D-30: figures in --font-num)."
+    },
+    {
+      "file": "public/bulls-and-cows/style.css",
+      "rule": "text-size",
+      "what": "font-size: 3.2rem",
+      "reason": "The hero's emoji at two moments the shell's 4.2 rem does not fit (C-8): the cover's icon on a short phone (under 600 px tall), so the Número / Palabra toggle and the first mode stay above the fold at 320×568 (landing-fold.mjs), and the solo result's trophy, so the score, the card and the final buttons fit without scrolling. Between the shell's size and the text steps: a hero's own size, not a text step."
     }
   ]
 }
