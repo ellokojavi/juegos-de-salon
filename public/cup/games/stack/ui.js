@@ -397,6 +397,7 @@ function cuentaPuntos(e, { el, T, SFX, vibrate, recien }) {
   const rotuloTotal = el('small', {}, T.skPoints[forma(total)]);
   const fin = el('div', { class: 'sk-termino total' }, el('span', { class: 'sk-signo' }, '='), valorTotal, rotuloTotal);
   const caja = el('div', { class: 'sk-cuenta', id: 'sk-cuenta', 'aria-label': `${total} ${T.skPoints[forma(total)]}` }, ...pasos, fin);
+  if (total >= 100) caja.classList.add('compacta');
   if (!recien || QUIETO()) { caja.classList.add('lista'); return caja; }
   // The total rolls from what it said to what it says now, a tick at a time
   let mostrado = 0;
