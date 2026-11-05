@@ -128,7 +128,7 @@ these uses the class; a game that needs something close to one asks for a varian
 |---|---|---|
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
-| Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is 40 px tall: a debt, §5 |
+| Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is drawn 40 px tall; an invisible `::before` band makes its tap area 44 px (U-10) |
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
 | Panel | `.panel`, `details.panel` | the glass card |
@@ -157,7 +157,7 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | Segmented control | `.seg`, `.seg button.on` | |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
-| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | |
+| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10) |
 | A link that is a button | `.link-btn` | |
 | The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
 | Whose turn | `.status`, `.who`, `.sub` | |
@@ -246,8 +246,8 @@ candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
 ## 5. Known debts of the system itself
 
-Found while building the components page (phase 3); each is a visible change on every page, so it
-is a decision for the owner, not a migration:
+Found while building the components page (phase 3). The 40 px `.back` and the 34 px `.switch` left
+this list on 2026-11-05: the owner chose a 44 px tap area, grown by an invisible band, nothing moved.
 
 - `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
   the components page leaves it out of its check until it is decided.
@@ -258,6 +258,9 @@ is a decision for the owner, not a migration:
 - `base.css` wrote 5, 7 and 11 px paddings and gaps in the chat and a 20 px corner on the install
   bubble: migrated in phase 5 (6, 8 and 12 px; 22 px), with its 67 token colours written as tokens. Its
   rem sizes (0.95, 1.05, 1.15) are the shared components' own: the lint exempts the shared sheets.
+- `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
+  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
+  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
 
 ## 6. Migration recipe
 
