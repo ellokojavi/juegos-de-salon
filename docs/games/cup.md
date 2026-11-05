@@ -556,4 +556,18 @@ their meaning.
   title line; a chosen chip is yellow everywhere (the name to sit as was cyan, the length shortcut
   yellow text): 2 px border, a yellow tint and ring like `.opcion.on`; the names to sit as are
   0.85 rem at 800 (were 1 rem at 900), the length shortcuts' border 2 px (was 1) on a well (was glass).
+- **PR 3, the shared variants:** what was the cup's own variant of a shared control is now
+  `base.css`'s: the choice buttons (`.opciones`, `.opcion`: the cup's copy is gone, only its
+  `.variantes` narrow columns stay), the hero's dark-emoji outline (`.intro-hero .icon.emoji-claro`),
+  the PIN field (`input.pin`, `.pin-row` and its 👁 `.pin-show`, were `.pin-fila` and `.ver-pin`), the
+  character counter (`.counter`, `.counter.full`, were `.contador`, `.lleno`), the date field
+  (`.field input[type=date]`, was `input.fecha`), the inline link (`.link-inline`, was `.linkish`),
+  danger (`.btn--danger` and `.btn--ghost.btn--danger`, were `.btn--red` and `.btn--peligro`, with
+  `--edge-red` and `--danger-soft` as tokens; `.panel--danger`, was `.peligro`), the wrapping button
+  row (`.btn-row--wrap`, was `.btn-row.tres` and two `:has()` rules) and the sheet's head
+  (`.hoja-cabeza`); `.link-btn`'s copy is gone. Every colour keeps its value. Intended differences:
+  the covers' hero emoji at the shell's 4.2 rem (was 4 rem); "Reportar un problema" and the other
+  `.link-btn`s at the shell's 0.95 rem (were 0.85) with no 8 px above; the Uno al día sheet's
+  "Silenciar" on the home page and `/today/`, which had no style outside La Copa, now has the soft
+  pink it had inside it.
 

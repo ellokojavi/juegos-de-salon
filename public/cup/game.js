@@ -441,8 +441,8 @@ async function copasDelJugador() {
 function campo(label, attrs = {}, { contador = false } = {}) {
   const input = el('input', { autocomplete: 'off', ...attrs });
   const max = Number(attrs.maxlength) || 0;
-  const cuenta = contador && max ? el('small', { class: 'contador muted', 'aria-live': 'polite' }) : null;
-  const pintar = () => { if (!cuenta) return; const n = input.value.length; cuenta.textContent = `${n} / ${max}`; cuenta.classList.toggle('lleno', n >= max); };
+  const cuenta = contador && max ? el('small', { class: 'counter muted', 'aria-live': 'polite' }) : null;
+  const pintar = () => { if (!cuenta) return; const n = input.value.length; cuenta.textContent = `${n} / ${max}`; cuenta.classList.toggle('full', n >= max); };
   input.addEventListener('input', pintar);
   pintar();
   return { input, nodo: el('div', { class: 'field' }, el('label', {}, label), input, cuenta) };
@@ -987,7 +987,7 @@ function tablero() {
     avisoAudiencia(meta),
     // In another zone, the cup's days in the viewer's hours (D-521)
     otraHora(meta) && !terminada(meta, now) ? el('p', { class: 'muted', id: 'zona-propia', style: 'margin:0' }, lineaZona(meta)) : null,
-    el('div', { class: 'btn-row' },
+    el('div', { class: terminada(meta, now) ? 'btn-row' : 'btn-row btn-row--wrap' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
       d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null,

@@ -40,7 +40,8 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--cyan` | `#2ee6d6` | the secondary accent: info, selection, "your turn" |
 | `--lime` | `#9dff3a` | success, correct, done |
 | `--purple` | `#8a4dff` | tertiary accent, used sparingly: the hidden digit of the keyboard, the owner's panel; a game does not need it |
-| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action (`.btn--red` lives in `cup/style.css` today, not in `base.css`: it moves with phase 7, #1196) |
+| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--danger`, deleting a cup), never a game action |
+| `--edge-red`, `--danger-soft` | `#8a1024`, `#ff8fbd` | the edge under `.btn--danger`; the soft pink text of a ghost danger button (`.btn--ghost.btn--danger`: silencing the notifications). From La Copa, phase 7 |
 | `--ink` | white | text on the dark background |
 | `--muted` | white at 72 % | secondary text on the dark background (`.muted`) |
 | `--glass`, `--glass-border` | white at 8 % and 16 % | panels, chips, ghost buttons: surfaces on the dark background |
@@ -131,13 +132,13 @@ these uses the class; a game that needs something close to one asks for a varian
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
 | Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is drawn 40 px tall; an invisible `::before` band makes its tap area 44 px (U-10) |
-| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
+| Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn--danger` (red: confirm a destructive step; with `--ghost`, the soft pink of turning something off), `.btn-row`, `.btn-row--wrap` (the buttons go down a line when they do not fit) | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
-| Panel | `.panel`, `details.panel` | the glass card |
+| Panel | `.panel`, `details.panel`, `.panel--danger` | the glass card; `--danger` frames a destructive step in red |
 | Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chip--cyan`, `.chips` | `--cyan` is the second meaning beside gold: La Copa's final ×2 (D-151) against the wildcard's gold |
 | A chip to choose | `.chip-btn`, `.chip-btn.on` | a pill to tap, 44 px tall; on is yellow like `.opcion.on` (yellow is the choice). La Copa's names to sit as, its week styles and its length shortcuts (phase 7) |
 | Stack | `.stack` | vertical rhythm of 12 px |
-| Sheet | `.hoja*` | the bottom sheet (D-232) |
+| Sheet | `.hoja*`, `.hoja-cabeza` | the bottom sheet (D-232); `.hoja-cabeza` its title with the ✕ |
 | Chat | `.chat*` | the room's chat bubble |
 | Random | `.azar*` | the random-game control (D-237) |
 | One a day | `.uad*` | |
@@ -153,15 +154,15 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | Component | Class | Notes |
 |---|---|---|
 | Screens | `.screen`, `.screen.active` | one visible, sliding up |
-| The cover's hero | `.intro-hero`, `.icon`, `.icon--cyan` | the emoji glowing above the title |
+| The cover's hero | `.intro-hero`, `.icon`, `.icon--cyan`, `.icon.emoji-claro` | the emoji glowing above the title; a dark emoji (〰️) gets a light outline too |
 | A mode to pick | `.modes`, `.mode`, `.mode .go`, `.mode .soon` | title, a line, the › |
-| A form field | `.field`, `label`, `input`, `input.name`, `input.code`, `.sub`, `.sub.warn` | the input in a well |
+| A form field | `.field`, `label`, `input`, `input.name`, `input.code`, `input.pin`, `input[type=date]`, `.sub`, `.sub.warn`, `.counter`, `.counter.full` | the input in a well; a PIN's digits spaced (`.pin-row` with its 👁 `.pin-show`), a date in the dark picker, "12 / 20" under a field with a maximum (D-119) |
 | The form's error | `.form-error` | |
 | Segmented control | `.seg`, `.seg button.on` | |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
 | A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10); a `<button role="switch">` keeps `aria-checked` and `.on` in step (La Copa's 🏁 final) |
-| A link that is a button | `.link-btn` | |
+| A link that is a button | `.link-btn`, `.link-inline` | `.link-btn` the small way out under a form; `.link-inline` a cyan link inside a line of text |
 | The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
 | Whose turn | `.status`, `.who`, `.sub` | |
 | The result's hero | `.result-hero`, `.trophy` | |

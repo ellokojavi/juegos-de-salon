@@ -1,17 +1,13 @@
 /* ==========================================================
    La Copa — estilos propios
    ========================================================== */
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-/* El contorno claro de un emoji oscuro (〰️) más el halo dorado de siempre */
-.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-.intro-hero .globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
+.globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
 .globo-portada canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* El globo aparece cuando llega la imagen satelital, sin pasar antes por el mapa dibujado */
 .globo-aparece { animation: globo-aparece 0.3s ease-out; }
 @keyframes globo-aparece { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .globo-aparece { animation: none; } }
-.intro-hero h1, .intro-hero h2 { margin: 4px 0 6px; overflow-wrap: anywhere; }
+.intro-hero h1, .intro-hero h2 { margin: var(--s-4) 0 var(--s-6); overflow-wrap: anywhere; }
 
 /* Formularios */
 /* The fields are the shell's (.field, base.css); the admin's small input beside its buttons is the cup's */
@@ -20,32 +16,16 @@ input.mini {
   border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none; min-height: 48px;
 }
 input.mini:focus { border-color: var(--cyan); }
-.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 /* En Administrar el aviso va debajo del botón, al final del panel: vacío no deja un hueco (U-11) */
 #admin-body .panel > .form-error:empty { display: none; }
 .waiting { text-align: center; color: var(--muted); font-weight: 800; padding: 30px 0; }
-.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 8px auto 0; display: block; }
 .ok { color: var(--lime); font-weight: 900; margin: 4px 0; }
 
-.opciones { display: grid; gap: 8px; }
-.opciones.dos { grid-template-columns: 1fr 1fr; }
-.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
-.opciones.tres .opcion { text-align: center; padding-left: 6px; padding-right: 6px; }
-/* German hyphenates on its own (base.css): in three narrow columns that split "Mor-gen" and "Ande-res". Whole words, a bit smaller on a narrow phone (texts not cut, C-8) */
-.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
-@media (max-width: 374px) { .opciones.tres .opcion { padding-left: 4px; padding-right: 4px; } .opciones.tres .opcion b { font-size: 0.95rem; } }
-.opcion {
-  text-align: left; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 14px;
-  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
-}
-.opciones.dos .opcion { text-align: center; }
-.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
-.opcion .opcion-emoji { display: block; }
-/* A variant's name in one piece at 320 px, also «Anschlüsse» inside the cup's form (U-12) */
-.opciones.variantes .opcion { padding-left: 6px; padding-right: 6px; }
+
+/* The choice buttons are the shell's (.opciones, .opcion, base.css). A variant's name in one piece at 320 px,
+   also «Anschlüsse» inside the cup's form (U-12) */
+.opciones.variantes .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
 .opciones.variantes .opcion b { hyphens: manual; }
-.opcion small { color: var(--muted); font-weight: 700; }
-.opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 ol.como { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
 ol.como li { line-height: 1.45; }
@@ -154,8 +134,6 @@ ol.como li { line-height: 1.45; }
 .hoja .field { margin: 0; }
 /* The version keeps the look of the cup's options: the sheet's own (.hoja .opcion, base.css) is a row with a check */
 #semana-hoja .opciones .opcion { display: block; text-align: center; padding: 12px 6px; }
-.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.hoja-cabeza h3 { margin: 0; font-size: 1.1rem; font-weight: 900; }
 .hoja-mover { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .hoja-mover .btn { width: 100%; font-size: 0.95rem; }
 .hoja-mover .btn:disabled { opacity: 0.35; }
@@ -174,9 +152,6 @@ ol.como li { line-height: 1.45; }
 .mas-opciones > summary { min-height: 44px; gap: 10px; }
 .mas-opciones .mas-t { display: grid; gap: 2px; min-width: 0; }
 .mas-opciones .mas-t small { font-weight: 700; font-size: 0.8rem; }
-.pin-fila { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 6px; }
-.ver-pin { min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
-.ver-pin[aria-pressed="true"] { border-color: var(--cyan); }
 .crear-fechas { display: block; text-align: center; margin-top: -4px; }
 @media (prefers-reduced-motion: reduce) { .semana-dia.baraja *, .semana-dia.cae { animation: none; } }
 .variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
@@ -328,7 +303,6 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-hero .icon { animation: none; }
 }
 
 /* Tus días (LIG-38): pasados y futuros deshabilitados, hoy como tarjeta grande */
@@ -637,20 +611,13 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .explicacion-total { font-weight: 800; }
 
 /* Otra fecha de inicio y la copa de prueba (D-115) */
-input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 800 1rem var(--font-body); padding: 8px 12px; color-scheme: dark; }
 .fecha-campo { display: grid; gap: 8px; margin-top: 8px; }
-.btn-row.tres { flex-wrap: wrap; }
 #btn-inicio-otra.on { border-color: var(--yellow); color: var(--yellow); }
 .lab-panel { border: 1px dashed var(--cyan); }
 
-/* Eliminar la copa (D-117) */
-.peligro { border: 1px solid rgba(224, 36, 60, 0.55); }
-.btn--red { background: var(--red); color: #fff; box-shadow: 0 4px 0 #8a1024; }
 
 /* El largo del nombre a la vista (D-119), y los nombres largos que parten línea en vez de salirse */
-.field .contador { display: block; text-align: right; margin-top: 4px; font-size: 0.8rem; }
-.field .contador.lleno { color: var(--yellow); }
-.copa-head h1, .intro-hero h1, .intro-hero h2 { overflow-wrap: anywhere; }
+.copa-head h1 { overflow-wrap: anywhere; }
 
 /* El link propio (D-121) */
 .link-estado { display: block; margin-top: 6px; font-size: 0.85rem; overflow-wrap: anywhere; }
@@ -679,12 +646,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .aviso-oferta .lead { margin: 0 0 4px; font-weight: 900; }
 .aviso-oferta .muted { margin: 0 0 12px; }
 .aviso-auto { text-align: center; margin: 4px 0; }
-/* A 320 px, en español y alemán, los botones lado a lado no caben: bajan a otra línea */
-.aviso-oferta .btn-row, .btn-row:has(> #btn-avisos) { flex-wrap: wrap; }
-.linkish { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
 .aviso-bloqueado { border-style: dashed; }
 .aviso-activo { color: var(--yellow); border-color: rgba(255, 210, 63, 0.6); }
-.btn--peligro { color: #ff8fbd; background: rgba(255, 46, 136, 0.16); border-color: transparent; }
 
 /* a. C. next to the boxes while it is on, so the answer reads as a whole before OK */
 .anio-juego .entry { align-items: center; gap: 8px; }

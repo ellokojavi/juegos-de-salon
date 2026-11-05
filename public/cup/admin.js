@@ -135,7 +135,7 @@ function pantallaAdmin({ forzar = false } = {}) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
       el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, lineaZona ? lineaZona(meta) : fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
       alerta ? el('div', { class: 'aviso' }, alerta) : null,
-      el('div', { class: 'btn-row tres' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'), botonOtra),
+      el('div', { class: 'btn-row btn-row--wrap' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'), botonOtra),
       otra.nodo));
   }
 
@@ -247,10 +247,10 @@ function pantallaAdmin({ forzar = false } = {}) {
 
   // Eliminar la copa (D-117): al final, en rojo, con dos confirmaciones (la segunda, escribir el nombre)
   const errBorrar = el('div', { class: 'form-error', role: 'alert' });
-  poner(body, el('div', { class: 'panel stack peligro', id: 'admin-eliminar' },
+  poner(body, el('div', { class: 'panel panel--danger stack', id: 'admin-eliminar' },
     el('p', { class: 'lead', style: 'margin:0' }, T.deleteTitle),
     el('p', { class: 'muted', style: 'margin:0' }, T.deleteLead),
-    el('button', { class: 'btn btn--red', id: 'btn-eliminar', onClick: async ev => {
+    el('button', { class: 'btn btn--danger', id: 'btn-eliminar', onClick: async ev => {
       SFX.tap();
       if (!confirm(fmt(T.deleteConfirm1, { copa: meta.name }))) return;
       const escrito = prompt(fmt(T.deleteConfirm2, { copa: meta.name }));

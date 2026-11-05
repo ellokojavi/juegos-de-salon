@@ -531,13 +531,13 @@ async function pantallaCrearCopa({ nombreInicial = '', desde = null, quien = '' 
   // The new screen asks for the PIN once, with 👁 to see it (D-425)
   const pin1 = campoPin(T.fPin), pin2 = nuevo ? null : campoPin(T.fPin2);
   if (nuevo) {
-    const ojo = el('button', { type: 'button', class: 'ver-pin', id: 'ver-pin', 'aria-label': T.pinShow, 'aria-pressed': 'false' }, '👁');
+    const ojo = el('button', { type: 'button', class: 'pin-show', id: 'ver-pin', 'aria-label': T.pinShow, 'aria-pressed': 'false' }, '👁');
     ojo.addEventListener('click', () => {
       const ver = pin1.input.type === 'password';
       pin1.input.type = ver ? 'text' : 'password';
       ojo.setAttribute('aria-pressed', String(ver)); ojo.setAttribute('aria-label', ver ? T.pinHide : T.pinShow);
     });
-    const filaPin = el('div', { class: 'pin-fila' });
+    const filaPin = el('div', { class: 'pin-row' });
     pin1.input.replaceWith(filaPin);
     filaPin.append(pin1.input, ojo);
   }
