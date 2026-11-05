@@ -216,6 +216,18 @@
       "rule": "text-size",
       "what": "font-size: 2.2rem",
       "reason": "The cover's 🐤 beside the title (`.titulo-aletazo .logo`), and the title itself on a short phone (under 640 px tall): sized together so the card keeps 🐤 Jugar in view at 320×568 (U-39); a .display step at 320 px is smaller than the title the cover is built around."
+    },
+    {
+      "file": "public/labs/stack/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.2rem",
+      "reason": "The cover's 🗼 beside the .display--lg title (`.titulo-torre .logo`): an emoji sized to sit with the title, between the text steps and the title steps (as Aletazo's 🐤)."
+    },
+    {
+      "file": "public/labs/stack/style.css",
+      "rule": "text-size",
+      "what": "font: 2.2rem var(--font-display)",
+      "reason": "The game's last word over the tower (`.aviso-torre.final`): one step above the streak's «Perfect ×n» (2 rem) so the end reads as the end, fixed over the canvas like the score above it."
     }
   ]
 }
