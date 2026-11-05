@@ -1,113 +1,83 @@
-/* Dudo — estilos propios. Lo compartido vive en assets/css/base.css. */
+/* ==========================================================
+   Dudo — estilos propios
+   Migrated to the design system (D-533, phase 5 of #1188, #1193): the screens, the cover's hero,
+   the modes, the form fields, the player rows, the toggle and its switch, the room (code, QR,
+   players, "or", waiting), whose turn and the result's hero come from base.css; this file keeps
+   what is the game's own (the dice, the table, the bid, the reveal, the shaking cloth), on the tokens.
+   ========================================================== */
 
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+/* The game's own colours (DESIGN.md §4): the ace is gold because it is the wild die, the one
+   face the hand reads first; the cloth is the green felt the dice are shaken on (D-447). */
+:root {
+  --ace-light: #ffe680;
+  --ace-deep: #ffb300;
+  --cloth: #1f6b4a;
+}
 
 /* ---------- Intro ---------- */
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-.rules-list { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 7px; }
+.rules-list { margin: var(--s-10) 0 0; padding-left: var(--s-20); display: grid; gap: var(--s-8); }
 .rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
 .rules-list li b { color: var(--ink); }
 
-.modes { display: grid; gap: 10px; }
-.mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }
-.mode:active { transform: scale(0.98); }
-.mode:disabled { opacity: 0.55; cursor: not-allowed; }
-.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
-.mode small { color: var(--muted); font-weight: 700; }
-.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
-.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px 8px; white-space: nowrap; }
+/* ---------- Configuración: what is Dudo's own on top of the shell ---------- */
+#screen-setup > h2 { margin-bottom: var(--s-6); }
+.setup-hint { color: var(--muted); font-weight: 700; text-align: center; margin: 0 0 var(--s-12); font-size: var(--fs-90); }
+/* The toggle rows follow the player rows and each other: the shell's row has no margin of its own */
+#setup-form .toggle-row { margin-top: var(--s-8); }
 
-/* ---------- Configuración ---------- */
-#screen-setup > h2 { margin-bottom: 6px; }
-.setup-hint { color: var(--muted); font-weight: 700; text-align: center; margin: 0 0 12px; font-size: 0.9rem; }
-.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 6px 10px; margin-bottom: 6px; }
-.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
-.player-row input { background: transparent; border: 0; padding: 10px 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
-.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 32px; height: 36px; cursor: pointer; }
-.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: 10px 0; }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
-.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 14px; margin-top: 8px; }
-.toggle-row .txt b { display: block; font-size: 0.95rem; }
-.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
-.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: 999px; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.4); position: relative; cursor: pointer; padding: 0; }
-.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
-.switch.on { background: rgba(255, 210, 63, 0.3); border-color: var(--yellow); }
-.switch.on::after { transform: translateX(24px); background: var(--yellow); }
-
-/* ---------- Sala (varios celulares) ---------- */
-#screen-lobby > h2 { margin-bottom: 12px; }
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
-.field input { width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; }
-.field input:focus { border-color: var(--cyan); }
-.field input::placeholder { color: rgba(255,255,255,0.35); }
-.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
-.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
-.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 2px 0; padding-left: 0.25em; }
-.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
-.qr svg { display: block; width: min(46vw, 190px); height: auto; }
-.lobby-players { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
-.lobby-players .p { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.28); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2,0.9,0.3,1.4) both; }
-.lobby-players .p.me { background: var(--cyan); color: #03302c; }
-.lobby-players .p.off { opacity: 0.45; }
-.waiting { text-align: center; color: var(--muted); font-weight: 800; }
-.waiting::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
-@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+/* ---------- Sala (varios celulares): the shell's room pieces come from base.css ---------- */
+#screen-lobby > h2 { margin-bottom: var(--s-12); }
 /* El sello de que nadie cambió sus dados al destaparlos (C-10) */
-.handoff .sello { font-weight: 900; font-size: 0.85rem; color: var(--lime); }
+.handoff .sello { font-weight: 900; font-size: var(--fs-85); color: var(--lime); }
 .handoff .sello.mal { color: var(--pink); }
 
 /* ---------- El dado ---------- */
 .die {
   display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 1px;
-  width: 46px; height: 46px; padding: 6px; border-radius: 11px;
-  background: var(--card); box-shadow: 0 3px 0 rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.35);
+  width: 46px; height: 46px; padding: var(--s-6); border-radius: var(--r-12);
+  background: var(--card); box-shadow: 0 3px 0 rgb(from var(--bg1) r g b / 0.35), 0 4px 10px rgb(from var(--bg1) r g b / 0.35);
 }
 .die i { display: block; align-self: center; justify-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--card-ink); }
 /* El as es comodín y por eso se ve distinto: es la información que más se mira en la mano */
-.die.ace { background: linear-gradient(180deg, #ffe680, #ffb300); }
-.die--sm { width: 30px; height: 30px; padding: 4px; border-radius: 8px; }
+.die.ace { background: linear-gradient(180deg, var(--ace-light), var(--ace-deep)); }
+.die--sm { width: 30px; height: 30px; padding: var(--s-4); border-radius: var(--r-8); }
 .die--sm i { width: 5px; height: 5px; }
 .die.off { opacity: 0.35; }
-.die.on { box-shadow: 0 0 0 2px var(--lime), 0 3px 0 rgba(0,0,0,0.35); }
+.die.on { box-shadow: 0 0 0 2px var(--lime), 0 3px 0 rgb(from var(--bg1) r g b / 0.35); }
 
-.dice-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+.dice-row { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; }
 
 /* ---------- Mesa ---------- */
-.rivals { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 4px; }
-.rivals .rival { display: grid; gap: 2px; justify-items: center; min-width: 74px; padding: 6px 10px; border-radius: 12px; background: rgba(0,0,0,0.25); }
-.rivals .rival .n { font-weight: 900; font-size: 0.76rem; }
+.rivals { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; margin-bottom: var(--s-4); }
+.rivals .rival { display: grid; gap: var(--s-2); justify-items: center; min-width: 74px; padding: var(--s-6) var(--s-10); border-radius: var(--r-12); background: var(--well); }
+.rivals .rival .n { font-weight: 900; font-size: var(--fs-75); }
+/* The rivals' dice as glyphs: five must fit in the card's 74 px, under the smallest text step (allowlisted) */
 .rivals .rival .d { font-size: 0.62rem; letter-spacing: -0.05em; }
-.rivals .rival.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.45); }
+.rivals .rival.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgb(from var(--yellow) r g b / 0.45); }
 .rivals .rival.turn .n { color: var(--yellow); }
 .rivals .rival.out { opacity: 0.45; }
 
-.status { text-align: center; margin: 2px 0 6px; }
-.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
-.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
-
 /* Los dados y la apuesta quedan centrados en el espacio libre: la botonera va al pie (C-8) y
    el hueco entre medio se reparte en vez de acumularse todo encima de los botones. */
-.mine { margin-top: auto; background: rgba(0,0,0,0.25); border-radius: 18px; padding: 12px 10px; display: grid; gap: 8px; justify-items: center; }
-.mine-label { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.wild-note { font-weight: 800; font-size: 0.78rem; color: var(--yellow); }
+.mine { margin-top: auto; background: var(--well); border-radius: var(--r-16); padding: var(--s-12) var(--s-10); display: grid; gap: var(--s-8); justify-items: center; }
+.mine-label { font-weight: 900; font-size: var(--fs-75); color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.wild-note { font-weight: 800; font-size: var(--fs-75); color: var(--yellow); }
 
 /* ---------- Shake to roll and the turn's clock (D-447) ---------- */
 /* The shaking cloth: while the dice are still to roll, the hand's panel turns green and holds
    bigger dice, face down until the first jolt. Landed, the same panel shrinks back to the hand's
    size and colour while the dice slide into their row (llegar in game.js). */
 .mine { transition: background-color 0.45s, box-shadow 0.45s; }
-.mine.agitando, .mine.llega { background-color: #1f6b4a; box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45); }
-.mine.agitando, .mine.llega { padding: 26px 10px 16px; }   /* the sides as always: five dice must fit in one row while it shrinks */
+.mine.agitando, .mine.llega { background-color: var(--cloth); box-shadow: inset 0 0 40px rgb(from var(--bg1) r g b / 0.45); }
+.mine.agitando, .mine.llega { padding: var(--s-24) var(--s-10) var(--s-16); }   /* the sides as always: five dice must fit in one row while it shrinks */
 .mine.llega-anda { overflow: visible; transition: height 480ms cubic-bezier(0.5, 0, 0.3, 1), padding 480ms cubic-bezier(0.5, 0, 0.3, 1), background-color 480ms, box-shadow 480ms; }
 .mine.llega-anda .die { transition: transform 480ms cubic-bezier(0.5, 0, 0.3, 1); }
 /* Sliding in, the ace stays white like the rest of the cloth's dice */
 .mine.llega .die.ace, .mine.llega-anda .die.ace { background: var(--card); }
-.agite-caja { display: grid; gap: 12px; justify-items: center; }
-.agite-pie { display: grid; gap: 8px; justify-items: center; }
-.agite-mesa { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 16px 14px; max-width: 260px; min-height: 150px; }
-.die--lg { width: 64px; height: 64px; padding: 9px; border-radius: 15px; }
+.agite-caja { display: grid; gap: var(--s-12); justify-items: center; }
+.agite-pie { display: grid; gap: var(--s-8); justify-items: center; }
+.agite-mesa { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: var(--s-16) var(--s-14); max-width: 260px; min-height: 150px; }
+.die--lg { width: 64px; height: 64px; padding: var(--s-10); border-radius: var(--r-16); }
 .die--lg i { width: 11px; height: 11px; }
 /* On the cloth the ace is a die like the others (the owner's request); the hand keeps it yellow */
 .agite-mesa .die.ace { background: var(--card); }
@@ -119,99 +89,98 @@
    spills over its box, which keeps the row's spacing the same as the flat dice */
 .dado3d { position: relative; display: inline-block; width: 64px; height: 64px; }
 .dado3d-lienzo { position: absolute; left: -32px; top: -32px; width: 128px; height: 128px; pointer-events: none; }
-.cacho-txt { margin: 0; font-weight: 800; font-size: 0.95rem; text-align: center; }
+.cacho-txt { margin: 0; font-weight: 800; font-size: var(--fs-90); text-align: center; }
 @media (prefers-reduced-motion: reduce) { .die.blank { animation: none; } .agite-mesa.rodando .die { transform: none; } }
 
-.turn-clock { position: relative; height: 18px; margin: 6px auto 0; max-width: 260px; border-radius: 9px; background: rgba(0,0,0,0.3); overflow: hidden; }
-.turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: 9px; transition: width 0.2s linear; }
-.turn-clock span { position: relative; display: block; text-align: center; font: 900 0.75rem/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.turn-clock { position: relative; height: 18px; margin: var(--s-6) auto 0; max-width: 260px; border-radius: var(--r-pill); background: var(--well-deep); overflow: hidden; }
+.turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: var(--r-pill); transition: width 0.2s linear; }
+.turn-clock span { position: relative; display: block; text-align: center; font: 900 var(--fs-75)/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgb(from var(--bg1) r g b / 0.6); }
 .turn-clock.apurado i { background: var(--pink); }
 
-.bid-board { margin: 10px 0 auto; }
-.standing { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px 14px; font-weight: 800; }
+.bid-board { margin: var(--s-10) 0 auto; }
+.standing { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--s-8); background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-10) var(--s-14); font-weight: 800; }
 .standing.opens { color: var(--muted); font-weight: 700; }
-.standing .lbl { color: var(--muted); font-size: 0.85rem; }
-.standing .word { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.04em; color: var(--yellow); }
-.bid-chip { display: inline-flex; align-items: center; gap: 6px; }
-.bid-chip b { font: 900 1.7rem var(--font-num); font-variant-numeric: tabular-nums; }
+.standing .lbl { color: var(--muted); font-size: var(--fs-85); }
+.standing .word { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; color: var(--yellow); }
+.bid-chip { display: inline-flex; align-items: center; gap: var(--s-6); }
+.bid-chip b { font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; }
 
 /* ---------- Apostar ---------- */
-.actions-bar { margin-top: auto; padding-top: 10px; display: grid; gap: 8px; }
-.pick-label { text-align: center; color: var(--muted); font-weight: 800; font-size: 0.85rem; margin: 0; }
-.pintas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-.pinta { display: grid; place-items: center; min-height: 48px; padding: 7px 0; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: pointer; }
-.pinta.on { border-color: var(--cyan); background: rgba(46,230,214,0.18); }
+.actions-bar { margin-top: auto; padding-top: var(--s-10); display: grid; gap: var(--s-8); }
+.pick-label { text-align: center; color: var(--muted); font-weight: 800; font-size: var(--fs-85); margin: 0; }
+.pintas { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-6); }
+.pinta { display: grid; place-items: center; min-height: 48px; padding: var(--s-6) 0; border-radius: var(--r-12); border: 2px solid transparent; background: var(--well); cursor: pointer; }
+.pinta.on { border-color: var(--cyan); background: rgb(from var(--cyan) r g b / 0.18); }
 .pinta:disabled { opacity: 0.3; cursor: not-allowed; }
 /* Los de la botonera no son dados, son botones que nombran una pinta. Van dibujados en hueco
    —sin cara, con el contorno y los puntos en línea— para que los dados de verdad, los de la
    mano del jugador, sean lo único que se lea como un objeto sobre la mesa. */
-.pinta .die { background: none; box-shadow: none; border: 2px solid rgba(255, 255, 255, 0.3); }
-.pinta .die i { background: rgba(255, 255, 255, 0.62); }
-.pinta .die.ace { background: none; border-color: rgba(255, 210, 63, 0.6); }
+.pinta .die { background: none; box-shadow: none; border: 2px solid rgb(from var(--ink) r g b / 0.3); }
+.pinta .die i { background: rgb(from var(--ink) r g b / 0.62); }
+.pinta .die.ace { background: none; border-color: rgb(from var(--yellow) r g b / 0.6); }
 .pinta .die.ace i { background: var(--yellow); }
 .pinta.on .die { border-color: var(--cyan); }
 .pinta.on .die i { background: var(--cyan); }
 /* Salvo el elegido, que se rellena: es la pinta sobre la que se está apostando */
-.pinta.on .die { background: rgba(46, 230, 214, 0.12); }
-.amount { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.pinta.on .die { background: rgb(from var(--cyan) r g b / 0.12); }
+.amount { display: flex; align-items: center; justify-content: center; gap: var(--s-16); }
+/* The bid's quantity: the board's own figure, above the largest text step (DESIGN.md §4) */
 .amount-n { font: 900 2.6rem var(--font-num); font-variant-numeric: tabular-nums; min-width: 2ch; text-align: center; color: var(--yellow); }
-.step { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.3); color: var(--ink); font: 900 1.8rem var(--font-body); cursor: pointer; }
+.step { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--glass-border); background: var(--well-deep); color: var(--ink); font: 900 var(--fs-160) var(--font-body); cursor: pointer; }
 .step:disabled { opacity: 0.3; }
 
 /* ---------- Se destapa la mesa ---------- */
-.handoff .reveal { gap: 10px; }
-.reveal-table { display: grid; gap: 6px; width: 100%; }
-.reveal-row { display: grid; grid-template-columns: 84px 1fr; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 6px 10px; }
-.reveal-row .n { font-weight: 900; font-size: 0.8rem; text-align: left; }
-.reveal-row .dice-row { justify-content: flex-start; gap: 5px; }
-.handoff .count { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.8rem); color: var(--yellow); letter-spacing: 0.03em; text-shadow: 0 4px 0 rgba(0,0,0,0.35); line-height: 1.05; }
-.handoff .exact { font-weight: 900; font-size: 1.1rem; }
+.handoff .reveal { gap: var(--s-10); }
+.reveal-table { display: grid; gap: var(--s-6); width: 100%; }
+.reveal-row { display: grid; grid-template-columns: 84px 1fr; gap: var(--s-8); align-items: center; background: var(--well-deep); border-radius: var(--r-12); padding: var(--s-6) var(--s-10); }
+.reveal-row .n { font-weight: 900; font-size: var(--fs-75); text-align: left; }
+.reveal-row .dice-row { justify-content: flex-start; gap: var(--s-4); }
+.handoff .count { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.8rem); color: var(--yellow); letter-spacing: 0.03em; text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.35); line-height: 1.05; }
+.handoff .exact { font-weight: 900; font-size: var(--fs-110); }
 .handoff .exact.yes { color: var(--lime); }
 .handoff .exact.no { color: var(--pink); }
 .handoff .outcome { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.2rem); color: var(--cyan); letter-spacing: 0.03em; }
 
-/* ---------- Final ---------- */
-.result-hero { text-align: center; padding: 2px 0 6px; }
-.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.replay { margin-top: 10px; padding: 12px 16px; }
-.replay summary { font-size: 1rem; }
-.hist { list-style: none; padding: 0; margin: 0; display: grid; gap: 5px; }
-.hist li { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: baseline; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 6px 10px; font-size: 0.82rem; font-weight: 700; }
-.hist .r { font: 900 0.82rem var(--font-num); color: var(--muted); }
+/* ---------- Final: the shell's result hero comes from base.css ---------- */
+.replay { margin-top: var(--s-10); padding: var(--s-12) var(--s-16); }
+.replay summary { font-size: var(--fs-100); }
+.hist { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s-4); }
+.hist li { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--s-8); align-items: baseline; background: var(--well); border-radius: var(--r-10); padding: var(--s-6) var(--s-10); font-size: var(--fs-85); font-weight: 700; }
+.hist .r { font: 900 var(--fs-85) var(--font-num); color: var(--muted); }
 .hist .q { color: var(--muted); }
 .hist .down { color: var(--pink); font-weight: 900; white-space: nowrap; }
 .hist .up { color: var(--lime); font-weight: 900; white-space: nowrap; }
 
 /* ---------- Classic rules, round 2 (lab, D-490) ---------- */
 /* The open obligada round: the rivals' dice face up, your own as ❓ */
-.rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: 3px; }
-.rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: 4px; }
-.rivals .rival.seen .die--sm.hidden-die { font-size: 1rem; padding: 0; }
-.die.hidden-die { display: grid; place-items: center; font-size: 1.6rem; grid-template: none; }
-.obligada-banner { font-size: 0.9rem; text-align: center; margin-top: 6px; }
+.rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: var(--s-2); }
+.rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: var(--s-4); }
+.rivals .rival.seen .die--sm.hidden-die { font-size: var(--fs-100); padding: 0; }
+.die.hidden-die { display: grid; place-items: center; font-size: var(--fs-160); grid-template: none; }
+.obligada-banner { font-size: var(--fs-90); text-align: center; margin-top: var(--s-6); }
 .obligada-notice .next-name { font-size: clamp(2rem, 10vw, 3rem); }
-.obligada-notice .hint { max-width: 34ch; margin: 8px auto 0; }
-.obligada-notice .btn { margin-top: 14px; }
+.obligada-notice .hint { max-width: 34ch; margin: var(--s-8) auto 0; }
+.obligada-notice .btn { margin-top: var(--s-14); }
 /* The first time calzar opens to a player, a line says what it is */
-.calzar-hint { margin: 8px 0 0; padding: 8px 12px; border-radius: 12px; background: rgba(46, 230, 214, 0.14); border: 1px solid var(--cyan); font-weight: 800; font-size: 0.82rem; line-height: 1.3; }
+.calzar-hint { margin: var(--s-8) 0 0; padding: var(--s-8) var(--s-12); border-radius: var(--r-12); background: rgb(from var(--cyan) r g b / 0.14); border: 1px solid var(--cyan); font-weight: 800; font-size: var(--fs-85); line-height: 1.3; }
 .standing .passed { display: block; color: var(--yellow); }
-/* The variants: one folded row under the classic rules */
-.variants { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 10px 14px; margin-top: 8px; }
+/* The variants: one folded row under the classic rules; the shell's toggle rows sit inside it */
+.variants { background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); margin-top: var(--s-8); }
 .variants summary { cursor: pointer; }
-.variants summary b { font-size: 0.95rem; }
-.variants summary small { display: block; color: var(--muted); font-weight: 700; font-size: 0.76rem; }
-.variants .toggle-row { background: rgba(0,0,0,0.25); }
+.variants summary b { font-size: var(--fs-90); }
+.variants summary small { display: block; color: var(--muted); font-weight: 700; font-size: var(--fs-75); }
 
 /* ---------- Clarity for first-time players (playtest, classic rules in the lab) ---------- */
 /* A face a rule closes looks like a disabled one, but stays tappable so the tap points at the reason */
 .pinta.closed { opacity: 0.3; cursor: not-allowed; }
-.face-why, .paso-why { margin: 0; font-size: 0.82rem; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.3; }
+.face-why, .paso-why { margin: 0; font-size: var(--fs-85); font-weight: 700; color: var(--muted); text-align: center; line-height: 1.3; }
 .paso-why.can { color: var(--lime); }
 .face-why.pulse { animation: faceWhy 0.6s ease-out; }
 @keyframes faceWhy { 0% { color: var(--yellow); transform: scale(1.06); } 100% { color: var(--muted); transform: none; } }
 /* Overlays are opaque from the first frame: fading in from transparent let the table show through
-   the pass screen (playtest). Only the stage pops. */
-.handoff { animation: none; }
+   the pass screen (playtest). Only the stage pops. Dudo's own overlay, by its id: the shell's
+   .handoff keeps its fade for the other games. */
+#handoff { animation: none; }
 
 /* The table's rules in the lobby, for whoever joins (rooms playtest) */
-#lobby-box .lobby-rules { font-size: 0.85rem; line-height: 1.35; margin: 14px 0 0; }
+#lobby-box .lobby-rules { font-size: var(--fs-85); line-height: 1.35; margin: var(--s-14) 0 0; }

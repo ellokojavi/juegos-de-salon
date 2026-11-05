@@ -1140,7 +1140,7 @@ function renderLobby() {
         class: 'btn btn--yellow', disabled: entraron.length < MIN_PLAYERS,
         onClick: () => { SFX.pass(); S.transport.send({ t: 'start', from: 'A', order: entraron }); },
       }, entraron.length < MIN_PLAYERS ? T.lobbyNeedMore : T.lobbyStart)
-      : el('p', { class: 'waiting' }, fmt(T.lobbyWaitHost, { name: M.names.A || '…' })),
+      : el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.lobbyWaitHost, { name: M.names.A || '…' }))),
     el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: e => leaveRoom(e.currentTarget) },
       S.role === 'A' ? T.lobbyCancel : T.lobbyLeave),
   );

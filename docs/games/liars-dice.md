@@ -346,3 +346,7 @@ Gancho de pruebas (C-14): `window.__dudo` (`view`, `match`, `session`).
 ## Excepciones a los cánones
 
 Ninguna. Los dados no salen de la semilla (C-7) a propósito: en la sala cada celular tira los suyos y los compromete con hash, que es lo que pide C-10 (ver “De dónde salen los dados”).
+
+## Migrated to the design system (D-533, #1193)
+
+Dudo followed Ahorcado's recipe (DESIGN.md §6): its stylesheet lost its copies of the game shell (screens, the cover's hero, modes, fields, player rows, the toggle and its switch, the room, whose turn, the result's hero), which live once in `base.css`, and what is its own (the dice, the table, the bid, the reveal, the shaking cloth) is written on the tokens, with the ace's gold and the cloth's green as its own tokens at the top. The lobby's waiting line carries the shell's `.dots` span for its animated dots. The design lint reports zero on it beyond two allowlisted escapes (the rivals' dice glyphs at 0.62 rem and the bid's figure at 2.6 rem, `.amount-n`). Visible differences, all intended: the ✕ of a player row grows to 44 px (the shell's, U-10), the hand's panel and the big dice take 16 px corners, the rules' and dice rows' gaps and the small texts move to the nearest step.
