@@ -393,7 +393,7 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
     ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `day ${d} (${id}): the result is in the cup before tapping "Ver resultado"`);
   }
   await click('#btn-fin'); await b.until(`__copa.estado.pantalla === 'resultado'`, 700, 30); await b.settle(400);
-  if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--final') && !c.classList.contains('chip--gold'))})()`), 'the final: in the results everyone carries the final\'s ×2, in cyan and not in the joker\'s gold (D-151)');
+  if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--cyan') && !c.classList.contains('chip--gold'))})()`), 'the final: in the results everyone carries the final\'s ×2, in cyan and not in the joker\'s gold (D-151)');
   if (capture) ok(await ev(`(document.querySelector('#explicacion')?.textContent || '').includes('Total:')`), `result of day ${d}: explains how the score was computed`);
   return id;
 }

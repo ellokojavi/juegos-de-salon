@@ -70,10 +70,6 @@ ol.como li { line-height: 1.45; }
 
 /* Invitación */
 .nombres { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-/* El ×2 de la final, distinto del dorado del comodín (D-151) */
-.chip--final { background: var(--cyan); color: #03302c; border-color: transparent; }
-.chip-btn { border: 2px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 900 1rem var(--font-body); border-radius: 999px; padding: 8px 16px; min-height: 44px; cursor: pointer; }
-.chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
 /* Elegir los juegos al crear la copa (D-163): la mano y la línea de Línea de Tiempo (linea.css) */
@@ -119,11 +115,7 @@ ol.como li { line-height: 1.45; }
 .semana-cabeza { flex-wrap: wrap; }
 @media (max-width: 360px) { .btn-dado { font-size: 1.05rem; padding: 0 12px; } }
 .semana-estilos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.semana-estilos .estilo {
-  flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
-  font: 800 0.85rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border);
-}
-.semana-estilos .estilo.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.semana-estilos .chip-btn { flex: none; white-space: nowrap; }
 .semana-dias { display: grid; gap: 6px; }
 .semana-dia {
   display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 36px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
@@ -721,19 +713,10 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .dur-num b { display: block; font-size: 1.9rem; line-height: 1.1; }
 .dur-num small { color: var(--muted); font-size: 0.82rem; }
 .dur-atajos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.dur-atajo { min-height: 44px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 0.85rem; font-weight: 800; color: #fff; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; display: inline-flex; align-items: center; }
-.dur-atajo.on { border-color: var(--yellow); color: var(--yellow); }
-.dur-final { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); }
-.dur-final .em { font-size: 1.6rem; }
-.dur-final .t { flex: 1; min-width: 0; }
-.dur-final .t b { display: block; }
-.dur-final .t small { color: var(--muted); font-size: 0.82rem; }
+/* The 🏁 row is the shell's .toggle-row with its .switch; under FINAL_DESDE days it fades and does not toggle */
+.dur-final { margin-top: var(--s-12); }
 .dur-final.off { opacity: 0.6; }
-.dur-switch { width: 52px; height: 30px; flex: none; border-radius: 999px; position: relative; border: 0; background: rgba(255, 255, 255, 0.2); cursor: pointer; transition: background 0.15s; }
-.dur-switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left 0.15s; }
-.dur-switch[aria-checked="true"] { background: var(--yellow); }
-.dur-switch[aria-checked="true"]::after { left: 25px; }
-.dur-switch:disabled { cursor: default; }
+.dur-final .switch:disabled { cursor: default; }
 .dur-aviso { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--glass); font-size: 0.85rem; font-weight: 700; }
 .dur-aviso[hidden] { display: none; }
 /* The cup's zone, one short line and who suggested it (D-521) */

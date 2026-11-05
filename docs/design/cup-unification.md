@@ -125,7 +125,7 @@ changed is in [docs/games/cup.md](../games/cup.md) ("In the design system").
 | # | Status |
 |---|---|
 | 1 | done (branch `phase7-cup-1`) |
-| 2 | to do |
+| 2 | done (branch `phase7-cup-2`) |
 | 3 | to do |
 | 4 | to do |
 | 5 | to do |

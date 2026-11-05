@@ -546,4 +546,14 @@ their meaning.
   48 px floor (they measure 52 px), the join screen's "Soy nuevo / Ya estoy inscrito" at the shell's
   0.95 rem with 4 px padding (at 320 px both now fit in one line: the buttons were 66 px tall, now 44),
   and the result's trophy at 4.2 rem on its own line (was 4 rem inline).
+- **PR 2, switches and chips:** the create screen's 🏁 row is the shell's `.toggle-row` with its
+  `.switch` (`.dur-switch` is gone; the button keeps `role="switch"` and `aria-checked`, and gains
+  `.on`); the three pill toggles (the names to sit as on the join screen, the week's styles, the
+  length shortcuts) are one `.chip-btn` in `base.css`; the final's ×2 is `base.css`'s `.chip--cyan`
+  (was `.chip--final`, same colours, D-151). Intended differences: the 🏁 switch is the shell's
+  58 × 34 one (dark track, yellow ring and knob when on; was 52 × 30, white knob on a yellow track),
+  its row a well at 25 % with a 14 px corner and no border (was 30 %, 16 px, a border) with 🏁 in the
+  title line; a chosen chip is yellow everywhere (the name to sit as was cyan, the length shortcut
+  yellow text): 2 px border, a yellow tint and ring like `.opcion.on`; the names to sit as are
+  0.85 rem at 800 (were 1 rem at 900), the length shortcuts' border 2 px (was 1) on a well (was glass).
 

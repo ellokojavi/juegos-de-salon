@@ -316,6 +316,15 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .chip--hot { background: var(--pink); border-color: transparent; }
 .chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* A chip in the colour of the second meaning (La Copa's final ×2, D-151): cyan, as `--gold` is gold */
+.chip--cyan { background: var(--cyan); color: var(--ink-on-cyan); border-color: transparent; }
+/* A chip that is a choice (phase 7, #1196): a pill to tap, one or more on; on is yellow like .opcion.on (yellow is the choice) */
+.chip-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--s-6) var(--s-12);
+  border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--well); color: var(--ink);
+  font: 800 var(--fs-85) var(--font-body); cursor: pointer;
+}
+.chip-btn.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 /* --- Panel desplegable --- */
 details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }

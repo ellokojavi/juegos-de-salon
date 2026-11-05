@@ -747,7 +747,7 @@ function hastaCuando(d, est, now) {
  * La píldora ×2: dorada para el comodín, cian para la final, que vale doble para todos. Así no se
  * confunden: un ×2 de la final no es un comodín, y los dos nunca se suman (D-151).
  */
-const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
+const claseX2 = final => `chip ${final ? 'chip--cyan' : 'chip--gold'}`;
 
 /**
  * The last day before the final, not played yet and the wildcard still unused: the card and the

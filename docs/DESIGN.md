@@ -134,7 +134,8 @@ these uses the class; a game that needs something close to one asks for a varian
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
 | Panel | `.panel`, `details.panel` | the glass card |
-| Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chips` | |
+| Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chip--cyan`, `.chips` | `--cyan` is the second meaning beside gold: La Copa's final ×2 (D-151) against the wildcard's gold |
+| A chip to choose | `.chip-btn`, `.chip-btn.on` | a pill to tap, 44 px tall; on is yellow like `.opcion.on` (yellow is the choice). La Copa's names to sit as, its week styles and its length shortcuts (phase 7) |
 | Stack | `.stack` | vertical rhythm of 12 px |
 | Sheet | `.hoja*` | the bottom sheet (D-232) |
 | Chat | `.chat*` | the room's chat bubble |
@@ -159,7 +160,7 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | Segmented control | `.seg`, `.seg button.on` | |
 | Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
-| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10) |
+| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10); a `<button role="switch">` keeps `aria-checked` and `.on` in step (La Copa's 🏁 final) |
 | A link that is a button | `.link-btn` | |
 | The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
 | Whose turn | `.status`, `.who`, `.sub` | |
