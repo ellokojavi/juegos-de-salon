@@ -11,6 +11,7 @@
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { showWaiting } from '../assets/js/waiting.js';
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
@@ -502,13 +503,10 @@ function crearCopa(...args) {
 /* Abrir una copa                                                      */
 /* ------------------------------------------------------------------ */
 
+/** Waiting, or a failure with a way out: the shared waiting screen (assets/js/waiting.js), back to La Copa's home. */
 function espera(texto, { error = false, reintentar = null } = {}) {
   mostrar('espera');
-  const body = $('#espera-body');
-  body.innerHTML = '';
-  poner(body, el('div', { class: error ? 'form-error' : 'waiting' }, texto));
-  if (reintentar) poner(body, el('button', { class: 'btn btn--cyan', onClick: reintentar }, T.retry));
-  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.cupHome));
+  showWaiting($('#espera-body'), texto, { error, retry: reintentar, retryLabel: T.retry, home: location.pathname + (PRUEBA ? '?test' : ''), homeLabel: T.cupHome });
 }
 
 /**
@@ -770,7 +768,7 @@ function tarjetaDia(d, rotulo) {
   // Out of the cup (D-347): nothing left to play; the notice on top says why
   else if (fuera(Lc, S.yo, now)) accion = null;
   // Con el admin solo no se juega (D-118): falta con quién competir
-  else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'aviso', id: 'falta-gente' }, T.needSecond);
+  else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'notice', id: 'falta-gente' }, T.needSecond);
   else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, `${J.emoji} ${T.play}`);
   else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, `${J.emoji} ${T.resume}`);
   return el('div', { class: `panel dia-card ${est}` },
@@ -1009,7 +1007,7 @@ function tablero() {
   const riesgo = yoFuera || terminada(meta, now) ? 0 : enRiesgo(Lc, S.yo, now);
   if (yoFuera) poner(body, el('div', { class: 'panel aviso-fuera', id: 'aviso-fuera' },
     el('p', { class: 'lead', style: 'margin:0 0 6px' }, T.outTitle), el('p', { class: 'muted', style: 'margin:0' }, fmt(T.outText, { a: yoFuera.desde, b: yoFuera.hasta }))));
-  else if (riesgo) poner(body, el('p', { class: 'aviso', id: 'aviso-riesgo' }, fmt(T.outRisk, { p: riesgo - 1, d: riesgo })));
+  else if (riesgo) poner(body, el('p', { class: 'notice', id: 'aviso-riesgo' }, fmt(T.outRisk, { p: riesgo - 1, d: riesgo })));
 
   // Tus días: el historial, el de hoy habilitado y los que vienen deshabilitados
   poner(body, misDias(d, now));
@@ -1162,7 +1160,7 @@ const avisos = () => (avisosCopa ||= crearAvisos({
 }));
 
 function toast(texto) {
-  const t = el('div', { class: 'toast', role: 'status' }, texto);
+  const t = el('div', { class: 'snackbar', role: 'status' }, texto);
   document.body.append(t);
   setTimeout(() => t.remove(), 2600);
 }
@@ -1556,7 +1554,7 @@ async function jugar(d, { nuevo = false } = {}) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
-  if (yaCorria) head.after(el('p', { class: 'aviso', id: 'aviso-otro-celular' }, T.resumedElsewhere));
+  if (yaCorria) head.after(el('p', { class: 'notice', id: 'aviso-otro-celular' }, T.resumedElsewhere));
   // No clock in the header while playing (D-379), except in a game whose speed scores and that has
   // no countdown of its own (`clock` in its ui.js, D-384). The end-to-end scripts read the time
   // here to check that it stops with the board (D-130)
@@ -1623,7 +1621,7 @@ async function enviar(d, fin, envio = null) {
   mostrar('resultado');
   const body = $('#resultado-body');
   body.innerHTML = '';
-  poner(body, el('div', { class: 'waiting center' }, T.sending));
+  poner(body, el('div', { class: 'waiting waiting--screen center' }, T.sending));
   try {
     await (envio || mandar(d, fin));
   } catch (e) {
@@ -1808,8 +1806,8 @@ function practica(id, varianteElegida = null) {
     // Toque y Fama: Palabra shares Toque y Fama's home card (#767): 🔢 Número goes back to it
     id === 'letras' && SUELTO && !HOY ? selectorTyf() : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
-    HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
-    delDia ? el('p', { class: 'aviso uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
+    HOY ? el('p', { class: 'notice uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
+    delDia ? el('p', { class: 'notice uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla, variante); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
@@ -2023,7 +2021,7 @@ function resultadoEnsayo(id, r, volver, variante = null) {
   poner(body,
     el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
       el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
-    el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
+    el('div', { class: 'notice' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
     explicacion(conVariante(JUEGOS_COPA[id], variante), { s: r.s, ms: r.ms, det: r.det, copa: false }),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); volver(); } }, T.trialBack));
 }
@@ -2183,13 +2181,13 @@ function reportar(extra = {}) {
       });
       body.innerHTML = '';
       SFX.reveal();
-      poner(body, el('div', { class: 'aviso bien' }, T.reportThanks),
+      poner(body, el('div', { class: 'notice notice--good' }, T.reportThanks),
         el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
     } catch (e) {
       // No se pudo enviar, pero quedó en el dispositivo y se reenvía solo (D-109)
       if (e?.guardado) {
         body.innerHTML = '';
-        poner(body, el('div', { class: 'aviso' }, T.reportQueued),
+        poner(body, el('div', { class: 'notice' }, T.reportQueued),
           el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
         return;
       }

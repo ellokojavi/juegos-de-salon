@@ -901,7 +901,7 @@ if (runs('labs')) {
         const dfs=t=>{if(found||k++>200000)return;if(z.estado(p,t).faltan){found=t.slice();return}for(let i=0;i<N;i++)if(z.puedeIr(p,t,i)){t.push(i);dfs(t);t.pop()}};dfs([start]);
         const g=document.querySelector('.zip-grid');const top0=g.getBoundingClientRect().top;
         for(const i of found)g.querySelector('.zc[data-i="'+i+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));
-        const h=g.querySelector('.zc.cabeza');const r={still:g.getBoundingClientRect().top===top0,warning:!!document.querySelector('.zip-aviso .aviso.mal'),num:h.innerText.trim()!=='',covers:getComputedStyle(h,'::after').content!=='none'};
+        const h=g.querySelector('.zc.cabeza');const r={still:g.getBoundingClientRect().top===top0,warning:!!document.querySelector('.zip-aviso .notice--bad'),num:h.innerText.trim()!=='',covers:getComputedStyle(h,'::after').content!=='none'};
         return JSON.stringify(r)})()`).then(JSON.parse);
       ok(z.warning && z.still, 'Zip: the missing-cells warning appears under the grid without moving it');
       ok(z.num && !z.covers, 'Zip: the head of the path over a number leaves the number visible');

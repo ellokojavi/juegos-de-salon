@@ -174,7 +174,7 @@ export function montar(raiz, ctx) {
   const dibujarAccion = e => {
     accion.replaceChildren();
     if (e.fin) {
-      accion.append(el('div', { class: 'aviso bien' }, `🎉 ${T.casoOk}`),
+      accion.append(el('div', { class: 'notice notice--good' }, `🎉 ${T.casoOk}`),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
       return;
     }

@@ -49,6 +49,8 @@
   --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
   /* Danger (phase 7, #1196, from La Copa): the red button's edge, and the soft pink of a ghost danger button's text */
   --edge-red: #8a1024; --danger-soft: #ff8fbd;
+  /* A notice that went wrong: its pale pink text on the red tint; the snackbar's near-black (phase 7, from La Copa) */
+  --ink-bad: #ffd0d6; --snackbar-bg: #111111;
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
   /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
   --well: rgba(0, 0, 0, 0.25); --well-deep: rgba(0, 0, 0, 0.3);
@@ -314,12 +316,20 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .lobby-players .p.me { background: var(--cyan); color: var(--ink-on-cyan); }
 .lobby-players .p.off { opacity: 0.45; }
 .waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting--screen { padding: var(--s-32) 0; }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 /* Whose turn, over the board: the name glowing cyan and a line under it */
 .status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
 .status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(from var(--cyan) r g b / 0.5); }
 .status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+/* A notice: one line that tells the player something, in a glass box; --good in lime, --bad on a red tint (phase 7, from La Copa) */
+.notice { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.notice--good { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
+.notice--bad { background: rgb(from var(--red) r g b / 0.22); color: var(--ink-bad); }
+/* The snackbar: a short message floating at the bottom for a moment ("Copiado"); centred without a
+   transform, because the entering animation would override it and push it to the right */
+.snackbar { position: fixed; left: var(--s-16); right: var(--s-16); margin: 0 auto; width: fit-content; bottom: calc(var(--s-24) + var(--safe-bottom)); background: var(--snackbar-bg); border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: var(--s-12) var(--s-18); border-radius: var(--r-14); z-index: 50; animation: slideUp 0.25s both; }
 /* The result's hero: the trophy popping above the title */
 .result-hero { text-align: center; padding: var(--s-2) 0 var(--s-6); }
 .result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }

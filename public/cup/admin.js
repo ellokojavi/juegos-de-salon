@@ -134,7 +134,7 @@ function pantallaAdmin({ forzar = false } = {}) {
       el('p', { class: 'lead', style: 'margin:0' }, T.startTitle),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
       el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, lineaZona ? lineaZona(meta) : fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
-      alerta ? el('div', { class: 'aviso' }, alerta) : null,
+      alerta ? el('div', { class: 'notice' }, alerta) : null,
       el('div', { class: 'btn-row btn-row--wrap' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'), botonOtra),
       otra.nodo));
   }
@@ -145,7 +145,7 @@ function pantallaAdmin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack lab-panel', id: 'admin-lab' },
       el('p', { class: 'lead', style: 'margin:0' }, `🧪 ${T.labTitle}`),
       el('p', { class: 'muted', style: 'margin:0' }, T.labLead),
-      faltaGente(Lc) ? el('div', { class: 'aviso', id: 'lab-falta-gente' }, T.labNeedSecond) : null,
+      faltaGente(Lc) ? el('div', { class: 'notice', id: 'lab-falta-gente' }, T.labNeedSecond) : null,
       faltaGente(Lc) ? null : accion(`⏭️ ${siguiente > meta.days ? T.labEnd : fmt(T.labNext, { d: siguiente })}`, 'btn-pasar-dia', async () => {
         if (!confirm(siguiente > meta.days ? T.labEndConfirm : fmt(T.labNextConfirm, { d: siguiente }))) throw { code: 'cancelado' };
         await c.store.reprogramar(S.code, pasarDia(meta));
@@ -175,7 +175,7 @@ function pantallaAdmin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-terminar' },
       el('p', { class: 'lead', style: 'margin:0' }, T.endTitle),
       el('p', { class: 'muted', style: 'margin:0' }, T.endLead),
-      quienes.map(x => el('div', { class: 'aviso' }, fmt(x.falta.length === 1 ? T.endMissingOne : T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
+      quienes.map(x => el('div', { class: 'notice' }, fmt(x.falta.length === 1 ? T.endMissingOne : T.endMissing, { d: x.k, names: x.falta.map(j => j.name).join(', ') }))),
       quedan ? el('p', { class: 'muted', style: 'margin:0' }, T.endCancelled) : null,
       accion(`🏁 ${T.endGo}`, 'btn-terminar', async () => {
         if (!confirm(fmt(T.endConfirm, { copa: meta.name }))) throw { code: 'cancelado' };
@@ -280,6 +280,6 @@ function eliminada(nombre) {
   poner(body, el('div', { class: 'stack center', id: 'copa-eliminada' },
     el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🗑️'),
       el('h2', { class: 'display display--md' }, T.deletedTitle)),
-    el('div', { class: 'aviso bien' }, fmt(T.deletedDone, { copa: nombre })),
+    el('div', { class: 'notice notice--good' }, fmt(T.deletedDone, { copa: nombre })),
     el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); S.eliminando = false; portada(); } }, T.deletedBack)));
 }

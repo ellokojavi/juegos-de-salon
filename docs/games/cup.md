@@ -570,4 +570,13 @@ their meaning.
   `.link-btn`s at the shell's 0.95 rem (were 0.85) with no 8 px above; the Uno al día sheet's
   "Silenciar" on the home page and `/today/`, which had no style outside La Copa, now has the soft
   pink it had inside it.
+- **PR 4, notices, the snackbar and waiting:** La Copa's notices and toast are `base.css`'s now,
+  under English names because two games already use the old ones for something else (Batalla
+  Naval's `.toast`, Aletazo's `.aviso`): `.aviso` → `.notice`, `.aviso.bien` / `.aviso.mal` →
+  `.notice--good` / `.notice--bad` (in the cup's screens and its 13 mini-games' `ui.js`), `.toast` →
+  `.snackbar`; their two colours without a token are `base.css`'s `--ink-bad` and `--snackbar-bg`.
+  `espera()` draws with the shared `showWaiting()` (`assets/js/waiting.js`), whose `.waiting--screen`
+  replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended
+  difference is the waiting line's room, 32 px above and below (was 30). `uno-al-dia-ui.js`'s intro line
+  keeps `.aviso`: on the home games it has no style, and giving it one is their migration, not this one.
 

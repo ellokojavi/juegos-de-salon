@@ -51,6 +51,7 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--well`, `--well-deep` | black at 25 % and 30 % | a sunken surface on the dark background: rows, segmented controls (`--well`), inputs (`--well-deep`) |
 | `--placeholder` | white at 35 % | an input's placeholder |
 | `--line-faint` | white at 35 % | a faint line drawn on the dark background: an empty step's ring (Rutas rotas' and Loteo's stage dots). Same value as `--placeholder`, other meaning: change one, not both |
+| `--ink-bad`, `--snackbar-bg` | `#ffd0d6`, `#111111` | the pale pink text of `.notice--bad` on its red tint; the snackbar's near-black. From La Copa, phase 7 |
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
 relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
@@ -163,7 +164,9 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
 | A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10); a `<button role="switch">` keeps `aria-checked` and `.on` in step (La Copa's 🏁 final) |
 | A link that is a button | `.link-btn`, `.link-inline` | `.link-btn` the small way out under a form; `.link-inline` a cyan link inside a line of text |
-| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
+| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.waiting--screen`, `.dots` | `--screen` gives a waiting line the room of a whole screen; `showWaiting()` in `assets/js/waiting.js` draws it, or the failure with Retry and a way home (from La Copa, phase 7) |
+| A notice | `.notice`, `.notice--good`, `.notice--bad` | one line that tells the player something, in a glass box; lime when it went well, a red tint when not (from La Copa, phase 7) |
+| A snackbar | `.snackbar` | a short message floating at the bottom for a moment ("Copiado"), `role="status"` |
 | Whose turn | `.status`, `.who`, `.sub` | |
 | The result's hero | `.result-hero`, `.trophy` | |
 

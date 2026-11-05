@@ -183,14 +183,14 @@ export function montar(raiz, ctx) {
     }
     const reinas = e.marcas.filter(v => v === motor.REINA).length;
     caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.queensLeft, { m: reinas, n })));
-    const cierre = e.fin ? [el('div', { class: 'aviso ' + (e.rendido ? 'mal' : 'bien') }, e.rendido ? T.queensGaveUp : `🎉 ${T.queensOk}`),
+    const cierre = e.fin ? [el('div', { class: 'notice notice--' + (e.rendido ? 'bad' : 'good') }, e.rendido ? T.queensGaveUp : `🎉 ${T.queensOk}`),
         // El puntaje es el tiempo (D-107): la pantalla lo lee del reloj de la partida al terminar
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...e, ms: ctx.tiempo?.() }); } }, ctx.textoFin || T.seeResults)] : [];
     // El cierre va arriba de la grilla; en la final (ctx.cierreAbajo), debajo
     if (!ctx.cierreAbajo) caja.append(...cierre);
     caja.append(grilla, el('p', { class: 'block-hint' }, T.queensHint));
     if (ctx.cierreAbajo) caja.append(...cierre);
-    if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'aviso mal' }, T.queensClash));
+    if (e.conflictos.size && !e.fin) caja.append(el('div', { class: 'notice notice--bad' }, T.queensClash));
     if (!e.fin) {
       const vacio = e.marcas.every(v => v === motor.VACIO);
       caja.append(el('div', { class: 'btn-row reinas-acciones' },

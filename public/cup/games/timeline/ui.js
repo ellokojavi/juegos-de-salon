@@ -115,7 +115,7 @@ export function montar(raiz, ctx) {
     // El cierre: el veredicto y el botón para seguir
     cierre.innerHTML = '';
     if (x.fin) {
-      cierre.append(el('div', { class: 'aviso bien' }, fmt(T.lineaFin, { ok: x.aciertos, n: x.marcas.length })),
+      cierre.append(el('div', { class: 'notice notice--good' }, fmt(T.lineaFin, { ok: x.aciertos, n: x.marcas.length })),
         x.linea.some(c => c.dato) ? el('p', { class: 'muted center', style: 'margin:0' }, LT.datoTap) : null,
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(x); } }, ctx.textoFin || T.seeResults));
     }
