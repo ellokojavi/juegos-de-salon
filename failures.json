@@ -282,7 +282,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/design-lint.test.mjs",
       "signature": "756a124245",
       "date": "2026-11-05T06:27:02.407Z",
-      "fix": null,
+      "fix": {
+        "commit": "65ea209a912f97bb732716f680ed1b8dd3064fc3",
+        "date": "2026-11-05T06:28:55.403Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
