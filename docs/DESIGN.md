@@ -187,7 +187,18 @@ was a whole file. The rows above are the first entries of the allowlist, read fr
 every other hit is a migration, not an escape. A 4 px tail used by three bubbles and a podium is a
 candidate scale step, `--r-4`: a decision, not an allowlist entry forever.)
 
-## 5. Migration recipe
+## 5. Known debts of the system itself
+
+Found while building the components page (phase 3); each is a visible change on every page, so it
+is a decision for the owner, not a migration:
+
+- `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
+  the components page leaves it out of its check until it is decided.
+- `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
+  its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
+  phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
+
+## 6. Migration recipe
 
 Written in phase 4 (#1192) from what the pilot (Ahorcado) teaches: what maps to what, what to look
 at in the screenshots, and how long one game takes.
