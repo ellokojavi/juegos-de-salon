@@ -6,6 +6,13 @@ two: this document (the rules) and `public/assets/css/base.css` (the tokens and 
 with `public/assets/css/ranking.css` for rankings. Nothing visual is decided in a game's own CSS
 that could be decided here (C-1, D-533).
 
+**What it governs:** everything (the owner, 2026-11-05). Every element of design and every
+experience of the site, La Copa and its mini-games included: not only how a button looks, but how
+a screen starts, passes the phone, confirms, shares and shows a result. Nothing is a game's own
+without an escape in §4 with its reason. La Copa behaves today as a system apart (`cup/style.css`,
+its own controls in `cup/game.js`); that is a defect the plan dissolves (phase 7, #1196), not a
+boundary the system respects.
+
 **Who keeps it:** the usability agent (`.claude/agents/usability.md`). It owns this document, the
 design lint (`tools/agents/design-lint.mjs`, phase 2 of #1188), and the components page
 (`/labs/design/`, phase 3). A change to a token or a shared class is reviewed by it. A game does
@@ -133,8 +140,9 @@ toggle row (`.toggle-row`), the link button (`.link-btn`), the section title, th
 ## 3. Rules
 
 1. **A value the player sees comes from a token.** A colour, a distance, a corner, a shadow or a
-   text size written by hand in a game's CSS is a lint hit (phase 2). The lint tells the file and
-   the line; the fix is the token, or an escape with its reason.
+   text size written by hand in a game's CSS is a lint hit (`node tools/agents/design-lint.mjs`).
+   The lint tells the file and the line; the fix is the token, or an escape with its reason. Until
+   phase 6 the lint reports and the ratchet holds (no file's count grows); then it gates.
 2. **A component is used, not copied.** A class that exists in `base.css` or `ranking.css` is not
    redeclared in a game. A variant the game needs goes into `base.css`, with its place on the
    components page, in the same PR.
@@ -157,8 +165,13 @@ toggle row (`.toggle-row`), the link button (`.link-btn`), the section title, th
 
 ## 4. Escapes
 
-A game's own visual rules, with their reason. The design lint reads `docs/design-allowlist.json`
-(phase 2); this list is the human-readable side, kept in sync by the usability agent.
+A game's own visual rules, with their reason. The design lint (`node tools/agents/design-lint.mjs`,
+D-533) reads `docs/design-allowlist.json`, one entry per exception with its reason; this list is the
+human-readable side, kept in sync by the usability agent. A game's thematic colours declared as its
+own tokens at the top of its stylesheet (`--mar`, `--casco`) are not hits and need no entry: the
+lint never reads a `--token:` declaration. What the lint measures today, and the ratchet
+(`docs/design-baseline.json`: a file's count never grows, `design-lint.mjs baseline` rewrites it
+after a migration), is in the lint's header.
 
 | Game | What | Why |
 |---|---|---|
@@ -167,7 +180,7 @@ A game's own visual rules, with their reason. The design lint reads `docs/design
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
 
-(The table is filled as the lint's baseline is read in phase 2.)
+(The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that was a whole file.)
 
 ## 5. Migration recipe
 

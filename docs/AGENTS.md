@@ -15,7 +15,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
   It owns **the design system** (D-533, `docs/DESIGN.md`): the tokens and shared classes in `base.css`, the design lint
-  (`node tools/agents/design-lint.mjs`, from phase 2 of #1188) and the components page (`/labs/design/`, phase 3); a PR that
+  (`node tools/agents/design-lint.mjs [--summary|--all|--gate|baseline|<file.css>]`: colours, corners, distances and text sizes off the tokens, classes copied from `base.css`; `docs/design-allowlist.json` with a reason per entry; the ratchet `docs/design-baseline.json` that `design-lint.test.mjs` holds and `baseline` rewrites after a migration) and the components page (`/labs/design/`, phase 3); a PR that
   adds a token, a scale step or a shared class is reviewed by it, and it migrates one game per round when the round is quiet (#1193).
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
   request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability

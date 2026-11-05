@@ -78,8 +78,9 @@ not a habit.
 
 `docs/DESIGN.md` and the tokens and shared classes in `public/assets/css/base.css` are the one
 visual language of the site, and you keep them: the document, the design lint
-(`node tools/agents/design-lint.mjs`, from phase 2 of #1188; its allowlist in `docs/`
-with a reason per entry, its baseline that never grows) and the components page (`/labs/design/`,
+(`node tools/agents/design-lint.mjs`; its allowlist `docs/design-allowlist.json` with a reason per
+entry; its ratchet `docs/design-baseline.json`, which `design-lint.test.mjs` holds: a file's count never
+grows, and `design-lint.mjs baseline` rewrites it after a migration) and the components page (`/labs/design/`,
 phase 3). In PR mode, when the PR touches CSS: run the lint and say the count in your report; a new
 colour, distance, corner or text size written by hand is fixed with its token or allowlisted with its
 reason; a class copied from `base.css` is replaced by the class; a control the game invents that
