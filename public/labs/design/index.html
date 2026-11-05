@@ -69,7 +69,7 @@
         <button class="btn btn--yellow" type="button">🏆 La acción</button>
         <button class="btn btn--cyan" type="button">Secundario</button>
         <button class="btn btn--ghost" type="button">Fantasma</button>
-        <div class="btn-row"><button class="btn btn--sm" type="button">Pequeño</button><button class="btn btn--ghost btn--sm" type="button">Pequeño fantasma</button></div>
+        <div class="btn-row"><button class="btn btn--sm" type="button">Pequeño</button><button class="btn btn--ghost btn--sm" type="button">👻 Pequeño</button></div>
         <button class="btn btn--yellow" type="button" disabled>Deshabilitado</button>
         <div class="btn-row"><button class="btn btn--ghost" type="button">Dos</button><button class="btn btn--yellow" type="button">En fila</button></div>
         <div class="topbar" style="margin:0"><a class="back" href="#ds-botones">‹ Menú</a><div class="tools"><button class="icon-btn" type="button" aria-label="Icono">🔊</button><span class="lang-toggle"><button type="button" class="on"><span class="flag">🇨🇱</span></button><button type="button"><span class="flag">🇺🇸</span></button></span></div></div>
@@ -89,18 +89,21 @@
           <div class="rk-fila yo"><span class="rk-puesto">🥈</span><span class="rk-nombre"><span class="rk-n">🇧🇷 Javi</span><small>(tú)</small></span><span class="rk-puntos">98</span><small class="rk-tiempo">1:15</small></div>
           <div class="rk-fila"><span class="rk-puesto">3</span><span class="rk-nombre"><span class="rk-n">Un nombre muy largo que se corta</span></span><span class="rk-puntos">7</span><small class="rk-tiempo">🏆</small></div>
         </div>
+        <p class="rk-record">🎉 ¡Nuevo récord!</p>
+        <div class="rk-seg" role="tablist"><button type="button" class="on">Semana</button><button type="button">Siempre</button><button type="button">Amigos</button></div>
+        <div class="rk-jugador"><label class="rk-campo"><span>Tu nombre</span><input type="text" value="Javi"></label><label class="rk-campo"><span>PIN</span><input type="password" class="rk-pin" value="1234"></label><button type="button" class="rk-link">Salir</button></div>
       </section>
 
       <section class="panel stack" id="ds-teclado">
         <h2 class="display display--sm">Teclado</h2>
         <!-- In a plain block: in a .stack (flex column) the keypad's `margin: 0 auto` would shrink it to its min-content -->
         <div><div class="entry"><div class="box filled">4</div><div class="box active">7</div><div class="box hidden-digit">0</div><div class="box"></div></div>
-        <div class="keypad"><button type="button">1</button><button type="button">2</button><button type="button" class="blocked">3</button><button type="button">4</button><button type="button" disabled>5</button><button type="button" class="ok">OK</button></div></div>
+        <div class="keypad"><button type="button">1</button><button type="button">2</button><button type="button" class="blocked">3</button><button type="button">4</button><button type="button" disabled>5</button><button type="button">6</button><button type="button" class="del" aria-label="Borrar">⌫</button><button type="button">0</button><button type="button" class="ok">OK</button></div></div>
       </section>
 
       <section class="panel stack" id="ds-escapes">
-        <h2 class="display display--sm">Escapes</h2>
-        <p class="muted">Lo que un juego puede tener propio, con su motivo, está en DESIGN.md §4 y en <code>docs/design-allowlist.json</code>. Lo demás lo cuenta <code>node tools/agents/design-lint.mjs</code>.</p>
+        <h2 class="display display--sm">Excepciones</h2>
+        <p class="muted">Lo que un juego puede tener propio, con su motivo, está en DESIGN.md §4 y en <code>docs/design-allowlist.json</code>. Lo demás lo mide <code>node tools/agents/design-lint.mjs</code>.</p>
       </section>
     </main>
   </div>
@@ -112,12 +115,8 @@
     const tokens = [...root.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(m => [m[1], m[2].trim()]);
     const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
     const swatches = document.getElementById('ds-muestras');
-    for (const [name, value] of tokens.filter(([n, v]) => /^#|^rgba?\(/.test(v) && !/^--(edge|ink-on)/.test(n))) {
+    for (const [name, value] of tokens.filter(([, v]) => /^#|^rgba?\(/.test(v))) {
       const s = el('div', 'ds-muestra'); s.append(el('span', 'ds-muestra-color'), el('b', '', name.slice(2)), el('small', 'muted', value));
-      s.querySelector('.ds-muestra-color').style.background = `var(${name})`; swatches.append(s);
-    }
-    for (const [name] of tokens.filter(([n]) => /^--(edge|ink-on)/.test(n))) {
-      const s = el('div', 'ds-muestra'); s.append(el('span', 'ds-muestra-color'), el('b', '', name.slice(2)));
       s.querySelector('.ds-muestra-color').style.background = `var(${name})`; swatches.append(s);
     }
     const scale = (id, prefix, draw) => { const box = document.getElementById(id); for (const [name, value] of tokens.filter(([n]) => n.startsWith(prefix))) box.append(draw(name, value)); };
