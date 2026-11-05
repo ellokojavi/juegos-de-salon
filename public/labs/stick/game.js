@@ -184,7 +184,7 @@ function jugar() {
   const logro = el('div', { class: 'logros-ninja', id: 'logros', 'aria-live': 'polite' });
   const cartel = el('div', { class: 'pausa-ninja', id: 'pausa', 'aria-live': 'polite', hidden: true },
     // The emoji outside the rainbow: a gradient clipped to text paints an emoji as a colored square
-    el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display rainbow' }, T.pausa)), el('span', {}, T.seguir));
+    el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display display--lg rainbow' }, T.pausa)), el('span', {}, T.seguir));
   const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.sostener }, lienzo, marcador, vidas, racha, aviso, logro, cartel);
   const antes = S.antes = mejorAntes();
   const mejor = el('span', { class: 'mejor-ninja', id: 'mejor-juego' }, antes ? fmt(T.mejorCorto, { n: antes }) : '');

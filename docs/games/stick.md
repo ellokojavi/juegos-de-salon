@@ -142,3 +142,7 @@ pillar and stays there, looking at the next one, with no stick (`public/assets/s
 `node marketing/splash/teaser.mjs ninja` from `marketing/splash/teaser/ninja.html`). The scene draws with the
 game's own `scene.js` on the teaser engine (`marketing/splash/TEASERS.md`, D-505), so a change to the game's drawing reaches it the next time it is recorded; its memory is
 `marketing/splash/campaigns/ninja-pronto/README.md`.
+
+## Migrated to the design system (D-533, #1193)
+
+The lab's stylesheet, `public/labs/stick/style.css`, lost its copy of the shell's `.link-btn` (identical to `base.css`'s) and writes the rest on the tokens: 47 lint hits to 0 beyond two escapes in `docs/design-allowlist.json` (the cover's 🥷 at 2.2 rem, the black of the canvas' fade mask). The pause's word takes the title step `.display--lg` (in `game.js`) instead of 2.6 rem of its own. What changed for the player, all intended: the night's corner is 16 px (was 18), the streak chip and today's runs are 1 px taller each side (4 px padding, was 3), the result's stamp is one step larger (1.4 rem, was 1.3), the line before the comment is fully rounded, the achievement's shadow is `--shadow-panel`, the ink on yellow is `--ink-on-yellow`, and sizes between two steps moved to the nearer one (the heading's 🥷, the best, the lives, the pause's text, the achievement's icon and text).
