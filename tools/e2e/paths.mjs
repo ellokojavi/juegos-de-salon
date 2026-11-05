@@ -513,6 +513,14 @@ export const PATHS = {
    */
   'linea-de-tiempo': {
     intro: [],
+    // One phone: the setup with the dealing selector (three labels side by side) in view, and the first turn
+    setup: [`document.querySelectorAll('.mode')[0].click()`, `document.querySelector('.seg--cards').scrollIntoView({block:'center'})`],
+    game: [
+      `document.querySelectorAll('.mode')[0].click()`,
+      `[...document.querySelectorAll('#setup-form .player-row input')].forEach((i,k)=>{i.value=['Javi','Cata'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
+      `document.querySelector('#setup-actions .btn').click()`,
+      `document.querySelector('#handoff .btn')?.click() ?? document.getElementById('handoff').click()`,
+    ],
     solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`],
     'solo-game': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
     'solo-result': [
