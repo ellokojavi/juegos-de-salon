@@ -127,7 +127,8 @@ or any other here), launch it and report what it found; do not ask the owner fir
   headless Claude rounds, hooks), is listed in `tools/jobs/jobs.json`; `node tools/jobs/jobs.mjs status` shows them all
   with their last run, and `jobs.test.mjs` fails if a scheduled workflow is missing. Frequent checks
   are `mac` jobs, plain scripts that call Claude only when there is work (`inbox-watch`: the hola@
-  inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
+  inbox every 5 minutes); a `mac` job with `service: true` is a process launchd keeps alive (the `referee` gateway,
+  `tools/referee/`). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
   holds and how to move it to another machine: [tools/jobs/MAC-MINI.md](tools/jobs/MAC-MINI.md) (D-383).
 - **Weekly report** (D-352): every Sunday at 8:00 the launchd job `weekly-report` (D-440, D-451), a
   headless Claude session following `tools/jobs/prompts/weekly-report.md`, runs
