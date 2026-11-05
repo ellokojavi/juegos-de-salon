@@ -144,6 +144,24 @@
       "rule": "text-size",
       "what": "font-size: 5rem",
       "reason": "The chameleon's reveal on the secret card (`.big-lizard`): the one card without a word, so the lizard is bigger than the cover's icon (4.2 rem) and whoever holds the phone knows at once; a hero's own size, not a text step."
+    },
+    {
+      "file": "public/labs/fourth-king/style.css",
+      "rule": "text-size",
+      "what": "font: 900 3.2rem var(--font-num)",
+      "reason": "The Cuenta Cuentos countdown (`.helper .timer`): a figure the table reads at a glance while someone talks, the board's own size above the text steps (D-30: figures in --font-num); the same size as Línea de Tiempo's solo score."
+    },
+    {
+      "file": "public/labs/fourth-king/style.css",
+      "rule": "text-size",
+      "what": "font-size: 3.6rem",
+      "reason": "The final screen's crown (`.finale .crown-big`): smaller than the result hero's 4.2 rem so the three buttons are seen without scrolling with six players on an 812 px phone, in every language (C-8, measured); a hero's own size, not a text step."
+    },
+    {
+      "file": "public/labs/fourth-king/style.css",
+      "rule": "text-size",
+      "what": "font-size: 3.8rem",
+      "reason": "The clinking glasses on the turn handoff (`.handoff .pase .cheers`): smaller than the shell's 5.5 rem because the result and the pass share one screen and with six drinkers the button fell off a small phone (C-9, C-8); a hero's own size."
     }
   ]
 }
