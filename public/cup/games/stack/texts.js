@@ -102,7 +102,7 @@ const PT = {
     skFloors: ['andares', 'andar', 'andares'],
     skPoints: ['pontos', 'ponto', 'pontos'],
     skTallyStreaks: ['sequências', 'sequência', 'sequências'],
-    skTallyLength: 'pelo comprimento',
+    skTallyLength: 'comprimento',
     skBdBlocks: ['🧱 Nenhum andar: 0 pontos.', '🧱 1 andar: 1 ponto.', '🧱 {n} andares: {n} pontos.'],
     skBdStreaks: ['', '🔥 1 sequência de 3 ou mais perfeitos: +{p}.', '🔥 {n} sequências de 3 ou mais perfeitos: +{p}.'],
     skBdLength: '📏 Pelo comprimento das sequências: +{p}.',
