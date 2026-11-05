@@ -32,6 +32,12 @@
       "reason": "the podium step (.escalon): flat 4 px feet so the three steps read as one podium; a shape, not a size on the scale"
     },
     {
+      "file": "public/cup/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.4rem",
+      "reason": "the day card's game emoji (.dia-emoji), the board's hero beside the game's name: between the text steps and the display steps, as the covers' icons"
+    },
+    {
       "file": "public/cup/games/case/style.css",
       "rule": "radius",
       "what": "border-radius: 14px 14px 14px 4px",
