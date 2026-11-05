@@ -84,6 +84,12 @@
       "rule": "text-size",
       "what": "font-size: 0.62rem",
       "reason": "The rivals' dice drawn as glyphs (`.rivals .rival .d`): five of them must fit in the rival card's 74 px, under the smallest text step; a board's own size."
+    },
+    {
+      "file": "public/liars-dice/style.css",
+      "rule": "text-size",
+      "what": "font: 900 2.6rem var(--font-num)",
+      "reason": "The bid's figure (`.bid-chip b` and its kin): a number the table reads from across the phone, the board's own size above the text steps (D-30: figures in --font-num)."
     }
   ]
 }
