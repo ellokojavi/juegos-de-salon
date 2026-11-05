@@ -703,9 +703,11 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
-    // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search
-    import('./launched.js').then(m => m.move()).catch(() => {}).then(() => import('./bodega.js')).then(m => m.start());
-    import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
+    // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search,
+    // and the owner's 🚀 Publicar para todos (D-480) is drawn on each card where it already sits
+    const moved = import('./launched.js').then(m => m.move()).catch(() => {});
+    moved.then(() => import('./bodega.js')).then(m => m.start());
+    moved.then(() => import('./publish.js')).then(m => m.start());
   </script>
 </body>
 </html>
