@@ -569,6 +569,7 @@ node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
+node tools/agents/conflict-markers.test.mjs
 node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
 node tools/agents/design-lint.test.mjs
