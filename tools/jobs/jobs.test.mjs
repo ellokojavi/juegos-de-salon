@@ -21,7 +21,8 @@ check('each job says where, what and why', () => {
     assert.ok(['github', 'mac', 'hook'].includes(j.where), `${j.id}: where`);
     assert.ok(j.what && j.decisions?.length, `${j.id}: what and decisions`);
     if (j.where === 'github') assert.ok(j.workflow && (j.cron || j.trigger), `${j.id}: workflow and cron (or the trigger of an event-driven one)`);
-    if (j.where === 'mac') assert.ok(((Number.isInteger(j.every) && j.every >= 60) !== !!j.at) && j.command?.length, `${j.id}: every or at, and command`);
+    if (j.where === 'mac' && j.service) assert.ok(!j.every && !j.at && j.command?.length >= 2, `${j.id}: a service has a command and no schedule`);
+    else if (j.where === 'mac') assert.ok(((Number.isInteger(j.every) && j.every >= 60) !== !!j.at) && j.command?.length, `${j.id}: every or at, and command`);
     if (j.at) assert.ok(Number.isInteger(j.at.hour) && Number.isInteger(j.at.minute), `${j.id}: at.hour and at.minute`);
     if (j.where === 'hook') assert.ok(j.trigger, `${j.id}: trigger`);
   }
@@ -55,6 +56,9 @@ check('the plist runs the job through jobs.mjs run, from the main folder', () =>
   const at = plist({ id: 'y', at: { weekday: 0, hour: 8, minute: 0 } }, { repo: '/r', node: '/n/node', path: '/n:/bin' });
   assert.match(at, /<key>StartCalendarInterval<\/key>\s*<dict><key>Hour<\/key><integer>8<\/integer><key>Minute<\/key><integer>0<\/integer><key>Weekday<\/key><integer>0<\/integer><\/dict>/);
   assert.doesNotMatch(at, /RunAtLoad/);
+  const svc = plist({ id: 'z', service: true, command: ['node', 'tools/referee/gateway.mjs'] }, { repo: '/r', node: '/n/node', path: '/n:/bin' });
+  assert.match(svc, /<string>\/n\/node<\/string><string>\/r\/tools\/referee\/gateway.mjs<\/string>/, 'a service runs its command itself');
+  assert.match(svc, /<key>KeepAlive<\/key><true\/>/); assert.doesNotMatch(svc, /StartInterval|<string>[^<]*jobs\.mjs<\/string>/);
 });
 
 check('Claude jobs keep their prompt in the repo, and it names only files that exist (D-440, D-451)', () => {
