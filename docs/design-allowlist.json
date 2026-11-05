@@ -444,6 +444,42 @@
       "rule": "token-colour",
       "what": "background: rgba(21, 7, 38, *)",
       "reason": "The chat and support sheets' lower stop: the shell's night written as a fixed colour, not var(--bg1)/var(--bg2): Pintaminas' hard mode (cup), Números explosivos and Dominorama redeclare --bg1…3 on body, and a token here would retint this surface on those pages; whether it should follow the page's night is the owner's call"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "text-size",
+      "what": "font-size: 4rem",
+      "reason": "the sign-in screen's 🔐 hero, the owner's own page: between the text steps and the shell's 4.2 rem, kept at its size"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.65rem",
+      "reason": "the hour labels under the 24-column chart (.hours .h): a column is ~11 px wide at 320 px, the smallest text step overflows it (C-8)"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "radius",
+      "what": "border-radius: 4px 4px 0 0",
+      "reason": "the hour chart's bars are ~11 px wide: a flat-bottomed bar with a 4 px top, an 8 px corner would round it into a pill"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "radius",
+      "what": "border-radius: 3px",
+      "reason": "the legend's 10 px colour swatch: an 8 px corner would make it a dot"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "space",
+      "what": "margin-left: 30px",
+      "reason": "the campaign strip's axis starts after the emoji column (22 px) and its gap (8 px): another element's size, not rhythm"
+    },
+    {
+      "file": "public/panel/style.css",
+      "rule": "space",
+      "what": "padding-right: 40px",
+      "reason": "room for the date's ✕ button (36 px at 4 px from the edge) beside the value: another element's size, not rhythm"
     }
   ]
 }
