@@ -10,7 +10,8 @@
  *
  * A card behind a runtime flag (D-498, `assets/js/flags.js`) needs no PR: its 🚀 writes
  * `flags/<id>` = 'all' and everyone gets it on their next visit; ↩️ Volver al laboratorio takes it
- * back. A later cleanup PR removes the gate and moves the card to La Bodega (D-479).
+ * back. Its card moves to La Bodega on its own when /labs/ opens (`launched.js`, D-534), keeping its
+ * switch (D-510); a later cleanup PR removes the gate and moves the card's HTML for good.
  */
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';

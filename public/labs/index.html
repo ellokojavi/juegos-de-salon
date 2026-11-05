@@ -14,6 +14,8 @@
   <link rel="preload" href="../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
+    /* ✨ Mejoras en prueba says it is empty only with no card left (D-510); the rule lived in experiments.css, which this page does not load */
+    #mejoras:has(> .seccion) .mejoras-vacio { display: none; }
     .hero { text-align: center; padding: 6px 0 4px; }
     .hero .icon { font-size: 3.6rem; display: block; }
     .hero h1 { margin: 4px 0; }
@@ -701,7 +703,8 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
-    import('./bodega.js').then(m => m.start()); // ✨ Mejoras lanzadas by week and month, with search
+    // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search
+    import('./launched.js').then(m => m.move()).catch(() => {}).then(() => import('./bodega.js')).then(m => m.start());
     import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
   </script>
 </body>

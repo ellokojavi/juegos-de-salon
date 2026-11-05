@@ -1,7 +1,8 @@
 // What reached everyone goes to La Bodega (D-479): a card still under 🎲 Juegos en prueba or
 // ✨ Mejoras en prueba must not say 🚀 Lanzado, and an improvement on trial must still be behind the
 // lab key, so some page outside /labs/ names it with a `lab: #<id>` comment (D-409). Once the gate
-// comes off, the card moves to ✨ Mejoras lanzadas in the same PR.
+// comes off, the card moves to ✨ Mejoras lanzadas in the same PR (a flag on *all* already moves it
+// when the page opens, launched.js, D-534: this checks the HTML as written).
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
