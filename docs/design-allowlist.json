@@ -210,6 +210,12 @@
       "rule": "text-size",
       "what": "font: 2.4rem var(--font-display)",
       "reason": "The cover demo's «¡Limpio!» (`.demo-rotulo`): it fills the 260 × 56 px space the two cleared rows leave, in its place (the board's own size, fixed so it does not move with the viewport like a .display step)."
+    },
+    {
+      "file": "public/labs/flap/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.2rem",
+      "reason": "The cover's 🐤 beside the title (`.titulo-aletazo .logo`), and the title itself on a short phone (under 640 px tall): sized together so the card keeps 🐤 Jugar in view at 320×568 (U-39); a .display step at 320 px is smaller than the title the cover is built around."
     }
   ]
 }

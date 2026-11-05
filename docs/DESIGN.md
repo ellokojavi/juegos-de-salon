@@ -222,6 +222,7 @@ after a migration), is in the lint's header.
 | La clave (`labs/code/style.css`) | the sky's tinted stars and the cards' sheen (`--cl-*` at the top of the sheet); the cover's 🔐 at 4 rem and the padlock beside the title at 2.6 rem; the result's trophy at 3.6 rem and the opened code at 2.4 rem | thematic board colours (C-1); heroes' emoji and a figure read at a glance (D-30), above the text steps (allowlisted) |
 | Dominorama (`labs/dominorama/style.css`) | the dominoes' ivory, edge, middle line and dots (`--dm-*` at the top of the sheet); its own night (`--bg1…3`, `--fondo` redeclared on `body`) | thematic board colours (C-1); custom properties, not hits |
 | Números explosivos (lab) | the title's bomb emoji at 2.3 rem (`.titulo-ne .bomba`); the demo's «¡Limpio!» at 2.4 rem (`.demo-rotulo`); the explosion's light `--ne-luz`, `--ne-halo` | the emoji sits with the title; «¡Limpio!» fills the space the demo board leaves (C-8); the flash's white core and warm halo colour only the board's effects |
+| Aletazo (lab) | the cover's 🐤 and, on a short phone, the title at 2.2 rem; the stage's sky `--aletazo-cielo` and the hint's drop `--aletazo-sombra` | the card keeps 🐤 Jugar in view at 320×568 (U-39); the sky and the drop are the stage's, under the canvas |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
 was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
