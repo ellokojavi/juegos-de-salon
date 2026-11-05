@@ -248,7 +248,11 @@
       "error": "✗ /year/: the FAQPage says what «Cómo se juega» does not show (or not in that order): «Un jugador, 2–5 minutos. Gratis, sin instalar nada y sin cuenta.»",
       "signature": "4093c7fcb2",
       "date": "2026-11-05T01:43:38.586Z",
-      "fix": null,
+      "fix": {
+        "commit": "60c3d2aa4af5e0ed4b8456957fe47fd84c0605af",
+        "date": "2026-11-05T03:30:58.993Z",
+        "stat": "8 file(s) +57 −30: changelog/claude-incremental-memory-game-p9nlrr.md, docs/games/memory.md, public/labs/index.html, public/labs/memory/game.js, public/labs/memory/rules.js, …"
+      },
       "flaky": false
     }
   ]
