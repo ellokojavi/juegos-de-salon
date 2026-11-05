@@ -78,6 +78,12 @@
       "rule": "text-size",
       "what": "font-size: 3.2rem",
       "reason": "The hero's emoji at two moments the shell's 4.2 rem does not fit (C-8): the cover's icon on a short phone (under 600 px tall), so the Número / Palabra toggle and the first mode stay above the fold at 320×568 (landing-fold.mjs), and the solo result's trophy, so the score, the card and the final buttons fit without scrolling. Between the shell's size and the text steps: a hero's own size, not a text step."
+    },
+    {
+      "file": "public/generala/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.62rem",
+      "reason": "The kept-die tag (`.dado-btn .tag`, \"Guardado\") under each of five dice: the board's own size, so the word fits under a 50 px die at 320 px (C-8); the smallest text step overflows it."
     }
   ]
 }

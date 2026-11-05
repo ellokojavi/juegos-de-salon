@@ -18,7 +18,7 @@ const ES = {
   variantNumber: '🔢 Número', variantWord: '🔤 Palabra',
   // setup
   setupTitle: '¿Cómo jugamos?', digits: 'Cifras', replica: 'Derecho a réplica', replicaHint: 'Si quien empieza adivina, el otro tiene un último intento para empatar.',
-  zeroFirst: 'Permitir cero al inicio', yourName: 'Tu nombre', p1: 'Jugador 1', p2: 'Jugador 2',
+  zeroFirst: 'Cero al inicio', yourName: 'Tu nombre', p1: 'Jugador 1', p2: 'Jugador 2',
   start: '¡A jugar!', create: 'Crear sala', joinTitle: 'Unirse a una sala', codePlaceholder: 'CÓDIGO', join: 'Unirse',
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.', errCode: 'El código tiene 4 letras.',
   errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.', errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.', errNet: 'No se pudo conectar. ¿Hay internet?',
@@ -78,7 +78,7 @@ const EN = {
   modeSolo: '🧍 Play alone', modeSoloHint: 'The phone picks the secret number and you crack it.',
   variantNumber: '🔢 Number', variantWord: '🔤 Word',
   setupTitle: 'How do we play?', digits: 'Digits', replica: 'Right of reply', replicaHint: 'If the starter cracks it, the other player gets one last guess to tie.',
-  zeroFirst: 'Allow leading zero', yourName: 'Your name', p1: 'Player 1', p2: 'Player 2',
+  zeroFirst: 'Leading zero', yourName: 'Your name', p1: 'Player 1', p2: 'Player 2',
   start: 'Let\'s play!', create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join',
   errName: 'Name missing.', errNames: 'Names missing or repeated.', errCode: 'The code has 4 letters.',
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
@@ -134,7 +134,7 @@ const PT = {
   variantNumber: '🔢 Número', variantWord: '🔤 Palavra',
   // configuração
   setupTitle: 'Como vamos jogar?', digits: 'Algarismos', replica: 'Direito de resposta', replicaHint: 'Se quem começa acertar, o outro tem uma última tentativa para empatar.',
-  zeroFirst: 'Permitir zero no início', yourName: 'Seu nome', p1: 'Jogador 1', p2: 'Jogador 2',
+  zeroFirst: 'Zero no início', yourName: 'Seu nome', p1: 'Jogador 1', p2: 'Jogador 2',
   start: 'Bora jogar!', create: 'Criar sala', joinTitle: 'Entrar em uma sala', codePlaceholder: 'CÓDIGO', join: 'Entrar',
   errName: 'Falta o nome.', errNames: 'Faltam nomes ou estão repetidos.', errCode: 'O código tem 4 letras.',
   errNotFound: 'Essa sala não existe. Confira o código.', errFull: 'A sala já está cheia.', errExpired: 'Essa sala já expirou.', errOtherGame: 'Esse código é de outro jogo.', errNet: 'Não foi possível conectar. Tem internet?',
