@@ -80,6 +80,7 @@ for (let k = 0; k < 3; k++) {
   }
 }
 ok(await waitFor(`/3 rondas/.test(document.getElementById('puntaje')?.textContent || '')`, 6000), 'three misses end the game: 3 rondas');
+ok(await ev(`window.__memory.g.found`) >= 4, 'the pictures found count every copy: one, a pair and one');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado') && !!document.getElementById('btn-otra')`), 'share and play again');
 ok(await ev(`(()=>{const k=[...document.querySelector('.result-ee').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario') && k.at(-2)?.classList.contains('divisor')})()`), 'the comment comes last, after a line');
 ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'no sideways scroll at 375 px');

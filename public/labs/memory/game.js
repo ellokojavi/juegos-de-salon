@@ -210,8 +210,8 @@ async function loop(run) {
     // 4. The player finds them
     const cleared = await ask(b, round, alive);
     if (!alive()) return;
+    S.g.found += S.play.found.length;   // every copy tapped right, so a pair counts two
     if (cleared) {
-      S.g.found++;
       say(T.well[Math.floor(Math.random() * T.well.length)], 'well');
       SFX.reveal(); vibrate(20);
       b.classList.add('cleared');
