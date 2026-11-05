@@ -37,7 +37,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418); the 3-day cup has none since D-438, and its three days are all games of the pool.
   In the lab (D-425; flag `copa-crear`, D-498), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
   azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
-  13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
+  13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday in the cup's zone (renamed when the zone or the audience changes, #1187), the PIN once with 👁, and the language, audience and
   link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
 - **Another cup with the same group** (#1165, lab, flag `cup-again`): under a finished cup's podium the admin, and only the admin, sees
