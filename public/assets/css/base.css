@@ -37,20 +37,21 @@
   --red: #e0243c;
   /* --- The design system's scales (D-533, docs/DESIGN.md): every distance, radius and shadow a game
      writes comes from here. Named by value, so `--s-12` is 12 px and no table is needed. --- */
-  /* Space: a 2 px grid up to 16, then steps of 4. Padding, gap and margin take one of these. */
+  /* Space: a 2 px grid up to 20, then steps of 4. Padding, gap and margin take one of these. */
   --s-2: 2px; --s-4: 4px; --s-6: 6px; --s-8: 8px; --s-10: 10px; --s-12: 12px; --s-14: 14px; --s-16: 16px;
-  --s-20: 20px; --s-24: 24px; --s-28: 28px; --s-32: 32px;
-  /* Corners: small (chips, cells), medium (rows, inputs), large (cards inside a panel), extra large
-     (the panel itself), pill (buttons). A circle is `50%`. */
-  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
-  --radius: var(--r-xl);
+  --s-18: 18px; --s-20: 20px; --s-24: 24px; --s-28: 28px; --s-32: 32px;
+  /* Corners: 8 (chips, cells, keys), 10 and 12 (inputs, cards in a panel), 14 (rows), 16 (sheets,
+     modals), 22 (the panel), pill (buttons). A circle is `50%`. */
+  --r-8: 8px; --r-10: 10px; --r-12: 12px; --r-14: 14px; --r-16: 16px; --r-22: 22px; --r-pill: 999px;
+  --radius: var(--r-22);
   /* Shadows and the "edge" under a button, one per button colour (they were written by hand in .btn) */
   --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
   --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
   --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
-  /* Text sizes: body is 1rem; the steps every game picks from (titles use .display--xl…sm) */
-  --fs-xs: 0.75rem; --fs-sm: 0.85rem; --fs-md: 1rem; --fs-lg: 1.2rem; --fs-xl: 1.6rem; --fs-2xl: 2rem;
+  /* Text sizes in hundredths of a rem: body is --fs-100; the steps every game picks from (titles use .display--xl…sm) */
+  --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
+  --fs-140: 1.4rem; --fs-160: 1.6rem; --fs-200: 2rem;
   --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
   /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */

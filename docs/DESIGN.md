@@ -48,7 +48,7 @@ title.
 
 ### Space
 
-A 2 px grid up to 16 px, then steps of 4. Padding, gap and margin take one of these:
+A 2 px grid up to 20 px, then steps of 4. Padding, gap and margin take one of these:
 
 | Token | px | Typical use |
 |---|---|---|
@@ -60,6 +60,7 @@ A 2 px grid up to 16 px, then steps of 4. Padding, gap and margin take one of th
 | `--s-12` | 12 | the gap in a `.stack`, row padding |
 | `--s-14` | 14 | horizontal padding of a row |
 | `--s-16` | 16 | button padding, section gaps |
+| `--s-18` | 18 | the panel's padding (`.panel`), the ghost button's sides |
 | `--s-20` | 20 | breathing room between blocks |
 | `--s-24` | 24 | between sections of a screen |
 | `--s-28` | 28 | the board's air before its buttons (`--aire-tablero`, D-309) |
@@ -72,10 +73,12 @@ about the board, not a size.
 
 | Token | px | Use |
 |---|---|---|
-| `--r-sm` | 8 | chips that are not pills, cells, keys, small inputs |
-| `--r-md` | 12 | rows, inputs, cards inside a panel |
-| `--r-lg` | 16 | large cards, sheets, modals |
-| `--r-xl` | 22 | the panel (`.panel`); `--radius` is its alias and stays for what already uses it |
+| `--r-8` | 8 | chips that are not pills, cells, keys, small inputs |
+| `--r-10` | 10 | small cards and inputs |
+| `--r-12` | 12 | inputs, cards inside a panel |
+| `--r-14` | 14 | rows (`.player-row` and its kin: the radius most games already use for a row) |
+| `--r-16` | 16 | large cards, sheets, modals |
+| `--r-22` | 22 | the panel (`.panel`); `--radius` is its alias and stays for what already uses it |
 | `--r-pill` | 999 | buttons and chips |
 | `50%` | | a circle (avatars, dots, round buttons): written as `50%`, it needs no token |
 
@@ -98,9 +101,9 @@ compares (D-30): the token is the family, and where it is used it is written at 
 `font-variant-numeric: tabular-nums`.
 
 Titles take one of the four steps of `.display` (`--xl`, `--lg`, `--md`, `--sm`), never a size of
-their own. Body text takes one of the steps `--fs-xs` (0.75 rem), `--fs-sm` (0.85), `--fs-md` (1),
-`--fs-lg` (1.2), `--fs-xl` (1.6), `--fs-2xl` (2). A size between two steps is the wrong step, not a
-new one.
+their own. Body text takes one of the steps, named in hundredths of a rem: `--fs-75`, `--fs-85`,
+`--fs-90`, `--fs-100` (the body), `--fs-110`, `--fs-120`, `--fs-140`, `--fs-160`, `--fs-200`. A size
+between two steps (0.95, 1.05, 1.3) is the wrong step, not a new one.
 
 ## 2. Components
 
@@ -138,12 +141,13 @@ toggle row (`.toggle-row`), the link button (`.link-btn`), the section title, th
 3. **Thematic colours are declared, not sprinkled.** A game's own palette sits at the top of its
    stylesheet as its own tokens, listed below, and colours only its board.
 4. **The scales do not grow for one case.** A new step in a scale is a decision (D-n) reviewed by
-   the usability agent, because the lint measures against it. The scales were drawn from
-   `base.css`, not from the games: phase 2's baseline is where they meet what the games write today
-   (the most common game radius is 14 px, which is not a step, and 0.9, 0.95 and 1.1 rem are
-   common text sizes between steps; `base.css` itself has `.lead` at 1.1 rem, `.btn--sm` at 1.05 and
-   the panel's 18 px padding). Whether a step is added or those values move is the owner's call,
-   taken once with the baseline in hand, not file by file.
+   the usability agent, because the lint measures against it. The scales were first drawn from
+   `base.css` and then widened once, with the games measured (D-533): 18 px joined the space scale
+   because the panel itself uses it; 10 and 14 px joined the corners because 14 is the row radius
+   most games use and 10 the small card's; 0.9, 1.1 and 1.4 rem joined the text steps because they
+   are, after the steps, the sizes games write most. What is still off the scales (0.95 and 1.05
+   rem, 18 px corners, 7 and 11 px paddings) moves to a step when its game is migrated, not by
+   widening the scale again.
 5. **Migration is per game, never two in one PR** (phase 5, #1193), with before and after
    screenshots at 390 and 320 px and the intended differences listed in the PR. A PR that touches a
    game's CSS for another reason migrates it in the same PR.
