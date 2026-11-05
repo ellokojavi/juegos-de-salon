@@ -63,6 +63,20 @@ for (let k = 1; k <= 3; k++) {
 }
 ok(await waitFor(`/Ronda 4/i.test(document.getElementById('ronda').textContent)`, 3000), 'the heading says Ronda 4');
 
+// The clock stops while the comment card is open or the screen is hidden (U-20); level 4 gives 2.25 s here
+await waitFor(`!!window.__memory.answer`, 15000);
+const stillThere = () => ev(`!!window.__memory.answer && window.__memory.g.lives === 3 && document.querySelector('.bar-ee span').getAnimations()[0]?.playState === 'paused'`);
+await ev(`document.getElementById('btn-comentario').click(); 1`);
+await sleep(3000);
+ok(await stillThere(), 'the comment card stops the clock');
+await ev(`document.querySelector('.labs-capa').click(); 1`);
+await sleep(100);
+ok(await ev(`document.querySelector('.bar-ee span').getAnimations()[0]?.playState === 'running'`), 'closing it starts the clock again');
+await ev(`Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')); 1`);
+await sleep(3000);
+ok(await stillThere(), 'a hidden screen stops the clock');
+await ev(`delete document.hidden; document.dispatchEvent(new Event('visibilitychange')); 1`);
+
 // Misses: the wrong tile shakes, the right one opens, a life goes
 for (let k = 0; k < 3; k++) {
   await waitFor(`!!window.__memory.answer`, 15000);

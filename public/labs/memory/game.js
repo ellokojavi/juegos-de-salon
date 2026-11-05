@@ -32,7 +32,26 @@ const BEST_KEY = 'juegos-de-salon:memory-best';
 
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const plural = (pair, n) => fmt(pair[n === 1 ? 0 : 1], { n });
-const wait = ms => new Promise(r => setTimeout(r, ms * SPEED));
+/* The game's clock (U-20): it runs only with the game in view, not with the screen hidden or the comment card open. */
+const timers = new Set();
+let played = 0, tickAt = performance.now(), wasStopped = false;
+function tick() {
+  const now = performance.now(), dt = Math.min(now - tickAt, 200);   // a frozen phone comes back with a long gap
+  tickAt = now;
+  const stop = document.hidden || !!document.querySelector('.labs-capa');
+  if (stop !== wasStopped) {
+    wasStopped = stop;
+    hud?.bar.firstElementChild.getAnimations().forEach(a => { if (stop && a.playState === 'running') a.pause(); else if (!stop && a.playState === 'paused') a.play(); });
+  }
+  if (stop) return;
+  played += dt;
+  for (const t of [...timers]) if (t.at <= played) { timers.delete(t); t.fn(); }
+}
+setInterval(tick, 50);
+document.addEventListener('visibilitychange', tick);
+/** Runs `fn` after `ms` of that clock; returns the function that cancels it. */
+function after(ms, fn) { const t = { at: played + ms * SPEED, fn }; timers.add(t); return () => timers.delete(t); }
+const wait = ms => new Promise(r => { after(ms, r); });
 const anim = ms => (QUIET ? 1 : ms * SPEED);
 const bestBefore = () => { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } };
 const keepBest = n => { try { localStorage.setItem(BEST_KEY, String(n)); } catch { /* private mode */ } };
@@ -143,7 +162,7 @@ function start(seed = SEED_URL || newSeed()) {
   demoRun++;
   S.g = newGame(seed);
   S.best = bestBefore();
-  S.from = Date.now();
+  S.from = played;
   S.run++;
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   hud = {
@@ -197,8 +216,8 @@ async function loop(run) {
     const opening = round.board.map((s, i) => s && setTimeout(() => openTile(tileAt(b, i), s, false), anim(i * 12)));
     timeBar(round.showMs, 'look');
     await new Promise(done => {
-      const clock = setTimeout(done, round.showMs * SPEED);
-      skip.addEventListener('click', () => { clearTimeout(clock); stopBar(); SFX.tap(); done(); });
+      const cancel = after(round.showMs, done);
+      skip.addEventListener('click', () => { cancel(); stopBar(); SFX.tap(); done(); });
     });
     opening.forEach(clearTimeout);
     if (!alive()) return;
@@ -250,18 +269,18 @@ function ask(b, round, alive) {
   timeBar(round.answerMs, 'answer');
   return new Promise(resolve => {
     const fail = (tile, text) => {
-      S.answer = null; clearTimeout(clock); stopBar();
+      S.answer = null; cancel(); stopBar();
       for (const x of b.children) x.disabled = true;
       tile?.classList.add('bad');
       SFX.error(); vibrate([40, 30, 40]);
       say(text, 'bad');
       // Where they were: the copies not found open with a yellow ring
       setTimeout(() => cells.forEach(c => { if (!S.play.found.includes(c)) { openTile(tileAt(b, c), sprite); tileAt(b, c).classList.add('answer'); } }), anim(350));
-      setTimeout(() => resolve(false), anim(1500));
+      wait(1500).then(() => resolve(false));
     };
-    const clock = setTimeout(() => { if (alive() && S.answer) fail(null, T.timeUp); }, round.answerMs * SPEED);
+    const cancel = after(round.answerMs, () => { if (alive() && S.answer) fail(null, T.timeUp); });
     S.answer = i => {
-      if (!alive()) { S.answer = null; clearTimeout(clock); return; }
+      if (!alive()) { S.answer = null; cancel(); return; }
       const t = tileAt(b, i);
       const res = tap(S.play, i);
       if (res === 'again') return;
@@ -269,7 +288,7 @@ function ask(b, round, alive) {
       if (res === 'miss') return fail(t, T.miss);
       t.classList.add('ok'); t.disabled = true;
       SFX.tap(); vibrate(10);
-      if (res === 'clear') { S.answer = null; clearTimeout(clock); stopBar(); for (const x of b.children) x.disabled = true; setTimeout(() => resolve(true), anim(250)); }
+      if (res === 'clear') { S.answer = null; cancel(); stopBar(); for (const x of b.children) x.disabled = true; wait(250).then(() => resolve(true)); }
     };
   });
 }
@@ -283,7 +302,7 @@ const link = seed => (seed ? `?seed=${encodeURIComponent(seed)}` : '');
 function result() {
   const { g } = S;
   S.answer = null;
-  const ms = Date.now() - S.from;
+  const ms = played - S.from;
   const record = g.score > S.best;
   const scoreText = plural(T.score, g.score);
   trackFinish({ detalle: `${g.score} rounds · level ${g.level} · ${g.found} found · ${mmss(ms)}` });
