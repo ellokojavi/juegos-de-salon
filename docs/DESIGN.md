@@ -205,7 +205,7 @@ after a migration), is in the lint's header.
 | Game | What | Why |
 |---|---|---|
 | Batalla Naval | the sea and the ships (`--mar`, `--casco-*`, and the fire's edges and flash: `--tocado-borde`, `--hundido-borde`, `--fogonazo`, `--brasa`, `--espuma-luz`); the cell's 4 px corner (2 px on the small board and the chip's ship squares); the small board's 0.55 rem glyphs and labels | thematic board colours (C-1); a cell is a tile of a 10×10 grid, not a card; the result's 220 px boards still show their 💥 and row numbers (allowlisted) |
-| Pintaminas | each drawing's palette | the game is about those colours |
+| Pintaminas | each drawing's palette (`--p1`, `--p2`, set by `ui.js`); in `cup/games/paint-mines`, `--pm-tinta`, `--pm-error`, `--pm-alerta`, `--pm-sombra`, the lever's metal (`--pm-placa-*`, `--pm-eje-*`, `--pm-palanca-*`, `--pm-mango-sombra`) and `--pm-chispa` | the game is about those colours; the board's and the lever's own colours (C-1) |
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
 | Ahorcado | the word's letters at 2.5, 2.1, 1.8 and 1.9 rem | a board's own sizes, between the title steps and the text steps, so a long word fits at 320 px (C-8) |
