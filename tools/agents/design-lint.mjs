@@ -12,7 +12,8 @@
  *
  * It reads every stylesheet under public/ that git knows (the generated bridge pages have none) and
  * reports, per declaration:
- *   token-colour   a colour written by hand that is one of the tokens: `#2ee6d6` is `var(--cyan)`.
+ *   token-colour   a colour written by hand that is one of the tokens: `#2ee6d6` is `var(--cyan)`; at an alpha,
+ *                  `rgba(46,230,214,0.6)` is `rgb(from var(--cyan) r g b / 0.6)` (a glow or a tint in a token colour).
  *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration.
  *   radius         a border-radius in px that is not on the corner scale (8, 10, 12, 14, 16, 22, 999).
  *   space          a padding, margin or gap in px that is not on the space scale (2 px grid up to 20, then 24, 28, 32).
@@ -80,11 +81,12 @@ export function normColour(v) {
   return null;
 }
 
-/** The classes a stylesheet defines (the subject of every simple selector). */
+/** The classes a stylesheet defines on their own: `.btn`, `.btn--sm:active`, `.player-row input`, never
+ * `.handoff .hint` (that is the handoff's hint, and a game may have a `.hint` of its own). */
 export function definedClasses(css) {
   const out = new Set();
   for (const r of rules(css)) for (const sel of r.selector.split(',')) {
-    const m = sel.trim().match(/\.([\w-]+)(?::[\w-]+(?:\([^)]*\))?)*$/);
+    const m = sel.trim().match(/^\.([\w-]+)(?:(?:\.[\w-]+)|(?::[\w-]+(?:\([^)]*\))?)|(?:\[[^\]]*\]))*(?:\s+[^.\s].*)?$/); // `.player-row input` defines .player-row; `.handoff .hint` defines neither
     if (m) out.add(m[1]);
   }
   return out;
@@ -155,17 +157,23 @@ export function lintCss(css, file, T, shared = sharedClasses()) {
     for (const d of r.decls) {
       if (d.prop.startsWith('--')) continue; // the game's own tokens (DESIGN.md §4), or base.css's
       if (/^(animation|transition|content|font-family|src|unicode-range)$/.test(d.prop)) continue;
+      const seen = new Set();
       for (const m of d.value.matchAll(COLOUR_LITERAL)) {
-        if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5): the colour is a token already
+        if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5) and rgb(from var(--x) r g b / a): the colour is a token already
+        if (seen.has(m[0])) continue; seen.add(m[0]); // one hit per colour per declaration
         const c = normColour(m[0]);
-        if (c && T.colours[c]) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `var(${T.colours[c]})`);
+        const [rgb, alpha] = (c || '').split('/');
+        const surface = /^(background|border|box-shadow|fill|stroke)/.test(d.prop) && rgb === 'ffffff' && !alpha;
+        if (c && T.colours[c] && !surface) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `var(${T.colours[c]})`);
+        else if (alpha && T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `rgb(from var(${T.colours[rgb]}) r g b / ${alpha})`);
+        else if (surface) { if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}`, 'a white surface: var(--card) if it is a card, or an allowlist entry with its reason'); }
         else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}`, 'a token, or the game\'s own `--token` at the top of the file with its reason in DESIGN.md §4');
       }
       if (d.prop === 'border-radius' || /^border-.*-radius$/.test(d.prop)) {
-        for (const n of pxOf(d.value)) if (!T.radius.has(n)) hit('radius', d.line, `${d.prop}: ${d.value}`, nearest(n, T.radius, '--r-', T.map));
+        for (const n of new Set(pxOf(d.value))) if (!T.radius.has(n)) hit('radius', d.line, `${d.prop}: ${d.value}`, nearest(n, T.radius, '--r-', T.map));
       }
       if (SPACE_PROPS.test(d.prop)) {
-        for (const n of pxOf(d.value)) if (!T.space.has(n)) hit('space', d.line, `${d.prop}: ${d.value}`, nearest(n, T.space, '--s-', T.map));
+        for (const n of new Set(pxOf(d.value))) if (!T.space.has(n)) hit('space', d.line, `${d.prop}: ${d.value}`, nearest(n, T.space, '--s-', T.map));
       }
       if (d.prop === 'font-size' && !isShared) { // the shared components' own sizes are the system
         const m = d.value.match(/^(\d*\.?\d+)rem$/);

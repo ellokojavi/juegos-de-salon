@@ -47,6 +47,20 @@ test('colour: any other literal is a hit, except in the game\'s own --token decl
   assert.deepEqual(by(h, 'colour').map(x => x.what), ['color: #ff8a8a', 'border-color: rgb(1,2,3)']);
 });
 
+test('a token colour at an alpha is a token-colour hit with the relative-colour idiom; the idiom itself is not a hit; one hit per colour per declaration', () => {
+  const h = lintCss('.x { box-shadow: 0 0 8px rgba(46, 230, 214, 0.6), 0 0 2px rgba(46, 230, 214, 0.6); } .y { text-shadow: 0 0 1px rgb(from var(--cyan) r g b / 0.6); }', 'public/g/style.css', T);
+  assert.deepEqual(by(h, 'token-colour').map(x => x.fix), ['rgb(from var(--cyan) r g b / 0.60)']);
+});
+
+test('#fff as a surface is not ink: a colour hit with its own advice, never "var(--ink)"', () => {
+  const h = lintCss('.x { background: #fff; color: #fff; }', 'public/g/style.css', T);
+  assert.deepEqual(h.map(x => `${x.rule} ${x.what}`), ['colour background: #fff', 'token-colour color: #fff']);
+});
+
+test('definedClasses: a class styled only inside another (`.handoff .hint`) is not defined by the sheet', () => {
+  assert.deepEqual([...definedClasses('.handoff .hint { color: red } .btn { } .btn--sm:active { } .player-row input { }')].sort(), ['btn', 'btn--sm', 'player-row']);
+});
+
 test('radius: off the corner scale, with the neighbours named; 50%, 0 and the scale pass; calc() is skipped', () => {
   const h = lintCss('.x { border-radius: 18px; } .y { border-radius: 50%; } .z { border-radius: 12px 999px; } .w { border-radius: calc(var(--r-12) + 2px); }', 'public/g/style.css', T);
   assert.equal(by(h, 'radius').length, 1);

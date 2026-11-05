@@ -48,6 +48,9 @@
   --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
   --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
+  --well: rgba(0, 0, 0, 0.25); --well-deep: rgba(0, 0, 0, 0.3);
+  --placeholder: rgba(255, 255, 255, 0.35);
   --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
   /* Text sizes in hundredths of a rem: body is --fs-100; the steps every game picks from (titles use .display--xl…sm) */
   --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
@@ -198,6 +201,102 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .stack { --gap-contenedor: 12px; }
 [data-tablero] { margin-bottom: max(0px, calc(var(--aire-tablero) - var(--gap-contenedor, 0px) - var(--aire-ya, 0px))) !important; }
 [data-tablero] [data-tablero] { margin-bottom: 0 !important; } /* uno dentro de otro: el aire lo pone el de afuera */
+
+/* --- The game shell (D-533, phase 4 of #1188): what every game's screens are made of ---
+   Until November 2026 each game copied these from the one before (eleven copies of .screen, eight
+   of .field and .form-error, seven of .mode, .code-big, .qr, .or and .result-hero, six of .switch,
+   five of .player-row and .lobby-players, three of .toggle-row). They live here once, on the
+   tokens; a game keeps only what is its own. The components page (/labs/design/) shows them. */
+/* Screens: one visible at a time, sliding up when it enters */
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+/* The cover's hero: the emoji glowing above the title; `.icon--cyan` for a sea or a number game */
+.intro-hero { text-align: center; padding: var(--s-6) 0 var(--s-8); }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
+.intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgba(46, 230, 214, 0.6)); }
+/* A mode to pick on the cover: title, a line under it and the › */
+.modes { display: grid; gap: var(--s-10); }
+.mode {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--s-10); text-align: left;
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: var(--s-14) var(--s-16);
+  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s, border-color 0.2s;
+}
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.5; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-4) var(--s-8); white-space: nowrap; }
+/* A form field: label in small caps, the input in a well; `.name` big and centred, `.code` a room code */
+.field { display: grid; gap: var(--s-6); margin-bottom: var(--s-12); }
+.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.field input {
+  width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none;
+}
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: var(--placeholder); }
+.field input.name { font: 900 1.5rem var(--font-body); text-align: center; padding: var(--s-14) var(--s-12); border-color: var(--glass-border); }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.field .sub { color: var(--muted); font-size: 0.78rem; font-weight: 700; margin: 0; }
+.field .sub.warn { color: var(--yellow); }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: var(--s-6) 0; }
+/* A segmented control: one of two or three, the chosen one in yellow */
+.seg { display: flex; gap: var(--s-6); background: var(--well-deep); border-radius: var(--r-14); padding: var(--s-4); }
+.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: var(--s-10) var(--s-4); border-radius: var(--r-10); cursor: pointer; min-height: 44px; }
+.seg button.on { background: var(--yellow); color: var(--ink-on-yellow); }
+/* Choice buttons (La Copa's, D-425): two or three side by side, the chosen one outlined in yellow */
+.opciones { display: grid; gap: var(--s-8); }
+.opciones.dos { grid-template-columns: 1fr 1fr; }
+.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
+.opciones.dos .opcion, .opciones.tres .opcion { text-align: center; }
+.opciones.tres .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
+.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
+@media (max-width: 374px) { .opciones.tres .opcion { padding-left: var(--s-4); padding-right: var(--s-4); } .opciones.tres .opcion b { font-size: 0.95rem; } }
+.opcion {
+  text-align: left; background: var(--well); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-12) var(--s-14);
+  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
+}
+.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion .opcion-emoji { display: block; }
+.opcion small { color: var(--muted); font-weight: 700; }
+.opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+/* A player's row in the setup: number, name, ✕; `.cpu` for a bot */
+.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-14); padding: var(--s-6) var(--s-10); margin-bottom: var(--s-6); }
+.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
+.player-row input { background: transparent; border: 0; padding: var(--s-10) 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; } /* 44: a finger fits (U-10); the games had 32 × 36 */
+.player-row .del:disabled { opacity: 0.2; }
+.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: var(--s-10) 0; }
+/* A row with a switch: the text (`.txt` with a <b> and a <small>) and the switch at the right */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-12); background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); }
+.toggle-row .txt b { display: block; font-size: 0.95rem; }
+.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
+.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: var(--r-pill); border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.4); position: relative; cursor: pointer; padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+.switch.on { background: rgba(255, 210, 63, 0.3); border-color: var(--yellow); }
+.switch.on::after { transform: translateX(24px); background: var(--yellow); }
+/* A link that is a button (the small way out under a form) */
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+/* A room: the code big, the QR on a card, the players as pills, "or", waiting… */
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: var(--s-2) 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: var(--s-8) auto; background: var(--ink); border-radius: var(--r-16); padding: var(--s-8); width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: var(--s-6) 0; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; margin: var(--s-10) 0; }
+.lobby-players .p { display: flex; align-items: center; gap: var(--s-6); padding: var(--s-6) var(--s-12); border-radius: var(--r-pill); background: var(--well); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: var(--ink-on-cyan); }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+/* Whose turn, over the board: the name glowing cyan and a line under it */
+.status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+/* The result's hero: the trophy popping above the title */
+.result-hero { text-align: center; padding: var(--s-2) 0 var(--s-6); }
+.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 
 /* --- Tarjetas de vidrio --- */
 .panel {
@@ -616,7 +715,7 @@ body.azar-abierto { overflow: hidden; }
   background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
 }
 .cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
-.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow, #ffd23f); text-align: center; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow); text-align: center; }
 .cuenta-num.late { animation: cuenta-late .9s ease-out both; }
 .cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
 .cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }

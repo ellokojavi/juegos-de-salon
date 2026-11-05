@@ -1,8 +1,10 @@
 // What reached everyone goes to La Bodega (D-479): a card still under 🎲 Juegos en prueba or
 // ✨ Mejoras en prueba must not say 🚀 Lanzado, and an improvement on trial must still be behind the
-// lab key, so some page outside /labs/ names it with a `lab: #<id>` comment (D-409). Once the gate
-// comes off, the card moves to ✨ Mejoras lanzadas in the same PR (a flag on *all* already moves it
-// when the page opens, launched.js, D-534: this checks the HTML as written).
+// lab key, so some page names it with a `lab: #<id>` comment (D-409): a page outside /labs/ that asks
+// the key, or a page that lives in the lab itself (behind the door by construction, like the design
+// system's components page, D-533). Once the gate comes off, the card moves to ✨ Mejoras lanzadas in
+// the same PR (a flag on *all* already moves it when the page opens, launched.js, D-534: this checks
+// the HTML as written).
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -11,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 const PUBLIC = fileURLToPath(new URL('..', import.meta.url));
 const labs = readFileSync(join(PUBLIC, 'labs/index.html'), 'utf8');
 const walk = dir => readdirSync(dir).flatMap(f => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
-const named = walk(PUBLIC).filter(p => /\.(js|html)$/.test(p) && !relative(PUBLIC, p).startsWith('labs/'))
+const named = walk(PUBLIC).filter(p => /\.(js|html)$/.test(p) && relative(PUBLIC, p) !== 'labs/index.html')
   .map(p => readFileSync(p, 'utf8')).join('\n');
 
 const group = id => {
