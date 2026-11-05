@@ -13,6 +13,8 @@
 /* De dónde sale la palabra, lado a lado: emoji arriba y nombre completo debajo (D-52) */
 .seg--src button { display: grid; align-content: center; gap: var(--s-2); padding: var(--s-8) var(--s-2); font-size: var(--fs-85); line-height: 1.15; text-wrap: balance; }
 .seg--src .em { font-size: var(--fs-140); line-height: 1; }
+/* The lives: «Normal · 6» on one line like its neighbours; at 320 px it was the only one to break after the dot */
+.seg--lives button { white-space: nowrap; }
 .themes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-8); }
 .theme-card { display: grid; gap: var(--s-2); justify-items: center; text-align: center; padding: var(--s-12) var(--s-8); border-radius: var(--r-16); background: var(--well-deep); border: 2px solid transparent; color: var(--ink); cursor: pointer; font-family: var(--font-body); }
 .theme-card .em { font-size: 1.8rem; }
