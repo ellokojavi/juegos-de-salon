@@ -44,10 +44,10 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-campo span { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .rk-campo input {
   width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 12px; border: 2px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.3); color: var(--ink); font: 800 1.1rem var(--font-body); outline: none;
+  background: var(--well-deep); color: var(--ink); font: 800 1.1rem var(--font-body); outline: none;
 }
 .rk-campo input:focus { border-color: var(--cyan); }
-.rk-campo input::placeholder { color: rgba(255, 255, 255, 0.35); }
+.rk-campo input::placeholder { color: var(--placeholder); }
 .rk-campo input.rk-pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 .rk-entrar { width: 100%; margin-top: 8px; }
 .rk-error { color: var(--yellow); font-weight: 800; text-align: center; margin: 6px 0; min-height: 0; }
@@ -58,25 +58,25 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-botones .btn { width: 100%; }
 
 .rk-titulo { margin: 0 0 6px; }
-.rk-seg { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.3); border-radius: 14px; padding: 4px; margin-bottom: 8px; }
+.rk-seg { display: flex; gap: 4px; background: var(--well-deep); border-radius: 14px; padding: 4px; margin-bottom: 8px; }
 .rk-seg button {
   flex: 1; min-width: 0; border: 0; background: transparent; color: var(--muted); font: 900 0.92rem var(--font-body);
   padding: 8px 4px; border-radius: 10px; cursor: pointer; min-height: 44px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.rk-seg button.on { background: var(--yellow); color: #3a1200; }
+.rk-seg button.on { background: var(--yellow); color: var(--ink-on-yellow); }
 /* A 320 px las cuatro pestañas no caben en una línea: se achican y, si igual no, parten línea (U-12) */
 @media (max-width: 360px) {
   .rk-seg { gap: 2px; }
-  .rk-seg button { flex: 1 1 auto; font-size: 0.8rem; padding: 6px 3px; white-space: normal; line-height: 1.1; overflow: visible; text-overflow: clip; }
+  .rk-seg button { flex: 1 1 auto; font-size: 0.8rem; padding: var(--s-6) var(--s-4); white-space: normal; line-height: 1.1; overflow: visible; text-overflow: clip; }
 }
 
 .rk-lista { display: grid; gap: 4px; }
 .rk-centro { text-align: center; margin: 8px 0; }
 .rk-fila {
   display: grid; grid-template-columns: 2.2em 1fr auto auto; align-items: center; gap: 8px;
-  padding: 7px 10px; border-radius: 10px; background: rgba(0, 0, 0, 0.22);
+  padding: var(--s-8) var(--s-10); border-radius: 10px; background: rgba(0, 0, 0, 0.22);
 }
-.rk-fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; background: rgba(46, 230, 214, 0.12); }
+.rk-fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; background: rgb(from var(--cyan) r g b / 0.12); }
 .rk-puesto { text-align: center; font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; }
 .rk-nombre { font-weight: 800; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
 .rk-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }

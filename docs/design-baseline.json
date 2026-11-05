@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 662,
+  "total": 655,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -20,10 +20,6 @@
       "radius": 1,
       "space": 7,
       "text-size": 3
-    },
-    "public/assets/css/ranking.css": {
-      "token-colour": 5,
-      "space": 2
     },
     "public/assets/css/recap.css": {
       "token-colour": 1,
