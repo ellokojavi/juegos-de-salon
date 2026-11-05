@@ -294,6 +294,12 @@
       "rule": "text-size",
       "what": "font: 2.7rem var(--font-display)",
       "reason": "The demo's «¡Listo!» stamped over the 180 px board that solves itself (`.lt-demo-rotulo`): a board's own message, sized to that board, between the text steps and the title steps."
+    },
+    {
+      "file": "public/cup/games/bridges/style.css",
+      "rule": "radius",
+      "what": "border-radius: 3px",
+      "reason": "A plank of the wood left (`.tv-tablones span`), 14 px tall and a few px wide when the stage gives many meters: an 8 px corner would turn each plank into a pill; a shape of the board, not a size on the corner scale."
     }
   ]
 }
