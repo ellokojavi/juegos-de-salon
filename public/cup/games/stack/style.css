@@ -97,7 +97,7 @@
 
 /* The score's tally over «Continue» (ui.js cuentaPuntos), as a receipt: a row per term, the label on
    one line on the left and the figure on the right, then a rule and the total. Each row slams in */
-.sk-cuenta { display: grid; gap: var(--s-2); width: min(100%, 22rem); justify-self: center; }
+.sk-cuenta { display: grid; gap: var(--s-2); width: min(100%, 22rem); justify-self: center; margin-bottom: var(--s-12); }
 .sk-termino { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-12); opacity: 0; transform: translateX(40px); }
 .sk-rotulo { font: 700 var(--fs-110) var(--font-body); color: var(--muted); white-space: nowrap; }
 .sk-palabra { display: inline-block; }
