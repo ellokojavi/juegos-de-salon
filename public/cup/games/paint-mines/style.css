@@ -137,10 +137,10 @@ body.modo-dificil {
 @keyframes pm-relampago { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
 /* On, the whole rectangle glows and flickers at random, like a light with a bad contact: ui.js moves
    --brillo (0 to 1) out of step, and here it becomes glow and border */
-.pm-interruptor.on { --brillo: 0.7; background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--brillo)));
-  border-color: rgba(143, 247, 238, calc(0.35 + 0.65 * var(--brillo)));
-  box-shadow: 0 0 calc(4px + 26px * var(--brillo)) rgba(46, 230, 214, calc(0.15 + 0.7 * var(--brillo))),
-    0 0 calc(2px + 6px * var(--brillo)) rgba(255, 210, 63, calc(0.4 * var(--brillo))) inset;
+.pm-interruptor.on { --brillo: 0.7; background: rgb(from var(--cyan) r g b / calc(0.04 + 0.08 * var(--brillo)));
+  border-color: rgb(from var(--pm-chispa) r g b / calc(0.35 + 0.65 * var(--brillo)));
+  box-shadow: 0 0 calc(4px + 26px * var(--brillo)) rgb(from var(--cyan) r g b / calc(0.15 + 0.7 * var(--brillo))),
+    0 0 calc(2px + 6px * var(--brillo)) rgb(from var(--yellow) r g b / calc(0.4 * var(--brillo))) inset;
   transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
 .pm-interruptor.on .pm-palanca { transform: rotate(38deg); }
 .pm-interruptor.on .pm-placa { border-color: var(--pm-chispa); }

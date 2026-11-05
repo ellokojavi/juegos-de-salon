@@ -54,6 +54,14 @@ test('a token colour at an alpha is a token-colour hit with the relative-colour 
   assert.deepEqual(by(h, 'token-colour').map(x => x.fix), ['rgb(from var(--cyan) r g b / 0.60)']);
 });
 
+test('an rgba() whose alpha is a calc() is still a literal: a token\'s colour says which token, another colour asks for one; the idiom with calc() is not a hit', () => {
+  const h = lintCss('.x { background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--k))); border-color: rgba(143,247,238,calc(0.35 * var(--k))); } .y { background: rgb(from var(--cyan) r g b / calc(0.1 * var(--k))); }', 'public/g/style.css', T);
+  assert.deepEqual(h.map(x => `${x.rule} ${x.fix}`), [
+    'token-colour rgb(from var(--cyan) r g b / calc(…))',
+    'colour rgb(from var(--token) r g b / calc(…)), with the game\'s own `--token` at the top of the file',
+  ]);
+});
+
 test('#fff as a surface is not ink: a colour hit with its own advice, never "var(--ink)"', () => {
   const h = lintCss('.x { background: #fff; color: #fff; }', 'public/g/style.css', T);
   assert.deepEqual(h.map(x => `${x.rule} ${x.what}`), ['colour background: #fff', 'token-colour color: #fff']);

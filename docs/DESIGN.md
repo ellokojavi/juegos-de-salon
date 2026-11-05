@@ -53,7 +53,8 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
 relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
-the idiom for every `rgba(46, 230, 214, 0.6)` it meets. A white surface (`background: #fff`) is
+the idiom for every `rgba(46, 230, 214, 0.6)` it meets, and an alpha that moves is the same idiom:
+`rgb(from var(--cyan) r g b / calc(0.2 * var(--k)))` (the lint flags `rgba(…, calc(…))` too). A white surface (`background: #fff`) is
 not ink: it is `var(--card)` if it is a card, or an escape.
 
 A game may have thematic colours (the sea in Batalla Naval, a painting's palette in Pintaminas)
