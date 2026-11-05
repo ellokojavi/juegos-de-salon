@@ -308,12 +308,15 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(boton);
+      fin.replaceChildren(cuentaPuntos(e, { el, T, SFX, vibrate, recien }), boton);
       // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
       document.getElementById('sk-musica-credito')?.remove();
       const credito = creditoMusica(el, T);
       if (credito) fin.after(credito);
       requestAnimationFrame(() => {
+        // Everything above the fold: the tower gives up whatever the page would scroll
+        const sobra = document.documentElement.scrollHeight - innerHeight;
+        if (sobra > 0) { escenario.style.minHeight = "0"; escenario.style.height = `${Math.max(200, escenario.offsetHeight - sobra)}px`; }
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
         // First the top glides up while the cuts fade in, then the camera starts down
         if (r.height) sc.deslizar(antes, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 1000);
@@ -373,6 +376,62 @@ export function montar(raiz, ctx) {
   // For the end-to-end script: `soltarEn(t)` drops at moment t, as a tap then would; `pausar()` pauses,
   // as a hidden page does; `perfecto()` is the next moment the block is exactly over the tower
   globalThis.__stack = { S, soltarEn: caer, pausar, perfecto: () => perfectTime(S.g, performance.now()), estado };
+}
+
+/**
+ * The score's tally on the end screen, over «Continue»: the floors, then each bonus slams in while
+ * the total rolls up to the points, which pops at the end (the owner's request: a show). Every term's
+ * place is kept from the start, so nothing jumps; with reduced motion, or a game already finished,
+ * it is all there at once.
+ */
+function cuentaPuntos(e, { el, T, SFX, vibrate, recien }) {
+  const p = Array.isArray(e.kinds) && e.kinds.length ? puntos(e.kinds) : { floors: Math.max(0, e.n | 0), streaks: 0, streakBonus: 0, lengthBonus: 0, total: Math.max(0, e.n | 0) };
+  const total = p.floors + p.streakBonus + p.lengthBonus;
+  const termino = (cls, signo, valor, rotulo) => el('div', { class: `sk-termino ${cls}` },
+    signo ? el('span', { class: 'sk-signo' }, signo) : null,
+    el('span', { class: 'sk-valor' }, valor), el('small', {}, rotulo));
+  const pasos = [termino('pisos', '', String(p.floors), T.skFloors[forma(p.floors)])];
+  if (p.streakBonus) pasos.push(termino('bono', '+', String(p.streakBonus), `🔥 ${T.skTallyStreaks[forma(p.streaks)]}`));
+  if (p.lengthBonus) pasos.push(termino('bono', '+', String(p.lengthBonus), `📏 ${T.skTallyLength}`));
+  const valorTotal = el('span', { class: 'sk-valor', id: 'sk-total' }, String(total));
+  const rotuloTotal = el('small', {}, T.skPoints[forma(total)]);
+  const fin = el('div', { class: 'sk-termino total' }, el('span', { class: 'sk-signo' }, '='), valorTotal, rotuloTotal);
+  const caja = el('div', { class: 'sk-cuenta', id: 'sk-cuenta', 'aria-label': `${total} ${T.skPoints[forma(total)]}` }, ...pasos, fin);
+  if (!recien || QUIETO()) { caja.classList.add('lista'); return caja; }
+  // The total rolls from what it said to what it says now, a tick at a time
+  let mostrado = 0;
+  const rodar = (hasta, ms) => {
+    const desde = mostrado, t0 = performance.now();
+    const paso = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      valorTotal.textContent = String(Math.round(desde + (hasta - desde) * (1 - (1 - k) ** 3)));
+      if (k < 1 && caja.isConnected) requestAnimationFrame(paso);
+    };
+    mostrado = hasta;
+    requestAnimationFrame(paso);
+  };
+  valorTotal.textContent = '0';
+  const sumas = [p.floors, p.streakBonus, p.lengthBonus].filter((x, i) => i === 0 || x);
+  let acumulado = 0, t = 1300;
+  pasos.forEach((nodo, i) => {
+    setTimeout(() => {
+      if (!caja.isConnected) return;
+      nodo.classList.add('entra');
+      if (i === 0) fin.classList.add('entra');
+      acumulado += sumas[i];
+      rodar(acumulado, i === 0 ? 700 : 500);
+      if (i === 0) SFX.tap(); else { SFX.reveal(); vibrate(15); fin.classList.remove('late'); void fin.offsetWidth; fin.classList.add('late'); }
+    }, t);
+    t += i === 0 ? 1000 : 850;
+  });
+  // The grand total: it pops, glows, and with bonuses throws confetti
+  setTimeout(() => {
+    if (!caja.isConnected) return;
+    valorTotal.textContent = String(total);
+    fin.classList.add('final');
+    if (pasos.length > 1) { SFX.win?.(); confetti({ count: 70, duration: 1200 }); }
+  }, t);
+  return caja;
 }
 
 /** What goes to the cup and to the result: the points (floors and streak bonuses, no cap), its card, and the playing time without pauses. */
