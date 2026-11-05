@@ -1,6 +1,6 @@
 {
   "_about": "The design lint's ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.",
-  "total": 1490,
+  "total": 1489,
   "files": {
     "public/assets/css/base.css": {
       "token-colour": 67,
@@ -104,9 +104,6 @@
       "space": 17,
       "copied": 11,
       "text-size": 58
-    },
-    "public/generala/style.css": {
-      "text-size": 1
     },
     "public/labs/bridges/style.css": {
       "token-colour": 8,
