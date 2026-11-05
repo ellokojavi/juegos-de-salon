@@ -29,7 +29,7 @@ en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-192), y siemp
 ```
 public/<carpeta>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
-  style.css       Solo lo específico del juego
+  style.css       Solo lo específico del juego: la carcasa (pantallas, portada, modos, campos, filas, sala, resultado) vive una vez en base.css (DESIGN.md §2, D-533)
   rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt, de }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
   engine.test.mjs Tests del motor (node public/<carpeta>/engine.test.mjs)

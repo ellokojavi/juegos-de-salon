@@ -16,7 +16,10 @@ the games.
 - **What it shows:** the colour tokens as swatches with their value, the space, corner and text
   scales as drawn boxes, the four `.display` steps and `.rainbow`, every button variant and state
   (pink, yellow, cyan, ghost, small, disabled, in a row, the back link, the icon button, the language
-  toggle), chips, the folding panel, the stack, from `ranking.css` a ranking with three rows, the
+  toggle), chips, the folding panel, the stack, the game shell (`#ds-armazon`, phase 4: the cover's
+  hero, modes, fields and the form's error, the segmented control, choice buttons, player rows, the
+  toggle row and its switch, the link button, the room's code, QR, players, "or" and waiting, whose
+  turn, the result's hero), from `ranking.css` a ranking with three rows, the
   record line, the tabs (`.rk-seg`) and the sign-in fields (`.rk-campo`, `.rk-link`), from
   `teclado.css` the keyboard with its ⌫ and OK keys and the entry boxes, and where the exceptions live.
 - **Live, not copied:** the tokens are read from `base.css` itself (fetched and parsed), so a new
@@ -24,7 +27,8 @@ the games.
   stylesheet (`style.css`) holds layout only, on the tokens: `node tools/agents/design-lint.mjs
   public/labs/design/style.css` reports zero.
 - **Test:** `tools/e2e/design/page.mjs`: the page opens behind the lab key, shows every section,
-  the tokens are read, no sideways scroll at 320 px, every tappable thing is 44 px or more, no
+  the tokens are read, no sideways scroll at 320 px, every tappable thing is 44 px or more (except
+  `.back` and `.switch`, the system's own debts in DESIGN.md §5), no
   button label wraps on the page or on its lab card (U-17).
 
 ## Exceptions to the canons

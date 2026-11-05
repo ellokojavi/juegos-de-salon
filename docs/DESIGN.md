@@ -40,7 +40,7 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--cyan` | `#2ee6d6` | the secondary accent: info, selection, "your turn" |
 | `--lime` | `#9dff3a` | success, correct, done |
 | `--purple` | `#8a4dff` | tertiary accent, used sparingly: the hidden digit of the keyboard, the owner's panel; a game does not need it |
-| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action | (`.btn--red` lives in `cup/style.css` today, not in `base.css`: it moves with phase 7, #1196)
+| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action (`.btn--red` lives in `cup/style.css` today, not in `base.css`: it moves with phase 7, #1196) |
 | `--ink` | white | text on the dark background |
 | `--muted` | white at 72 % | secondary text on the dark background (`.muted`) |
 | `--glass`, `--glass-border` | white at 8 % and 16 % | panels, chips, ghost buttons: surfaces on the dark background |
@@ -130,7 +130,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | Text | `.muted`, `.lead`, `.center` | |
 | Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is 40 px tall: a debt, §5 |
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
-| Choice buttons | `.opcion` (today in `cup/style.css`; moves here in phase 4) | two or three options side by side, one on |
+| Choice buttons | `.opciones.dos/.tres`, `.opcion` | two or three options side by side, one on; part of the game shell below (phase 4), from La Copa |
 | Panel | `.panel`, `details.panel` | the glass card |
 | Chips | `.chip`, `.chip--hot`, `.chip--gold`, `.chips` | |
 | Stack | `.stack` | vertical rhythm of 12 px |
