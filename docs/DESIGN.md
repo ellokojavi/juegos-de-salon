@@ -220,6 +220,7 @@ after a migration), is in the lint's header.
 | Cuarto Rey | the king's gold (`--king-light`, `--king-deep`) and the big card's drop (`--card-drop`); the countdown at 3.2 rem, the final crown at 3.6 rem and the handoff's glasses at 3.8 rem | thematic colours of the K card and the deck; the figure is read across the table (D-30), the crown and the glasses are heroes compacted so the buttons stay on screen with six players (C-8, C-9) (allowlisted) |
 | Stick Ninja (`labs/stick/style.css`) | the cover's 🥷 at 2.2 rem; black in the canvas' fade mask | the emoji is drawn to the title's height; a mask's black is opacity, not a colour (allowlisted) |
 | La clave (`labs/code/style.css`) | the sky's tinted stars and the cards' sheen (`--cl-*` at the top of the sheet); the cover's 🔐 at 4 rem and the padlock beside the title at 2.6 rem; the result's trophy at 3.6 rem and the opened code at 2.4 rem | thematic board colours (C-1); heroes' emoji and a figure read at a glance (D-30), above the text steps (allowlisted) |
+| Dominorama (`labs/dominorama/style.css`) | the dominoes' ivory, edge, middle line and dots (`--dm-*` at the top of the sheet); its own night (`--bg1…3`, `--fondo` redeclared on `body`) | thematic board colours (C-1); custom properties, not hits |
 
 (The table grows as migrations meet a legitimate exception; the baseline of phase 2 found none that
 was a whole file. The rows above are the first entries of the allowlist, read from the baseline:
