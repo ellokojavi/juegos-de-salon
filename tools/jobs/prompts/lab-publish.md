@@ -29,7 +29,8 @@ session moves with `node tools/agents/lab-publish.mjs`. Nobody will answer quest
    Read the decision the card's code or doc names before changing it.
 5. Move the card to La Bodega in the same PR (D-479): folded, under `✨ Mejoras lanzadas` or
    `🎲 Juegos guardados`, its text opening with `🚀 Lanzado.` and saying what everyone sees now.
-   `public/labs/bodega.test.mjs` checks it.
+   `public/labs/bodega.test.mjs` checks it. A card whose flag is already *all* shows there on its
+   own since the flag went live (`public/labs/launched.js`, D-534): this PR writes it there for good.
 6. The `changelog/<branch>.md` entry (`node tools/release/changelog.mjs new patch`, `minor` for a
    game), the decision that records the launch if the feature's decision said it waited in the lab,
    the tests (`docs/SESSIONS.md`, Tests), and the agents CLAUDE.md (detail in `docs/MERGING.md`) asks for before a merge: usability and

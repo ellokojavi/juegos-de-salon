@@ -555,6 +555,7 @@ node public/cup/store.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
+node public/labs/launched.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
@@ -748,7 +749,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
   agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
-  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
+  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534)
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
