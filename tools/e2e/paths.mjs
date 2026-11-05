@@ -379,6 +379,15 @@ export const PATHS = {
       `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
       1, 1, 1, 1, 1,
     ],
+    // The same end with the sheet unfolded: the final table (every box, the total) at full width
+    'final-table': [
+      `document.querySelector('[data-mode=solo]').click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `document.getElementById('btn-empezar').click()`,
+      `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let t=0;t<11;t++){document.getElementById('btn-tirar').click();await w(60);document.querySelector('.casilla.libre').click();await w(30);document.getElementById('btn-anotar').click();await w(60);}})()`,
+      1, 1, 1, 1, 1,
+      `(()=>{const d=document.getElementById('result-cards');d.open=true;d.scrollIntoView({block:'start'});return 1})()`,
+    ],
   },
   'cuarto-rey': {
     intro: [],
