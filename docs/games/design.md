@@ -16,14 +16,16 @@ the games.
 - **What it shows:** the colour tokens as swatches with their value, the space, corner and text
   scales as drawn boxes, the four `.display` steps and `.rainbow`, every button variant and state
   (pink, yellow, cyan, ghost, small, disabled, in a row, the back link, the icon button, the language
-  toggle), chips, the folding panel, the stack, a ranking with three rows from `ranking.css`, the
-  keyboard and the entry boxes from `teclado.css`, and where the escapes live.
+  toggle), chips, the folding panel, the stack, from `ranking.css` a ranking with three rows, the
+  record line, the tabs (`.rk-seg`) and the sign-in fields (`.rk-campo`, `.rk-link`), from
+  `teclado.css` the keyboard with its ⌫ and OK keys and the entry boxes, and where the exceptions live.
 - **Live, not copied:** the tokens are read from `base.css` itself (fetched and parsed), so a new
   token appears without touching the page; each component is the shared class, and the page's own
   stylesheet (`style.css`) holds layout only, on the tokens: `node tools/agents/design-lint.mjs
   public/labs/design/style.css` reports zero.
 - **Test:** `tools/e2e/design/page.mjs`: the page opens behind the lab key, shows every section,
-  the tokens are read, no sideways scroll at 320 px, every tappable thing is 44 px or more.
+  the tokens are read, no sideways scroll at 320 px, every tappable thing is 44 px or more, no
+  button label wraps on the page or on its lab card (U-17).
 
 ## Exceptions to the canons
 
