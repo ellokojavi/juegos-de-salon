@@ -8,12 +8,14 @@
  */
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
-import { getLang, langToggle } from '../../assets/js/i18n.js';
+import { getLang, langToggle, COMMON } from '../../assets/js/i18n.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { labAccess } from '../../assets/js/lab-access.js';
+import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
+import { rankingsVisibles } from '../../assets/js/jugador.js';
 import { newGame, step, flap, verdictOf, LIVES, BR } from './engine.js';
 import { escena } from './scene.js';
 
@@ -171,11 +173,29 @@ const contexto = () => ({
   pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
+/**
+ * Aletazo's ranking (D-212): the `aletazo` table, Week · All time · Friends, under the stage, below the
+ * fold, as every game played alone shows it. On the cover with signing in; on the result, with the
+ * notice that saves the run first (a tester's start never counts).
+ */
+const rankingEl = $('ranking');
+function tabla({ entrar = true } = {}) {
+  const R = (COMMON[lang] || COMMON.es).rk;
+  return bloqueTabla({ tabla: GAME_ID, titulo: String(R.titleOf).replace('{game}', L.nombre), entrar });
+}
+function rankingCover() { rankingEl.replaceChildren(tabla()); }
+function rankingResult(n, ms) {
+  const tablaFin = tabla({ entrar: false });
+  const cuenta = !prueba && rankingsVisibles();
+  rankingEl.replaceChildren(...(cuenta ? [avisoPartida({ juego: GAME_ID, s: n, ms, alAnotar: () => tablaFin.recargar() })] : []), tablaFin);
+}
+
 /** The cover: the card over a demo that flies itself, above the card when there is room. */
 function toCover() {
   result.hidden = true; hud.hidden = true; cover.hidden = false;
   document.body.classList.remove('jugando');
   texts();
+  rankingCover();
   g = newGame({ W, mode: 'demo', band: demoBand() });
   scene.clear();
 }
@@ -192,6 +212,7 @@ function startGame() {
   cover.hidden = true; result.hidden = true; hud.hidden = true;
   // The game's screen, like Stack's and Stick's: the tester ribbon's «T» hides, so it never covers the HUD's level
   document.body.classList.add('jugando');
+  scrollTo(0, 0);
   g = newGame({ W, mode: 'glide' });
   scene.clear();
   stage.classList.add('contando');
@@ -218,6 +239,7 @@ function showResult() {
   $('res-veredicto').textContent = L.veredictos[verdictOf(n)];
   $('res-mejor').replaceChildren(...(isBest ? [] : [fmt(L.tuMejor, ''), el('b', {}, String(best))]));
   $('res-salidas').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
+  rankingResult(n, Date.now() - startedAt);
   result.hidden = false;
   $('btn-otra').focus({ preventScroll: true });
 }
