@@ -1419,6 +1419,7 @@
     "tools/agents/clean-worktrees.test.mjs",
     "tools/agents/covers.test.mjs",
     "tools/agents/decision.test.mjs",
+    "tools/agents/design-lint.test.mjs",
     "tools/agents/document.test.mjs",
     "tools/agents/english.test.mjs",
     "tools/agents/failures.test.mjs",

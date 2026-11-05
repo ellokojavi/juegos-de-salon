@@ -1,0 +1,4 @@
+{
+  "_about": "Exceptions to the design lint (tools/agents/design-lint.mjs, D-533), each with its reason: none is silent. Entries { file, rule, what, reason }: `rule` is one of token-colour, colour, radius, space, copied, text-size or `*`; `what` matches the hit's declaration (`color: #ff8a8a`) or selector, `*` matching any run of characters. An entry that no longer hits fails design-lint.test.mjs as stale, so remove it when the stylesheet changes. The human-readable side is docs/DESIGN.md §4.",
+  "entries": []
+}
