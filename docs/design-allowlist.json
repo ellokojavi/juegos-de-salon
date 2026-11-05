@@ -288,6 +288,12 @@
       "rule": "text-size",
       "what": "font-size: 2.6rem",
       "reason": "The pause's title over the night (`.sn-pausa .display`): the board's own message, the floor of .display--xl fixed so it does not grow over the run on a wide screen (as Babel's)."
+    },
+    {
+      "file": "public/cup/games/plots/style.css",
+      "rule": "text-size",
+      "what": "font: 2.7rem var(--font-display)",
+      "reason": "The demo's «¡Listo!» stamped over the 180 px board that solves itself (`.lt-demo-rotulo`): a board's own message, sized to that board, between the text steps and the title steps."
     }
   ]
 }
