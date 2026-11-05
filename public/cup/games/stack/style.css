@@ -95,24 +95,24 @@
 #screen-jugar:has(.sk-juego.terminado) #jugar-reglas,
 #screen-jugar:has(.sk-juego.terminado) #comentario-pie { display: none; }
 
-/* The score's tally over «Continue» (ui.js cuentaPuntos): floors + bonuses = points, one term at a time.
-   One row with the same gap (--sk-g) between every figure and sign; each label hangs under its figure
-   without widening it, in the room kept under the row. --sk-n and --sk-g are fitted by ui.js encajar */
-.sk-cuenta { --sk-n: 3rem; --sk-g: 12px; display: flex; justify-content: center; align-items: flex-start; gap: var(--sk-g); width: 100%; min-width: 0; padding-bottom: 2.6rem; }
-.sk-termino { position: relative; display: grid; justify-items: center; opacity: 0; transform: translateY(14px) scale(0.6); }
-.sk-termino .sk-valor { font: 900 var(--sk-n)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
-.sk-termino small { position: absolute; top: calc(100% + var(--s-4)); left: 50%; transform: translateX(-50%); width: max-content; max-width: var(--sk-l, 5.5rem); font: 700 var(--fs-75)/1.15 var(--font-body); color: var(--muted); text-align: center; }
-.sk-op { font: 900 calc(var(--sk-n) * 0.6)/1 var(--font-num); line-height: var(--sk-n); color: rgb(from var(--ink) r g b / 0.60); opacity: 0; }
-.sk-op.entra { opacity: 1; transition: opacity 0.3s; }
+/* The score's tally over «Continue» (ui.js cuentaPuntos), as a receipt: a row per term, the label on
+   one line on the left and the figure on the right, then a rule and the total. Each row slams in */
+.sk-cuenta { display: grid; gap: var(--s-2); width: min(100%, 22rem); justify-self: center; margin-bottom: var(--s-12); }
+.sk-termino { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-12); opacity: 0; transform: translateX(40px); }
+.sk-rotulo { font: 700 var(--fs-110) var(--font-body); color: var(--muted); white-space: nowrap; }
+.sk-palabra { display: inline-block; }
+.sk-palabra::first-letter { text-transform: uppercase; }
+.sk-termino .sk-valor { font: 900 var(--fs-200)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
 .sk-termino.bono .sk-valor { color: var(--cyan); text-shadow: 0 0 14px rgb(from var(--cyan) r g b / 0.60); }
-.sk-termino.total .sk-valor { color: var(--yellow); transform-origin: 50% 80%; }
-.sk-termino.entra { animation: sk-golpe 0.55s cubic-bezier(.2,1.6,.4,1) forwards; }
+.sk-termino.total { border-top: 2px solid rgb(from var(--ink) r g b / 0.25); padding-top: var(--s-4); margin-top: var(--s-2); }
+.sk-termino.total .sk-rotulo { color: var(--ink); }
+.sk-termino.total .sk-valor { font-size: var(--fs-200); color: var(--yellow); transform-origin: 100% 70%; }
+.sk-termino.entra { animation: sk-golpe 0.5s cubic-bezier(.2,1.5,.4,1) forwards; }
 .sk-termino.total.late .sk-valor { animation: sk-late 0.45s ease-out; }
 .sk-termino.total.final .sk-valor { animation: sk-corona 0.9s ease-out forwards; }
-.sk-cuenta.lista .sk-termino, .sk-cuenta.lista .sk-op { opacity: 1; transform: none; animation: none; }
-.sk-cuenta.lista .total .sk-valor { transform: scale(1.12); }
-@keyframes sk-golpe { 0% { opacity: 0; transform: translateY(-26px) scale(1.8); } 60% { opacity: 1; transform: translateY(2px) scale(0.92); } 100% { opacity: 1; transform: none; } }
+.sk-cuenta.lista .sk-termino { opacity: 1; transform: none; animation: none; }
+.sk-cuenta.lista .total .sk-valor { transform: scale(1.3); }
+@keyframes sk-golpe { 0% { opacity: 0; transform: translateX(60px) scale(1.3); } 60% { opacity: 1; transform: translateX(-4px) scale(0.98); } 100% { opacity: 1; transform: none; } }
 @keyframes sk-late { 0% { transform: scale(1); } 40% { transform: scale(1.2); } 100% { transform: scale(1); } }
-@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(1.4); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(1.12); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
-@media (prefers-reduced-motion: reduce) { .sk-op { opacity: 1; } }
+@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(1.6); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(1.3); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
 @media (prefers-reduced-motion: reduce) { .sk-termino { opacity: 1; transform: none; animation: none !important; } }

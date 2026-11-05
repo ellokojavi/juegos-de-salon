@@ -14,7 +14,7 @@
 > reads «N pisos» (no blocks stamp); «Continuar» sits on a blurred strip over the tower, and the tour starts from the game's last frame, the top gliding up to just under «Fin del juego». No tour
 > with reduced motion. The rules panel hides at the end (no time to read it), and the tower's height
 > shrinks to whatever keeps the whole end above the fold, with no vertical scroll. In the lab (flag `babel-tally`, card `#seccion-babel-tally`), over «Continuar» the
-> score adds itself up (`cuentaPuntos` in `ui.js`, its figures and the one gap around every sign fitted to the width by `encajar`): «9 pisos + 3 🔥 racha + 15 📏 por lo largo = 27 puntos»,
+> score adds itself up as a receipt (`cuentaPuntos` in `ui.js`; the owner's call: labels on one line, big figures): a row each for «🧱 Pisos 9», «🔥 Bono de racha +3», «📏 Largo de rachas +15», then a rule and «🏆 Puntos 27»,
 > each bonus slamming in while the total rolls up, which pops (confetti when there were bonuses);
 > all at once with reduced motion or a finished game reopened.
 >
