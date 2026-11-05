@@ -51,7 +51,7 @@ const EN = {
   back: '‹ Lab',
   tagline: 'Look, remember, find.',
   steps: [
-    ['👀', 'Look at the pictures before they hide.'],
+    ['👀', 'Look at the pictures before they get covered.'],
     ['👆', 'Tap the one asked for: one, a pair or a trio.'],
     ['⏱️', `Every round is faster. You have ${LIVES} lives.`],
   ],
@@ -83,7 +83,7 @@ const EN = {
   time: '⏱️ Time: {t}.',
   again: '🔁 Play again',
   commentOpen: '💬 Leave a comment',
-  comment: { titulo: 'What did you think?', lead: 'Tell us if you had time to see the pictures and to find them, and what you would change.', ph: 'For example: the pictures hide too fast.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
+  comment: { titulo: 'What did you think?', lead: 'Tell us if you had time to see the pictures and to find them, and what you would change.', ph: 'For example: the pictures get covered too fast.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
 };
 
 const PT = {
@@ -123,7 +123,7 @@ const PT = {
   time: '⏱️ Tempo: {t}.',
   again: '🔁 Jogar de novo',
   commentOpen: '💬 Deixar um comentário',
-  comment: { titulo: 'O que você achou?', lead: 'Conte se dava tempo de ver os desenhos e de encontrá-los, e o que você mudaria.', ph: 'Por exemplo: os desenhos somem rápido demais.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
+  comment: { titulo: 'O que você achou?', lead: 'Conte se dava tempo de ver os desenhos e de encontrá-los, e o que você mudaria.', ph: 'Por exemplo: os desenhos são cobertos rápido demais.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT };
