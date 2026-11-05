@@ -271,6 +271,19 @@
         "stat": "3 file(s) +6 −0: README.md, docs/ADD-GAME.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 41980263759,
+      "check": "tests",
+      "pr": 1197,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "56385831449bf6922e9b125df0e52f19341dbc7f",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/design-lint.test.mjs",
+      "signature": "756a124245",
+      "date": "2026-11-05T06:27:02.407Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
