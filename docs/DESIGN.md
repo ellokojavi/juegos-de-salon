@@ -40,13 +40,20 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--cyan` | `#2ee6d6` | the secondary accent: info, selection, "your turn" |
 | `--lime` | `#9dff3a` | success, correct, done |
 | `--purple` | `#8a4dff` | tertiary accent, used sparingly: the hidden digit of the keyboard, the owner's panel; a game does not need it |
-| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action |
+| `--red` | `#e0243c` | errors, collisions and losses; as a button only a destructive confirmation (`.btn--red`, deleting a cup), never a game action | (`.btn--red` lives in `cup/style.css` today, not in `base.css`: it moves with phase 7, #1196)
 | `--ink` | white | text on the dark background |
 | `--muted` | white at 72 % | secondary text on the dark background (`.muted`) |
 | `--glass`, `--glass-border` | white at 8 % and 16 % | panels, chips, ghost buttons: surfaces on the dark background |
 | `--card`, `--card-ink` | cream and near-black | a light card (a playing card, a note) and its text |
 | `--ink-on-yellow`, `--ink-on-cyan` | dark brown, dark teal | text on a yellow or cyan surface |
 | `--edge-pink`, `--edge-yellow`, `--edge-cyan` | darkened accents | the 3D edge under a button of that colour |
+| `--well`, `--well-deep` | black at 25 % and 30 % | a sunken surface on the dark background: rows, segmented controls (`--well`), inputs (`--well-deep`) |
+| `--placeholder` | white at 35 % | an input's placeholder |
+
+**A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
+relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
+the idiom for every `rgba(46, 230, 214, 0.6)` it meets. A white surface (`background: #fff`) is
+not ink: it is `var(--card)` if it is a card, or an escape.
 
 A game may have thematic colours (the sea in Batalla Naval, a painting's palette in Pintaminas)
 for its board. They are declared once, at the top of its stylesheet, as that game's own tokens
@@ -121,6 +128,7 @@ these uses the class; a game that needs something close to one asks for a varian
 |---|---|---|
 | Title | `.display` + `--xl/--lg/--md/--sm`, `.rainbow` | the rainbow only on the game's own title |
 | Text | `.muted`, `.lead`, `.center` | |
+| Topbar | `.topbar`, `.back`, `.tools`, `.icon-btn`, `.sound-toggle`, `.lang-toggle` | `.back` is 40 px tall: a debt, §5 |
 | Button | `.btn` (pink), `.btn--yellow` (the action), `.btn--cyan`, `.btn--ghost`, `.btn--sm`, `.btn-row` | 60 px tall, 50 for `--ghost`, 44 for `--sm`; 44 is U-10's floor for anything tapped; the label fits in one line at 320 px (U-17) |
 | Choice buttons | `.opcion` (today in `cup/style.css`; moves here in phase 4) | two or three options side by side, one on |
 | Panel | `.panel`, `details.panel` | the glass card |
@@ -134,8 +142,29 @@ these uses the class; a game that needs something close to one asks for a varian
 | Keyboard | `teclado.css` | |
 | Topbar, footer | `.topbar`, footer | |
 
-Planned for phase 4 (#1192), because games copy them today: the list row (`.player-row`), the
-toggle row (`.toggle-row`), the link button (`.link-btn`), the section title, the score line.
+**The game shell** (phase 4, #1192): what every game's screens are made of, once in `base.css`.
+Until November 2026 each game copied these from the one before (eleven copies of `.screen`, eight
+of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `.result-hero`, six of
+`.switch`, five of `.player-row` and `.lobby-players`, three of `.toggle-row`).
+
+| Component | Class | Notes |
+|---|---|---|
+| Screens | `.screen`, `.screen.active` | one visible, sliding up |
+| The cover's hero | `.intro-hero`, `.icon`, `.icon--cyan` | the emoji glowing above the title |
+| A mode to pick | `.modes`, `.mode`, `.mode .go`, `.mode .soon` | title, a line, the › |
+| A form field | `.field`, `label`, `input`, `input.name`, `input.code`, `.sub`, `.sub.warn` | the input in a well |
+| The form's error | `.form-error` | |
+| Segmented control | `.seg`, `.seg button.on` | |
+| Choice buttons | `.opciones.dos/.tres`, `.opcion`, `.opcion.on` | La Copa's, now everyone's |
+| A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
+| A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | |
+| A link that is a button | `.link-btn` | |
+| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.dots` | |
+| Whose turn | `.status`, `.who`, `.sub` | |
+| The result's hero | `.result-hero`, `.trophy` | |
+
+A game that still carries its own copy is a `copied` hit of the lint until it migrates (phase 5):
+its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the pilot.
 
 ## 3. Rules
 
@@ -179,6 +208,7 @@ after a migration), is in the lint's header.
 | Pintaminas | each drawing's palette | the game is about those colours |
 | 🕵️ Agentes | the four clue colours | tested by `palette.test.mjs` |
 | Seasonal templates (`season.css`) | the Halloween and other palettes | a dated skin over the tokens (D-457) |
+| Ahorcado | the word's letters at 2.5, 2.1, 1.8 and 1.9 rem | a board's own sizes, between the title steps and the text steps, so a long word fits at 320 px (C-8) |
 | `base.css` (the chat bubble, the install bubble) | the bubble's 4 px tail; the room the page and the text keep for the install bubble and its ✕ (170, 48 and 30 px) | a tail is a shape, not a corner on the scale; the room is another element's size, not rhythm (allowlisted) |
 | La Copa (`cup/style.css`) | the podium's flat 4 px feet (`.escalon`) and the speech bubble's 4 px tail (`.cs-globo`) | the same shapes as `base.css`'s bubble (allowlisted) |
 
@@ -194,11 +224,37 @@ is a decision for the owner, not a migration:
 
 - `.back`, the topbar's "‹ Menú" link, is 40 px tall: under U-10's 44 px floor. The e2e script of
   the components page leaves it out of its check until it is decided.
+- `.switch`, the toggle's switch (58 × 34 px in the six games that copied it, now in the shell), is
+  under 44 px tall: the row around it is tappable, the switch alone is not. A taller switch or a
+  larger hit area is a visible change on six games' setup screens, so it is the owner's call; the
+  components page's script leaves it out of its check until then.
 - `base.css` writes 14 and 18 px corners, 7 and 11 px paddings and 0.95, 1.05 and 1.15 rem sizes in
   its own components (the chat sheet, the ghost button, the folding panel's summary): the baseline of
   phase 2 counts them; they move to a step when base.css is migrated, in phase 5, with screenshots.
 
 ## 6. Migration recipe
 
-Written in phase 4 (#1192) from what the pilot (Ahorcado) teaches: what maps to what, what to look
-at in the screenshots, and how long one game takes.
+From the pilot, Ahorcado (phase 4, #1192; 276 lines, 101 hits before, 0 after). One game per PR.
+
+1. **Measure first.** `node tools/agents/design-lint.mjs public/<game>/style.css` says every hit and
+   its fix. Take the "before" with the computed-styles dump and screenshots of the game's screens at
+   390 and 320 px (the usability agent's `look.mjs`, or a Playwright dump of `getComputedStyle` of
+   every element of the active screen: it tells a 1 px shift apart from a real change).
+2. **Delete the shell copies.** Every rule the sheet repeats from the game shell (§2) goes; what the
+   game adds on top of a shell component stays as a modifier (`.field--name`, `.seg--src`). If the
+   game's copy differed from the shell, the shell wins: list the difference as intended.
+3. **Tokens, mechanically.** Colours → the token; a token at an alpha → `rgb(from var(--x) r g b / a)`;
+   `rgba(0,0,0,.25/.3)` → `--well`/`--well-deep`; `#fff` as text → `--ink`, as a surface → `--card`
+   or an escape; corners → `--r-*`; padding, gap, margin → `--s-*` (an odd value takes the nearer
+   step; a negative margin is `calc(-1 * var(--s-18))`); rem sizes → `--fs-*` (the nearer step; a
+   board's own letters, like the word of Ahorcado at 2.5 rem, are an escape with their reason).
+4. **Run** the lint on the file (zero, or escapes with a reason), `design-lint.mjs baseline`,
+   `design-lint.test.mjs`, the game's e2e scripts, and the "after" dump: diff it against the
+   "before" and read every property that changed. The list of intended differences goes in the PR
+   body with the two screenshots; anything not on the list is a bug.
+5. **Write it down:** the game's doc notes the migration; the changelog entry says what moved.
+
+What the pilot taught: the copies were not identical (two paddings for `.toggle-row`, two input
+fonts for `.player-row`, `.seg` with and without a 44 px floor), so step 2 is where the eye is
+needed; step 3 is mechanical and takes minutes; the dump in step 4 caught every 1 px shift. One
+game of Ahorcado's size takes one session.

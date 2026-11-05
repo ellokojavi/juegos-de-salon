@@ -275,3 +275,7 @@ import map de la copia que se publica (C-11, D-205). Gancho `window.__ahorcado` 
   tienen todos los aparatos; con cadena en un celular, la app guarda las dos y no hay a quién
   engañar. El compromiso con hash corre donde de verdad hay un secreto por aparato: cadena en
   varios celulares. Jugando solo no hay ninguno, porque la palabra sale del mazo (D-65).
+
+## The design system's pilot (D-533, #1192)
+
+Ahorcado was the first game migrated to the design system: its stylesheet lost its copies of the game shell (screens, the cover's hero, modes, fields, the segmented control, player rows, the toggle and its switch, the room, the result's hero), which live once in `base.css`, and the rest (the gallows, the word, the keyboard, the verdict) is written on the tokens. The design lint reports zero on it beyond its escapes (the board's own letter sizes). The recipe every later game follows is DESIGN.md §6.

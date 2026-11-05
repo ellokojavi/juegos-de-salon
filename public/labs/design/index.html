@@ -82,6 +82,31 @@
         <div class="stack"><div class="ds-caja">.stack</div><div class="ds-caja">12 px entre hijos</div></div>
       </section>
 
+      <section class="panel stack" id="ds-armazon">
+        <h2 class="display display--sm">El armazón de un juego</h2>
+        <p class="muted">Lo que toda pantalla de juego tiene y antes cada juego copiaba (D-533, fase 4): la portada, los modos, el formulario, las filas, el interruptor, la sala y el resultado.</p>
+        <div class="intro-hero"><span class="icon">🪢</span><h2 class="display display--md rainbow">Portada</h2></div>
+        <div class="modes"><button class="mode" type="button"><span><b>Un modo</b><small>Lo que hace, en una línea</small></span><span class="go">›</span></button><button class="mode" type="button" disabled><span><b>Pronto</b><small>Aún no se puede</small></span><span class="soon">pronto</span></button></div>
+        <div class="field"><label>Un campo</label><input type="text" placeholder="Escribe algo"><p class="sub">La ayuda bajo el campo.</p></div>
+        <div class="field"><label>Tu nombre</label><input class="name" type="text" value="Javi"></div>
+        <div class="field"><label>Código de sala</label><input class="code" type="text" value="ABCD"></div>
+        <div class="form-error">El error del formulario, en amarillo.</div>
+        <div class="seg"><button type="button" class="on">Uno</button><button type="button">Dos</button><button type="button">Tres</button></div>
+        <div class="opciones tres"><button class="opcion on" type="button"><b>Ahora</b></button><button class="opcion" type="button"><b>Mañana</b></button><button class="opcion" type="button"><b>Otra fecha</b></button></div>
+        <div class="opciones dos"><button class="opcion" type="button"><b>Sí</b><small>con detalle</small></button><button class="opcion on" type="button"><b>No</b><small>con detalle</small></button></div>
+        <div><div class="player-row"><span class="num">1</span><input type="text" value="Cata"><button class="del" type="button" aria-label="Quitar">✕</button></div><div class="player-row cpu"><span class="num">2</span><span class="cpu-name">🤖 La máquina</span><button class="del" type="button" aria-label="Quitar" disabled>✕</button></div></div>
+        <div class="toggle-row"><div class="txt"><b>Una opción con interruptor</b><small>Lo que cambia cuando está encendida.</small></div><button class="switch on" type="button" role="switch" aria-checked="true" aria-label="Opción"></button></div>
+        <div class="toggle-row"><div class="txt"><b>Apagada</b><small>Y su explicación.</small></div><button class="switch" type="button" role="switch" aria-checked="false" aria-label="Opción"></button></div>
+        <button class="link-btn" type="button">Un link que es botón</button>
+        <div class="code-big">KZMR</div>
+        <div class="qr"><svg viewBox="0 0 8 8" width="120" height="120" shape-rendering="crispEdges"><rect width="8" height="8" fill="#fff"/><path fill="#1a1a1a" d="M0 0h3v3H0zM5 0h3v3H5zM0 5h3v3H0zM4 1h1v1H4zM3 4h2v1H3zM6 4h1v2H6zM4 6h1v2H4zM6 7h2v1H6z"/></svg></div>
+        <div class="lobby-players"><span class="p me">🇨🇱 Javi</span><span class="p">Cata</span><span class="p off">Pedro</span></div>
+        <p class="or">o</p>
+        <p class="waiting">Esperando a los demás<span class="dots"></span></p>
+        <div class="status"><div class="who">Le toca a Cata</div><div class="sub">Elige una letra</div></div>
+        <div class="result-hero"><span class="trophy">🏆</span><h2 class="display display--md">Resultado</h2></div>
+      </section>
+
       <section class="panel stack" id="ds-ranking">
         <h2 class="display display--sm">Ranking</h2>
         <div class="rk-lista">
