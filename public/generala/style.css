@@ -110,6 +110,8 @@
 .tabla { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--fs-75); }
 .tabla th, .tabla td { padding: var(--s-4) var(--s-2); text-align: center; border-bottom: 1px solid var(--glass); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tabla th:first-child, .tabla td:first-child { text-align: left; width: 34%; color: var(--muted); font-weight: 800; }
+/* A box's name wraps between words instead of being cut: «Doble generala», «Four of a kind» don't fit 34% at 320 px */
+.tabla td:first-child { white-space: normal; text-overflow: clip; line-height: 1.2; }
 .tabla td { font: 900 var(--fs-85) var(--font-num); font-variant-numeric: tabular-nums; }
 .tabla tr.suma td { color: var(--yellow); border-bottom: 0; font-size: var(--fs-100); }
 
