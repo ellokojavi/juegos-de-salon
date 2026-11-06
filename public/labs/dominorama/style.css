@@ -4,7 +4,7 @@
 
 /* The page's background: a deep night with a little color, like a game table */
 body {
-  --bg1: #100a26; --bg2: #1a0c33; --bg3: #08142a;
+  --bg1: #100a26; --bg1-rgb: 16 10 38; --bg2: #1a0c33; --bg2-rgb: 26 12 51; --bg3: #08142a; --bg3-rgb: 8 20 42;
   --fondo:
     radial-gradient(1000px 560px at 0% -10%, rgba(46, 230, 214, 0.20), transparent 60%),
     radial-gradient(900px 520px at 110% 20%, rgba(255, 46, 136, 0.18), transparent 60%),
@@ -29,7 +29,7 @@ body {
 .ficha {
   --t: 40px;
   display: inline-grid; grid-auto-flow: column; padding: 0; border: 0; border-radius: calc(var(--t) * 0.18);
-  background: var(--dm-marfil); box-shadow: 0 2px 0 var(--dm-canto), 0 4px 10px rgb(from var(--well) r g b / 0.35); color: var(--dm-punto);
+  background: var(--dm-marfil); box-shadow: 0 2px 0 var(--dm-canto), 0 4px 10px rgb(var(--well-rgb) / 0.35); color: var(--dm-punto);
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
 }
 .ficha.vertical { grid-auto-flow: row; }
@@ -49,26 +49,26 @@ button.ficha:active { transform: scale(0.94); }
 }
 .tablero-dominorama.chico { --s: min(52px, calc((100vw - 64px) / var(--w))); }
 .celda {
-  --z: rgb(from var(--ink) r g b / 0.35);
+  --z: rgb(var(--ink-rgb) / 0.35);
   margin: 1px; padding: 0; border: 0; border-radius: var(--r-8); cursor: pointer;
-  background: color-mix(in srgb, var(--z) 26%, rgb(from var(--ink) r g b / 0.04));
+  background: color-mix(in srgb, var(--z) 26%, rgb(var(--ink-rgb) / 0.04));
   -webkit-tap-highlight-color: transparent;
 }
-.celda.libre { background: rgb(from var(--ink) r g b / 0.07); }
+.celda.libre { background: rgb(var(--ink-rgb) / 0.07); }
 /* The zone's edge: a dashed line on each side where it meets another zone or the outside */
 .celda.bt { border-top: 2px dashed var(--z); } .celda.br { border-right: 2px dashed var(--z); }
 .celda.bb { border-bottom: 2px dashed var(--z); } .celda.bl { border-left: 2px dashed var(--z); }
-.celda.libre.bt, .celda.libre.br, .celda.libre.bb, .celda.libre.bl { border-color: rgb(from var(--ink) r g b / 0.18); }
+.celda.libre.bt, .celda.libre.br, .celda.libre.bb, .celda.libre.bl { border-color: rgb(var(--ink-rgb) / 0.18); }
 .celda.no { animation: dominorama-no 0.35s; }
 @keyframes dominorama-no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 /* The rule: a small diamond inside the zone's last cell, bottom right (D-385); a tap lights its zone */
 .regla {
   z-index: 2; cursor: pointer; align-self: end; justify-self: end; margin: 0 var(--s-4) var(--s-4) 0;
   width: 22px; height: 22px; display: grid; place-items: center; transform: rotate(45deg);
-  background: var(--z); border: 2px solid var(--ink); border-radius: var(--r-8); box-shadow: 0 2px 6px rgb(from var(--well) r g b / 0.45);
+  background: var(--z); border: 2px solid var(--ink); border-radius: var(--r-8); box-shadow: 0 2px 6px rgb(var(--well-rgb) / 0.45);
 }
 .regla > span { transform: rotate(-45deg); font: 900 var(--fs-75) var(--font-num); color: var(--dm-punto); white-space: nowrap; }
-.regla.ok { box-shadow: 0 0 0 3px var(--lime), 0 2px 6px rgb(from var(--well) r g b / 0.45); }
+.regla.ok { box-shadow: 0 0 0 3px var(--lime), 0 2px 6px rgb(var(--well-rgb) / 0.45); }
 .regla.mal { background: var(--red); animation: dominorama-no 0.35s; }
 .regla.mal > span { color: var(--ink); }
 .tablero-dominorama.chico .regla { width: 22px; height: 22px; margin: 0 var(--s-2) var(--s-2) 0; pointer-events: none; }
@@ -82,14 +82,14 @@ button.ficha:active { transform: scale(0.94); }
 .celda.destino.no { outline-color: var(--red); }
 .bandeja .ficha, .tablero-dominorama .puesta { touch-action: none; -webkit-touch-callout: none; }
 .ficha.arrastrada { opacity: 0.3; }
-.ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgb(from var(--well) r g b / 0.55); }
+.ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgb(var(--well-rgb) / 0.55); }
 .tablero-dominorama.chico .regla > span { font-size: var(--fs-85); }
 /* A placed domino covers its two cells */
 .puesta { --t: calc(var(--s) - 4px); z-index: 1; align-self: center; justify-self: center; }
 .tablero-dominorama .puesta.cae { animation: dominorama-cae 0.28s ease-out; }
 .tablero-dominorama .puesta.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 18px var(--yellow); }
 @keyframes dominorama-cae { from { transform: scale(1.25); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
-.tablero-dominorama.resuelto { filter: drop-shadow(0 0 14px rgb(from var(--lime) r g b / 0.6)); }
+.tablero-dominorama.resuelto { filter: drop-shadow(0 0 14px rgb(var(--lime-rgb) / 0.6)); }
 
 /* While playing */
 .cabeza-dominorama { display: flex; justify-content: space-between; align-items: center; gap: var(--s-8); }
@@ -103,7 +103,7 @@ button.ficha:active { transform: scale(0.94); }
 .bandeja { --hueco: min(92px, calc((100vw - 37px) / 4)); }
 .bandeja > .hueco { flex: none; width: var(--hueco); height: var(--hueco); display: grid; place-items: center; }
 .bandeja .ficha { --t: calc(var(--hueco) * 0.46); }
-.bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgb(from var(--well) r g b / 0.35); }
+.bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
 .acciones-dominorama { display: flex; gap: var(--s-8); justify-content: center; flex-wrap: wrap; }
 .acciones-dominorama .armado { background: var(--yellow); color: var(--ink-on-yellow); }
 
@@ -114,7 +114,7 @@ button.ficha:active { transform: scale(0.94); }
   padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
 .sello-dominorama.mal { color: var(--pink); }
 .resultado .comentario { text-align: left; }
-.divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(from var(--ink) r g b / 0.45) 15%, rgb(from var(--ink) r g b / 0.45) 85%, transparent); }
+.divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(var(--ink-rgb) / 0.45) 15%, rgb(var(--ink-rgb) / 0.45) 85%, transparent); }
 .desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: var(--s-4); }
 
 @media (prefers-reduced-motion: reduce) {

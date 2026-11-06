@@ -12,9 +12,12 @@
  * It reads every stylesheet under public/ that git knows (the generated bridge pages have none) and
  * reports, per declaration:
  *   token-colour   a colour written by hand that is one of the tokens: `#2ee6d6` is `var(--cyan)`; at an alpha,
- *                  `rgba(46,230,214,0.6)` is `rgb(from var(--cyan) r g b / 0.6)` (a glow or a tint in a token colour).
+ *                  `rgba(46,230,214,0.6)` is `rgb(var(--cyan-rgb) / 0.6)` (a glow or a tint in a token colour; `--cyan-rgb`
+ *                  is the token's channels, declared next to it). The relative-colour form `rgb(from var(--x) r g b / a)`
+ *                  is a hit too: browsers before Chrome 119 / Safari 16.4 / Firefox 128 drop it (DESIGN.md §1).
  *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration, a calc()
- *                  alpha included: `rgba(143,247,238, calc(…))` is `rgb(from var(--own-token) r g b / calc(…))`.
+ *                  alpha included: `rgba(143,247,238, calc(…))` is `rgb(var(--own-token-rgb) / calc(…))`; so is
+ *                  `rgb(var(--x-rgb) / a)` when `--x-rgb` is declared neither in base.css nor in the same sheet.
  *   radius         a border-radius in px that is not on the corner scale (8, 10, 12, 14, 16, 22, 999).
  *   space          a padding, margin or gap in px that is not on the space scale (2 px grid up to 20, then 24, 28, 32).
  *   copied         a selector that redeclares a class of base.css or ranking.css (`.btn`, `.panel`, `.display--sm`…),
@@ -151,6 +154,7 @@ const CALC_ALPHA = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*calc\(/gi;
 export function lintCss(css, file, T, shared = sharedClasses()) {
   const hits = [];
   const isShared = SHARED.includes(file);
+  const own = new Set([...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--[\w-]+-rgb)\s*:/g)].map(m => m[1])); // the sheet's own channel tokens
   const hit = (rule, line, what, fix) => hits.push({ file, rule, line, what, fix });
   for (const r of rules(css)) {
     const subject = r.selector.split(',').map(s => s.trim());
@@ -163,20 +167,24 @@ export function lintCss(css, file, T, shared = sharedClasses()) {
     for (const d of r.decls) {
       if (d.prop.startsWith('--')) continue; // the game's own tokens (DESIGN.md §4), or base.css's
       if (/^(animation|transition|content|font-family|src|unicode-range)$/.test(d.prop)) continue;
+      for (const m of d.value.matchAll(/rgb\(from var\((--[\w-]+)\)/g)) // dropped by older browsers: the channels token instead
+        hit('token-colour', d.line, `${d.prop}: ${m[0]}…`, `rgb(var(${m[1]}-rgb) / a)`);
+      for (const m of d.value.matchAll(/rgba?\(\s*var\((--[\w-]+-rgb)\)/g))
+        if (!(m[1] in T.map) && !own.has(m[1])) hit('colour', d.line, `${d.prop}: ${m[0]}`, `${m[1]} is not declared in base.css or this sheet: declare it next to its colour token`);
       for (const m of d.value.matchAll(CALC_ALPHA)) {
         const rgb = normColour(`rgb(${m[1]}, ${m[2]}, ${m[3]})`);
-        if (T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}…)`, `rgb(from var(${T.colours[rgb]}) r g b / calc(…))`);
-        else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}…)`, 'rgb(from var(--token) r g b / calc(…)), with the game\'s own `--token` at the top of the file');
+        if (T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}…)`, `rgb(var(${T.colours[rgb]}-rgb) / calc(…))`);
+        else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}…)`, 'rgb(var(--token-rgb) / calc(…)), with the game\'s own `--token` and `--token-rgb` at the top of the file');
       }
       const seen = new Set();
       for (const m of d.value.matchAll(COLOUR_LITERAL)) {
-        if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5) and rgb(from var(--x) r g b / a): the colour is a token already
+        if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5) and rgb(var(--x-rgb) / a): the colour is a token already
         if (seen.has(m[0])) continue; seen.add(m[0]); // one hit per colour per declaration
         const c = normColour(m[0]);
         const [rgb, alpha] = (c || '').split('/');
         const surface = /^(background|border|box-shadow|fill|stroke)/.test(d.prop) && rgb === 'ffffff' && !alpha;
         if (c && T.colours[c] && !surface) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `var(${T.colours[c]})`);
-        else if (alpha && T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `rgb(from var(${T.colours[rgb]}) r g b / ${alpha})`);
+        else if (alpha && T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}`, `rgb(var(${T.colours[rgb]}-rgb) / ${alpha})`);
         else if (surface) { if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}`, 'a white surface: var(--card) if it is a card, or an allowlist entry with its reason'); }
         else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}`, 'a token, or the game\'s own `--token` at the top of the file with its reason in DESIGN.md §4');
       }

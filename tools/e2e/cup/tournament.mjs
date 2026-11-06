@@ -883,10 +883,10 @@ if (runs('labs')) {
       await click('#btn-volver-ensayo'); await sleep(300);
     }
     await click('#btn-empezar'); await sleep(300); await waitCountdown();
-    // The folded rules below the board (D-133)
+    // The folded rules below the board (D-133). A standalone game has no title under the menu since #1243: then only fold and place are checked
     {
       const r = await ev(`(()=>{const d=document.getElementById('reglas');if(!d)return null;const b=document.getElementById('jugar-body').getBoundingClientRect();return JSON.stringify({open:d.open,below:d.getBoundingClientRect().top>=b.bottom-1,title:d.querySelector('summary').textContent})})()`).then(x => x && JSON.parse(x));
-      ok(r && !r.open && r.below && r.title.includes(await ev(`__copa.estado.juego ? document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') : ''`)), `${id}: the rules are folded below the board (${r?.title})`);
+      ok(r && !r.open && r.below && r.title.includes(await ev(`__copa.estado.juego ? (document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') ?? '') : ''`)), `${id}: the rules are folded below the board (${r?.title})`);
       if (id === 'agentes') {
         await ev(`document.querySelector('#reglas summary').click(); document.getElementById('reglas').scrollIntoView(); 1`); await sleep(300);
         await b.shot('rules-open');

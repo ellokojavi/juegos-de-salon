@@ -591,6 +591,7 @@ node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
 node tools/agents/repo-weight.test.mjs
 node tools/agents/round-watch.test.mjs
+node tools/agents/tokens-rgb.test.mjs
 node tools/agents/usability-lint.test.mjs
 node tools/agents/wait-pr.test.mjs
 node tools/cloudflare/inbox-worker.test.mjs

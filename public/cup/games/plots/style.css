@@ -3,10 +3,10 @@
    game's tokens below (DESIGN.md §4), and the demo's «¡Listo!» keeps its own size (docs/design-allowlist.json).
    The plots' colours (Numbers and Utilities) come from ui.js as --c. */
 :root {
-  --lt-noche: #0a101c;    /* the board's night, and the line between plots */
-  --lt-sombra: #000;      /* the drops: under the board, the numbers, the icons, inside a plot */
+  --lt-noche: #0a101c; --lt-noche-rgb: 10 16 28;    /* the board's night, and the line between plots */
+  --lt-sombra: #000; --lt-sombra-rgb: 0 0 0;      /* the drops: under the board, the numbers, the icons, inside a plot */
   --lt-tinta: #1b1530;    /* ink on a lit surface: a covered number, the plot-size chip */
-  --lt-error: #ff4d5e;    /* a rectangle that is not valid, the wrong drawing */
+  --lt-error: #ff4d5e; --lt-error-rgb: 255 77 94;    /* a rectangle that is not valid, the wrong drawing */
   --lt-alerta: #ff8a8a;   /* a soft red: a wrong notice, Give up armed, a bad stamp */
 }
 
@@ -22,7 +22,7 @@
 .lt-demo-caja .lt-tablero { transition: opacity 0.4s; }
 .lt-demo-caja:has(.lt-demo-rotulo.ve) .lt-tablero { opacity: 0.35; }
 .lt-demo-rotulo { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; pointer-events: none; z-index: 4;
-  font: 2.7rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgb(from var(--lt-sombra) r g b / 0.45), 0 0 18px rgb(from var(--yellow) r g b / 0.45);
+  font: 2.7rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgb(var(--lt-sombra-rgb) / 0.45), 0 0 18px rgb(var(--yellow-rgb) / 0.45);
   opacity: 0; transition: opacity 0.3s; }
 .lt-demo-rotulo.ve { opacity: 1; animation: lt-listo 0.55s cubic-bezier(.3,1.6,.6,1); }
 @keyframes lt-listo { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -35,34 +35,34 @@ body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hi
 /* The board: the squared background, the plots on top and the numbers above everything.
    Its own width sizes the numbers (container units), so the same rules serve the small boards */
 .lt-tablero { --lado: 7; position: relative; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border-radius: var(--r-14); container-type: inline-size;
-  background: rgb(from var(--lt-noche) r g b / 0.85); box-shadow: 0 0 0 2px rgb(from var(--ink) r g b / 0.14), 0 10px 30px rgb(from var(--lt-sombra) r g b / 0.4);
+  background: rgb(var(--lt-noche-rgb) / 0.85); box-shadow: 0 0 0 2px rgb(var(--ink-rgb) / 0.14), 0 10px 30px rgb(var(--lt-sombra-rgb) / 0.4);
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; transition: box-shadow 0.4s; }
 .lt-tablero#lt-tablero { touch-action: none; }
 .lt-tablero .lt-fondo, .lt-tablero .lt-nums { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--lado), 1fr); grid-template-rows: repeat(var(--lado), 1fr); }
 .lt-tablero .lt-fondo { border-radius: inherit; overflow: hidden; }
-.lt-celda { border: 1px solid rgb(from var(--ink) r g b / 0.07); }
+.lt-celda { border: 1px solid rgb(var(--ink-rgb) / 0.07); }
 .lt-tablero .lt-lotes { position: absolute; inset: 0; pointer-events: none; }
 .lt-tablero .lt-nums { pointer-events: none; z-index: 2; }
-.lt-num { display: grid; place-items: center; color: var(--ink); text-shadow: 0 2px 0 rgb(from var(--lt-sombra) r g b / 0.4); line-height: 1;
+.lt-num { display: grid; place-items: center; color: var(--ink); text-shadow: 0 2px 0 rgb(var(--lt-sombra-rgb) / 0.4); line-height: 1;
   font: 900 calc(100cqw / var(--lado) * 0.5) var(--font-num); font-variant-numeric: tabular-nums; transition: color 0.2s; }
 .lt-num.cubierto { color: var(--lt-tinta); text-shadow: none; }
 /* The Utilities icons: big, with a shadow that lifts them off the background and the plot */
-.lt-num.lt-icono { font-size: calc(100cqw / var(--lado) * 0.56); text-shadow: none; filter: drop-shadow(0 1px 1px rgb(from var(--lt-sombra) r g b / 0.55)); }
+.lt-num.lt-icono { font-size: calc(100cqw / var(--lado) * 0.56); text-shadow: none; filter: drop-shadow(0 1px 1px rgb(var(--lt-sombra-rgb) / 0.55)); }
 /* A plot: its color, with a border that sets it apart from its neighbours */
-.lt-lote { position: absolute; box-sizing: border-box; border: 2.5px solid rgb(from var(--lt-noche) r g b / 0.9); border-radius: var(--r-10);
-  background: var(--c); box-shadow: inset 0 -4px 0 rgb(from var(--lt-sombra) r g b / 0.12), inset 0 3px 0 rgb(from var(--ink) r g b / 0.35); }
+.lt-lote { position: absolute; box-sizing: border-box; border: 2.5px solid rgb(var(--lt-noche-rgb) / 0.9); border-radius: var(--r-10);
+  background: var(--c); box-shadow: inset 0 -4px 0 rgb(var(--lt-sombra-rgb) / 0.12), inset 0 3px 0 rgb(var(--ink-rgb) / 0.35); }
 .lt-lote.nace { animation: lt-nace 0.32s cubic-bezier(.3,1.6,.6,1); }
 @keyframes lt-nace { from { transform: scale(0.82); opacity: 0.4; } to { transform: none; opacity: 1; } }
 /* The one the hint placed: a dashed border */
-.lt-lote.ayudado { border-style: dashed; border-color: rgb(from var(--ink) r g b / 0.95); }
+.lt-lote.ayudado { border-style: dashed; border-color: rgb(var(--ink-rgb) / 0.95); }
 /* The rectangle being drawn; red and shaking if it is not valid */
-.lt-seleccion { position: absolute; z-index: 3; box-sizing: border-box; border: 3px solid var(--ink); border-radius: var(--r-10); background: rgb(from var(--ink) r g b / 0.16);
-  box-shadow: 0 0 16px rgb(from var(--ink) r g b / 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s, left 0.1s, top 0.1s, width 0.1s, height 0.1s; }
+.lt-seleccion { position: absolute; z-index: 3; box-sizing: border-box; border: 3px solid var(--ink); border-radius: var(--r-10); background: rgb(var(--ink-rgb) / 0.16);
+  box-shadow: 0 0 16px rgb(var(--ink-rgb) / 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s, left 0.1s, top 0.1s, width 0.1s, height 0.1s; }
 .lt-seleccion.ve { opacity: 1; }
-.lt-seleccion.mal { border-color: var(--lt-error); background: rgb(from var(--lt-error) r g b / 0.25); box-shadow: 0 0 16px rgb(from var(--lt-error) r g b / 0.6); animation: lt-no 0.4s ease-in-out; transition: opacity 0.12s; }
+.lt-seleccion.mal { border-color: var(--lt-error); background: rgb(var(--lt-error-rgb) / 0.25); box-shadow: 0 0 16px rgb(var(--lt-error-rgb) / 0.6); animation: lt-no 0.4s ease-in-out; transition: opacity 0.12s; }
 @keyframes lt-no { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
 /* Solved: it shines, and the plots jump */
-.lt-tablero.resuelto { box-shadow: 0 0 0 2px rgb(from var(--lime) r g b / 0.8), 0 0 26px rgb(from var(--lime) r g b / 0.5); }
+.lt-tablero.resuelto { box-shadow: 0 0 0 2px rgb(var(--lime-rgb) / 0.8), 0 0 26px rgb(var(--lime-rgb) / 0.5); }
 .lt-tablero.resuelto .lt-lote { animation: lt-ola 0.6s ease-out; }
 @keyframes lt-ola { 40% { transform: scale(1.05); filter: brightness(1.15); } }
 
@@ -72,7 +72,7 @@ body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hi
 .lt-tablero.chico.entra { animation: lt-entra 0.4s ease-out; }
 @keyframes lt-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
 .lt-ejemplo .lt-tablero.ej { width: 112px; }
-.lt-ejemplo .lt-tablero.ej-mal { width: 56px; box-shadow: 0 0 0 2px rgb(from var(--lt-error) r g b / 0.7); }
+.lt-ejemplo .lt-tablero.ej-mal { width: 56px; box-shadow: 0 0 0 2px rgb(var(--lt-error-rgb) / 0.7); }
 .lt-tablero.ej.resuelto .lt-lote { animation: none; }
 
 /* «Plots of n squares»: above the board (and above the demo) */
@@ -84,7 +84,7 @@ body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hi
 .lt-n-etapa { margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.06em; }
 .lt-etapas { display: flex; gap: var(--s-8); }
 .lt-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-faint); box-sizing: border-box; }
-.lt-punto.actual { border-color: var(--ink); background: rgb(from var(--ink) r g b / 0.25); box-shadow: 0 0 8px rgb(from var(--ink) r g b / 0.5); }
+.lt-punto.actual { border-color: var(--ink); background: rgb(var(--ink-rgb) / 0.25); box-shadow: 0 0 8px rgb(var(--ink-rgb) / 0.5); }
 .lt-punto.hecha { background: var(--lime); border-color: var(--lime); }
 
 /* Two lines tall always, in rem so the bigger size and win texts do not grow it: the board never moves while playing (U-12) */

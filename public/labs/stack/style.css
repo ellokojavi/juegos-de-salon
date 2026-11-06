@@ -25,7 +25,7 @@
 .cabeza-torre { display: flex; align-items: center; justify-content: space-between; gap: var(--s-10); }
 .cabeza-torre .titulo-torre { gap: var(--s-8); }
 .mejor-torre { font: 800 var(--fs-90) var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s, text-shadow 0.3s; }
-.mejor-torre.record { color: var(--yellow); text-shadow: 0 0 12px rgb(from var(--yellow) r g b / 0.6); }
+.mejor-torre.record { color: var(--yellow); text-shadow: 0 0 12px rgb(var(--yellow-rgb) / 0.6); }
 
 /* The game: the tower takes the screen between the heading and the comment link, and a tap anywhere on it drops */
 .escenario {
@@ -41,7 +41,7 @@
 }
 .aviso-torre {
   position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 700 var(--fs-100) var(--font-body); color: rgb(from var(--ink) r g b / 0.85); transition: opacity 0.4s;
+  font: 700 var(--fs-100) var(--font-body); color: rgb(var(--ink-rgb) / 0.85); transition: opacity 0.4s;
 }
 .aviso-torre.fuera { opacity: 0; }
 .aviso-torre.brilla { font: var(--fs-200) var(--font-display); letter-spacing: 0.06em; animation: torre-brilla 0.9s ease-out forwards; }
@@ -51,7 +51,7 @@
 /* Paused (a call, another app): over the tower, until a tap takes it off */
 .pausa-torre {
   position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; pointer-events: none;
-  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.8), rgb(from var(--bg1) r g b / 0.35) 70%, transparent);
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.8), rgb(var(--bg1-rgb) / 0.35) 70%, transparent);
   font: 700 var(--fs-100) var(--font-body); color: var(--ink);
 }
 .pausa-torre[hidden] { display: none; }
@@ -64,7 +64,7 @@
 .sello-torre { justify-self: center; margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
 .resultado .comentario { text-align: left; }
-.divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(from var(--ink) r g b / 0.45) 15%, rgb(from var(--ink) r g b / 0.45) 85%, transparent); }
+.divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(var(--ink-rgb) / 0.45) 15%, rgb(var(--ink-rgb) / 0.45) 85%, transparent); }
 .desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: var(--s-4); }
 /* The comment's link button is the shell's .link-btn (base.css) */
 

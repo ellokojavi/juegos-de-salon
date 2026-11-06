@@ -161,7 +161,7 @@ puede quedarse.
 
 `cup/games/case/style.css` is written on `base.css`'s tokens (70 lint hits to 0 beyond three
 allowlisted escapes: the bubble's 4 px tail, the stamp at 2.6 rem, a suspect's trade at 0.64 rem).
-Token colours by hand are the token or `rgb(from var(--x) r g b / a)`; the criminal's pink, the
+Token colours by hand are the token or `rgb(var(--x-rgb) / a)`; the criminal's pink, the
 second group's, the verdict buttons' and a card's back are the game's own `--cs-*` (DESIGN.md §4),
 every value unchanged. Intended differences, the nearer step: the clues' text 1.1 rem on the latest
 (was 1.06), the column/row labels 1 rem (were 1.05), a card's emoji 1.4 rem (was 1.45) and its back's

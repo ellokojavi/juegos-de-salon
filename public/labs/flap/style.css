@@ -17,7 +17,7 @@
 .escenario {
   position: relative; flex: none; height: calc(100svh - 76px); min-height: 340px; overflow: hidden; border-radius: var(--radius);
   border: 1px solid var(--glass-border); background: var(--aletazo-cielo);
-  box-shadow: inset 0 0 60px rgb(from var(--purple) r g b / 0.18), var(--shadow-panel);
+  box-shadow: inset 0 0 60px rgb(var(--purple-rgb) / 0.18), var(--shadow-panel);
   touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
 }
 .escenario:focus-visible { box-shadow: 0 0 0 3px var(--cyan); }
@@ -35,7 +35,7 @@
 }
 .aviso {
   position: absolute; top: calc(5% + clamp(3.4rem, 18vw, 4.8rem)); left: 0; right: 0; text-align: center;
-  font: 700 var(--fs-110) var(--font-body); color: rgb(from var(--ink) r g b / 0.88); transition: opacity 0.4s;
+  font: 700 var(--fs-110) var(--font-body); color: rgb(var(--ink-rgb) / 0.88); transition: opacity 0.4s;
 }
 .aviso.fuera { opacity: 0; }
 .aviso.brilla { font: clamp(1.35rem, 7vw, 1.9rem)/1.1 var(--font-display); letter-spacing: 0.06em; padding: 0 var(--s-14); text-wrap: balance; animation: aletazo-brilla 1s ease-out forwards; }
@@ -44,10 +44,10 @@
 /* The cover and the result: a glass card over the stage, the night still showing above it */
 .capa {
   position: absolute; inset: 0; display: grid; align-items: end; padding: var(--s-14); overflow-y: auto; cursor: default;
-  background: linear-gradient(to bottom, transparent 20%, rgb(from var(--bg1) r g b / 0.65));
+  background: linear-gradient(to bottom, transparent 20%, rgb(var(--bg1-rgb) / 0.65));
 }
 .tarjeta {
-  background: rgb(from var(--bg1) r g b / 0.72); border: 1px solid var(--glass-border); border-radius: var(--radius);
+  background: rgb(var(--bg1-rgb) / 0.72); border: 1px solid var(--glass-border); border-radius: var(--radius);
   padding: var(--s-18); display: grid; gap: var(--s-12); text-align: center;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--shadow-panel);
 }
@@ -81,7 +81,7 @@
 
 /* The countdown (cuenta-regresiva.js) lets the bird show through, flying on its own and blurred;
    the blur fades as «¡A jugar!» leaves (--sale, CUENTA_SALE_MS) */
-body:has(.escenario.contando) .cuenta { background: rgb(from var(--bg1) r g b / 0.45); backdrop-filter: none; -webkit-backdrop-filter: none; }
+body:has(.escenario.contando) .cuenta { background: rgb(var(--bg1-rgb) / 0.45); backdrop-filter: none; -webkit-backdrop-filter: none; }
 #lienzo { transition: filter var(--sale, 0.9s) ease-out; }
 .escenario.contando #lienzo { filter: blur(6px) brightness(0.75); }
 
@@ -96,7 +96,7 @@ body:has(.escenario.contando) .cuenta { background: rgb(from var(--bg1) r g b / 
 
 /* Paused (a call, another app): over the play, until a tap */
 .pausa { position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; font-weight: 700;
-  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.85), rgb(from var(--bg1) r g b / 0.4) 70%, transparent); }
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.85), rgb(var(--bg1-rgb) / 0.4) 70%, transparent); }
 
 @media (prefers-reduced-motion: reduce) {
   .titulo-aletazo .logo, .sello, .aviso.brilla, .pista { animation: none; }

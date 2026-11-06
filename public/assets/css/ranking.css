@@ -76,7 +76,7 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
   display: grid; grid-template-columns: 2.2em 1fr auto auto; align-items: center; gap: 8px;
   padding: var(--s-8) var(--s-10); border-radius: 10px; background: rgba(0, 0, 0, 0.22);
 }
-.rk-fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; background: rgb(from var(--cyan) r g b / 0.12); }
+.rk-fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; background: rgb(var(--cyan-rgb) / 0.12); }
 .rk-puesto { text-align: center; font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; }
 .rk-nombre { font-weight: 800; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
 .rk-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }

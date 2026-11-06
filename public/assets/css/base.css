@@ -18,23 +18,23 @@
 @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('../fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 :root {
-  --bg1: #150726;
-  --bg2: #2a0a4a;
-  --bg3: #0b1e3f;
-  --pink: #ff2e88;
+  --bg1: #150726; --bg1-rgb: 21 7 38;
+  --bg2: #2a0a4a; --bg2-rgb: 42 10 74;
+  --bg3: #0b1e3f; --bg3-rgb: 11 30 63;
+  --pink: #ff2e88; --pink-rgb: 255 46 136;
   --pink-deep: #c2185b;
-  --yellow: #ffd23f;
-  --cyan: #2ee6d6;
-  --lime: #9dff3a;
-  --orange: #ff7a1a;
-  --purple: #8a4dff;
-  --ink: #ffffff;
+  --yellow: #ffd23f; --yellow-rgb: 255 210 63;
+  --cyan: #2ee6d6; --cyan-rgb: 46 230 214;
+  --lime: #9dff3a; --lime-rgb: 157 255 58;
+  --orange: #ff7a1a; --orange-rgb: 255 122 26;
+  --purple: #8a4dff; --purple-rgb: 138 77 255;
+  --ink: #ffffff; --ink-rgb: 255 255 255;
   --muted: rgba(255, 255, 255, 0.72);
   --glass: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.16);
   --card: #fffdf7;
-  --card-ink: #1a1a1a;
-  --red: #e0243c;
+  --card-ink: #1a1a1a; --card-ink-rgb: 26 26 26;
+  --red: #e0243c; --red-rgb: 224 36 60;
   /* --- The design system's scales (D-533, docs/DESIGN.md): every distance, radius and shadow a game
      writes comes from here. Named by value, so `--s-12` is 12 px and no table is needed. --- */
   /* Space: a 2 px grid up to 20, then steps of 4. Padding, gap and margin take one of these. */
@@ -53,7 +53,7 @@
   --ink-bad: #ffd0d6; --snackbar-bg: #111111;
   --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
   /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
-  --well: rgba(0, 0, 0, 0.25); --well-deep: rgba(0, 0, 0, 0.3);
+  --well: rgba(0, 0, 0, 0.25); --well-rgb: 0 0 0; --well-deep: rgba(0, 0, 0, 0.3);
   --placeholder: rgba(255, 255, 255, 0.35);
   --line-faint: rgba(255, 255, 255, 0.35);
   --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
@@ -134,7 +134,7 @@ body {
   line-height: 0.95;
   text-transform: uppercase;
   margin: 0;
-  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(from var(--pink) r g b / 0.45);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--pink-rgb) / 0.45);
 }
 .display--xl { font-size: clamp(2.6rem, 12vw, 4.4rem); }
 .display--lg { font-size: clamp(2rem, 9vw, 3.2rem); }
@@ -172,17 +172,17 @@ p { line-height: 1.5; margin: 0 0 12px; }
   text-transform: uppercase; color: var(--ink);
   padding: 16px 24px; border-radius: 999px;
   background: linear-gradient(180deg, var(--pink), var(--pink-deep));
-  box-shadow: 0 6px 0 var(--edge-pink), 0 12px 24px rgb(from var(--pink) r g b / 0.35);
+  box-shadow: 0 6px 0 var(--edge-pink), 0 12px 24px rgb(var(--pink-rgb) / 0.35);
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s;
   width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   text-align: center; text-decoration: none; user-select: none; min-height: 60px;
 }
-.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--edge-pink), 0 6px 12px rgb(from var(--pink) r g b / 0.35); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--edge-pink), 0 6px 12px rgb(var(--pink-rgb) / 0.35); }
 .btn:disabled { filter: grayscale(0.6) brightness(0.7); cursor: not-allowed; box-shadow: none; transform: none; }
-.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); box-shadow: 0 6px 0 var(--edge-yellow), 0 12px 24px rgb(from var(--yellow) r g b / 0.35); }
-.btn--yellow:active { box-shadow: 0 2px 0 var(--edge-yellow), 0 6px 12px rgb(from var(--yellow) r g b / 0.35); }
-.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: var(--ink-on-cyan); box-shadow: 0 6px 0 var(--edge-cyan), 0 12px 24px rgb(from var(--cyan) r g b / 0.35); }
-.btn--cyan:active { box-shadow: 0 2px 0 var(--edge-cyan), 0 6px 12px rgb(from var(--cyan) r g b / 0.35); }
+.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); box-shadow: 0 6px 0 var(--edge-yellow), 0 12px 24px rgb(var(--yellow-rgb) / 0.35); }
+.btn--yellow:active { box-shadow: 0 2px 0 var(--edge-yellow), 0 6px 12px rgb(var(--yellow-rgb) / 0.35); }
+.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: var(--ink-on-cyan); box-shadow: 0 6px 0 var(--edge-cyan), 0 12px 24px rgb(var(--cyan-rgb) / 0.35); }
+.btn--cyan:active { box-shadow: 0 2px 0 var(--edge-cyan), 0 6px 12px rgb(var(--cyan-rgb) / 0.35); }
 .btn--ghost {
   background: var(--glass); border: 2px solid var(--glass-border); box-shadow: none; color: var(--ink);
   font-size: 1.15rem; min-height: 50px; padding: 12px 18px;
@@ -192,7 +192,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
 /* Danger (phase 7, #1196): red only to confirm a destructive step (deleting a cup); as a ghost, the soft
    pink of a step that turns something off (silencing the notifications). Never a game action. */
 .btn--danger { background: var(--red); color: var(--ink); box-shadow: 0 4px 0 var(--edge-red); }
-.btn--ghost.btn--danger { background: rgb(from var(--pink) r g b / 0.16); color: var(--danger-soft); border-color: transparent; box-shadow: none; }
+.btn--ghost.btn--danger { background: rgb(var(--pink-rgb) / 0.16); color: var(--danger-soft); border-color: transparent; box-shadow: none; }
 /* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
 .btn.room-local { margin: 4px 0 18px; }
 .btn-row { display: flex; gap: 10px; }
@@ -225,10 +225,10 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
 /* The cover's hero: the emoji glowing above the title; `.icon--cyan` for a sea or a number game */
 .intro-hero { text-align: center; padding: var(--s-6) 0 var(--s-8); }
-.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgb(from var(--yellow) r g b / 0.6)); }
-.intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgb(from var(--cyan) r g b / 0.6)); }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
+.intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgb(var(--cyan-rgb) / 0.6)); }
 /* A dark emoji (〰️, 🕵️) gets the light outline of .emoji-claro on top of the hero's golden glow */
-.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 18px rgb(from var(--yellow) r g b / 0.6)); }
+.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
 /* A mode to pick on the cover: title, a line under it and the › */
 .modes { display: grid; gap: var(--s-10); }
 .mode {
@@ -286,7 +286,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
 .opcion .opcion-emoji { display: block; }
 .opcion small { color: var(--muted); font-weight: 700; }
-.opcion.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.opcion.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 /* A player's row in the setup: number, name, ✕; `.cpu` for a bot */
 .player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-14); padding: var(--s-6) var(--s-10); margin-bottom: var(--s-6); }
 .player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
@@ -300,14 +300,14 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
 .switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: var(--r-pill); border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.4); position: relative; cursor: pointer; padding: 0; }
 .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
-.switch.on { background: rgb(from var(--yellow) r g b / 0.3); border-color: var(--yellow); }
+.switch.on { background: rgb(var(--yellow-rgb) / 0.3); border-color: var(--yellow); }
 .switch.on::after { transform: translateX(24px); background: var(--yellow); }
 /* U-10: the switch is drawn 34 px tall; an invisible band takes its tap area to 44 px without moving anything. */
 .switch::before { content: ''; position: absolute; inset: -7px -2px; }
 /* A link that is a button (the small way out under a form) */
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 /* A room: the code big, the QR on a card, the players as pills, "or", waiting… */
-.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgb(from var(--yellow) r g b / 0.6); margin: var(--s-2) 0; padding-left: 0.25em; }
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgb(var(--yellow-rgb) / 0.6); margin: var(--s-2) 0; padding-left: 0.25em; }
 .qr { display: grid; place-items: center; margin: var(--s-8) auto; background: var(--ink); border-radius: var(--r-16); padding: var(--s-8); width: fit-content; }
 .qr svg { display: block; width: min(46vw, 190px); height: auto; }
 .or { text-align: center; color: var(--muted); font-weight: 900; margin: var(--s-6) 0; }
@@ -321,12 +321,12 @@ p { line-height: 1.5; margin: 0 0 12px; }
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 /* Whose turn, over the board: the name glowing cyan and a line under it */
 .status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
-.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(from var(--cyan) r g b / 0.5); }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--cyan-rgb) / 0.5); }
 .status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
 /* A notice: one line that tells the player something, in a glass box; --good in lime, --bad on a red tint (phase 7, from La Copa) */
 .notice { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
-.notice--good { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
-.notice--bad { background: rgb(from var(--red) r g b / 0.22); color: var(--ink-bad); }
+.notice--good { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
+.notice--bad { background: rgb(var(--red-rgb) / 0.22); color: var(--ink-bad); }
 /* The snackbar: a short message floating at the bottom for a moment ("Copiado"); centred without a
    transform, because the entering animation would override it and push it to the right */
 .snackbar { position: fixed; left: var(--s-16); right: var(--s-16); margin: 0 auto; width: fit-content; bottom: calc(var(--s-24) + var(--safe-bottom)); background: var(--snackbar-bg); border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: var(--s-12) var(--s-18); border-radius: var(--r-14); z-index: 50; animation: slideUp 0.25s both; }
@@ -342,11 +342,11 @@ p { line-height: 1.5; margin: 0 0 12px; }
   box-shadow: var(--shadow-panel);
 }
 /* A panel around a destructive step (deleting a cup): its border in red */
-.panel--danger { border-color: rgb(from var(--red) r g b / 0.55); }
+.panel--danger { border-color: rgb(var(--red-rgb) / 0.55); }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 0.95rem;
-  background: rgb(from var(--ink) r g b / 0.12); border: 1px solid var(--glass-border);
+  background: rgb(var(--ink-rgb) / 0.12); border: 1px solid var(--glass-border);
 }
 .chip--hot { background: var(--pink); border-color: transparent; }
 .chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
@@ -362,7 +362,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
 /* A sheet's head: its title and the ✕ */
 .hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); }
 .hoja-cabeza h3 { margin: 0; font-size: var(--fs-110); font-weight: 900; }
-.chip-btn.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.chip-btn.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 /* --- Panel desplegable --- */
 details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; position: relative; }
@@ -441,8 +441,8 @@ details.panel summary::-webkit-details-marker { display: none; }
 .handoff {
   position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px;
   background:
-    radial-gradient(700px 500px at 50% 20%, rgb(from var(--pink) r g b / 0.45), transparent 65%),
-    radial-gradient(600px 500px at 50% 110%, rgb(from var(--cyan) r g b / 0.35), transparent 60%),
+    radial-gradient(700px 500px at 50% 20%, rgb(var(--pink-rgb) / 0.45), transparent 65%),
+    radial-gradient(600px 500px at 50% 110%, rgb(var(--cyan-rgb) / 0.35), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3));
   animation: fadeIn 0.25s ease-out both; text-align: center;
   /* En un celular bajo (320 × 568) el veredicto con su dato y el pase no caben: se desplaza, y el
@@ -460,14 +460,14 @@ details.panel summary::-webkit-details-marker { display: none; }
 .cheers .r { animation: clinkR 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; transform-origin: bottom left; }
 @keyframes clinkL { 0%, 100% { transform: rotate(-18deg) translateX(-6px); } 45% { transform: rotate(10deg) translateX(6px); } }
 @keyframes clinkR { 0%, 100% { transform: rotate(18deg) translateX(6px) scaleX(-1); } 45% { transform: rotate(-10deg) translateX(-6px) scaleX(-1); } }
-.handoff .title { font-family: var(--font-display); font-size: clamp(2.6rem, 14vw, 4.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgb(from var(--yellow) r g b / 0.6); line-height: 0.95; }
+.handoff .title { font-family: var(--font-display); font-size: clamp(2.6rem, 14vw, 4.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgb(var(--yellow-rgb) / 0.6); line-height: 0.95; }
 .handoff .title.gold { color: var(--yellow); }
 .handoff .drinkers { margin: 0; }
 .handoff .drinkers .chip { font-size: 1.2rem; padding: 10px 18px; }
 .handoff .hint { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 .handoff .phone { font-size: 4.5rem; line-height: 1; animation: passPhone 1.4s ease-in-out infinite; }
 @keyframes passPhone { 0%, 100% { transform: translateX(-14px) rotate(-8deg); } 50% { transform: translateX(14px) rotate(8deg); } }
-.handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgb(from var(--cyan) r g b / 0.7); line-height: 0.95; }
+.handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgb(var(--cyan-rgb) / 0.7); line-height: 0.95; }
 .handoff .btn { max-width: 420px; }
 
 /* --- Pantalla opaca compartida: "pásale el celular", toca para ver (modo un celular) --- */
@@ -491,12 +491,12 @@ body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bo
 .chat-fab {
   position: absolute; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--glass-border);
-  background: linear-gradient(180deg, rgb(from var(--purple) r g b / 0.95), rgba(42, 10, 74, 0.95));
+  background: linear-gradient(180deg, rgb(var(--purple-rgb) / 0.95), rgba(42, 10, 74, 0.95));
   color: var(--ink); font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
   display: grid; place-items: center; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
 }
 .chat-fab:active { transform: scale(0.94); }
-.chat-fab.has-unread { border-color: var(--pink); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgb(from var(--pink) r g b / 0.6); }
+.chat-fab.has-unread { border-color: var(--pink); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgb(var(--pink-rgb) / 0.6); }
 .chat-badge {
   position: absolute; top: -3px; right: -3px; min-width: 22px; height: 22px; padding: 0 var(--s-6);
   border-radius: 999px; background: var(--pink); color: var(--ink); font: 900 0.72rem var(--font-body);
@@ -550,7 +550,7 @@ body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bo
   max-width: 84%; align-self: flex-start; padding: var(--s-8) var(--s-12); border-radius: 14px;
   background: var(--glass); border: 1px solid var(--glass-border); animation: pop 0.2s ease-out both;
 }
-.chat-msg.mine { align-self: flex-end; background: rgb(from var(--cyan) r g b / 0.16); border-color: rgb(from var(--cyan) r g b / 0.4); }
+.chat-msg.mine { align-self: flex-end; background: rgb(var(--cyan-rgb) / 0.16); border-color: rgb(var(--cyan-rgb) / 0.4); }
 .chat-msg.grouped { margin-top: -4px; }
 .chat-msg .who { display: block; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 1px; }
 .chat-msg .txt { font-size: 0.92rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
@@ -563,7 +563,7 @@ body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bo
 .chat-send:active { transform: scale(0.94); }
 
 /* Un emoji casi negro (〰️) sobre el fondo morado: contorno claro, el mismo emoji (ui.js, EMOJI_OSCUROS) */
-.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 5px rgb(from var(--ink) r g b / 0.55)); }
+.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 5px rgb(var(--ink-rgb) / 0.55)); }
 
 /*
  * En alemán las palabras compuestas son largas y no caben en una columna angosta: se cortan
@@ -576,7 +576,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-tabs { position: fixed; left: 0; top: 46%; z-index: 40; display: grid; gap: 6px; }
 .labs-tab {
   width: 34px; height: 44px; display: grid; place-items: center; font-size: 1.1rem; text-decoration: none;
-  border: 1px solid rgb(from var(--orange) r g b / 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
+  border: 1px solid rgb(var(--orange-rgb) / 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
   background: rgba(42, 10, 74, 0.92); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); color: var(--ink);
 }
 .labs-tab:active { transform: scale(0.94); }
@@ -603,7 +603,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-error { color: var(--pink); font-weight: 800; min-height: 1em; }
 .labs-error:empty { display: none; }
 .labs-aviso { margin: 0; font-weight: 800; line-height: 1.5; }
-.topbar .labs-bicho { flex: none; border-color: rgb(from var(--orange) r g b / 0.6); font-size: 1.1rem; }
+.topbar .labs-bicho { flex: none; border-color: rgb(var(--orange-rgb) / 0.6); font-size: 1.1rem; }
 
 /* The inbox at the end of the experience (D-345, U-38): a quiet link, below everything */
 .buzon-pie { margin-top: 18px; text-align: center; }
@@ -634,13 +634,13 @@ html.i18n-pendiente body { visibility: hidden; }
   background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
 }
-.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgb(from var(--ink) r g b / 0.3); }
+.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.3); }
 .hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
 .hoja p { margin: 0; line-height: 1.45; }
 .hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
 .hoja-paso small { display: block; margin-top: 2px; }
 .hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: var(--ink); font-weight: 900; display: grid; place-items: center; }
-.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgb(from var(--ink) r g b / 0.1); display: grid; place-items: center; font-size: 1.3rem; color: var(--ink); font-weight: 900; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.1); display: grid; place-items: center; font-size: 1.3rem; color: var(--ink); font-weight: 900; }
 .hoja-link, .hoja-caja { background: var(--glass); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
 .hoja .btn-row { flex-wrap: wrap; }
 /* Cada botón mide lo que su texto en una línea: si los dos no caben lado a lado, el segundo baja
@@ -674,9 +674,9 @@ html.i18n-pendiente body { visibility: hidden; }
   max-width: 520px; margin: 0 auto; box-sizing: border-box;
   display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px 12px;
   padding: 12px; border-radius: var(--r-22);
-  border: 2px solid rgb(from var(--yellow) r g b / 0.55);
+  border: 2px solid rgb(var(--yellow-rgb) / 0.55);
   background: linear-gradient(135deg, #3a0e62, #1a082e);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgb(from var(--yellow) r g b / 0.18);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgb(var(--yellow-rgb) / 0.18);
   animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   transition: transform 0.25s, opacity 0.25s;
 }
@@ -737,7 +737,7 @@ body.azar-abierto { overflow: hidden; }
 .azar-capa.velo.saliendo .azar-escena { transform: scale(0.85); }
 
 /* Uno al día (D-230): la tarjeta bajo el resultado */
-.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgb(from var(--orange) r g b / 0.5); background: linear-gradient(160deg, rgb(from var(--orange) r g b / 0.16), rgb(from var(--pink) r g b / 0.12)); }
+.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgb(var(--orange-rgb) / 0.5); background: linear-gradient(160deg, rgb(var(--orange-rgb) / 0.16), rgb(var(--pink-rgb) / 0.12)); }
 .uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
 .uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
 .uad-red { display: grid; gap: 10px; }
@@ -747,9 +747,9 @@ body.azar-abierto { overflow: hidden; }
 .uad-comodin { margin: 0; font-weight: 800; color: var(--cyan); }
 .uad-invitar { display: grid; gap: 8px; text-align: center; }
 /* Los interruptores de las hojas (los avisos de La Copa y de Uno al día) */
-.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgb(from var(--ink) r g b / 0.12); cursor: pointer; }
+.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgb(var(--ink-rgb) / 0.12); cursor: pointer; }
 .hoja-switch span { display: flex; flex-direction: column; gap: 2px; }
-.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgb(from var(--ink) r g b / 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
+.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
 .hoja-switch input::after { content: ''; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 999px; background: #fff; transition: transform 0.15s; }
 .hoja-switch input:checked { background: var(--pink); }
 .hoja-switch input:checked::after { transform: translateX(20px); }
@@ -778,7 +778,7 @@ body.azar-abierto { overflow: hidden; }
 @keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
 /* --- The site's footer: the home page's, and the one site-footer.js puts on the screens outside a game --- */
-.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgb(from var(--ink) r g b / 0.28), transparent); }
+.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgb(var(--ink-rgb) / 0.28), transparent); }
 .pie-sitio { margin-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
 .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
 .footer-msg.out { opacity: 0; transform: translateY(6px); }
@@ -795,22 +795,22 @@ body.azar-abierto { overflow: hidden; }
 }
 .footer-links.tiles > * {
   display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; margin: 0;
-  border: 1px solid rgb(from var(--ink) r g b / 0.12); border-radius: 14px; background: none;
+  border: 1px solid rgb(var(--ink-rgb) / 0.12); border-radius: 14px; background: none;
   color: var(--muted); font: 700 0.8rem/1.25 var(--font-body); text-decoration: none; text-align: center; text-wrap: balance;
 }
-.footer-links.tiles > *:active { background: rgb(from var(--ink) r g b / 0.05); }
-.footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(from var(--yellow) r g b / 0.3); }
+.footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.05); }
+.footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--yellow-rgb) / 0.3); }
 .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
    phrase in white, and each option on frosted glass with its color circle above the label */
-footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgb(from var(--purple) r g b / 0.28) 45%, rgb(from var(--pink) r g b / 0.32)); }
+footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgb(var(--purple-rgb) / 0.28) 45%, rgb(var(--pink-rgb) / 0.32)); }
 footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
 footer.atardecer .footer-links.tiles::before { content: none; }
 footer.atardecer .footer-links.tiles { margin-top: 18px; }
-footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgb(from var(--ink) r g b / 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-footer.atardecer .footer-links.tiles > *:active { background: rgb(from var(--ink) r g b / 0.18); }
+footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgb(var(--ink-rgb) / 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+footer.atardecer .footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.18); }
 /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
-footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgb(from var(--lime) r g b / 0.35); }
-footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(from var(--cyan) r g b / 0.35); }
-footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(from var(--orange) r g b / 0.5); }
-footer.atardecer > .muted { color: rgb(from var(--ink) r g b / 0.8); }
+footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
+footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }

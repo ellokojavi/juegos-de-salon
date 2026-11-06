@@ -45,7 +45,7 @@
 .marcador .p { display: grid; justify-items: center; min-width: 64px; padding: var(--s-6) var(--s-10); border-radius: var(--r-12); background: var(--well); }
 .marcador .p .n { font-weight: 900; font-size: var(--fs-75); max-width: 9ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .marcador .p .t { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
-.marcador .p.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgb(from var(--yellow) r g b / 0.45); }
+.marcador .p.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgb(var(--yellow-rgb) / 0.45); }
 .marcador .p.turn .n, .marcador .p.turn .t { color: var(--yellow); }
 
 /* Los cinco dados: se tocan para guardarlos */
@@ -62,7 +62,7 @@
 .dado-btn.kept .die { box-shadow: 0 0 0 3px var(--lime), 0 3px 0 var(--well-deep); transform: translateY(-3px); }
 .dado-btn.kept .tag { visibility: visible; }
 /* Antes del primer tiro: el lugar de cada dado, en hueco */
-.die.vacio { background: none; box-shadow: none; border: 2px dashed rgb(from var(--ink) r g b / 0.25); }
+.die.vacio { background: none; box-shadow: none; border: 2px dashed rgb(var(--ink-rgb) / 0.25); }
 .die.rueda { animation: rueda 0.45s ease-out both; }
 @keyframes rueda { 0% { transform: rotate(-30deg) scale(0.7); opacity: 0.3; } 70% { transform: rotate(8deg) scale(1.06); } 100% { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .die.rueda { animation: none; } }
@@ -83,10 +83,10 @@
 /* Libre: lo que valdría con estos dados, en gris; ocupada: lo anotado, en blanco */
 .casilla.libre .val { color: var(--muted); }
 .casilla.libre.vale .val { color: var(--lime); }
-.casilla.usada { cursor: default; background: rgb(from var(--ink) r g b / 0.06); }
+.casilla.usada { cursor: default; background: rgb(var(--ink-rgb) / 0.06); }
 .casilla.usada .nom { color: var(--muted); }
 .casilla.tachada .val { color: var(--pink); }
-.casilla.on { border-color: var(--cyan); background: rgb(from var(--cyan) r g b / 0.18); }
+.casilla.on { border-color: var(--cyan); background: rgb(var(--cyan-rgb) / 0.18); }
 .casilla:disabled { cursor: default; }
 
 /* ---------- Se pasa el celular ---------- */

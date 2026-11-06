@@ -14,7 +14,7 @@
 .recap-tabla td { padding: 6px; background: var(--glass); }
 .recap-tabla td:first-child { border-radius: 12px 0 0 12px; }
 .recap-tabla td:last-child { border-radius: 0 12px 12px 0; }
-.recap-tabla tr.mia td { background: rgb(from var(--cyan) r g b / 0.18); box-shadow: 0 2px 0 -1px var(--cyan) inset, 0 -2px 0 -1px var(--cyan) inset; }
+.recap-tabla tr.mia td { background: rgb(var(--cyan-rgb) / 0.18); box-shadow: 0 2px 0 -1px var(--cyan) inset, 0 -2px 0 -1px var(--cyan) inset; }
 .recap-tabla tr.fuera td { opacity: 0.5; }
 .recap-lugar { width: 2.2em; text-align: center; font-weight: 900; }
 th.recap-lugar { text-align: center; }

@@ -34,7 +34,7 @@
 }
 .sk-aviso {
   position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 700 var(--fs-100) var(--font-body); color: rgb(from var(--ink) r g b / 0.85); transition: opacity 0.4s; padding: 0 var(--s-16);
+  font: 700 var(--fs-100) var(--font-body); color: rgb(var(--ink-rgb) / 0.85); transition: opacity 0.4s; padding: 0 var(--s-16);
 }
 .sk-aviso.fuera { opacity: 0; }
 .sk-aviso.brilla { font: 1.9rem var(--font-display); letter-spacing: 0.06em; animation: sk-brilla 0.9s ease-out forwards; }
@@ -44,7 +44,7 @@
 /* Paused (a call, another app): over the tower, until a tap takes it off */
 .sk-pausa {
   position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; pointer-events: none;
-  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.8), rgb(from var(--bg1) r g b / 0.35) 70%, transparent);
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.8), rgb(var(--bg1-rgb) / 0.35) 70%, transparent);
   font: 700 var(--fs-100) var(--font-body); color: var(--ink);
 }
 .sk-pausa[hidden] { display: none; }
@@ -82,7 +82,7 @@
 
 /* «Simular final», only with a lab key (ui.js titulo) */
 .sk-sim { display: flex; gap: var(--s-8); justify-content: center; align-items: center; margin-top: var(--s-6); }
-.sk-sim-n { width: 4.5em; padding: var(--s-6) var(--s-8); border-radius: var(--r-10); border: 1px solid rgb(from var(--ink) r g b / 0.3); background: var(--glass); color: inherit; font: inherit; text-align: center; }
+.sk-sim-n { width: 4.5em; padding: var(--s-6) var(--s-8); border-radius: var(--r-10); border: 1px solid rgb(var(--ink-rgb) / 0.3); background: var(--glass); color: inherit; font: inherit; text-align: center; }
 
 /* The credit to the original, in the waiting room (like Pintaminas' .pm-credito) */
 .sk-credito { margin: 0; font-size: var(--fs-85); color: var(--muted); text-align: center; }
@@ -93,7 +93,7 @@
 .sk-musica-credito { text-align: center; }
 .sk-musica-credito { font-size: var(--fs-75); margin: calc(-1 * var(--s-10)) 0 0; position: relative; z-index: 1; }
 .sk-musica-credito a { color: inherit; }
-.sk-lab { position: fixed; left: 0; top: 38%; z-index: 30; background: var(--sk-pestana); border: 1px solid rgb(from var(--ink) r g b / 0.25); border-left: 0; border-radius: 0 var(--r-12) var(--r-12) 0; padding: var(--s-4) var(--s-6); backdrop-filter: blur(6px); }
+.sk-lab { position: fixed; left: 0; top: 38%; z-index: 30; background: var(--sk-pestana); border: 1px solid rgb(var(--ink-rgb) / 0.25); border-left: 0; border-radius: 0 var(--r-12) var(--r-12) 0; padding: var(--s-4) var(--s-6); backdrop-filter: blur(6px); }
 .sk-lab > summary { list-style: none; cursor: pointer; font-size: var(--fs-110); opacity: 0.7; }
 .sk-lab > summary::-webkit-details-marker { display: none; }
 .sk-lab[open] { padding: var(--s-6) var(--s-10) var(--s-10) var(--s-6); }
@@ -111,8 +111,8 @@
 .sk-palabra { display: inline-block; }
 .sk-palabra::first-letter { text-transform: uppercase; }
 .sk-termino .sk-valor { font: 900 var(--fs-200)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
-.sk-termino.bono .sk-valor { color: var(--cyan); text-shadow: 0 0 14px rgb(from var(--cyan) r g b / 0.60); }
-.sk-termino.total { border-top: 2px solid rgb(from var(--ink) r g b / 0.25); padding-top: var(--s-4); margin-top: var(--s-2); }
+.sk-termino.bono .sk-valor { color: var(--cyan); text-shadow: 0 0 14px rgb(var(--cyan-rgb) / 0.60); }
+.sk-termino.total { border-top: 2px solid rgb(var(--ink-rgb) / 0.25); padding-top: var(--s-4); margin-top: var(--s-2); }
 .sk-termino.total .sk-rotulo { color: var(--ink); }
 .sk-termino.total .sk-valor { font-size: var(--fs-200); color: var(--yellow); transform-origin: 100% 70%; }
 .sk-termino.entra { animation: sk-golpe 0.5s cubic-bezier(.2,1.5,.4,1) forwards; }

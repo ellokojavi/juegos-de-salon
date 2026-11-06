@@ -22,7 +22,7 @@
 .my-secret:active { transform: scale(0.97); }
 .my-secret .label { color: var(--muted); }
 .my-secret .num { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.2em; color: var(--muted); }
-.my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgb(from var(--yellow) r g b / 0.5); }
+.my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgb(var(--yellow-rgb) / 0.5); }
 .my-secret .hint { color: var(--muted); font-size: var(--fs-75); font-weight: 700; }
 
 /* Separador entre la respuesta y el pase del celular */
@@ -51,8 +51,8 @@
 .solo-titulo { font-weight: 900; }
 .cron { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
 .aviso { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
-.aviso.bien { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
-.aviso.mal { background: rgb(from var(--red) r g b / 0.22); color: var(--ink); }
+.aviso.bien { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
+.aviso.mal { background: rgb(var(--red-rgb) / 0.22); color: var(--ink); }
 /* The solo result's hero is smaller than the shell's: the score, the secret's card and the final
    buttons fit on a phone without scrolling (C-8, local.mjs checks the buttons at 812 px) */
 #screen-solo-result .result-hero .trophy { font-size: 3.2rem; }

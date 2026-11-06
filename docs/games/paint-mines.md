@@ -141,5 +141,5 @@ Pintaminas' sheet (`public/cup/games/paint-mines/style.css`) had no copies of th
 
 **The hard-mode switch's glow on tokens** (2026-11-05): its four flickering colours were
 `rgba(r, g, b, calc(… * var(--brillo)))` with raw numbers, which the design lint did not see. They are
-`rgb(from var(--cyan|--pm-chispa|--yellow) r g b / calc(…))`, the same colours and alphas (the
+`rgb(var(--cyan-rgb|--pm-chispa-rgb|--yellow-rgb) / calc(…))` (first written with the relative-colour syntax, 2026-11-06 the channel tokens), the same colours and alphas (the
 computed values match within 1/255), and the lint now flags an `rgba()` with a `calc()` alpha.

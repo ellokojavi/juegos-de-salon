@@ -12,7 +12,7 @@
 /* La base, con las cartas puestas encima */
 .tablero { border-radius: var(--r-16); background: var(--well); border: 2px solid var(--glass-border); padding: var(--s-10); }
 .marco svg { display: block; width: 100%; height: auto; overflow: visible; }
-.borde { fill: rgb(from var(--ink) r g b / 0.05); stroke: rgb(from var(--ink) r g b / 0.35); stroke-width: 3; }
+.borde { fill: rgb(var(--ink-rgb) / 0.05); stroke: rgb(var(--ink-rgb) / 0.35); stroke-width: 3; }
 .trazo { stroke-width: 9; stroke-linecap: round; }
 .capa { transform-box: view-box; transform-origin: 150px 70px; transition: transform 0.35s cubic-bezier(0.3, 1.2, 0.4, 1), opacity 0.2s; }
 .marco .capa { opacity: 0; }
@@ -20,12 +20,12 @@
 .marco .capa.elegida .trazo { stroke-width: 11; filter: drop-shadow(0 0 4px currentColor); }
 /* La bandeja: una miniatura por carta, con su color; las puestas, con su número encendido */
 .bandeja { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-6); }
-.carta { position: relative; border: 2px solid rgb(from var(--ink) r g b / 0.18); border-radius: var(--r-10); background: var(--well); padding: var(--s-6) var(--s-4); min-height: 44px; cursor: pointer; transition: transform 0.12s, border-color 0.15s; }
+.carta { position: relative; border: 2px solid rgb(var(--ink-rgb) / 0.18); border-radius: var(--r-10); background: var(--well); padding: var(--s-6) var(--s-4); min-height: 44px; cursor: pointer; transition: transform 0.12s, border-color 0.15s; }
 .carta:active { transform: scale(0.95); }
 .carta svg { display: block; width: 100%; height: auto; }
 .carta .trazo { stroke-width: 12; }
 .carta .num { position: absolute; top: -7px; left: -7px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
-  font: 900 var(--fs-75) var(--font-num); background: rgb(from var(--well) r g b / 0.6); color: var(--muted); border: 1px solid rgb(from var(--ink) r g b / 0.25); }
+  font: 900 var(--fs-75) var(--font-num); background: rgb(var(--well-rgb) / 0.6); color: var(--muted); border: 1px solid rgb(var(--ink-rgb) / 0.25); }
 .carta.puesta { border-color: var(--color); }
 .carta.puesta .num { background: var(--color); color: var(--card-ink); }
 .carta.elegida { border-color: var(--color); box-shadow: 0 0 0 2px var(--color), 0 0 14px var(--color); }
@@ -61,8 +61,8 @@
   background-size: 180px 180px; opacity: 0.55; animation: cl-estrellas 60s linear infinite;
 }
 .tablero::after {
-  background: radial-gradient(60% 50% at 30% 40%, rgb(from var(--purple) r g b / 0.22), transparent 70%),
-              radial-gradient(50% 45% at 75% 65%, rgb(from var(--cyan) r g b / 0.16), transparent 70%);
+  background: radial-gradient(60% 50% at 30% 40%, rgb(var(--purple-rgb) / 0.22), transparent 70%),
+              radial-gradient(50% 45% at 75% 65%, rgb(var(--cyan-rgb) / 0.16), transparent 70%);
   animation: cl-nebulosa 14s ease-in-out infinite alternate;
 }
 @keyframes cl-estrellas { to { background-position: 180px -180px; } }
@@ -70,7 +70,7 @@
 
 /* Los trazos puestos laten como luces, cada carta a su ritmo; los de la base titilan apenas */
 .marco .capa.puesta .trazo { animation: cl-luz var(--latido, 3.2s) ease-in-out infinite alternate; animation-delay: var(--latido-desde, 0s); }
-@keyframes cl-luz { from { filter: drop-shadow(0 0 1px rgb(from var(--ink) r g b / 0.25)); } to { filter: drop-shadow(0 0 5px rgb(from var(--ink) r g b / 0.55)); } }
+@keyframes cl-luz { from { filter: drop-shadow(0 0 1px rgb(var(--ink-rgb) / 0.25)); } to { filter: drop-shadow(0 0 5px rgb(var(--ink-rgb) / 0.55)); } }
 .marco svg > .trazo { animation: cl-titila 4.5s ease-in-out infinite alternate; }
 @keyframes cl-titila { from { opacity: 0.8; } to { opacity: 1; } }
 
@@ -99,7 +99,7 @@
 .modos { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-8); }
 .tablero.palabra .trazo { stroke-width: 7; }
 .carta .caras { position: absolute; bottom: -6px; right: 6px; display: flex; gap: var(--s-2); }
-.carta .caras i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--color); background: rgb(from var(--well) r g b / 0.5); }
+.carta .caras i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--color); background: rgb(var(--well-rgb) / 0.5); }
 .carta .caras i.on { background: var(--color); }
 .capa.volteando { transform: var(--giro-capa, none) scaleX(0) !important; transition: transform 0.15s ease-in !important; }
 .keypad--letras button { min-height: 44px; font-size: var(--fs-110); padding: var(--s-6) 0; }
@@ -107,7 +107,7 @@
 
 /* ---------- Portada y título ---------- */
 .titulo-clave { display: flex; align-items: center; justify-content: center; gap: var(--s-10); margin: 0; }
-.titulo-clave .candado { font-size: 1.6rem; line-height: 1; display: inline-block; transform-origin: 50% 80%; animation: cl-candado 3.4s ease-in-out infinite; filter: drop-shadow(0 0 10px rgb(from var(--yellow) r g b / 0.45)); }
+.titulo-clave .candado { font-size: 1.6rem; line-height: 1; display: inline-block; transform-origin: 50% 80%; animation: cl-candado 3.4s ease-in-out infinite; filter: drop-shadow(0 0 10px rgb(var(--yellow-rgb) / 0.45)); }
 .titulo-clave.grande .candado { font-size: 2.6rem; }
 @keyframes cl-candado { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg) translateY(-2px); } }
 /* La ilustración: las cartas prueban combinaciones, se fijan una a una y la clave queda escrita */
@@ -118,8 +118,8 @@
 .capa-demo { transform-box: view-box; transform-origin: 150px 70px; opacity: 0.85; }
 .capa-demo.salta { animation: cl-salta 0.12s ease-out; }
 @keyframes cl-salta { from { transform: scale(0.94) rotate(-2deg); opacity: 0.5; } to { transform: none; opacity: 0.85; } }
-.capa-demo.fija { opacity: 1; filter: drop-shadow(0 0 4px rgb(from var(--ink) r g b / 0.6)); }
-.demo.lista svg { filter: drop-shadow(0 0 10px rgb(from var(--ink) r g b / 0.55)); }
+.capa-demo.fija { opacity: 1; filter: drop-shadow(0 0 4px rgb(var(--ink-rgb) / 0.6)); }
+.demo.lista svg { filter: drop-shadow(0 0 10px rgb(var(--ink-rgb) / 0.55)); }
 .demo.lista .capa-demo, .demo.lista svg > .trazo { animation: cl-luz 0.9s ease-in-out infinite alternate; }
 .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); }
 .pasos li { display: grid; grid-template-columns: 34px 1fr; gap: var(--s-10); align-items: center; text-align: left; }

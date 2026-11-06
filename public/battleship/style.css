@@ -41,7 +41,7 @@
 .cell {
   min-width: 0; overflow: hidden; aspect-ratio: 1; border-radius: 4px;
   background: var(--mar) var(--agua, none) center / 100% 100%; image-rendering: pixelated;
-  border: 1px solid rgb(from var(--cyan) r g b / 0.14);
+  border: 1px solid rgb(var(--cyan-rgb) / 0.14);
   display: grid; place-items: center; font-size: clamp(0.7rem, 3.2vw, 1.05rem); line-height: 1; position: relative; transition: background 0.15s, transform 0.1s;
 }
 /* El trozo de barco que le toca a esta casilla. Vertical = el mismo dibujo girado. El giro vive
@@ -54,25 +54,25 @@
 .cell.ship.sel {
   --casco-borde: #6d3400; --casco-luz: #fff6d8; --casco: #ffc247;
   --casco-sombra: #e08a10; --casco-medio: #f0a520; --cubierta: #c06f06;
-  border-color: var(--ink); overflow: visible; z-index: 2; box-shadow: 0 0 10px rgb(from var(--yellow) r g b / 0.7);
+  border-color: var(--ink); overflow: visible; z-index: 2; box-shadow: 0 0 10px rgb(var(--yellow-rgb) / 0.7);
 }
 .cell .rot {
   position: absolute; top: -16px; right: -16px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--ink); cursor: pointer;
-  background: var(--pink); color: var(--ink); font: 900 22px/1 var(--font-body); display: grid; place-items: center; box-shadow: 0 3px 8px rgb(from var(--bg1) r g b / 0.55); z-index: 3;
+  background: var(--pink); color: var(--ink); font: 900 22px/1 var(--font-body); display: grid; place-items: center; box-shadow: 0 3px 8px rgb(var(--bg1-rgb) / 0.55); z-index: 3;
   animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; touch-action: manipulation;
 }
 /* Área táctil extra invisible alrededor del botón (44×44 mínimo recomendado) */
 .cell .rot::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; }
 .cell .rot:active { transform: scale(0.9) rotate(90deg); }
-.cell.ghost-ok { background: rgb(from var(--lime) r g b / 0.45); border-color: var(--lime); }
-.cell.ghost-bad { background: rgb(from var(--pink) r g b / 0.55); border-color: var(--pink); }
+.cell.ghost-ok { background: rgb(var(--lime-rgb) / 0.45); border-color: var(--lime); }
+.cell.ghost-bad { background: rgb(var(--pink-rgb) / 0.55); border-color: var(--pink); }
 /* Un disparo al agua no cambia el mar: le queda el mismo patrón con un halo oscuro,
    como el hoyo que deja la bomba, y el punto encima. */
-.cell.agua { box-shadow: inset 0 0 7px 3px rgb(from var(--bg1) r g b / 0.55); border-color: rgb(from var(--cyan) r g b / 0.08); }
-.cell.agua::after { content: '•'; color: rgb(from var(--ink) r g b / 0.6); font-size: 1.2em; }
+.cell.agua { box-shadow: inset 0 0 7px 3px rgb(var(--bg1-rgb) / 0.55); border-color: rgb(var(--cyan-rgb) / 0.08); }
+.cell.agua::after { content: '•'; color: rgb(var(--ink-rgb) / 0.6); font-size: 1.2em; }
 /* Tocado y hundido tampoco borran el mar: le ponen un resplandor por dentro. Así el agua
    sigue siendo agua alrededor del barco, que es lo que se está quemando. */
-.cell.tocado { box-shadow: inset 0 0 8px 4px rgb(from var(--orange) r g b / 0.75); border-color: var(--tocado-borde); }
+.cell.tocado { box-shadow: inset 0 0 8px 4px rgb(var(--orange-rgb) / 0.75); border-color: var(--tocado-borde); }
 .cell.tocado::after { content: '💥'; }
 /* Hundido: el casco cambia de paleta y queda quemado —negro, brasas, óxido— debajo del 🔥.
    Por eso el fondo rojo se ve solo alrededor del barco: el agua ardiendo, no un cuadrado. */
@@ -81,7 +81,7 @@
   --casco-sombra: #57231c; --casco-medio: #6f3226; --cubierta: #431c17;
   --marca: var(--orange); --antena: var(--orange); --espuma: rgba(255, 180, 120, 0.5);
   border-color: var(--hundido-borde);
-  box-shadow: inset 0 0 9px 4px rgb(from var(--red) r g b / 0.8), 0 0 10px rgb(from var(--pink) r g b / 0.55);
+  box-shadow: inset 0 0 9px 4px rgb(var(--red-rgb) / 0.8), 0 0 10px rgb(var(--pink-rgb) / 0.55);
 }
 .cell.tocado .barco { filter: saturate(0.55) brightness(0.9); }
 .cell.hundido::after { content: '🔥'; }
@@ -116,15 +116,15 @@
   --casco-borde: #1d2740; --casco-luz: #eef3fa; --casco: #a9b7c9;
   --casco-sombra: #73839a; --casco-medio: #8795ab; --cubierta: #5d6c85;
   --marca: var(--yellow); --antena: var(--cyan); --espuma: rgba(255, 255, 255, 0.45);
-  border-color: var(--tocado-borde); box-shadow: inset 0 0 8px 4px rgb(from var(--orange) r g b / 0.75);
+  border-color: var(--tocado-borde); box-shadow: inset 0 0 8px 4px rgb(var(--orange-rgb) / 0.75);
 }
 .cell.hundiendo.aun-vivo::after { content: '💥'; }
 
 @keyframes aguaArde {
-  0%   { box-shadow: inset 0 0 6px 2px rgb(from var(--orange) r g b / 0.5); }
+  0%   { box-shadow: inset 0 0 6px 2px rgb(var(--orange-rgb) / 0.5); }
   6%   { box-shadow: inset 0 0 16px 9px var(--fogonazo); }
   22%  { box-shadow: inset 0 0 12px 6px var(--brasa); }
-  100% { box-shadow: inset 0 0 9px 4px rgb(from var(--red) r g b / 0.8), 0 0 10px rgb(from var(--pink) r g b / 0.55); }
+  100% { box-shadow: inset 0 0 9px 4px rgb(var(--red-rgb) / 0.8), 0 0 10px rgb(var(--pink-rgb) / 0.55); }
 }
 @keyframes brasa { 0% { transform: scale(1); } 7% { transform: scale(1.6); } 30% { transform: scale(1); } }
 /* El casco se va bajo el agua y vuelve a asomar hecho pecio, en su sitio: no desaparece, porque
@@ -144,15 +144,15 @@
   animation: onda 620ms cubic-bezier(0.1, 0.7, 0.3, 1) both;
 }
 @keyframes onda {
-  0%   { box-shadow: 0 0 0 0 rgb(from var(--ink) r g b / 0.95), inset 0 0 12px 6px rgb(from var(--ink) r g b / 0.9); }
-  100% { box-shadow: 0 0 0 16px rgb(from var(--ink) r g b / 0), inset 0 0 12px 6px rgb(from var(--ink) r g b / 0); }
+  0%   { box-shadow: 0 0 0 0 rgb(var(--ink-rgb) / 0.95), inset 0 0 12px 6px rgb(var(--ink-rgb) / 0.9); }
+  100% { box-shadow: 0 0 0 16px rgb(var(--ink-rgb) / 0), inset 0 0 12px 6px rgb(var(--ink-rgb) / 0); }
 }
 
 /* La espuma sube del medio del casco cuando el sonido va en las burbujas: `SFX.sink` las toca
    entre los 0,5 y los 0,95 s, así que la imagen y el ruido cuentan lo mismo al mismo tiempo. */
 .burbuja {
   position: absolute; left: 50%; bottom: 6%; width: 34%; height: 34%; border-radius: 50%;
-  background: radial-gradient(circle at 34% 30%, var(--espuma-luz), rgb(from var(--ink) r g b / 0.35) 62%, rgb(from var(--ink) r g b / 0) 72%);
+  background: radial-gradient(circle at 34% 30%, var(--espuma-luz), rgb(var(--ink-rgb) / 0.35) 62%, rgb(var(--ink-rgb) / 0) 72%);
   pointer-events: none; z-index: 6; animation: sube 780ms ease-out both;
 }
 @keyframes sube {
@@ -165,8 +165,8 @@
    el 💥 y el 🔥 quedaban debajo del casco y no se veían. */
 .cell::after { position: relative; z-index: 2; }
 .cell.last { outline: 2px solid var(--yellow); outline-offset: -1px; animation: lastPulse 1.2s ease-in-out infinite; }
-@keyframes lastPulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(from var(--yellow) r g b / 0.6); } 50% { box-shadow: 0 0 8px 3px rgb(from var(--yellow) r g b / 0.35); } }
-.cell.aim { outline: 3px solid var(--yellow); outline-offset: -1px; transform: scale(1.12); z-index: 1; background: rgb(from var(--yellow) r g b / 0.35); }
+@keyframes lastPulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(var(--yellow-rgb) / 0.6); } 50% { box-shadow: 0 0 8px 3px rgb(var(--yellow-rgb) / 0.35); } }
+.cell.aim { outline: 3px solid var(--yellow); outline-offset: -1px; transform: scale(1.12); z-index: 1; background: rgb(var(--yellow-rgb) / 0.35); }
 .cell.aim::after { content: '🎯'; }
 /* El tablero enemigo ocupa media pantalla: es el cartel más grande que hay para decir de quién
    es el turno. Vivo cuando puedes disparar, apagado cuando no. Apagado no es tapado: los
@@ -175,12 +175,12 @@
 /* El aro va también fuera de la animación: con `prefers-reduced-motion` el latido se corta y,
    si el aro viviera solo en los fotogramas, el tablero se quedaría sin la señal que importa. */
 .enemy.live .grid-wrap {
-  background: rgb(from var(--cyan) r g b / 0.07); box-shadow: 0 0 0 2px rgb(from var(--cyan) r g b / 0.65), 0 0 18px rgb(from var(--cyan) r g b / 0.28);
+  background: rgb(var(--cyan-rgb) / 0.07); box-shadow: 0 0 0 2px rgb(var(--cyan-rgb) / 0.65), 0 0 18px rgb(var(--cyan-rgb) / 0.28);
   animation: turnoVivo 2.2s ease-in-out infinite;
 }
 @keyframes turnoVivo {
-  0%, 100% { box-shadow: 0 0 0 2px rgb(from var(--cyan) r g b / 0.45), 0 0 14px rgb(from var(--cyan) r g b / 0.18); }
-  50% { box-shadow: 0 0 0 2px rgb(from var(--cyan) r g b / 0.85), 0 0 24px rgb(from var(--cyan) r g b / 0.45); }
+  0%, 100% { box-shadow: 0 0 0 2px rgb(var(--cyan-rgb) / 0.45), 0 0 14px rgb(var(--cyan-rgb) / 0.18); }
+  50% { box-shadow: 0 0 0 2px rgb(var(--cyan-rgb) / 0.85), 0 0 24px rgb(var(--cyan-rgb) / 0.45); }
 }
 .enemy.locked { opacity: 0.45; filter: saturate(0.5); transition: opacity 0.25s, filter 0.25s; }
 .enemy.live .cell:not(.agua):not(.tocado):not(.hundido) { cursor: pointer; }
@@ -205,7 +205,7 @@
 }
 .ship-chip .barco-tira { display: flex; gap: 1px; }
 .ship-chip .barco-tira .barco { width: 12px; height: 12px; display: block; background: var(--mar); border-radius: 2px; }
-.ship-chip.sel { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.18); }
+.ship-chip.sel { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.18); }
 .ship-chip:active { cursor: grabbing; }
 .ship-chip.done { opacity: 0.45; }
 .ship-chip.done .barco-tira { filter: saturate(0.4) brightness(1.15); }
@@ -228,8 +228,8 @@
    que el titular porque un emoji ocupa más alto que las mayúsculas de Bangers y, si no, es él
    el que manda el alto de la barra. */
 .status .ico { font-family: var(--font-body); font-size: 0.82em; margin-right: var(--s-6); }
-.status.mine { background: rgb(from var(--lime) r g b / 0.14); border-color: var(--lime); }
-.status.mine .who { color: var(--lime); text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.4), 0 0 24px rgb(from var(--lime) r g b / 0.55); }
+.status.mine { background: rgb(var(--lime-rgb) / 0.14); border-color: var(--lime); }
+.status.mine .who { color: var(--lime); text-shadow: 0 4px 0 rgb(var(--bg1-rgb) / 0.4), 0 0 24px rgb(var(--lime-rgb) / 0.55); }
 /* Apagada a propósito: sin borde vivo, sin brillo y con el titular en gris. */
 .status.theirs { background: var(--well-deep); border-color: var(--glass-border); }
 .status.theirs .who { color: var(--muted); text-shadow: none; }
@@ -244,14 +244,14 @@
 .board-title { text-align: center; font-family: var(--font-display); font-size: var(--fs-100); letter-spacing: 0.05em; margin: var(--s-6) 0 var(--s-4); color: var(--muted); }
 .fire-row { display: grid; grid-template-columns: 1fr; gap: var(--s-8); margin: var(--s-10) auto; max-width: 420px; }
 .toast .coord { font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
-.toast { text-align: center; font-family: var(--font-display); font-size: var(--fs-160); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgb(from var(--bg1) r g b / 0.35); min-height: 1.4em; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.toast { text-align: center; font-family: var(--font-display); font-size: var(--fs-160); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgb(var(--bg1-rgb) / 0.35); min-height: 1.4em; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .toast.agua { color: var(--cyan); }
 .toast.hundido { color: var(--pink); }
 .mine-wrap { margin-top: var(--s-10); display: grid; justify-items: center; gap: var(--s-4); }
 .mine-cover { position: relative; }
 .mine-cover .veil {
   position: absolute; inset: -4px; border-radius: var(--r-12); display: grid; place-items: center; cursor: pointer;
-  background: linear-gradient(160deg, rgb(from var(--bg1) r g b / 0.96), rgb(from var(--bg2) r g b / 0.96)); border: 1px solid var(--glass-border);
+  background: linear-gradient(160deg, rgb(var(--bg1-rgb) / 0.96), rgb(var(--bg2-rgb) / 0.96)); border: 1px solid var(--glass-border);
   font-weight: 900; color: var(--muted); font-size: var(--fs-85); text-align: center; padding: var(--s-8);
 }
 .mine-cover.shown .veil { display: none; }
@@ -276,7 +276,7 @@
 
 /* Etapa de resultado en el pase (modo un celular) */
 /* La casilla es un dato que se lee y se canta: cifras en Nunito, no en Bangers (D-30) */
-.shot-big { font: 900 clamp(2.1rem, 10.5vw, 3rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.12em; color: var(--yellow); text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.35); }
+.shot-big { font: 900 clamp(2.1rem, 10.5vw, 3rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.12em; color: var(--yellow); text-shadow: 0 4px 0 rgb(var(--bg1-rgb) / 0.35); }
 .shot-result { font-family: var(--font-display); font-size: var(--fs-160); letter-spacing: 0.05em; }
 .shot-result.agua { color: var(--cyan); } .shot-result.tocado { color: var(--orange); } .shot-result.hundido { color: var(--pink); }
 .pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: var(--s-6) auto var(--s-2); }
