@@ -87,6 +87,36 @@ function idiomaDeLaUrl() {
 }
 idiomaDeLaUrl();
 
+/**
+ * The browser's language on the first visit (D-536, amends D-47): the first of the browser's
+ * languages that the app speaks, or Spanish. Pure, for node.
+ */
+export function idiomaDelNavegador(prefs = []) {
+  for (const p of prefs) {
+    const base = String(p || '').toLowerCase().split('-')[0];
+    const l = RETIRADOS[base] || base;
+    if (LANGS.includes(l)) return l;
+  }
+  return 'es';
+}
+
+/**
+ * Only when nothing was chosen on this device (no toggle, no `?lang=`): the browser's language is
+ * saved as the choice, once, and the page reloads in it. The toggle still changes it at any time.
+ * Behind the flag browser-lang until the owner publishes it. lab: #seccion-browser-lang
+ */
+async function idiomaInicial() {
+  try {
+    if (typeof document === 'undefined' || localStorage.getItem(KEY)) return;
+    const { flag } = await import('./flags.js');
+    if (!(await flag('browser-lang')) || localStorage.getItem(KEY)) return;
+    const l = idiomaDelNavegador(navigator.languages?.length ? navigator.languages : [navigator.language]);
+    localStorage.setItem(KEY, l);
+    if (l !== 'es') location.reload();
+  } catch (_) { /* without storage the app stays in Spanish, as before */ }
+}
+idiomaInicial();
+
 // En el laboratorio, cada página suma sus pestañas 🧪 y 🐞 y no deja que la navegación se salga
 if (LABS_IDIOMA && typeof document !== 'undefined') {
   import('./labs-idioma.js').then(m => m.iniciarLabs(LABS_IDIOMA)).catch(() => {});
