@@ -41,6 +41,7 @@
 .tabla-fin .no td { color: var(--muted); }
 .tabla-fin .estrellas-td { color: var(--yellow); white-space: nowrap; }
 .tabla-fin .total td { font-weight: 900; font-size: var(--fs-100); }
+@media (max-width: 360px) { .tabla-fin { font-size: var(--fs-75); } .tabla-fin th, .tabla-fin td { padding-inline: var(--s-2); } }
 .leyenda { font-size: var(--fs-75); margin: var(--s-8) 0 0; }
 .score-big { font: 900 clamp(3rem, 16vw, 4.4rem)/1 var(--font-num); color: var(--yellow); text-shadow: var(--shadow-text); }
 .sello { margin: 0; font-weight: 900; }
