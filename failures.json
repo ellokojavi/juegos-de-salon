@@ -522,6 +522,19 @@
         "stat": "48 file(s) +601 −512: README.md, changelog/ccr-9fd16d5f-jgf8sp.md, docs/AGENTS.md, docs/DESIGN.md, docs/facts.json, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42164201900,
+      "check": "end-to-end",
+      "pr": 1245,
+      "branch": "ccr-03358154-lf7wxx",
+      "commit": "8691b70198837919e5b62c0107d0ac8796ac75c3",
+      "test": "landing-fold.mjs",
+      "error": "✗ labs/contraption 320×568 es: «⚙️ Jugar» ends at 622 px, 54 px below the fold",
+      "signature": "759d99d45a",
+      "date": "2026-11-06T04:55:13.225Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
