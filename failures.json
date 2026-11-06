@@ -937,6 +937,32 @@
       "date": "2026-11-06T20:50:40.992Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42292074531,
+      "check": "tests",
+      "pr": 1251,
+      "branch": "claude/sleepy-planck-aranwz",
+      "commit": "7b9f18e522deb62b3538de18bc17c445ebe2f626",
+      "test": "tools/agents/english.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Spanish names not in docs/english-renames.json: name them in English, or add them with their English name (D-316): cup/game-agentes.png, cup/game-anio.png, cup/game-letras.png, cup/game-linea.png, cup/game-numero.png, cup/game-reinas.png, cup/practice-letras.png, cup/practice-reinas.png, cup/result-agentes.png, cup/result-anio.png, cup/result-letras.png, cup/result-linea.png, cup/result-numero.png, cup/result-reinas.png\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "9ac10af65c",
+      "date": "2026-11-06T20:55:02.251Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42292074531,
+      "check": "tests",
+      "pr": 1251,
+      "branch": "claude/sleepy-planck-aranwz",
+      "commit": "7b9f18e522deb62b3538de18bc17c445ebe2f626",
+      "test": "tools/agents/repo-weight.test.mjs",
+      "error": "✗ Repo weight (D-494): host big files outside git (docs/REPO-WEIGHT.md).",
+      "signature": "35a82f01e7",
+      "date": "2026-11-06T20:55:02.251Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
