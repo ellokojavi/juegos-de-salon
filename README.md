@@ -477,6 +477,7 @@ node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/flap/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
+node public/labs/memory/engine.test.mjs
 node public/labs/stack/engine.test.mjs
 node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -817,6 +818,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Diseño: El Ahorcado](docs/games/hangman.md)
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
+- [👀 Memorice (lab prototype, in Games being tried)](docs/games/memory.md)
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)

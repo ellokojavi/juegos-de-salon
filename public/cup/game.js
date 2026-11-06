@@ -1949,7 +1949,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
   head.innerHTML = '';
-  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
+  poner(head, SUELTO ? null : el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
   head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379, D-384)
   const cron = mostrarReloj(head, mod, () => reloj.leer(rel, Date.now()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
