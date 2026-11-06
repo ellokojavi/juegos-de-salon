@@ -102,7 +102,7 @@ Not patterns to unify: **sharing** (the cup already uses `compartir.js` and `lam
 ## The order: PRs that dissolve the layer
 
 Each PR in phase 5's style: before/after screenshots at 390 and 320 px, the intended differences in
-the body, the design baseline rewritten, and `cup/tournament.mjs`, `cup/languages.mjs` and
+the body, the design lint at zero, and `cup/tournament.mjs`, `cup/languages.mjs` and
 `cup-games/languages.mjs` green. U-21: a PR that changes what a live cup shows merges on a day no cup
 is playing a changed screen, or behind a flag.
 

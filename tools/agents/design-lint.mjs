@@ -6,8 +6,7 @@
  *   node tools/agents/design-lint.mjs             (every hit, by file; exit 0: report mode)
  *   node tools/agents/design-lint.mjs --summary   (one line per file with its counts)
  *   node tools/agents/design-lint.mjs --all       (also the allowlisted hits)
- *   node tools/agents/design-lint.mjs --gate      (exit 1 on any hit not allowlisted: phase 6)
- *   node tools/agents/design-lint.mjs baseline    (rewrites docs/design-baseline.json with today's counts)
+ *   node tools/agents/design-lint.mjs --gate      (exit 1 on any hit not allowlisted or stale entry: the gate, phase 6)
  *   node tools/agents/design-lint.mjs <file.css>  (one file)
  *
  * It reads every stylesheet under public/ that git knows (the generated bridge pages have none) and
@@ -29,10 +28,10 @@
  * (a decision, D-533) is a new step here.
  *
  * Exceptions live in docs/design-allowlist.json with a reason each; an entry that no longer hits is
- * stale. The ratchet is docs/design-baseline.json: `design-lint.test.mjs` fails when a file's count
- * for a rule grows past it, never when it drops; a migrated file gets its baseline rewritten.
+ * stale. Since phase 6 the lint is a gate: `design-lint.test.mjs`, which the `tests` check runs, fails
+ * on any hit not allowlisted and on any stale entry, as `--gate` does here.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -235,44 +234,17 @@ export function lint(files = sources(), entries = allowlist()) {
   return { hits, stale };
 }
 
-/** Counts per file and rule of the hits not allowlisted: what the baseline keeps. */
+/** Counts per file and rule of the hits not allowlisted (--summary). */
 export function counts(hits) {
   const out = {};
   for (const h of hits) { if (h.allowed) continue; out[h.file] = out[h.file] || {}; out[h.file][h.rule] = (out[h.file][h.rule] || 0) + 1; }
   return Object.fromEntries(Object.keys(out).sort().map(f => [f, Object.fromEntries(RULES.filter(r => out[f][r]).map(r => [r, out[f][r]]))]));
 }
 
-export function baseline() {
-  try { return JSON.parse(readFileSync(join(ROOT, 'docs/design-baseline.json'), 'utf8')).files || {}; } catch (_) { return {}; }
-}
-
-/** The ratchet: files and rules whose count grew past the baseline, and files the baseline names that are gone. */
-export function ratchet(hits, base = baseline(), files = sources()) {
-  const now = counts(hits);
-  const grew = [];
-  for (const [f, rules] of Object.entries(now)) for (const [r, n] of Object.entries(rules)) {
-    const was = base[f]?.[r] || 0;
-    if (n > was) grew.push({ file: f, rule: r, was, now: n });
-  }
-  const gone = Object.keys(base).filter(f => !files.includes(f));
-  return { grew, gone, now };
-}
-
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
-  const cmd = args.find(a => !a.startsWith('--') && !a.endsWith('.css'));
   const files = args.filter(a => a.endsWith('.css'));
   const { hits, stale } = lint(files.length ? files : undefined);
-  if (cmd === 'baseline') {
-    const files = counts(hits);
-    const total = Object.values(files).reduce((a, r) => a + Object.values(r).reduce((x, y) => x + y, 0), 0);
-    writeFileSync(join(ROOT, 'docs/design-baseline.json'), JSON.stringify({
-      _about: 'The design lint\'s ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.',
-      total, files,
-    }, null, 2) + '\n');
-    console.log(`docs/design-baseline.json written: ${total} hits in ${Object.keys(files).length} files`);
-    process.exit(0);
-  }
   const show = args.includes('--all') ? hits : hits.filter(h => !h.allowed);
   if (args.includes('--summary')) {
     const c = counts(hits);
