@@ -129,7 +129,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-71](decisions/D-71.md) | Dudo is said in Chilean, and in a duel there is no calzar | amended by D-490, D-491 |
 | [D-72](decisions/D-72.md) | The card shown when sharing a link | amended by D-205 |
 | [D-73](decisions/D-73.md) | The panel learns about new games on its own | current |
-| [D-74](decisions/D-74.md) | The language can come in the link | amended by D-197 |
+| [D-74](decisions/D-74.md) | The language can come in the link | amended by D-197, D-536 |
 | [D-75](decisions/D-75.md) | The app measures what is seen, not what the screen says it measures | amended by D-77 |
 | [D-76](decisions/D-76.md) | Screenshots are taken with the screen still | amended by D-77 |
 | [D-77](decisions/D-77.md) | The app is built for the small height of the screen | current |
