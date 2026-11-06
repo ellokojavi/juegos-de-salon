@@ -153,7 +153,7 @@ export function montar(raiz, ctx) {
         dibujar();
       };
       grilla.append(el('button', {
-        type: 'button', class: 'rej' + (v === motor.REINA ? ' reina' : v === motor.MARCA ? ' marca' : '') + (e.conflictos.has(i) ? ' choque' : ''),
+        type: 'button', 'data-cell': '', class: 'rej' + (v === motor.REINA ? ' reina' : v === motor.MARCA ? ' marca' : '') + (e.conflictos.has(i) ? ' choque' : ''),
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
         style: `background:${ZONAS[z % ZONAS.length]};--zona:${ZONAS[z % ZONAS.length]};--trama:${pattern(z)}`,
         // El toque largo marca la X (como las notas del teclado de Toque y Fama); el toque normal
