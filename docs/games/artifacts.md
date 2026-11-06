@@ -1,4 +1,4 @@
-# ⚙️ Artilugio (lab prototype, in Juegos en prueba)
+# ⚙️ Artefactos (lab prototype, in Juegos en prueba)
 
 A machine puzzle for one player: each level drops a ball from a pipe and the player places parts on a
 grid so that it ends in the basket. An original game in the genre of
@@ -8,8 +8,13 @@ no name, art, sound or level comes from it.
 
 ## Summary
 
-- **Where:** `https://juegosdesalon.cl/labs/contraption/`, in the lab (each person's key, D-281). Id
-  `artilugio` in the usage signal (`trackStart` on each level, `trackFinish` on each solved one).
+- **Where:** `https://juegosdesalon.cl/labs/artifacts/`, in the lab (each person's key, D-281). One name
+  inside and out (D-535): the player reads Artefactos, and everything internal is its English
+  version, `artifacts`: the folder, the usage signal's id (`trackStart` on each game, `trackFinish`
+  at its end), the phone's key `juegos-de-salon:artifacts`, the test hook `window.__artifacts`, the
+  lab card's `#seccion-artifacts`, `tools/e2e/artifacts/`, `tools/generators/artifacts-levels.mjs`
+  and this page. It was Artilugio until 2026-11-06 (folder `contraption`, id `artilugio`); the best
+  kept under `juegos-de-salon:artilugio-stages` is carried over once.
 - **For whom:** one player. Spanish, English and Portuguese (C-3), language toggle on the cover.
 - **Status:** active project, to try with friends. Not in `games.js` (lab games are not, until they leave).
 
@@ -47,15 +52,20 @@ and a yellow «⚙️ Jugar», in C-5's order.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
 - **▶ Probar** runs the ball with a fixed-step physics (gravity, bounces, a little friction). It ends
   **won** only once the ball **rests on the basket's floor** (down on it, slower than 0.6 cells/s for
-  0.5 s: a ball that flies through, bounces out or is still rolling does not count; arriving with
+  0.3 s: a ball that flies through, bounces out or is still rolling does not count; arriving with
   speed, it rolls and knocks from side to side inside the basket until a flat floor's rolling
   resistance stops it); **boom** when it touches the bottom of the
   board: it blows up (a flash, a fireball, a shock wave, sparks and smoke, the board shakes, a bang)
   and only after it plays out (1.1 s) the stage is marked failed, «¡Bum! 💥 Tocó el fondo»; **popped**
-  on spikes; or **stuck** (still outside the basket for 1.4 s, or 14 s in all). A failure says which
+  on spikes; or **stuck** (still outside the basket for 1.4 s, or 30 s in all). A failure says which
   and leaves the parts where they were. ■ Parar stops a run.
-- **Stars:** 3 with the fewest parts the level needs, 2 with one more, 1 otherwise. Kept on the phone
-  (`juegos-de-salon:artilugio-stars`); a level opens when the one before is solved.
+- **In the basket:** its floor is rough (`CUP_ROLL`, 7 per second against 1.6 on other flat ground):
+  a ball that lands with speed still rolls and knocks the walls naturally, but only a little (about
+  0.7 of a cell in the median), and once it has been at rest for 0.3 s (`SETTLE`) the stage passes:
+  0.4 to 1.2 s after it touches the floor across the pool. A run lasts up to 30 s (`MAX_T`;
+  trampolines can keep a ball in the air a long while), and a ball already down in the basket when
+  time runs out counts (the owner's report: at 14 s a late landing was called stuck while settling).
+- **Stars:** 3 with the fewest parts the level needs, 2 with one more, 1 otherwise.
 
 ## The levels
 
@@ -87,9 +97,9 @@ its five with the day's seed, the same for everyone; «Jugar otra vez» draws an
   were passed, a table with a row per stage (difficulty, stars, time, points as 10 + bonus), the speed
   with the time used, the total and a one-line legend; the best on this phone; «Jugar otra vez» and
   the way back to the lab. The cover shows the format («5 etapas · 6:00») and the best
-  (`juegos-de-salon:artilugio-stages`).
+  (`juegos-de-salon:artifacts`).
 
-**How the pool is made** (`tools/generators/contraption-levels.mjs`): each level is built backwards
+**How the pool is made** (`tools/generators/artifacts-levels.mjs`): each level is built backwards
 from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
 chained on its real path, each where the ball passes; the basket goes where that machine brings the
 ball down, and the run must end at rest in it; hazards (spikes, girders, fixed planks and ramps) are
@@ -97,11 +107,12 @@ added only where the machine still works. A level is kept only if an exhaustive 
 with fewer parts from its tray: the search is exact while pruned, because a part the ball never comes
 near (and no fan blows on) cannot change the run. `engine.test.mjs` plays every level's answer and
 checks that no board solves itself. To make a new pool: run each tier side by side
-(`node tools/generators/contraption-levels.mjs 12 <seed> <tier>`) and join them (`… merge /tmp/contraption-tiers-*.json`).
+(`node tools/generators/artifacts-levels.mjs 12 <seed> <tier>`) and join them (`… merge /tmp/artifacts-tiers-*.json`). After a change to the physics, `… check`
+re-verifies the pool (every answer still wins, none has a shorter answer).
 
 ## For tests
 
-`window.__artilugio` exposes the board and the run. End to end: `tools/e2e/contraption/lab.mjs`
+`window.__artifacts` exposes the board and the run. End to end: `tools/e2e/artifacts/lab.mjs`
 (cover, the five stages played with their answers placed by drags, each summary stopping the clock, the result's table, Jugar otra vez drawing five others, the clock running out at 320 px, a failed run, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
 
 ## The look (`scene.js`)

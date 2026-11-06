@@ -19,7 +19,10 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 ## Where everything is (D-192)
 
 - **`public/` is the site** as served: folder = URL, in English. Serve it with `python3 -m http.server 87xx -d public`.
-- **A game's id is not its folder**: `'ahorcado'` lives in `/hangman/`, and ids never change. The old
+- **One name inside and out** (C-20, D-535, the owner's tenet): a game's folder, id, keys, hooks, tests
+  and docs are the English version of the name the player reads (Artefactos is `artifacts`), and a
+  rename renames them all, carrying over what was kept. Older games keep the ids they have until a PR
+  renames one with its migration: `'ahorcado'` lives in `/hangman/`. The old
   Spanish paths (`public/ahorcado/`, `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) are
   generated bridge pages: do not edit them.
 - **The workshop**: `docs/`, `firebase/`, `marketing/`, `tools/` by function (`release/`, `firebase/`, `generators/`, `agents/`, `e2e/<game>/`).

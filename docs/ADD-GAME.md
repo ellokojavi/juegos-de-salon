@@ -6,7 +6,7 @@
 
 ## 1. The folder
 
-`public/<folder>/`, in English, with C-2's files (`index.html`, `style.css`, `rules.js`,
+`public/<folder>/`, in English and the same word as its id, keys and docs (C-20), with C-2's files (`index.html`, `style.css`, `rules.js`,
 `engine.js`, `engine.test.mjs`, `game.js`). Copy `index.html`'s `<head>` from another game: it brings
 the manifest, the icon and the iPhone name, `instalable.js` (D-221, D-222), the preloads of
 `nunito-latin.woff2` and `bangers-latin.woff2` right before `base.css` (`fonts-preload.test.mjs`) and
@@ -33,7 +33,7 @@ Inside it, what the canons ask, using the shared modules and never one of its ow
 The manifest (#855): the home page, menu, panel, search, One a Day, La Copa's pool and the e2e scope
 all read it. `manifest.test.mjs` checks that nothing keeps a copy of its own.
 
-- `id` (never changes), `path`, `emoji`, `tipos` (keys of `TIPOS`, D-214), `nuevoDesde:
+- `id`, the English version of the game's name like its folder (C-20, D-535; a rename migrates it), `path`, `emoji`, `tipos` (keys of `TIPOS`, D-214), `nuevoDesde:
   'YYYY-MM-DD'` (D-333), and its place in `POPULARIDAD` (D-255); a new mode goes in `MODES`.
   The rest the home page asks is in C-17 (`games.test.mjs`).
 - `keywords`: es, en, pt and de, at least three each (D-404; `search.test.mjs`).

@@ -470,9 +470,9 @@ node public/cup/games/stack/engine.test.mjs
 node public/cup/games/stick/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
+node public/labs/artifacts/engine.test.mjs
 node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
-node public/labs/contraption/engine.test.mjs
 node public/labs/dominorama/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/flap/engine.test.mjs
@@ -803,6 +803,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [End-to-end tests (headless Chrome over CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
 - [🕵️ Agentes](docs/games/agents.md)
+- [⚙️ Artefactos (lab prototype, in Juegos en prueba)](docs/games/artifacts.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
 - [🚅 Tren en Vilo (bridge builder)](docs/games/bridges.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
@@ -810,7 +811,6 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [El caso](docs/games/case.md)
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
-- [⚙️ Artilugio (lab prototype, in Juegos en prueba)](docs/games/contraption.md)
 - [La Copa](docs/games/cup.md)
 - [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)

@@ -1253,6 +1253,10 @@
     "public/hangman/engine.js",
     "public/hangman/game.js",
     "public/hangman/rules.js",
+    "public/labs/artifacts/engine.js",
+    "public/labs/artifacts/game.js",
+    "public/labs/artifacts/levels.js",
+    "public/labs/artifacts/scene.js",
     "public/labs/bodega.js",
     "public/labs/bridges/trains/sheet.js",
     "public/labs/bridges/visitors/sheet.js",
@@ -1262,10 +1266,6 @@
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
-    "public/labs/contraption/engine.js",
-    "public/labs/contraption/game.js",
-    "public/labs/contraption/levels.js",
-    "public/labs/contraption/scene.js",
     "public/labs/dominorama/engine.js",
     "public/labs/dominorama/game.js",
     "public/labs/exploding-numbers/engine.js",
@@ -1402,11 +1402,11 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
+    "public/labs/artifacts/engine.test.mjs",
     "public/labs/bodega.test.mjs",
     "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
-    "public/labs/contraption/engine.test.mjs",
     "public/labs/dominorama/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/flap/engine.test.mjs",
@@ -1500,6 +1500,7 @@
     "agents/game.mjs",
     "already-tested.mjs",
     "already-tested.test.mjs",
+    "artifacts/lab.mjs",
     "battleship/alignment.mjs",
     "battleship/chat.mjs",
     "battleship/languages.mjs",
@@ -1521,7 +1522,6 @@
     "clock-jumps.test.mjs",
     "code/lab.mjs",
     "contact-sheet.mjs",
-    "contraption/lab.mjs",
     "cup-games/languages.mjs",
     "cup/again.mjs",
     "cup/archived.mjs",
@@ -1721,6 +1721,10 @@
       "title": "🕵️ Agentes"
     },
     {
+      "path": "docs/games/artifacts.md",
+      "title": "⚙️ Artefactos (lab prototype, in Juegos en prueba)"
+    },
+    {
       "path": "docs/games/battleship.md",
       "title": "Diseño: Batalla Naval"
     },
@@ -1747,10 +1751,6 @@
     {
       "path": "docs/games/code.md",
       "title": "🔐 La clave (prototipo del laboratorio, en La Bodega)"
-    },
-    {
-      "path": "docs/games/contraption.md",
-      "title": "⚙️ Artilugio (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/cup.md",

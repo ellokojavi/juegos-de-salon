@@ -1,5 +1,5 @@
 /**
- * Artilugio's drawing: the workshop at night, all drawn on the canvas (no image files), in the app's neon:
+ * Artefactos' drawing: the workshop at night, all drawn on the canvas (no image files), in the app's neon:
  * a dotted grid, wooden ramps and planks with brass bolts, a coiled trampoline that squashes, a fan whose
  * blades spin and whose breeze shows, violet steel girders, glowing red spikes, a woven basket that
  * glows, a pipe the ball drops from, the ball with its light and shadow, and particles for the moments

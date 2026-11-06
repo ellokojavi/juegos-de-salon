@@ -1,5 +1,5 @@
 /**
- * Artilugio — lab prototype: a contraption puzzle for one player, in the genre of The Incredible Machine
+ * Artefactos — lab prototype: a contraption puzzle for one player, in the genre of The Incredible Machine
  * (Sierra, 1993), credited on the cover; the board, the parts, the levels and the look are our own.
  * Each level drops a ball that must end in the cup: the player places ramps, planks, trampolines and fans
  * from the tray on the grid, then taps ▶ Probar to watch the ball run. Fewer parts, more stars.
@@ -21,8 +21,8 @@ import {
 
 trackVisit();   // the site's traffic (D-208)
 
-const GAME_ID = 'artilugio';
-const KEY = 'juegos-de-salon:artilugio-stages';
+const GAME_ID = 'artifacts';
+const KEY = 'juegos-de-salon:artifacts';
 const LOCALES = {
   es: {
     lema: 'Arma la máquina y lleva la pelota a la canasta.',
@@ -150,7 +150,12 @@ export function stagesFor(seed) {
   return STAGE_TIERS.map(t => { const tier = POOL.filter(l => l.tier === t); return tier[Math.floor(r() * tier.length)]; });
 }
 let save = { best: 0, day: null };
-try { save = { ...save, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (_) { /* nothing kept */ }
+try {
+  // Once: the best kept while the game was called Artilugio comes along to its English key (D-535)
+  const old = 'juegos-de-salon:artilugio-stages';
+  if (!localStorage.getItem(KEY) && localStorage.getItem(old)) { localStorage.setItem(KEY, localStorage.getItem(old)); localStorage.removeItem(old); }
+  save = { ...save, ...JSON.parse(localStorage.getItem(KEY) || '{}') };
+} catch (_) { /* nothing kept */ }
 const keep = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (_) { /* not kept */ } };
 // The game in play: its stages, the one being built, what each scored, and the clock
 let game = null, level = null;
@@ -526,4 +531,4 @@ initSound();
 texts();
 requestAnimationFrame(frame);
 // For the end-to-end script: the game's state, and a level's solution to play it like a player would
-window.__artilugio = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, startGame, stagesFor, fits, fixedSegments };
+window.__artifacts = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, startGame, stagesFor, fits, fixedSegments };

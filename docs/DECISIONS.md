@@ -23,8 +23,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 
 | Topic | Today's rule | Decisions |
 |---|---|---|
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534 |
-| Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533 |
+| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535 |
+| Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533, D-535 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442 |
 | 🖌️ Pintaminas, the lab's colour Minesweeper (drawings and their colours, brushes, no-guess board, hard mode, help, giving up) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (518)
+## In force (519)
 
 | D | Title | Status |
 |---|---|---|
@@ -242,7 +242,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-189](decisions/D-189.md) | Outside contributions: fork, PR and protected `main` | current |
 | [D-190](decisions/D-190.md) | Desenredo leaves the lab | current |
 | [D-191](decisions/D-191.md) | A new language enters through the lab: German | amended by D-195, D-197, D-231 |
-| [D-192](decisions/D-192.md) | The site in `public/`, folders in English and the workshop tidied | amended by D-198, D-205 |
+| [D-192](decisions/D-192.md) | The site in `public/`, folders in English and the workshop tidied | amended by D-198, D-205, D-535 |
 | [D-193](decisions/D-193.md) | End-to-end tests run on their own on GitHub | amended by D-216, D-302, D-307 |
 | [D-194](decisions/D-194.md) | German: Hochdeutsch for the three countries, Central European time, spoken umlauts and no flash | current |
 | [D-195](decisions/D-195.md) | In a language's lab, the menu depends on the chosen language | current |
@@ -577,6 +577,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-532](decisions/D-532.md) | A learning programme: AI in the game only where it costs nothing per use, and the owner's learning recorded as a deliverable | current |
 | [D-533](decisions/D-533.md) | The design system: one visual language, owned by the usability agent | current |
 | [D-534](decisions/D-534.md) | A flag on *all* moves its card to La Bodega on its own, when /labs/ opens | current |
+| [D-535](decisions/D-535.md) | One name inside and out: everything internal is the English version of the game's name | current |
 
 ## No longer in force (12)
 

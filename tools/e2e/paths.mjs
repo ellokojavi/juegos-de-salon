@@ -657,8 +657,8 @@ export const PATHS = {
     intro: [],
     game: [`document.getElementById('btn-jugar').click()`, `1`, `1`, `1`, `1`, `1`, `1`, `document.getElementById('escenario').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))`, `1`],
   },
-  // Artilugio: the cover, then Jugar opens level 1's board
-  'labs/contraption': {
+  // Artefactos: the cover, then Jugar opens level 1's board
+  'labs/artifacts': {
     intro: [],
     game: [`document.getElementById('btn-jugar').click(); 1`, `1`],
   },
