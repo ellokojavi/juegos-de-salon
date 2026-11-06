@@ -648,6 +648,10 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
+  'labs/memory': {
+    intro: [],
+    game: [`document.getElementById('btn-jugar').click(); 1`, `1`, `1`, `1`],
+  },
   // Aletazo: the cover over its demo, then Jugar, the 3, 2, 1… (six waits) and the first flap (the bird in the air, the HUD up)
   'labs/flap': {
     intro: [],
