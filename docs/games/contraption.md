@@ -16,12 +16,13 @@ no name, art, sound or level comes from it.
 ## Cover
 
 The demo board solving levels by itself, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
-(`details.panel`), the language toggle, where the run is (the level, its difficulty, the stars so far)
+(`details.panel`), the language toggle, the format («5 etapas · 6:00») and the best,
 and a yellow «⚙️ Jugar», in C-5's order.
 
 1. 🧩 Arrastra una pieza de abajo al tablero.
 2. ↔️ Toca una rampa o un ventilador para girarlo; arrastra para moverlo; suéltalo fuera para quitarlo.
-3. ▶️ Toca Probar: la pelota tiene que caer en la canasta 🧺.
+3. ▶️ Toca Probar: la pelota tiene que quedar en la canasta 🧺.
+4. ⏱️ 5 etapas, cada una más difícil, contra un reloj de 6 minutos.
 
 ## How it is played
 
@@ -58,24 +59,35 @@ and a yellow «⚙️ Jugar», in C-5's order.
 
 ## The levels
 
-**A run of levels, dealt at random, harder as it goes.** The first three teach the parts, hand-made in
-`LEVELS` (`engine.js`): the ramp, the trampoline, the fan. From the fourth on, each level is dealt at
-random from the generated pool (`levels.js`, 72 levels in six tiers of 12), one tier harder every 4
-levels, never repeating one until its tier runs out:
+**A game is five stages against the clock, as Tren en Vilo's.** Each stage is drawn from its tier of
+the generated pool (`levels.js`, 72 levels in six tiers of 12), one harder than the one before
+(`STAGE_TIERS` in `game.js`: tiers 1, 2, 3, 5, 6):
 
-| Tier | Label | The answer needs | Tray | Hazards |
+| Stage | Label | The answer needs | Tray | Hazards |
 |---|---|---|---|---|
 | 1 | Fácil | 1 ramp | exact | 1–2 |
 | 2 | Fácil + | 1 part of any kind | one decoy | 2–3 |
 | 3 | Medio | 2 parts | exact | 2–3 |
-| 4 | Medio + | 2 parts | one decoy | 3–4 |
-| 5 | Difícil | 3 parts | exact | 3–4 |
-| 6 | Experto | 3 parts | one decoy | 4–6 |
+| 4 | Difícil | 3 parts | exact | 3–4 |
+| 5 | Experto | 3 parts | one decoy | 4–6 |
 
-**🎲 Otro** (beside the level, not in the tutorial) deals another level of the same tier, as the same
-step, for when one gets stuck. The cover shows where the run is («Nivel 9», its difficulty and the
-stars so far); the run, the stars per level, the levels seen and the one in progress are kept on the
-phone (`juegos-de-salon:artilugio`). Stars: 3 with the parts the answer needs, 2 with one more, 1 otherwise.
+(Tier 4, «Medio +», 2 parts among decoys, stays in the pool unused.) The first game of the day draws
+its five with the day's seed, the same for everyone; «Jugar otra vez» draws another five at random.
+
+- **The clock:** one for the whole game, 6:00, in the header beside «Etapa 2 de 5», the stage's
+  difficulty and five dots (passed in green, the one in play in yellow). It runs while building and
+  testing, stops while a stage's summary is open or the page is hidden, and blinks pink in the last
+  30 s. At 0:00 the game ends where it is: «⏱️ ¡Se acabó el tiempo!».
+- **A stage passed** opens a summary over the board: «¡Etapa 2 superada!», its stars, the parts used,
+  its time and its points, with «Siguiente etapa ›» («Ver el resultado ›» after the fifth).
+- **Score:** each stage passed is 10, plus 5 / 3 / 1 for its stars (3 with the parts the answer needs,
+  2 with one more, 1 otherwise), plus up to 10 for speed (all of it with the five in 2:00 or less,
+  none at 6:00, scaled by the stages passed): at most 85.
+- **The result** (`#s-fin`): the stamp (new best, time is up, or done), the total, how many stages
+  were passed, a table with a row per stage (difficulty, stars, time, points as 10 + bonus), the speed
+  with the time used, the total and a one-line legend; the best on this phone; «Jugar otra vez» and
+  the way back to the lab. The cover shows the format («5 etapas · 6:00») and the best
+  (`juegos-de-salon:artilugio-stages`).
 
 **How the pool is made** (`tools/generators/contraption-levels.mjs`): each level is built backwards
 from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
@@ -90,7 +102,7 @@ checks that no board solves itself. To make a new pool: run each tier side by si
 ## For tests
 
 `window.__artilugio` exposes the board and the run. End to end: `tools/e2e/contraption/lab.mjs`
-(cover, a level dealt at random at step 9 and 🎲 Otro, a failed run, the explosion on the bottom, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
+(cover, the five stages played with their answers placed by drags, each summary stopping the clock, the result's table, Jugar otra vez drawing five others, the clock running out at 320 px, a failed run, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
 
 ## The look (`scene.js`)
 

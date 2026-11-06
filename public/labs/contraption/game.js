@@ -22,7 +22,7 @@ import {
 trackVisit();   // the site's traffic (D-208)
 
 const GAME_ID = 'artilugio';
-const KEY = 'juegos-de-salon:artilugio';
+const KEY = 'juegos-de-salon:artilugio-stages';
 const LOCALES = {
   es: {
     lema: 'Arma la máquina y lleva la pelota a la canasta.',
@@ -31,7 +31,8 @@ const LOCALES = {
     como: [
       ['🧩', 'Arrastra una pieza de abajo al tablero.'],
       ['↔️', 'Toca una rampa o un ventilador para girarlo; arrastra para moverlo; suéltalo fuera para quitarlo.'],
-      ['▶️', 'Toca Probar: la pelota tiene que caer en la canasta 🧺.'],
+      ['▶️', 'Toca Probar: la pelota tiene que quedar en la canasta 🧺.'],
+      ['⏱️', '5 etapas, cada una más difícil, contra un reloj de 6 minutos.'],
     ],
     jugar: '⚙️ Jugar', nivel: 'Nivel {n}', objetivo: 'Lleva la pelota a la 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tabla', spring: 'Cama elástica', fan: 'Ventilador' },
@@ -39,7 +40,7 @@ const LOCALES = {
     elige: 'Arrastra una pieza al tablero (o tócala y toca una casilla).', toca: 'Toca el tablero para poner la {p}.', noCabe: 'Ahí no cabe.',
     movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.',
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
-    gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente nivel ›', otraVez: 'Jugar de nuevo este nivel',
+    gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente etapa ›', otraVez: 'Jugar otra vez', formato: '5 etapas · {n}', mejor: '🏆 Récord: {n}', etapa: 'Etapa {n} de 5', superada: '¡Etapa {n} superada!', enTiempo: 'En {n}.', verResultado: 'Ver el resultado ›', record: '🏆 ¡Nuevo récord!', sinTiempo: '⏱️ ¡Se acabó el tiempo!', finJuego: '¡Listo!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificultad', 'Piezas', 'Tiempo', 'Puntos'], rapidez: '⚡ Rapidez (usaste {n})', total: 'Total', leyenda: 'Cada etapa vale 10, más 5 / 3 / 1 por usar pocas piezas (★★★ / ★★ / ★), más hasta 10 por rapidez.', tuMejor: 'Tu récord: {n}',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', otro: '🎲 Otro', dificultad: ['Aprendiendo', 'Fácil', 'Fácil +', 'Medio', 'Medio +', 'Difícil', 'Experto'],
     comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué nivel te costó, si las piezas se ponían fácil y qué pieza te gustaría.', ph: 'Por ejemplo: el nivel 3 me costó mucho.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -51,7 +52,8 @@ const LOCALES = {
     como: [
       ['🧩', 'Drag a part from below onto the board.'],
       ['↔️', 'Tap a ramp or a fan to turn it; drag to move it; drop it outside to remove it.'],
-      ['▶️', 'Tap Try: the ball has to land in the basket 🧺.'],
+      ['▶️', 'Tap Try: the ball has to end up in the basket 🧺.'],
+      ['⏱️', '5 stages, each one harder, against a 6-minute clock.'],
     ],
     jugar: '⚙️ Play', nivel: 'Level {n}', objetivo: 'Get the ball to the 🧺',
     piezas: { ramp: 'Ramp', plank: 'Plank', spring: 'Trampoline', fan: 'Fan' },
@@ -59,7 +61,7 @@ const LOCALES = {
     elige: 'Drag a part onto the board (or tap it, then tap a cell).', toca: 'Tap the board to place the {p}.', noCabe: 'It does not fit there.',
     movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.',
     fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
-    gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next level ›', otraVez: 'Play this level again',
+    gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next stage ›', otraVez: 'Play again', formato: '5 stages · {n}', mejor: '🏆 Best: {n}', etapa: 'Stage {n} of 5', superada: 'Stage {n} cleared!', enTiempo: 'In {n}.', verResultado: 'See the result ›', record: '🏆 New best!', sinTiempo: '⏱️ Time is up!', finJuego: 'Done!', superadas: '{n} of 5 stages cleared.', columnas: ['Stage', 'Difficulty', 'Parts', 'Time', 'Points'], rapidez: '⚡ Speed (you used {n})', total: 'Total', leyenda: 'Each stage is worth 10, plus 5 / 3 / 1 for using few parts (★★★ / ★★ / ★), plus up to 10 for speed.', tuMejor: 'Your best: {n}',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', otro: '🎲 Another', dificultad: ['Learning', 'Easy', 'Easy +', 'Medium', 'Medium +', 'Hard', 'Expert'],
     comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us which level was hard, if placing parts was easy and what part you would like.', ph: 'For example: level 3 was very hard.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
@@ -71,7 +73,8 @@ const LOCALES = {
     como: [
       ['🧩', 'Arraste uma peça de baixo para o tabuleiro.'],
       ['↔️', 'Toque numa rampa ou ventilador para girar; arraste para mover; solte fora para tirar.'],
-      ['▶️', 'Toque Testar: a bola tem que cair na cesta 🧺.'],
+      ['▶️', 'Toque Testar: a bola tem que ficar na cesta 🧺.'],
+      ['⏱️', '5 etapas, cada uma mais difícil, contra um relógio de 6 minutos.'],
     ],
     jugar: '⚙️ Jogar', nivel: 'Nível {n}', objetivo: 'Leve a bola até a 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tábua', spring: 'Cama elástica', fan: 'Ventilador' },
@@ -79,7 +82,7 @@ const LOCALES = {
     elige: 'Arraste uma peça para o tabuleiro (ou toque nela e numa casa).', toca: 'Toque o tabuleiro para colocar a {p}.', noCabe: 'Aí não cabe.',
     movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.',
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
-    gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próximo nível ›', otraVez: 'Jogar este nível de novo',
+    gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próxima etapa ›', otraVez: 'Jogar de novo', formato: '5 etapas · {n}', mejor: '🏆 Recorde: {n}', etapa: 'Etapa {n} de 5', superada: 'Etapa {n} superada!', enTiempo: 'Em {n}.', verResultado: 'Ver o resultado ›', record: '🏆 Novo recorde!', sinTiempo: '⏱️ Acabou o tempo!', finJuego: 'Pronto!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificuldade', 'Peças', 'Tempo', 'Pontos'], rapidez: '⚡ Rapidez (você usou {n})', total: 'Total', leyenda: 'Cada etapa vale 10, mais 5 / 3 / 1 por usar poucas peças (★★★ / ★★ / ★), mais até 10 por rapidez.', tuMejor: 'Seu recorde: {n}',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', otro: '🎲 Outro', dificultad: ['Aprendendo', 'Fácil', 'Fácil +', 'Médio', 'Médio +', 'Difícil', 'Expert'],
     comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que achou?', lead: 'Conte qual nível foi difícil, se era fácil colocar as peças e que peça você gostaria.', ph: 'Por exemplo: o nível 3 foi muito difícil.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -125,28 +128,42 @@ const SOUND = {
 };
 
 /*
- * The levels: three to learn the parts (the ramp, the trampoline, the fan), then an endless run dealt at
- * random from the generated pool (levels.js), one tier harder every 4 levels: one part, then two, then
- * three, with decoys in the tray and more hazards. A level already played is not dealt again until its
- * tier runs out. The run, the stars and the level in progress are kept on this phone.
+ * A game, as Tren en Vilo's: five stages of growing difficulty against one clock. Each stage is drawn
+ * from its tier of the generated pool (levels.js): 1 part, 1 part among decoys, 2 parts, then 3 and 3
+ * among decoys. The first game of the day draws with the day's seed, the same five for everyone; «Jugar
+ * otra vez» draws a new five. The clock runs while building and testing, and stops while a stage's
+ * summary is open or the page is hidden; at 0:00 the game ends where it is.
+ *
+ * Score: each stage passed is 10, plus 5 / 3 / 1 for its stars (the fewest parts, one more, more), plus
+ * up to 10 for speed (all of it with the five in 2:00 or less, none at the end of the clock), scaled by
+ * the stages passed: at most 5 × 15 + 10 = 85.
  */
-const TUTORIAL = [0, 2, 3].map((i, k) => ({ id: `tut-${k + 1}`, tier: 0, ...LEVELS[i] }));
-const TIERS = Math.max(...POOL.map(l => l.tier));
-const tierFor = n => n <= TUTORIAL.length ? 0 : Math.min(TIERS, 1 + Math.floor((n - TUTORIAL.length - 1) / 4));
-const byId = id => TUTORIAL.find(l => l.id === id) || POOL.find(l => l.id === id) || null;
-let save = { n: 1, stars: {}, seen: [], id: null };
-try { save = { ...save, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (_) { /* a fresh run */ }
-const keep = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (_) { /* not kept */ } };
-const totalStars = () => Object.values(save.stars).reduce((a, b) => a + b, 0);
-/** The level for step n: the tutorial, or a random one of its tier not played yet. */
-function deal(n, avoid = null) {
-  if (n <= TUTORIAL.length) return TUTORIAL[n - 1];
-  const tier = tierFor(n);
-  let left = POOL.filter(l => l.tier === tier && !save.seen.includes(l.id) && l.id !== avoid);
-  if (!left.length) { save.seen = save.seen.filter(id => byId(id)?.tier !== tier); left = POOL.filter(l => l.tier === tier && l.id !== avoid); }
-  return left[Math.floor(Math.random() * left.length)];
+export const STAGE_TIERS = [1, 2, 3, 5, 6];
+const CLOCK_MS = 6 * 60 * 1000, FAST_MS = 2 * 60 * 1000;
+const PUNTOS_ETAPA = 10, PUNTOS_ESTRELLAS = [0, 1, 3, 5], PUNTOS_RAPIDEZ = 10;
+function seeded(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const daySeed = day => [...day].reduce((h, ch) => Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0, 2166136261);
+/** The five stages for a seed: one level of each tier in STAGE_TIERS. */
+export function stagesFor(seed) {
+  const r = seeded(seed);
+  return STAGE_TIERS.map(t => { const tier = POOL.filter(l => l.tier === t); return tier[Math.floor(r() * tier.length)]; });
 }
-let level = byId(save.id) || deal(save.n);
+let save = { best: 0, day: null };
+try { save = { ...save, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (_) { /* nothing kept */ }
+const keep = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (_) { /* not kept */ } };
+// The game in play: its stages, the one being built, what each scored, and the clock
+let game = null, level = null;
+function newGame(seed) {
+  game = { seed, stages: stagesFor(seed), at: 0, done: [], left: CLOCK_MS, paused: true, over: false };
+}
+const mmss = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+function speedPoints() {
+  const used = CLOCK_MS - game.left, passed = game.done.filter(d => d.ok).length;
+  const k = Math.max(0, Math.min(1, (CLOCK_MS - used) / (CLOCK_MS - FAST_MS)));
+  return game.left <= 0 ? 0 : Math.round(PUNTOS_RAPIDEZ * k * passed / STAGE_TIERS.length);
+}
+const totalOf = () => game.done.reduce((a, d) => a + d.pts, 0) + speedPoints();
 
 /* ------------------------------------------------------------------ */
 /* The cover                                                           */
@@ -162,19 +179,18 @@ function texts() {
   $('btn-jugar').textContent = L.jugar;
   $('btn-probar').textContent = L.probar; $('btn-limpiar').textContent = L.limpiar; $('btn-deshacer').textContent = L.deshacer;
   $('btn-girar').textContent = L.girar; $('btn-quitar').textContent = L.quitar;
-  $('btn-otra').textContent = L.otraVez; $('btn-otro').textContent = L.otro;
+  $('btn-otra').textContent = L.otraVez;
   $('pie').replaceChildren(el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
-    onClick: () => abrirComentario({ T: L.comentario, contexto: { juego: GAME_ID, nivel: save.n, nivelId: level?.id, pantalla: $('s-juego').classList.contains('active') ? 'juego' : 'portada', url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } }),
+    onClick: () => abrirComentario({ T: L.comentario, contexto: { juego: GAME_ID, etapa: game ? game.at + 1 : null, nivelId: level?.id, pantalla: $('s-juego').classList.contains('active') ? 'juego' : 'portada', url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } }),
   }, L.comentarAbrir));
   levelChips();
 }
 function levelChips() {
-  // The cover: where the run is, how hard it gets there and the stars so far
+  // The cover: the format, and the best on this phone
   $('niveles').replaceChildren(
-    el('span', { class: 'chip chip--gold', id: 'progreso' }, fmt(L.nivel, save.n)),
-    el('span', { class: 'chip' }, L.dificultad[tierFor(save.n)]),
-    totalStars() ? el('span', { class: 'chip', id: 'estrellas-total' }, `★ ${totalStars()}`) : '');
+    el('span', { class: 'chip chip--gold', id: 'formato' }, fmt(L.formato, mmss(CLOCK_MS))),
+    save.best ? el('span', { class: 'chip', id: 'mejor' }, fmt(L.mejor, save.best)) : '');
 }
 
 /* ------------------------------------------------------------------ */
@@ -183,18 +199,27 @@ function levelChips() {
 const canvas = $('lienzo');
 let board = null, run = null, picked = null, chosen = null, trail = [], startedAt = 0;
 
-function startLevel(lv = level) {
-  level = lv; save.id = lv.id; keep();
+function startLevel(lv) {
+  level = lv;
   board = newBoard(lv); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null;
   $('resultado').hidden = true; document.body.classList.remove('ganado');
-  $('nivel').textContent = fmt(L.nivel, save.n); $('dificultad').textContent = L.dificultad[lv.tier]; $('objetivo').textContent = L.objetivo;
-  $('btn-otro').hidden = lv.tier === 0;
+  $('nivel').textContent = fmt(L.etapa, game.at + 1); $('dificultad').textContent = L.dificultad[lv.tier];
+  $('etapas').replaceChildren(...STAGE_TIERS.map((_, i) => el('span', { class: i < game.at ? (game.done[i]?.ok ? 'ok' : 'no') : i === game.at ? 'ahora' : '' })));
   say(L.elige);
-  startedAt = Date.now();
-  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
-  tray(); controls();
+  startedAt = Date.now(); game.stageAt = game.left; game.paused = false;
+  tray(); controls(); clock();
   show('s-juego');
   requestAnimationFrame(size);
+}
+function clock() {
+  const c = $('reloj'); c.textContent = mmss(game.left);
+  c.classList.toggle('apurado', game.left < 30000);
+}
+/** Jugar: a new game of five stages (the day's five the first time today), from stage 1. */
+function startGame(seed) {
+  newGame(seed);
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
+  startLevel(game.stages[0]);
 }
 function say(t) { $('mensaje').textContent = t; }
 function tray() {
@@ -343,26 +368,66 @@ $('btn-probar').addEventListener('click', () => {
   run = newRun(board); last = performance.now(); acc = 0;
   say(''); tray(); controls();
 });
-$('btn-jugar').addEventListener('click', () => { unlockAudio(); startLevel(level); });
-$('btn-siguiente').addEventListener('click', () => startLevel(deal(save.n)));
-$('btn-otra').addEventListener('click', () => { save.n--; startLevel(level); });   // the same level again, as the same step
-// Stuck on one? Another of the same difficulty, at random
-$('btn-otro').addEventListener('click', () => { if (run) return; save.seen.push(level.id); startLevel(deal(save.n, level.id)); });
+$('btn-jugar').addEventListener('click', () => {
+  unlockAudio();
+  const day = today(), first = save.day !== day;
+  if (first) { save.day = day; keep(); }
+  startGame(first ? daySeed(day) : Math.floor(Math.random() * 2 ** 31));
+});
+$('btn-siguiente').addEventListener('click', nextStage);
+$('btn-otra').addEventListener('click', () => { unlockAudio(); startGame(Math.floor(Math.random() * 2 ** 31)); });
+function nextStage() {
+  if ($('resultado').hidden) return;
+  clearTimeout(game.auto);
+  game.at++;
+  if (game.at >= STAGE_TIERS.length) endGame(); else startLevel(game.stages[game.at]);
+}
+// The page hidden (a call, another app) stops the clock; back, it runs again
+document.addEventListener('visibilitychange', () => { if (game && !game.over) last = performance.now(); });
+
+/** The game's end: every stage played, or the clock at 0:00. The result explains the sum. */
+function endGame() {
+  if (game.over) return;
+  game.over = true; game.paused = true; run = null;
+  for (let i = game.done.length; i < STAGE_TIERS.length; i++) game.done.push({ ok: false, pts: 0, stars: 0, ms: 0 });
+  const total = totalOf(), passed = game.done.filter(d => d.ok).length, isBest = total > (save.best || 0);
+  if (isBest) { save.best = total; keep(); }
+  trackFinish({ detalle: `${total} pts · ${passed}/5 stages · ${game.done.map(d => d.ok ? d.stars : 0).join('')} stars · ${mmss(CLOCK_MS - game.left)} used · seed ${game.seed}` });
+  $('fin-sello').textContent = isBest ? L.record : game.left <= 0 ? L.sinTiempo : L.finJuego;
+  $('fin-sello').className = `sello ${isBest ? 'record' : 'fin'}`;
+  $('fin-puntos').textContent = total;
+  $('fin-linea').textContent = fmt(L.superadas, passed);
+  $('fin-tabla').replaceChildren(
+    el('thead', {}, el('tr', {}, ...L.columnas.map(c => el('th', {}, c)))),
+    el('tbody', {}, ...game.done.map((d, i) => el('tr', { class: d.ok ? '' : 'no' },
+      el('td', {}, String(i + 1)), el('td', {}, L.dificultad[STAGE_TIERS[i]]),
+      el('td', { class: 'estrellas-td' }, d.ok ? '★'.repeat(d.stars) + '☆'.repeat(3 - d.stars) : '—'),
+      el('td', {}, d.ok ? mmss(d.ms) : '—'),
+      el('td', {}, d.ok ? `${PUNTOS_ETAPA} + ${d.pts - PUNTOS_ETAPA}` : '0'))),
+      el('tr', { class: 'rapidez' }, el('td', { colspan: 4 }, fmt(L.rapidez, mmss(CLOCK_MS - game.left))), el('td', {}, `+${speedPoints()}`)),
+      el('tr', { class: 'total' }, el('td', { colspan: 4 }, L.total), el('td', {}, String(total)))));
+  $('fin-leyenda').textContent = L.leyenda;
+  $('fin-mejor').textContent = isBest ? '' : fmt(L.tuMejor, save.best);
+  $('fin-salidas').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
+  show('s-fin');
+  levelChips();
+  $('btn-otra').focus({ preventScroll: true });
+}
 
 function finish(state) {
+  if (game.over) return;
   if (state === 'won') {
     SOUND.won(); vibrate([30, 40, 30]);
-    const n = board.placed.length, s = starsOf(level, n);
-    save.stars[level.id] = Math.max(save.stars[level.id] || 0, s);
-    if (!save.seen.includes(level.id)) save.seen.push(level.id);
-    trackFinish({ detalle: `level ${save.n} · ${level.id} · ${n} parts · ${s} stars · ${Math.round((Date.now() - startedAt) / 1000)}s` });
-    save.n++; save.id = null; keep();
-    $('res-titulo').textContent = L.gano;
-    $('res-estrellas').textContent = '★'.repeat(s) + '☆'.repeat(3 - s);
-    $('res-linea').textContent = fmt(L.linea[n === 1 ? 0 : 1], n);
+    const n = board.placed.length, st = starsOf(level, n), ms = game.stageAt - game.left;
+    const pts = PUNTOS_ETAPA + PUNTOS_ESTRELLAS[st];
+    game.done.push({ ok: true, stars: st, ms, pts, id: level.id });
+    game.paused = true;   // the summary stops the clock
+    const lastOne = game.at + 1 >= STAGE_TIERS.length;
+    $('res-titulo').textContent = fmt(L.superada, game.at + 1);
+    $('res-estrellas').textContent = '★'.repeat(st) + '☆'.repeat(3 - st);
+    $('res-linea').textContent = `${fmt(L.linea[n === 1 ? 0 : 1], n)} ${fmt(L.enTiempo, mmss(ms))} +${pts}`;
     document.body.classList.add('ganado');
-    $('btn-siguiente').textContent = L.siguiente;
-    $('res-salidas').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
+    $('btn-siguiente').textContent = lastOne ? L.verResultado : L.siguiente;
     $('resultado').hidden = false;
     $('btn-siguiente').focus({ preventScroll: true });
   } else {
@@ -395,6 +460,11 @@ let last = performance.now(), acc = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   const onBoard = $('s-juego').classList.contains('active');
+  // The game's clock: it runs while building and testing a stage, and ends the game at 0:00
+  if (game && !game.over && !game.paused && onBoard && !document.hidden) {
+    game.left -= dt * 1000; clock();
+    if (game.left <= 0) { game.left = 0; clock(); SOUND.fail(); endGame(); }
+  }
   if (onBoard) scene.tick(dt);
   if (run && run.state === 'running') {
     acc += dt;
@@ -456,4 +526,4 @@ initSound();
 texts();
 requestAnimationFrame(frame);
 // For the end-to-end script: the game's state, and a level's solution to play it like a player would
-window.__artilugio = { get board() { return board; }, get run() { return run; }, LEVELS, POOL, get level() { return level; }, start: startLevel, fits, fixedSegments };
+window.__artilugio = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, startGame, stagesFor, fits, fixedSegments };

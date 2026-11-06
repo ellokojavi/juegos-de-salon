@@ -1,9 +1,12 @@
-// Artilugio in the lab end to end, at /labs/contraption/: the lab offers it under Active projects with its
-// credit; the cover has the tagline, the credit, «Cómo se juega», the language toggle, the levels (1 open,
-// the rest locked) and a yellow Jugar; Jugar opens level 1's board with its tray; Probar with no parts ends
-// on the spikes and says so; a ramp placed by real taps on the board (pick it in the tray, tap a cell),
-// turned and moved, solves it: «¡Funciona!» with 3 stars; the next level opens and level 2 is unlocked on
-// the cover; in English the cover is in English; at 320 px no sideways scroll. Prints ✗ if anything fails.
+// Artilugio in the lab end to end, at /labs/contraption/: the lab offers it with its credit; the cover has
+// the tagline, the credit, «Cómo se juega» (four steps), the language toggle, the format (5 etapas · 6:00)
+// and a yellow Jugar in the first screen; Jugar starts stage 1 of 5 with its difficulty, the five dots and
+// the clock running; Probar with no parts fails and says so; the tray, one-tap turning, dragging to move,
+// Deshacer and dropping off the board work by real drags; each of the five stages is solved with its
+// known answer, placed by drags: a summary per stage that stops the clock, then the next stage, harder;
+// after the fifth, the result: the total, a row per stage, the speed and the total, «Jugar otra vez» and
+// the way back to the lab; the best is kept; in English the cover is in English; at 320 px no sideways
+// scroll, and a game whose clock runs out ends with «¡Se acabó el tiempo!». Prints ✗ if anything fails.
 import fs from 'node:fs';
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -28,25 +31,21 @@ await b.go(`${SITE}/labs/contraption/?test`, 1000);
 ok(await waitFor(`!!document.getElementById('btn-jugar')?.textContent`), 'the cover has Jugar');
 ok(/Arma la máquina/.test(await ev(`document.getElementById('lema').textContent`)), 'the tagline');
 ok(/The Incredible Machine/.test(await ev(`document.getElementById('credito').textContent`)) && /wikipedia/.test(await ev(`document.getElementById('link-tim')?.href || ''`)), 'the credit, with its link');
-ok(await ev(`document.querySelectorAll('#pasos li').length`) === 3, 'three steps under «Cómo se juega»');
-ok(await ev(`document.getElementById('progreso')?.textContent`) === 'Nivel 1' && /Aprendiendo/.test(await ev(`document.getElementById('niveles').textContent`)), 'the run: «Nivel 1», learning');
+ok(await ev(`document.querySelectorAll('#pasos li').length`) === 4, 'four steps under «Cómo se juega»');
+ok(await ev(`document.getElementById('formato')?.textContent`) === '5 etapas · 6:00', 'the format: «5 etapas · 6:00»');
 ok(await ev(`!!(document.getElementById('lang-slot').compareDocumentPosition(document.getElementById('btn-jugar')) & Node.DOCUMENT_POSITION_FOLLOWING)`), 'the language toggle comes before Jugar (C-5)');
 ok(await ev(`(() => { const r = document.getElementById('btn-jugar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Jugar in the first screen');
 await b.shot('01-cover');
 
 await ev(`document.getElementById('btn-jugar').click(); 1`);
 ok(await waitFor(`document.getElementById('s-juego').classList.contains('active')`), 'Jugar opens the board');
-ok(await ev(`document.getElementById('nivel').textContent`) === 'Nivel 1', 'level 1');
-ok(await ev(`document.querySelector('#bandeja [data-pieza="ramp"]')?.textContent.includes('×1')`), 'the tray: one ramp');
+ok(await ev(`document.getElementById('nivel').textContent`) === 'Etapa 1 de 5' && await ev(`document.getElementById('dificultad').textContent`) === 'Fácil', '«Etapa 1 de 5», Fácil');
+ok(await ev(`document.querySelectorAll('#etapas span').length`) === 5 && await ev(`document.querySelectorAll('#etapas .ahora').length`) === 1, 'the five stages as dots, the first one lit');
+const c0 = await ev(`__artilugio.game.left`); await sleep(1300);
+ok(await ev(`__artilugio.game.left`) < c0 - 900 && /^[56]:\d\d$/.test(await ev(`document.getElementById('reloj').textContent`)), `the clock runs (${await ev(`document.getElementById('reloj').textContent`)})`);
 ok(await ev(`(() => { const r = document.getElementById('btn-probar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Probar in view with the board');
 await ev(`document.getElementById('btn-probar').click(); 1`);
-ok(await waitFor(`/Pinchazo/.test(document.getElementById('mensaje').textContent)`, 6000), 'with no parts the ball ends on the spikes, and it says so');
-// Past the basket, down to the floor: it blows up, and only then it says the stage failed
-await ev(`document.getElementById('btn-probar').click(); __artilugio.run.ball.x = 7.5; 1`);
-ok(await waitFor(`__artilugio.run?.state === 'boom'`, 4000), 'a ball that touches the bottom blows up');
-ok(await ev(`document.getElementById('mensaje').textContent`) === '', 'the explosion plays out first, with no verdict yet');
-await sleep(250); await b.shot('02-boom');
-ok(await waitFor(`/Bum/.test(document.getElementById('mensaje').textContent)`, 3000), 'then «¡Bum! 💥 Tocó el fondo»');
+ok(await waitFor(`/Prueba otra cosa/.test(document.getElementById('mensaje').textContent)`, 8000), 'with no parts the ball does not make it, and it says why');
 
 // Real drags, as a mouse makes them: press, a few moves, let go (x, y in cells of the board; null = off the board)
 const DRAG = (from, to) => `(async () => {
@@ -61,34 +60,62 @@ const DRAG = (from, to) => `(async () => {
   return 1; })()`;
 const PART = `JSON.stringify(__artilugio.board.placed.map(p => [p.c, p.r, p.dir]))`;
 
-await ev(DRAG('#bandeja [data-pieza="ramp"]', [3, 3.5]));
-ok(await ev(PART) === '[[2,3,1]]' && await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').disabled`), 'dragging the ramp from the tray places it where it is let go, and the tray is empty');
+// The parts by hand on stage 1: drag from the tray, one tap turns, drag to move, Deshacer, drop off to remove
+const sol1 = await ev(`JSON.stringify(__artilugio.level.solution)`).then(JSON.parse);
+const t1 = sol1[0].type;
+await ev(DRAG(`#bandeja [data-pieza="${t1}"]`, [3, 3.5]));
+ok(await ev(`__artilugio.board.placed.length`) === 1 && await ev(PART).then(p => JSON.parse(p)[0].slice(0, 2).join()) === '2,3', 'dragging a part from the tray places it where it is let go');
+const d0 = await ev(`__artilugio.board.placed[0].dir`);
 await ev(TAP(2, 3)); await sleep(100);
-ok(await ev(PART) === '[[2,3,-1]]', 'one tap on it turns it round');
-ok(!await ev(`document.getElementById('btn-quitar').hidden`) && !await ev(`document.getElementById('btn-girar').hidden`), 'and it shows Girar and Quitar');
-await ev(TAP(2, 3)); await sleep(100);
-ok(await ev(PART) === '[[2,3,1]]', 'another tap turns it back');
+ok(t1 !== 'ramp' && t1 !== 'fan' || await ev(`__artilugio.board.placed[0].dir`) === -d0, 'one tap on a ramp or a fan turns it round');
 await ev(DRAG([2.5, 3.5], [1, 4.5]));
-ok(await ev(PART) === '[[0,4,1]]', 'dragging it moves it, snapped to the grid');
+ok(await ev(PART).then(p => JSON.parse(p)[0].slice(0, 2).join()) === '0,4', 'dragging it moves it, snapped to the grid');
 await ev(`document.getElementById('btn-deshacer').click(); 1`);
-ok(await ev(PART) === '[[2,3,1]]', 'Deshacer puts it back where it was');
+ok(await ev(PART).then(p => JSON.parse(p)[0].slice(0, 2).join()) === '2,3', 'Deshacer puts it back');
 await ev(DRAG([2.5, 3.5], null));
-ok(await ev(PART) === '[]' && await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').textContent.includes('×1')`), 'dropped off the board, it goes back to the tray');
-await ev(`document.getElementById('btn-deshacer').click(); 1`);
-await ev(DRAG([2.5, 3.5], [1, 4.5]));
-ok(await ev(PART) === '[[0,4,1]]', 'undone and dragged again');
+ok(await ev(`__artilugio.board.placed.length`) === 0, 'dropped off the board, it goes back to the tray');
 await b.shot('02-board');
-await ev(`document.getElementById('btn-probar').click(); 1`);
-ok(await waitFor(`!document.getElementById('resultado').hidden`, 8000), 'Probar: the ball runs into the basket');
-ok(await ev(`document.getElementById('res-titulo').textContent`) === '¡Funciona!' && await ev(`document.getElementById('res-estrellas').textContent`) === '★★★', '«¡Funciona!» with three stars');
-ok(await ev(`document.querySelector('#res-salidas a')?.getAttribute('href')`) === '../../labs/', 'and the way back to the lab');
-await b.shot('03-won');
-await ev(`document.getElementById('btn-siguiente').click(); 1`);
-ok(await waitFor(`document.getElementById('nivel').textContent === 'Nivel 2'`), 'Siguiente opens level 2');
+
+// The five stages, each with its known answer placed by drags (and a tap to turn what faces left)
+const PLAY = async () => {
+  const sol = await ev(`JSON.stringify(__artilugio.level.solution)`).then(JSON.parse);
+  for (const p of sol) {
+    await ev(DRAG(`#bandeja [data-pieza="${p.type}"]`, [p.c + 1, p.r + 0.5]));
+    if ((p.dir ?? 1) === -1) { await ev(TAP(p.c, p.r)); await sleep(80); }
+  }
+  const got = await ev(`JSON.stringify(__artilugio.board.placed.map(p => [p.type, p.c, p.r, p.type === 'ramp' || p.type === 'fan' ? p.dir : 1]).sort())`);
+  const want = JSON.stringify(sol.map(p => [p.type, p.c, p.r, p.type === 'ramp' || p.type === 'fan' ? p.dir ?? 1 : 1]).sort());
+  await ev(`document.getElementById('btn-probar').click(); 1`);
+  return got === want;
+};
+const DIFF = ['Fácil', 'Fácil +', 'Medio', 'Difícil', 'Experto'];
+for (let i = 0; i < 5; i++) {
+  ok(await ev(`document.getElementById('nivel').textContent`) === `Etapa ${i + 1} de 5` && await ev(`document.getElementById('dificultad').textContent`) === DIFF[i], `stage ${i + 1}: ${DIFF[i]}`);
+  ok(await PLAY(), `stage ${i + 1}: its answer placed by drags`);
+  ok(await waitFor(`!document.getElementById('resultado').hidden`, 15000), `stage ${i + 1}: the ball rests in the basket`);
+  ok(await ev(`document.getElementById('res-titulo').textContent`) === `¡Etapa ${i + 1} superada!` && await ev(`document.getElementById('res-estrellas').textContent`) === '★★★', `«¡Etapa ${i + 1} superada!» with three stars`);
+  if (i === 0) {
+    const t = await ev(`__artilugio.game.left`); await sleep(1200);
+    ok(await ev(`__artilugio.game.left`) === t, 'the summary stops the clock');
+    await b.shot('03-stage');
+  }
+  ok(await ev(`document.getElementById('btn-siguiente').textContent`) === (i < 4 ? 'Siguiente etapa ›' : 'Ver el resultado ›'), i < 4 ? '«Siguiente etapa ›»' : '«Ver el resultado ›» after the fifth');
+  await ev(`document.getElementById('btn-siguiente').click(); 1`); await sleep(200);
+}
+ok(await waitFor(`document.getElementById('s-fin').classList.contains('active')`), 'the result');
+const total = +await ev(`document.getElementById('fin-puntos').textContent`);
+ok(total >= 75 && total <= 85, `the total: 5 × (10 + 5) plus speed (${total})`);
+ok(await ev(`document.querySelectorAll('#fin-tabla tbody tr').length`) === 7 && /Rapidez/.test(await ev(`document.getElementById('fin-tabla').textContent`)), 'a row per stage, the speed and the total');
+ok(/Nuevo récord/.test(await ev(`document.getElementById('fin-sello').textContent`)), 'a first game is a new best');
+ok(await ev(`document.getElementById('btn-otra').textContent`) === 'Jugar otra vez' && await ev(`document.querySelector('#fin-salidas a')?.getAttribute('href')`) === '../../labs/', 'Jugar otra vez, and the way back to the lab');
+await b.shot('04-result');
+const day = await ev(`JSON.stringify(__artilugio.game.stages.map(l => l.id))`);
+await ev(`document.getElementById('btn-otra').click(); 1`);
+ok(await waitFor(`document.getElementById('nivel').textContent === 'Etapa 1 de 5'`) && await ev(`JSON.stringify(__artilugio.game.stages.map(l => l.id))`) !== day, 'Jugar otra vez: a new game, five other stages');
 
 await b.go(`${SITE}/labs/contraption/?lang=en&test`, 1000);
 ok(await waitFor(`/Build the machine/.test(document.getElementById('lema').textContent)`), 'in English, the cover is in English');
-ok(await ev(`document.getElementById('progreso')?.textContent`) === 'Level 2' && /★ 3/.test(await ev(`document.getElementById('estrellas-total')?.textContent || ''`)), 'the run and its stars are kept: Level 2, ★ 3');
+ok(new RegExp(`Best: ${total}`).test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'and the best is kept');
 ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
 b.close();
 
@@ -97,19 +124,12 @@ await s.go(`${SITE}/labs/contraption/?test`, 1000);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'no sideways scroll at 320 px');
 await s.evaluate(`document.getElementById('btn-jugar').click(); 1`); await sleep(500);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'nor on the board');
-await s.shot('04-board-320');
-// Further on: a level dealt at random from its tier, and 🎲 Otro deals another of the same difficulty
-await s.evaluate(`localStorage.setItem('juegos-de-salon:artilugio', JSON.stringify({ n: 9, stars: {}, seen: [], id: null })); 1`);
-await s.go(`${SITE}/labs/contraption/?test`, 1000);
-ok(await s.evaluate(`document.getElementById('progreso')?.textContent`) === 'Nivel 9', 'the cover picks the run up at Nivel 9');
-await s.evaluate(`document.getElementById('btn-jugar').click(); 1`); await sleep(400);
-const first = await s.evaluate(`__artilugio.level.id`);
-ok(/^t2-/.test(first) && await s.evaluate(`document.getElementById('dificultad').textContent`) === 'Fácil +', `level 9 is dealt from the second tier (${first}), «Fácil +»`);
-ok(!await s.evaluate(`document.getElementById('btn-otro').hidden`), '🎲 Otro is offered');
-await s.evaluate(`document.getElementById('btn-otro').click(); 1`); await sleep(300);
-const second = await s.evaluate(`__artilugio.level.id`);
-ok(second !== first && /^t2-/.test(second) && await s.evaluate(`document.getElementById('nivel').textContent`) === 'Nivel 9', `🎲 Otro deals another of the same tier (${second}), still Nivel 9`);
-await s.shot('06-dealt-320');
+await s.shot('05-board-320');
+// The clock runs out: the game ends where it is
+await s.evaluate(`__artilugio.game.left = 1200; 1`);
+ok(await (async () => { for (let t = 0; t < 5000; t += 100) { if (await s.evaluate(`document.getElementById('s-fin').classList.contains('active')`)) return true; await sleep(100); } return false; })(), 'at 0:00 the game ends');
+ok(/Se acabó el tiempo/.test(await s.evaluate(`document.getElementById('fin-sello').textContent`)) && await s.evaluate(`document.getElementById('fin-puntos').textContent`) === '0', '«¡Se acabó el tiempo!», 0 points');
+await s.shot('06-time-320');
 ok(!s.errors.length, `no errors at 320 px ${JSON.stringify(s.errors)}`);
 s.close();
 if (failures) { console.log(`✗ ${failures} failures`); process.exit(1); }

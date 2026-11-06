@@ -22,10 +22,30 @@
 /* The run on the cover: the level, its difficulty, the stars */
 .niveles { justify-content: center; }
 
-.cabecera { display: flex; align-items: center; gap: var(--s-8); flex-wrap: wrap; }
-.cabecera .objetivo { flex: 1; text-align: right; font-size: var(--fs-90); }
-.cabecera .link-btn { min-height: 44px; }
-.cabecera b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; }
+.cabecera { display: flex; align-items: center; gap: var(--s-6); }
+.cabecera .chip { white-space: nowrap; }
+/* The five stages as dots: passed, failed, the one in play */
+.etapas { display: flex; gap: var(--s-4); flex: 1; justify-content: center; }
+.etapas span { width: 10px; height: 10px; border-radius: 50%; background: var(--glass-border); }
+.etapas .ok { background: var(--lime); }
+.etapas .no { background: var(--red); }
+.etapas .ahora { background: var(--yellow); box-shadow: 0 0 0 3px rgb(var(--yellow-rgb) / 0.3); }
+.reloj { font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; }
+.reloj.apurado { color: var(--pink); animation: artilugio-late 1s ease-in-out infinite; }
+@keyframes artilugio-late { 50% { opacity: 0.55; } }
+/* The result's table: a row per stage, the speed and the total */
+.tabla-fin { width: 100%; border-collapse: collapse; font-size: var(--fs-85); }
+.tabla-fin th { color: var(--muted); font-weight: 700; text-align: left; padding: var(--s-4); }
+.tabla-fin td { padding: var(--s-6) var(--s-4); border-top: 1px solid var(--glass-border); }
+.tabla-fin td:last-child, .tabla-fin th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.tabla-fin .no td { color: var(--muted); }
+.tabla-fin .estrellas-td { color: var(--yellow); white-space: nowrap; }
+.tabla-fin .total td { font-weight: 900; font-size: var(--fs-100); }
+.leyenda { font-size: var(--fs-75); margin: var(--s-8) 0 0; }
+.score-big { font: 900 clamp(3rem, 16vw, 4.4rem)/1 var(--font-num); color: var(--yellow); text-shadow: var(--shadow-text); }
+.sello { margin: 0; font-weight: 900; }
+.cabecera b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; white-space: nowrap; }
+@media (max-width: 360px) { .cabecera b { font-size: var(--fs-110); } .cabecera .chip { font-size: var(--fs-75); padding-inline: var(--s-6); } .etapas span { width: 7px; height: 7px; } .reloj { font-size: var(--fs-110); } }
 
 /* The board: an 8 × 11 grid, as wide as the screen allows and never taller than it */
 .tablero {
@@ -54,5 +74,4 @@ body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: no
 /* Once won, only the result card speaks: the tray and the buttons under the board step aside */
 body.ganado #s-juego > .bandeja, body.ganado #s-juego > .btn-row, body.ganado .mensaje { visibility: hidden; }
 .herramientas .btn { padding-inline: var(--s-8); white-space: nowrap; }
-/* On a narrow phone the header keeps the level, its difficulty and 🎲 Otro; the glowing basket says the goal */
-@media (max-width: 400px) { .cabecera .objetivo { visibility: hidden; } }
+
