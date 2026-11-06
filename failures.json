@@ -427,7 +427,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/contraption/engine.js, public/labs/contraption/game.js",
       "signature": "0b265da56c",
       "date": "2026-11-06T03:42:41.546Z",
-      "fix": null,
+      "fix": {
+        "commit": "803a3ef023ed803fc86b804273602fed10f3af96",
+        "date": "2026-11-06T03:48:45.415Z",
+        "stat": "9 file(s) +347 −99: README.md, changelog/ccr-03358154-lf7wxx.md, docs/facts.json, docs/games/contraption.md, public/labs/contraption/engine.js, …"
+      },
       "flaky": false
     },
     {
@@ -440,7 +444,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/contraption/engine.js, public/labs/contraption/game.js, public/labs/contraption/scene.js",
       "signature": "b135376773",
       "date": "2026-11-06T03:48:27.674Z",
-      "fix": null,
+      "fix": {
+        "commit": "803a3ef023ed803fc86b804273602fed10f3af96",
+        "date": "2026-11-06T03:48:45.415Z",
+        "stat": "2 file(s) +11 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
