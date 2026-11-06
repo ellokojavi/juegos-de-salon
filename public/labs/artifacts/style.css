@@ -1,13 +1,13 @@
-/* Artilugio (lab). The shell (screens, hero, panel, buttons, chips) is base.css's; this sheet holds only
+/* Artefactos (lab). The shell (screens, hero, panel, buttons, chips) is base.css's; this sheet holds only
    the board, the tray and the result card, on the design system's tokens (D-533, docs/DESIGN.md). */
 
 /* The board's own colour (DESIGN.md §4): the workshop's darker floor behind the canvas */
-:root { --artilugio-fondo: rgba(10, 4, 24, 0.45); }
+:root { --artifacts-floor: rgba(10, 4, 24, 0.45); }
 
 /* The cover's demo: a level solving itself, framed like the board */
 .demo {
   width: min(40%, 160px); aspect-ratio: 8 / 11; margin: 0 auto var(--s-10); border-radius: var(--radius);
-  border: 1px solid var(--glass-border); background: var(--artilugio-fondo); overflow: hidden; box-shadow: var(--shadow-panel);
+  border: 1px solid var(--glass-border); background: var(--artifacts-floor); overflow: hidden; box-shadow: var(--shadow-panel);
 }
 .demo canvas { display: block; width: 100%; height: 100%; }
 @media (max-height: 700px) { .demo { width: min(30%, 110px); } }
@@ -31,8 +31,8 @@
 .etapas .no { background: var(--red); }
 .etapas .ahora { background: var(--yellow); box-shadow: 0 0 0 3px rgb(var(--yellow-rgb) / 0.3); }
 .reloj { font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; }
-.reloj.apurado { color: var(--pink); animation: artilugio-late 1s ease-in-out infinite; }
-@keyframes artilugio-late { 50% { opacity: 0.55; } }
+.reloj.apurado { color: var(--pink); animation: artifacts-late 1s ease-in-out infinite; }
+@keyframes artifacts-late { 50% { opacity: 0.55; } }
 /* The result's table: a row per stage, the speed and the total */
 .tabla-fin { width: 100%; border-collapse: collapse; font-size: var(--fs-85); }
 .tabla-fin th { color: var(--muted); font-weight: 700; text-align: left; padding: var(--s-4); }
@@ -50,7 +50,7 @@
 /* The board: an 8 × 11 grid, as wide as the screen allows and never taller than it */
 .tablero {
   position: relative; width: min(100%, max(220px, calc((100svh - 430px) * 8 / 11))); aspect-ratio: 8 / 11; margin: 0 auto;
-  border: 1px solid var(--glass-border); border-radius: var(--radius); background: var(--artilugio-fondo);
+  border: 1px solid var(--glass-border); border-radius: var(--radius); background: var(--artifacts-floor);
   overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #lienzo { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: none; }

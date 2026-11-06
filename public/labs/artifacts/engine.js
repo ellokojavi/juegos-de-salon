@@ -1,5 +1,5 @@
 /**
- * Artilugio's engine: the board, the parts, the placing rules and the physics of the ball, with no DOM,
+ * Artefactos' engine: the board, the parts, the placing rules and the physics of the ball, with no DOM,
  * so the tests run it in node and the page only draws it.
  *
  * The board is a grid of COLS × ROWS cells; one cell is one unit, y grows downwards. Every part is two
@@ -15,10 +15,11 @@ export const R = 0.28;            // the ball's radius
 export const G = 22;              // gravity, cells/s²
 export const SPRING_V = 18;       // a trampoline's throw: up about 7 rows
 export const FAN = 26;            // a fan's push, cells/s²
-export const MAX_T = 14;          // a run that lasts longer has failed
+export const MAX_T = 30;          // a run that lasts longer has failed (trampolines can keep a ball in the air a long while)
 export const STILL = 1.4;         // seconds almost still: stuck
 export const ROLL = 1.6;          // rolling resistance on flat ground, per second
-export const SETTLE = 0.5;        // seconds at rest in the basket: passed
+export const CUP_ROLL = 7;        // the basket's floor is rough: a ball rolls a little and stops
+export const SETTLE = 0.3;        // seconds at rest in the basket: passed
 export const SETTLE_V = 0.6;      // below this speed the ball is at rest
 export const PARTS = ['ramp', 'plank', 'spring', 'fan'];
 
@@ -89,7 +90,7 @@ export function fixedSegments(level) {
     else s.push(...segmentsOf(f).map(x => [...x, f]));
   }
   const { c, r } = level.goal;
-  s.push([c + 0.1, r, c + 0.1, r + 1, 'solid'], [c + 1.9, r, c + 1.9, r + 1, 'solid'], [c + 0.1, r + 1, c + 1.9, r + 1, 'solid']);
+  s.push([c + 0.1, r, c + 0.1, r + 1, 'solid'], [c + 1.9, r, c + 1.9, r + 1, 'solid'], [c + 0.1, r + 1, c + 1.9, r + 1, 'cup']);
   return s;
 }
 /** The cells nobody may place a part on: the fixed pieces', the cup's and the start's. */
@@ -201,7 +202,7 @@ export function stepRun(run, dt) {
       b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny;
       // A little rolling friction along the surface, more on a flat floor so a ball rolling there comes to rest
       b.vx *= 0.998; b.vy *= 0.998;
-      if (ny < -0.97) b.vx *= 1 - ROLL * dt;
+      if (ny < -0.97) b.vx *= 1 - (s[4] === 'cup' ? CUP_ROLL : ROLL) * dt;
       if (vn < -4) run.events.push({ type: 'knock' });
     }
   }
@@ -216,6 +217,8 @@ export function stepRun(run, dt) {
   run.settle = inCup && slow ? (run.settle || 0) + dt : 0;
   if (run.settle >= SETTLE) { run.state = 'won'; run.events.push({ type: 'won' }); return run; }
   run.still = slow && !inCup ? run.still + dt : 0;
+  // Out of time: a ball already down in the basket counts (it was only settling), any other is stuck
+  if (run.t > MAX_T && inCup) { run.state = 'won'; run.events.push({ type: 'won' }); return run; }
   if (run.still > STILL || run.t > MAX_T) { run.state = 'stuck'; run.events.push({ type: 'stuck' }); }
   return run;
 }

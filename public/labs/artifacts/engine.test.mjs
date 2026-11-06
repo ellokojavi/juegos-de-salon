@@ -1,4 +1,4 @@
-// Artilugio's engine: placing parts, and every level solved by its solution and failed without parts.
+// Artefactos' engine: placing parts, and every level solved by its solution and failed without parts.
 import assert from 'node:assert/strict';
 import { POOL } from './levels.js';
 import { SETTLE, ROWS as FLOOR, LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf } from './engine.js';
@@ -82,6 +82,16 @@ LEVELS.forEach((L, i) => {
   assert.ok(events.some(e => e.type === 'boom' && e.y <= FLOOR), 'with where it happened, for the explosion');
 }
 
+// A long run that ends in the basket counts: trampolines kept this one in the air 13.5 s, and the
+// old 14 s cap called it stuck while it was settling in the basket (the owner's report, stage 4)
+{
+  const L = POOL.find(l => l.id === 't5-10'), b = newBoard(L);
+  b.placed = [{ type: 'ramp', c: 6, r: 1, dir: -1 }, { type: 'spring', c: 1, r: 6, dir: 1 }, { type: 'spring', c: 3, r: 6, dir: 1 }];
+  const r = simulate(b);
+  assert.equal(r.state, 'won', `the ball that lands in the basket late still passes (${r.state} at ${r.t.toFixed(2)} s)`);
+  assert.ok(r.t > 13.5);
+}
+
 // Stars: the fewest parts, three
 assert.equal(starsOf(0, 1), 3); assert.equal(starsOf(0, 2), 2); assert.equal(starsOf(5, 4), 1);
-console.log(`✓ artilugio engine: ${LEVELS.length} hand-made and ${POOL.length} generated levels solved, placing, physics`);
+console.log(`✓ artifacts engine: ${LEVELS.length} hand-made and ${POOL.length} generated levels solved, placing, physics`);
