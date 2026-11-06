@@ -403,6 +403,19 @@
         "stat": "21 file(s) +1855 −4: README.md, changelog/ccr-14bf451e-qic63j.md, changelog/ccr-9fd16d5f-jgf8sp.md, changelog/claude-incremental-memory-game-p9nlrr.md, docs/DESIGN.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42156355862,
+      "check": "end-to-end",
+      "pr": 1244,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "11007241f11c4812fc860988e74fafbed36e5ef7",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ agentes: the rules are folded below the board (📖 Reglas de Agentes)",
+      "signature": "0faec1e3e5",
+      "date": "2026-11-06T03:36:29.934Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
