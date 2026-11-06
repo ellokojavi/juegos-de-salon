@@ -472,6 +472,7 @@ node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
+node public/labs/contraption/engine.test.mjs
 node public/labs/dominorama/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/flap/engine.test.mjs
@@ -808,6 +809,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [El caso](docs/games/case.md)
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
+- [⚙️ Artilugio (lab prototype, in Juegos en prueba)](docs/games/contraption.md)
 - [La Copa](docs/games/cup.md)
 - [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)

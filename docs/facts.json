@@ -1262,6 +1262,10 @@
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
+    "public/labs/contraption/engine.js",
+    "public/labs/contraption/game.js",
+    "public/labs/contraption/levels.js",
+    "public/labs/contraption/scene.js",
     "public/labs/dominorama/engine.js",
     "public/labs/dominorama/game.js",
     "public/labs/exploding-numbers/engine.js",
@@ -1402,6 +1406,7 @@
     "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
+    "public/labs/contraption/engine.test.mjs",
     "public/labs/dominorama/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/flap/engine.test.mjs",
@@ -1514,6 +1519,7 @@
     "ci.mjs",
     "code/lab.mjs",
     "contact-sheet.mjs",
+    "contraption/lab.mjs",
     "cup-games/languages.mjs",
     "cup/again.mjs",
     "cup/archived.mjs",
@@ -1739,6 +1745,10 @@
     {
       "path": "docs/games/code.md",
       "title": "🔐 La clave (prototipo del laboratorio, en La Bodega)"
+    },
+    {
+      "path": "docs/games/contraption.md",
+      "title": "⚙️ Artilugio (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/cup.md",
