@@ -2,13 +2,20 @@
    El teclado, los tableros de intentos y las pistas de famas y toques, compartidos (D-102)
    Los usan Toque y Fama y, en La Copa, 🔢 Toque y Fama: Número y 🔤 Toque y Fama
    con letras. Salieron de bulls-and-cows/style.css sin cambios.
+   Migrated to the design system (D-533, #1193): written on the tokens; its own colours are the
+   tokens below (DESIGN.md §4).
    ========================================================== */
+:root {
+  --tc-sombra: rgba(0,0,0,0.35);     /* the drop under a digit box and the big reply */
+  --tc-descartado: rgba(0,0,0,0.4);  /* a guess the clues had already ruled out */
+  --tc-tinta-lima: #1d3a00;          /* ink on a lime clue chip (a fama) */
+}
 /* Keypad. Las cifras van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden (D-30) */
 .entry { display: flex; justify-content: center; gap: 10px; margin: 10px 0 14px; }
 .entry .box {
   width: clamp(48px, 15vw, 64px); aspect-ratio: 3 / 4; border-radius: 14px; background: var(--card); color: var(--card-ink);
   font: 900 clamp(1.7rem, 7.6vw, 2.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center;
-  box-shadow: 0 6px 0 rgba(0,0,0,0.35); transition: transform 0.1s;
+  box-shadow: 0 6px 0 var(--tc-sombra); transition: transform 0.1s;
 }
 .entry .box.filled { animation: pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .entry .box.hidden-digit { background: linear-gradient(160deg, var(--pink), var(--purple)); color: transparent; }
@@ -16,45 +23,47 @@
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 340px; margin: 0 auto; }
 .keypad button {
   border: 0; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
-  font: 900 1.7rem var(--font-num); font-variant-numeric: tabular-nums; padding: 12px 0; min-height: 58px; cursor: pointer; transition: transform 0.08s, background 0.15s;
+  font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; padding: 12px 0; min-height: 58px; cursor: pointer; transition: transform 0.08s, background 0.15s;
 }
-.keypad button:active { transform: scale(0.94); background: rgba(255,255,255,0.2); }
+.keypad button:active { transform: scale(0.94); background: rgb(from var(--ink) r g b / 0.2); }
 .keypad button:disabled { opacity: 0.25; }
 .keypad button { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .keypad button.blocked {
-  opacity: 1; color: rgba(255,255,255,0.35); background: rgba(255, 46, 136, 0.12); border-color: rgba(255, 46, 136, 0.5);
+  opacity: 1; color: var(--placeholder); background: rgb(from var(--pink) r g b / 0.12); border-color: rgb(from var(--pink) r g b / 0.5);
   text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 4px; position: relative;
 }
-.keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: 0.8rem; }
-.block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
-.keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; border-color: transparent; box-shadow: 0 5px 0 #9a4a00; font-family: var(--font-display); font-size: 1.9rem; }
+.keypad button.blocked::after { content: '🚫'; position: absolute; top: 4px; right: 6px; font-size: var(--fs-75); }
+.block-hint { margin: 10px auto 0; max-width: 360px; text-align: center; color: var(--muted); font-size: var(--fs-75); font-weight: 700; line-height: 1.35; }
+.keypad button.ok { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); border-color: transparent; box-shadow: 0 5px 0 var(--edge-yellow); font-family: var(--font-display); font-size: var(--fs-200); }
+/* At 320 px a key is ~89 px and «Probar» at 2 rem fills it edge to edge, its slant spilling over: one step down on narrow phones */
+@media (max-width: 374px) { .keypad button.ok { font-size: var(--fs-160); } }
 .keypad button.ok:disabled { opacity: 0.4; box-shadow: none; }
-.keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: 1.3rem; }
+.keypad button.del { font-family: var(--font-body); font-weight: 900; font-size: var(--fs-120); }
 .boards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .board { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; min-height: 120px; }
-.board.turn { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.35); }
+.board.turn { border-color: var(--cyan); box-shadow: 0 0 0 2px rgb(from var(--cyan) r g b / 0.35); }
 .board h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
 .board .count { color: var(--muted); font-size: 0.75rem; font-weight: 800; text-align: center; margin-bottom: 6px; }
 .board ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.board li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 5px 8px; animation: slideUp 0.25s ease-out both; }
+.board li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: center; background: var(--well); border-radius: 10px; padding: var(--s-6) var(--s-8); animation: slideUp 0.25s ease-out both; }
 .board li .val { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.14em; }
 .board li .clue { display: flex; gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
-.board li .clue span { font-size: 0.78rem; font-weight: 900; padding: 3px 8px; border-radius: 999px; white-space: nowrap; font-family: var(--font-num); letter-spacing: 0.03em; }
-.board li .clue .f { background: var(--lime); color: #1d3a00; }
-.board li .clue .t { background: var(--yellow); color: #3a1200; }
-.board li .clue .z { background: rgba(255,255,255,0.15); color: var(--muted); }
-.board li.hit { background: linear-gradient(90deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.35)); }
+.board li .clue span { font-size: var(--fs-75); font-weight: 900; padding: var(--s-4) var(--s-8); border-radius: 999px; white-space: nowrap; font-family: var(--font-num); letter-spacing: 0.03em; }
+.board li .clue .f { background: var(--lime); color: var(--tc-tinta-lima); }
+.board li .clue .t { background: var(--yellow); color: var(--ink-on-yellow); }
+.board li .clue .z { background: rgb(from var(--ink) r g b / 0.15); color: var(--muted); }
+.board li.hit { background: linear-gradient(90deg, rgb(from var(--yellow) r g b / 0.35), rgb(from var(--pink) r g b / 0.35)); }
 /* A guess the clues had already ruled out: finished board, lab key only (D-453) */
-.board li .clue .d { background: rgba(255,255,255,0.1); padding: 3px 6px; }
-.board li.out { background: rgba(0,0,0,0.4); }
+.board li .clue .d { background: rgb(from var(--ink) r g b / 0.1); padding: var(--s-4) var(--s-6); }
+.board li.out { background: var(--tc-descartado); }
 .board li.out .val { color: var(--muted); }
 .board .board-note { color: var(--muted); font-size: 0.75rem; font-weight: 800; margin: 8px 0 0; text-align: center; }
 .board .empty { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 10px 0; }
-.reply-big { font: 900 clamp(2rem, 10vw, 2.8rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.reply-big { font: 900 clamp(2rem, 10vw, 2.8rem) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-shadow: 0 4px 0 var(--tc-sombra); }
 .reply-clue { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
 .reply-clue span { font-weight: 900; font-size: 1.2rem; padding: 8px 14px; border-radius: 999px; }
-.reply-clue .f { background: var(--lime); color: #1d3a00; }
-.reply-clue .t { background: var(--yellow); color: #3a1200; }
-.reply-clue .z { background: rgba(255,255,255,0.15); }
+.reply-clue .f { background: var(--lime); color: var(--tc-tinta-lima); }
+.reply-clue .t { background: var(--yellow); color: var(--ink-on-yellow); }
+.reply-clue .z { background: rgb(from var(--ink) r g b / 0.15); }
 /* Con `elegir` (#604) las casillas se tocan para elegir dónde va la próxima cifra */
 .entry--elegir .box { cursor: pointer; -webkit-tap-highlight-color: transparent; }

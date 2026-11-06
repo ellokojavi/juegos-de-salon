@@ -530,3 +530,77 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   «Tus copas»), so the button climbs one level at a time (#1040, C-19); the menu is one more tap.
   With `?labs` it goes to the lab. It carries a real `href`, so a long press or a new tab lands right
   too. Behind flag `cup-back-board`, published for everyone on 2026-10-30.
+
+## In the design system (D-533, phase 7, #1196)
+
+La Copa's stylesheet is dissolved into the shared one PR by PR, in the order of
+[docs/design/cup-unification.md](../design/cup-unification.md); the owner declined its PRs 6 and 7
+(2026-11-05), so "🏠 Volver al menú" stays on a Cup mini-game's cover and the cup's own colours keep
+their meaning.
+
+- **PR 1, the exact copies:** `cup/style.css` drops its copies of the game shell (`.screen`, the
+  `.field` rules, `.form-error`, `.seg`, `.result-hero`); the admin's small input (`input.mini`) keeps
+  its own rule on the tokens. 🔍 El caso's scene (`.cs-*`, ~120 lines) moves to
+  `games/case/style.css`, loaded by its `ui.js` with `loadCss()` like Babel's (D-468). The shell wins
+  where the copy differed: field labels at 0.9 rem (were 0.85), inputs at 1.1 rem (were 1.15) with no
+  48 px floor (they measure 52 px), the join screen's "Soy nuevo / Ya estoy inscrito" at the shell's
+  0.95 rem with 4 px padding (at 320 px both now fit in one line: the buttons were 66 px tall, now 44),
+  and the result's trophy at 4.2 rem on its own line (was 4 rem inline).
+- **PR 2, switches and chips:** the create screen's 🏁 row is the shell's `.toggle-row` with its
+  `.switch` (`.dur-switch` is gone; the button keeps `role="switch"` and `aria-checked`, and gains
+  `.on`); the three pill toggles (the names to sit as on the join screen, the week's styles, the
+  length shortcuts) are one `.chip-btn` in `base.css`; the final's ×2 is `base.css`'s `.chip--cyan`
+  (was `.chip--final`, same colours, D-151). Intended differences: the 🏁 switch is the shell's
+  58 × 34 one (dark track, yellow ring and knob when on; was 52 × 30, white knob on a yellow track),
+  its row a well at 25 % with a 14 px corner and no border (was 30 %, 16 px, a border) with 🏁 in the
+  title line; a chosen chip is yellow everywhere (the name to sit as was cyan, the length shortcut
+  yellow text): 2 px border, a yellow tint and ring like `.opcion.on`; the names to sit as are
+  0.85 rem at 800 (were 1 rem at 900), the length shortcuts' border 2 px (was 1) on a well (was glass).
+- **PR 3, the shared variants:** what was the cup's own variant of a shared control is now
+  `base.css`'s: the choice buttons (`.opciones`, `.opcion`: the cup's copy is gone, only its
+  `.variantes` narrow columns stay), the hero's dark-emoji outline (`.intro-hero .icon.emoji-claro`),
+  the PIN field (`input.pin`, `.pin-row` and its 👁 `.pin-show`, were `.pin-fila` and `.ver-pin`), the
+  character counter (`.counter`, `.counter.full`, were `.contador`, `.lleno`), the date field
+  (`.field input[type=date]`, was `input.fecha`), the inline link (`.link-inline`, was `.linkish`),
+  danger (`.btn--danger` and `.btn--ghost.btn--danger`, were `.btn--red` and `.btn--peligro`, with
+  `--edge-red` and `--danger-soft` as tokens; `.panel--danger`, was `.peligro`), the wrapping button
+  row (`.btn-row--wrap`, was `.btn-row.tres` and two `:has()` rules) and the sheet's head
+  (`.hoja-cabeza`); `.link-btn`'s copy is gone. Every colour keeps its value. Intended differences:
+  the covers' hero emoji at the shell's 4.2 rem (was 4 rem); "Reportar un problema" and the other
+  `.link-btn`s at the shell's 0.95 rem (were 0.85) with no 8 px above; the Uno al día sheet's
+  "Silenciar" on the home page and `/today/`, which had no style outside La Copa, now has the soft
+  pink it had inside it.
+- **PR 4, notices, the snackbar and waiting:** La Copa's notices and toast are `base.css`'s now,
+  under English names because two games already use the old ones for something else (Batalla
+  Naval's `.toast`, Aletazo's `.aviso`): `.aviso` → `.notice`, `.aviso.bien` / `.aviso.mal` →
+  `.notice--good` / `.notice--bad` (in the cup's screens and 11 of its mini-games' `ui.js`), `.toast` →
+  `.snackbar`; their two colours without a token are `base.css`'s `--ink-bad` and `--snackbar-bg`.
+  `espera()` draws with the shared `showWaiting()` (`assets/js/waiting.js`), whose `.waiting--screen`
+  replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended
+  difference is the waiting line's room, 32 px above and below (was 30). `uno-al-dia-ui.js`'s intro line
+  keeps `.aviso`: on the home games it has no style, and giving it one is their migration, not this one.
+- **PR 5, the rules in the shared block:** La Copa's own rules block (`.reglas`, the rules folded
+  under the board, D-133) is the shared folding panel, `details.panel`, the same block as a home
+  game's "🧠 Cómo se juega"; its eleven rules are gone from `cup/style.css` (the full-screen game's pill,
+  `body.pantalla-completa #jugar-reglas`, keeps its own placement). The covers' how-to-play (a day's
+  cover, a practice's cover, a final round) are the same `details.panel`, titled "🧠 Cómo se juega",
+  and stay **open** as before: whether to fold them like a home game's (U-16) is still the owner's
+  call. Intended differences, under the board: a glass panel with the panel's 18 px padding (was a
+  darker well, 18 % black, with no padding), the title at the left in ink, bold, 1.05 rem, with the
+  panel's ▾ (was centred, muted, 0.95 rem, with a line under it when open); its summary keeps a 44 px
+  target (was 48); 24 px above it (was 22). On the covers: the title is the summary ("🧠 Cómo se
+  juega", 1.05 rem bold, with ▾) instead of a `.lead` line, and it can be folded.
+- **On the tokens:** `cup/style.css` is written on `base.css`'s tokens (185 lint hits to 0 beyond two
+  allowlisted escapes: the podium's 4 px feet and the day card's 2.4 rem emoji). Token colours by hand
+  are the token or `rgb(from var(--x) r g b / a)`; what has no token is La Copa's own `--cp-*` at the
+  top of the sheet (DESIGN.md §4), every value unchanged, the floating widgets' night a fixed value
+  (`--cp-noche`) because Pintaminas' hard mode redeclares `--bg1`. Intended differences, the nearer
+  step: the table's day blocks and the eliminated pill at 0.75 rem (were 0.72 and 0.66) with an 8 px
+  corner (was 6), the ×2 chip beside a day 0.75 rem (was 0.65), the legend 0.75 rem (was 0.8) with
+  6 px gaps (were 5), Tus días' emoji and › 1.4 rem (were 1.5), the week's game names 0.9 rem (were
+  0.95), the day emoji 1.4 rem (was 1.35), the − / + of the length 1.6 rem (were 1.8) and its number
+  2 rem (was 1.9), the 🎲 at 320 px 1 rem (was 1.05), the words' keypad letters 1 rem and Probar
+  1.2 rem (were 1.05 and 1.3), Zip's and Desenredo's clock 1.1 rem (was 1.15), the rules' diagrams'
+  corners 8 px (were 5 and 6) and 24 px apart (were 22), Tango's = and ≠ 0.75 rem (were 0.7), the
+  podium's first step 28 px above (was 26), a few 3 px paddings and margins 4 px.
+

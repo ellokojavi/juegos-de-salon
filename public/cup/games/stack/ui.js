@@ -201,6 +201,10 @@ export function montar(raiz, ctx) {
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) && Number.isFinite(ctx.jugadas.n) ? ctx.jugadas : null;
   const vez = ++partidas;
   const sim = simulacion; simulacion = 0;
+  // The score's tally on the end screen, in the lab until the owner publishes it (flag babel-tally,
+  // D-498); asked now, so the answer is in long before the game ends. lab: #seccion-babel-tally
+  let conCuenta = false;
+  flag('babel-tally').then(v => { conCuenta = v; }).catch(() => {});
   const S = { g: newGame(performance.now() + 400), kinds: [], fin: false, pausa: 0, pausado: 0, inicio: performance.now(), finEn: 0, dormido: false, ms: 0 };
 
   const lienzo = el('canvas', { class: 'sk-lienzo', 'aria-hidden': 'true' });
@@ -308,7 +312,7 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(cuentaPuntos(e, { el, T, SFX, vibrate, recien }), boton);
+      fin.replaceChildren(conCuenta ? cuentaPuntos(e, { el, T, SFX, vibrate, recien }) : null, boton);
       // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
       document.getElementById('sk-musica-credito')?.remove();
       const credito = creditoMusica(el, T);
@@ -387,17 +391,17 @@ export function montar(raiz, ctx) {
 function cuentaPuntos(e, { el, T, SFX, vibrate, recien }) {
   const p = Array.isArray(e.kinds) && e.kinds.length ? puntos(e.kinds) : { floors: Math.max(0, e.n | 0), streaks: 0, streakBonus: 0, lengthBonus: 0, total: Math.max(0, e.n | 0) };
   const total = p.floors + p.streakBonus + p.lengthBonus;
-  const termino = (cls, signo, valor, rotulo) => el('div', { class: `sk-termino ${cls}` },
-    signo ? el('span', { class: 'sk-signo' }, signo) : null,
-    el('span', { class: 'sk-valor' }, valor), el('small', {}, rotulo));
-  const pasos = [termino('pisos', '', String(p.floors), T.skFloors[forma(p.floors)])];
-  if (p.streakBonus) pasos.push(termino('bono', '+', String(p.streakBonus), `🔥 ${T.skTallyStreaks[forma(p.streaks)]}`));
-  if (p.lengthBonus) pasos.push(termino('bono', '+', String(p.lengthBonus), `📏 ${T.skTallyLength}`));
+  // A receipt (the owner's call: labels on one line, figures big): a row per term, its label on the
+  // left and its figure on the right, then a rule and the total
+  const fila = (cls, emoji, rotulo, valor) => el('div', { class: `sk-termino ${cls}` },
+    el('span', { class: 'sk-rotulo' }, el('span', { 'aria-hidden': 'true' }, emoji), ' ', el('span', { class: 'sk-palabra' }, rotulo)),
+    typeof valor === 'string' ? el('span', { class: 'sk-valor' }, valor) : valor);
+  const pasos = [[fila('pisos', '🧱', T.skFloors[forma(p.floors)], String(p.floors))]];
+  if (p.streakBonus) pasos.push([fila('bono', '🔥', T.skTallyStreaks[forma(p.streaks)], `+${p.streakBonus}`)]);
+  if (p.lengthBonus) pasos.push([fila('bono', '📏', T.skTallyLength, `+${p.lengthBonus}`)]);
   const valorTotal = el('span', { class: 'sk-valor', id: 'sk-total' }, String(total));
-  const rotuloTotal = el('small', {}, T.skPoints[forma(total)]);
-  const fin = el('div', { class: 'sk-termino total' }, el('span', { class: 'sk-signo' }, '='), valorTotal, rotuloTotal);
-  const caja = el('div', { class: 'sk-cuenta', id: 'sk-cuenta', 'aria-label': `${total} ${T.skPoints[forma(total)]}` }, ...pasos, fin);
-  if (total >= 100) caja.classList.add('compacta');
+  const fin = fila('total', '🏆', T.skPoints[forma(total)], valorTotal);
+  const caja = el('div', { class: 'sk-cuenta', id: 'sk-cuenta', 'aria-label': `${total} ${T.skPoints[forma(total)]}` }, ...pasos.flat(), fin);
   if (!recien || QUIETO()) { caja.classList.add('lista'); return caja; }
   // The total rolls from what it said to what it says now, a tick at a time
   let mostrado = 0;
@@ -414,10 +418,10 @@ function cuentaPuntos(e, { el, T, SFX, vibrate, recien }) {
   valorTotal.textContent = '0';
   const sumas = [p.floors, p.streakBonus, p.lengthBonus].filter((x, i) => i === 0 || x);
   let acumulado = 0, t = 1300;
-  pasos.forEach((nodo, i) => {
+  pasos.forEach((nodos, i) => {
     setTimeout(() => {
       if (!caja.isConnected) return;
-      nodo.classList.add('entra');
+      nodos.forEach(n => n.classList.add('entra'));
       if (i === 0) fin.classList.add('entra');
       acumulado += sumas[i];
       rodar(acumulado, i === 0 ? 700 : 500);

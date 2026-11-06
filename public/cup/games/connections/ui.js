@@ -55,20 +55,20 @@ export function montar(raiz, ctx) {
       poner(caja, el('button', {
         class: 'btn btn--yellow', id: 'btn-confirmar', disabled: sel.length !== 4,
         onClick: () => {
-          if (motor.repetido(jugadas, sel)) { aviso = el('div', { class: 'aviso' }, T.alreadyTried); SFX.tap(); dibujar(); return; }
+          if (motor.repetido(jugadas, sel)) { aviso = el('div', { class: 'notice' }, T.alreadyTried); SFX.tap(); dibujar(); return; }
           jugadas.push(sel.slice());
           ctx.guardar(jugadas);
           const e2 = motor.estado(p, jugadas);
           if (e2.resueltos.length > e.resueltos.length) { SFX.reveal(); vibrate(30); aviso = null; sel = []; }
           else {
             SFX.error(); vibrate([40, 40, 40]);
-            aviso = el('div', { class: 'aviso mal shake' }, motor.aUna(p, sel) ? T.oneAway : T.wrongGroup);
+            aviso = el('div', { class: 'notice notice--bad shake' }, motor.aUna(p, sel) ? T.oneAway : T.wrongGroup);
           }
           dibujar();
         },
       }, sel.length === 4 ? `${T.confirm} · ${sel.join(', ')}` : T.select4));
     } else {
-      poner(caja, el('div', { class: 'aviso ' + (e.perdio ? 'mal' : 'bien') }, e.perdio ? T.groupsFail : `🎉 ${T.groupsOk}`),
+      poner(caja, el('div', { class: 'notice notice--' + (e.perdio ? 'bad' : 'good') }, e.perdio ? T.groupsFail : `🎉 ${T.groupsOk}`),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
     }
     poner(raiz, caja);

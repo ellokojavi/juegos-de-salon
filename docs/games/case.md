@@ -127,6 +127,7 @@ medir (D-267). El panel lo muestra con su clave cruda (C-16).
 ```
 public/cup/games/case/engine.js   motor: genera el caso, el solver, la ayuda y el puntaje (sin DOM)
 public/cup/games/case/ui.js       pantalla: grilla, pistas, sellos, portada de la antesala
+public/cup/games/case/style.css   its stylesheet (`.cs-*`), loaded by ui.js with loadCss (D-468); out of cup/style.css since phase 7 (#1196)
 public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los tres idiomas
 public/cup/game.js                lo de `diario`: el caso del día, seguir al recargar y el final
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
@@ -155,3 +156,15 @@ puede quedarse.
 - **C-8b (un error se queda hasta que el jugador toca):** el mensaje de error se va solo a los
   4 s, por pedido del dueño. El error no se pierde: la carta queda marcada con ✕ y se suma a la
   cuenta de errores. El temporizador solo cierra su propio mensaje.
+
+## In the design system (D-533, phase 7, #1196)
+
+`cup/games/case/style.css` is written on `base.css`'s tokens (70 lint hits to 0 beyond three
+allowlisted escapes: the bubble's 4 px tail, the stamp at 2.6 rem, a suspect's trade at 0.64 rem).
+Token colours by hand are the token or `rgb(from var(--x) r g b / a)`; the criminal's pink, the
+second group's, the verdict buttons' and a card's back are the game's own `--cs-*` (DESIGN.md §4),
+every value unchanged. Intended differences, the nearer step: the clues' text 1.1 rem on the latest
+(was 1.06), the column/row labels 1 rem (were 1.05), a card's emoji 1.4 rem (was 1.45) and its back's
+1.4 (was 1.5), the 🔍 beside the title 2 rem (was 2.1), the clues' heading, the «nueva» tag and the
+💬 0.75 rem (were 0.8, 0.68, 0.7); the cards' padding 6 px (was 5), the clues 8 px apart (were 7),
+the rules' cards with a 10 px corner (was 9) and the cover's cards 8 px (was 7), 6 px apart (were 5).

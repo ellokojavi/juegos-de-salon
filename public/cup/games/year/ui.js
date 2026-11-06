@@ -28,7 +28,7 @@ export function montar(raiz, ctx) {
       const f = e.filas[revelado];
       poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.yearOf, { i: revelado + 1, n: p.hitos.length })),
         el('div', { class: 'carta actual' }, el('span', { class: 'carta-emoji' }, f.hito.emoji), el('b', {}, f.hito.texto)),
-        el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal') }, `${motor.marca(f.hito.year, f.r)} ${fmt(f.pts === 1 ? T.yearWasOne : T.yearWas, { v: motor.anioLabel(f.hito.year, ctx.lang), pts: f.pts })}`),
+        el('div', { class: 'notice notice--' + (f.pts >= 50 ? 'good' : 'bad') }, `${motor.marca(f.hito.year, f.r)} ${fmt(f.pts === 1 ? T.yearWasOne : T.yearWas, { v: motor.anioLabel(f.hito.year, ctx.lang), pts: f.pts })}`),
         el('p', { class: 'muted center' }, `${T.yearAnswer}: ${motor.anioLabel(f.r, ctx.lang)}`),
         bloqueDato(el, f.hito.dato, { pausa: seguir ? PAUSA_DATO_MS : 0 }),
         e.fin

@@ -6,15 +6,15 @@
  *   node tools/agents/design-lint.mjs             (every hit, by file; exit 0: report mode)
  *   node tools/agents/design-lint.mjs --summary   (one line per file with its counts)
  *   node tools/agents/design-lint.mjs --all       (also the allowlisted hits)
- *   node tools/agents/design-lint.mjs --gate      (exit 1 on any hit not allowlisted: phase 6)
- *   node tools/agents/design-lint.mjs baseline    (rewrites docs/design-baseline.json with today's counts)
+ *   node tools/agents/design-lint.mjs --gate      (exit 1 on any hit not allowlisted or stale entry: the gate, phase 6)
  *   node tools/agents/design-lint.mjs <file.css>  (one file)
  *
  * It reads every stylesheet under public/ that git knows (the generated bridge pages have none) and
  * reports, per declaration:
  *   token-colour   a colour written by hand that is one of the tokens: `#2ee6d6` is `var(--cyan)`; at an alpha,
  *                  `rgba(46,230,214,0.6)` is `rgb(from var(--cyan) r g b / 0.6)` (a glow or a tint in a token colour).
- *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration.
+ *   colour         any other colour literal (hex, rgb, rgba, hsl) outside a `--own-token:` declaration, a calc()
+ *                  alpha included: `rgba(143,247,238, calc(…))` is `rgb(from var(--own-token) r g b / calc(…))`.
  *   radius         a border-radius in px that is not on the corner scale (8, 10, 12, 14, 16, 22, 999).
  *   space          a padding, margin or gap in px that is not on the space scale (2 px grid up to 20, then 24, 28, 32).
  *   copied         a selector that redeclares a class of base.css or ranking.css (`.btn`, `.panel`, `.display--sm`…),
@@ -28,10 +28,10 @@
  * (a decision, D-533) is a new step here.
  *
  * Exceptions live in docs/design-allowlist.json with a reason each; an entry that no longer hits is
- * stale. The ratchet is docs/design-baseline.json: `design-lint.test.mjs` fails when a file's count
- * for a rule grows past it, never when it drops; a migrated file gets its baseline rewritten.
+ * stale. Since phase 6 the lint is a gate: `design-lint.test.mjs`, which the `tests` check runs, fails
+ * on any hit not allowlisted and on any stale entry, as `--gate` does here.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -144,6 +144,8 @@ function withoutFormulas(value) {
 }
 const pxOf = value => [...withoutFormulas(value).matchAll(/(-?\d*\.?\d+)px\b/g)].map(m => Math.abs(parseFloat(m[1]))).filter(n => n !== 1);
 const COLOUR_LITERAL = /#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/gi;
+// `rgba(46, 230, 214, calc(0.2 * var(--k)))`: COLOUR_LITERAL stops at calc's first `)` and sees a var(), so it is caught here
+const CALC_ALPHA = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*calc\(/gi;
 
 /** The hits of one stylesheet, against the tokens. */
 export function lintCss(css, file, T, shared = sharedClasses()) {
@@ -161,6 +163,11 @@ export function lintCss(css, file, T, shared = sharedClasses()) {
     for (const d of r.decls) {
       if (d.prop.startsWith('--')) continue; // the game's own tokens (DESIGN.md §4), or base.css's
       if (/^(animation|transition|content|font-family|src|unicode-range)$/.test(d.prop)) continue;
+      for (const m of d.value.matchAll(CALC_ALPHA)) {
+        const rgb = normColour(`rgb(${m[1]}, ${m[2]}, ${m[3]})`);
+        if (T.colours[rgb]) hit('token-colour', d.line, `${d.prop}: ${m[0]}…)`, `rgb(from var(${T.colours[rgb]}) r g b / calc(…))`);
+        else if (!isShared) hit('colour', d.line, `${d.prop}: ${m[0]}…)`, 'rgb(from var(--token) r g b / calc(…)), with the game\'s own `--token` at the top of the file');
+      }
       const seen = new Set();
       for (const m of d.value.matchAll(COLOUR_LITERAL)) {
         if (m[0].includes('var(')) continue; // rgba(var(--g), 0.5) and rgb(from var(--x) r g b / a): the colour is a token already
@@ -227,44 +234,17 @@ export function lint(files = sources(), entries = allowlist()) {
   return { hits, stale };
 }
 
-/** Counts per file and rule of the hits not allowlisted: what the baseline keeps. */
+/** Counts per file and rule of the hits not allowlisted (--summary). */
 export function counts(hits) {
   const out = {};
   for (const h of hits) { if (h.allowed) continue; out[h.file] = out[h.file] || {}; out[h.file][h.rule] = (out[h.file][h.rule] || 0) + 1; }
   return Object.fromEntries(Object.keys(out).sort().map(f => [f, Object.fromEntries(RULES.filter(r => out[f][r]).map(r => [r, out[f][r]]))]));
 }
 
-export function baseline() {
-  try { return JSON.parse(readFileSync(join(ROOT, 'docs/design-baseline.json'), 'utf8')).files || {}; } catch (_) { return {}; }
-}
-
-/** The ratchet: files and rules whose count grew past the baseline, and files the baseline names that are gone. */
-export function ratchet(hits, base = baseline(), files = sources()) {
-  const now = counts(hits);
-  const grew = [];
-  for (const [f, rules] of Object.entries(now)) for (const [r, n] of Object.entries(rules)) {
-    const was = base[f]?.[r] || 0;
-    if (n > was) grew.push({ file: f, rule: r, was, now: n });
-  }
-  const gone = Object.keys(base).filter(f => !files.includes(f));
-  return { grew, gone, now };
-}
-
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
-  const cmd = args.find(a => !a.startsWith('--') && !a.endsWith('.css'));
   const files = args.filter(a => a.endsWith('.css'));
   const { hits, stale } = lint(files.length ? files : undefined);
-  if (cmd === 'baseline') {
-    const files = counts(hits);
-    const total = Object.values(files).reduce((a, r) => a + Object.values(r).reduce((x, y) => x + y, 0), 0);
-    writeFileSync(join(ROOT, 'docs/design-baseline.json'), JSON.stringify({
-      _about: 'The design lint\'s ratchet (tools/agents/design-lint.mjs, D-533): hits per stylesheet and rule that are not allowlisted. design-lint.test.mjs fails when a count grows, never when it drops. Rewritten with `node tools/agents/design-lint.mjs baseline` after a migration; generated, never edited by hand.',
-      total, files,
-    }, null, 2) + '\n');
-    console.log(`docs/design-baseline.json written: ${total} hits in ${Object.keys(files).length} files`);
-    process.exit(0);
-  }
   const show = args.includes('--all') ? hits : hits.filter(h => !h.allowed);
   if (args.includes('--summary')) {
     const c = counts(hits);

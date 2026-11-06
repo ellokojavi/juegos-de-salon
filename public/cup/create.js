@@ -273,7 +273,7 @@ function armarSemana() {
   }
   function pintar() {
     chips.replaceChildren(...estilos.map(e => el('button', {
-      type: 'button', class: 'estilo' + (estilo === e ? ' on' : ''), 'data-estilo': e, 'aria-pressed': String(estilo === e),
+      type: 'button', class: 'chip-btn' + (estilo === e ? ' on' : ''), 'data-estilo': e, 'aria-pressed': String(estilo === e),
       onClick: () => { SFX.tap(); ultimo = e; tirar(); },
     }, T.weekStyles[e])));
     // A cup longer than a week shows its days by week, with their dates (D-521)
@@ -403,18 +403,18 @@ function controlDuracion(alCambiar) {
   const mas = el('button', { type: 'button', class: 'dur-btn', id: 'dur-mas', 'aria-label': T.lenMore, onClick: () => fijar(n + 1) }, '+');
   const num = el('b', { id: 'dur-n' }), rango = el('small', { id: 'dur-rango' });
   const atajos = el('div', { class: 'dur-atajos', id: 'dur-atajos' });
-  const sw = el('button', { type: 'button', class: 'dur-switch', role: 'switch', id: 'dur-final', 'aria-label': T.finalOn, onClick: () => { if (n < FINAL_DESDE) return; SFX.tap(); final = !final; pintar(); alCambiar(); } });
+  const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'dur-final', 'aria-label': T.finalOn, onClick: () => { if (n < FINAL_DESDE) return; SFX.tap(); final = !final; pintar(); alCambiar(); } });
   const finSub = el('small', {});
-  const filaFinal = el('div', { class: 'dur-final' }, el('span', { class: 'em', 'aria-hidden': 'true' }, '🏁'), el('span', { class: 't' }, el('b', {}, T.finalOn), finSub), sw);
+  const filaFinal = el('div', { class: 'toggle-row dur-final' }, el('span', { class: 'txt' }, el('b', {}, el('span', { 'aria-hidden': 'true' }, '🏁 '), T.finalOn), finSub), sw);
   const aviso = el('div', { class: 'dur-aviso', id: 'dur-aviso' }, `⚠️ ${T.longWarn}`);
   const ATAJOS = [3, 7, 14];
   function pintar() {
     num.textContent = fmt(T.lenDays, { n });
     menos.disabled = n <= DIAS_MIN; mas.disabled = n >= DIAS_MAX;
-    atajos.replaceChildren(...ATAJOS.map(k => el('button', { type: 'button', class: 'dur-atajo' + (k === n ? ' on' : ''), 'aria-pressed': String(k === n), onClick: () => fijar(k) }, `${k} · ${T.lenPresets[k]}`)),
-      ...(ATAJOS.includes(n) ? [] : [el('span', { class: 'dur-atajo on' }, String(n))]));
+    atajos.replaceChildren(...ATAJOS.map(k => el('button', { type: 'button', class: 'chip-btn dur-atajo' + (k === n ? ' on' : ''), 'aria-pressed': String(k === n), onClick: () => fijar(k) }, `${k} · ${T.lenPresets[k]}`)),
+      ...(ATAJOS.includes(n) ? [] : [el('span', { class: 'chip-btn dur-atajo on' }, String(n))]));
     const puede = n >= FINAL_DESDE;
-    sw.disabled = !puede; sw.setAttribute('aria-checked', String(puede && final));
+    sw.disabled = !puede; sw.setAttribute('aria-checked', String(puede && final)); sw.classList.toggle('on', puede && final);
     filaFinal.classList.toggle('off', !puede);
     finSub.textContent = puede ? fmt(T.finalOnSub, { n: Math.min(FINAL_RONDAS, n - 1) }) : fmt(T.finalFrom, { n: FINAL_DESDE });
     aviso.hidden = n < 10;
@@ -531,13 +531,13 @@ async function pantallaCrearCopa({ nombreInicial = '', desde = null, quien = '' 
   // The new screen asks for the PIN once, with 👁 to see it (D-425)
   const pin1 = campoPin(T.fPin), pin2 = nuevo ? null : campoPin(T.fPin2);
   if (nuevo) {
-    const ojo = el('button', { type: 'button', class: 'ver-pin', id: 'ver-pin', 'aria-label': T.pinShow, 'aria-pressed': 'false' }, '👁');
+    const ojo = el('button', { type: 'button', class: 'pin-show', id: 'ver-pin', 'aria-label': T.pinShow, 'aria-pressed': 'false' }, '👁');
     ojo.addEventListener('click', () => {
       const ver = pin1.input.type === 'password';
       pin1.input.type = ver ? 'text' : 'password';
       ojo.setAttribute('aria-pressed', String(ver)); ojo.setAttribute('aria-label', ver ? T.pinHide : T.pinShow);
     });
-    const filaPin = el('div', { class: 'pin-fila' });
+    const filaPin = el('div', { class: 'pin-row' });
     pin1.input.replaceWith(filaPin);
     filaPin.append(pin1.input, ojo);
   }

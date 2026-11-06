@@ -12,7 +12,7 @@
  *   node tools/e2e/look.mjs dudo bid --chat        (a room's 💬 bubble on top: it must cover no button)
  *
  * It takes the screenshot and also checks what the canon asks to look at on every screen (C-8):
- * no horizontal scroll and no button under 44 px; and that the board has space before its
+ * no horizontal scroll and no button or summary under 44 px; and that the board has space before its
  * buttons (D-309, U-11).
  *
  * It was born from writing eight throwaway scripts in /tmp to review a button bar. To test that
@@ -86,8 +86,12 @@ await sleep(400);
 const review = await b.evaluate(`(()=>{
   // The lab games and La Copa's standalone games have no .screen: there the whole page is checked
   const scr = document.querySelector('.screen') ? '.screen.active' : 'body';
-  const small = [...document.querySelectorAll(scr + ' button, .confirm button')]
-    .filter(x => x.offsetParent !== null && x.getBoundingClientRect().height < 44)
+  // a <summary> too (a folding panel's title, U-10); the tap area is the box or its invisible ::before band
+  const tall = x => { const r = x.getBoundingClientRect(), p = getComputedStyle(x, '::before');
+    return p.content !== 'none' && p.position === 'absolute' ? Math.max(r.height, r.height - parseFloat(p.top) - parseFloat(p.bottom)) : r.height; };
+  const small = [...document.querySelectorAll(scr + ' button, ' + scr + ' summary, .confirm button')]
+    // a board cell ([data-cell]) is the owner's exception (DESIGN.md §4): an 8×8 board can't give 44 px cells at 320 px
+    .filter(x => x.offsetParent !== null && !x.matches('[data-cell]') && tall(x) < 43.5)
     .map(x => (x.textContent || x.className).trim().slice(0, 18));
   return JSON.stringify({
     screen: document.querySelector('.screen.active')?.id,

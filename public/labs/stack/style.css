@@ -1,27 +1,31 @@
-/* Stack (lab, D-445). What is shared lives in assets/css/base.css. */
+/* Stack (lab, D-445). What is shared lives in assets/css/base.css; this sheet is on the design
+   system's tokens (D-533, docs/DESIGN.md). */
+
+/* The fade's mask (DESIGN.md §4): a mask reads only the alpha, so its opaque stop is the game's own token */
+:root { --torre-opaco: #000; }
 
 /* The background is the app's own night (base.css): the tower's canvas is transparent and stands on it */
 
-.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
-.titulo-torre { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.portada { text-align: center; display: grid; gap: var(--s-10); padding-top: var(--s-8); }
+.titulo-torre { display: flex; align-items: center; justify-content: center; gap: var(--s-12); margin: 0; }
 .titulo-torre .logo { font-size: 2.2rem; animation: torre-mece 3s ease-in-out infinite; }
-.titulo-torre.chico .display { font-size: 1.6rem; }
-.titulo-torre.chico .logo { font-size: 1.5rem; }
+.titulo-torre.chico .display { font-size: var(--fs-160); }
+.titulo-torre.chico .logo { font-size: var(--fs-160); }
 @keyframes torre-mece { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
-.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito { margin: 0; font-size: var(--fs-85); color: var(--muted); }
 .credito a { color: var(--cyan); }
-.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
-.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
-.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: var(--s-10); align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-110); background: var(--glass); border: 1px solid var(--glass-border); }
 
 /* The cover's tower, building itself */
 .demo-torre { display: block; width: 100%; height: 230px; }
 
 /* The heading, like the other games': the name on the left, the best on the right */
-.cabeza-torre { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.cabeza-torre .titulo-torre { gap: 8px; }
-.mejor-torre { font: 800 0.95rem var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s, text-shadow 0.3s; }
-.mejor-torre.record { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.6); }
+.cabeza-torre { display: flex; align-items: center; justify-content: space-between; gap: var(--s-10); }
+.cabeza-torre .titulo-torre { gap: var(--s-8); }
+.mejor-torre { font: 800 var(--fs-90) var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s, text-shadow 0.3s; }
+.mejor-torre.record { color: var(--yellow); text-shadow: 0 0 12px rgb(from var(--yellow) r g b / 0.6); }
 
 /* The game: the tower takes the screen between the heading and the comment link, and a tap anywhere on it drops */
 .escenario {
@@ -30,39 +34,39 @@
 }
 .lienzo-torre { display: block; width: 100%; height: 100%; }
 /* The tower fades into the night at the bottom instead of ending at a hard edge */
-.lienzo-torre, .demo-torre { -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
+.lienzo-torre, .demo-torre { -webkit-mask-image: linear-gradient(to bottom, var(--torre-opaco) 72%, transparent); mask-image: linear-gradient(to bottom, var(--torre-opaco) 72%, transparent); }
 .marcador-torre {
   position: absolute; top: 6%; left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text);
 }
 .aviso-torre {
   position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.85); transition: opacity 0.4s;
+  font: 700 var(--fs-100) var(--font-body); color: rgb(from var(--ink) r g b / 0.85); transition: opacity 0.4s;
 }
 .aviso-torre.fuera { opacity: 0; }
-.aviso-torre.brilla { font: 1.9rem var(--font-display); letter-spacing: 0.06em; animation: torre-brilla 0.9s ease-out forwards; }
+.aviso-torre.brilla { font: var(--fs-200) var(--font-display); letter-spacing: 0.06em; animation: torre-brilla 0.9s ease-out forwards; }
 .aviso-torre.final { font: 2.2rem var(--font-display); letter-spacing: 0.06em; }
 @keyframes torre-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
 
 /* Paused (a call, another app): over the tower, until a tap takes it off */
 .pausa-torre {
-  position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(21, 7, 38, 0.8), rgba(21, 7, 38, 0.35) 70%, transparent);
-  font: 700 1.05rem var(--font-body); color: #fff;
+  position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.8), rgb(from var(--bg1) r g b / 0.35) 70%, transparent);
+  font: 700 var(--fs-100) var(--font-body); color: var(--ink);
 }
 .pausa-torre[hidden] { display: none; }
-.titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
-.pausa-torre .display { font-size: 2.6rem; }
+.titulo-pausa { display: flex; align-items: center; justify-content: center; gap: var(--s-10); font-size: var(--fs-200); }
+/* The pause's title is .display--lg (game.js) */
 
 /* The result, like the other lab games */
-.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
-.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-.sello-torre { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
-  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.resultado { text-align: center; display: grid; gap: var(--s-10); --gap-contenedor: var(--s-10); }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text); }
+.sello-torre { justify-self: center; margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
 .resultado .comentario { text-align: left; }
-.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
-.desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
-.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+.divisor { width: 100%; border: 0; height: 2px; margin: var(--s-18) 0 var(--s-6); border-radius: var(--r-pill); background: linear-gradient(90deg, transparent, rgb(from var(--ink) r g b / 0.45) 15%, rgb(from var(--ink) r g b / 0.45) 85%, transparent); }
+.desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: var(--s-4); }
+/* The comment's link button is the shell's .link-btn (base.css) */
 
 @media (prefers-reduced-motion: reduce) {
   .titulo-torre .logo, .sello-torre, .aviso-torre.brilla { animation: none; }

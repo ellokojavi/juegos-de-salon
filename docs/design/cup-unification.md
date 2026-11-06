@@ -102,7 +102,7 @@ Not patterns to unify: **sharing** (the cup already uses `compartir.js` and `lam
 ## The order: PRs that dissolve the layer
 
 Each PR in phase 5's style: before/after screenshots at 390 and 320 px, the intended differences in
-the body, the design baseline rewritten, and `cup/tournament.mjs`, `cup/languages.mjs` and
+the body, the design lint at zero, and `cup/tournament.mjs`, `cup/languages.mjs` and
 `cup-games/languages.mjs` green. U-21: a PR that changes what a live cup shows merges on a day no cup
 is playing a changed screen, or behind a flag.
 
@@ -111,9 +111,25 @@ is playing a changed screen, or behind a flag.
 | 1 | Delete the exact copies (`.screen`, `.form-error`, `.result-hero`, `.seg`, `.field` base rules) and move El caso's `.cs-*` to its own stylesheet | lowest: pixel-level differences only | no |
 | 2 | `.dur-switch` → `.switch` in `.toggle-row`; the three chip toggles → one `.chip-btn` in base; `.chip--final` → `.chip--cyan` | low: the create screen (admin only) | no, intended differences listed |
 | 3 | `.opciones` grid, `.field .pin`, `.field .contador`, date field, `.link-inline`, `.btn--danger`, `.btn-row--wrap` into base; the cup uses them | low–medium: join and create screens | no |
-| 4 | `.toast`, `.aviso`, `espera()` lifted to base / `assets/js/`; home online games may adopt them later | medium | no (a new component on the components page) |
+| 4 | `.toast`, `.aviso`, `espera()` lifted to base / `assets/js/` (done as `.snackbar`, `.notice`, `showWaiting()`); home online games may adopt them later | medium | no (a new component on the components page) |
 | 5 | One how-to-play block for home and Cup | medium: every Cup day's cover | **yes**: folding the Cup's open rules (U-16) changes what every player sees |
 | 6 | One start screen: drop the Cup mini-game's "Volver al menú" button, shared cover builder | medium–high: every Cup day and every solo Cup game | **yes**: removes a button players use (U-21) |
 | 7 | Tokenise the cup's own (table, calendar, podium, week builder, chart colours as `--token`s with their rows in DESIGN.md §4) | high in size, low in looks | **yes** for any colour whose meaning changes (the day blocks of D-131, the ×2 of D-151) |
+
+**The owner's decision (2026-11-05):** PRs 1 to 5 go ahead, PR 5 as "fold La Copa's own rules into
+the shared classes". **PR 6 and PR 7 are declined**: the Cup mini-game's "🏠 Volver al menú" button
+stays, and the cup's own colours (the day blocks of D-131, the final's ×2 of D-151, the table, the
+calendar, the podium, the chart) keep their values and meanings as they are. What each done PR
+changed is in [docs/games/cup.md](../games/cup.md) ("In the design system").
+
+| # | Status |
+|---|---|
+| 1 | done (branch `phase7-cup-1`) |
+| 2 | done (branch `phase7-cup-2`) |
+| 3 | done (branch `phase7-cup-3`) |
+| 4 | done (branch `phase7-cup-4`): as `.notice` and `.snackbar`, because Batalla Naval's `.toast` and Aletazo's `.aviso` already mean something else |
+| 5 | done (branch `phase7-cup-5`): the rules are `details.panel`, open on the covers as before (folding them there is still the owner's call, U-16) |
+| 6 | declined by the owner, 2026-11-05 |
+| 7 | declined by the owner, 2026-11-05 |
 
 Done when `cup/style.css` holds only the cup's own, on tokens, under a third of its size (#1196).

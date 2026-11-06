@@ -1,115 +1,113 @@
 /* ==========================================================
-   Cuarto Rey — estilos propios del juego
+   Cuarto Rey: the game's own styles. What is shared lives in assets/css/base.css: the screens,
+   the cover's hero, the player's row, the form's error and the handoff are the game shell
+   (DESIGN.md §2, D-533); here only what the game adds, on the tokens.
    ========================================================== */
 
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+/* The king's gold (the K's mini card and history card) and the drop under the big card: the
+   game's own colours (DESIGN.md §4). */
+:root {
+  --king-light: #ffe680;
+  --king-deep: #ffb300;
+  --card-drop: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
 
 /* ---------- Intro ---------- */
-.intro-hero { text-align: center; padding: 10px 0 8px; }
-.intro-hero .crown { font-size: 4.5rem; display: block; filter: drop-shadow(0 0 20px rgba(255, 210, 63, 0.7)); animation: wiggle 2.4s ease-in-out infinite; }
-.rules-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.rules-list li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: center; }
+/* The cover's crown is the shell's `.icon` (size and glow); it wiggles like a crown instead of
+   bouncing. */
+.intro-hero .crown { animation: wiggle 2.4s ease-in-out infinite; }
+.rules-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s-8); }
+.rules-list li { display: grid; grid-template-columns: 52px 1fr; gap: var(--s-10); align-items: center; }
 .rules-list .mini-card {
-  width: 44px; height: 58px; border-radius: 7px; background: var(--card); color: var(--card-ink);
-  font: 900 1.35rem var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  width: 44px; height: 58px; border-radius: var(--r-8); background: var(--card); color: var(--card-ink);
+  font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; display: grid; place-items: center;
+  box-shadow: 0 2px 6px var(--well-deep);
 }
-.rules-list .mini-card.k { background: linear-gradient(180deg, #ffe680, #ffb300); }
+.rules-list .mini-card.k { background: linear-gradient(180deg, var(--king-light), var(--king-deep)); }
 .rules-list b { display: block; }
 .rules-list small { color: var(--muted); }
 
 /* ---------- Setup jugadores ---------- */
-.players-form { display: grid; gap: 10px; }
-/* La fila: número, nombre, género y ✕. En un celular angosto el nombre quedaba reducido a
+.players-form { display: grid; gap: var(--s-10); }
+/* The shell's player row with a fourth column: number, name, gender and ✕. The form's gap spaces
+   the rows, so the shell's margin under each goes. En un celular angosto el nombre quedaba reducido a
    dos letras para dejarle sitio al selector de género, así que bajo 380 px el selector pasa a
    una segunda línea, a lo ancho, y el nombre se queda con la fila entera (C-8). El corte es
    una media query y no `flex-wrap` porque con `wrap` la ✕ se bajaba sola y la fila quedaba coja. */
-.player-row {
-  display: grid; grid-template-columns: 26px 1fr auto auto; gap: 8px; align-items: center;
-  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px 10px;
-}
+.players-form .player-row { grid-template-columns: 26px 1fr auto auto; margin-bottom: 0; }
 /* Entra sólo la fila recién agregada, y entra sin escalarse: un `pop` sobre una fila de ancho
    completo la deja más ancha a media animación y la lista se ve chueca (D-76). */
-.player-row.nueva { animation: rowIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.players-form .player-row.nueva { animation: rowIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 @keyframes rowIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
-.player-row .num { font: 900 1.3rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-align: center; }
-.player-row input {
-  width: 100%; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
-  background: rgba(0, 0, 0, 0.25); border: 2px solid transparent; border-radius: 12px; padding: 12px 12px; outline: none;
-}
-.player-row input:focus { border-color: var(--cyan); }
-.player-row input::placeholder { color: rgba(255, 255, 255, 0.4); font-weight: 700; }
-.gender { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 4px; }
+/* The row's number is a figure (D-30), not the shell's Bangers */
+.players-form .player-row .num { font: 900 var(--fs-120) var(--font-num); font-variant-numeric: tabular-nums; }
+.players-form .player-row input { min-width: 0; }
+.gender { display: flex; gap: var(--s-4); background: var(--well); border-radius: var(--r-12); padding: var(--s-4); }
 .gender button {
-  border: 0; background: transparent; color: var(--muted); font-size: 1.15rem; width: 44px; height: 44px; border-radius: 9px; cursor: pointer;
+  border: 0; background: transparent; color: var(--muted); font-size: var(--fs-120); width: 44px; height: 44px; border-radius: var(--r-8); cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
-.gender button.on { background: var(--pink); color: #fff; transform: scale(1.05); }
+.gender button.on { background: var(--pink); color: var(--ink); transform: scale(1.05); }
 .gender button[data-g="f"].on { background: var(--purple); }
-.gender button[data-g="x"].on { background: var(--cyan); color: #03302c; }
-/* La ✕ es angosta para que le quede ancho al nombre; lo que se toca mide 44 px (C-8). */
-.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 32px; height: 44px; cursor: pointer; position: relative; }
-.player-row .del::after { content: ''; position: absolute; inset: 0 -6px; }
-.player-row .del:disabled { opacity: 0.2; }
+.gender button[data-g="x"].on { background: var(--cyan); color: var(--ink-on-cyan); }
+/* La ✕ es angosta para que le quede ancho al nombre; lo que se toca mide 44 px (C-8): narrower
+   than the shell's 44 × 44, with the rest of the touch area in ::after. */
+.players-form .player-row .del { width: 32px; position: relative; }
+.players-form .player-row .del::after { content: ''; position: absolute; inset: 0 -6px; }
 /* Celular angosto (375 px y menos): la fila se aprieta —número, separaciones, el marco del
    selector, la ✕ y el relleno del nombre— antes que sacrificar el nombre, que es lo único que el
    jugador escribe. Los botones de género no se achican: miden 44 px a cualquier ancho (C-8); se
    juntan sin separación, que el botón encendido ya marca cuál es cuál. La ✕ se ve más angosta,
    pero lo que se toca sigue midiendo 44 px. */
 @media (max-width: 400px) {
-  .player-row { grid-template-columns: 22px 1fr auto auto; gap: 5px; padding: 8px 8px; }
-  .player-row input { padding: 12px 9px; }
+  .players-form .player-row { grid-template-columns: 22px 1fr auto auto; gap: var(--s-4); padding: var(--s-6) var(--s-8); }
   .gender { gap: 0; padding: 0; }
-  .player-row .del { width: 26px; }
-  .player-row .del::after { inset: 0 -9px; }
+  .players-form .player-row .del { width: 26px; }
+  .players-form .player-row .del::after { inset: 0 -9px; }
 }
 /* Más angosto que eso (320 px) ya no da: el selector se baja entero a una segunda línea. */
 @media (max-width: 340px) {
-  .player-row {
+  .players-form .player-row {
     grid-template-columns: 24px 1fr auto;
     grid-template-areas: 'num name del' 'gender gender gender';
   }
-  .player-row .num { grid-area: num; }
-  .player-row input { grid-area: name; }
-  .player-row .gender { grid-area: gender; }
-  .player-row .del { grid-area: del; }
+  .players-form .player-row .num { grid-area: num; }
+  .players-form .player-row input { grid-area: name; }
+  .players-form .player-row .gender { grid-area: gender; }
+  .players-form .player-row .del { grid-area: del; }
   .gender button { flex: 1; width: auto; }
 }
-.setup-hint { font-size: 0.9rem; color: var(--muted); text-align: center; }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; }
+.setup-hint { font-size: var(--fs-90); color: var(--muted); text-align: center; }
 
 /* ---------- Mesa de juego ---------- */
-.hud { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px; }
-.crowns { display: flex; gap: 4px; font-size: 1.6rem; filter: grayscale(1) opacity(0.35); }
+.hud { display: grid; grid-template-columns: 1fr auto; gap: var(--s-10); align-items: center; margin-bottom: var(--s-10); }
+.crowns { display: flex; gap: var(--s-4); font-size: var(--fs-160); }
 .crowns span { transition: transform 0.3s, filter 0.3s; }
-.crowns span.lit { filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgba(255, 210, 63, 0.9)); animation: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.crowns { filter: none; }
+.crowns span.lit { filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgb(from var(--yellow) r g b / 0.9)); animation: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .crowns span:not(.lit) { filter: grayscale(1) opacity(0.3); }
-.deck-count { font-weight: 900; color: var(--muted); font-size: 0.95rem; text-align: right; }
-.deck-count b { color: var(--ink); font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
+.deck-count { font-weight: 900; color: var(--muted); font-size: var(--fs-90); text-align: right; }
+.deck-count b { color: var(--ink); font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; }
 
-.turn {
-  text-align: center; margin: 4px 0 10px;
-}
-.turn .label { color: var(--muted); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; }
-.turn .name { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(46, 230, 214, 0.6); }
+/* Whose turn: bigger than the shell's `.status`, the name is read from across the table */
+.turn { text-align: center; margin: var(--s-4) 0 var(--s-10); }
+.turn .label { color: var(--muted); font-weight: 800; font-size: var(--fs-90); text-transform: uppercase; letter-spacing: 0.1em; }
+.turn .name { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3rem); letter-spacing: 0.04em; text-shadow: var(--shadow-text), 0 0 30px rgb(from var(--cyan) r g b / 0.6); }
 
-.seats { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.seats { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--s-6); margin-bottom: var(--s-12); }
 .seat {
-  padding: 5px 11px; border-radius: 999px; font-size: 0.85rem; font-weight: 800;
-  background: rgba(0, 0, 0, 0.25); border: 1px solid transparent; color: var(--muted);
+  padding: var(--s-6) var(--s-12); border-radius: var(--r-pill); font-size: var(--fs-85); font-weight: 800;
+  background: var(--well); border: 1px solid transparent; color: var(--muted);
 }
-.seat.current { background: var(--cyan); color: #03302c; border-color: transparent; transform: scale(1.06); }
+.seat.current { background: var(--cyan); color: var(--ink-on-cyan); border-color: transparent; transform: scale(1.06); }
 .seat .s { opacity: 0.8; font-weight: 700; }
 
 /* La carta: grande al estar boca abajo, se encoge al descubrirse para dejar espacio a las instrucciones */
-.table { display: grid; place-items: center; padding: 6px 0 12px; perspective: 1200px; }
+.table { display: grid; place-items: center; padding: var(--s-6) 0 var(--s-12); perspective: 1200px; }
 .card {
   width: min(80vw, 340px); aspect-ratio: 2.5 / 3.5; position: relative; cursor: pointer;
   transform-style: preserve-3d;
   transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1), width 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15);
-  border-radius: 18px;
+  border-radius: var(--r-16);
 }
 .card.flipped { transform: rotateY(180deg); }
 .card.small { width: min(38vw, 150px); }
@@ -117,115 +115,114 @@
 .card.enter { animation: cardEnter 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
 @keyframes cardIdle { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-10px) rotate(1.5deg); } }
 @keyframes cardEnter { from { transform: translateY(60px) scale(0.6) rotate(-8deg); opacity: 0; } to { transform: translateY(0) scale(1) rotate(0); opacity: 1; } }
-@keyframes glowPulse { 0%, 100% { box-shadow: 0 16px 40px rgba(0,0,0,0.55), 0 0 0 0 rgba(255, 210, 63, 0.0); } 50% { box-shadow: 0 16px 40px rgba(0,0,0,0.55), 0 0 40px 6px rgba(255, 210, 63, 0.45); } }
+@keyframes glowPulse { 0%, 100% { box-shadow: var(--card-drop), 0 0 0 0 rgb(from var(--yellow) r g b / 0); } 50% { box-shadow: var(--card-drop), 0 0 40px 6px rgb(from var(--yellow) r g b / 0.45); } }
 .card.idle .back { animation: glowPulse 2.2s ease-in-out infinite; }
 .card .face {
-  position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  position: absolute; inset: 0; border-radius: var(--r-16); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  box-shadow: var(--card-drop);
 }
 .card .back {
   background:
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0 6px, transparent 6px 12px),
+    repeating-linear-gradient(45deg, var(--glass) 0 6px, transparent 6px 12px),
     linear-gradient(160deg, var(--pink), var(--purple) 60%, var(--bg3));
-  border: 6px solid #fffdf7; display: grid; place-items: center;
+  border: 6px solid var(--card); display: grid; place-items: center;
 }
-.card .back .logo { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: #fff; text-shadow: 0 3px 0 rgba(0,0,0,0.35); text-align: center; line-height: 1; }
+.card .back .logo { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--ink); text-shadow: var(--shadow-text); text-align: center; line-height: 1; }
 .card .back .logo small { display: block; font-size: clamp(1rem, 4.5vw, 1.4rem); letter-spacing: 0.2em; opacity: 0.9; }
-.card .back .tap { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-weight: 900; font-size: clamp(0.95rem, 4vw, 1.2rem); color: rgba(255,255,255,0.85); animation: bounce 1.2s infinite; }
+.card .back .tap { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-weight: 900; font-size: clamp(0.95rem, 4vw, 1.2rem); color: rgb(from var(--ink) r g b / 0.85); animation: bounce 1.2s infinite; }
 .card .front {
   transform: rotateY(180deg); background: var(--card); color: var(--card-ink);
-  display: grid; grid-template-rows: auto 1fr auto; padding: 8px 10px; container-type: inline-size;
+  display: grid; grid-template-rows: auto 1fr auto; padding: var(--s-8) var(--s-10); container-type: inline-size;
 }
 .card .front.red { color: var(--red); }
 .card .corner { font-family: var(--font-num); font-weight: 900; font-variant-numeric: tabular-nums; font-size: clamp(1.1rem, 5vw, 1.7rem); line-height: 1; display: flex; flex-direction: column; align-items: center; width: 1.6em; }
 .card .corner.br { transform: rotate(180deg); justify-self: end; }
 .card .pip { display: grid; place-items: center; font-size: 42cqw; line-height: 1; }
 .card .pip .face-emoji { font-size: 36cqw; }
-.card.small .corner { font-size: 1.05rem; }
+.card.small .corner { font-size: var(--fs-110); }
 .card.reveal .pip { animation: pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; animation-delay: 0.45s; }
 
 /* Panel de resultado */
-.result { margin-top: 4px; }
-.result .kicker { text-align: center; color: var(--muted); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
-.result .title { text-align: center; margin: 4px 0 8px; }
-.result .title.gold { color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); }
-.result .text { text-align: center; font-size: 1.05rem; font-weight: 700; }
-.drinkers { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0 6px; }
-.drinkers .chip { font-size: 1.05rem; padding: 8px 14px; animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.result .actions { margin-top: 14px; }
+.result { margin-top: var(--s-4); }
+.result .kicker { text-align: center; color: var(--muted); font-weight: 800; font-size: var(--fs-85); text-transform: uppercase; letter-spacing: 0.1em; }
+.result .title { text-align: center; margin: var(--s-4) 0 var(--s-8); }
+.result .title.gold { color: var(--yellow); text-shadow: var(--shadow-text), 0 0 30px rgb(from var(--yellow) r g b / 0.7); }
+.result .text { text-align: center; font-size: var(--fs-110); font-weight: 700; }
+.drinkers { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-8); margin: var(--s-10) 0 var(--s-6); }
+.drinkers .chip { font-size: var(--fs-110); padding: var(--s-8) var(--s-14); animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.result .actions { margin-top: var(--s-14); }
 
 /* Mini-juego */
-.mini-rules { margin: 8px 0 0; padding-left: 0; list-style: none; display: grid; gap: 6px; }
-.mini-rules li { display: grid; grid-template-columns: 26px 1fr; gap: 6px; font-weight: 700; font-size: 0.98rem; line-height: 1.35; }
+.mini-rules { margin: var(--s-8) 0 0; padding-left: 0; list-style: none; display: grid; gap: var(--s-6); }
+.mini-rules li { display: grid; grid-template-columns: 26px 1fr; gap: var(--s-6); font-weight: 700; font-size: var(--fs-100); line-height: 1.35; }
 .mini-rules li::before { content: '👉'; }
-.helper { margin-top: 12px; background: rgba(0, 0, 0, 0.25); border-radius: 16px; padding: 12px; text-align: center; }
-.helper .big { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.04em; color: var(--yellow); margin: 4px 0; }
+.helper { margin-top: var(--s-12); background: var(--well); border-radius: var(--r-16); padding: var(--s-12); text-align: center; }
+.helper .big { font-family: var(--font-display); font-size: var(--fs-160); letter-spacing: 0.04em; color: var(--yellow); margin: var(--s-4) 0; }
 .helper .timer { font: 900 3.2rem var(--font-num); font-variant-numeric: tabular-nums; line-height: 1; color: var(--cyan); }
-.helper .timer.alarm { color: var(--pink); animation: shake 0.5s; font-size: 2.2rem; line-height: 1.45; } /* "¡TIEMPO!" en Nunito es más ancho que en Bangers: cabe en 320 px sin mover el resto */
-.helper .quote { font-size: 1.15rem; font-weight: 800; font-style: italic; }
+.helper .timer.alarm { color: var(--pink); animation: shake 0.5s; font-size: var(--fs-200); line-height: 1.6; } /* "¡TIEMPO!" en Nunito es más ancho que en Bangers: cabe en 320 px sin mover el resto (line-height keeps the 3.2 rem box) */
+.helper .quote { font-size: var(--fs-110); font-weight: 800; font-style: italic; }
 
 /* Selector de jugadores (perdedor / regalo) */
-.picker { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+.picker { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-8); margin-top: var(--s-10); }
 .picker button {
   border: 2px solid var(--glass-border); background: var(--glass); color: var(--ink);
-  font: 900 1rem var(--font-body); padding: 12px 8px; border-radius: 14px; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform 0.1s, background 0.15s;
+  font: 900 var(--fs-100) var(--font-body); padding: var(--s-12) var(--s-8); border-radius: var(--r-14); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: var(--s-2); transition: transform 0.1s, background 0.15s;
 }
 .picker button:active { transform: scale(0.96); }
 .picker button.on { background: var(--pink); border-color: transparent; }
-.picker button .count { font-family: var(--font-display); font-size: 1.3rem; color: var(--yellow); }
+.picker button .count { font-family: var(--font-display); font-size: var(--fs-140); color: var(--yellow); }
 .picker button:disabled { opacity: 0.4; }
 
 /* Penitencia */
-.penitencia-text { font-size: 1.25rem; font-weight: 800; text-align: center; padding: 14px; background: rgba(0,0,0,0.25); border-radius: 16px; margin: 10px 0; }
+.penitencia-text { font-size: var(--fs-120); font-weight: 800; text-align: center; padding: var(--s-14); background: var(--well); border-radius: var(--r-16); margin: var(--s-10) 0; }
 
 /* Cuarto Rey (fin) */
 /* overflow-x: clip porque la corona se mece (wiggle) y en 320 px se salía medio píxel:
    lo justo para que apareciera barra horizontal, que C-8 no admite. */
-.finale { text-align: center; padding: 2px 0 4px; overflow-x: clip; }
+.finale { text-align: center; padding: var(--s-2) 0 var(--s-4); overflow-x: clip; }
 /* La pantalla final se compacta para que los tres botones se vean sin desplazar con seis
-   jugadores en un celular de 812 px, en los tres idiomas (C-8). Medido, no supuesto. */
-#screen-end .panel { padding: 12px 14px; }
-#screen-end .stack { gap: 10px; }
-.finale .crown-big { font-size: 3.6rem; line-height: 1.1; display: block; filter: drop-shadow(0 0 30px rgba(255, 210, 63, 0.9)); animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, wiggle 2s ease-in-out 0.8s infinite; }
-.finale .victim { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.7); margin: 2px 0; }
-.ranking { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 5px; }
-.ranking li { display: grid; grid-template-columns: 30px 1fr auto; gap: 8px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 5px 12px; font-weight: 800; }
-.ranking li .pos { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+   jugadores en un celular de 812 px, en los tres idiomas (C-8). Medido, no supuesto. Por eso la
+   corona mide 3.6 rem y no los 4.2 del héroe del resultado (allowlisted). */
+#screen-end .panel { padding: var(--s-12) var(--s-14); }
+#screen-end .stack { gap: var(--s-10); }
+.finale .crown-big { font-size: 3.6rem; line-height: 1.1; display: block; filter: drop-shadow(0 0 30px rgb(from var(--yellow) r g b / 0.9)); animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, wiggle 2s ease-in-out 0.8s infinite; }
+.finale .victim { font-family: var(--font-display); font-size: clamp(2.4rem, 12vw, 3.6rem); color: var(--yellow); text-shadow: var(--shadow-text), 0 0 30px rgb(from var(--yellow) r g b / 0.7); margin: var(--s-2) 0; }
+.ranking { list-style: none; padding: 0; margin: var(--s-10) 0 0; display: grid; gap: var(--s-4); }
+.ranking li { display: grid; grid-template-columns: 30px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-12); padding: var(--s-4) var(--s-12); font-weight: 800; }
+.ranking li .pos { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .ranking li .sorbos { color: var(--cyan); font-variant-numeric: tabular-nums; }
-.ranking li.top { background: linear-gradient(90deg, rgba(255, 210, 63, 0.3), rgba(255, 46, 136, 0.3)); }
+.ranking li.top { background: linear-gradient(90deg, rgb(from var(--yellow) r g b / 0.3), rgb(from var(--pink) r g b / 0.3)); }
 
 /* ---------- Historial de cartas (CR-18) ---------- */
-.replay { margin-top: 10px; padding: 12px 16px; }
-.replay summary { font-size: 1rem; }
-.hist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-.hist li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 6px 12px 6px 8px; }
+.replay { margin-top: var(--s-10); padding: var(--s-12) var(--s-16); }
+.replay summary { font-size: var(--fs-100); }
+.hist { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s-6); }
+.hist li { display: grid; grid-template-columns: 34px 1fr auto; gap: var(--s-10); align-items: center; background: var(--well); border-radius: var(--r-12); padding: var(--s-6) var(--s-12) var(--s-6) var(--s-8); }
 .hist-card {
-  width: 34px; height: 44px; border-radius: 6px; background: var(--card); color: var(--card-ink);
-  font: 900 1rem/1 var(--font-num); font-variant-numeric: tabular-nums;
-  display: grid; place-items: center; align-content: center; gap: 1px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  width: 34px; height: 44px; border-radius: var(--r-8); background: var(--card); color: var(--card-ink);
+  font: 900 var(--fs-100)/1 var(--font-num); font-variant-numeric: tabular-nums;
+  display: grid; place-items: center; align-content: center; gap: 0;
+  box-shadow: 0 2px 5px var(--well-deep);
 }
 .hist-card.red { color: var(--red); }
-.hist-card.k { background: linear-gradient(180deg, #ffe680, #ffb300); }
-.hist-card .suit { font-size: 0.9rem; }
+.hist-card.k { background: linear-gradient(180deg, var(--king-light), var(--king-deep)); }
+.hist-card .suit { font-size: var(--fs-90); }
 .hist .who { font-weight: 800; }
-.hist .what { color: var(--muted); font-size: 0.85rem; text-align: right; }
-
-/* Modal de confirmación simple */
-.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: grid; place-items: center; padding: 24px; z-index: 40; }
-.modal .panel { width: 100%; max-width: 420px; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.hist .what { color: var(--muted); font-size: var(--fs-85); text-align: right; }
 
 /* ---------- Pase del celular (C-9) ----------
    El resultado y "Pásale el celular a X" van en una sola pantalla, así que se compactan: con un As
    y seis jugadores, seis fichas más el pase no cabían en un celular chico y el botón quedaba fuera.
    Y si igual no cabe (letra grande del sistema), el overlay se desplaza en vez de cortar arriba y
-   abajo: los márgenes automáticos centran cuando sobra alto y se anulan cuando falta. */
-.handoff { place-items: start center; overflow-y: auto; padding: 20px 16px; }
+   abajo (the shell's .handoff scrolls): los márgenes automáticos centran cuando sobra alto y se
+   anulan cuando falta. By its id: handoff.js rewrites the overlay's classes. The glasses at 3.8 rem
+   instead of the shell's 5.5 for the same reason (allowlisted). */
+#handoff { place-items: start center; padding: var(--s-20) var(--s-16); }
 .handoff > .stage { margin-block: auto; }
-.handoff .stage.pase { gap: 10px; }
+.handoff .stage.pase { gap: var(--s-10); }
 .handoff .pase .cheers { font-size: 3.8rem; }
 .handoff .pase .title { font-size: clamp(2.2rem, 12vw, 3.4rem); }
-.handoff .pase .drinkers { gap: 6px; }
-.handoff .pase .drinkers .chip { font-size: 1rem; padding: 7px 12px; }
-.handoff .pase .stage { gap: 8px; margin-top: 4px; }
+.handoff .pase .drinkers { gap: var(--s-6); }
+.handoff .pase .drinkers .chip { font-size: var(--fs-100); padding: var(--s-6) var(--s-12); }
+.handoff .pase .stage { gap: var(--s-8); margin-top: var(--s-4); }

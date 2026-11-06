@@ -830,7 +830,8 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   always runs, in the recap window's slot (`showSeason` in `assets/js/recap.js`). A player not in the
   table, or with the flag off, gets the table window alone. Code: `assets/js/month-end.js`,
   `assets/css/month-end.css`, texts in es/en/pt in its `TEXTS`; `/?recap=month-end-demo&place=N` shows a
-  made-up season, recording nothing. Tested by `month-end.test.mjs`.
+  made-up season, recording nothing. Tested by `month-end.test.mjs`. Its sheet is on the design system's
+  tokens (D-533, #1193; its own colours and escapes in DESIGN.md §4).
 
 The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
 rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype

@@ -15,8 +15,8 @@ or any other here), launch it and report what it found; do not ask the owner fir
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
   It owns **the design system** (D-533, `docs/DESIGN.md`): the tokens and shared classes in `base.css`, the design lint
-  (`node tools/agents/design-lint.mjs [--summary|--all|--gate|baseline|<file.css>]`: colours, corners, distances and text sizes off the tokens (a `font-size` or the size inside a `font:` shorthand; a token colour at an alpha is named as `rgb(from var(--x) r g b / a)`), classes copied from `base.css` (the game shell among them, phase 4); `docs/design-allowlist.json` with a reason per entry; the ratchet `docs/design-baseline.json` that `design-lint.test.mjs` holds and `baseline` rewrites after a migration) and the components page (`/labs/design/`, phase 3); a PR that
-  adds a token, a scale step or a shared class is reviewed by it, and it migrates one game per round when the round is quiet (#1193).
+  (`node tools/agents/design-lint.mjs [--summary|--all|--gate|<file.css>]`: colours, corners, distances and text sizes off the tokens (a `font-size` or the size inside a `font:` shorthand; a token colour at an alpha is named as `rgb(from var(--x) r g b / a)`), classes copied from `base.css` (the game shell among them, phase 4); `docs/design-allowlist.json` with a reason per entry; since phase 6 a gate: `design-lint.test.mjs` fails the `tests` check on any hit not allowlisted) and the components page (`/labs/design/`, phase 3); a PR that
+  adds a token, a scale step or a shared class is reviewed by it; every stylesheet is migrated (phases 5 and 7), and a later visual change follows DESIGN.md §6.
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
   request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability
   round's; it does not touch code, except the messages with which the app

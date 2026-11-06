@@ -11,6 +11,10 @@
  * mientras una lupa las recorre.
  */
 import * as motor from './engine.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
 
 const QUIETO = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
@@ -170,7 +174,7 @@ export function montar(raiz, ctx) {
   const dibujarAccion = e => {
     accion.replaceChildren();
     if (e.fin) {
-      accion.append(el('div', { class: 'aviso bien' }, `🎉 ${T.casoOk}`),
+      accion.append(el('div', { class: 'notice notice--good' }, `🎉 ${T.casoOk}`),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
       return;
     }

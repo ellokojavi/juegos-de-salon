@@ -1,10 +1,18 @@
 /* 🗼 Babel in La Copa (from the lab's style.css, D-445). Loaded by ui.js; every class starts with `sk-`.
-   The tower's canvas is transparent: it stands on the app's own night (base.css). */
+   The tower's canvas is transparent: it stands on the app's own night (base.css).
+   Migrated to the design system (D-533, #1193): written on the tokens; the tower's own colours are
+   the game's tokens below (DESIGN.md §4), and the messages over the tower keep their own sizes
+   (docs/design-allowlist.json). */
+:root {
+  --sk-hundido: rgba(0,0,0,0.35);    /* the score's drop over the tower */
+  --sk-tira: rgba(29,11,58,0.8);     /* the end's blurred strip under «Continue» */
+  --sk-pestana: rgba(20,8,40,0.85);  /* the lab tab's night */
+}
 
 /* The waiting room's name, with the 🗼 that sways */
-.sk-cabeza { display: grid; justify-items: center; gap: 2px; }
-.sk-titulo { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
-.sk-logo { font-size: 2.2rem; animation: sk-mece 3s ease-in-out infinite; }
+.sk-cabeza { display: grid; justify-items: center; gap: var(--s-2); }
+.sk-titulo { display: flex; align-items: center; justify-content: center; gap: var(--s-12); margin: 0; }
+.sk-logo { font-size: var(--fs-200); animation: sk-mece 3s ease-in-out infinite; }
 @keyframes sk-mece { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
 
 /* The cover's tower, building itself */
@@ -12,7 +20,7 @@
 .sk-demo { display: block; width: 100%; height: 230px; }
 
 /* The game: the tower takes the screen under the cup's heading, and a tap anywhere on it drops */
-.sk-juego { display: grid; gap: 10px; }
+.sk-juego { display: grid; gap: var(--s-10); }
 .sk-escenario {
   position: relative; height: calc(100svh - 220px); min-height: 340px; overflow: hidden;
   touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
@@ -22,11 +30,11 @@
 .sk-lienzo, .sk-demo { -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
 .sk-marcador {
   position: absolute; top: 6%; left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 var(--sk-hundido);
 }
 .sk-aviso {
   position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.85); transition: opacity 0.4s; padding: 0 16px;
+  font: 700 var(--fs-100) var(--font-body); color: rgb(from var(--ink) r g b / 0.85); transition: opacity 0.4s; padding: 0 var(--s-16);
 }
 .sk-aviso.fuera { opacity: 0; }
 .sk-aviso.brilla { font: 1.9rem var(--font-display); letter-spacing: 0.06em; animation: sk-brilla 0.9s ease-out forwards; }
@@ -35,16 +43,16 @@
 
 /* Paused (a call, another app): over the tower, until a tap takes it off */
 .sk-pausa {
-  position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(21, 7, 38, 0.8), rgba(21, 7, 38, 0.35) 70%, transparent);
-  font: 700 1.05rem var(--font-body); color: #fff;
+  position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.8), rgb(from var(--bg1) r g b / 0.35) 70%, transparent);
+  font: 700 var(--fs-100) var(--font-body); color: var(--ink);
 }
 .sk-pausa[hidden] { display: none; }
-.sk-titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
+.sk-titulo-pausa { display: flex; align-items: center; justify-content: center; gap: var(--s-10); font-size: var(--fs-200); }
 .sk-pausa .display { font-size: 2.6rem; }
 
 /* The end, under the tower: «See results» */
-.sk-fin { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.sk-fin { display: grid; gap: var(--s-10); justify-items: center; text-align: center; }
 .sk-fin:empty { display: none; }
 /* Finished: the tower takes the whole screen for the tour (scene.js recorrer) */
 .sk-juego.terminado .sk-escenario { height: calc(100svh - 150px); min-height: 380px; cursor: default; }
@@ -52,7 +60,7 @@
 /* The end's tour: the tower takes the whole screen,
    and «Continue» sits on a blurred strip over it that melts upward */
 .sk-juego.gira .sk-fin { position: relative; z-index: 1; margin-top: -110px; padding: 44px 0 24px;
-  background: linear-gradient(to bottom, transparent, rgba(29,11,58,0.8) 45%);
+  background: linear-gradient(to bottom, transparent, var(--sk-tira) 45%);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   /* it melts at the bottom too: a hard edge right under the button looked like a stripe on its shadow */
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40px, #000 calc(100% - 22px), transparent);
@@ -73,53 +81,46 @@
 }
 
 /* «Simular final», only with a lab key (ui.js titulo) */
-.sk-sim { display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 6px; }
-.sk-sim-n { width: 4.5em; padding: 6px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: inherit; font: inherit; text-align: center; }
+.sk-sim { display: flex; gap: var(--s-8); justify-content: center; align-items: center; margin-top: var(--s-6); }
+.sk-sim-n { width: 4.5em; padding: var(--s-6) var(--s-8); border-radius: var(--r-10); border: 1px solid rgb(from var(--ink) r g b / 0.3); background: var(--glass); color: inherit; font: inherit; text-align: center; }
 
 /* The credit to the original, in the waiting room (like Pintaminas' .pm-credito) */
-.sk-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.sk-credito { margin: 0; font-size: var(--fs-85); color: var(--muted); text-align: center; }
 .sk-credito a { color: var(--cyan); }
-.sk-cabecera { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+.sk-cabecera { display: flex; gap: var(--s-8); justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: var(--s-4); }
 .sk-musica { flex: none; white-space: nowrap; width: auto; margin: 0; }
 .sk-musica.apagada { opacity: 0.7; }
 .sk-musica-credito { text-align: center; }
-.sk-musica-credito { font-size: 0.78rem; margin: -10px 0 0; position: relative; z-index: 1; }
+.sk-musica-credito { font-size: var(--fs-75); margin: calc(-1 * var(--s-10)) 0 0; position: relative; z-index: 1; }
 .sk-musica-credito a { color: inherit; }
-.sk-lab { position: fixed; left: 0; top: 38%; z-index: 30; background: rgba(20,8,40,0.85); border: 1px solid rgba(255,255,255,0.25); border-left: 0; border-radius: 0 12px 12px 0; padding: 4px 6px; backdrop-filter: blur(6px); }
-.sk-lab > summary { list-style: none; cursor: pointer; font-size: 1.1rem; opacity: 0.7; }
+.sk-lab { position: fixed; left: 0; top: 38%; z-index: 30; background: var(--sk-pestana); border: 1px solid rgb(from var(--ink) r g b / 0.25); border-left: 0; border-radius: 0 var(--r-12) var(--r-12) 0; padding: var(--s-4) var(--s-6); backdrop-filter: blur(6px); }
+.sk-lab > summary { list-style: none; cursor: pointer; font-size: var(--fs-110); opacity: 0.7; }
 .sk-lab > summary::-webkit-details-marker { display: none; }
-.sk-lab[open] { padding: 6px 10px 10px 6px; }
-.sk-lab .sk-sim { margin-top: 6px; }
+.sk-lab[open] { padding: var(--s-6) var(--s-10) var(--s-10) var(--s-6); }
+.sk-lab .sk-sim { margin-top: var(--s-6); }
 
 /* The end: no rules under the tower, there is no time to read them (the owner's call) */
 #screen-jugar:has(.sk-juego.terminado) #jugar-reglas,
 #screen-jugar:has(.sk-juego.terminado) #comentario-pie { display: none; }
 
-/* The score's tally over «Continue» (ui.js cuentaPuntos): floors + bonuses = points, one term at a time */
-.sk-cuenta { display: flex; justify-content: center; align-items: flex-end; gap: 4px 10px; flex-wrap: wrap; width: 100%; }
-/* Three-digit figures: smaller numbers and tighter gaps, so the sum stays on one line at 320 px */
-.sk-cuenta.compacta { gap: var(--s-6); flex-wrap: nowrap; }
-.sk-cuenta.compacta .sk-valor { font-size: var(--fs-140); }
-.sk-cuenta.compacta .sk-signo { font-size: var(--fs-100); }
-.sk-cuenta.compacta small { white-space: normal; max-width: 6.5em; text-align: center; }
-.sk-cuenta.compacta .sk-termino:not(.pisos) { padding-left: 1.1em; }
-.sk-cuenta.compacta .sk-signo { transform: translate(-1.15em, 0.1em); }
-.sk-cuenta.compacta .total .sk-valor { --sk-corona: 1.1; transform-origin: 100% 80%; }
-.sk-termino { display: grid; justify-items: center; line-height: 1; opacity: 0; transform: translateY(14px) scale(0.6); }
-.sk-termino .sk-valor { font: 900 var(--fs-200)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); }
-.sk-termino small { font: 700 var(--fs-75) var(--font-body); color: var(--muted); margin-top: var(--s-2); white-space: nowrap; }
-.sk-termino .sk-signo { position: absolute; transform: translate(-1.1em, 0.15em); font: 900 var(--fs-120) var(--font-num); color: rgb(from var(--ink) r g b / 0.60); }
-.sk-termino { position: relative; padding-left: 0.9em; }
-.sk-termino.pisos { padding-left: 0; }
-.sk-termino.total { padding-left: 1.2em; }
+/* The score's tally over «Continue» (ui.js cuentaPuntos), as a receipt: a row per term, the label on
+   one line on the left and the figure on the right, then a rule and the total. Each row slams in */
+.sk-cuenta { display: grid; gap: var(--s-2); width: min(100%, 22rem); justify-self: center; margin-bottom: var(--s-12); }
+.sk-termino { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-12); opacity: 0; transform: translateX(40px); }
+.sk-rotulo { font: 700 var(--fs-110) var(--font-body); color: var(--muted); white-space: nowrap; }
+.sk-palabra { display: inline-block; }
+.sk-palabra::first-letter { text-transform: uppercase; }
+.sk-termino .sk-valor { font: 900 var(--fs-200)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
 .sk-termino.bono .sk-valor { color: var(--cyan); text-shadow: 0 0 14px rgb(from var(--cyan) r g b / 0.60); }
-.sk-termino.total .sk-valor { color: var(--yellow); transform-origin: 50% 80%; }
-.sk-termino.entra { animation: sk-golpe 0.55s cubic-bezier(.2,1.6,.4,1) forwards; }
+.sk-termino.total { border-top: 2px solid rgb(from var(--ink) r g b / 0.25); padding-top: var(--s-4); margin-top: var(--s-2); }
+.sk-termino.total .sk-rotulo { color: var(--ink); }
+.sk-termino.total .sk-valor { font-size: var(--fs-200); color: var(--yellow); transform-origin: 100% 70%; }
+.sk-termino.entra { animation: sk-golpe 0.5s cubic-bezier(.2,1.5,.4,1) forwards; }
 .sk-termino.total.late .sk-valor { animation: sk-late 0.45s ease-out; }
 .sk-termino.total.final .sk-valor { animation: sk-corona 0.9s ease-out forwards; }
 .sk-cuenta.lista .sk-termino { opacity: 1; transform: none; animation: none; }
-.sk-cuenta.lista .total .sk-valor { transform: scale(var(--sk-corona, 1.3)); }
-@keyframes sk-golpe { 0% { opacity: 0; transform: translateY(-26px) scale(1.8); } 60% { opacity: 1; transform: translateY(2px) scale(0.92); } 100% { opacity: 1; transform: none; } }
-@keyframes sk-late { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
-@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(calc(var(--sk-corona, 1.3) * 1.3)); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(var(--sk-corona, 1.3)); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
+.sk-cuenta.lista .total .sk-valor { transform: scale(1.3); }
+@keyframes sk-golpe { 0% { opacity: 0; transform: translateX(60px) scale(1.3); } 60% { opacity: 1; transform: translateX(-4px) scale(0.98); } 100% { opacity: 1; transform: none; } }
+@keyframes sk-late { 0% { transform: scale(1); } 40% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes sk-corona { 0% { transform: scale(1); } 35% { transform: scale(1.6); text-shadow: 0 0 28px var(--yellow), 0 3px 0 rgba(0,0,0,0.35); } 100% { transform: scale(1.3); text-shadow: 0 0 18px rgba(255,214,0,0.7), 0 3px 0 rgba(0,0,0,0.35); } }
 @media (prefers-reduced-motion: reduce) { .sk-termino { opacity: 1; transform: none; animation: none !important; } }

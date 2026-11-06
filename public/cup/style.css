@@ -1,90 +1,82 @@
 /* ==========================================================
    La Copa — estilos propios
    ========================================================== */
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
-
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-/* El contorno claro de un emoji oscuro (〰️) más el halo dorado de siempre */
-.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 18px rgba(255, 210, 63, 0.6)); }
-.intro-hero .globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
+/* La Copa's own colours (DESIGN.md §4): what has no token in base.css, declared once, by value */
+:root {
+  --cp-negro: #000;                 /* black at an alpha: the cup's wells a shade off --well (0.15–0.22), its drops, a mark on a coloured cell */
+  --cp-noche: #150726;              /* the shell's --bg1 as a fixed value under the floating widgets: Pintaminas' hard mode redeclares --bg1 */
+  --cp-globo-luz: #2a1250;          /* ¿Dónde queda?'s sky around the globe */
+  --cp-globo-fondo: #0e0520;
+  --cp-dado-tinta: #2a1200;         /* the 🎲 button of the create screen: its ink, its light and its edge */
+  --cp-dado-luz: #ffe066;
+  --cp-dado-borde: #b86e00;
+  --cp-anio: #6b3fd1;               /* the year on a Línea de tiempo card */
+  --cp-carta-luz: #fff7d6;          /* the card in play */
+  --cp-carta-fondo: #ffe38a;
+  --cp-palabra-on: #5a594e;         /* a chosen word in Conexiones */
+  --cp-perdido: #ff788c;            /* a day not played, in the table */
+  --cp-ciudad-tinta: #6b4a00;       /* the city's country line, on the yellow notice */
+  --cp-aviso-bien: #1a3008;         /* ¿Dónde queda?'s notices over the globe */
+  --cp-aviso-mal: #460814;
+  --cp-brujula: #ff4d4d;            /* the compass's north */
+  --cp-tinta-cian: #00312d;         /* the = mark on cyan (Tango) */
+  --cp-tinta-lima: #1d3a00;         /* a letter in place on lime (the word game) */
+  --cp-sol: #ffb830;                /* Tango's day and night cells */
+  --cp-sol-borde: #ffc446;
+  --cp-sol-dado: #d6700a;
+  --cp-luna: #0e1448;
+  --cp-luna-borde: #82a0ff;
+  --cp-luna-dada: #263696;
+  --cp-cuerda: #0e0620;             /* Desenredo's rope: its dark edge and strand */
+}
+.globo-portada { position: relative; display: block; width: 150px; height: 150px; margin: 0 auto; }
 .globo-portada canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* El globo aparece cuando llega la imagen satelital, sin pasar antes por el mapa dibujado */
 .globo-aparece { animation: globo-aparece 0.3s ease-out; }
 @keyframes globo-aparece { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .globo-aparece { animation: none; } }
-.intro-hero h1, .intro-hero h2 { margin: 4px 0 6px; overflow-wrap: anywhere; }
+.intro-hero h1, .intro-hero h2 { margin: var(--s-4) 0 var(--s-6); overflow-wrap: anywhere; }
 
 /* Formularios */
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
-.field label { font-weight: 900; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.field input, input.mini {
-  width: 100%; font: 900 1.15rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3);
-  border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; min-height: 48px;
+/* The fields are the shell's (.field, base.css); the admin's small input beside its buttons is the cup's */
+input.mini {
+  width: 100%; font: 900 var(--fs-110) var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none; min-height: 48px;
 }
-.field input:focus, input.mini:focus { border-color: var(--cyan); }
-.field input::placeholder { color: rgba(255,255,255,0.35); }
-.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
-.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
+input.mini:focus { border-color: var(--cyan); }
 /* En Administrar el aviso va debajo del botón, al final del panel: vacío no deja un hueco (U-11) */
 #admin-body .panel > .form-error:empty { display: none; }
-.waiting { text-align: center; color: var(--muted); font-weight: 800; padding: 30px 0; }
-.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 8px auto 0; display: block; }
 .ok { color: var(--lime); font-weight: 900; margin: 4px 0; }
 
-.seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
-.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 1.05rem var(--font-body); padding: 10px; border-radius: 10px; cursor: pointer; min-height: 44px; }
-.seg button.on { background: var(--yellow); color: #3a1200; }
 
-.opciones { display: grid; gap: 8px; }
-.opciones.dos { grid-template-columns: 1fr 1fr; }
-.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
-.opciones.tres .opcion { text-align: center; padding-left: 6px; padding-right: 6px; }
-/* German hyphenates on its own (base.css): in three narrow columns that split "Mor-gen" and "Ande-res". Whole words, a bit smaller on a narrow phone (texts not cut, C-8) */
-.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
-@media (max-width: 374px) { .opciones.tres .opcion { padding-left: 4px; padding-right: 4px; } .opciones.tres .opcion b { font-size: 0.95rem; } }
-.opcion {
-  text-align: left; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 14px;
-  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
-}
-.opciones.dos .opcion { text-align: center; }
-.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
-.opcion .opcion-emoji { display: block; }
-/* A variant's name in one piece at 320 px, also «Anschlüsse» inside the cup's form (U-12) */
-.opciones.variantes .opcion { padding-left: 6px; padding-right: 6px; }
+/* The choice buttons are the shell's (.opciones, .opcion, base.css). A variant's name in one piece at 320 px,
+   also «Anschlüsse» inside the cup's form (U-12) */
+.opciones.variantes .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
 .opciones.variantes .opcion b { hyphens: manual; }
-.opcion small { color: var(--muted); font-weight: 700; }
-.opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 ol.como { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
 ol.como li { line-height: 1.45; }
 
 /* Portada */
 .mias { display: grid; gap: 8px; }
-.mia { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 10px; text-decoration: none; color: var(--ink); background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 14px; min-height: 48px; }
+.mia { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 10px; text-decoration: none; color: var(--ink); background: var(--well); border-radius: 14px; padding: 10px 14px; min-height: 48px; }
 .mia b { font-weight: 900; }
 .mia small { color: var(--muted); font-weight: 700; grid-row: 2; }
-.mia .go { grid-row: 1 / -1; grid-column: 2; font-family: var(--font-display); font-size: 1.8rem; color: var(--yellow); }
+.mia .go { grid-row: 1 / -1; grid-column: 2; font-family: var(--font-display); font-size: var(--fs-160); color: var(--yellow); }
 .mia .mia-cod { margin-left: 4px; font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
 /* The status line, in the second row: yellow to play, cyan when played, grey otherwise */
 .mia .mia-linea { grid-row: 2; font-weight: 800; font-size: 0.9rem; margin-top: 2px; }
 .mia.est-jugar .mia-linea { color: var(--yellow); }
 .mia.est-ok .mia-linea { color: var(--cyan); }
 .mia.est-espera .mia-linea, .mia.est-fuera .mia-linea { color: var(--muted); }
-.mia.terminada { background: rgba(0,0,0,0.15); }
+.mia.terminada { background: rgb(from var(--cp-negro) r g b / 0.15); }
 .mia.terminada b { color: var(--muted); }
-.etiqueta-fin { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,0.14); color: var(--ink); font-size: 0.75rem; font-weight: 800; vertical-align: 2px; }
+.etiqueta-fin { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: rgb(from var(--ink) r g b / 0.14); color: var(--ink); font-size: 0.75rem; font-weight: 800; vertical-align: 2px; }
 .mias-vacia { margin: 0 0 4px; }
 .hoja-switch.mias-switch { margin-top: 10px; min-height: 48px; padding-bottom: 0; border-bottom: 0; }
 
 /* Invitación */
 .nombres { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-/* El ×2 de la final, distinto del dorado del comodín (D-151) */
-.chip--final { background: var(--cyan); color: #03302c; border-color: transparent; }
-.chip-btn { border: 2px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 900 1rem var(--font-body); border-radius: 999px; padding: 8px 16px; min-height: 44px; cursor: pointer; }
-.chip-btn.on { border-color: var(--cyan); background: rgba(46, 230, 214, 0.18); }
 .cal-mini { display: flex; justify-content: center; gap: 8px; font-size: 1.6rem; margin-bottom: 4px; }
 
 /* Elegir los juegos al crear la copa (D-163): la mano y la línea de Línea de Tiempo (linea.css) */
@@ -96,17 +88,17 @@ ol.como li { line-height: 1.45; }
 #crear-juegos .hand .card { width: 112px; min-height: 76px; }
 #crear-juegos .hand .card.hueco, .cal-linea .event.hueco { opacity: 0.3; border-style: dashed; }
 .cal-linea .event {
-  width: 100%; grid-template-columns: 50px 28px 1fr 24px; margin: 3px 0; min-height: 52px; animation: none;
+  width: 100%; grid-template-columns: 50px 28px 1fr 24px; margin: var(--s-4) 0; min-height: 52px; animation: none;
   color: var(--ink); font-family: var(--font-body); text-align: left; cursor: pointer;
 }
 .cal-linea .event .y { font-size: 0.85rem; }
-.cal-linea .event .t { font-size: 0.92rem; font-weight: 900; }
+.cal-linea .event .t { font-size: var(--fs-90); font-weight: 900; }
 .cal-linea .event .t small { display: block; color: var(--muted); font-weight: 700; font-size: 0.75rem; }
-.cal-linea .event.sel { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); }
+.cal-linea .event.sel { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.14); }
 /* Con un juego de fuera elegido, cada día es un destino; el de turno, encendido */
-.cal-linea.blanco .event[data-dia] { border-style: dashed; border-color: rgba(255, 210, 63, 0.55); }
-.cal-linea .event[data-dia].on { border: 2px solid var(--yellow); background: rgba(255, 210, 63, 0.22); box-shadow: 0 0 14px rgba(255, 210, 63, 0.3); }
-.cal-linea .event.fija { cursor: default; border-style: dashed; border-color: rgba(46, 230, 214, 0.45); }
+.cal-linea.blanco .event[data-dia] { border-style: dashed; border-color: rgb(from var(--yellow) r g b / 0.55); }
+.cal-linea .event[data-dia].on { border: 2px solid var(--yellow); background: rgb(from var(--yellow) r g b / 0.22); box-shadow: 0 0 14px rgb(from var(--yellow) r g b / 0.3); }
+.cal-linea .event.fija { cursor: default; border-style: dashed; border-color: rgb(from var(--cyan) r g b / 0.45); }
 /* Por el agarre se arrastra en un celular: el resto de la fila deja desplazar la página */
 .cal-linea .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 10px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
 .cal-linea .slot { min-height: 44px; }
@@ -120,33 +112,29 @@ ol.como li { line-height: 1.45; }
 .semana-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
 .semana-titulo { white-space: nowrap; font-weight: 900; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .btn-dado {
-  font: 400 1.2rem var(--font-display); letter-spacing: 0.04em; color: #2a1200; white-space: nowrap; cursor: pointer;
-  background: linear-gradient(180deg, #ffe066, var(--yellow)); border: 0; border-radius: 999px; min-height: 44px; padding: 0 16px;
-  box-shadow: 0 3px 0 #b86e00;
+  font: 400 1.2rem var(--font-display); letter-spacing: 0.04em; color: var(--cp-dado-tinta); white-space: nowrap; cursor: pointer;
+  background: linear-gradient(180deg, var(--cp-dado-luz), var(--yellow)); border: 0; border-radius: 999px; min-height: 44px; padding: 0 16px;
+  box-shadow: 0 3px 0 var(--cp-dado-borde);
 }
-.btn-dado:active { transform: translateY(2px); box-shadow: 0 1px 0 #b86e00; }
+.btn-dado:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--cp-dado-borde); }
 /* At 320 px "Crear al azar" / "Criar ao acaso" can run past the panel's padding to its border (U-11): a touch smaller there,
    and if a language still does not fit, the button drops under the title instead of overflowing */
 .semana-cabeza { flex-wrap: wrap; }
-@media (max-width: 360px) { .btn-dado { font-size: 1.05rem; padding: 0 12px; } }
+@media (max-width: 360px) { .btn-dado { font-size: var(--fs-100); padding: 0 12px; } }
 .semana-estilos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.semana-estilos .estilo {
-  flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
-  font: 800 0.85rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border);
-}
-.semana-estilos .estilo.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.semana-estilos .chip-btn { flex: none; white-space: nowrap; }
 .semana-dias { display: grid; gap: 6px; }
 .semana-dia {
   display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 36px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
-  background: rgba(0, 0, 0, 0.22); border: 1px solid var(--glass-border); border-radius: 14px;
+  background: rgb(from var(--cp-negro) r g b / 0.22); border: 1px solid var(--glass-border); border-radius: 14px;
 }
 .semana-dias + .semana-final { margin-top: 6px; }
 .semana-dia .cab { display: grid; justify-items: center; line-height: 1.1; }
 .semana-dia .y { font-weight: 900; font-size: 0.75rem; color: var(--yellow); white-space: nowrap; }
-.semana-dia .em { font-size: 1.35rem; }
+.semana-dia .em { font-size: var(--fs-140); }
 /* The roll (D-425): while a card runs through random games its text spins like a slot machine's reel,
    and it lands with a small bump, one card after the other */
-.semana-dia.baraja { border-color: rgba(255, 210, 63, 0.55); }
+.semana-dia.baraja { border-color: rgb(from var(--yellow) r g b / 0.55); }
 .semana-dia.baraja .em, .semana-dia.baraja .semana-juego b, .semana-dia.baraja .semana-juego small { animation: semanaRueda 70ms linear infinite; }
 .semana-dia.baraja .semana-juego b, .semana-dia.baraja .semana-juego small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @keyframes semanaRueda { from { transform: translateY(-5px); opacity: 0.45; } to { transform: translateY(5px); opacity: 0.85; } }
@@ -156,46 +144,41 @@ ol.como li { line-height: 1.45; }
   all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: center; min-height: 44px; padding: 6px 2px; min-width: 0;
 }
 .semana-juego:focus-visible, .hoja-juego:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-radius: 8px; }
-.semana-juego b { font-size: 0.95rem; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
+.semana-juego b { font-size: var(--fs-90); font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
 .semana-juego small { color: var(--muted); font-weight: 700; font-size: 0.75rem; }
 .semana-dia.hueco { opacity: 0.3; border-style: dashed; }
-.semana-dia.on { border: 2px solid var(--yellow); background: rgba(255, 210, 63, 0.18); }
+.semana-dia.on { border: 2px solid var(--yellow); background: rgb(from var(--yellow) r g b / 0.18); }
 /* As in the week of before: on a phone the day is dragged by its grip, and the rest of the row lets the page scroll */
 .semana-dia .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 12px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
-.semana-final { grid-template-columns: 3.4em minmax(0, 1fr); border-style: dashed; border-color: rgba(46, 230, 214, 0.45); }
+.semana-final { grid-template-columns: 3.4em minmax(0, 1fr); border-style: dashed; border-color: rgb(from var(--cyan) r g b / 0.45); }
 .semana-final .semana-juego { cursor: default; }
 .semana-final[hidden] { display: none; }
 .semana-mezcla { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 6px; }
-.semana-mezcla span { font-size: 0.75rem; font-weight: 800; border-radius: 999px; padding: 3px 10px; background: rgba(255, 255, 255, 0.1); }
-.semana-mezcla span.muchas { background: rgba(255, 46, 136, 0.28); }
+.semana-mezcla span { font-size: 0.75rem; font-weight: 800; border-radius: 999px; padding: var(--s-4) 10px; background: rgb(from var(--ink) r g b / 0.1); }
+.semana-mezcla span.muchas { background: rgb(from var(--pink) r g b / 0.28); }
 .semana-ayuda { display: block; }
 /* The sheet is the app's own (base.css, D-223): here, a day's choices */
 .hoja .field { margin: 0; }
 /* The version keeps the look of the cup's options: the sheet's own (.hoja .opcion, base.css) is a row with a check */
 #semana-hoja .opciones .opcion { display: block; text-align: center; padding: 12px 6px; }
-.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.hoja-cabeza h3 { margin: 0; font-size: 1.1rem; font-weight: 900; }
 .hoja-mover { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.hoja-mover .btn { width: 100%; font-size: 0.95rem; }
+.hoja-mover .btn { width: 100%; font-size: var(--fs-90); }
 .hoja-mover .btn:disabled { opacity: 0.35; }
 .hoja-juegos { display: grid; gap: 6px; }
 .hoja-juego {
   all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center;
-  padding: 10px 12px; min-height: 52px; border-radius: 14px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.22);
+  padding: 10px 12px; min-height: 52px; border-radius: 14px; border: 1px solid var(--glass-border); background: rgb(from var(--cp-negro) r g b / 0.22);
 }
-.hoja-juego.actual { border-color: var(--yellow); background: rgba(255, 210, 63, 0.1); }
-.hoja-juego .em { font-size: 1.35rem; text-align: center; }
-.hoja-juego .t b { display: block; font-size: 0.95rem; font-weight: 900; line-height: 1.2; }
-.hoja-juego .t small { display: block; color: var(--muted); font-weight: 600; font-size: 0.8rem; line-height: 1.3; }
-.hoja-juego .etiqueta { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cyan); white-space: nowrap; }
+.hoja-juego.actual { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.1); }
+.hoja-juego .em { font-size: var(--fs-140); text-align: center; }
+.hoja-juego .t b { display: block; font-size: var(--fs-90); font-weight: 900; line-height: 1.2; }
+.hoja-juego .t small { display: block; color: var(--muted); font-weight: 600; font-size: var(--fs-75); line-height: 1.3; }
+.hoja-juego .etiqueta { font-size: var(--fs-75); font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cyan); white-space: nowrap; }
 .hoja-juego .etiqueta.nueva { color: var(--pink); }
 /* "More options" folds like every panel (base.css, ▾ on the right), with what is chosen inside under its name */
 .mas-opciones > summary { min-height: 44px; gap: 10px; }
 .mas-opciones .mas-t { display: grid; gap: 2px; min-width: 0; }
-.mas-opciones .mas-t small { font-weight: 700; font-size: 0.8rem; }
-.pin-fila { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 6px; }
-.ver-pin { min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
-.ver-pin[aria-pressed="true"] { border-color: var(--cyan); }
+.mas-opciones .mas-t small { font-weight: 700; font-size: var(--fs-75); }
 .crear-fechas { display: block; text-align: center; margin-top: -4px; }
 @media (prefers-reduced-motion: reduce) { .semana-dia.baraja *, .semana-dia.cae { animation: none; } }
 .variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
@@ -206,8 +189,8 @@ ol.como li { line-height: 1.45; }
 .copa-head { text-align: center; display: grid; gap: 8px; }
 .copa-head h1 { margin: 0; overflow-wrap: anywhere; }
 .dia-card { display: grid; gap: 10px; }
-.dia-card.hoy, .dia-card.en-curso { border-color: rgba(255, 210, 63, 0.55); box-shadow: 0 0 22px rgba(255, 210, 63, 0.15); }
-.dia-card.gracia { border-color: rgba(255, 122, 26, 0.55); }
+.dia-card.hoy, .dia-card.en-curso { border-color: rgb(from var(--yellow) r g b / 0.55); box-shadow: 0 0 22px rgb(from var(--yellow) r g b / 0.15); }
+.dia-card.gracia { border-color: rgb(from var(--orange) r g b / 0.55); }
 .dia-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .dia-juego { display: flex; align-items: center; gap: 12px; }
 .dia-juego b { display: block; font-size: 1.2rem; font-weight: 900; }
@@ -215,14 +198,14 @@ ol.como li { line-height: 1.45; }
 .quienes { margin: 0; font-size: 0.9rem; }
 
 .tabla { display: grid; gap: 6px; }
-.fila { display: grid; grid-template-columns: 1.6em 1em 1fr auto; align-items: center; gap: 6px; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 8px 10px; }
+.fila { display: grid; grid-template-columns: 1.6em 1em 1fr auto; align-items: center; gap: 6px; background: rgb(from var(--cp-negro) r g b / 0.22); border-radius: 12px; padding: 8px 10px; }
 .fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; }
 /* Out of the cup (D-347): kept in the table, faded, below everyone still playing (D-376) */
 .fila.fuera { opacity: 0.45; }
 .fila.fuera .quien b { font-weight: 700; color: var(--muted); }
 /* The days an eliminated player will not play, in one pill (D-376) */
-.pd.eliminado { box-sizing: border-box; min-width: 0; padding: 2px 8px; font: 800 0.66rem var(--font-body); text-transform: uppercase; white-space: nowrap; max-width: 100%; color: var(--muted); background: transparent; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset; }
-.aviso-fuera { border: 2px solid rgba(255, 255, 255, 0.25); }
+.pd.eliminado { box-sizing: border-box; min-width: 0; padding: 2px 8px; font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; white-space: nowrap; max-width: 100%; color: var(--muted); background: transparent; box-shadow: 0 0 0 1px rgb(from var(--ink) r g b / 0.22) inset; }
+.aviso-fuera { border: 2px solid rgb(from var(--ink) r g b / 0.25); }
 .fila .lugar { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-align: center; }
 .fila .flecha { font-size: 0.75rem; text-align: center; }
 .fila .flecha.sube { color: var(--lime); }
@@ -236,21 +219,21 @@ ol.como li { line-height: 1.45; }
 .fila .quien .con-x2 b { min-width: 0; }
 .fila .quien .con-x2 .md-x2 { flex: none; }
 .fila .total { font: 900 1.2rem var(--font-num); font-variant-numeric: tabular-nums; text-align: right; }
-.fila .total small { font-size: 0.7rem; color: var(--muted); }
-.puntitos { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
-.pd { font: 900 0.72rem var(--font-num); font-variant-numeric: tabular-nums; min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; background: rgba(255,255,255,0.08); color: var(--muted); }
-.pd.oro { background: rgba(255, 210, 63, 0.25); color: var(--yellow); }
+.fila .total small { font-size: var(--fs-75); color: var(--muted); }
+.puntitos { display: flex; gap: 4px; flex-wrap: wrap; margin-top: var(--s-4); }
+.pd { font: 900 var(--fs-75) var(--font-num); font-variant-numeric: tabular-nums; min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: var(--r-8); background: var(--glass); color: var(--muted); }
+.pd.oro { background: rgb(from var(--yellow) r g b / 0.25); color: var(--yellow); }
 .pd.doble { box-shadow: 0 0 0 1px var(--orange) inset; }
 .pd.oculto { color: var(--cyan); }
 /* Los siete días como bloques (D-131): por jugar, no jugó y todavía no abre */
-.pd.abierto { color: var(--yellow); background: transparent; box-shadow: 0 0 0 1.5px rgba(255, 210, 63, 0.7) inset; }
-.pd.perdido { color: rgba(255, 120, 140, 0.9); background: rgba(224, 36, 60, 0.12); }
-.pd.pendiente { background: transparent; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset; min-height: 1.45em; }
-.tabla-leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 2px 4px; font-size: 0.8rem; color: var(--muted); }
-.tabla-leyenda > span { display: inline-flex; align-items: center; gap: 5px; }
+.pd.abierto { color: var(--yellow); background: transparent; box-shadow: 0 0 0 1.5px rgb(from var(--yellow) r g b / 0.7) inset; }
+.pd.perdido { color: rgb(from var(--cp-perdido) r g b / 0.9); background: rgb(from var(--red) r g b / 0.12); }
+.pd.pendiente { background: transparent; box-shadow: 0 0 0 1px rgb(from var(--ink) r g b / 0.14) inset; min-height: 1.45em; }
+.tabla-leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 2px 4px; font-size: var(--fs-75); color: var(--muted); }
+.tabla-leyenda > span { display: inline-flex; align-items: center; gap: var(--s-6); }
 
 .calendario { display: grid; gap: 6px; }
-.cal-fila { display: grid; grid-template-columns: 4.2em 1fr auto 1.6em; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: rgba(0,0,0,0.18); font-weight: 700; }
+.cal-fila { display: grid; grid-template-columns: 4.2em 1fr auto 1.6em; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: rgb(from var(--cp-negro) r g b / 0.18); font-weight: 700; }
 .cal-fila.hoy { box-shadow: 0 0 0 2px var(--yellow) inset; }
 .cal-dia { color: var(--muted); font-size: 0.85rem; text-transform: capitalize; }
 .cal-est { text-align: center; }
@@ -258,22 +241,16 @@ ol.como li { line-height: 1.45; }
 /* Podio */
 .podio { display: grid; gap: 10px; }
 .escalones { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 6px; }
-.escalon { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 14px 14px 4px 4px; background: rgba(255,255,255,0.08); min-width: 0; }
+.escalon { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 14px 14px 4px 4px; background: var(--glass); min-width: 0; }
 .escalon b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .escalon .medal { font-size: 2rem; }
-.escalon.e1 { padding-top: 26px; background: rgba(255, 210, 63, 0.18); }
+.escalon.e1 { padding-top: var(--s-28); background: rgb(from var(--yellow) r g b / 0.18); }
 .escalon.e2 { padding-top: 16px; }
 /* The podium announced on the last day, before the cup closes: the same steps, framed in gold */
-.podio--anticipado { border: 1px solid rgba(255, 210, 63, 0.45); }
+.podio--anticipado { border: 1px solid rgb(from var(--yellow) r g b / 0.45); }
 .medalla { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }
 .medalla span { color: var(--muted); font-weight: 700; }
 
-/* Avisos */
-/* Centrado sin transform: la animación de entrada lo pisaba y el aviso quedaba corrido a la derecha */
-.toast { position: fixed; left: 16px; right: 16px; margin: 0 auto; width: fit-content; bottom: calc(24px + var(--safe-bottom)); background: #111; border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: 12px 18px; border-radius: 14px; z-index: 50; animation: slideUp 0.25s both; }
-.aviso { text-align: center; font-weight: 800; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); }
-.aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
-.aviso.mal { background: rgba(224, 36, 60, 0.22); color: #ffd0d6; }
 
 
 /* Jugar */
@@ -283,16 +260,14 @@ ol.como li { line-height: 1.45; }
 .cron.en-pausa { opacity: .55; }
 
 /* Resultado */
-.result-hero { text-align: center; }
-.result-hero .trophy { font-size: 4rem; display: inline-block; }
-.score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-space: pre-wrap; margin: 0; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; overflow-wrap: anywhere; }
+.score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgb(from var(--cp-negro) r g b / 0.35); }
+pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-space: pre-wrap; margin: 0; background: var(--well); border-radius: 14px; padding: 10px; overflow-wrap: anywhere; }
 /* A 320 px, los 10 cuadros de Zip (o una fila de 11 emojis) cabían con uno solo en la segunda línea (U-12) */
-@media (max-width: 360px) { pre.tarjeta { font-size: 1.05rem; } }
+@media (max-width: 360px) { pre.tarjeta { font-size: var(--fs-100); } }
 
 /* Admin */
 .admin-jugadores { display: grid; gap: 8px; }
-.admin-fila { display: grid; gap: 6px; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 10px 12px; }
+.admin-fila { display: grid; gap: 6px; background: rgb(from var(--cp-negro) r g b / 0.22); border-radius: 12px; padding: 10px 12px; }
 /* El nombre y Renombrar en la misma línea (D-110): el botón a la derecha, sin gastar alto */
 .admin-nombre { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .admin-nombre b { min-width: 0; overflow-wrap: anywhere; }
@@ -303,18 +278,18 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 .admin-fila.fuera { opacity: 0.6; }
 .acciones { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .acciones input.mini { flex: 1 1 8em; min-width: 0; }
-.mini-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: var(--ink); font: 800 0.9rem var(--font-body); border-radius: 10px; padding: 8px 12px; min-height: 44px; cursor: pointer; }
+.mini-btn { background: rgb(from var(--ink) r g b / 0.1); border: 1px solid var(--glass-border); color: var(--ink); font: 800 0.9rem var(--font-body); border-radius: 10px; padding: 8px 12px; min-height: 44px; cursor: pointer; }
 
 /* ---------- Juegos ---------- */
 .carta {
   display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center;
-  background: var(--card); color: var(--card-ink); border-radius: 14px; padding: 10px 12px; font-weight: 800; box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+  background: var(--card); color: var(--card-ink); border-radius: 14px; padding: 10px 12px; font-weight: 800; box-shadow: 0 4px 0 rgb(from var(--cp-negro) r g b / 0.3);
 }
-.carta .anio { grid-column: 1 / 3; font: 900 0.95rem var(--font-num); font-variant-numeric: tabular-nums; color: #6b3fd1; }
+.carta .anio { grid-column: 1 / 3; font: 900 var(--fs-90) var(--font-num); font-variant-numeric: tabular-nums; color: var(--cp-anio); }
 .carta .carta-emoji { font-size: 1.6rem; }
-.carta.ok { box-shadow: 0 0 0 3px var(--lime), 0 4px 0 rgba(0,0,0,0.3); }
-.carta.mal { box-shadow: 0 0 0 3px var(--red), 0 4px 0 rgba(0,0,0,0.3); }
-.carta.actual { grid-template-columns: auto 1fr; font-size: 1.1rem; background: linear-gradient(180deg, #fff7d6, #ffe38a); }
+.carta.ok { box-shadow: 0 0 0 3px var(--lime), 0 4px 0 rgb(from var(--cp-negro) r g b / 0.3); }
+.carta.mal { box-shadow: 0 0 0 3px var(--red), 0 4px 0 rgb(from var(--cp-negro) r g b / 0.3); }
+.carta.actual { grid-template-columns: auto 1fr; font-size: 1.1rem; background: linear-gradient(180deg, var(--cp-carta-luz), var(--cp-carta-fondo)); }
 .carta.actual small { grid-column: 1 / 3; }
 .carta.actual b { font-weight: 900; }
 
@@ -323,15 +298,15 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
 .grupos { display: grid; gap: 6px; }
 .grupo {
   --c: var(--yellow);
-  position: relative; border-radius: 14px; padding: 10px 12px 10px 16px; text-align: center; display: grid; gap: 3px;
+  position: relative; border-radius: 14px; padding: 10px 12px 10px 16px; text-align: center; display: grid; gap: var(--s-4);
   color: var(--ink); overflow: hidden;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 14%, transparent)), rgba(0,0,0,0.22);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 14%, transparent)), rgb(from var(--cp-negro) r g b / 0.22);
   border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--c) 22%, transparent), inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c) 22%, transparent), inset 0 1px 0 rgb(from var(--ink) r g b / 0.08);
 }
 /* El color del grupo como un filo a la izquierda, además del tinte: se distingue sin depender solo del color */
 .grupo::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
-.grupo b { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c); text-shadow: 0 1px 0 rgba(0,0,0,0.35); }
+.grupo b { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-100); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c); text-shadow: 0 1px 0 rgb(from var(--cp-negro) r g b / 0.35); }
 .grupo span { font-weight: 800; font-size: 0.85rem; color: var(--ink); opacity: 0.92; }
 /* Los colores de la app, en el orden de las tarjetas para compartir (🟨 🟩 🟦 🟪) */
 .grupo.nivel0 { --c: var(--yellow); }
@@ -344,22 +319,20 @@ pre.tarjeta { font: 1.2rem/1.35 var(--font-body); text-align: center; white-spac
   font: 900 clamp(0.62rem, 2.9vw, 0.95rem)/1.1 var(--font-body); padding: 4px 2px; cursor: pointer; overflow-wrap: anywhere; hyphens: auto;
 }
 .palabra.larga { font-size: clamp(0.55rem, 2.4vw, 0.8rem); }
-.palabra.on { background: #5a594e; color: #fff; }
+.palabra.on { background: var(--cp-palabra-on); color: var(--ink); }
 .vidas { letter-spacing: 0.1em; }
 
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-hero .icon { animation: none; }
-  .screen.active { animation: none; }
 }
 
 /* Tus días (LIG-38): pasados y futuros deshabilitados, hoy como tarjeta grande */
 .mis-dias { display: grid; gap: 8px; }
 .mis-dias > .lead { margin: 0; }
-.mis-dias .dia-card { margin: 2px 0; background: rgba(255, 210, 63, 0.06); }
+.mis-dias .dia-card { margin: 2px 0; background: rgb(from var(--yellow) r g b / 0.06); }
 .md-fila {
   display: grid; grid-template-columns: 3.2em 2em 1fr auto; align-items: center; gap: 8px; width: 100%;
-  background: rgba(0,0,0,0.22); border: 0; border-radius: 12px; padding: 8px 10px; color: var(--ink); text-align: left; font-family: var(--font-body); min-height: 52px;
+  background: rgb(from var(--cp-negro) r g b / 0.22); border: 0; border-radius: 12px; padding: 8px 10px; color: var(--ink); text-align: left; font-family: var(--font-body); min-height: 52px;
 }
 button.md-fila { cursor: pointer; }
 .md-fila[aria-disabled="true"] { opacity: 0.5; }
@@ -369,19 +342,19 @@ button.md-fila { cursor: pointer; }
 .md-fila.gracia:has(> .btn), .md-fila.en-curso:has(> .btn) { grid-template-columns: 3.2em 2em 1fr; }
 .md-fila > .btn { grid-column: 1 / -1; margin-top: 4px; }
 .md-dia { display: grid; line-height: 1.1; }
-.md-dia b { font: 900 0.95rem var(--font-num); }
-.md-dia small { color: var(--muted); font-size: 0.7rem; text-transform: capitalize; }
-.md-emoji { font-size: 1.5rem; text-align: center; }
+.md-dia b { font: 900 var(--fs-90) var(--font-num); }
+.md-dia small { color: var(--muted); font-size: var(--fs-75); text-transform: capitalize; }
+.md-emoji { font-size: var(--fs-140); text-align: center; }
 .md-info { min-width: 0; display: grid; }
 /* El nombre largo parte línea, no se corta (U-12) */
 .md-info b { font-weight: 900; overflow-wrap: anywhere; }
 .md-info small { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
-.md-x2 { font-size: 0.65rem; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
-.md-go { font-family: var(--font-display); font-size: 1.5rem; color: var(--cyan); }
+.md-x2 { font-size: var(--fs-75); padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+.md-go { font-family: var(--font-display); font-size: var(--fs-140); color: var(--cyan); }
 
 /* Gráfico de posición por día: tu línea de color, el resto en gris, recesivo el resto */
 .grafico { width: 100%; height: auto; display: block; overflow: visible; }
-.grafico .g-grid { stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+.grafico .g-grid { stroke: rgb(from var(--ink) r g b / 0.08); stroke-width: 1; }
 .grafico .g-eje { fill: var(--muted); font: 800 10px var(--font-num); }
 .grafico .g-linea { fill: none; stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; opacity: 0.85; }
 .grafico .g-jugador.mia .g-linea { stroke-width: 3.5; opacity: 1; }
@@ -395,7 +368,7 @@ button.md-fila { cursor: pointer; }
 .grafico:not(.con-destacado) .g-jugador.fuera { opacity: 0.35; }
 .g-chip.fuera { opacity: 0.55; }
 .grafico-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.g-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--ink); font: 800 0.85rem var(--font-body); cursor: pointer; }
+.g-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgb(from var(--cp-negro) r g b / 0.2); color: var(--ink); font: 800 0.85rem var(--font-body); cursor: pointer; }
 .g-chip.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c) inset; }
 .g-chip.mia { font-weight: 900; }
 .g-color { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
@@ -405,7 +378,7 @@ button.md-fila { cursor: pointer; }
 
 /* Reportes (LIG-42) */
 .reporte-btn { margin-top: 14px; }
-.reporte-texto { width: 100%; font: 700 1rem/1.4 var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; resize: vertical; }
+.reporte-texto { width: 100%; font: 700 1rem/1.4 var(--font-body); color: var(--ink); background: var(--well-deep); border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none; resize: vertical; }
 .reporte-texto:focus { border-color: var(--cyan); }
 
 /* ---------- Juegos de la v2 (D-102) ---------- */
@@ -414,21 +387,21 @@ button.md-fila { cursor: pointer; }
 .lt-juego .status { text-align: center; margin: 0 0 8px; }
 .lt-juego .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 .lt-juego .line-wrap { padding: 2px; margin-top: 2px; }
-.event.fallo { border-color: rgba(255, 46, 136, 0.7); box-shadow: 0 0 10px rgba(255, 46, 136, 0.25); }
+.event.fallo { border-color: rgb(from var(--pink) r g b / 0.7); box-shadow: 0 0 10px rgb(from var(--pink) r g b / 0.25); }
 
 /* Toque y Fama: el teclado y el tablero vienen de assets/css/teclado.css */
 .board--solo { min-height: 0; }
 .board--solo li { grid-template-columns: auto 1fr; }
 .keypad--letras { max-width: 460px; gap: 4px; }
-.keypad--letras button { font: 900 1.05rem var(--font-body); min-height: 48px; padding: 0; }
+.keypad--letras button { font: 900 var(--fs-100) var(--font-body); min-height: 48px; padding: 0; }
 .keypad--letras button.del, .keypad--letras button.ok { grid-column: span 2; }
 /* Probar no cabe junto a ⌫ y caía solo a la izquierda de una fila nueva: va a lo ancho, centrado (U-11) */
-.keypad--letras button.ok { font-size: 1.3rem; grid-column: 1 / -1; }
+.keypad--letras button.ok { font-size: var(--fs-120); grid-column: 1 / -1; }
 .letras-juego .entry .box { width: clamp(44px, 14vw, 58px); font-family: var(--font-body); }
-.board li .val.letras { display: flex; gap: 3px; letter-spacing: 0; }
-.letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 6px; font: 900 0.95rem var(--font-body); background: rgba(255,255,255,0.1); }
-.letra.f { background: var(--lime); color: #1d3a00; }
-.letra.t { background: var(--yellow); color: #3a1200; }
+.board li .val.letras { display: flex; gap: var(--s-4); letter-spacing: 0; }
+.letra { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: var(--r-8); font: 900 var(--fs-90) var(--font-body); background: rgb(from var(--ink) r g b / 0.1); }
+.letra.f { background: var(--lime); color: var(--cp-tinta-lima); }
+.letra.t { background: var(--yellow); color: var(--ink-on-yellow); }
 .anio-era { max-width: 260px; width: 100%; margin: 0 auto; }
 .anio-era button { white-space: nowrap; }
 
@@ -437,25 +410,25 @@ button.md-fila { cursor: pointer; }
    plegadas; abajo, la pista, + y − y la acción. El globo se gira y se acerca con los dedos, así
    que nada desplaza la página (touch-action). Los widgets van en una columna fija que no recibe
    toques (pointer-events: none): solo sus botones, así el globo se toca entre ellos. */
-.mapa-caja { position: fixed; inset: 0; z-index: -1; pointer-events: auto; background: radial-gradient(circle at 50% 45%, #2a1250, #0e0520 75%); }
+.mapa-caja { position: fixed; inset: 0; z-index: -1; pointer-events: auto; background: radial-gradient(circle at 50% 45%, var(--cp-globo-luz), var(--cp-globo-fondo) 75%); }
 .mapa-satelite { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .mapa-globo { position: relative; display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
 .globo-pista { pointer-events: none; white-space: nowrap; align-self: center;
-  background: rgba(21,7,38,0.8); color: #fff; font: 800 0.9rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); }
+  background: rgb(from var(--cp-noche) r g b / 0.8); color: var(--ink); font: 800 0.9rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); }
 .mapa-zoom { display: grid; gap: 6px; margin-left: auto; pointer-events: auto; }
-.mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgba(21,7,38,0.75); }
-.donde-ciudad { padding: 8px 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+.mapa-zoom .btn { width: 44px; min-height: 44px; padding: 0; font: 900 1.4rem var(--font-body); background: rgb(from var(--cp-noche) r g b / 0.75); }
+.donde-ciudad { padding: 8px 14px; box-shadow: 0 6px 18px rgb(from var(--cp-negro) r g b / 0.35); }
 .donde-nombre { display: grid; min-width: 0; }
 .donde-nombre b { overflow-wrap: anywhere; }
-.donde-cual { color: #6b4a00; font-weight: 800; font-size: 0.78rem; }
+.donde-cual { color: var(--cp-ciudad-tinta); font-weight: 800; font-size: var(--fs-75); }
 .donde-abajo { display: grid; gap: 8px; pointer-events: none; }
 .donde-fila { position: relative; display: flex; align-items: flex-end; gap: 8px; }
 .donde-fila .globo-pista { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
 .donde-accion { pointer-events: auto; gap: 8px; }
-.donde-accion .aviso { background: rgba(21,7,38,0.85); border: 1px solid var(--glass-border); }
-.donde-accion .aviso.bien { background: rgba(26,48,8,0.9); }
-.donde-accion .aviso.mal { background: rgba(70,8,20,0.9); }
-.donde-accion .btn { box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+.donde-accion .notice { background: rgb(from var(--cp-noche) r g b / 0.85); border: 1px solid var(--glass-border); }
+.donde-accion .notice--good { background: rgb(from var(--cp-aviso-bien) r g b / 0.9); }
+.donde-accion .notice--bad { background: rgb(from var(--cp-aviso-mal) r g b / 0.9); }
+.donde-accion .btn { box-shadow: 0 6px 18px rgb(from var(--cp-negro) r g b / 0.4); }
 
 /* La cáscara, cuando el juego pide pantalla completa: la página no se desplaza, la pantalla de
    jugar es una columna fija del alto de la ventana y sus partes se ordenan dentro (display:
@@ -464,8 +437,8 @@ button.md-fila { cursor: pointer; }
 body.pantalla-completa { overflow: hidden; overscroll-behavior: none; }
 body.pantalla-completa .topbar { position: fixed; z-index: 3; margin: 0;
   top: calc(var(--safe-top) + 12px); left: calc(16px + env(safe-area-inset-left, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); }
-body.pantalla-completa .topbar .back, body.pantalla-completa .topbar .tools > * { box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa .topbar .back { background: rgba(21,7,38,0.75); }
+body.pantalla-completa .topbar .back, body.pantalla-completa .topbar .tools > * { box-shadow: 0 4px 14px rgb(from var(--cp-negro) r g b / 0.35); }
+body.pantalla-completa .topbar .back { background: rgb(from var(--cp-noche) r g b / 0.75); }
 body.pantalla-completa .topbar .tools .chip { display: none; }
 /* On a day's cover "‹ Volver a la copa" already names the cup: its chip would be cut to "🏆 …" (U-12) */
 body.antesala .topbar .tools .chip { display: none; }
@@ -488,7 +461,7 @@ body.pantalla-completa .donde-abajo { order: 3; margin-top: auto; }
    pill as 🧪 and .sin-chip removes it (ajustarCabeza) */
 body.pantalla-completa #jugar-head { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
   width: auto; min-height: 44px; margin: 0 auto; padding: 0 12px; gap: 8px; border-radius: 999px; pointer-events: auto;
-  background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+  background: rgb(from var(--cp-noche) r g b / 0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgb(from var(--cp-negro) r g b / 0.35); }
 body.pantalla-completa #jugar-head:empty,
 body.pantalla-completa #jugar-head:not(:has(.chip, .cron)),
 body.pantalla-completa #jugar-head.sin-chip:not(:has(.cron)) { display: none; }
@@ -499,84 +472,84 @@ body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
 #jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
    una tarjeta del ancho de la ciudad que se desplaza por dentro y no tapa la acción */
-body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; background: rgba(21,7,38,0.85); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: 6px 14px; }
-body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; }
-body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; background: rgba(21,7,38,0.97); }
+body.pantalla-completa #jugar-reglas .reglas { width: fit-content; max-width: 100%; margin: 0; padding: 0; background: rgb(from var(--cp-noche) r g b / 0.85); box-shadow: 0 4px 14px rgb(from var(--cp-negro) r g b / 0.35); }
+body.pantalla-completa #jugar-reglas .reglas > summary { min-height: 44px; padding: var(--s-6) var(--s-14); margin: 0; gap: var(--s-6); }
+body.pantalla-completa #jugar-reglas .reglas[open] { width: 100%; max-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 330px); min-height: 120px; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--s-16) var(--s-14); }
+body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky; top: 0; margin: 0 calc(-1 * var(--s-16)) var(--s-12); background: rgb(from var(--cp-noche) r g b / 0.97); border-bottom: 1px solid var(--glass-border); }
 /* La brújula: la N y su punta roja apuntan al norte del mapa girado */
-.brujula-aguja { display: grid; justify-items: center; font: 900 0.8rem/1 var(--font-body); }
-.brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid #ff4d4d; margin-bottom: 2px; }
+.brujula-aguja { display: grid; justify-items: center; font: 900 var(--fs-75)/1 var(--font-body); }
+.brujula-aguja::before { content: ''; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid var(--cp-brujula); margin-bottom: 2px; }
 .donde-ciudad b { overflow-wrap: anywhere; }
 
 /* Reinas, Tango y Zip: grillas cuadradas que se tocan (C-8: 44 px en 320 de ancho con 7 u 8
    casillas no caben; el área de toque es la casilla entera y la grilla usa todo el ancho) */
 .rej-grid, .tan-grid, .zip-grid { display: grid; width: 100%; max-width: 440px; margin: 0 auto; user-select: none; -webkit-user-select: none; }
-.rej-grid { gap: 0; border: 3px solid #1a1a1a; border-radius: 8px; overflow: hidden; touch-action: none; }
-.rej { aspect-ratio: 1; min-width: 0; border: 1px solid #1a1a1a; padding: 0; font: 900 clamp(1rem, 5.5vw, 1.6rem)/1 var(--font-body); color: #1a1a1a; cursor: pointer; display: grid; place-items: center; }
-.rej.marca { color: rgba(0,0,0,0.45); font-size: clamp(0.8rem, 3.8vw, 1.1rem); }
-.rej.choque { box-shadow: inset 0 0 0 3px var(--red); background-image: repeating-linear-gradient(45deg, rgba(224,36,60,0.35) 0 4px, transparent 4px 8px) !important; }
+.rej-grid { gap: 0; border: 3px solid var(--card-ink); border-radius: 8px; overflow: hidden; touch-action: none; }
+.rej { aspect-ratio: 1; min-width: 0; border: 1px solid var(--card-ink); padding: 0; font: 900 clamp(1rem, 5.5vw, 1.6rem)/1 var(--font-body); color: var(--card-ink); cursor: pointer; display: grid; place-items: center; }
+.rej.marca { color: rgb(from var(--cp-negro) r g b / 0.45); font-size: clamp(0.8rem, 3.8vw, 1.1rem); }
+.rej.choque { box-shadow: inset 0 0 0 3px var(--red); background-image: repeating-linear-gradient(45deg, rgb(from var(--red) r g b / 0.35) 0 4px, transparent 4px 8px) !important; }
 .rej:disabled { cursor: default; }
 /* A texture per region over its color, for colorblind players (#896, D-481): region-patterns.js */
 .tramas .rej:not(.choque), .tramas .rej-ej span:not(.choque) { background: var(--trama), var(--zona) !important; }
-.tramas .rej.marca { color: rgba(0,0,0,0.6); text-shadow: 0 0 2px #fff, 0 0 4px #fff; }
+.tramas .rej.marca { color: rgb(from var(--cp-negro) r g b / 0.6); text-shadow: 0 0 2px var(--ink), 0 0 4px var(--ink); }
 /* El dibujo de las reglas: un tablero resuelto y dos reinas que se tocan */
-.rej-ejemplo { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 12px 22px; margin: 10px 0 14px; }
+.rej-ejemplo { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 12px var(--s-24); margin: 10px 0 14px; }
 .rej-ejemplo figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
 .rej-ejemplo figcaption { font-size: 0.85rem; line-height: 1.3; color: var(--muted); text-align: center; max-width: 170px; }
-.rej-ej { display: grid; border: 2px solid #1a1a1a; border-radius: 6px; overflow: hidden; }
-.rej-ej span { width: 28px; height: 28px; border: 1px solid #1a1a1a; display: grid; place-items: center; font-size: 16px; line-height: 1; }
-.rej-ej span.choque { box-shadow: inset 0 0 0 2px var(--red); background-image: repeating-linear-gradient(45deg, rgba(224,36,60,0.35) 0 3px, transparent 3px 6px) !important; }
+.rej-ej { display: grid; border: 2px solid var(--card-ink); border-radius: var(--r-8); overflow: hidden; }
+.rej-ej span { width: 28px; height: 28px; border: 1px solid var(--card-ink); display: grid; place-items: center; font-size: 16px; line-height: 1; }
+.rej-ej span.choque { box-shadow: inset 0 0 0 2px var(--red); background-image: repeating-linear-gradient(45deg, rgb(from var(--red) r g b / 0.35) 0 3px, transparent 3px 6px) !important; }
 /* Los dibujos de las reglas de Tango y Zip, del mismo tamaño que el de Reinas */
 .tan-ej { display: grid; gap: 6px; }
-.tan-ej span { position: relative; width: 28px; height: 28px; border-radius: 5px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); display: grid; place-items: center; font-size: 14px; line-height: 1; }
-.tan-ej span.choque, .tan-ej span.choque.sol { box-shadow: inset 0 0 0 2px var(--red); background: rgba(224, 36, 60, 0.25); }
-.tan-ej i { position: absolute; z-index: 2; display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; font: 900 0.7rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; font-style: normal; box-shadow: 0 0 0 1px var(--bg1); }
-.tan-ej i.igual { background: var(--cyan); color: #00312d; }
-.tan-ej i.distinto { background: var(--pink); color: #fff; }
+.tan-ej span { position: relative; width: 28px; height: 28px; border-radius: var(--r-8); border: 1px solid var(--glass-border); background: rgb(from var(--ink) r g b / 0.1); display: grid; place-items: center; font-size: 14px; line-height: 1; }
+.tan-ej span.choque, .tan-ej span.choque.sol { box-shadow: inset 0 0 0 2px var(--red); background: rgb(from var(--red) r g b / 0.25); }
+.tan-ej i { position: absolute; z-index: 2; display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; font: 900 var(--fs-75)/1 system-ui, -apple-system, 'Segoe UI', sans-serif; font-style: normal; box-shadow: 0 0 0 1px var(--bg1); }
+.tan-ej i.igual { background: var(--cyan); color: var(--cp-tinta-cian); }
+.tan-ej i.distinto { background: var(--pink); color: var(--ink); }
 .tan-ej i.der { right: -11px; top: 50%; transform: translateY(-50%); }
 .tan-ej i.abajo { bottom: -11px; left: 50%; transform: translateX(-50%); }
 .zip-ej { position: relative; display: grid; border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; }
-.zip-ej span { position: relative; z-index: 2; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.08); display: grid; place-items: center; }
-.zip-ej span.on { background: rgba(255, 122, 26, 0.28); }
-.zip-ej.fin span.on { background: rgba(157, 255, 58, 0.25); }
+.zip-ej span { position: relative; z-index: 2; width: 32px; height: 32px; border: 1px solid rgb(from var(--ink) r g b / 0.08); display: grid; place-items: center; }
+.zip-ej span.on { background: rgb(from var(--orange) r g b / 0.28); }
+.zip-ej.fin span.on { background: rgb(from var(--lime) r g b / 0.25); }
 /* Las casillas que el trazo se saltó: el error que el dibujo quiere mostrar */
-.zip-ej span.falta { box-shadow: inset 0 0 0 2px var(--red); background: repeating-linear-gradient(45deg, rgba(224,36,60,0.3) 0 3px, transparent 3px 6px); }
-.zip-ej b { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; background: #1a1a1a; color: #fff; font: 900 0.75rem/1 var(--font-num); box-shadow: 0 0 0 2px #fff; }
+.zip-ej span.falta { box-shadow: inset 0 0 0 2px var(--red); background: repeating-linear-gradient(45deg, rgb(from var(--red) r g b / 0.3) 0 3px, transparent 3px 6px); }
+.zip-ej b { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; background: var(--card-ink); color: var(--ink); font: 900 0.75rem/1 var(--font-num); box-shadow: 0 0 0 2px var(--ink); }
 .zip-ej .zip-trazo { z-index: 1; }
 .zip-ej.fin .zip-trazo polyline { stroke: var(--lime); }
 /* Dos toques rápidos en la misma casilla (sol y luego luna) no son un zoom: sin esto, iOS se come
    el segundo y el sol de paso se ve como choque (reporte 🐞 del 2-oct) */
 .tan-grid { gap: 4px; touch-action: manipulation; }
-.tan { position: relative; aspect-ratio: 1; color: inherit; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
-.tan.dada { background: rgba(255,255,255,0.28); cursor: default; }
+.tan { position: relative; aspect-ratio: 1; color: inherit; min-width: 0; border-radius: 8px; border: 1px solid var(--glass-border); background: rgb(from var(--ink) r g b / 0.1); font-size: clamp(1.2rem, 7vw, 2rem); cursor: pointer; padding: 0; display: grid; place-items: center; }
+.tan.dada { background: rgb(from var(--ink) r g b / 0.28); cursor: default; }
 /* Día y noche (D-146): el sol y la luna son emojis amarillos; el fondo y la luna plateada los separan */
-.tan[data-v="1"], .tan-ej span.sol { background: rgba(255, 184, 48, 0.34); border-color: rgba(255, 196, 70, 0.6); }
-.tan[data-v="2"], .tan-ej span.luna { background: rgba(14, 20, 72, 0.88); border-color: rgba(130, 160, 255, 0.45); }
+.tan[data-v="1"], .tan-ej span.sol { background: rgb(from var(--cp-sol) r g b / 0.34); border-color: rgb(from var(--cp-sol-borde) r g b / 0.6); }
+.tan[data-v="2"], .tan-ej span.luna { background: rgb(from var(--cp-luna) r g b / 0.88); border-color: rgb(from var(--cp-luna-borde) r g b / 0.45); }
 /* El sol dado, como la luna dada: el mismo color más vivo y con el borde entero (#61). A dark
    amber, not yellow: on a yellow cell the ☀️ emoji, the same yellow, nearly vanished; the shadow
    under the sun lifts it off its cell everywhere */
-.tan.dada[data-v="1"] { background: rgba(214, 112, 10, 0.92); border-color: rgb(255, 196, 70); }
-.tan-ico.sol { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45)); }
-.tan.dada[data-v="2"] { background: rgba(38, 54, 150, 0.95); }
+.tan.dada[data-v="1"] { background: rgb(from var(--cp-sol-dado) r g b / 0.92); border-color: var(--cp-sol-borde); }
+.tan-ico.sol { filter: drop-shadow(0 1px 2px rgb(from var(--cp-negro) r g b / 0.45)); }
+.tan.dada[data-v="2"] { background: rgb(from var(--cp-luna-dada) r g b / 0.95); }
 .tan-ico.luna { filter: grayscale(1) brightness(1.5); }
 /* Las casillas que no se tocan (las dadas y las que reveló una pista) llevan un candado chico en la
    esquina libre: las marcas = y ≠ van en los bordes derecho e inferior */
 .tan.dada::before, .tan.revelada::before { content: ""; position: absolute; top: 3px; left: 3px; width: 26%; max-width: 14px; aspect-ratio: 1;
-  background: rgba(255, 255, 255, 0.5); pointer-events: none;
+  background: rgb(from var(--ink) r g b / 0.5); pointer-events: none;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5A1.5 1.5 0 0 1 13.5 8.5v5A1.5 1.5 0 0 1 12 15H4a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 4 7h.5zm1.8 0h3.4V5a1.7 1.7 0 0 0-3.4 0v2z'/%3E%3C/svg%3E") center / contain no-repeat;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5A1.5 1.5 0 0 1 13.5 8.5v5A1.5 1.5 0 0 1 12 15H4a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 4 7h.5zm1.8 0h3.4V5a1.7 1.7 0 0 0-3.4 0v2z'/%3E%3C/svg%3E") center / contain no-repeat; }
 .tan.revelada::before { background: var(--cyan); opacity: 0.6; }
-.tan.choque, .tan.choque[data-v] { box-shadow: inset 0 0 0 3px var(--red); background: rgba(224, 36, 60, 0.25); }
-.tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 900 1.35rem/1 system-ui, -apple-system, 'Segoe UI', sans-serif; box-shadow: 0 0 0 2px var(--bg1), 0 2px 6px rgba(0,0,0,0.4); pointer-events: none; }
+.tan.choque, .tan.choque[data-v] { box-shadow: inset 0 0 0 3px var(--red); background: rgb(from var(--red) r g b / 0.25); }
+.tan-marca { position: absolute; z-index: 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 900 var(--fs-140)/1 system-ui, -apple-system, 'Segoe UI', sans-serif; box-shadow: 0 0 0 2px var(--bg1), 0 2px 6px rgb(from var(--cp-negro) r g b / 0.4); pointer-events: none; }
 /* Igual y distinto con colores propios, además del signo (D-112): el ≠ casi no se distinguía del = */
-.tan-marca.igual { background: var(--cyan); color: #00312d; }
-.tan-marca.distinto { background: var(--pink); color: #fff; }
+.tan-marca.igual { background: var(--cyan); color: var(--cp-tinta-cian); }
+.tan-marca.distinto { background: var(--pink); color: var(--ink); }
 .tan-marca.der { right: -16px; top: 50%; transform: translateY(-50%); }
 .tan-marca.abajo { bottom: -16px; left: 50%; transform: translateX(-50%); }
 .zip-grid { position: relative; gap: 0; border: 2px solid var(--glass-border); border-radius: 10px; overflow: hidden; touch-action: none; }
-.zc { aspect-ratio: 1; min-width: 0; border: 1px solid rgba(255,255,255,0.08); display: grid; place-items: center; position: relative; z-index: 2; }
-.zc.on { background: rgba(255, 122, 26, 0.28); }
-.zc.num span { display: grid; place-items: center; width: 62%; aspect-ratio: 1; border-radius: 50%; background: #1a1a1a; color: #fff; font: 900 clamp(0.8rem, 4vw, 1.1rem)/1 var(--font-num); box-shadow: 0 0 0 2px #fff; }
+.zc { aspect-ratio: 1; min-width: 0; border: 1px solid rgb(from var(--ink) r g b / 0.08); display: grid; place-items: center; position: relative; z-index: 2; }
+.zc.on { background: rgb(from var(--orange) r g b / 0.28); }
+.zc.num span { display: grid; place-items: center; width: 62%; aspect-ratio: 1; border-radius: 50%; background: var(--card-ink); color: var(--ink); font: 900 clamp(0.8rem, 4vw, 1.1rem)/1 var(--font-num); box-shadow: 0 0 0 2px var(--ink); }
 .zc.cabeza::after { content: ''; position: absolute; inset: 30%; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
 /* Sobre un número, la cabeza es un anillo amarillo: el punto tapaba el número */
 .zc.num.cabeza::after { content: none; }
@@ -588,7 +561,7 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .zip-grid.fin .zip-trazo polyline { stroke: var(--lime); }
 /* Se acabó el tiempo a medias: la solución del nivel, en otro color que un nivel resuelto (D-109) */
 .zip-grid.solucion .zip-trazo polyline { stroke: var(--cyan); stroke-dasharray: 0.5 0.25; }
-.zip-grid.solucion .zc.on { background: rgba(46, 230, 214, 0.18); }
+.zip-grid.solucion .zc.on { background: rgb(from var(--cyan) r g b / 0.18); }
 
 /* v0.45 (D-103): Zip por niveles, acciones de Tango y la sesión de prueba */
 .zip-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 900; }
@@ -596,14 +569,14 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .zip-cabeza > span { white-space: nowrap; }
 .zip-nivel { color: var(--yellow); }
 .zip-hechos { color: var(--muted); font-size: 0.9rem; }
-.zip-reloj { font: 900 1.15rem var(--font-num); font-variant-numeric: tabular-nums; }
+.zip-reloj { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; }
 .zip-reloj.poco { color: var(--pink); animation: pulse 1s ease-in-out infinite; }
-.zip-grid.fin .zc.on { background: rgba(157, 255, 58, 0.25); }
+.zip-grid.fin .zc.on { background: rgb(from var(--lime) r g b / 0.25); }
 .tan.revelada { box-shadow: inset 0 0 0 3px var(--cyan); cursor: default; }
 /* La revelada en una línea que choca: anillo cian por fuera y rojo por dentro, se ven los dos */
 .tan.revelada.choque { box-shadow: inset 0 0 0 3px var(--cyan), inset 0 0 0 6px var(--red); }
 .tango-acciones .btn, .zip-acciones .btn, .reinas-acciones .btn { white-space: normal; line-height: 1.15; }
-.tango-acciones .btn.armado, .zip-acciones .btn.armado, .reinas-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
+.tango-acciones .btn.armado, .zip-acciones .btn.armado, .reinas-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.12); }
 /* Reinas lleva tres botones (D-283): Deshacer y Borrar todo juntos, y Rendirse, que es definitivo,
    en su propia línea. Cada uno en una línea de texto: el que no cabe baja, en vez de partir las
    palabras. Borrar todo armado sí parte su frase larga. */
@@ -618,16 +591,16 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .tango-acciones .btn.armado { white-space: normal; }
 /* Desenredo (D-179): hilos y nudos en un SVG de 1000 × 1000. Los trazos miden en píxeles de pantalla
    (non-scaling-stroke) para verse iguales en cualquier ancho; el radio de los nudos lo pone el código. */
-.des-tablero { display: block; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: 10px; background: rgba(255,255,255,0.03); touch-action: none; user-select: none; -webkit-user-select: none; }
+.des-tablero { display: block; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: 10px; background: rgb(from var(--ink) r g b / 0.03); touch-action: none; user-select: none; -webkit-user-select: none; }
 .des-hilo { --hilo: rgba(236, 228, 255, 0.82); }
 .des-hilo path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 /* La cuerda (D-182): borde oscuro, alma del color del hilo y hebras cortadas encima, que hacen de torcido */
-.des-hilo .borde { stroke: rgba(14, 6, 32, 0.6); stroke-width: 6.5px; }
+.des-hilo .borde { stroke: rgb(from var(--cp-cuerda) r g b / 0.6); stroke-width: 6.5px; }
 .des-hilo .alma { stroke: var(--hilo); stroke-width: 4px; }
 .des-hilo path { stroke-linejoin: round; }
 /* Los dos cabos (D-183): la hebra oscura y el brillo claro se alternan a lo largo de la cuerda */
-.des-hilo .hebra { stroke: rgba(14, 6, 32, 0.34); stroke-width: 4px; stroke-linecap: butt; stroke-dasharray: 2px 3px; }
-.des-hilo .brillo { stroke: rgba(255, 255, 255, 0.38); stroke-width: 1.4px; stroke-linecap: butt; stroke-dasharray: 1.2px 3.8px; stroke-dashoffset: -2.6px; }
+.des-hilo .hebra { stroke: rgb(from var(--cp-cuerda) r g b / 0.34); stroke-width: 4px; stroke-linecap: butt; stroke-dasharray: 2px 3px; }
+.des-hilo .brillo { stroke: rgb(from var(--ink) r g b / 0.38); stroke-width: 1.4px; stroke-linecap: butt; stroke-dasharray: 1.2px 3.8px; stroke-dashoffset: -2.6px; }
 .des-hilo.mal { --hilo: var(--red); }
 .des-tablero .des-hilo.propio { --hilo: var(--cyan); }
 .des-tablero .des-hilo.propio.mal { --hilo: var(--pink); }
@@ -635,7 +608,7 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .des-tablero circle.vecino { fill: var(--cyan); }
 .des-tablero circle.mal { fill: var(--red); }
 /* "tomado" y no "vilo": .vilo es la carta en vuelo del arrastre compartido (linea.css) y va con display: none */
-.des-tablero circle.tomado { fill: #fff; stroke: var(--cyan); stroke-width: 3px; }
+.des-tablero circle.tomado { fill: var(--ink); stroke: var(--cyan); stroke-width: 3px; }
 .des-tablero.fin .des-hilo, .des-ej.fin .des-hilo { --hilo: var(--lime); }
 .des-tablero.fin circle, .des-ej.fin circle { fill: var(--lime); }
 /* Se acabó el tiempo a medias: una solución, en otro color que un nivel resuelto (D-109) */
@@ -659,20 +632,13 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .explicacion-total { font-weight: 800; }
 
 /* Otra fecha de inicio y la copa de prueba (D-115) */
-input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 800 1rem var(--font-body); padding: 8px 12px; color-scheme: dark; }
 .fecha-campo { display: grid; gap: 8px; margin-top: 8px; }
-.btn-row.tres { flex-wrap: wrap; }
 #btn-inicio-otra.on { border-color: var(--yellow); color: var(--yellow); }
 .lab-panel { border: 1px dashed var(--cyan); }
 
-/* Eliminar la copa (D-117) */
-.peligro { border: 1px solid rgba(224, 36, 60, 0.55); }
-.btn--red { background: var(--red); color: #fff; box-shadow: 0 4px 0 #8a1024; }
 
 /* El largo del nombre a la vista (D-119), y los nombres largos que parten línea en vez de salirse */
-.field .contador { display: block; text-align: right; margin-top: 4px; font-size: 0.8rem; }
-.field .contador.lleno { color: var(--yellow); }
-.copa-head h1, .intro-hero h1, .intro-hero h2 { overflow-wrap: anywhere; }
+.copa-head h1 { overflow-wrap: anywhere; }
 
 /* El link propio (D-121) */
 .link-estado { display: block; margin-top: 6px; font-size: 0.85rem; overflow-wrap: anywhere; }
@@ -682,157 +648,27 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 /* Compartir como imagen: separado de la nota y centrado en la caja del gráfico (D-126) */
 #btn-imagen { display: flex; margin: 16px auto 4px; }
 
-/* Las reglas plegadas debajo del tablero (D-133): discretas hasta que se abren */
-#jugar-reglas { margin-top: 22px; }
-.reglas { padding: 0; background: rgba(0,0,0,0.18); }
-.reglas > summary { list-style: none; cursor: pointer; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; color: var(--muted); font-weight: 800; font-size: 0.95rem; }
-.reglas > summary::-webkit-details-marker { display: none; }
-.reglas > summary::after { content: '▾'; font-size: 0.85rem; transition: transform 0.2s; }
-.reglas[open] > summary::after { transform: rotate(180deg); }
-.reglas[open] > summary { color: var(--ink); border-bottom: 1px solid var(--glass-border); }
-.reglas > :not(summary) { margin-left: 16px; margin-right: 16px; }
-.reglas > :last-child { margin-bottom: 14px; }
-.reglas .lead { margin: 12px 16px 4px; }
+/* The rules folded under the board (D-133) are the shared folding panel (details.panel, base.css), the
+   same block as a home game's "Cómo se juega" (phase 7, #1196); under the board the summary keeps a
+   44 px target (U-10), since the panel's own summary is only its text's height (DESIGN.md §5) */
+#jugar-reglas { margin-top: var(--s-24); }
+#jugar-reglas .reglas > summary { min-height: 44px; }
+/* Its titles («Puntaje», the final's rounds) keep the air they had above them */
+#jugar-reglas .reglas .lead { margin: var(--s-12) 0 var(--s-4); }
 
 /* --- Avisos al celular (D-223): la oferta, la campana y sus hojas ---
    La hoja de abajo (.hoja) es de todo el sitio y vive en base.css: la usa también el globo de
    agregar a inicio de la portada (D-232). Aquí, lo propio de los avisos. */
-.aviso-oferta { border: 2px solid rgba(255, 210, 63, 0.55); }
+.aviso-oferta { border: 2px solid rgb(from var(--yellow) r g b / 0.55); }
 .aviso-oferta .lead { margin: 0 0 4px; font-weight: 900; }
 .aviso-oferta .muted { margin: 0 0 12px; }
 .aviso-auto { text-align: center; margin: 4px 0; }
-/* A 320 px, en español y alemán, los botones lado a lado no caben: bajan a otra línea */
-.aviso-oferta .btn-row, .btn-row:has(> #btn-avisos) { flex-wrap: wrap; }
-.linkish { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
 .aviso-bloqueado { border-style: dashed; }
-.aviso-activo { color: var(--yellow); border-color: rgba(255, 210, 63, 0.6); }
-.btn--peligro { color: #ff8fbd; background: rgba(255, 46, 136, 0.16); border-color: transparent; }
+.aviso-activo { color: var(--yellow); border-color: rgb(from var(--yellow) r g b / 0.6); }
 
-/* ---------- 🔍 El caso (D-257). La misma experiencia del prototipo del laboratorio (D-256) ---------- */
-/* El nombre en la antesala: la lupa al lado y los colores que se mueven, como en el prototipo */
-.cs-titulo { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-/* La letra inclinada se pasa del borde de su caja y el degradado solo pinta dentro: sin este relleno, la última letra salía cortada (la O de "O Caso", la E de "The Case") */
-.cs-titulo .rainbow { padding: 0.2em 0.15em 0 0; margin: -0.2em -0.15em 0 0; }
-.cs-lupa { font-size: 2.1rem; line-height: 1; display: inline-block; transform-origin: 70% 70%; animation: cs-lupa 3.2s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255, 210, 63, 0.45)); }
-@keyframes cs-lupa { 0%, 100% { transform: rotate(-8deg) translateX(0); } 50% { transform: rotate(10deg) translateX(3px); } }
-@media (prefers-reduced-motion: reduce) { .cs-lupa { animation: none; } }
-/* La portada de la antesala: cartas que se dan vuelta solas y una lupa que las recorre */
-.intro-hero .cs-portada { margin: 0 auto; }
-.cs-portada { position: relative; display: grid; grid-template-columns: repeat(4, 30px); gap: 5px; width: max-content; padding: 6px; }
-.cs-p-carta { width: 30px; height: 38px; perspective: 300px; }
-.cs-p-giro { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateY(180deg); animation: cs-p-giro 5.4s ease-in-out infinite; animation-delay: var(--d); }
-.cs-p-cara { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 7px; backface-visibility: hidden; -webkit-backface-visibility: hidden; font-size: 1rem; }
-.cs-p-cara.dorso { transform: rotateY(180deg); color: rgba(255, 210, 63, 0.8); font: 900 0.9rem var(--font-display); border: 1.5px solid rgba(255, 210, 63, 0.5);
-  background: repeating-linear-gradient(45deg, rgba(255, 210, 63, 0.18) 0 4px, rgba(255, 210, 63, 0.05) 4px 8px), #2a1450; }
-.cs-p-carta.inocente .frente { background: rgba(157, 255, 58, 0.3); border: 1.5px solid rgba(157, 255, 58, 0.8); }
-.cs-p-carta.criminal .frente { background: rgba(255, 61, 139, 0.35); border: 1.5px solid rgba(255, 61, 139, 0.85); }
-@keyframes cs-p-giro { 0%, 30% { transform: rotateY(180deg); } 40%, 75% { transform: rotateY(0); } 85%, 100% { transform: rotateY(180deg); } }
-.cs-p-lupa { position: absolute; left: 0; top: 0; font-size: 2rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); animation: cs-p-lupa 6s ease-in-out infinite; pointer-events: none; }
-@keyframes cs-p-lupa { 0% { transform: translate(-6px, -4px) rotate(-10deg); } 25% { transform: translate(110px, 10px) rotate(8deg); } 50% { transform: translate(70px, 62px) rotate(-6deg); } 75% { transform: translate(8px, 70px) rotate(6deg); } 100% { transform: translate(-6px, -4px) rotate(-10deg); } }
-.cs-portada.quieta .cs-p-giro, .cs-portada.quieta .cs-p-lupa { animation: none; }
-.cs-portada.quieta .cs-p-carta:nth-child(odd) .cs-p-giro { transform: none; }
-.cs-portada.quieta .cs-p-lupa { transform: translate(90px, 40px) rotate(-8deg); }
-
-/* El dibujo de las reglas */
-.cs-mini-fila { display: flex; gap: 6px; }
-.cs-mini { display: grid; justify-items: center; gap: 1px; width: 52px; padding: 5px 2px; border-radius: 9px; background: var(--glass); border: 2px solid transparent; font-size: 1.1rem; }
-.cs-mini b { font-size: 0.7rem; }
-.cs-mini.inocente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
-.cs-mini.criminal { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
-.cs-globo { max-width: 190px; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255, 210, 63, 0.55); font-weight: 800; font-size: 0.85rem; line-height: 1.3; }
-
-/* La grilla: las letras y los números van dentro de la misma grilla (C-8) */
-.cs-juego { gap: 8px; --gap-contenedor: 8px; }
-.cs-grilla { display: grid; grid-template-columns: 20px repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
-/* Las letras y los números de la grilla, grandes: las pistas los nombran ("en la fila 3", "en la columna B") */
-.cs-grilla .etq { display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); opacity: 0.85; }
-.cs-persona { position: relative; display: grid; padding: 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); cursor: pointer; min-width: 0; perspective: 700px; transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3), opacity 0.2s; -webkit-tap-highlight-color: transparent; }
-.cs-persona:disabled { cursor: default; }
-.cs-persona .giro { display: grid; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.3, 0.9, 0.3, 1.05); }
-.cs-persona .cara { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 2px solid transparent; min-height: 78px; }
-.cs-persona .frente { display: grid; justify-items: center; align-content: center; gap: 1px; padding: 5px 2px; background: var(--glass); transition: background 0.3s, border-color 0.3s, box-shadow 0.2s; }
-.cs-persona .dorso { display: grid; place-items: center; font-size: 1.5rem; transform: rotateY(180deg); border-color: rgba(255, 210, 63, 0.45);
-  background: repeating-linear-gradient(45deg, rgba(255, 210, 63, 0.16) 0 6px, rgba(255, 210, 63, 0.05) 6px 12px), #2a1450; }
-.cs-persona.tapada .giro { transform: rotateY(180deg); }
-.cs-persona .emo { font-size: 1.45rem; line-height: 1.1; }
-.cs-persona .nom { font-weight: 900; font-size: clamp(0.74rem, 3.8vw, 0.94rem); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cs-persona .ofi { font-weight: 700; font-size: 0.64rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cs-persona .dice { position: absolute; top: 3px; right: 4px; font-size: 0.7rem; display: none; }
-.cs-persona.marcada .dice { display: block; }
-.cs-persona.inocente .frente { background: rgba(157, 255, 58, 0.28); border-color: rgba(157, 255, 58, 0.75); }
-.cs-persona.criminal .frente { background: rgba(255, 61, 139, 0.32); border-color: rgba(255, 61, 139, 0.8); }
-.cs-persona.inocente .ofi, .cs-persona.criminal .ofi { color: var(--ink); opacity: 0.8; }
-.cs-persona.equivoco .frente::after { content: '✕'; position: absolute; top: 2px; left: 6px; font-size: 0.72rem; color: var(--yellow); font-weight: 900; }
-.cs-persona.elegida { transform: scale(1.09); z-index: 2; }
-.cs-persona.elegida .frente { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(46, 230, 214, 0.5); }
-.cs-grilla.enfoque .cs-persona:not(.foco):not(.foco-b):not(.foco-ab):not(.habla):not(.elegida) { opacity: 0.32; }
-/* El segundo grupo de una comparación, en rosado; quien está en los dos, con los dos colores (#282) */
-.cs-persona.foco-b .frente { box-shadow: 0 0 0 3px #ff8fbf, 0 0 14px rgba(255, 61, 139, 0.5); }
-.cs-persona.foco-ab .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px #ff8fbf; }
-.cs-ga { color: var(--yellow); font-weight: 900; }
-.cs-gb { color: #ff8fbf; font-weight: 900; }
-.cs-persona.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.55); }
-.cs-persona.habla .frente { box-shadow: 0 0 0 3px var(--cyan), 0 0 14px rgba(46, 230, 214, 0.55); }
-.cs-persona.habla.foco .frente { box-shadow: 0 0 0 3px var(--yellow), 0 0 0 6px var(--cyan); }
-.cs-persona .sello { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2.6rem; pointer-events: none; z-index: 3; animation: cs-sello 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-@keyframes cs-sello { 0% { transform: scale(2.4) rotate(-14deg); opacity: 0; } 35% { transform: scale(0.9) rotate(4deg); opacity: 1; } 55% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
-.cs-persona.acierto .giro { animation: cs-voltea 0.6s ease-out; }
-@keyframes cs-voltea { 0% { transform: rotateY(0); } 50% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
-.cs-persona.acierto.inocente .frente { animation: cs-brilla-verde 0.9s ease-out; }
-.cs-persona.acierto.criminal .frente { animation: cs-brilla-rosa 0.9s ease-out; }
-@keyframes cs-brilla-verde { 0%, 40% { box-shadow: 0 0 0 0 rgba(157, 255, 58, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(157, 255, 58, 0); } }
-@keyframes cs-brilla-rosa { 0%, 40% { box-shadow: 0 0 0 0 rgba(255, 61, 139, 0.9); } 100% { box-shadow: 0 0 0 14px rgba(255, 61, 139, 0); } }
-.cs-persona.fallo { animation: shake 0.45s; }
-.cs-persona.fallo .frente { animation: cs-rojo 0.8s ease-out; }
-@keyframes cs-rojo { 0%, 30% { background: rgba(255, 40, 60, 0.75); border-color: #ff2840; } 100% { background: var(--glass); } }
-.cs-persona.duda .frente { animation: cs-duda 0.7s ease-out; }
-@keyframes cs-duda { 0%, 30% { border-color: var(--yellow); background: rgba(255, 210, 63, 0.25); } }
-
-/* Lo que se hace con la elegida, y el mensaje de la última marca */
-.cs-accion { display: grid; gap: 6px; min-height: 58px; }
-.cs-accion .btn-row .btn { min-height: 48px; font-size: 1rem; padding-left: 6px; padding-right: 6px; }
-.btn.cs-inocente { background: linear-gradient(180deg, #c6ff8a, var(--lime)); color: #173a00; box-shadow: 0 4px 0 #4f8f13; }
-.btn.cs-criminal { background: linear-gradient(180deg, #ff8fbf, #ff3d8b); color: #3a0018; box-shadow: 0 4px 0 #a3134f; }
-.cs-msg { display: grid; gap: 4px; align-content: center; width: 100%; text-align: center; font: 800 0.98rem/1.35 var(--font-body); color: var(--ink); margin: 0; padding: 9px 12px; border-radius: 12px; border: 2px solid transparent; background: rgba(0,0,0,0.25); cursor: default; }
-.cs-msg.ok { color: var(--lime); border-color: rgba(157, 255, 58, 0.45); }
-.cs-msg.error { color: var(--pink); border-color: rgba(255, 61, 139, 0.45); }
-.cs-msg.falta { color: var(--yellow); }
-.cs-msg.dato { text-align: left; border-color: rgba(255, 210, 63, 0.55); cursor: pointer; }
-.cs-msg.ayuda { color: var(--yellow); border-color: rgba(255, 210, 63, 0.55); }
-.cs-pie { display: grid; justify-items: center; gap: 6px; }
-.cs-pie #btn-ayuda.armado { border-color: var(--yellow); color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
-.cs-msg.se-va { opacity: 0; transition: opacity 0.35s; }
-.cs-msg.activa { box-shadow: 0 0 0 2px var(--yellow); }
-.cs-msg .ver { color: var(--cyan); font-weight: 900; font-size: 0.85rem; }
-.cs-sub { text-align: center; font-weight: 800; color: var(--muted); margin: 0; }
-
-/* Las pistas: la última arriba y destacada; tocar una ilumina a quiénes nombra */
-.cs-pistas { display: grid; gap: 7px; }
-.cs-pistas h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 4px 4px 0; }
-.cs-pista { display: grid; grid-template-columns: 1fr 44px; align-items: stretch; border-radius: 12px; background: rgba(0,0,0,0.25); border: 2px solid transparent; overflow: hidden; }
-.cs-pista .texto { min-height: 44px; text-align: left; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: 700 1rem/1.4 var(--font-body); cursor: pointer; }
-.cs-pista .de { font-weight: 900; color: var(--cyan); }
-.cs-pista .tachar { border: 0; border-left: 1px solid var(--glass-border); background: none; color: var(--muted); font: 900 1.1rem var(--font-body); cursor: pointer; }
-.cs-pista.ultima { border-color: var(--yellow); background: rgba(255, 210, 63, 0.12); }
-.cs-pista.ultima .texto { font-size: 1.06rem; }
-.cs-pista .nueva-tag { display: inline-block; font: 900 0.68rem var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: #3a1200; background: var(--yellow); border-radius: 999px; padding: 2px 7px; margin-right: 6px; vertical-align: 2px; }
-.cs-pista.entra { animation: cs-entra 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-@keyframes cs-entra { 0% { transform: translateY(-10px) scale(0.97); opacity: 0; } 100% { transform: none; opacity: 1; } }
-.cs-pista.activa { box-shadow: 0 0 0 2px var(--cyan); }
-.cs-pista.guia { box-shadow: 0 0 0 2px var(--yellow); }
-.cs-pista.tachada .texto { opacity: 0.4; text-decoration: line-through; }
-.cs-pista.tachada .tachar { color: var(--lime); }
-
-@media (prefers-reduced-motion: reduce) {
-  .cs-persona, .cs-persona .giro { transition: none; }
-  .cs-persona.fallo, .cs-persona .giro, .cs-persona .frente, .cs-pista.entra { animation: none !important; }
-}
-/* El sello que cae al marcar empieza grande y, en una carta del borde, ensanchaba la página un
-   momento: la grilla lo recorta en el borde de la pantalla, no en el suyo (C-8) */
-.cs-juego { overflow-x: clip; margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
 /* a. C. next to the boxes while it is on, so the answer reads as a whole before OK */
 .anio-juego .entry { align-items: center; gap: 8px; }
-.anio-era-marca { font: 900 1.05rem var(--font-body); color: var(--yellow); white-space: nowrap; margin-left: 8px; }
+.anio-era-marca { font: 900 var(--fs-100) var(--font-body); color: var(--yellow); white-space: nowrap; margin-left: 8px; }
 .anio-era-marca[hidden] { display: none; }
 
 /* A short phone (320×568): the cover above the title shrinks, so Empezar is seen without
@@ -842,7 +678,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 }
 
 /* The last day before the final with the wildcard unused (D-444): gold, like the wildcard's ×2 (D-151) */
-.aviso-comodin { margin: 8px 0; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--yellow); background: rgba(255, 210, 63, .12); color: var(--yellow); font-weight: 700; line-height: 1.35; }
+.aviso-comodin { margin: 8px 0; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--yellow); background: rgb(from var(--yellow) r g b / 0.12); color: var(--yellow); font-weight: 700; line-height: 1.35; }
 
 /* An archived cup's podium (D-476) */
 .podio-archivado { list-style: none; padding: 0; margin: 0.5rem 0; display: grid; gap: 0.35rem; font-size: 1.1rem; overflow-wrap: anywhere; }
@@ -850,34 +686,27 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 #copa-archivada h2 { overflow-wrap: anywhere; }
 
 /* The new create screen's length (D-521): − n days +, shortcuts, the 🏁 switch and the long-cup warning */
-.dur { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--yellow); }
-.dur-btn { width: 52px; height: 52px; flex: none; border-radius: 50%; font: inherit; font-size: 1.8rem; font-weight: 800; line-height: 1; color: #fff; background: var(--glass); border: 2px solid var(--glass-border); cursor: pointer; }
+.dur { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--well-deep); border: 2px solid var(--yellow); }
+.dur-btn { width: 52px; height: 52px; flex: none; border-radius: 50%; font: inherit; font-size: var(--fs-160); font-weight: 800; line-height: 1; color: var(--ink); background: var(--glass); border: 2px solid var(--glass-border); cursor: pointer; }
 .dur-btn:disabled { opacity: 0.35; cursor: default; }
 .dur-num { text-align: center; min-width: 0; }
-.dur-num b { display: block; font-size: 1.9rem; line-height: 1.1; }
-.dur-num small { color: var(--muted); font-size: 0.82rem; }
+.dur-num b { display: block; font-size: var(--fs-200); line-height: 1.1; }
+.dur-num small { color: var(--muted); font-size: var(--fs-85); }
 .dur-atajos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.dur-atajo { min-height: 44px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 0.85rem; font-weight: 800; color: #fff; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; display: inline-flex; align-items: center; }
-.dur-atajo.on { border-color: var(--yellow); color: var(--yellow); }
-.dur-final { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); }
-.dur-final .em { font-size: 1.6rem; }
-.dur-final .t { flex: 1; min-width: 0; }
-.dur-final .t b { display: block; }
-.dur-final .t small { color: var(--muted); font-size: 0.82rem; }
+/* The 🏁 row is the shell's .toggle-row with its .switch; under FINAL_DESDE days it fades and does not toggle */
+.dur-final { margin-top: var(--s-12); }
 .dur-final.off { opacity: 0.6; }
-.dur-switch { width: 52px; height: 30px; flex: none; border-radius: 999px; position: relative; border: 0; background: rgba(255, 255, 255, 0.2); cursor: pointer; transition: background 0.15s; }
-.dur-switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left 0.15s; }
-.dur-switch[aria-checked="true"] { background: var(--yellow); }
-.dur-switch[aria-checked="true"]::after { left: 25px; }
-.dur-switch:disabled { cursor: default; }
+.dur-final .switch:disabled { cursor: default; }
 .dur-aviso { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--glass); font-size: 0.85rem; font-weight: 700; }
 .dur-aviso[hidden] { display: none; }
 /* The cup's zone, one short line and who suggested it (D-521) */
 .crear-zona .zona-linea { display: block; }
 .crear-zona .zona-por { display: block; }
-.zona-cambiar { font: inherit; font-weight: 800; color: var(--yellow); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
-.zona-sel { display: block; margin-top: 8px; width: 100%; min-height: 44px; font: inherit; color: #fff; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0 10px; }
+.zona-cambiar { position: relative; font: inherit; font-weight: 800; color: var(--yellow); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+/* A 44 px tap area without moving the line (U-10), as .back and .switch in base.css */
+.zona-cambiar::before { content: ''; position: absolute; inset: calc(-1 * var(--s-14)) calc(-1 * var(--s-4)); }
+.zona-sel { display: block; margin-top: 8px; width: 100%; min-height: 44px; font: inherit; color: var(--ink); background: rgb(from var(--cp-negro) r g b / 0.35); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0 10px; }
 .zona-sel[hidden] { display: none; }
-.zona-sel option { color: #000; }
+.zona-sel option { color: var(--cp-negro); }
 /* A cup longer than a week shows its days by week (D-521) */
 .semana-sep { margin: 12px 0 4px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
