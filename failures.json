@@ -414,7 +414,11 @@
       "error": "✗ agentes: the rules are folded below the board (📖 Reglas de Agentes)",
       "signature": "0faec1e3e5",
       "date": "2026-11-06T03:36:29.934Z",
-      "fix": null,
+      "fix": {
+        "commit": "25a7538ef73a2c25775d50a2bd71314bb044acfb",
+        "date": "2026-11-06T04:00:50.178Z",
+        "stat": "1 file(s) +2 −2: tools/e2e/cup/tournament.mjs"
+      },
       "flaky": false
     },
     {
