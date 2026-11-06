@@ -478,7 +478,11 @@
       "error": "✗ 1 script(s) of the site don't parse:\nlabs/contraption/game.js: SyntaxError: Unexpected token 'import'",
       "signature": "21d33dc9b2",
       "date": "2026-11-06T04:00:33.765Z",
-      "fix": null,
+      "fix": {
+        "commit": "a35295bc9f441dd1976e04cb4259977bdce9d219",
+        "date": "2026-11-06T04:02:04.776Z",
+        "stat": "1 file(s) +0 −429: public/labs/contraption/game.js"
+      },
       "flaky": false
     }
   ]
