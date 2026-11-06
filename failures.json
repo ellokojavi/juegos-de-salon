@@ -484,6 +484,19 @@
         "stat": "1 file(s) +0 −429: public/labs/contraption/game.js"
       },
       "flaky": false
+    },
+    {
+      "run": 42160099753,
+      "check": "tests",
+      "pr": 1245,
+      "branch": "ccr-03358154-lf7wxx",
+      "commit": "c2062fa5384f2aecd256e974aca6f45da15c72b3",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
+      "signature": "bb52322cc2",
+      "date": "2026-11-06T04:04:40.130Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
