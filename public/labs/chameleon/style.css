@@ -8,7 +8,7 @@
 
 /* ---------- Intro ---------- */
 /* The lizard glows green, not the shell's yellow: a chameleon is green (the lime token at an alpha) */
-.intro-hero .lizard, .lizard { filter: drop-shadow(0 0 20px rgb(from var(--lime) r g b / 0.6)); }
+.intro-hero .lizard, .lizard { filter: drop-shadow(0 0 20px rgb(var(--lime-rgb) / 0.6)); }
 .how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
 .credito { font-size: var(--fs-85); margin: 0; }
 .credito a { color: inherit; }

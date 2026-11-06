@@ -24,7 +24,7 @@
 .hand::-webkit-scrollbar { display: none; }
 .hand .card {
   flex: 0 0 auto; width: 130px; min-height: 84px; border-radius: 14px; padding: 8px; cursor: pointer;
-  background: linear-gradient(180deg, rgb(from var(--ink) r g b / 0.14), rgb(from var(--ink) r g b / 0.06)); border: 2px solid var(--glass-border);
+  background: linear-gradient(180deg, rgb(var(--ink-rgb) / 0.14), rgb(var(--ink-rgb) / 0.06)); border: 2px solid var(--glass-border);
   display: grid; gap: 2px; align-content: start; text-align: center; color: var(--ink); font-family: var(--font-body); transition: transform 0.1s, border-color 0.15s;
   /* El eje del gesto se reparte solo: el navegador se queda con el desplazamiento lateral de
      la tira y nos entrega el vertical, que es sacar la carta hacia la línea (D-85). */
@@ -34,7 +34,7 @@
 .hand .card.hueco { opacity: 0.25; border-style: dashed; }
 .hand .card .em { font-size: var(--fs-140); }
 .hand .card .t { font-size: var(--fs-75); font-weight: 800; line-height: 1.25; }
-.hand .card.sel { border-color: var(--yellow); background: linear-gradient(180deg, rgb(from var(--yellow) r g b / 0.3), rgb(from var(--orange) r g b / 0.15)); transform: translateY(-3px); }
+.hand .card.sel { border-color: var(--yellow); background: linear-gradient(180deg, rgb(var(--yellow-rgb) / 0.3), rgb(var(--orange-rgb) / 0.15)); transform: translateY(-3px); }
 .hand.dim .card:not(.sel) { opacity: 0.55; }
 .hand .card:active { transform: scale(0.97); }
 .line { display: grid; gap: 0; position: relative; }
@@ -47,19 +47,19 @@
 .event .y { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); letter-spacing: 0.01em; }
 .event .em { font-size: 1.2rem; text-align: center; }
 .event .t { font-size: var(--fs-85); font-weight: 700; line-height: 1.25; }
-.event.fresh { border-color: var(--lime); box-shadow: 0 0 12px rgb(from var(--lime) r g b / 0.4); }
+.event.fresh { border-color: var(--lime); box-shadow: 0 0 12px rgb(var(--lime-rgb) / 0.4); }
 /* Mientras se arrastra, los dos hitos entre los que caería la carta encienden su año: es
    el dato que se está decidiendo, y el mismo que después explica el error (C-8b). No tocan
    su borde a propósito: el borde encendido tiene que significar una sola cosa, el destino. */
-.event.vecino { background: rgb(from var(--lime) r g b / 0.05); }
-.event.vecino .y { color: var(--lime); text-shadow: 0 0 10px rgb(from var(--lime) r g b / 0.5); }
+.event.vecino { background: rgb(var(--lime-rgb) / 0.05); }
+.event.vecino .y { color: var(--lime); text-shadow: 0 0 10px rgb(var(--lime-rgb) / 0.5); }
 .slot {
   display: grid; place-items: center; min-height: 30px; margin: var(--s-4) 0; border-radius: 10px; cursor: pointer;
-  border: 2px dashed rgb(from var(--ink) r g b / 0.22); color: var(--muted); font-weight: 800; font-size: 0.75rem;
+  border: 2px dashed rgb(var(--ink-rgb) / 0.22); color: var(--muted); font-weight: 800; font-size: 0.75rem;
   transition: background 0.15s, border-color 0.15s, min-height 0.2s;
 }
 .slot:active { transform: scale(0.99); }
-.slot.on { border-color: var(--yellow); border-style: solid; background: rgb(from var(--yellow) r g b / 0.16); color: var(--ink); min-height: 56px; }
+.slot.on { border-color: var(--yellow); border-style: solid; background: rgb(var(--yellow-rgb) / 0.16); color: var(--ink); min-height: 56px; }
 .slot.on .ghost { display: grid; grid-template-columns: 62px 28px 1fr; align-items: center; gap: 8px; width: 100%; padding: 0 10px;
   /* La carta puesta se retoma arrastrándola a otra ranura, o se suelta fuera para devolverla */
   cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
@@ -83,8 +83,8 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 /* Overlay de resultado de jugada */
 .verdict { display: grid; gap: 6px; justify-items: center; }
 .verdict .big { font-family: var(--font-display); font-size: clamp(2.4rem, 13vw, 3.4rem); letter-spacing: 0.04em; }
-.verdict .big.ok { color: var(--lime); text-shadow: 0 4px 0 var(--ln-sombra), 0 0 30px rgb(from var(--lime) r g b / 0.5); }
-.verdict .big.no { color: var(--pink); text-shadow: 0 4px 0 var(--ln-sombra), 0 0 30px rgb(from var(--pink) r g b / 0.5); }
+.verdict .big.ok { color: var(--lime); text-shadow: 0 4px 0 var(--ln-sombra), 0 0 30px rgb(var(--lime-rgb) / 0.5); }
+.verdict .big.no { color: var(--pink); text-shadow: 0 4px 0 var(--ln-sombra), 0 0 30px rgb(var(--pink-rgb) / 0.5); }
 .verdict .card-big {
   display: grid; gap: 4px; justify-items: center; background: var(--card); color: var(--card-ink);
   border-radius: 16px; padding: 14px 18px; min-width: 200px; box-shadow: 0 10px 30px var(--ln-sombra-carta);
@@ -95,7 +95,7 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .verdict .card-big .y { font: 900 clamp(2.6rem, 15vw, 3.6rem) var(--font-num); font-variant-numeric: tabular-nums; color: var(--pink-deep); line-height: 1; white-space: nowrap; margin-top: 2px; }
 .verdict .note { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 /* Error: la pantalla se tiñe de rojo y la carta se sacude; se queda hasta que el jugador toque */
-.handoff.bad { background: radial-gradient(700px 500px at 50% 25%, rgb(from var(--pink) r g b / 0.55), transparent 65%), radial-gradient(600px 500px at 50% 110%, rgb(from var(--pink) r g b / 0.25), transparent 60%), linear-gradient(160deg, var(--ln-error-1), var(--ln-error-2) 60%, var(--ln-error-3)); }
+.handoff.bad { background: radial-gradient(700px 500px at 50% 25%, rgb(var(--pink-rgb) / 0.55), transparent 65%), radial-gradient(600px 500px at 50% 110%, rgb(var(--pink-rgb) / 0.25), transparent 60%), linear-gradient(160deg, var(--ln-error-1), var(--ln-error-2) 60%, var(--ln-error-3)); }
 .handoff.bad .card-big { animation: shake 0.6s both; }
 .verdict .why { max-width: 340px; text-align: center; color: var(--ink); font-weight: 700; font-size: var(--fs-90); line-height: 1.45; background: var(--well-deep); border-radius: 14px; padding: 10px 14px; margin-top: 4px; }
 .verdict .why b { color: var(--yellow); }
@@ -107,8 +107,8 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .vilo.on { display: block; }
 .vilo-carta {
   display: grid; gap: 4px; justify-items: center; color: var(--ink);
-  background: linear-gradient(180deg, rgb(from var(--yellow) r g b / 0.34), rgb(from var(--orange) r g b / 0.18)), linear-gradient(180deg, var(--ln-vilo-1), var(--ln-vilo-2));
-  border: 2px solid var(--yellow); box-shadow: 0 0 26px rgb(from var(--yellow) r g b / 0.35);
+  background: linear-gradient(180deg, rgb(var(--yellow-rgb) / 0.34), rgb(var(--orange-rgb) / 0.18)), linear-gradient(180deg, var(--ln-vilo-1), var(--ln-vilo-2));
+  border: 2px solid var(--yellow); box-shadow: 0 0 26px rgb(var(--yellow-rgb) / 0.35);
   border-radius: 16px; padding: var(--s-12) var(--s-14); width: min(70vw, 268px);
   transform: translate(-50%, -100%); transform-origin: 50% 100%;
   animation: alzar 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
@@ -124,7 +124,7 @@ body.arrastrando .place-row { opacity: 0; pointer-events: none; }
 .lt-juego .status { text-align: center; margin: 0 0 8px; }
 .lt-juego .status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 .lt-juego .line-wrap { padding: 2px; margin-top: 2px; }
-.event.fallo { border-color: rgb(from var(--pink) r g b / 0.7); box-shadow: 0 0 10px rgb(from var(--pink) r g b / 0.25); }
+.event.fallo { border-color: rgb(var(--pink-rgb) / 0.7); box-shadow: 0 0 10px rgb(var(--pink-rgb) / 0.25); }
 
 /* El dato de la carta (D-277): en el veredicto (al errar y al acertar, D-314) y en la línea final */
 .dato { max-width: 340px; text-align: center; color: var(--ink); font-weight: 700; font-size: var(--fs-90); line-height: 1.45;

@@ -4,15 +4,15 @@
 :root {
   --rr-noche: #0b0f1d;            /* the board at night, and the stations' outline */
   --rr-sombra: rgba(0,0,0,0.4);   /* the board's drop on the background */
-  --rr-alerta: #ff8a8a;           /* a soft red: the last minute, Give up armed, a bad stamp */
+  --rr-alerta: #ff8a8a; --rr-alerta-rgb: 255 138 138;           /* a soft red: the last minute, Give up armed, a bad stamp */
 }
 
 /* The board: 3×3 dark pieces, like a subway map at night */
 .rr-tablero { position: relative; width: 100%; max-width: 360px; aspect-ratio: 1; margin: 0 auto; border-radius: var(--r-16); touch-action: none;
-  background: var(--rr-noche); box-shadow: 0 0 0 2px rgb(from var(--ink) r g b / 0.12), 0 10px 30px var(--rr-sombra); overflow: hidden; -webkit-user-select: none; user-select: none; }
+  background: var(--rr-noche); box-shadow: 0 0 0 2px rgb(var(--ink-rgb) / 0.12), 0 10px 30px var(--rr-sombra); overflow: hidden; -webkit-user-select: none; user-select: none; }
 .rr-tablero.rr-portada { width: 150px; max-width: 150px; border-radius: var(--r-12); margin: 0 auto var(--s-4); touch-action: auto; }
 .rr-tablero.rr-ej { width: 108px; max-width: 108px; border-radius: var(--r-10); touch-action: auto; }
-.rr-tablero .rr-pieza { position: absolute; width: calc(100% / 3); height: calc(100% / 3); box-sizing: border-box; border: 1px solid rgb(from var(--ink) r g b / 0.07);
+.rr-tablero .rr-pieza { position: absolute; width: calc(100% / 3); height: calc(100% / 3); box-sizing: border-box; border: 1px solid rgb(var(--ink-rgb) / 0.07);
   transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
 /* While it turns, the piece goes above the others: the block is seen whole */
 .rr-tablero .rr-pieza.girando { z-index: 1; }
@@ -21,18 +21,18 @@
 .rr-tablero .rr-tramo { opacity: 0.9; }
 .rr-tablero .rr-estacion { fill: var(--ink); stroke: var(--rr-noche); stroke-width: 2; }
 /* The rectangle being marked: white, the yellow one was confused with the yellow line */
-.rr-seleccion { position: absolute; border: 3px solid var(--ink); border-radius: var(--r-10); background: rgb(from var(--ink) r g b / 0.12); box-sizing: border-box;
-  box-shadow: 0 0 16px rgb(from var(--ink) r g b / 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 2; }
+.rr-seleccion { position: absolute; border: 3px solid var(--ink); border-radius: var(--r-10); background: rgb(var(--ink-rgb) / 0.12); box-sizing: border-box;
+  box-shadow: 0 0 16px rgb(var(--ink-rgb) / 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 2; }
 .rr-seleccion.ve { opacity: 1; }
 .rr-ej .rr-seleccion { border-width: 2px; border-radius: var(--r-8); }
 /* Solved: the lines glow */
 .rr-tablero.resuelto .rr-tramo { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
-.rr-tablero.resuelto { box-shadow: 0 0 0 2px rgb(from var(--lime) r g b / 0.7), 0 0 26px rgb(from var(--lime) r g b / 0.45); }
+.rr-tablero.resuelto { box-shadow: 0 0 0 2px rgb(var(--lime-rgb) / 0.7), 0 0 26px rgb(var(--lime-rgb) / 0.45); }
 /* The waiting room's board: the scramble comes in, and when solved it lights up with a pulse */
 .rr-tablero.aparece { animation: rr-aparece 0.4s ease-out; }
 @keyframes rr-aparece { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
 .rr-tablero.rr-portada.resuelto { animation: rr-ilumina 1.2s ease-out; }
-@keyframes rr-ilumina { 0% { box-shadow: 0 0 0 2px rgb(from var(--lime) r g b / 0.7), 0 0 0 rgb(from var(--lime) r g b / 0); } 40% { box-shadow: 0 0 0 3px var(--lime), 0 0 40px rgb(from var(--lime) r g b / 0.8); } 100% { box-shadow: 0 0 0 2px rgb(from var(--lime) r g b / 0.7), 0 0 26px rgb(from var(--lime) r g b / 0.45); } }
+@keyframes rr-ilumina { 0% { box-shadow: 0 0 0 2px rgb(var(--lime-rgb) / 0.7), 0 0 0 rgb(var(--lime-rgb) / 0); } 40% { box-shadow: 0 0 0 3px var(--lime), 0 0 40px rgb(var(--lime-rgb) / 0.8); } 100% { box-shadow: 0 0 0 2px rgb(var(--lime-rgb) / 0.7), 0 0 26px rgb(var(--lime-rgb) / 0.45); } }
 
 .rr-credito { margin: 0; font-size: var(--fs-85); color: var(--muted); text-align: center; }
 .rr-credito a { color: var(--cyan); }
@@ -48,7 +48,7 @@
 .rr-n-etapa { margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.06em; }
 .rr-etapas { display: flex; gap: var(--s-8); }
 .rr-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-faint); box-sizing: border-box; }
-.rr-punto.actual { border-color: var(--ink); background: rgb(from var(--ink) r g b / 0.25); box-shadow: 0 0 8px rgb(from var(--ink) r g b / 0.5); }
+.rr-punto.actual { border-color: var(--ink); background: rgb(var(--ink-rgb) / 0.25); box-shadow: 0 0 8px rgb(var(--ink-rgb) / 0.5); }
 /* Like the share card: 🟩 at the minimum, 🟨 with extra turns */
 .rr-punto.hecha { background: var(--yellow); border-color: var(--yellow); }
 .rr-punto.perfecta { background: var(--lime); border-color: var(--lime); }
@@ -67,7 +67,7 @@
 .rr-acciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-8); }
 .rr-acciones .btn { width: 100%; min-width: 0; min-height: 44px; padding: var(--s-4); font-size: var(--fs-90); white-space: normal; line-height: 1.15; }
 .rr-acciones .btn:disabled { opacity: 0.4; }
-.rr-acciones .btn.armado { color: var(--rr-alerta); border-color: var(--rr-alerta); background: rgb(from var(--rr-alerta) r g b / 0.12); }
+.rr-acciones .btn.armado { color: var(--rr-alerta); border-color: var(--rr-alerta); background: rgb(var(--rr-alerta-rgb) / 0.12); }
 
 /* The end: the stamp */
 .rr-sello { justify-self: center; align-self: center; margin: 0; font: var(--fs-120) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);

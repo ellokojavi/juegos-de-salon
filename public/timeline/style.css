@@ -21,7 +21,7 @@
 .theme-card .em { font-size: 1.8rem; }
 .theme-card b { font-size: var(--fs-100); }
 .theme-card small { color: var(--muted); font-size: var(--fs-75); font-weight: 700; text-wrap: balance; }
-.theme-card.on { border-color: var(--yellow); background: rgb(from var(--yellow) r g b / 0.15); }
+.theme-card.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.15); }
 
 /* ---------- Juego ---------- */
 .score { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-6); margin-bottom: var(--s-8); }
@@ -43,7 +43,7 @@
 .ranking li .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ranking li .info { color: var(--cyan); font-size: var(--fs-75); text-align: right; white-space: nowrap; }
 .ranking li .info .time { color: var(--muted); font: 900 var(--fs-75) var(--font-num); font-variant-numeric: tabular-nums; }
-.ranking li.top { background: linear-gradient(90deg, rgb(from var(--yellow) r g b / 0.28), rgb(from var(--pink) r g b / 0.28)); }
+.ranking li.top { background: linear-gradient(90deg, rgb(var(--yellow-rgb) / 0.28), rgb(var(--pink-rgb) / 0.28)); }
 .replay { margin-top: var(--s-10); padding: var(--s-12) var(--s-16); }
 .replay summary { font-size: var(--fs-100); }
 /* El aire con lo de arriba lo da el repaso o el panel marcado con data-tablero (D-309) */
@@ -59,13 +59,13 @@
 .solo-top b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; }
 .solo-top .cron { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); padding: var(--s-4) var(--s-10); border-radius: var(--r-pill); background: var(--well-deep); }
 .aviso { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
-.aviso.bien { background: rgb(from var(--lime) r g b / 0.14); color: var(--lime); }
+.aviso.bien { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
 #screen-solo-result .result-hero { display: grid; gap: var(--s-4); justify-items: center; }
 #screen-solo-result .result-hero .lead, #screen-solo-result .result-hero .muted { margin: 0; }
 /* El puntaje es una cifra que se compara: Nunito, no Bangers (C-1, D-30). Its 3.2 rem is the
    score's own size, above the text steps, like a title (DESIGN.md §4). */
 .puntos { display: flex; align-items: baseline; gap: var(--s-2); }
-.puntos b { font: 900 3.2rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.35); }
+.puntos b { font: 900 3.2rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgb(var(--bg1-rgb) / 0.35); }
 .puntos small { font: 900 var(--fs-110) var(--font-num); color: var(--muted); }
 .tarjeta { font-size: var(--fs-140); letter-spacing: 0.08em; margin-top: var(--s-4); }
 .solo-como { margin-top: var(--s-4); }

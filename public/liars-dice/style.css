@@ -35,7 +35,7 @@
 .die {
   display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 1px;
   width: 46px; height: 46px; padding: var(--s-6); border-radius: var(--r-12);
-  background: var(--card); box-shadow: 0 3px 0 rgb(from var(--bg1) r g b / 0.35), 0 4px 10px rgb(from var(--bg1) r g b / 0.35);
+  background: var(--card); box-shadow: 0 3px 0 rgb(var(--bg1-rgb) / 0.35), 0 4px 10px rgb(var(--bg1-rgb) / 0.35);
 }
 .die i { display: block; align-self: center; justify-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--card-ink); }
 /* El as es comodín y por eso se ve distinto: es la información que más se mira en la mano */
@@ -43,7 +43,7 @@
 .die--sm { width: 30px; height: 30px; padding: var(--s-4); border-radius: var(--r-8); }
 .die--sm i { width: 5px; height: 5px; }
 .die.off { opacity: 0.35; }
-.die.on { box-shadow: 0 0 0 2px var(--lime), 0 3px 0 rgb(from var(--bg1) r g b / 0.35); }
+.die.on { box-shadow: 0 0 0 2px var(--lime), 0 3px 0 rgb(var(--bg1-rgb) / 0.35); }
 
 .dice-row { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; }
 
@@ -53,7 +53,7 @@
 .rivals .rival .n { font-weight: 900; font-size: var(--fs-75); }
 /* The rivals' dice as glyphs: five must fit in the card's 74 px, under the smallest text step (allowlisted) */
 .rivals .rival .d { font-size: 0.62rem; letter-spacing: -0.05em; }
-.rivals .rival.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgb(from var(--yellow) r g b / 0.45); }
+.rivals .rival.turn { box-shadow: 0 0 0 2px var(--yellow), 0 0 14px rgb(var(--yellow-rgb) / 0.45); }
 .rivals .rival.turn .n { color: var(--yellow); }
 .rivals .rival.out { opacity: 0.45; }
 
@@ -68,7 +68,7 @@
    bigger dice, face down until the first jolt. Landed, the same panel shrinks back to the hand's
    size and colour while the dice slide into their row (llegar in game.js). */
 .mine { transition: background-color 0.45s, box-shadow 0.45s; }
-.mine.agitando, .mine.llega { background-color: var(--cloth); box-shadow: inset 0 0 40px rgb(from var(--bg1) r g b / 0.45); }
+.mine.agitando, .mine.llega { background-color: var(--cloth); box-shadow: inset 0 0 40px rgb(var(--bg1-rgb) / 0.45); }
 .mine.agitando, .mine.llega { padding: var(--s-24) var(--s-10) var(--s-16); }   /* the sides as always: five dice must fit in one row while it shrinks */
 .mine.llega-anda { overflow: visible; transition: height 480ms cubic-bezier(0.5, 0, 0.3, 1), padding 480ms cubic-bezier(0.5, 0, 0.3, 1), background-color 480ms, box-shadow 480ms; }
 .mine.llega-anda .die { transition: transform 480ms cubic-bezier(0.5, 0, 0.3, 1); }
@@ -94,7 +94,7 @@
 
 .turn-clock { position: relative; height: 18px; margin: var(--s-6) auto 0; max-width: 260px; border-radius: var(--r-pill); background: var(--well-deep); overflow: hidden; }
 .turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: var(--r-pill); transition: width 0.2s linear; }
-.turn-clock span { position: relative; display: block; text-align: center; font: 900 var(--fs-75)/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgb(from var(--bg1) r g b / 0.6); }
+.turn-clock span { position: relative; display: block; text-align: center; font: 900 var(--fs-75)/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgb(var(--bg1-rgb) / 0.6); }
 .turn-clock.apurado i { background: var(--pink); }
 
 .bid-board { margin: var(--s-10) 0 auto; }
@@ -110,19 +110,19 @@
 .pick-label { text-align: center; color: var(--muted); font-weight: 800; font-size: var(--fs-85); margin: 0; }
 .pintas { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-6); }
 .pinta { display: grid; place-items: center; min-height: 48px; padding: var(--s-6) 0; border-radius: var(--r-12); border: 2px solid transparent; background: var(--well); cursor: pointer; }
-.pinta.on { border-color: var(--cyan); background: rgb(from var(--cyan) r g b / 0.18); }
+.pinta.on { border-color: var(--cyan); background: rgb(var(--cyan-rgb) / 0.18); }
 .pinta:disabled { opacity: 0.3; cursor: not-allowed; }
 /* Los de la botonera no son dados, son botones que nombran una pinta. Van dibujados en hueco
    —sin cara, con el contorno y los puntos en línea— para que los dados de verdad, los de la
    mano del jugador, sean lo único que se lea como un objeto sobre la mesa. */
-.pinta .die { background: none; box-shadow: none; border: 2px solid rgb(from var(--ink) r g b / 0.3); }
-.pinta .die i { background: rgb(from var(--ink) r g b / 0.62); }
-.pinta .die.ace { background: none; border-color: rgb(from var(--yellow) r g b / 0.6); }
+.pinta .die { background: none; box-shadow: none; border: 2px solid rgb(var(--ink-rgb) / 0.3); }
+.pinta .die i { background: rgb(var(--ink-rgb) / 0.62); }
+.pinta .die.ace { background: none; border-color: rgb(var(--yellow-rgb) / 0.6); }
 .pinta .die.ace i { background: var(--yellow); }
 .pinta.on .die { border-color: var(--cyan); }
 .pinta.on .die i { background: var(--cyan); }
 /* Salvo el elegido, que se rellena: es la pinta sobre la que se está apostando */
-.pinta.on .die { background: rgb(from var(--cyan) r g b / 0.12); }
+.pinta.on .die { background: rgb(var(--cyan-rgb) / 0.12); }
 .amount { display: flex; align-items: center; justify-content: center; gap: var(--s-16); }
 /* The bid's quantity: the board's own figure, above the largest text step (DESIGN.md §4) */
 .amount-n { font: 900 2.6rem var(--font-num); font-variant-numeric: tabular-nums; min-width: 2ch; text-align: center; color: var(--yellow); }
@@ -135,7 +135,7 @@
 .reveal-row { display: grid; grid-template-columns: 84px 1fr; gap: var(--s-8); align-items: center; background: var(--well-deep); border-radius: var(--r-12); padding: var(--s-6) var(--s-10); }
 .reveal-row .n { font-weight: 900; font-size: var(--fs-75); text-align: left; }
 .reveal-row .dice-row { justify-content: flex-start; gap: var(--s-4); }
-.handoff .count { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.8rem); color: var(--yellow); letter-spacing: 0.03em; text-shadow: 0 4px 0 rgb(from var(--bg1) r g b / 0.35); line-height: 1.05; }
+.handoff .count { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.8rem); color: var(--yellow); letter-spacing: 0.03em; text-shadow: 0 4px 0 rgb(var(--bg1-rgb) / 0.35); line-height: 1.05; }
 .handoff .exact { font-weight: 900; font-size: var(--fs-110); }
 .handoff .exact.yes { color: var(--lime); }
 .handoff .exact.no { color: var(--pink); }
@@ -162,7 +162,7 @@
 .obligada-notice .hint { max-width: 34ch; margin: var(--s-8) auto 0; }
 .obligada-notice .btn { margin-top: var(--s-14); }
 /* The first time calzar opens to a player, a line says what it is */
-.calzar-hint { margin: var(--s-8) 0 0; padding: var(--s-8) var(--s-12); border-radius: var(--r-12); background: rgb(from var(--cyan) r g b / 0.14); border: 1px solid var(--cyan); font-weight: 800; font-size: var(--fs-85); line-height: 1.3; }
+.calzar-hint { margin: var(--s-8) 0 0; padding: var(--s-8) var(--s-12); border-radius: var(--r-12); background: rgb(var(--cyan-rgb) / 0.14); border: 1px solid var(--cyan); font-weight: 800; font-size: var(--fs-85); line-height: 1.3; }
 .standing .passed { display: block; color: var(--yellow); }
 /* The variants: one folded row under the classic rules; the shell's toggle rows sit inside it */
 .variants { background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); margin-top: var(--s-8); }

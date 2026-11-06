@@ -54,9 +54,17 @@ role where the role is the meaning (`--edge-pink` is the shadow under a pink but
 | `--ink-bad`, `--snackbar-bg` | `#ffd0d6`, `#111111` | the pale pink text of `.notice--bad` on its red tint; the snackbar's near-black. From La Copa, phase 7 |
 
 **A token colour at an alpha** (a glow, a tint, a shadow in the brand's colour) is written with the
-relative-colour syntax, never as a new literal: `rgb(from var(--cyan) r g b / 0.6)`. The lint names
-the idiom for every `rgba(46, 230, 214, 0.6)` it meets, and an alpha that moves is the same idiom:
-`rgb(from var(--cyan) r g b / calc(0.2 * var(--k)))` (the lint flags `rgba(…, calc(…))` too). A white surface (`background: #fff`) is
+token's channels, never as a new literal: `rgb(var(--cyan-rgb) / 0.6)`. Every colour token used this
+way has a companion `--x-rgb` declared right next to it, its red, green and blue as three numbers
+(`--cyan: #2ee6d6; --cyan-rgb: 46 230 214;`), in base.css and in each sheet that declares its own
+(`--cp-*`, `--pm-*`…). A sheet or a rule that redeclares a token (Pintaminas' hard mode, a lab's own
+`--bg1`…`--bg3` on `:root`) redeclares its `-rgb` on the same line, or the alpha keeps the old colour;
+`tokens-rgb.test.mjs` fails on any `--x-rgb` that does not match its `--x` in the same block. The lint
+names the idiom for every `rgba(46, 230, 214, 0.6)` it meets, and an alpha that moves is the same idiom:
+`rgb(var(--cyan-rgb) / calc(0.2 * var(--k)))` (the lint flags `rgba(…, calc(…))` too). The
+relative-colour form `rgb(from var(--cyan) r g b / 0.6)` is a lint hit: it needs Chrome 119, Safari
+16.4 or Firefox 128, and an older browser drops the whole declaration, so the fill, border or shadow
+does not draw; `rgb(var(--x-rgb) / a)` works since Chrome 65 and Safari 12.1. A white surface (`background: #fff`) is
 not ink: it is `var(--card)` if it is a card, or an escape.
 
 A game may have thematic colours (the sea in Batalla Naval, a painting's palette in Pintaminas)
@@ -284,7 +292,7 @@ From the pilot, Ahorcado (phase 4, #1192; 276 lines, 101 hits before, 0 after). 
 2. **Delete the shell copies.** Every rule the sheet repeats from the game shell (§2) goes; what the
    game adds on top of a shell component stays as a modifier (`.field--name`, `.seg--src`). If the
    game's copy differed from the shell, the shell wins: list the difference as intended.
-3. **Tokens, mechanically.** Colours → the token; a token at an alpha → `rgb(from var(--x) r g b / a)`;
+3. **Tokens, mechanically.** Colours → the token; a token at an alpha → `rgb(var(--x-rgb) / a)`;
    `rgba(0,0,0,.25/.3)` → `--well`/`--well-deep`; `#fff` as text → `--ink`, as a surface → `--card`
    or an escape; corners → `--r-*`; padding, gap, margin → `--s-*` (an odd value takes the nearer
    step; a negative margin is `calc(-1 * var(--s-18))`); rem sizes → `--fs-*` (the nearer step; a

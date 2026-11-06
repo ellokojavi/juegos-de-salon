@@ -36,7 +36,7 @@
 /* A perfect: an emerging ring of light from the stage's edge, over the canvas' own pulse */
 .sn-escenario::after {
   content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; opacity: 0;
-  box-shadow: inset 0 0 0 2px rgb(from var(--yellow) r g b / 0.8), inset 0 0 40px rgb(from var(--pink) r g b / 0.45);
+  box-shadow: inset 0 0 0 2px rgb(var(--yellow-rgb) / 0.8), inset 0 0 40px rgb(var(--pink-rgb) / 0.45);
 }
 .sn-escenario.sn-pulso::after { animation: sn-pulso 0.7s ease-out; }
 @keyframes sn-pulso { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
@@ -51,7 +51,7 @@
   position: absolute; top: calc(5% + clamp(3.5rem, 19.5vw, 5rem)); left: 50%; transform: translateX(-50%); pointer-events: none;
   padding: var(--s-4) var(--s-12); border-radius: var(--r-pill); white-space: nowrap;
   font: 800 var(--fs-85) var(--font-body); color: var(--ink-on-yellow); background: linear-gradient(90deg, var(--yellow), var(--orange));
-  box-shadow: 0 0 16px rgb(from var(--orange) r g b / 0.55); animation: pop 0.35s ease-out;
+  box-shadow: 0 0 16px rgb(var(--orange-rgb) / 0.55); animation: pop 0.35s ease-out;
 }
 .sn-racha[hidden] { display: none; }
 /* The lives, top left of the night: a fallen one goes dark */
@@ -61,7 +61,7 @@
 .sn-aviso .sn-quedan { display: block; margin-top: var(--s-4); font: 700 var(--fs-100) var(--font-body); letter-spacing: 0; color: var(--ink); }
 .sn-aviso {
   position: absolute; top: calc(5% + clamp(5.2rem, 28vw, 7rem)); left: 8%; right: 8%; text-align: center; pointer-events: none;
-  font: 700 var(--fs-100) var(--font-body); color: rgb(from var(--ink) r g b / 0.88); transition: opacity 0.4s;
+  font: 700 var(--fs-100) var(--font-body); color: rgb(var(--ink-rgb) / 0.88); transition: opacity 0.4s;
 }
 .sn-aviso.sn-fuera { opacity: 0; }
 .sn-aviso.sn-brilla { font: var(--fs-200) var(--font-display); letter-spacing: 0.06em; animation: sn-brilla 1s ease-out forwards; }
@@ -72,24 +72,24 @@
 .sn-logros { position: absolute; left: 0; right: 0; bottom: 9%; display: grid; justify-items: center; pointer-events: none; }
 .sn-logro {
   display: flex; align-items: center; gap: var(--s-10); padding: var(--s-8) var(--s-16) var(--s-8) var(--s-10); border-radius: var(--r-16);
-  background: linear-gradient(135deg, rgb(from var(--bg2) r g b / 0.92), rgb(from var(--bg1) r g b / 0.92));
-  border: 1.5px solid rgb(from var(--yellow) r g b / 0.75);
-  box-shadow: 0 0 0 0 rgb(from var(--yellow) r g b / 0.6), 0 8px 24px var(--sn-sombra);
+  background: linear-gradient(135deg, rgb(var(--bg2-rgb) / 0.92), rgb(var(--bg1-rgb) / 0.92));
+  border: 1.5px solid rgb(var(--yellow-rgb) / 0.75);
+  box-shadow: 0 0 0 0 rgb(var(--yellow-rgb) / 0.6), 0 8px 24px var(--sn-sombra);
   animation: sn-logro-entra 0.45s cubic-bezier(.2, 1.4, .4, 1) both, sn-logro-onda 1.1s ease-out 0.2s;
 }
 .sn-logro.sn-sale { animation: sn-logro-sale 0.26s ease-in forwards; }
-.sn-logro-ico { font-size: var(--fs-160); line-height: 1; filter: drop-shadow(0 0 8px rgb(from var(--yellow) r g b / 0.7)); }
+.sn-logro-ico { font-size: var(--fs-160); line-height: 1; filter: drop-shadow(0 0 8px rgb(var(--yellow-rgb) / 0.7)); }
 .sn-logro-txt { display: grid; text-align: left; line-height: 1.15; }
 .sn-logro-txt b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
-.sn-logro-txt small { font: 700 var(--fs-75) var(--font-body); color: rgb(from var(--ink) r g b / 0.8); }
+.sn-logro-txt small { font: 700 var(--fs-75) var(--font-body); color: rgb(var(--ink-rgb) / 0.8); }
 @keyframes sn-logro-entra { from { opacity: 0; transform: translateY(18px) scale(0.85); } to { opacity: 1; transform: none; } }
-@keyframes sn-logro-onda { 0% { box-shadow: 0 0 0 0 rgb(from var(--yellow) r g b / 0.6), 0 8px 24px var(--sn-sombra); } 100% { box-shadow: 0 0 0 22px rgb(from var(--yellow) r g b / 0), 0 8px 24px var(--sn-sombra); } }
+@keyframes sn-logro-onda { 0% { box-shadow: 0 0 0 0 rgb(var(--yellow-rgb) / 0.6), 0 8px 24px var(--sn-sombra); } 100% { box-shadow: 0 0 0 22px rgb(var(--yellow-rgb) / 0), 0 8px 24px var(--sn-sombra); } }
 @keyframes sn-logro-sale { to { opacity: 0; transform: translateY(10px) scale(0.92); } }
 
 /* Paused (a call, another app): over the night, until a tap takes it off */
 .sn-pausa {
   position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; pointer-events: none;
-  background: radial-gradient(closest-side, rgb(from var(--bg1) r g b / 0.82), rgb(from var(--bg1) r g b / 0.4) 70%, transparent);
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.82), rgb(var(--bg1-rgb) / 0.4) 70%, transparent);
   font: 700 var(--fs-100) var(--font-body); color: var(--ink);
 }
 .sn-pausa[hidden] { display: none; }
