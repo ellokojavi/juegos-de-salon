@@ -533,7 +533,11 @@
       "error": "✗ labs/contraption 320×568 es: «⚙️ Jugar» ends at 622 px, 54 px below the fold",
       "signature": "759d99d45a",
       "date": "2026-11-06T04:55:13.225Z",
-      "fix": null,
+      "fix": {
+        "commit": "8bad686d501fa731aca39eeb66ba6addd12fcf45",
+        "date": "2026-11-06T05:08:02.395Z",
+        "stat": "1 file(s) +2 −0: public/labs/contraption/style.css"
+      },
       "flaky": false
     }
   ]
