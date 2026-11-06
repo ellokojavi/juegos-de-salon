@@ -539,6 +539,19 @@
         "stat": "1 file(s) +2 −0: public/labs/contraption/style.css"
       },
       "flaky": false
+    },
+    {
+      "run": 42221226405,
+      "check": "tests",
+      "pr": 1247,
+      "branch": "processes-2026-11-06",
+      "commit": "7ae6e1113a8a12a2f58e4865f94ce4effa03c142",
+      "test": "tools/release/changelog.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: changelog/processes-2026-11-06.md: the first line must be \"level: patch\" (or minor, or major)\ncode: 'ERR_ASSERTION',\nexpected: true,",
+      "signature": "392fd0f26c",
+      "date": "2026-11-06T12:55:51.878Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
