@@ -1,3 +1,0 @@
-level: minor
-
-- **La Copa: the podium is announced on the last day** (in the lab behind the flag `cup-podium-early`): once nothing left to play can change the first three places, the board announces them above the days («¡Cata ya ganó la copa!», the three steps, and a line saying what is left cannot move them). It counts only with what each player can see: whoever has not played the last day keeps the others' results hidden, and the announcement waits; the points of a day still open may drop as others play it and a free wildcard may still double a day, so when in doubt it waits too. The podium with its medals, the closing notice and the splash come as always when the cup closes. Demo `decided` in the test store.
