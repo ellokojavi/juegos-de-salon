@@ -16,8 +16,9 @@ let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 // A tap on a cell of the board, as a finger would
-const TAP = (c, r) => `(() => { const k = document.getElementById('lienzo'), b = k.getBoundingClientRect();
-  k.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, clientX: b.left + (${c} + 0.5) * b.width / 8, clientY: b.top + (${r} + 0.5) * b.height / 11 })); return 1; })()`;
+const TAP = (c, r) => /* a tap in the middle of a cell, as a finger */ `(() => { const k = document.getElementById('lienzo'), b = k.getBoundingClientRect();
+  const o = { bubbles: true, cancelable: true, pointerId: 9, pointerType: 'touch', clientX: b.left + (${c} + 0.5) * b.width / 8, clientY: b.top + (${r} + 0.5) * b.height / 11 };
+  k.dispatchEvent(new PointerEvent('pointerdown', o)); k.dispatchEvent(new PointerEvent('pointerup', o)); return 1; })()`;
 
 await b.go(`${SITE}/labs/`);
 ok(await ev(`document.querySelector('#activos #seccion-artilugio #btn-artilugio')?.getAttribute('href')`) === 'contraption/', 'the lab offers Artilugio under Active projects');
@@ -41,15 +42,35 @@ ok(await ev(`(() => { const r = document.getElementById('btn-probar').getBoundin
 await ev(`document.getElementById('btn-probar').click(); 1`);
 ok(await waitFor(`/Pinchazo/.test(document.getElementById('mensaje').textContent)`, 6000), 'with no parts the ball ends on the spikes, and it says so');
 
-await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').click(); 1`);
-await ev(TAP(2, 2));
-ok(await ev(`__artilugio.board.placed.length`) === 1 && await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').disabled`), 'a tap on the board places the ramp, and the tray is empty');
-ok(!await ev(`document.getElementById('acciones-pieza').hidden`), 'the placed part shows Girar and Quitar');
-await ev(`document.getElementById('btn-girar').click(); 1`);
-ok(await ev(`__artilugio.board.placed[0].dir`) === -1, 'Girar turns it');
-await ev(`document.getElementById('btn-girar').click(); 1`);
-await ev(TAP(0, 4));
-ok(await ev(`__artilugio.board.placed[0].c === 0 && __artilugio.board.placed[0].r === 4`), 'a tap on another cell moves it');
+// Real drags, as a mouse makes them: press, a few moves, let go (x, y in cells of the board; null = off the board)
+const DRAG = (from, to) => `(async () => {
+  const k = document.getElementById('lienzo'), b = k.getBoundingClientRect(), w = t => new Promise(r => setTimeout(r, t));
+  const at = p => p ? [b.left + p[0] * b.width / 8, b.top + p[1] * b.height / 11] : [b.right + 60, b.top + 40];
+  const src = typeof ${JSON.stringify(from)} === 'string' ? document.querySelector(${JSON.stringify(from)}) : k;
+  const [x0, y0] = typeof ${JSON.stringify(from)} === 'string' ? (r => [r.left + r.width / 2, r.top + r.height / 2])(src.getBoundingClientRect()) : at(${JSON.stringify(from)});
+  const [x1, y1] = at(${JSON.stringify(to)}), o = { bubbles: true, cancelable: true, pointerId: 7, pointerType: 'mouse' };
+  src.dispatchEvent(new PointerEvent('pointerdown', { ...o, clientX: x0, clientY: y0 }));
+  for (let i = 1; i <= 8; i++) { (document.elementFromPoint(x0 + (x1 - x0) * i / 8, y0 + (y1 - y0) * i / 8) || document.body).dispatchEvent(new PointerEvent('pointermove', { ...o, clientX: x0 + (x1 - x0) * i / 8, clientY: y0 + (y1 - y0) * i / 8 })); await w(16); }
+  document.body.dispatchEvent(new PointerEvent('pointerup', { ...o, clientX: x1, clientY: y1 }));
+  return 1; })()`;
+const PART = `JSON.stringify(__artilugio.board.placed.map(p => [p.c, p.r, p.dir]))`;
+
+await ev(DRAG('#bandeja [data-pieza="ramp"]', [3, 3.5]));
+ok(await ev(PART) === '[[2,3,1]]' && await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').disabled`), 'dragging the ramp from the tray places it where it is let go, and the tray is empty');
+await ev(TAP(2, 3)); await sleep(100);
+ok(await ev(PART) === '[[2,3,-1]]', 'one tap on it turns it round');
+ok(!await ev(`document.getElementById('btn-quitar').hidden`) && !await ev(`document.getElementById('btn-girar').hidden`), 'and it shows Girar and Quitar');
+await ev(TAP(2, 3)); await sleep(100);
+ok(await ev(PART) === '[[2,3,1]]', 'another tap turns it back');
+await ev(DRAG([2.5, 3.5], [1, 4.5]));
+ok(await ev(PART) === '[[0,4,1]]', 'dragging it moves it, snapped to the grid');
+await ev(`document.getElementById('btn-deshacer').click(); 1`);
+ok(await ev(PART) === '[[2,3,1]]', 'Deshacer puts it back where it was');
+await ev(DRAG([2.5, 3.5], null));
+ok(await ev(PART) === '[]' && await ev(`document.querySelector('#bandeja [data-pieza="ramp"]').textContent.includes('×1')`), 'dropped off the board, it goes back to the tray');
+await ev(`document.getElementById('btn-deshacer').click(); 1`);
+await ev(DRAG([2.5, 3.5], [1, 4.5]));
+ok(await ev(PART) === '[[0,4,1]]', 'undone and dragged again');
 await b.shot('02-board');
 await ev(`document.getElementById('btn-probar').click(); 1`);
 ok(await waitFor(`!document.getElementById('resultado').hidden`, 8000), 'Probar: the ball runs into the basket');

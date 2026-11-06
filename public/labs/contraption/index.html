@@ -54,12 +54,14 @@
       </div>
       <p class="mensaje" id="mensaje" aria-live="polite"></p>
       <div class="bandeja" id="bandeja" role="group"></div>
-      <div class="btn-row" id="acciones-pieza" hidden>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-girar"></button>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-quitar"></button>
-      </div>
-      <div class="btn-row">
+      <!-- One row of tools, always the same height: Deshacer and Limpiar, or with a part chosen, Girar and Quitar beside Deshacer -->
+      <div class="btn-row herramientas">
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-deshacer"></button>
         <button type="button" class="btn btn--ghost btn--sm" id="btn-limpiar"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-girar" hidden></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-quitar" hidden></button>
+      </div>
+      <div class="stack">
         <button type="button" class="btn btn--yellow" id="btn-probar"></button>
       </div>
     </section>

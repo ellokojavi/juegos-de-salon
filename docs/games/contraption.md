@@ -30,9 +30,20 @@ unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in 
 - **The parts** (two cells wide, one tall, anchored at the tapped cell): 📐 ramp (↘ or ↙), 🪵 plank,
   🛝 trampoline (throws the ball up about 7 rows, always the same height), 🌀 fan (blows the ball
   sideways over itself and the three cells it faces, in its row and the one above).
-- **Placing:** tap a part in the tray, then a free cell. Tapping a placed part chooses it (dashed
-  outline) and shows ↔ Girar and 🗑 Quitar; a tap on another free cell moves it. 🧹 Limpiar sends
-  everything back to the tray.
+- **Placing, by dragging:** press a part in the tray and drag it onto the board; it floats as a ghost
+  snapped to the grid, over a green slot where it fits and a red one where it does not, lifted about a
+  cell above the finger on a touch screen so the finger never hides it (with a mouse, none). Let go to
+  place it. The tap way stays: tap a part in the tray, then a cell (with a mouse, its ghost follows the
+  pointer before the click).
+- **One tap turns:** a tap on a placed ramp or fan turns it round at once (planks and trampolines have
+  no direction). The tapped part becomes the chosen one (dashed outline): ↔ Girar and 🗑 Quitar take
+  Limpiar's place in the tools row, so nothing below the board moves.
+- **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
+  send it back to the tray. A tap on a free cell with a part chosen also moves it there.
+- **↶ Deshacer** undoes the last change (place, move, turn, remove, Limpiar), up to 40; 🧹 Limpiar sends
+  everything back to the tray. Each step says the next one under the board, and the phone gives a
+  small tick on each snap and a pulse on placing.
+- **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
 - **▶ Probar** runs the ball with a fixed-step physics (gravity, bounces, a little friction). It ends
   **won** in the basket, or **popped** on spikes, **fallen** off the board or **stuck** (still for 1.4 s
   or 14 s in all); a failure says which and leaves the parts where they were. ■ Parar stops a run.
@@ -48,7 +59,7 @@ force over every placement of one and two parts, so each has a few answers, not 
 ## For tests
 
 `window.__artilugio` exposes the board and the run. End to end: `tools/e2e/contraption/lab.mjs`
-(cover, a failed run, placing/turning/moving by taps, a win, the next level, English, 320 px).
+(cover, a failed run, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
 
 ## The look (`scene.js`)
 
@@ -59,7 +70,7 @@ breeze streaks across its reach and a chevron for its direction; violet steel gi
 red spikes that glow; a woven basket that glows and pulses; a steel pipe the ball drops from; a ball
 with light, shadow and a stripe that turns as it rolls, and a fading trail. Particles mark a bounce,
 a pop on the spikes (the ball bursts) and a win (confetti from the basket). While a part is picked the
-free cells glow; with a mouse, a ghost of the part follows the pointer (red when it does not fit).
+part floats over a green or red slot where it would land.
 The cover shows a small board solving the levels by itself, one after another.
 
 ## Exceptions to the canons

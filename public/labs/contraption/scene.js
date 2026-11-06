@@ -180,14 +180,13 @@ export function escena(canvas) {
     ctx.fillStyle = bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = building ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.06)';
     for (let c = 1; c < COLS; c++) for (let r = 1; r < ROWS; r++) { ctx.beginPath(); ctx.arc(X(c), X(r), Math.max(1, X(0.03)), 0, 7); ctx.fill(); }
-    // while a part is picked, the free cells it can go to glow faintly
-    if (building && s.free) { ctx.fillStyle = 'rgba(255,214,79,0.06)'; for (const [c, r] of s.free) { ctx.beginPath(); ctx.roundRect(X(c) + 2, X(r) + 2, X(1) - 4, X(1) - 4, X(0.12)); ctx.fill(); } }
     for (const f of level.fixed) if (f.type === 'spikes') spikes(f);
     for (const f of level.fixed) if (f.type === 'wall') girder(f);
     for (const f of level.fixed) if (f.type !== 'wall' && f.type !== 'spikes') part(f, true);
     basket(level.goal, s.won);
     pipe(level.start);
     for (const p of s.board.placed) {
+      if (p === s.dragging) continue;   // it floats as the ghost while it is dragged
       if (p === s.chosen && building) {
         ctx.save(); ctx.strokeStyle = C.yellow; ctx.lineWidth = Math.max(2, X(0.03)); ctx.setLineDash([X(0.12), X(0.08)]); ctx.lineDashOffset = -clock * 20;
         ctx.beginPath(); ctx.roundRect(X(p.c) + 3, X(p.r) + 3, X(2) - 6, X(1) - 6, X(0.15)); ctx.stroke(); ctx.restore();
@@ -195,8 +194,11 @@ export function escena(canvas) {
       part(p);
     }
     if (s.ghost && building) {
-      ctx.save(); ctx.globalAlpha = 0.45; part(s.ghost); ctx.restore();
-      if (!s.ghost.ok) { ctx.save(); ctx.strokeStyle = C.red; ctx.lineWidth = 2; ctx.strokeRect(X(s.ghost.c) + 2, X(s.ghost.r) + 2, X(2) - 4, X(1) - 4); ctx.restore(); }
+      // where it would land: a lit slot (green fits, red does not), and the part over it
+      const g = s.ghost, ok = g.ok;
+      ctx.save(); ctx.fillStyle = ok ? 'rgba(124,255,155,0.14)' : 'rgba(255,77,109,0.16)'; ctx.strokeStyle = ok ? C.lime : C.red; ctx.lineWidth = Math.max(2, X(0.035));
+      ctx.beginPath(); ctx.roundRect(X(g.c) + 2, X(g.r) + 2, X(2) - 4, X(1) - 4, X(0.15)); ctx.fill(); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.globalAlpha = ok ? 0.85 : 0.45; part(g); ctx.restore();
     }
     // the trail, then the ball
     s.trail.forEach(([x, y], i) => { ctx.globalAlpha = 0.3 * i / s.trail.length; ctx.fillStyle = C.pink; ctx.beginPath(); ctx.arc(X(x), X(y), X(R) * (0.3 + 0.5 * i / s.trail.length), 0, 7); ctx.fill(); });
