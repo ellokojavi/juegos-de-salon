@@ -550,7 +550,11 @@
       "error": "AssertionError [ERR_ASSERTION]: changelog/processes-2026-11-06.md: the first line must be \"level: patch\" (or minor, or major)\ncode: 'ERR_ASSERTION',\nexpected: true,",
       "signature": "392fd0f26c",
       "date": "2026-11-06T12:55:51.878Z",
-      "fix": null,
+      "fix": {
+        "commit": "f909d17c27051bbc81aaa08a608b18ebec6e2995",
+        "date": "2026-11-06T13:00:50.043Z",
+        "stat": "4 file(s) +8 −0: README.md, changelog/processes-2026-11-06.md, docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     },
     {
@@ -563,7 +567,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/e2e/clock-jumps.test.mjs\nERROR · appeared e2e: clock-jumps.test.mjs",
       "signature": "8ceba32ad2",
       "date": "2026-11-06T12:57:04.577Z",
-      "fix": null,
+      "fix": {
+        "commit": "f909d17c27051bbc81aaa08a608b18ebec6e2995",
+        "date": "2026-11-06T13:00:50.043Z",
+        "stat": "3 file(s) +6 −0: README.md, docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     }
   ]
