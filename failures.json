@@ -552,6 +552,19 @@
       "date": "2026-11-06T12:55:51.878Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42221293930,
+      "check": "tests",
+      "pr": 1247,
+      "branch": "processes-2026-11-06",
+      "commit": "71695a2aba85231aa8da2c5024e9c344e4910300",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/e2e/clock-jumps.test.mjs\nERROR · appeared e2e: clock-jumps.test.mjs",
+      "signature": "8ceba32ad2",
+      "date": "2026-11-06T12:57:04.577Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
