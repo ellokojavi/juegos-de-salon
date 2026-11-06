@@ -450,6 +450,19 @@
         "stat": "2 file(s) +11 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42158561194,
+      "check": "end-to-end",
+      "pr": 1245,
+      "branch": "ccr-03358154-lf7wxx",
+      "commit": "803a3ef023ed803fc86b804273602fed10f3af96",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ agentes: the rules are folded below the board (📖 Reglas de Agentes)",
+      "signature": "0faec1e3e5",
+      "date": "2026-11-06T03:57:35.825Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
