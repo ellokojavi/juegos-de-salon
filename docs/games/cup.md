@@ -592,7 +592,7 @@ their meaning.
   juega", 1.05 rem bold, with ▾) instead of a `.lead` line, and it can be folded.
 - **On the tokens:** `cup/style.css` is written on `base.css`'s tokens (185 lint hits to 0 beyond two
   allowlisted escapes: the podium's 4 px feet and the day card's 2.4 rem emoji). Token colours by hand
-  are the token or `rgb(from var(--x) r g b / a)`; what has no token is La Copa's own `--cp-*` at the
+  are the token or `rgb(var(--x-rgb) / a)`; what has no token is La Copa's own `--cp-*` at the
   top of the sheet (DESIGN.md §4), every value unchanged, the floating widgets' night a fixed value
   (`--cp-noche`) because Pintaminas' hard mode redeclares `--bg1`. Intended differences, the nearer
   step: the table's day blocks and the eliminated pill at 0.75 rem (were 0.72 and 0.66) with an 8 px

@@ -1442,6 +1442,7 @@
     "tools/agents/processes.test.mjs",
     "tools/agents/repo-weight.test.mjs",
     "tools/agents/round-watch.test.mjs",
+    "tools/agents/tokens-rgb.test.mjs",
     "tools/agents/usability-lint.test.mjs",
     "tools/agents/wait-pr.test.mjs",
     "tools/cloudflare/inbox-worker.test.mjs",

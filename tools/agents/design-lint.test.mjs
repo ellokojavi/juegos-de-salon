@@ -48,16 +48,24 @@ test('colour: any other literal is a hit, except in the game\'s own --token decl
   assert.deepEqual(by(h, 'colour').map(x => x.what), ['color: #ff8a8a', 'border-color: rgb(1,2,3)']);
 });
 
-test('a token colour at an alpha is a token-colour hit with the relative-colour idiom; the idiom itself is not a hit; one hit per colour per declaration', () => {
-  const h = lintCss('.x { box-shadow: 0 0 8px rgba(46, 230, 214, 0.6), 0 0 2px rgba(46, 230, 214, 0.6); } .y { text-shadow: 0 0 1px rgb(from var(--cyan) r g b / 0.6); }', 'public/g/style.css', T);
-  assert.deepEqual(by(h, 'token-colour').map(x => x.fix), ['rgb(from var(--cyan) r g b / 0.60)']);
+test('a token colour at an alpha is a token-colour hit with the channels idiom; the idiom itself is not a hit; one hit per colour per declaration', () => {
+  const h = lintCss('.x { box-shadow: 0 0 8px rgba(46, 230, 214, 0.6), 0 0 2px rgba(46, 230, 214, 0.6); } .y { text-shadow: 0 0 1px rgb(var(--cyan-rgb) / 0.6); }', 'public/g/style.css', T);
+  assert.deepEqual(by(h, 'token-colour').map(x => x.fix), ['rgb(var(--cyan-rgb) / 0.60)']);
+});
+
+test('the relative-colour form is a hit (older browsers drop it); the channels of a token nobody declares are a colour hit, of the sheet\'s own token are not', () => {
+  const h = lintCss('.x { --mar: #0b1e3f; --mar-rgb: 11 30 63; color: rgb(from var(--cyan) r g b / 0.5); background: rgb(var(--nope-rgb) / 0.2); border-color: rgb(var(--mar-rgb) / 0.3); outline-color: rgb(var(--cyan-rgb) / calc(0.1 * var(--k))); }', 'public/g/style.css', T);
+  assert.deepEqual(h.map(x => `${x.rule} ${x.fix}`), [
+    'token-colour rgb(var(--cyan-rgb) / a)',
+    'colour --nope-rgb is not declared in base.css or this sheet: declare it next to its colour token',
+  ]);
 });
 
 test('an rgba() whose alpha is a calc() is still a literal: a token\'s colour says which token, another colour asks for one; the idiom with calc() is not a hit', () => {
-  const h = lintCss('.x { background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--k))); border-color: rgba(143,247,238,calc(0.35 * var(--k))); } .y { background: rgb(from var(--cyan) r g b / calc(0.1 * var(--k))); }', 'public/g/style.css', T);
+  const h = lintCss('.x { background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--k))); border-color: rgba(143,247,238,calc(0.35 * var(--k))); } .y { background: rgb(var(--cyan-rgb) / calc(0.1 * var(--k))); }', 'public/g/style.css', T);
   assert.deepEqual(h.map(x => `${x.rule} ${x.fix}`), [
-    'token-colour rgb(from var(--cyan) r g b / calc(…))',
-    'colour rgb(from var(--token) r g b / calc(…)), with the game\'s own `--token` at the top of the file',
+    'token-colour rgb(var(--cyan-rgb) / calc(…))',
+    'colour rgb(var(--token-rgb) / calc(…)), with the game\'s own `--token` and `--token-rgb` at the top of the file',
   ]);
 });
 
