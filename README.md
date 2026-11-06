@@ -470,12 +470,15 @@ node public/cup/games/stack/engine.test.mjs
 node public/cup/games/stick/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
+node public/labs/artifacts/engine.test.mjs
 node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/dominorama/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
+node public/labs/flap/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
+node public/labs/memory/engine.test.mjs
 node public/labs/stack/engine.test.mjs
 node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -554,6 +557,7 @@ node public/cup/store.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
+node public/labs/launched.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
@@ -567,8 +571,10 @@ node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
+node tools/agents/conflict-markers.test.mjs
 node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
+node tools/agents/design-lint.test.mjs
 node tools/agents/document.test.mjs
 node tools/agents/english.test.mjs
 node tools/agents/failures.test.mjs
@@ -586,12 +592,14 @@ node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
 node tools/agents/repo-weight.test.mjs
 node tools/agents/round-watch.test.mjs
+node tools/agents/tokens-rgb.test.mjs
 node tools/agents/usability-lint.test.mjs
 node tools/agents/wait-pr.test.mjs
 node tools/cloudflare/inbox-worker.test.mjs
 node tools/e2e/affected.test.mjs
 node tools/e2e/already-tested.test.mjs
 node tools/e2e/changes.test.mjs
+node tools/e2e/clock-jumps.test.mjs
 node tools/e2e/groups.test.mjs
 node tools/e2e/inert.test.mjs
 node tools/e2e/narrow.test.mjs
@@ -617,6 +625,7 @@ node tools/push/notify.test.mjs
 node tools/push/release.test.mjs
 node tools/push/schedule.test.mjs
 node tools/push/webpush.test.mjs
+node tools/referee/gateway.test.mjs
 node tools/release/changelog.test.mjs
 node tools/release/json-ld.test.mjs
 node tools/release/merge-report.test.mjs
@@ -680,7 +689,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 <!-- generated: languages · written by python3 tools/release/readme.py update -->
 | Español | English | Português |
 |---|---|---|
-| Juegos de Salón | Party Games | Jogos de Salão |
+| Juegos de Salón | Parlor Games | Jogos de Salão |
 | La Copa | The Cup | A Copa |
 | Línea de Tiempo | Timeline | Linha do Tempo |
 | Toque y Fama | Bulls and Cows | Toque e Fama |
@@ -745,12 +754,12 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
   agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
-  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
+  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534)
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
   panel/                      Private owner dashboard (docs/PANEL.md); release-push.js, its 🔔 for the owner's release notifications (D-504)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, share-grid.js (Uno al día's spoiler-free share grid, D-482), splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game, the one-player games' covers included; not while playing), season.js (seasonal touches on the home page and Rankings, D-457), controls.js (the panel's skins and site-feature switches, D-477), flags.js (runtime lab flags in Firebase, lab|all|off switched on their /labs/ card, D-498, D-509), lab-usage.js (aggregate lab use per flag for the ✅ ready badge on /labs/, D-528), flag-list.js (the flags by name for /labs/, the panel and tests, apart so a new flag does not run every page's e2e, D-515), tester-badge.js (the «tester» chip under the home title, with a lab key), tester-boot.js (vigia.js adds it to every page: the tester ribbon for lab key holders), tester-ribbon.js (in the lab, the testers' ribbon on the right edge: tester sheet, Labs and each screen's test control), music.js (background music for a game, an experiment behind a lab flag), region-patterns.js (a texture per Queens region for colorblind players, D-481),how-to-play-facts.js (in the lab, who plays, how and what it costs as the first line of «Cómo se juega» on six covers, D-488), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, share-grid.js (Uno al día's spoiler-free share grid, D-482), splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game, the one-player games' covers included; not while playing), season.js (seasonal touches on the home page and Rankings, D-457), controls.js (the panel's skins and site-feature switches, D-477), flags.js (runtime lab flags in Firebase, lab|all|off switched on their /labs/ card, D-498, D-509), lab-usage.js (aggregate lab use per flag for the ✅ ready badge on /labs/, D-528), flag-list.js (the flags by name for /labs/, the panel and tests, apart so a new flag does not run every page's e2e, D-515), tester-badge.js (the «tester» chip under the home title, with a lab key), tester-boot.js (vigia.js adds it to every page: the tester ribbon for lab key holders), tester-ribbon.js (in the lab, the testers' ribbon on the right edge: tester sheet, Labs and each screen's test control), music.js (background music for a game, an experiment behind a lab flag), region-patterns.js (a texture per Queens region for colorblind players, D-481),how-to-play-facts.js (in the lab, who plays, how and what it costs as the first line of «Cómo se juega» on six covers, D-488), waiting.js (a waiting screen, or a failure with Retry and a way home, from La Copa, D-533), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
   assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images
@@ -794,6 +803,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [End-to-end tests (headless Chrome over CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
 - [🕵️ Agentes](docs/games/agents.md)
+- [⚙️ Artefactos (lab prototype, in Juegos en prueba)](docs/games/artifacts.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
 - [🚅 Tren en Vilo (bridge builder)](docs/games/bridges.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
@@ -802,13 +812,16 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
+- [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
+- [🐤 Aletazo (lab prototype, in Juegos en prueba)](docs/games/flap.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)
 - [Diseño: El Ahorcado](docs/games/hangman.md)
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
+- [👀 Memorice (lab prototype, in Games being tried)](docs/games/memory.md)
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
@@ -818,7 +831,9 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
+- [The design system](docs/DESIGN.md)
 - [Merge lanes (D-519)](docs/LANES.md)
+- [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
 - [Merging and publishing](docs/MERGING.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
@@ -828,4 +843,11 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
+- [La Copa inside the design system: the analysis (phase 7, #1196)](docs/design/cup-unification.md)
+- [Piece 1 · Endless content with quality control](docs/learning/01-content-pipeline.md)
+- [Piece 2 · The factory's dashboard](docs/learning/02-factory-metrics.md)
+- [Piece 3 · The owner's taste as data](docs/learning/03-taste-model.md)
+- [Piece 4 · Earned autonomy](docs/learning/04-earned-autonomy.md)
+- [Piece 5 · Closing the hypothesis loop](docs/learning/05-hypothesis-loop.md)
+- [Piece 6 · Where the model lives: one judge in three places](docs/learning/06-model-placement.md)
 <!-- /generated -->

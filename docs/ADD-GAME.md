@@ -6,7 +6,7 @@
 
 ## 1. The folder
 
-`public/<folder>/`, in English, with C-2's files (`index.html`, `style.css`, `rules.js`,
+`public/<folder>/`, in English and the same word as its id, keys and docs (C-20), with C-2's files (`index.html`, `style.css`, `rules.js`,
 `engine.js`, `engine.test.mjs`, `game.js`). Copy `index.html`'s `<head>` from another game: it brings
 the manifest, the icon and the iPhone name, `instalable.js` (D-221, D-222), the preloads of
 `nunito-latin.woff2` and `bangers-latin.woff2` right before `base.css` (`fonts-preload.test.mjs`) and
@@ -15,6 +15,7 @@ development lives under `public/labs/` (D-395).
 
 Inside it, what the canons ask, using the shared modules and never one of its own:
 
+- **Styles** from the tokens and classes of `base.css` (C-1, D-533, [DESIGN.md](DESIGN.md)): no distance, corner or colour written by hand; thematic colours declared once at the top of `style.css` (the design lint, phase 2 of #1188). The game shell (screens, the cover's hero, modes, fields, the segmented control, player and toggle rows, the room, the result's hero) lives once in `base.css` (DESIGN.md §2, phase 4): a new game starts from it and copies nothing; `style.css` holds only what is the game's own, on the tokens, and `node tools/agents/design-lint.mjs public/<folder>/style.css` must report zero: the lint is a gate (phase 6), so a hit not allowlisted fails `design-lint.test.mjs` and the `tests` check. Write every value from the tokens of [DESIGN.md](DESIGN.md) §1; an exception is an allowlist entry with its reason (§4).
 - **Texts** in `LOCALES = { es, en, pt }` in `rules.js` (C-3, parity test); instructions per U-18.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`.
@@ -32,7 +33,7 @@ Inside it, what the canons ask, using the shared modules and never one of its ow
 The manifest (#855): the home page, menu, panel, search, One a Day, La Copa's pool and the e2e scope
 all read it. `manifest.test.mjs` checks that nothing keeps a copy of its own.
 
-- `id` (never changes), `path`, `emoji`, `tipos` (keys of `TIPOS`, D-214), `nuevoDesde:
+- `id`, the English version of the game's name like its folder (C-20, D-535; a rename migrates it), `path`, `emoji`, `tipos` (keys of `TIPOS`, D-214), `nuevoDesde:
   'YYYY-MM-DD'` (D-333), and its place in `POPULARIDAD` (D-255); a new mode goes in `MODES`.
   The rest the home page asks is in C-17 (`games.test.mjs`).
 - `keywords`: es, en, pt and de, at least three each (D-404; `search.test.mjs`).
@@ -45,7 +46,9 @@ all read it. `manifest.test.mjs` checks that nothing keeps a copy of its own.
 - `lanza: '<flag>'` only if the finished game waits for the owner's 🚀 (D-517): add its row to `FLAGS`
   in `flag-list.js` and point its /labs/ card to the page. Until the flag is *all* the entry carries
   `oculto` (off the home page, search, filters, /records/ and `POZO_ABIERTO`); `POZO`, `POZO_FIJO` and
-  One a Day's `desde` do not read the flag. The cleanup PR removes `lanza` and the row.
+  One a Day's `desde` do not read the flag. The cleanup PR removes `lanza` and the row, and moves
+  the card to 🎲 Juegos guardados (D-479): `/labs/` moves only improvement cards on its own when a
+  flag is *all* (`launched.js`, D-534), not a game's.
 
 ## 3. What stays elsewhere (code, not data)
 

@@ -18,24 +18,48 @@
 @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('../fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 :root {
-  --bg1: #150726;
-  --bg2: #2a0a4a;
-  --bg3: #0b1e3f;
-  --pink: #ff2e88;
+  --bg1: #150726; --bg1-rgb: 21 7 38;
+  --bg2: #2a0a4a; --bg2-rgb: 42 10 74;
+  --bg3: #0b1e3f; --bg3-rgb: 11 30 63;
+  --pink: #ff2e88; --pink-rgb: 255 46 136;
   --pink-deep: #c2185b;
-  --yellow: #ffd23f;
-  --cyan: #2ee6d6;
-  --lime: #9dff3a;
-  --orange: #ff7a1a;
-  --purple: #8a4dff;
-  --ink: #ffffff;
+  --yellow: #ffd23f; --yellow-rgb: 255 210 63;
+  --cyan: #2ee6d6; --cyan-rgb: 46 230 214;
+  --lime: #9dff3a; --lime-rgb: 157 255 58;
+  --orange: #ff7a1a; --orange-rgb: 255 122 26;
+  --purple: #8a4dff; --purple-rgb: 138 77 255;
+  --ink: #ffffff; --ink-rgb: 255 255 255;
   --muted: rgba(255, 255, 255, 0.72);
   --glass: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.16);
   --card: #fffdf7;
-  --card-ink: #1a1a1a;
-  --red: #e0243c;
-  --radius: 22px;
+  --card-ink: #1a1a1a; --card-ink-rgb: 26 26 26;
+  --red: #e0243c; --red-rgb: 224 36 60;
+  /* --- The design system's scales (D-533, docs/DESIGN.md): every distance, radius and shadow a game
+     writes comes from here. Named by value, so `--s-12` is 12 px and no table is needed. --- */
+  /* Space: a 2 px grid up to 20, then steps of 4. Padding, gap and margin take one of these. */
+  --s-2: 2px; --s-4: 4px; --s-6: 6px; --s-8: 8px; --s-10: 10px; --s-12: 12px; --s-14: 14px; --s-16: 16px;
+  --s-18: 18px; --s-20: 20px; --s-24: 24px; --s-28: 28px; --s-32: 32px;
+  /* Corners: 8 (chips, cells, keys), 10 and 12 (inputs, cards in a panel), 14 (rows), 16 (sheets,
+     modals), 22 (the panel), pill (buttons). A circle is `50%`. */
+  --r-8: 8px; --r-10: 10px; --r-12: 12px; --r-14: 14px; --r-16: 16px; --r-22: 22px; --r-pill: 999px;
+  --radius: var(--r-22);
+  /* Shadows and the "edge" under a button, one per button colour (they were written by hand in .btn) */
+  --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
+  --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
+  /* Danger (phase 7, #1196, from La Copa): the red button's edge, and the soft pink of a ghost danger button's text */
+  --edge-red: #8a1024; --danger-soft: #ff8fbd;
+  /* A notice that went wrong: its pale pink text on the red tint; the snackbar's near-black (phase 7, from La Copa) */
+  --ink-bad: #ffd0d6; --snackbar-bg: #111111;
+  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
+  --well: rgba(0, 0, 0, 0.25); --well-rgb: 0 0 0; --well-deep: rgba(0, 0, 0, 0.3);
+  --placeholder: rgba(255, 255, 255, 0.35);
+  --line-faint: rgba(255, 255, 255, 0.35);
+  --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
+  /* Text sizes in hundredths of a rem: body is --fs-100; the steps every game picks from (titles use .display--xl…sm) */
+  --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
+  --fs-140: 1.4rem; --fs-160: 1.6rem; --fs-200: 2rem;
   --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
   /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
@@ -110,7 +134,7 @@ body {
   line-height: 0.95;
   text-transform: uppercase;
   margin: 0;
-  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgba(255, 46, 136, 0.45);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--pink-rgb) / 0.45);
 }
 .display--xl { font-size: clamp(2.6rem, 12vw, 4.4rem); }
 .display--lg { font-size: clamp(2rem, 9vw, 3.2rem); }
@@ -120,10 +144,13 @@ body {
  * El degradado se pinta dentro de la caja del texto, y con line-height 0.95 los acentos sobre
  * mayúscula quedan fuera: la Ó de SALÓN y la Ã de SALÃO salían cortadas, y en alemán se perdían
  * las diéresis de casi cada título (Ä, Ö, Ü). El relleno arriba agranda la caja pintada y el
- * margen negativo deja el título donde estaba (D-191).
+ * margen negativo deja el título donde estaba (D-191). The same on the right: the display font
+ * slants, so a title's last letter (the O of ALETAZO) went past the painted box and was cut; each
+ * game used to add that right padding on its own title. It goes on both sides, so a centered
+ * title stays centered.
  */
 .rainbow {
-  padding-top: 0.2em; margin-top: -0.2em;
+  padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0;
   background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
   background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -142,30 +169,38 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .btn {
   appearance: none; border: 0; cursor: pointer;
   font-family: var(--font-display); font-size: 1.45rem; letter-spacing: 0.06em;
-  text-transform: uppercase; color: #fff;
+  text-transform: uppercase; color: var(--ink);
   padding: 16px 24px; border-radius: 999px;
   background: linear-gradient(180deg, var(--pink), var(--pink-deep));
-  box-shadow: 0 6px 0 #7a0f3a, 0 12px 24px rgba(255, 46, 136, 0.35);
+  box-shadow: 0 6px 0 var(--edge-pink), 0 12px 24px rgb(var(--pink-rgb) / 0.35);
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s;
   width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   text-align: center; text-decoration: none; user-select: none; min-height: 60px;
 }
-.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a0f3a, 0 6px 12px rgba(255, 46, 136, 0.35); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--edge-pink), 0 6px 12px rgb(var(--pink-rgb) / 0.35); }
 .btn:disabled { filter: grayscale(0.6) brightness(0.7); cursor: not-allowed; box-shadow: none; transform: none; }
-.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: #3a1200; box-shadow: 0 6px 0 #9a4a00, 0 12px 24px rgba(255, 210, 63, 0.35); }
-.btn--yellow:active { box-shadow: 0 2px 0 #9a4a00, 0 6px 12px rgba(255, 210, 63, 0.35); }
-.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: #03302c; box-shadow: 0 6px 0 #0b5f57, 0 12px 24px rgba(46, 230, 214, 0.35); }
-.btn--cyan:active { box-shadow: 0 2px 0 #0b5f57, 0 6px 12px rgba(46, 230, 214, 0.35); }
+.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); box-shadow: 0 6px 0 var(--edge-yellow), 0 12px 24px rgb(var(--yellow-rgb) / 0.35); }
+.btn--yellow:active { box-shadow: 0 2px 0 var(--edge-yellow), 0 6px 12px rgb(var(--yellow-rgb) / 0.35); }
+.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: var(--ink-on-cyan); box-shadow: 0 6px 0 var(--edge-cyan), 0 12px 24px rgb(var(--cyan-rgb) / 0.35); }
+.btn--cyan:active { box-shadow: 0 2px 0 var(--edge-cyan), 0 6px 12px rgb(var(--cyan-rgb) / 0.35); }
 .btn--ghost {
   background: var(--glass); border: 2px solid var(--glass-border); box-shadow: none; color: var(--ink);
   font-size: 1.15rem; min-height: 50px; padding: 12px 18px;
 }
 .btn--ghost:active { transform: translateY(2px); box-shadow: none; }
 .btn--sm { font-size: 1.05rem; min-height: 44px; padding: 10px 16px; width: auto; }
+/* Danger (phase 7, #1196): red only to confirm a destructive step (deleting a cup); as a ghost, the soft
+   pink of a step that turns something off (silencing the notifications). Never a game action. */
+.btn--danger { background: var(--red); color: var(--ink); box-shadow: 0 4px 0 var(--edge-red); }
+.btn--ghost.btn--danger { background: rgb(var(--pink-rgb) / 0.16); color: var(--danger-soft); border-color: transparent; box-shadow: none; }
 /* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
 .btn.room-local { margin: 4px 0 18px; }
 .btn-row { display: flex; gap: 10px; }
 .btn-row .btn { flex: 1; }
+/* A row whose buttons go down a line when they do not fit side by side (at 320 px, or a long language) */
+.btn-row--wrap { flex-wrap: wrap; }
+/* A link inside a line of text: cyan, underlined, still 44 px to tap */
+.link-inline { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 var(--s-6); }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 
 /* --- Aire entre el tablero y sus botones (D-309, U-11) ---
@@ -180,24 +215,159 @@ p { line-height: 1.5; margin: 0 0 12px; }
 [data-tablero] { margin-bottom: max(0px, calc(var(--aire-tablero) - var(--gap-contenedor, 0px) - var(--aire-ya, 0px))) !important; }
 [data-tablero] [data-tablero] { margin-bottom: 0 !important; } /* uno dentro de otro: el aire lo pone el de afuera */
 
+/* --- The game shell (D-533, phase 4 of #1188): what every game's screens are made of ---
+   Until November 2026 each game copied these from the one before (eleven copies of .screen, eight
+   of .field and .form-error, seven of .mode, .code-big, .qr, .or and .result-hero, six of .switch,
+   five of .player-row and .lobby-players, three of .toggle-row). They live here once, on the
+   tokens; a game keeps only what is its own. The components page (/labs/design/) shows them. */
+/* Screens: one visible at a time, sliding up when it enters */
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+/* The cover's hero: the emoji glowing above the title; `.icon--cyan` for a sea or a number game */
+.intro-hero { text-align: center; padding: var(--s-6) 0 var(--s-8); }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
+.intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgb(var(--cyan-rgb) / 0.6)); }
+/* A dark emoji (〰️, 🕵️) gets the light outline of .emoji-claro on top of the hero's golden glow */
+.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
+/* A mode to pick on the cover: title, a line under it and the › */
+.modes { display: grid; gap: var(--s-10); }
+.mode {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--s-10); text-align: left;
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: var(--s-14) var(--s-16);
+  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s, border-color 0.2s;
+}
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.5; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-4) var(--s-8); white-space: nowrap; }
+/* A form field: label in small caps, the input in a well; `.name` big and centred, `.code` a room code */
+.field { display: grid; gap: var(--s-6); margin-bottom: var(--s-12); }
+.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.field input {
+  width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none;
+}
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: var(--placeholder); }
+.field input.name { font: 900 1.5rem var(--font-body); text-align: center; padding: var(--s-14) var(--s-12); border-color: var(--glass-border); }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.field .sub { color: var(--muted); font-size: 0.78rem; font-weight: 700; margin: 0; }
+.field .sub.warn { color: var(--yellow); }
+/* A PIN: its digits spaced and centred; `.pin-row` puts a 👁 (`.pin-show`) beside it */
+.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.pin-row { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: var(--s-6); }
+.pin-show { min-height: 44px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); color: var(--ink); font-size: var(--fs-110); cursor: pointer; }
+.pin-show[aria-pressed="true"] { border-color: var(--cyan); }
+/* How many characters of the most (D-119): under the input, at the right; yellow when full */
+.field .counter { display: block; text-align: right; margin-top: var(--s-4); font-size: 0.8rem; }
+.field .counter.full { color: var(--yellow); }
+/* A date: the phone's own picker, in the dark scheme */
+.field input[type="date"] { min-height: 48px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); font: 800 var(--fs-100) var(--font-body); padding: var(--s-8) var(--s-12); color-scheme: dark; }
+.field input[type="date"]:focus { border-color: var(--cyan); }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: var(--s-6) 0; }
+/* A segmented control: one of two or three, the chosen one in yellow */
+.seg { display: flex; gap: var(--s-6); background: var(--well-deep); border-radius: var(--r-14); padding: var(--s-4); }
+.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: var(--s-10) var(--s-4); border-radius: var(--r-10); cursor: pointer; min-height: 44px; }
+.seg button.on { background: var(--yellow); color: var(--ink-on-yellow); }
+/* Choice buttons (La Copa's, D-425): two or three side by side, the chosen one outlined in yellow */
+.opciones { display: grid; gap: var(--s-8); }
+.opciones.dos { grid-template-columns: 1fr 1fr; }
+.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
+.opciones.dos .opcion, .opciones.tres .opcion { text-align: center; }
+.opciones.tres .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
+.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
+@media (max-width: 374px) { .opciones.tres .opcion { padding-left: var(--s-4); padding-right: var(--s-4); } .opciones.tres .opcion b { font-size: 0.95rem; } }
+.opcion {
+  text-align: left; background: var(--well); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-12) var(--s-14);
+  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
+}
+.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion .opcion-emoji { display: block; }
+.opcion small { color: var(--muted); font-weight: 700; }
+.opcion.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+/* A player's row in the setup: number, name, ✕; `.cpu` for a bot */
+.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-14); padding: var(--s-6) var(--s-10); margin-bottom: var(--s-6); }
+.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
+.player-row input { background: transparent; border: 0; padding: var(--s-10) 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; } /* 44: a finger fits (U-10); the games had 32 × 36 */
+.player-row .del:disabled { opacity: 0.2; }
+.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: var(--s-10) 0; }
+/* A row with a switch: the text (`.txt` with a <b> and a <small>) and the switch at the right */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-12); background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); }
+.toggle-row .txt b { display: block; font-size: 0.95rem; }
+.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
+.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: var(--r-pill); border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.4); position: relative; cursor: pointer; padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+.switch.on { background: rgb(var(--yellow-rgb) / 0.3); border-color: var(--yellow); }
+.switch.on::after { transform: translateX(24px); background: var(--yellow); }
+/* U-10: the switch is drawn 34 px tall; an invisible band takes its tap area to 44 px without moving anything. */
+.switch::before { content: ''; position: absolute; inset: -7px -2px; }
+/* A link that is a button (the small way out under a form) */
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+/* A room: the code big, the QR on a card, the players as pills, "or", waiting… */
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgb(var(--yellow-rgb) / 0.6); margin: var(--s-2) 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: var(--s-8) auto; background: var(--ink); border-radius: var(--r-16); padding: var(--s-8); width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: var(--s-6) 0; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; margin: var(--s-10) 0; }
+.lobby-players .p { display: flex; align-items: center; gap: var(--s-6); padding: var(--s-6) var(--s-12); border-radius: var(--r-pill); background: var(--well); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: var(--ink-on-cyan); }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting--screen { padding: var(--s-32) 0; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+/* Whose turn, over the board: the name glowing cyan and a line under it */
+.status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--cyan-rgb) / 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+/* A notice: one line that tells the player something, in a glass box; --good in lime, --bad on a red tint (phase 7, from La Copa) */
+.notice { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.notice--good { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
+.notice--bad { background: rgb(var(--red-rgb) / 0.22); color: var(--ink-bad); }
+/* The snackbar: a short message floating at the bottom for a moment ("Copiado"); centred without a
+   transform, because the entering animation would override it and push it to the right */
+.snackbar { position: fixed; left: var(--s-16); right: var(--s-16); margin: 0 auto; width: fit-content; bottom: calc(var(--s-24) + var(--safe-bottom)); background: var(--snackbar-bg); border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: var(--s-12) var(--s-18); border-radius: var(--r-14); z-index: 50; animation: slideUp 0.25s both; }
+/* The result's hero: the trophy popping above the title */
+.result-hero { text-align: center; padding: var(--s-2) 0 var(--s-6); }
+.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+
 /* --- Tarjetas de vidrio --- */
 .panel {
   background: var(--glass); border: 1px solid var(--glass-border);
   border-radius: var(--radius); padding: 18px;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-panel);
 }
+/* A panel around a destructive step (deleting a cup): its border in red */
+.panel--danger { border-color: rgb(var(--red-rgb) / 0.55); }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 0.95rem;
-  background: rgba(255, 255, 255, 0.12); border: 1px solid var(--glass-border);
+  background: rgb(var(--ink-rgb) / 0.12); border: 1px solid var(--glass-border);
 }
 .chip--hot { background: var(--pink); border-color: transparent; }
-.chip--gold { background: var(--yellow); color: #3a1200; border-color: transparent; }
+.chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* A chip in the colour of the second meaning (La Copa's final ×2, D-151): cyan, as `--gold` is gold */
+.chip--cyan { background: var(--cyan); color: var(--ink-on-cyan); border-color: transparent; }
+/* A chip that is a choice (phase 7, #1196): a pill to tap, one or more on; on is yellow like .opcion.on (yellow is the choice) */
+.chip-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--s-6) var(--s-12);
+  border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--well); color: var(--ink);
+  font: 800 var(--fs-85) var(--font-body); cursor: pointer;
+}
+/* A sheet's head: its title and the ✕ */
+.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); }
+.hoja-cabeza h3 { margin: 0; font-size: var(--fs-110); font-weight: 900; }
+.chip-btn.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
 /* --- Panel desplegable --- */
-details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; position: relative; }
+/* U-10: the summary is only its text's height (~25 px); an invisible band takes its tap area to 44 px without moving anything */
+details.panel summary::before { content: ''; position: absolute; left: 0; right: 0; top: min(0px, calc(50% - 22px)); bottom: min(0px, calc(50% - 22px)); }
 details.panel summary::after { content: '▾'; font-size: 1.3rem; transition: transform 0.2s; }
 details.panel[open] summary::after { transform: rotate(180deg); }
 details.panel[open] summary { margin-bottom: 12px; }
@@ -217,7 +387,10 @@ details.panel summary::-webkit-details-marker { display: none; }
   flex: none; white-space: nowrap;
   color: var(--ink); text-decoration: none; font-weight: 900; font-size: 1rem;
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 999px; padding: 8px 14px;
+  position: relative;
 }
+/* U-10: the pill is drawn 40 px tall; an invisible band takes its tap area to 44 px without moving anything. */
+.topbar .back::before { content: ''; position: absolute; inset: -3px -1px; }
 
 /* --- Animaciones reutilizables --- */
 @keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
@@ -268,8 +441,8 @@ details.panel summary::-webkit-details-marker { display: none; }
 .handoff {
   position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px;
   background:
-    radial-gradient(700px 500px at 50% 20%, rgba(255, 46, 136, 0.45), transparent 65%),
-    radial-gradient(600px 500px at 50% 110%, rgba(46, 230, 214, 0.35), transparent 60%),
+    radial-gradient(700px 500px at 50% 20%, rgb(var(--pink-rgb) / 0.45), transparent 65%),
+    radial-gradient(600px 500px at 50% 110%, rgb(var(--cyan-rgb) / 0.35), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3));
   animation: fadeIn 0.25s ease-out both; text-align: center;
   /* En un celular bajo (320 × 568) el veredicto con su dato y el pase no caben: se desplaza, y el
@@ -287,14 +460,14 @@ details.panel summary::-webkit-details-marker { display: none; }
 .cheers .r { animation: clinkR 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; transform-origin: bottom left; }
 @keyframes clinkL { 0%, 100% { transform: rotate(-18deg) translateX(-6px); } 45% { transform: rotate(10deg) translateX(6px); } }
 @keyframes clinkR { 0%, 100% { transform: rotate(18deg) translateX(6px) scaleX(-1); } 45% { transform: rotate(-10deg) translateX(-6px) scaleX(-1); } }
-.handoff .title { font-family: var(--font-display); font-size: clamp(2.6rem, 14vw, 4.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255, 210, 63, 0.6); line-height: 0.95; }
+.handoff .title { font-family: var(--font-display); font-size: clamp(2.6rem, 14vw, 4.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgb(var(--yellow-rgb) / 0.6); line-height: 0.95; }
 .handoff .title.gold { color: var(--yellow); }
 .handoff .drinkers { margin: 0; }
 .handoff .drinkers .chip { font-size: 1.2rem; padding: 10px 18px; }
 .handoff .hint { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
 .handoff .phone { font-size: 4.5rem; line-height: 1; animation: passPhone 1.4s ease-in-out infinite; }
 @keyframes passPhone { 0%, 100% { transform: translateX(-14px) rotate(-8deg); } 50% { transform: translateX(14px) rotate(8deg); } }
-.handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgba(46, 230, 214, 0.7); line-height: 0.95; }
+.handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgb(var(--cyan-rgb) / 0.7); line-height: 0.95; }
 .handoff .btn { max-width: 420px; }
 
 /* --- Pantalla opaca compartida: "pásale el celular", toca para ver (modo un celular) --- */
@@ -318,15 +491,15 @@ body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bo
 .chat-fab {
   position: absolute; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--glass-border);
-  background: linear-gradient(180deg, rgba(138, 77, 255, 0.95), rgba(42, 10, 74, 0.95));
+  background: linear-gradient(180deg, rgb(var(--purple-rgb) / 0.95), rgba(42, 10, 74, 0.95));
   color: var(--ink); font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
   display: grid; place-items: center; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
 }
 .chat-fab:active { transform: scale(0.94); }
-.chat-fab.has-unread { border-color: var(--pink); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 46, 136, 0.6); }
+.chat-fab.has-unread { border-color: var(--pink); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgb(var(--pink-rgb) / 0.6); }
 .chat-badge {
-  position: absolute; top: -3px; right: -3px; min-width: 22px; height: 22px; padding: 0 5px;
-  border-radius: 999px; background: var(--pink); color: #fff; font: 900 0.72rem var(--font-body);
+  position: absolute; top: -3px; right: -3px; min-width: 22px; height: 22px; padding: 0 var(--s-6);
+  border-radius: 999px; background: var(--pink); color: var(--ink); font: 900 0.72rem var(--font-body);
   display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -369,28 +542,28 @@ body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bo
 .chat-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; border-bottom: 1px solid var(--glass-border); }
 .chat-head b { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.05em; }
 .chat-x { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; }
-.chat-list { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.chat-list { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 12px; display: flex; flex-direction: column; gap: var(--s-8); }
 /* Los mensajes se apoyan abajo, pegados al campo de texto, como en cualquier chat */
 .chat-list > :first-child { margin-top: auto; }
 .chat-empty { color: var(--muted); font-weight: 800; text-align: center; margin: auto 0; font-size: 0.9rem; }
 .chat-msg {
-  max-width: 84%; align-self: flex-start; padding: 7px 11px; border-radius: 14px;
+  max-width: 84%; align-self: flex-start; padding: var(--s-8) var(--s-12); border-radius: 14px;
   background: var(--glass); border: 1px solid var(--glass-border); animation: pop 0.2s ease-out both;
 }
-.chat-msg.mine { align-self: flex-end; background: rgba(46, 230, 214, 0.16); border-color: rgba(46, 230, 214, 0.4); }
+.chat-msg.mine { align-self: flex-end; background: rgb(var(--cyan-rgb) / 0.16); border-color: rgb(var(--cyan-rgb) / 0.4); }
 .chat-msg.grouped { margin-top: -4px; }
 .chat-msg .who { display: block; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 1px; }
 .chat-msg .txt { font-size: 0.92rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
 .chat-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--glass-border); }
 /* 16px exactos: con menos, iOS hace zoom al enfocar el campo */
-.chat-form input { width: 100%; font: 700 16px var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.35); border: 2px solid transparent; border-radius: 999px; padding: 11px 16px; outline: none; }
+.chat-form input { width: 100%; font: 700 16px var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.35); border: 2px solid transparent; border-radius: 999px; padding: var(--s-12) var(--s-16); outline: none; }
 .chat-form input:focus { border-color: var(--cyan); }
-.chat-form input::placeholder { color: rgba(255, 255, 255, 0.35); }
-.chat-send { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--cyan); color: #03302c; font-size: 1.2rem; cursor: pointer; }
+.chat-form input::placeholder { color: var(--placeholder); }
+.chat-send { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--cyan); color: var(--ink-on-cyan); font-size: 1.2rem; cursor: pointer; }
 .chat-send:active { transform: scale(0.94); }
 
 /* Un emoji casi negro (〰️) sobre el fondo morado: contorno claro, el mismo emoji (ui.js, EMOJI_OSCUROS) */
-.emoji-claro { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px rgba(255, 255, 255, 0.55)); }
+.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 5px rgb(var(--ink-rgb) / 0.55)); }
 
 /*
  * En alemán las palabras compuestas son largas y no caben en una columna angosta: se cortan
@@ -403,7 +576,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-tabs { position: fixed; left: 0; top: 46%; z-index: 40; display: grid; gap: 6px; }
 .labs-tab {
   width: 34px; height: 44px; display: grid; place-items: center; font-size: 1.1rem; text-decoration: none;
-  border: 1px solid rgba(255, 122, 26, 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
+  border: 1px solid rgb(var(--orange-rgb) / 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
   background: rgba(42, 10, 74, 0.92); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); color: var(--ink);
 }
 .labs-tab:active { transform: scale(0.94); }
@@ -422,7 +595,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 /* With the page pinned behind it, scrolling the card never carries over */
 .fondo-fijo .labs-caja { overscroll-behavior: contain; }
 .labs-texto, .labs-nombre {
-  width: 100%; font: 700 16px/1.4 var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3);
+  width: 100%; font: 700 16px/1.4 var(--font-body); color: var(--ink); background: var(--well-deep);
   border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none;
 }
 .labs-texto { resize: vertical; }
@@ -430,7 +603,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-error { color: var(--pink); font-weight: 800; min-height: 1em; }
 .labs-error:empty { display: none; }
 .labs-aviso { margin: 0; font-weight: 800; line-height: 1.5; }
-.topbar .labs-bicho { flex: none; border-color: rgba(255, 122, 26, 0.6); font-size: 1.1rem; }
+.topbar .labs-bicho { flex: none; border-color: rgb(var(--orange-rgb) / 0.6); font-size: 1.1rem; }
 
 /* The inbox at the end of the experience (D-345, U-38): a quiet link, below everything */
 .buzon-pie { margin-top: 18px; text-align: center; }
@@ -439,7 +612,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .buzon-tipos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 @media (min-width: 440px) { .buzon-tipos { grid-template-columns: repeat(4, auto); justify-content: start; } }
 .buzon-tipo {
-  font: 800 0.8rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3); cursor: pointer;
+  font: 800 0.8rem var(--font-body); color: var(--ink); background: var(--well-deep); cursor: pointer;
   border: 2px solid transparent; border-radius: 999px; padding: 6px 8px; min-height: 44px; white-space: nowrap;
 }
 .buzon-tipo[aria-pressed="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.15); }
@@ -461,14 +634,14 @@ html.i18n-pendiente body { visibility: hidden; }
   background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
 }
-.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.3); }
+.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.3); }
 .hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
 .hoja p { margin: 0; line-height: 1.45; }
 .hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
 .hoja-paso small { display: block; margin-top: 2px; }
-.hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: #fff; font-weight: 900; display: grid; place-items: center; }
-.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); display: grid; place-items: center; font-size: 1.3rem; color: #fff; font-weight: 900; }
-.hoja-link, .hoja-caja { background: rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
+.hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: var(--ink); font-weight: 900; display: grid; place-items: center; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.1); display: grid; place-items: center; font-size: 1.3rem; color: var(--ink); font-weight: 900; }
+.hoja-link, .hoja-caja { background: var(--glass); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
 .hoja .btn-row { flex-wrap: wrap; }
 /* Cada botón mide lo que su texto en una línea: si los dos no caben lado a lado, el segundo baja
    entero en vez de partir la palabra ("YA LA / AGREGUÉ", "BE-SCHEID"; U-17) */
@@ -484,7 +657,7 @@ html.i18n-pendiente body { visibility: hidden; }
 .hoja-pestanas { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--glass); border: 2px solid var(--glass-border); }
 .hoja-pestana { flex: 1; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--muted);
   font-family: var(--font-body); font-weight: 900; font-size: 0.95rem; cursor: pointer; }
-.hoja-pestana.on { background: linear-gradient(180deg, var(--yellow), #ff9a1a); color: #3a1200; }
+.hoja-pestana.on { background: linear-gradient(180deg, var(--yellow), #ff9a1a); color: var(--ink-on-yellow); }
 .hoja-pestana:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .hoja .opcion { flex-shrink: 0; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; width: 100%;
   background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 12px 16px; min-height: 44px;
@@ -500,10 +673,10 @@ html.i18n-pendiente body { visibility: hidden; }
   position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
   max-width: 520px; margin: 0 auto; box-sizing: border-box;
   display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px 12px;
-  padding: 12px; border-radius: 20px;
-  border: 2px solid rgba(255, 210, 63, 0.55);
+  padding: 12px; border-radius: var(--r-22);
+  border: 2px solid rgb(var(--yellow-rgb) / 0.55);
   background: linear-gradient(135deg, #3a0e62, #1a082e);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 210, 63, 0.18);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgb(var(--yellow-rgb) / 0.18);
   animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   transition: transform 0.25s, opacity 0.25s;
 }
@@ -564,7 +737,7 @@ body.azar-abierto { overflow: hidden; }
 .azar-capa.velo.saliendo .azar-escena { transform: scale(0.85); }
 
 /* Uno al día (D-230): la tarjeta bajo el resultado */
-.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgba(255, 122, 26, 0.5); background: linear-gradient(160deg, rgba(255, 122, 26, 0.16), rgba(255, 46, 136, 0.12)); }
+.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgb(var(--orange-rgb) / 0.5); background: linear-gradient(160deg, rgb(var(--orange-rgb) / 0.16), rgb(var(--pink-rgb) / 0.12)); }
 .uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
 .uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
 .uad-red { display: grid; gap: 10px; }
@@ -574,9 +747,9 @@ body.azar-abierto { overflow: hidden; }
 .uad-comodin { margin: 0; font-weight: 800; color: var(--cyan); }
 .uad-invitar { display: grid; gap: 8px; text-align: center; }
 /* Los interruptores de las hojas (los avisos de La Copa y de Uno al día) */
-.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; }
+.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgb(var(--ink-rgb) / 0.12); cursor: pointer; }
 .hoja-switch span { display: flex; flex-direction: column; gap: 2px; }
-.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
+.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
 .hoja-switch input::after { content: ''; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 999px; background: #fff; transition: transform 0.15s; }
 .hoja-switch input:checked { background: var(--pink); }
 .hoja-switch input:checked::after { transform: translateX(20px); }
@@ -597,7 +770,7 @@ body.azar-abierto { overflow: hidden; }
   background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
 }
 .cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
-.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow, #ffd23f); text-align: center; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow); text-align: center; }
 .cuenta-num.late { animation: cuenta-late .9s ease-out both; }
 .cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
 .cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
@@ -605,7 +778,7 @@ body.azar-abierto { overflow: hidden; }
 @keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
 /* --- The site's footer: the home page's, and the one site-footer.js puts on the screens outside a game --- */
-.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
+.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgb(var(--ink-rgb) / 0.28), transparent); }
 .pie-sitio { margin-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
 .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
 .footer-msg.out { opacity: 0; transform: translateY(6px); }
@@ -622,22 +795,22 @@ body.azar-abierto { overflow: hidden; }
 }
 .footer-links.tiles > * {
   display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; margin: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; background: none;
+  border: 1px solid rgb(var(--ink-rgb) / 0.12); border-radius: 14px; background: none;
   color: var(--muted); font: 700 0.8rem/1.25 var(--font-body); text-decoration: none; text-align: center; text-wrap: balance;
 }
-.footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
-.footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgba(255, 210, 63, 0.3); }
+.footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.05); }
+.footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--yellow-rgb) / 0.3); }
 .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
    phrase in white, and each option on frosted glass with its color circle above the label */
-footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgba(138, 77, 255, 0.28) 45%, rgba(255, 46, 136, 0.32)); }
+footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgb(var(--purple-rgb) / 0.28) 45%, rgb(var(--pink-rgb) / 0.32)); }
 footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
 footer.atardecer .footer-links.tiles::before { content: none; }
 footer.atardecer .footer-links.tiles { margin-top: 18px; }
-footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgba(255, 255, 255, 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-footer.atardecer .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.18); }
+footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgb(var(--ink-rgb) / 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+footer.atardecer .footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.18); }
 /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
-footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(157, 255, 58, 0.35); }
-footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgba(46, 230, 214, 0.35); }
-footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgba(255, 122, 26, 0.5); }
-footer.atardecer > .muted { color: rgba(255, 255, 255, 0.8); }
+footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
+footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }

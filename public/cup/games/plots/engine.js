@@ -116,6 +116,7 @@ export function resolver(t, limite = 2) {
   let n = 0, primera = null;
   const cabe = x => x.k.every(k => !ocupada[k]);
   const paso = () => {
+    trabajo.nodos++;
     // La pista que tiene menos opciones
     let mejor = -1, opciones = null;
     for (let p = 0; p < cand.length; p++) {
@@ -220,6 +221,13 @@ function repartir(r, lado, rects, dificil) {
 const dificultad = d => d.rondas - 1.5 * d.deEntrada;
 
 /**
+ * The work done so far: the candidate boards the generators checked (`candidatos`) and the steps of the
+ * solvers' search (`nodos`). Deterministic with the seed, unlike a stopwatch, so the tests bound how
+ * long a board takes to build by this count and not by milliseconds, which a busy machine stretches.
+ */
+export const trabajo = { candidatos: 0, nodos: 0 };
+
+/**
  * El tablero de una semilla, con solución única y que se deduce sin adivinar: parte la grilla al azar,
  * reparte los números (`repartir`) y revisa con `resolver` que no haya otra solución. Los fáciles se
  * quedan con el primero que sirve; los difíciles arman varios y se quedan con el más difícil
@@ -237,6 +245,7 @@ export function generar(semilla, { lado = 7, dificil = false } = {}) {
     if (lado < 7 && rects.filter(x => area(x) >= 4).length < 2) continue;
     for (let vez = 0; vez < 6; vez++) {
       const t = armar(lado, rects, repartir(r, lado, rects, dificil));
+      trabajo.candidatos++;
       if (resolver(t, 2).n !== 1) continue;
       const d = deducir(t);
       if (!d.resuelto) continue;
@@ -438,6 +447,7 @@ export function resolverServicios(t, limite = 2) {
   let n = 0, primera = null;
   const cabe = j => lotes[j].k.every(k => !ocupada[k]);
   const paso = () => {
+    trabajo.nodos++;
     let mejor = -1, opciones = null;
     for (let k = 0; k < N; k++) {
       if (ocupada[k]) continue;
@@ -582,6 +592,7 @@ export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz
     const iconos = new Array(lado * lado).fill(null);
     for (const x of rects) ubicarIconos(r, x, lado, dificil, servicios.length).forEach((k, j) => { iconos[k] = servicios[j]; });
     const t = { modo: 'servicios', lado, tam, servicios: [...servicios], iconos, solucion: rects };
+    trabajo.candidatos++;
     if (resolverServicios(t, 2).n !== 1) continue;
     if (!dificil) {
       if (!deducirServicios(t, { avanzado: false }).resuelto) continue;

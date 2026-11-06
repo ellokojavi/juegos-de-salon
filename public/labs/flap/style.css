@@ -1,0 +1,120 @@
+/* Aletazo (lab). What is shared lives in assets/css/base.css: the night, the fonts, .btn, .display, .rainbow;
+   this sheet is on the design system's tokens (D-533, docs/DESIGN.md). */
+
+/* The stage's own colours (DESIGN.md §4): the darker sky behind the canvas, and the drop that keeps
+   «Toca para aletear» legible over the play */
+:root { --aletazo-cielo: rgba(10, 4, 24, 0.35); --aletazo-sombra: rgba(0, 0, 0, 0.6); }
+
+/* One screen: the top bar, the stage filling the rest, the comment link under it (this page's own
+   layout over the shell's .app, hence the id) */
+#app { min-height: 100svh; gap: 0; }
+.pie { text-align: center; }
+/* The ranking, under the stage: the stage keeps the first screen, the table is below the fold */
+.ranking-aletazo { margin-top: var(--s-16); }
+.ranking-aletazo:empty, body.jugando .ranking-aletazo { display: none; }
+
+/* The stage: a tap anywhere on it flaps. The canvas is transparent over the app's night */
+.escenario {
+  position: relative; flex: none; height: calc(100svh - 76px); min-height: 340px; overflow: hidden; border-radius: var(--radius);
+  border: 1px solid var(--glass-border); background: var(--aletazo-cielo);
+  box-shadow: inset 0 0 60px rgb(var(--purple-rgb) / 0.18), var(--shadow-panel);
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
+}
+.escenario:focus-visible { box-shadow: 0 0 0 3px var(--cyan); }
+#lienzo { display: block; width: 100%; height: 100%; }
+
+/* What is read over the play */
+.hud { position: absolute; inset: 0; pointer-events: none; }
+.vidas { position: absolute; top: 12px; left: 14px; font-size: var(--fs-140); letter-spacing: 2px; }
+.vidas .off { filter: grayscale(1) brightness(0.5); opacity: 0.5; }
+.nivel { position: absolute; top: 14px; right: 14px; font: 900 var(--fs-90) var(--font-body); color: var(--muted); }
+.marcador {
+  position: absolute; top: 5%; left: 0; right: 0; text-align: center;
+  font: 900 clamp(3rem, 16vw, 4.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums;
+  color: var(--yellow); text-shadow: var(--shadow-text);
+}
+.aviso {
+  position: absolute; top: calc(5% + clamp(3.4rem, 18vw, 4.8rem)); left: 0; right: 0; text-align: center;
+  font: 700 var(--fs-110) var(--font-body); color: rgb(var(--ink-rgb) / 0.88); transition: opacity 0.4s;
+}
+.aviso.fuera { opacity: 0; }
+.aviso.brilla { font: clamp(1.35rem, 7vw, 1.9rem)/1.1 var(--font-display); letter-spacing: 0.06em; padding: 0 var(--s-14); text-wrap: balance; animation: aletazo-brilla 1s ease-out forwards; }
+@keyframes aletazo-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+
+/* The cover and the result: a glass card over the stage, the night still showing above it */
+.capa {
+  position: absolute; inset: 0; display: grid; align-items: end; padding: var(--s-14); overflow-y: auto; cursor: default;
+  background: linear-gradient(to bottom, transparent 20%, rgb(var(--bg1-rgb) / 0.65));
+}
+.tarjeta {
+  background: rgb(var(--bg1-rgb) / 0.72); border: 1px solid var(--glass-border); border-radius: var(--radius);
+  padding: var(--s-18); display: grid; gap: var(--s-12); text-align: center;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--shadow-panel);
+}
+.titulo-aletazo { display: flex; align-items: center; justify-content: center; gap: var(--s-10); margin: 0; }
+.titulo-aletazo .display { font-size: clamp(2.4rem, 11vw, 3.4rem); }
+/* The slanted font goes past the box .rainbow paints in, and clipped the last O: as Shinobi's title */
+.titulo-aletazo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-aletazo .logo { font-size: 2.2rem; animation: aletazo-mece 1.6s ease-in-out infinite; }
+@keyframes aletazo-mece { 0%, 100% { transform: translateY(2px) rotate(-6deg); } 50% { transform: translateY(-4px) rotate(8deg); } }
+.lema { margin: 0; color: var(--muted); font-weight: 700; }
+.credito { margin: calc(-1 * var(--s-6)) 0 0; font-size: var(--fs-85); color: var(--muted); text-wrap: balance; }   /* on two lines (320 px): «…Flappy Bird,» and «de Dong Nguyen.», never «Nguyen.» alone */
+.credito a { color: var(--cyan); white-space: nowrap; }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: var(--s-10); align-items: center; font-size: var(--fs-90); }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-100); background: var(--glass); border: 1px solid var(--glass-border); }
+.mejor { font: 800 var(--fs-90) var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mejor:empty { display: none; }
+.idioma { display: flex; justify-content: center; }
+/* «Cómo se juega ▾» only on a short phone (below); the button is the shell's .link-btn (base.css) */
+.tarjeta .como { display: none; justify-self: center; margin: calc(-1 * var(--s-6)) 0; min-height: 40px; }
+.mejor b { color: var(--yellow); }
+
+/* The result: the stamp, the score, a line about how it went */
+.sello { justify-self: center; margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: aletazo-sello 0.5s ease-out 0.3s both; }
+.sello.fin { color: var(--pink); }
+.sello.record { color: var(--yellow); }
+@keyframes aletazo-sello { from { transform: rotate(-5deg) scale(0.4); opacity: 0; } to { transform: rotate(-5deg) scale(1); opacity: 1; } }
+.score-big { font: 900 clamp(2.8rem, 14vw, 3.8rem)/1.05 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text); }
+.veredicto { margin: calc(-1 * var(--s-4)) 0 0; font: 900 var(--fs-120)/1.25 var(--font-body); text-wrap: balance; }
+
+/* The countdown (cuenta-regresiva.js) lets the bird show through, flying on its own and blurred;
+   the blur fades as «¡A jugar!» leaves (--sale, CUENTA_SALE_MS) */
+body:has(.escenario.contando) .cuenta { background: rgb(var(--bg1-rgb) / 0.45); backdrop-filter: none; -webkit-backdrop-filter: none; }
+#lienzo { transition: filter var(--sale, 0.9s) ease-out; }
+.escenario.contando #lienzo { filter: blur(6px) brightness(0.75); }
+
+/* «Toca para aletear», after the countdown until the first tap: clear of the bird (at 45 %) and the first gate */
+.pista {
+  position: absolute; left: 0; right: 0; top: 62%; text-align: center; pointer-events: none;
+  font: 900 var(--fs-120) var(--font-body); color: var(--ink); text-shadow: 0 2px 8px var(--aletazo-sombra);
+  animation: aletazo-pulsa 1.4s ease-in-out infinite; transition: opacity 0.2s;
+}
+.pista.fuera { opacity: 0; animation: none; }
+@keyframes aletazo-pulsa { 0%, 100% { opacity: 0.65; transform: scale(0.97); } 50% { opacity: 1; transform: scale(1.03); } }
+
+/* Paused (a call, another app): over the play, until a tap */
+.pausa { position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; font-weight: 700;
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.85), rgb(var(--bg1-rgb) / 0.4) 70%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .titulo-aletazo .logo, .sello, .aviso.brilla, .pista { animation: none; }
+}
+/* A short phone (320×568): the card tightens so 🐤 Play stays in view (U-39) */
+/* The steps fold under «Cómo se juega ▾», after Jugar; opened, they unfold below it and the card scrolls inside,
+   so the title, the language toggle and Jugar stay where they were */
+@media (max-height: 640px) {
+  .capa { padding: var(--s-10); grid-template-rows: minmax(0, 1fr); }
+  .tarjeta { align-self: end; gap: var(--s-8); padding: var(--s-12) var(--s-14); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+  .capa:has(.tarjeta.abierta) { overflow: hidden; }
+  .tarjeta .como { display: block; order: 1; }
+  .pasos { order: 2; }
+  .tarjeta:not(.abierta) .pasos { display: none; }
+  .titulo-aletazo .display { font-size: 2.2rem; }
+  .titulo-aletazo .logo { font-size: var(--fs-160); }
+  .pasos { gap: var(--s-6); }
+  .pasos li { font-size: var(--fs-90); }
+  .paso-ico { width: 30px; height: 30px; font-size: var(--fs-90); }
+  .btn#btn-jugar { padding-block: var(--s-12); }
+}

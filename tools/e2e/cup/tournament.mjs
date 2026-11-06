@@ -393,7 +393,7 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
     ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `day ${d} (${id}): the result is in the cup before tapping "Ver resultado"`);
   }
   await click('#btn-fin'); await b.until(`__copa.estado.pantalla === 'resultado'`, 700, 30); await b.settle(400);
-  if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--final') && !c.classList.contains('chip--gold'))})()`), 'the final: in the results everyone carries the final\'s ×2, in cyan and not in the joker\'s gold (D-151)');
+  if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--cyan') && !c.classList.contains('chip--gold'))})()`), 'the final: in the results everyone carries the final\'s ×2, in cyan and not in the joker\'s gold (D-151)');
   if (capture) ok(await ev(`(document.querySelector('#explicacion')?.textContent || '').includes('Total:')`), `result of day ${d}: explains how the score was computed`);
   return id;
 }
@@ -622,9 +622,10 @@ if (runs('cup')) {
   const days = SEVEN ? 7 : 3;
   // Levels per day so the table moves: [Cata, Javi, Pancho]
   const LEVELS = [[2, 1, 0], [0, 2, 1], [1, 0, 2], [2, 1, 0], [1, 2, 0], [1, 0, 2], [1, 0, 2]];
-  // A day and three hours, to reach tomorrow's day 1 even on a 25-hour day (summer time ends: on
-  // 2026-11-01 a plain day after 00:30 in Los Angeles was still today, and day 1 never opened)
-  await ev(`__copa.store.adelantar(${DAY + 3 * 3600e3}); 1`);
+  // To 03:00 on the start day, in the cup's zone: a fixed jump depends on the hour the test runs.
+  // A plain day after 00:30 in Los Angeles was still today when summer time ended (2026-11-01), and
+  // a day and three hours after 21:00 there landed on day 2, so the reminder and the grace day missed
+  await ev(`(async()=>{const E=await import('/cup/engine.js');const m=__copa.estado.copa.meta;__copa.store.adelantar(E.medianoche(m.start,m.tz)+3*3600e3-__copa.store.now());return 1})()`);
 
   for (let d = 1; d <= days; d++) {
     for (let j = 0; j < PLAYERS.length; j++) {
@@ -882,10 +883,10 @@ if (runs('labs')) {
       await click('#btn-volver-ensayo'); await sleep(300);
     }
     await click('#btn-empezar'); await sleep(300); await waitCountdown();
-    // The folded rules below the board (D-133)
+    // The folded rules below the board (D-133). A standalone game has no title under the menu since #1243: then only fold and place are checked
     {
       const r = await ev(`(()=>{const d=document.getElementById('reglas');if(!d)return null;const b=document.getElementById('jugar-body').getBoundingClientRect();return JSON.stringify({open:d.open,below:d.getBoundingClientRect().top>=b.bottom-1,title:d.querySelector('summary').textContent})})()`).then(x => x && JSON.parse(x));
-      ok(r && !r.open && r.below && r.title.includes(await ev(`__copa.estado.juego ? document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') : ''`)), `${id}: the rules are folded below the board (${r?.title})`);
+      ok(r && !r.open && r.below && r.title.includes(await ev(`__copa.estado.juego ? (document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') ?? '') : ''`)), `${id}: the rules are folded below the board (${r?.title})`);
       if (id === 'agentes') {
         await ev(`document.querySelector('#reglas summary').click(); document.getElementById('reglas').scrollIntoView(); 1`); await sleep(300);
         await b.shot('rules-open');
@@ -900,7 +901,7 @@ if (runs('labs')) {
         const dfs=t=>{if(found||k++>200000)return;if(z.estado(p,t).faltan){found=t.slice();return}for(let i=0;i<N;i++)if(z.puedeIr(p,t,i)){t.push(i);dfs(t);t.pop()}};dfs([start]);
         const g=document.querySelector('.zip-grid');const top0=g.getBoundingClientRect().top;
         for(const i of found)g.querySelector('.zc[data-i="'+i+'"]').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:0}));
-        const h=g.querySelector('.zc.cabeza');const r={still:g.getBoundingClientRect().top===top0,warning:!!document.querySelector('.zip-aviso .aviso.mal'),num:h.innerText.trim()!=='',covers:getComputedStyle(h,'::after').content!=='none'};
+        const h=g.querySelector('.zc.cabeza');const r={still:g.getBoundingClientRect().top===top0,warning:!!document.querySelector('.zip-aviso .notice--bad'),num:h.innerText.trim()!=='',covers:getComputedStyle(h,'::after').content!=='none'};
         return JSON.stringify(r)})()`).then(JSON.parse);
       ok(z.warning && z.still, 'Zip: the missing-cells warning appears under the grid without moving it');
       ok(z.num && !z.covers, 'Zip: the head of the path over a number leaves the number visible');

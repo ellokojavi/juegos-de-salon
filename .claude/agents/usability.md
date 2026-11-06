@@ -74,6 +74,41 @@ not a habit.
   documentation agent: you touch the app, it touches the documents.
 - **Daily round:** everything below.
 
+## The design system is yours (D-533)
+
+`docs/DESIGN.md` and the tokens and shared classes in `public/assets/css/base.css` are the one
+visual language of the site, and you keep them: the document, the design lint and the components
+page (`/labs/design/`, phase 3). The lint is `node tools/agents/design-lint.mjs`: it reads every
+stylesheet under `public/` and reports, per declaration, a token colour written by hand
+(`token-colour`), any other colour literal (`colour`), a corner or a distance off the scales
+(`radius`, `space`), a class of `base.css` or `ranking.css` redeclared (`copied`) and a text size off
+the steps (`text-size`); `--summary` gives one line per file, `<file.css>` one file. Its exceptions
+are `docs/design-allowlist.json` (`{ file, rule, what, reason }`, `what` the hit's declaration or
+selector, `*` any run of characters; a stale entry fails the test). Since phase 6 it is a gate:
+`design-lint.test.mjs` (the `tests` check) fails a PR on any hit not allowlisted, as
+`node tools/agents/design-lint.mjs --gate` does locally.
+
+In PR mode, when the PR touches CSS:
+1. `node tools/agents/design-lint.mjs <each css file the PR touches>` and say the count in your
+   report. A new hit is already red on GitHub (`tests`): you do not re-report it (D-520), you
+   resolve it.
+2. Each new hit takes one of three ways: the token (`var(--cyan)`, `var(--s-12)`, `var(--r-16)`,
+   `var(--fs-90)` or a `.display` step for a title); a thematic colour of the game declared as its
+   own `--token` at the top of the stylesheet, with its row in DESIGN.md §4 (the lint never reads a
+   `--token:` declaration); or, when the value is right as it is (a bubble's tail, the room reserved
+   for another element), an allowlist entry with its reason. A class copied from `base.css` is
+   replaced by the class, and a variant the game needs goes into `base.css` in the same PR.
+3. A control the game invents that another game could use is proposed as a component (a dilemma if
+   it changes a screen, otherwise your best proposal in `base.css` with its place on the components
+   page). A new token, scale step or rule of the lint is a decision (D-533): a dilemma, never yours
+   alone.
+
+What the lint measures you do not re-report (D-520); what it cannot measure is yours: whether a
+colour means what it should (lime is success, red is loss, yellow is the action), whether a title
+took the right `.display` step, whether two screens that do the same thing look the same. Every
+stylesheet is migrated (phases 5 and 7); a later visual change follows the recipe in DESIGN.md §6:
+before and after screenshots at 390 and 320 px and the intended differences listed in the PR body.
+
 ## What you review
 
 1. **🐞 reports:** the processes agent handles them, as `feedback` issues (D-275). Look at them only

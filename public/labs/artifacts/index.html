@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- The lab is not announced: it is not in the menu or the search engines (D-101), and without the key nobody gets in (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Artefactos ⚙️ · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-volver">‹ Laboratorio</a>
+      <div class="tools"><span class="chip">⚙️</span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- The cover: the title, how to play, the levels and Jugar -->
+    <section class="screen active stack" id="s-portada">
+      <div class="intro-hero">
+        <div class="demo" aria-hidden="true"><canvas id="demo"></canvas></div>
+        <h1 class="display display--xl rainbow">Artefactos</h1>
+        <p class="lead muted" id="lema"></p>
+        <p class="credito muted" id="credito"></p>
+      </div>
+      <details class="panel" id="como"><summary id="como-titulo"></summary><ul class="pasos" id="pasos"></ul></details>
+      <div class="idioma" id="lang-slot"></div>
+      <div class="chips niveles" id="niveles"></div>
+      <button type="button" class="btn btn--yellow" id="btn-jugar"></button>
+    </section>
+
+    <!-- The workshop: the board, the tray of parts and the buttons to try it -->
+    <section class="screen stack" id="s-juego">
+      <!-- The stage, its difficulty, the five dots and the game's clock, always in view -->
+      <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj" id="reloj" role="timer"></span></div>
+      <div class="tablero" id="tablero" data-tablero>
+        <canvas id="lienzo"></canvas>
+        <div class="capa" id="resultado" hidden>
+          <div class="panel tarjeta stack">
+            <p class="display display--lg" id="res-titulo"></p>
+            <p class="estrellas" id="res-estrellas"></p>
+            <p class="muted" id="res-linea"></p>
+            <button type="button" class="btn btn--yellow" id="btn-siguiente"></button>
+          </div>
+        </div>
+      </div>
+      <p class="mensaje" id="mensaje" aria-live="polite"></p>
+      <div class="bandeja" id="bandeja" role="group"></div>
+      <!-- One row of tools, always the same height: Deshacer and Limpiar, or with a part chosen, Girar and Quitar beside Deshacer -->
+      <div class="btn-row herramientas">
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-deshacer"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-limpiar"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-girar" hidden></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-quitar" hidden></button>
+      </div>
+      <div class="stack">
+        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
+      </div>
+    </section>
+    <!-- The result: the total, how it adds up stage by stage, and the way to play again -->
+    <section class="screen stack" id="s-fin">
+      <div class="result-hero">
+        <p class="sello" id="fin-sello"></p>
+        <div class="score-big" id="fin-puntos">0</div>
+        <p class="muted" id="fin-linea"></p>
+      </div>
+      <div class="panel"><table class="tabla-fin" id="fin-tabla"></table><p class="muted leyenda" id="fin-leyenda"></p></div>
+      <p class="muted center" id="fin-mejor"></p>
+      <button type="button" class="btn btn--yellow" id="btn-otra"></button>
+      <div id="fin-salidas"></div>
+    </section>
+    <div id="pie" class="pie"></div>
+  </main>
+  <script type="module">import './game.js';</script>
+</body>
+</html>

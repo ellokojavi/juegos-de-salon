@@ -14,6 +14,7 @@ machine needs. `machine.test.mjs` fails if a `mac` job, or a file under
 | `lab-ready` | launchd (`cl.juegosdesalon.lab-ready`) | hourly | `node tools/jobs/jobs.mjs install` (D-528) |
 | `feedback-watch` | launchd (`cl.juegosdesalon.feedback-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
 | `processes-round` | launchd (`cl.juegosdesalon.processes-round`), a headless `claude -p` | 4:30 Pacific, daily | `node tools/jobs/jobs.mjs install` (D-451) |
+| `referee` | launchd (`cl.juegosdesalon.referee`), a service kept alive | always | `node tools/jobs/jobs.mjs install`; Ollama and the Cloudflare tunnel by hand: [tools/referee/README.md](../referee/README.md) (piece 6, D-532) |
 | `weekly-report` | launchd (`cl.juegosdesalon.weekly-report`), a headless `claude -p` | Sundays 08:00 Pacific | `node tools/jobs/jobs.mjs install` (D-451) |
 
 The launchd plists are generated from `jobs.json` (`~/Library/LaunchAgents/cl.juegosdesalon.<id>.plist`)
@@ -40,6 +41,7 @@ In `~/.config/juegos-de-salon/` (copy the folder to the new machine, by hand, ne
 | `vapid-privada.txt` | backup of the push notifications' private key (the real one is a GitHub secret) | `vapid.mjs` |
 | `inbox-log.jsonl`, `mail-log.jsonl` | what was triaged and what was sent (history, not needed to run) | `inbox.mjs`, `send-mail.py` |
 | `inbox-skipped.jsonl` | the text of each email the support agent skipped, for the owner to check (D-452; history, not needed to run) | `inbox.mjs` |
+| `referee.json` | the referee gateway's config: model, limits, the warm-up key's fingerprint (all optional) | `tools/referee/gateway.mjs` |
 | `jobs/<id>.json` | each `mac` job's last run (recreated on its own) | `jobs.mjs status` |
 
 In that Gmail account, **IMAP must be on** (Settings → Forwarding and POP/IMAP): `send-mail.py` reads

@@ -201,6 +201,10 @@ export function montar(raiz, ctx) {
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) && Number.isFinite(ctx.jugadas.n) ? ctx.jugadas : null;
   const vez = ++partidas;
   const sim = simulacion; simulacion = 0;
+  // The score's tally on the end screen, in the lab until the owner publishes it (flag babel-tally,
+  // D-498); asked now, so the answer is in long before the game ends. lab: #seccion-babel-tally
+  let conCuenta = false;
+  flag('babel-tally').then(v => { conCuenta = v; }).catch(() => {});
   const S = { g: newGame(performance.now() + 400), kinds: [], fin: false, pausa: 0, pausado: 0, inicio: performance.now(), finEn: 0, dormido: false, ms: 0 };
 
   const lienzo = el('canvas', { class: 'sk-lienzo', 'aria-hidden': 'true' });
@@ -308,12 +312,15 @@ export function montar(raiz, ctx) {
       // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
-      fin.replaceChildren(boton);
+      fin.replaceChildren(conCuenta ? cuentaPuntos(e, { el, T, SFX, vibrate, recien }) : null, boton);
       // The music's credit goes under the blurred strip, not in it: inside, it stretched the strip down to a hard edge
       document.getElementById('sk-musica-credito')?.remove();
       const credito = creditoMusica(el, T);
       if (credito) fin.after(credito);
       requestAnimationFrame(() => {
+        // Everything above the fold: the tower gives up whatever the page would scroll
+        const sobra = document.documentElement.scrollHeight - innerHeight;
+        if (sobra > 0) { escenario.style.minHeight = "0"; escenario.style.height = `${Math.max(200, escenario.offsetHeight - sobra)}px`; }
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
         // First the top glides up while the cuts fade in, then the camera starts down
         if (r.height) sc.deslizar(antes, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 1000);
@@ -373,6 +380,63 @@ export function montar(raiz, ctx) {
   // For the end-to-end script: `soltarEn(t)` drops at moment t, as a tap then would; `pausar()` pauses,
   // as a hidden page does; `perfecto()` is the next moment the block is exactly over the tower
   globalThis.__stack = { S, soltarEn: caer, pausar, perfecto: () => perfectTime(S.g, performance.now()), estado };
+}
+
+/**
+ * The score's tally on the end screen, over «Continue»: the floors, then each bonus slams in while
+ * the total rolls up to the points, which pops at the end (the owner's request: a show). Every term's
+ * place is kept from the start, so nothing jumps; with reduced motion, or a game already finished,
+ * it is all there at once.
+ */
+function cuentaPuntos(e, { el, T, SFX, vibrate, recien }) {
+  const p = Array.isArray(e.kinds) && e.kinds.length ? puntos(e.kinds) : { floors: Math.max(0, e.n | 0), streaks: 0, streakBonus: 0, lengthBonus: 0, total: Math.max(0, e.n | 0) };
+  const total = p.floors + p.streakBonus + p.lengthBonus;
+  // A receipt (the owner's call: labels on one line, figures big): a row per term, its label on the
+  // left and its figure on the right, then a rule and the total
+  const fila = (cls, emoji, rotulo, valor) => el('div', { class: `sk-termino ${cls}` },
+    el('span', { class: 'sk-rotulo' }, el('span', { 'aria-hidden': 'true' }, emoji), ' ', el('span', { class: 'sk-palabra' }, rotulo)),
+    typeof valor === 'string' ? el('span', { class: 'sk-valor' }, valor) : valor);
+  const pasos = [[fila('pisos', '🧱', T.skFloors[forma(p.floors)], String(p.floors))]];
+  if (p.streakBonus) pasos.push([fila('bono', '🔥', T.skTallyStreaks[forma(p.streaks)], `+${p.streakBonus}`)]);
+  if (p.lengthBonus) pasos.push([fila('bono', '📏', T.skTallyLength, `+${p.lengthBonus}`)]);
+  const valorTotal = el('span', { class: 'sk-valor', id: 'sk-total' }, String(total));
+  const fin = fila('total', '🏆', T.skPoints[forma(total)], valorTotal);
+  const caja = el('div', { class: 'sk-cuenta', id: 'sk-cuenta', 'aria-label': `${total} ${T.skPoints[forma(total)]}` }, ...pasos.flat(), fin);
+  if (!recien || QUIETO()) { caja.classList.add('lista'); return caja; }
+  // The total rolls from what it said to what it says now, a tick at a time
+  let mostrado = 0;
+  const rodar = (hasta, ms) => {
+    const desde = mostrado, t0 = performance.now();
+    const paso = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      valorTotal.textContent = String(Math.round(desde + (hasta - desde) * (1 - (1 - k) ** 3)));
+      if (k < 1 && caja.isConnected) requestAnimationFrame(paso);
+    };
+    mostrado = hasta;
+    requestAnimationFrame(paso);
+  };
+  valorTotal.textContent = '0';
+  const sumas = [p.floors, p.streakBonus, p.lengthBonus].filter((x, i) => i === 0 || x);
+  let acumulado = 0, t = 1300;
+  pasos.forEach((nodos, i) => {
+    setTimeout(() => {
+      if (!caja.isConnected) return;
+      nodos.forEach(n => n.classList.add('entra'));
+      if (i === 0) fin.classList.add('entra');
+      acumulado += sumas[i];
+      rodar(acumulado, i === 0 ? 700 : 500);
+      if (i === 0) SFX.tap(); else { SFX.reveal(); vibrate(15); fin.classList.remove('late'); void fin.offsetWidth; fin.classList.add('late'); }
+    }, t);
+    t += i === 0 ? 1000 : 850;
+  });
+  // The grand total: it pops, glows, and with bonuses throws confetti
+  setTimeout(() => {
+    if (!caja.isConnected) return;
+    valorTotal.textContent = String(total);
+    fin.classList.add('final');
+    if (pasos.length > 1) { SFX.win?.(); confetti({ count: 70, duration: 1200 }); }
+  }, t);
+  return caja;
 }
 
 /** What goes to the cup and to the result: the points (floors and streak bonuses, no cap), its card, and the playing time without pauses. */

@@ -8,7 +8,7 @@ import {
   estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, ultimoDiaComodin, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
-  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
+  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista, podioDecidido,
 } from './engine.js';
 import { JUEGOS_COPA } from './rules.js';
 
@@ -654,6 +654,75 @@ test('the weekend cup: three days of three games (D-439)', () => {
 });
 
 await new Promise(r => setTimeout(r, 50));
+/** A cup's results from a score per player and day: `s` by player, the same every day listed. */
+const jugados = (dias, s, saltos = {}) => Object.fromEntries(dias.map(d => [d, Object.fromEntries(Object.entries(s).filter(([pid]) => !saltos[pid]?.includes(d)).map(([pid, v]) => [pid, { s: v, ms: 5 }]))]));
+// A cup of today (its unused wildcards land on their own, D-444), on its last day at noon: day 6 is in its grace day
+const metaHoy = nuevaMeta({ nombre: 'Copa de noviembre', dias: 7, inicio: '2026-11-02', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
+const ultimoDia = metaHoy.win[7].a + 12 * H;
+
+test('the podium announced on the last day: only when nothing left to play can change the first three places', () => {
+  // Everyone played every day, Cata always first, then Javi, Pancho and Tomás: nothing is left to play
+  const todo = jugados([1, 2, 3, 4, 5, 6, 7], { aaaaaa: 9, bbbbbb: 7, cccccc: 5, dddddd: 3 });
+  const L = { meta: metaHoy, players, results: todo, wild: {} };
+  const p = podioDecidido(L, 'aaaaaa', ultimoDia);
+  assert.deepEqual(p.map(f => [f.name, f.lugar]), [['Cata', 1], ['Javi', 2], ['Pancho', 3]]);
+  assert.equal(podioDecidido(L, 'aaaaaa', ultimoDia - 24 * H), null, 'not before the last day');
+  assert.equal(podioDecidido(L, 'aaaaaa', metaHoy.end), null, 'not once the cup is over: the podium takes over');
+  // Tomás still has the final to play: 20 points, and the wildcard he never used already landed on day 6
+  const sinTomas = { ...L, results: jugados([1, 2, 3, 4, 5, 6, 7], { aaaaaa: 9, bbbbbb: 7, cccccc: 5, dddddd: 3 }, { dddddd: [7] }) };
+  const t = tabla(sinTomas, 'aaaaaa', ultimoDia);
+  assert.deepEqual(t.map(f => [f.name, f.total]), [['Cata', 90], ['Javi', 72], ['Pancho', 54], ['Tomás', 35]]);
+  assert.equal(podioDecidido(sinTomas, 'aaaaaa', ultimoDia), null, 'Tomás can still reach 55 and Pancho may drop to 50');
+  // Tomás also missed days 1 and 3 (not two in a row: he is still in): at most 40, and the podium is set
+  const lejos = { ...L, results: jugados([1, 2, 3, 4, 5, 6, 7], { aaaaaa: 9, bbbbbb: 7, cccccc: 5, dddddd: 3 }, { dddddd: [1, 3, 7] }) };
+  assert.ok(!fuera(lejos, 'dddddd', ultimoDia));
+  assert.deepEqual(podioDecidido(lejos, 'aaaaaa', ultimoDia).map(f => f.name), ['Cata', 'Javi', 'Pancho']);
+  // What `yo` cannot see counts as still to come: Tomás has played the final, Javi looks without having played it
+  const sinJavi = { ...L, results: jugados([1, 2, 3, 4, 5, 6, 7], { aaaaaa: 9, bbbbbb: 7, cccccc: 5, dddddd: 3 }, { bbbbbb: [7], cccccc: [2, 4], dddddd: [1, 3, 5] }) };
+  assert.deepEqual(podioDecidido(sinJavi, 'aaaaaa', ultimoDia).map(f => f.name), ['Cata', 'Javi', 'Pancho'], 'for Cata, who sees the final');
+  assert.equal(podioDecidido(sinJavi, 'bbbbbb', ultimoDia), null, 'for Javi the final is hidden: anyone may still win it');
+  assert.equal(podioDecidido(sinJavi, null, ultimoDia), null, 'for someone outside, too');
+});
+
+test('the podium announced: a played day still open may drop, the free wildcard may double, and a tie for good shares', () => {
+  // Two players. Cata wins days 1 to 4 (40), Javi wins day 5 (Cata 8): 48 and 42. Day 6, in its grace day,
+  // only Cata played it (10, doubled by the wildcard that lands there: 68). The final: Javi 20, Cata 16: 84 and 62
+  const s = (c, j) => ({ aaaaaa: { s: c, ms: 5 }, bbbbbb: { s: j, ms: 5 } });
+  const dos = { meta: metaHoy, players: { aaaaaa: players.aaaaaa, bbbbbb: players.bbbbbb }, wild: {},
+    results: { 1: s(9, 7), 2: s(9, 7), 3: s(9, 7), 4: s(9, 7), 5: s(7, 9), 6: { aaaaaa: { s: 9, ms: 5 } }, 7: s(7, 9) } };
+  const t = tabla(dos, 'aaaaaa', ultimoDia);
+  assert.deepEqual(t.map(f => [f.name, f.total]), [['Cata', 84], ['Javi', 62]]);
+  // Javi may still win day 6 (10) with his wildcard on it (20): 82; and Cata would drop to 2nd there: 80
+  assert.equal(podioDecidido(dos, 'aaaaaa', ultimoDia), null);
+  // With his wildcard spent on day 1 (16 instead of 8: 70), Javi reaches 80 at most, the same as Cata's worst,
+  // but with fewer days won: Cata is the champion whatever day 6 brings
+  const gastado = { ...dos, wild: { bbbbbb: 1 } };
+  assert.equal(tabla(gastado, 'aaaaaa', ultimoDia)[1].total, 70);
+  assert.deepEqual(podioDecidido(gastado, 'aaaaaa', ultimoDia).map(f => f.name), ['Cata', 'Javi']);
+  // Equal in everything and nothing left to play: they share the first place, and it is announced
+  const iguales = { meta: metaHoy, players: dos.players, wild: {}, results: jugados([1, 2, 3, 4, 5, 6, 7], { aaaaaa: 5, bbbbbb: 5 }) };
+  const e = podioDecidido(iguales, 'aaaaaa', ultimoDia);
+  assert.deepEqual(e.map(f => f.lugar), [1, 1]);
+  // Fewer than two players: nothing to announce
+  assert.equal(podioDecidido({ ...iguales, players: { aaaaaa: players.aaaaaa } }, 'aaaaaa', ultimoDia), null);
+});
+
+test('the podium announced in a cup without a final (D-438): its last day counts single and takes the wildcard', () => {
+  const m = nuevaMeta({ nombre: 'Finde', dias: 3, inicio: '2026-11-02', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'tango', 'donde'] });
+  const hoy = m.win[3].a + 12 * H;
+  const tres = { aaaaaa: players.aaaaaa, bbbbbb: players.bbbbbb, cccccc: players.cccccc };
+  // Everyone played the three days in the same order, each wildcard landing on day 3: set
+  const L = { meta: m, players: tres, wild: {}, results: jugados([1, 2, 3], { aaaaaa: 9, bbbbbb: 7, cccccc: 5 }) };
+  assert.deepEqual(tabla(L, 'aaaaaa', hoy).map(f => f.total), [40, 32, 24]);
+  assert.deepEqual(podioDecidido(L, 'aaaaaa', hoy).map(f => f.name), ['Cata', 'Javi', 'Pancho']);
+  assert.equal(podioDecidido(L, 'aaaaaa', m.win[2].a + 12 * H), null, 'day 2 is not the last');
+  // Pancho has day 3 left, with his wildcard still free: 12 now, up to 32. Javi, 2nd on day 3 among two and
+  // doubled there (32), may drop to 3rd (28): not yet
+  const falta = { ...L, results: jugados([1, 2, 3], { aaaaaa: 9, bbbbbb: 7, cccccc: 5 }, { cccccc: [3] }) };
+  assert.deepEqual(tabla(falta, 'aaaaaa', hoy).map(f => f.total), [40, 32, 12]);
+  assert.equal(podioDecidido(falta, 'aaaaaa', hoy), null);
+});
+
 console.log(`copa/engine: ${n} tests OK`);
 
 test('the length is the admin\'s choice, 3 to 14 days, the final from 5 (D-521)', () => {

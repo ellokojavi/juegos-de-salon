@@ -200,7 +200,7 @@ export function montar(raiz, ctx) {
     } else tablero.classList.add('fin');
     const todos = J.hechos >= motor.NIVELES;
     if (todos) { SFX.win(); } else SFX.timeUp();
-    aviso.append(...[el('div', { class: 'aviso bien' }, todos ? T.desAll : J.hechos === 1 ? T.desTimeOne : fmt(T.desTime, { n: J.hechos })),
+    aviso.append(...[el('div', { class: 'notice notice--good' }, todos ? T.desAll : J.hechos === 1 ? T.desTimeOne : fmt(T.desTime, { n: J.hechos })),
       aMedias ? el('p', { class: 'muted center', id: 'des-solucion', style: 'margin:0' }, fmt(T.desSolution, { k: J.hechos + 1 })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...J }); } }, ctx.textoFin || T.seeResults)].filter(Boolean));
     pintarCabeza();

@@ -134,3 +134,12 @@ None: one player, one phone. In a cup the result goes to Firebase like every cup
 - **The cells are under 44 px at 320 px** (C-8): seven across do not fit 44 px each in 288 px
   (about 38 px each), as in the lab. `look.mjs` flags it; the brushes and the buttons are 44 px or
   more.
+
+## Migrated to the design system (D-533, #1193)
+
+Pintaminas' sheet (`public/cup/games/paint-mines/style.css`) had no copies of the shell and is now written on the tokens: 58 lint hits to 0, with no escape. The paintings' colours still come from `ui.js` (`--p1`, `--p2`) and the hard variant still redefines `--bg1`…`--fondo` on `body.modo-dificil`; the board's ink and reds, the drops and the lever's metal are tokens at the top of the sheet (row in DESIGN.md §4), every value unchanged. What the player may notice: the small and the how-to boards' cells have 8 px corners (were 5 and 6) and 4 px gaps (were 3), the switch's corner is 16 px (was 18), and the sizes between two steps took the nearer one (🖌️ 2.3 → 2 rem, the cells' numbers 1.05 → 1, the brushes and the switch's label 1.25 → 1.2, the buttons 0.92 → 0.9, the stamp 1.3 → 1.2, the small board's numbers 0.72 → 0.75).
+
+**The hard-mode switch's glow on tokens** (2026-11-05): its four flickering colours were
+`rgba(r, g, b, calc(… * var(--brillo)))` with raw numbers, which the design lint did not see. They are
+`rgb(var(--cyan-rgb|--pm-chispa-rgb|--yellow-rgb) / calc(…))` (first written with the relative-colour syntax, 2026-11-06 the channel tokens), the same colours and alphas (the
+computed values match within 1/255), and the lint now flags an `rgba()` with a `calc()` alpha.

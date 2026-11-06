@@ -146,7 +146,7 @@ export function montar(raiz, ctx) {
     // Con los diez, la victoria ya sonó al resolver el último
     const todos = J.hechos >= motor.NIVELES;
     if (!todos) SFX.timeUp();
-    aviso.append(...[el('div', { class: 'aviso bien' }, todos ? T.zipAll : J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
+    aviso.append(...[el('div', { class: 'notice notice--good' }, todos ? T.zipAll : J.hechos === 1 ? T.zipTimeOne : fmt(T.zipTime, { n: J.hechos })),
       aMedias ? el('p', { class: 'muted center', id: 'zip-solucion', style: 'margin:0' }, fmt(T.zipSolution, { k: J.hechos + 1 })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar({ ...J }); } }, ctx.textoFin || T.seeResults)].filter(Boolean));
     pintarCabeza();
@@ -159,7 +159,7 @@ export function montar(raiz, ctx) {
     linea.setAttribute('points', J.trazo.map(i => `${(i % p.n) + 0.5},${Math.floor(i / p.n) + 0.5}`).join(' '));
     pintarBorrar();
     aviso.innerHTML = '';
-    if (e.faltan) aviso.append(el('div', { class: 'aviso mal' }, e.faltan === 1 ? T.zipMissingOne : fmt(T.zipMissing, { n: e.faltan })));
+    if (e.faltan) aviso.append(el('div', { class: 'notice notice--bad' }, e.faltan === 1 ? T.zipMissingOne : fmt(T.zipMissing, { n: e.faltan })));
     return e;
   };
 

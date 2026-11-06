@@ -12,7 +12,11 @@
 > a full circle, then back up turning the other way (`scene.js` `tour`, `recorrer`). A glowing plane
 > slices the tower every ten floors, its number lying on the plane in two opposite corners. Up top it
 > reads «N pisos» (no blocks stamp); «Continuar» sits on a blurred strip over the tower, and the tour starts from the game's last frame, the top gliding up to just under «Fin del juego». No tour
-> with reduced motion.
+> with reduced motion. The rules panel hides at the end (no time to read it), and the tower's height
+> shrinks to whatever keeps the whole end above the fold, with no vertical scroll. In the lab (flag `babel-tally`, card `#seccion-babel-tally`), over «Continuar» the
+> score adds itself up as a receipt (`cuentaPuntos` in `ui.js`; the owner's call: labels on one line, big figures): a row each for «🧱 Pisos 9», «🔥 Bono de racha +3», «📏 Largo de rachas +15», then a rule and «🏆 Puntos 27»,
+> each bonus slamming in while the total rolls up, which pops (confetti when there were bonuses);
+> all at once with reduced motion or a finished game reopened.
 >
 > **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button in a folded 🧪 tab on
 > the screen's left edge (`#sk-lab`), off the cover so it always shows what players see (the owner's call).
@@ -136,3 +140,9 @@ The cover has «🎵 Música: sí / 🔇 Música: no» (`#btn-musica`, in words:
 right of the language toggle (under it when they do not fit), both above the tower as a header (`#sk-cabecera`, the owner's call); kept on the phone in `juegos-de-salon:music`.
 The end screen credits the track that played under «Continuar»: «🎵 Música: Retro Game, de The Mountain, en Pixabay»,
 linked to its Pixabay page (`CREDITS` in `ui.js`; the four authors: The Mountain, Bransboynd, Hitslab, DeepMusicEveryDay).
+
+## Migrated to the design system (D-533, #1193)
+
+The lab's stylesheet (`public/labs/stack/style.css`; Babel at `/babel/` runs on La Copa's sheet, migrated below) dropped its copy of the shell's `.link-btn` and writes the rest (the cover, the heading, the tower's score and notices, the pause, the result) on the tokens. The design lint reports zero on it beyond two escapes: the cover's 🗼 at 2.2 rem and the last word over the tower at 2.2 rem; the fade mask's opaque stop is the game's own token (`--torre-opaco`). What the player may notice: the pause title takes `.display--lg` (it was 2.6 rem), «Perfect ×n» is 2 rem (was 1.9), the stamp 1.4 rem (was 1.3), the heading's 🗼 1.6 rem (was 1.5), the best and the pause's line take the nearer text step.
+
+Babel's sheet (`public/cup/games/stack/style.css`) had no copies of the shell and is now written on the tokens: 22 lint hits to 0 beyond six escapes in `docs/design-allowlist.json` and DESIGN.md §4 (the three messages over the tower keep 1.9, 2.2 and 2.6 rem; the end's strip keeps its 110 px rise and its 44 px for the fade; the masks' `#000`). Its own colours are three tokens at the top of the sheet (`--sk-hundido`, `--sk-tira`, `--sk-pestana`), every value unchanged; the pause's night is `--bg1` at an alpha. What the player may notice: the 🗼 by the title is 2 rem (was 2.2), the pause's line 1 rem (was 1.05) and the music credit 0.75 rem (was 0.78).

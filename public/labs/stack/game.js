@@ -128,7 +128,7 @@ function jugar() {
   const aviso = el('div', { class: 'aviso-torre', id: 'aviso' }, T.toca);
   const cartel = el('div', { class: 'pausa-torre', id: 'pausa', 'aria-live': 'polite', hidden: true },
     // The emoji outside the rainbow: a gradient clipped to text paints an emoji as a colored square
-    el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display rainbow' }, T.pausa)), el('span', {}, T.seguir));
+    el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display display--lg rainbow' }, T.pausa)), el('span', {}, T.seguir));
   const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.toca }, lienzo, marcador, aviso, cartel);
   // The heading, like the other games': the name, and the best so far (it lights up once beaten)
   const antes = S.antes = mejorAntes();

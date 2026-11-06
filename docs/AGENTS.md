@@ -14,6 +14,9 @@ or any other here), launch it and report what it found; do not ask the owner fir
   what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it first reads `node tools/agents/usability-lint.mjs` (the measurable rules, D-520: `tests` runs it too) and runs `node tools/agents/covers.mjs check [base]`,
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
+  It owns **the design system** (D-533, `docs/DESIGN.md`): the tokens and shared classes in `base.css`, the design lint
+  (`node tools/agents/design-lint.mjs [--summary|--all|--gate|<file.css>]`: colours, corners, distances and text sizes off the tokens (a `font-size` or the size inside a `font:` shorthand; a token colour at an alpha is named as `rgb(var(--x-rgb) / a)`), classes copied from `base.css` (the game shell among them, phase 4); `docs/design-allowlist.json` with a reason per entry; since phase 6 a gate: `design-lint.test.mjs` fails the `tests` check on any hit not allowlisted) and the components page (`/labs/design/`, phase 3); a PR that
+  adds a token, a scale step or a shared class is reviewed by it; every stylesheet is migrated (phases 5 and 7), and a later visual change follows DESIGN.md §6.
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
   request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability
   round's; it does not touch code, except the messages with which the app
@@ -80,7 +83,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
   the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.
-  What launches for everyone moves its card to La Bodega in the same PR (D-479); a flag flipped to *all* moves it in the next PR, keeping its switch (D-510). The owner sends a
+  What launches for everyone moves its card to La Bodega in the same PR (D-479); a flag flipped to *all* moves it on its own when `/labs/` opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that removes the gate moves its HTML for good. The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the
   Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
   `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main` or with red checks, the watcher sends
@@ -127,7 +130,8 @@ or any other here), launch it and report what it found; do not ask the owner fir
   headless Claude rounds, hooks), is listed in `tools/jobs/jobs.json`; `node tools/jobs/jobs.mjs status` shows them all
   with their last run, and `jobs.test.mjs` fails if a scheduled workflow is missing. Frequent checks
   are `mac` jobs, plain scripts that call Claude only when there is work (`inbox-watch`: the hola@
-  inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
+  inbox every 5 minutes); a `mac` job with `service: true` is a process launchd keeps alive (the `referee` gateway,
+  `tools/referee/`). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
   holds and how to move it to another machine: [tools/jobs/MAC-MINI.md](tools/jobs/MAC-MINI.md) (D-383).
 - **Weekly report** (D-352): every Sunday at 8:00 the launchd job `weekly-report` (D-440, D-451), a
   headless Claude session following `tools/jobs/prompts/weekly-report.md`, runs

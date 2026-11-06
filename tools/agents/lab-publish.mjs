@@ -113,8 +113,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     await patch(k, { state: 'working', started: Date.now(), branch });
     // The card's flag as Firebase holds it ('all', 'lab', 'off', or null with none saved): the
     // session cannot read Firebase itself (its curl is denied), and 📦 files the card by it (D-511)
-    const flag = (await read(`flags/${k.replace(/^seccion-/, '')}`, t))?.state ?? null;
-    console.log(JSON.stringify({ id: k, kind: e.kind || 'publish', title: e.title || '', note: e.note || '', branch, flag }, null, 2));
+    const f = await read(`flags/${k.replace(/^seccion-/, '')}`, t);
+    const flag = f?.state ?? null;
+    // and the day it went live (`at`), so the card's HTML carries the same date /labs/ showed on its own (D-534)
+    const flagAt = Number(f?.at) ? new Date(Number(f.at)).toISOString().slice(0, 10) : null;
+    console.log(JSON.stringify({ id: k, kind: e.kind || 'publish', title: e.title || '', note: e.note || '', branch, flag, flagAt }, null, 2));
   } else if (cmd === 'opened' && id && /^\d+$/.test(arg || '')) {
     known(id);
     await patch(id, { state: 'pr', pr: Number(arg) });

@@ -1,113 +1,120 @@
 /* 🚅 Tren en Vilo (lab demo): the cover, the board on a canvas, its bar and the result */
-.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
-.titulo-tv { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; text-align: center; }
-.titulo-tv .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+/* Its thematic colours (D-533, DESIGN.md §4): the planks' wood and steel, and the gauge's plate, which is the
+   scene's (night sky, a strip of water, the cliff's rock); they colour only the board's pieces */
+:root {
+  --tv-madera: #b5743a; --tv-madera-oscura: #8a5226; --tv-veta: #3a1d10;
+  --tv-acero: #a9b0c4; --tv-acero-luz: #eef0f8; --tv-acero-borde: #1c1d2a;
+  --tv-cielo: #1d0838; --tv-cielo-bajo: #2f0c48; --tv-agua: #11415e; --tv-agua-honda: #0b2c48;
+  --tv-roca: #5a2f8a; --tv-roca-honda: #3d1d63; --tv-placa-borde: #25103f; --tv-lila: rgba(190, 160, 255, 0.35);
+}
+.portada { text-align: center; display: grid; gap: var(--s-10); padding-top: var(--s-8); }
+.titulo-tv { display: flex; align-items: center; justify-content: center; gap: var(--s-10); margin: 0; text-align: center; }
 .titulo-tv .tren { font-size: 2.3rem; display: inline-block; animation: tv-vaiven 1.4s ease-in-out infinite; }
-.titulo-tv.chico .display { font-size: 1.6rem; }
-.titulo-tv.chico .tren { font-size: 1.5rem; }
+.titulo-tv.chico .display { font-size: var(--fs-160); }
+.titulo-tv.chico .tren { font-size: var(--fs-160); }
 @keyframes tv-vaiven { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-4px) rotate(3deg); } }
-.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito { margin: 0; font-size: var(--fs-85); color: var(--muted); }
 .credito a { color: var(--cyan); }
-.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
-.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
-.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: var(--s-10); align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-110); background: var(--glass); border: 1px solid var(--glass-border); }
 .tv-demo { width: 100%; max-width: 360px; margin: 0 auto; }
 
 /* The game: the stage, its dots and the countdown on top; the canvas; the beams left and the notice */
-.tv-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 900; }
+.tv-cabeza { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); font-weight: 900; }
 .tv-puntos { justify-content: flex-start; }
 /* The stage is the screen's title, and under it the train's weight, which stays */
-.tv-titulo-etapa { display: grid; gap: 2px; text-align: center; }
-.tv-etapa { margin: 0; font: 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
-.tv-carga { margin: 0; font-weight: 800; font-size: 0.95rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.tv-titulo-etapa { display: grid; gap: var(--s-2); text-align: center; }
+.tv-etapa { margin: 0; font: var(--fs-160) var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.tv-carga { margin: 0; font-weight: 800; font-size: var(--fs-90); color: var(--muted); display: flex; align-items: center; justify-content: center; gap: var(--s-8); }
 .tv-tren-mini { image-rendering: pixelated; }
-.tv-carga.pesado { color: #ff8a3d; }
+.tv-carga.pesado { color: var(--orange); }
 .tv-reloj { font-variant-numeric: tabular-nums; }
-.tv-reloj.apurado { color: #ff6b8b; }
-.tv-puntos { display: flex; gap: 6px; justify-content: center; }
-.tv-puntos span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.55); }
+.tv-reloj.apurado { color: var(--pink); }
+.tv-puntos { display: flex; gap: var(--s-6); justify-content: center; }
+.tv-puntos span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgb(var(--ink-rgb) / 0.55); }
 .tv-puntos span.hecha { background: var(--lime); border-color: var(--lime); }
-.tv-puntos span.actual { background: #fff; border-color: #fff; }
+.tv-puntos span.actual { background: var(--ink); border-color: var(--ink); }
 .tv-puntos.grande span { width: 18px; height: 18px; }
-.tv-tablero { position: relative; width: 100%; max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden;
-  background: linear-gradient(180deg, rgba(138, 77, 255, 0.18), rgba(11, 30, 63, 0.35)); border: 1px solid var(--glass-border); }
+.tv-tablero { position: relative; width: 100%; max-width: 560px; margin: 0 auto; border-radius: var(--r-16); overflow: hidden;
+  background: linear-gradient(180deg, rgb(var(--purple-rgb) / 0.18), rgb(var(--bg3-rgb) / 0.35)); border: 1px solid var(--glass-border); }
 .tv-lienzo { display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
-.tv-barra { display: grid; gap: 2px; text-align: center; min-height: 3.2em; }
+.tv-barra { display: grid; gap: var(--s-2); text-align: center; min-height: 3.2em; }
 .tv-cuenta { font-weight: 900; font-variant-numeric: tabular-nums; }
 .tv-cuenta.lleno { color: var(--yellow); }
-.tv-tablones { display: flex; gap: 3px; height: 14px; margin: 2px 0 4px; }
-.tv-tablones span { position: relative; overflow: hidden; border-radius: 3px; background: rgba(255, 255, 255, 0.08); border: 1px solid #3a1d10; }
-.tv-tablones i { position: absolute; inset: 0 auto 0 0; background: #b5743a; transition: width 0.2s; }
-.tv-tablones span:nth-child(even) i { background: #8a5226; }
-.tv-tablones.acero span { border-color: #1c1d2a; }
-.tv-tablones.acero i, .tv-tablones.acero span:nth-child(even) i { background: #a9b0c4; box-shadow: inset 0 2px 0 #eef0f8; }
-.tv-aviso { margin: 0; color: var(--muted); font-size: 0.92rem; }
-.tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tv-acciones .btn { padding-inline: 6px; }
+.tv-tablones { display: flex; gap: var(--s-2); height: 14px; margin: var(--s-2) 0 var(--s-4); }
+.tv-tablones span { position: relative; overflow: hidden; border-radius: 3px; background: var(--glass); border: 1px solid var(--tv-veta); }
+.tv-tablones i { position: absolute; inset: 0 auto 0 0; background: var(--tv-madera); transition: width 0.2s; }
+.tv-tablones span:nth-child(even) i { background: var(--tv-madera-oscura); }
+.tv-tablones.acero span { border-color: var(--tv-acero-borde); }
+.tv-tablones.acero i, .tv-tablones.acero span:nth-child(even) i { background: var(--tv-acero); box-shadow: inset 0 2px 0 var(--tv-acero-luz); }
+.tv-aviso { margin: 0; color: var(--muted); font-size: var(--fs-90); }
+.tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
+.tv-acciones .btn { padding-inline: var(--s-6); }
 .btn.armado { border-color: var(--yellow); color: var(--yellow); }
 
-.resultado { text-align: center; display: grid; gap: 10px; }
-.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-.tv-sello { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
-  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
-.tv-sello.mal { color: #ff8a8a; }
+.resultado { text-align: center; display: grid; gap: var(--s-10); }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text); }
+.tv-sello { justify-self: center; margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.tv-sello.mal { color: var(--pink); }
 .desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }
 /* The score's arithmetic, line by line, on the result */
-.tv-cuenta-final { text-align: left; display: grid; gap: 6px; }
+.tv-cuenta-final { text-align: left; display: grid; gap: var(--s-6); }
 .tv-cuenta-final p { margin: 0; }
-.tv-cuenta-final .desglose { font-size: 0.9rem; padding-left: 1.1em; }
-.tv-total { font-weight: 900; font-size: 1.1rem; color: var(--yellow); border-top: 1px solid var(--glass-border); padding-top: 6px; }
+.tv-cuenta-final .desglose { font-size: var(--fs-90); padding-left: 1.1em; }
+.tv-total { font-weight: 900; font-size: var(--fs-110); color: var(--yellow); border-top: 1px solid var(--glass-border); padding-top: var(--s-6); }
 
 @media (prefers-reduced-motion: reduce) { .titulo-tv .tren, .tv-sello { animation: none; } }
 
 
 /* The score's table: one row per stage, numbers aligned on the right */
 .tv-tabla-caja { overflow-x: auto; }
-.tv-tabla { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
-.tv-tabla th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 800; padding: 4px 3px; text-align: left; }
-.tv-tabla td { padding: 5px 3px; border-top: 1px solid var(--glass-border); white-space: nowrap; }
+.tv-tabla { width: 100%; border-collapse: collapse; font-size: var(--fs-85); font-variant-numeric: tabular-nums; }
+.tv-tabla th { font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 800; padding: var(--s-4) var(--s-2); text-align: left; }
+.tv-tabla td { padding: var(--s-4) var(--s-2); border-top: 1px solid var(--glass-border); white-space: nowrap; }
 .tv-tabla .num { text-align: right; }
 .tv-tabla tr.no td { color: var(--muted); }
 .tv-tabla tfoot td { font-weight: 900; border-top: 2px solid var(--glass-border); }
-.tv-nota { font-size: 0.82rem; margin: 0; }
-.tv-linea { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; }
-.tv-linea.total { font-size: 1.1rem; color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: 8px; }
+.tv-nota { font-size: var(--fs-85); margin: 0; }
+.tv-linea { display: flex; justify-content: space-between; gap: var(--s-10); font-weight: 800; }
+.tv-linea.total { font-size: var(--fs-110); color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: var(--s-8); }
 
 /* The result's "how it could be crossed": the known bridge with the train looping over it */
-.tv-solucion { display: grid; gap: 8px; text-align: left; }
+.tv-solucion { display: grid; gap: var(--s-8); text-align: left; }
 .tv-solucion p { margin: 0; }
 /* On a narrow phone the table drops the "Mín." column so it fits without scrolling; the note still names the minimum */
 /* Each cell: the number, and under it, small, what it is measured against or how it adds up */
 .tv-tabla td b, .tv-tabla td small { display: block; }
-.tv-tabla td small { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+.tv-tabla td small { font-size: var(--fs-75); color: var(--muted); font-weight: 600; }
 .tv-tabla tbody td { vertical-align: top; }
-.tv-leyenda { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 3px; }
-@media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } }
+.tv-leyenda { margin: 0; padding-left: 0; list-style: none; display: grid; gap: var(--s-2); }
+@media (max-width: 380px) { .tv-tabla { font-size: var(--fs-75); } }
 
 /* The strain gauge, at the top centre of the board (the sky, clear of the train and the towers) while the
    train crosses. Its plate is the scene's: night sky above, a strip of water and the cliff's rock below */
-.tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 4px 6px 3px; border-radius: 12px;
+.tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: var(--s-4) var(--s-6) var(--s-2); border-radius: var(--r-12);
   display: grid; justify-items: center; gap: 1px; pointer-events: none; line-height: 0;
-  background: linear-gradient(180deg, #1d0838 0%, #2f0c48 62%, #11415e 62%, #0b2c48 80%, #5a2f8a 80%, #3d1d63 100%);
-  border: 2px solid #25103f; box-shadow: inset 0 1px 0 rgba(157, 255, 58, 0.55); }
-.tv-medidor-titulo { line-height: 1; font: 0.78rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); }
+  background: linear-gradient(180deg, var(--tv-cielo) 0%, var(--tv-cielo-bajo) 62%, var(--tv-agua) 62%, var(--tv-agua-honda) 80%, var(--tv-roca) 80%, var(--tv-roca-honda) 100%);
+  border: 2px solid var(--tv-placa-borde); box-shadow: inset 0 1px 0 rgb(var(--lime-rgb) / 0.55); }
+.tv-medidor-titulo { line-height: 1; font: var(--fs-75) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); }
 .tv-medidor[hidden] { display: none; }
 
 /* The stage's summary, over the screen when a stage passes; the bar empties until it goes on its own */
 /* Under #confetti (z 50), so the stage confetti falls in front of it */
-.tv-felicitacion { position: fixed; inset: 0; z-index: 49; display: grid; place-items: center; padding: 16px; background: rgba(12, 4, 24, 0.72); }
-.tv-fel-caja { width: min(360px, 100%); display: grid; gap: 10px; text-align: left; }
-.tv-fel-caja h2 { margin: 0 0 4px; font: 1.35rem var(--font-display); color: var(--lime); text-align: center; letter-spacing: 0.03em; }
-.tv-fel-fila { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 8px; }
+.tv-felicitacion { position: fixed; inset: 0; z-index: 49; display: grid; place-items: center; padding: var(--s-16); background: rgb(var(--bg1-rgb) / 0.72); }
+.tv-fel-caja { width: min(360px, 100%); display: grid; gap: var(--s-10); text-align: left; }
+.tv-fel-caja h2 { margin: 0 0 var(--s-4); font: var(--fs-140) var(--font-display); color: var(--lime); text-align: center; letter-spacing: 0.03em; }
+.tv-fel-fila { display: grid; grid-template-columns: 1fr auto; column-gap: var(--s-10); border-top: 1px solid var(--glass-border); padding-top: var(--s-8); }
 .tv-fel-fila b { font-variant-numeric: tabular-nums; text-align: right; }
-.tv-fel-fila small { grid-column: 1 / -1; color: var(--muted); font-size: 0.78rem; }
-.tv-fel-barra { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
+.tv-fel-fila small { grid-column: 1 / -1; color: var(--muted); font-size: var(--fs-75); }
+.tv-fel-barra { height: 5px; border-radius: var(--r-pill); background: rgb(var(--ink-rgb) / 0.15); overflow: hidden; }
 .tv-fel-barra span { display: block; height: 100%; background: var(--yellow); transform-origin: left; animation: tv-fel-barra linear forwards; }
 @keyframes tv-fel-barra { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
 /* `?style=neon` (lab prototype, neon.js): the pieces around the board in the house style too */
 .tv-neon .tv-tren-mini { image-rendering: auto; }
-.tv-neon .tv-medidor { background: rgba(20, 8, 40, 0.82); border: 1px solid rgba(190, 160, 255, 0.35);
-  box-shadow: 0 0 14px rgba(255, 46, 136, 0.25); backdrop-filter: blur(4px); }
+.tv-neon .tv-medidor { background: rgb(var(--bg1-rgb) / 0.82); border: 1px solid var(--tv-lila);
+  box-shadow: 0 0 14px rgb(var(--pink-rgb) / 0.25); backdrop-filter: blur(4px); }
 .tv-cabeza .tv-reloj { margin-left: auto; }
-.tv-saltar { min-width: 44px; padding-inline: 8px; }
+.tv-saltar { min-width: 44px; padding-inline: var(--s-8); }

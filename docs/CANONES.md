@@ -17,6 +17,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 - Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo. The fonts are served from `public/assets/fonts/` (never from Google Fonts), with their OFL license, and every page that links `base.css` preloads `nunito-latin.woff2` and `bangers-latin.woff2` (the title font, so titles do not flash in the fallback) right before it (#851, `public/assets/css/fonts-preload.test.mjs`).
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
+- **The design system** (D-533, [DESIGN.md](DESIGN.md)): every distance, corner, shadow and text size a game writes comes from the tokens in `base.css` (`--s-*`, `--r-*`, `--edge-*`, `--fs-*`), and a component that exists there is used, not copied. Thematic colours are declared once at the top of the game's stylesheet and listed in DESIGN.md's escapes. The usability agent owns the system; its lint (phase 2 of #1188) measures it.
 - Cada juego tiene un emoji propio que lo identifica en el menú, la pestaña y la barra superior.
 - Momentos de cierre con celebración: confeti y sonido al ganar o al terminar una partida.
 
@@ -28,7 +29,7 @@ en minúsculas y con guiones (`public/hangman/` → `/hangman/`, D-192), y siemp
 ```
 public/<carpeta>/
   index.html      Pantallas como <section class="screen">, barra superior, contenedores #handoff y #cover
-  style.css       Solo lo específico del juego
+  style.css       Solo lo específico del juego: la carcasa (pantallas, portada, modos, campos, filas, sala, resultado) vive una vez en base.css (DESIGN.md §2, D-533)
   rules.js        GAME_ID, DEFAULT_CONFIG y LOCALES = { es, en, pt, de }. Datos, sin lógica ni DOM
   engine.js       Reglas puras, sin DOM ni estado global. Testeable con node
   engine.test.mjs Tests del motor (node public/<carpeta>/engine.test.mjs)
@@ -51,7 +52,10 @@ public/<carpeta>/
   activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280), or once
   what it tried reached everyone (D-372): whatever is implemented for everyone moves to La Bodega in
   the same PR, folded, a game to 🎲 Juegos guardados and an improvement to ✨ Mejoras lanzadas
-  (D-479, `public/labs/bodega.test.mjs`). The owner sends a feature live from its own card with **🚀 Publicar para todos**,
+  (D-479, `public/labs/bodega.test.mjs`). An improvement behind a runtime flag does not wait for that
+  PR: when its flag goes to *all*, `/labs/` moves its card into ✨ Mejoras lanzadas on its own each
+  time it opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that
+  removes the gate moves its HTML for good. The owner sends a feature live from its own card with **🚀 Publicar para todos**,
   which a headless session on the Mac mini turns into a PR with auto-merge (D-480).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
@@ -607,6 +611,29 @@ that moment, and only those, in the same order everywhere (D-343):
 
 ---
 
+## C-20 · One name, inside and out
+
+A game is called one thing, and everything says it (D-535, the owner's tenet of design and
+construction): the name the player reads, and its **English version for everything internal**.
+Artefactos is `artifacts`: its folder and URL (`/labs/artifacts/`), its id in the usage signal (and
+in `games.js` once it leaves the lab), the keys it keeps on the phone (`juegos-de-salon:artifacts`),
+its test hook (`window.__artifacts`), its lab card's ids, its CSS custom properties, its end-to-end
+folder (`tools/e2e/artifacts/`), its generators and its page in `docs/games/`.
+
+- **A new game** takes its English name everywhere from the start: no working name left inside
+  (no `contraption` for Artefactos), no Spanish id beside an English folder.
+- **A rename renames everything in the same PR**, inside and out: the player's name in the three
+  languages, then every id, key, file, folder and test. What a phone or the database keeps under
+  the old name is **carried over, not dropped**: a lab game moves its `localStorage` key once on
+  load; a published game also needs its Firebase paths, rankings and panel history migrated and
+  its old URL kept as a bridge (C-18), so its rename is a plan the owner approves before the PR.
+- **Before this canon** the rule was that ids never change (D-192): `'ahorcado'` lives in
+  `/hangman/`, `'reinas'` in `/minigames/queens/`. Those stay as they are until a PR renames that
+  game on purpose, with its migration: D-192's reason (an id is stored data) is now the reason to
+  migrate, not to keep a second name.
+
+---
+
 ## Lista de chequeo antes de dar por listo un juego
 
 - [ ] Los modos que ofrece (los tres, si es para dos) funcionan y la partida se puede retomar en **todos** (C-5, C-6).
@@ -627,6 +654,7 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333) and its search keywords in the three languages (D-404).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
+- [ ] One name inside and out: its folder, id, phone keys, test hook, e2e folder and spec page are the English version of the name the player reads, and a rename carries what was kept under the old one (C-20, D-535).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/look.mjs panel data` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py check` en verde (C-13).

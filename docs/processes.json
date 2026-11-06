@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "22f095b567371e5e701ca4367b24e80cd55c36c6",
+  "checkedUpTo": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -411,6 +411,90 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "e2e-clock-assumption",
+      "what": "Cup e2e assumed a fixed 27 h to day 1; failed when the cup's zone moved day 1 (#1163, #1162)",
+      "seen": [
+        {
+          "date": "2026-11-04",
+          "what": "Cup e2e assumed a fixed 27 h to day 1; failed when the cup's zone moved day 1 (#1163, #1162)",
+          "commit": "4ea8a1c9"
+        },
+        {
+          "date": "2026-11-04T05:49:22.079Z",
+          "what": "#1163 end-to-end: cup/tournament.mjs:cup",
+          "commit": "9e58b88832f6f1f5dac451783719ea9a4b860354"
+        },
+        {
+          "date": "2026-11-04T05:57:13.610Z",
+          "what": "#1162 end-to-end: cup/tournament.mjs:cup",
+          "commit": "e6a7ee59f0d8fc909dd0d6c8159bf443393fb484"
+        }
+      ],
+      "mechanism": {
+        "date": "2026-11-06",
+        "what": "clock-jumps.test.mjs: the first adelantar() in each e2e script must be anchored with medianoche(start, tz); variants.mjs anchored",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1247"
+      },
+      "signatures": [
+        "9199ef943c"
+      ]
+    },
+    {
+      "key": "design-lint-gate",
+      "what": "CI tests: tools/agents/design-lint.test.mjs · ✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted",
+      "seen": [
+        {
+          "date": "2026-11-06T03:22:13.209Z",
+          "what": "#1244 tests: tools/agents/design-lint.test.mjs",
+          "commit": "9865754edf2f31d2b323fb9f9e73fac9d5558366"
+        },
+        {
+          "date": "2026-11-06T04:04:40.130Z",
+          "what": "#1245 tests: tools/agents/design-lint.test.mjs",
+          "commit": "c2062fa5384f2aecd256e974aca6f45da15c72b3"
+        },
+        {
+          "date": "2026-11-06T04:23:53.408Z",
+          "what": "#1245 tests: tools/agents/design-lint.test.mjs",
+          "commit": "3a4f15229bc2e42ecf8afd36b4ac6f361365a0ef"
+        },
+        {
+          "date": "2026-11-06",
+          "what": "design-lint gate caught unallowlisted hits on #1244 and #1245 before merge: the test is the mechanism, working",
+          "commit": null
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "bb52322cc2"
+      ]
+    },
+    {
+      "key": "e2e-stale-assertion",
+      "what": "CI end-to-end: cup/tournament.mjs:labs · ✗ agentes: the rules are folded below the board (📖 Reglas de Agentes)",
+      "seen": [
+        {
+          "date": "2026-11-06T03:36:29.934Z",
+          "what": "#1244 end-to-end: cup/tournament.mjs:labs",
+          "commit": "11007241f11c4812fc860988e74fafbed36e5ef7"
+        },
+        {
+          "date": "2026-11-06T03:57:35.825Z",
+          "what": "#1245 end-to-end: cup/tournament.mjs:labs",
+          "commit": "803a3ef023ed803fc86b804273602fed10f3af96"
+        },
+        {
+          "date": "2026-11-06",
+          "what": "tournament.mjs:labs asserted Agentes' folded rules; two PRs had to update the script after a lab change (#1244, #1245)",
+          "commit": null
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "0faec1e3e5"
+      ]
     }
   ],
   "mechanisms": [
@@ -497,26 +581,33 @@
       "key": "e2e-gate-signature",
       "what": "failures.mjs parseLog never records end-to-end's gate job (failures.test.mjs)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155"
+    },
+    {
+      "date": "2026-11-06",
+      "key": "e2e-clock-assumption",
+      "what": "clock-jumps.test.mjs: the first adelantar() in each e2e script must be anchored with medianoche(start, tz); variants.mjs anchored",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1247"
     }
   ],
   "queueDone": [
     "#321:3",
     "#387:1",
     "#494:2",
-    "#780:1"
+    "#780:1",
+    "#1165:1"
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-03",
-      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
+      "date": "2026-11-06",
+      "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec"
     },
     "usability": {
-      "date": "2026-11-03",
-      "to": "22f095b567371e5e701ca4367b24e80cd55c36c6"
+      "date": "2026-11-06",
+      "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec"
     },
     "ideas": {
-      "date": "2026-10-28",
-      "to": "dae3ca8"
+      "date": "2026-11-04",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615"
     }
   },
   "rounds": [
@@ -663,6 +754,22 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1154",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1155",
       "note": "docs #1152, usability #1153"
+    },
+    {
+      "date": "2026-11-04",
+      "from": "22f095b567371e5e701ca4367b24e80cd55c36c6",
+      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
+      "pr": null,
+      "note": "dispatched 3; collected 8 changelog entries; tournament signature 9199ef9 shared by 2 PRs with different causes, no mechanism"
+    },
+    {
+      "date": "2026-11-06",
+      "from": "e44291b1f43b60d74678a089aa03fccf7cec8615",
+      "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1247",
+      "note": "catch-up round 11-05/11-06; 19 changelog entries collected; 3 CI signatures promoted"
     }
   ],
   "ownerDecisions": [

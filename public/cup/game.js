@@ -11,6 +11,7 @@
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { showWaiting } from '../assets/js/waiting.js';
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
@@ -24,7 +25,7 @@ import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../asset
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, ultimoDiaComodin, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, podioDecidido, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
   findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista, porJugar,
 } from './engine.js';
@@ -271,6 +272,14 @@ const zonaTexto = tz => T.zones[tz] || T.zonesMore?.[tz] || fmt(T.zoneOther, { t
 let horaPropia = false;
 // A board already drawn when the flag arrives is drawn again, with the viewer's hours
 flag('copa-crear').then(v => { horaPropia = v; if (v && L()?.meta && document.getElementById('tablero-body')?.childElementCount && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
+// «Otra copa con este grupo» under a finished cup's podium, for its admin (#1165): the create screen comes
+// filled from that cup, for the admin to check and confirm. lab: #seccion-cup-again
+let otraCopa = false;
+flag('cup-again').then(v => { otraCopa = v; if (v && L()?.meta && document.querySelector('#tablero-body .podio') && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
+// On the last day, once nothing left to play can change the first three places, the board announces the
+// podium before the cup closes (`podioDecidido`); the podium and the closing notice come as always. lab: #seccion-cup-podium-early
+let podioAnticipado = false;
+flag('cup-podium-early').then(v => { podioAnticipado = v; if (v && L()?.meta && document.getElementById('tablero-body')?.childElementCount && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
 const zonaPropia = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) { return null; } })();
 const horaEn = (ms, tz) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
 const otraHora = meta => horaPropia && !!zonaPropia && !!meta?.tz && horaEn(Date.now(), meta.tz) !== horaEn(Date.now(), zonaPropia);
@@ -433,8 +442,8 @@ async function copasDelJugador() {
 function campo(label, attrs = {}, { contador = false } = {}) {
   const input = el('input', { autocomplete: 'off', ...attrs });
   const max = Number(attrs.maxlength) || 0;
-  const cuenta = contador && max ? el('small', { class: 'contador muted', 'aria-live': 'polite' }) : null;
-  const pintar = () => { if (!cuenta) return; const n = input.value.length; cuenta.textContent = `${n} / ${max}`; cuenta.classList.toggle('lleno', n >= max); };
+  const cuenta = contador && max ? el('small', { class: 'counter muted', 'aria-live': 'polite' }) : null;
+  const pintar = () => { if (!cuenta) return; const n = input.value.length; cuenta.textContent = `${n} / ${max}`; cuenta.classList.toggle('full', n >= max); };
   input.addEventListener('input', pintar);
   pintar();
   return { input, nodo: el('div', { class: 'field' }, el('label', {}, label), input, cuenta) };
@@ -494,13 +503,10 @@ function crearCopa(...args) {
 /* Abrir una copa                                                      */
 /* ------------------------------------------------------------------ */
 
+/** Waiting, or a failure with a way out: the shared waiting screen (assets/js/waiting.js), back to La Copa's home. */
 function espera(texto, { error = false, reintentar = null } = {}) {
   mostrar('espera');
-  const body = $('#espera-body');
-  body.innerHTML = '';
-  poner(body, el('div', { class: error ? 'form-error' : 'waiting' }, texto));
-  if (reintentar) poner(body, el('button', { class: 'btn btn--cyan', onClick: reintentar }, T.retry));
-  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.cupHome));
+  showWaiting($('#espera-body'), texto, { error, retry: reintentar, retryLabel: T.retry, home: location.pathname + (PRUEBA ? '?test' : ''), homeLabel: T.cupHome });
 }
 
 /**
@@ -739,7 +745,7 @@ function hastaCuando(d, est, now) {
  * La píldora ×2: dorada para el comodín, cian para la final, que vale doble para todos. Así no se
  * confunden: un ×2 de la final no es un comodín, y los dos nunca se suman (D-151).
  */
-const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
+const claseX2 = final => `chip ${final ? 'chip--cyan' : 'chip--gold'}`;
 
 /**
  * The last day before the final, not played yet and the wildcard still unused: the card and the
@@ -762,7 +768,7 @@ function tarjetaDia(d, rotulo) {
   // Out of the cup (D-347): nothing left to play; the notice on top says why
   else if (fuera(Lc, S.yo, now)) accion = null;
   // Con el admin solo no se juega (D-118): falta con quién competir
-  else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'aviso', id: 'falta-gente' }, T.needSecond);
+  else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'notice', id: 'falta-gente' }, T.needSecond);
   else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, `${J.emoji} ${T.play}`);
   else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, `${J.emoji} ${T.resume}`);
   return el('div', { class: `panel dia-card ${est}` },
@@ -979,7 +985,7 @@ function tablero() {
     avisoAudiencia(meta),
     // In another zone, the cup's days in the viewer's hours (D-521)
     otraHora(meta) && !terminada(meta, now) ? el('p', { class: 'muted', id: 'zona-propia', style: 'margin:0' }, lineaZona(meta)) : null,
-    el('div', { class: 'btn-row' },
+    el('div', { class: terminada(meta, now) ? 'btn-row' : 'btn-row btn-row--wrap' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
       d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
       esAdmin() ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-admin', onClick: () => { SFX.tap(); admin(); } }, T.adminTab) : null,
@@ -993,6 +999,7 @@ function tablero() {
   }
 
   if (terminada(meta, now)) poner(body, podio());
+  else if (podioAnticipado) { const decidido = podioDecidido(Lc, S.yo, now); if (decidido) poner(body, podioAdelantado(decidido)); }
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
 
   // Out of the cup, or one missed day away from it (D-347): said before the days
@@ -1000,7 +1007,7 @@ function tablero() {
   const riesgo = yoFuera || terminada(meta, now) ? 0 : enRiesgo(Lc, S.yo, now);
   if (yoFuera) poner(body, el('div', { class: 'panel aviso-fuera', id: 'aviso-fuera' },
     el('p', { class: 'lead', style: 'margin:0 0 6px' }, T.outTitle), el('p', { class: 'muted', style: 'margin:0' }, fmt(T.outText, { a: yoFuera.desde, b: yoFuera.hasta }))));
-  else if (riesgo) poner(body, el('p', { class: 'aviso', id: 'aviso-riesgo' }, fmt(T.outRisk, { p: riesgo - 1, d: riesgo })));
+  else if (riesgo) poner(body, el('p', { class: 'notice', id: 'aviso-riesgo' }, fmt(T.outRisk, { p: riesgo - 1, d: riesgo })));
 
   // Tus días: el historial, el de hoy habilitado y los que vienen deshabilitados
   poner(body, misDias(d, now));
@@ -1079,8 +1086,30 @@ function podio() {
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
     medalla(T.medalLast, m.farolito),
     el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', id: 'btn-resumen', onClick: ev => conBoton(ev, compartirTabla) }, T.shareSummary),
+    // The admin starts the next cup with the same group (#1165): the create screen opens filled from this
+    // one (name, days, final, language, audience, zone, their name; a new week; tomorrow as the start),
+    // with a note to check it before Crear la copa. A cup ended early by the admin offers it too.
+    otraCopa && esAdmin() ? el('button', { class: 'btn btn--yellow btn--sm', style: 'width:100%', id: 'btn-otra-copa', onClick: () => { SFX.tap(); crearCopa({ desde: Lc.meta, quien: Lc.players?.[S.yo]?.name || '' }); } }, T.againBtn) : null,
     // The Cup is over: its way out, right under the podium (C-19)
     salidasFin('podio', { lang: LANG, raiz: RAIZ }));
+}
+
+/**
+ * The podium announced on the last day (`podioDecidido`, lab flag `cup-podium-early`): the first three
+ * places as they will stay, without points (what is left to play may still move them), and a line saying
+ * why it is already known. The real podium, with its medals and confetti, still comes when the cup closes.
+ */
+function podioAdelantado(filas) {
+  const top = filas.slice(0, 3);
+  const primeros = filas.filter(f => f.lugar === 1);
+  const titulo = primeros.length === 1 ? fmt(T.earlyTitle, { name: primeros[0].name }) : T.earlyTie;
+  return el('div', { class: 'panel podio podio--anticipado', id: 'podio-anticipado' },
+    el('h2', { class: 'display display--md center' }, titulo),
+    el('div', { class: 'escalones' }, [1, 0, 2].map(i => top[i] ? el('div', { class: `escalon e${i + 1}` },
+      el('span', { class: 'medal' }, ['🥇', '🥈', '🥉'][i]), el('b', {}, top[i].name)) : null)),
+    // A shared first place for good: the steps give one medal each, so the line names them both, as the podium does
+    primeros.length > 1 ? el('div', { class: 'medalla' }, el('b', {}, T.medalChamp), el('span', {}, primeros.map(f => f.name).join(', '))) : null,
+    el('p', { class: 'muted center', style: 'margin:0' }, T.earlyNote));
 }
 
 /* ------------------------------------------------------------------ */
@@ -1131,7 +1160,7 @@ const avisos = () => (avisosCopa ||= crearAvisos({
 }));
 
 function toast(texto) {
-  const t = el('div', { class: 'toast', role: 'status' }, texto);
+  const t = el('div', { class: 'snackbar', role: 'status' }, texto);
   document.body.append(t);
   setTimeout(() => t.remove(), 2600);
 }
@@ -1338,7 +1367,7 @@ function antesDeJugar(d) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('details', { class: 'panel', open: true }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
       CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
@@ -1525,7 +1554,7 @@ async function jugar(d, { nuevo = false } = {}) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
-  if (yaCorria) head.after(el('p', { class: 'aviso', id: 'aviso-otro-celular' }, T.resumedElsewhere));
+  if (yaCorria) head.after(el('p', { class: 'notice', id: 'aviso-otro-celular' }, T.resumedElsewhere));
   // No clock in the header while playing (D-379), except in a game whose speed scores and that has
   // no countdown of its own (`clock` in its ui.js, D-384). The end-to-end scripts read the time
   // here to check that it stops with the board (D-130)
@@ -1592,7 +1621,7 @@ async function enviar(d, fin, envio = null) {
   mostrar('resultado');
   const body = $('#resultado-body');
   body.innerHTML = '';
-  poner(body, el('div', { class: 'waiting center' }, T.sending));
+  poner(body, el('div', { class: 'waiting waiting--screen center' }, T.sending));
   try {
     await (envio || mandar(d, fin));
   } catch (e) {
@@ -1777,8 +1806,8 @@ function practica(id, varianteElegida = null) {
     // Toque y Fama: Palabra shares Toque y Fama's home card (#767): 🔢 Número goes back to it
     id === 'letras' && SUELTO && !HOY ? selectorTyf() : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
-    HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
-    delDia ? el('p', { class: 'aviso uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
+    HOY ? el('p', { class: 'notice uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
+    delDia ? el('p', { class: 'notice uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
     mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla, variante); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
@@ -1790,7 +1819,7 @@ function practica(id, varianteElegida = null) {
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, el('p', { class: 'lead', id: 'como-titulo' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
+    el('details', { class: 'panel', open: true }, el('summary', { id: 'como-titulo' }, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
@@ -1920,7 +1949,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
   head.innerHTML = '';
-  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
+  poner(head, SUELTO ? null : el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
   head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379, D-384)
   const cron = mostrarReloj(head, mod, () => reloj.leer(rel, Date.now()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -1992,7 +2021,7 @@ function resultadoEnsayo(id, r, volver, variante = null) {
   poner(body,
     el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
       el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
-    el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
+    el('div', { class: 'notice' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
     explicacion(conVariante(JUEGOS_COPA[id], variante), { s: r.s, ms: r.ms, det: r.det, copa: false }),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); volver(); } }, T.trialBack));
 }
@@ -2152,13 +2181,13 @@ function reportar(extra = {}) {
       });
       body.innerHTML = '';
       SFX.reveal();
-      poner(body, el('div', { class: 'aviso bien' }, T.reportThanks),
+      poner(body, el('div', { class: 'notice notice--good' }, T.reportThanks),
         el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
     } catch (e) {
       // No se pudo enviar, pero quedó en el dispositivo y se reenvía solo (D-109)
       if (e?.guardado) {
         body.innerHTML = '';
-        poner(body, el('div', { class: 'aviso' }, T.reportQueued),
+        poner(body, el('div', { class: 'notice' }, T.reportQueued),
           el('button', { class: 'btn btn--yellow', id: 'btn-reporte-volver', onClick: () => { SFX.tap(); volver(); } }, T.reportBack));
         return;
       }

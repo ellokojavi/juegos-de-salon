@@ -1,7 +1,7 @@
 {
   "app": {
     "es": "Juegos de Salón",
-    "en": "Party Games",
+    "en": "Parlor Games",
     "pt": "Jogos de Salão"
   },
   "languages": [
@@ -95,6 +95,7 @@
         "public/cup/games/bridges/ui.js",
         "public/cup/games/bridges/visitors.js",
         "public/cup/games/case/engine.js",
+        "public/cup/games/case/style.css",
         "public/cup/games/case/ui.js",
         "public/cup/games/connections/engine.js",
         "public/cup/games/connections/grillas-en.js",
@@ -1139,6 +1140,7 @@
     "public/assets/js/vapid.js",
     "public/assets/js/vendor/qrcode.js",
     "public/assets/js/vigia.js",
+    "public/assets/js/waiting.js",
     "public/assets/season/templates.js",
     "public/battleship/engine.js",
     "public/battleship/flota.js",
@@ -1251,6 +1253,10 @@
     "public/hangman/engine.js",
     "public/hangman/game.js",
     "public/hangman/rules.js",
+    "public/labs/artifacts/engine.js",
+    "public/labs/artifacts/game.js",
+    "public/labs/artifacts/levels.js",
+    "public/labs/artifacts/scene.js",
     "public/labs/bodega.js",
     "public/labs/bridges/trains/sheet.js",
     "public/labs/bridges/visitors/sheet.js",
@@ -1264,6 +1270,9 @@
     "public/labs/dominorama/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
+    "public/labs/flap/engine.js",
+    "public/labs/flap/game.js",
+    "public/labs/flap/scene.js",
     "public/labs/fourth-king/engine.js",
     "public/labs/fourth-king/game.js",
     "public/labs/fourth-king/rules.js",
@@ -1271,6 +1280,11 @@
     "public/labs/julep/engine.js",
     "public/labs/julep/game.js",
     "public/labs/julep/rules.js",
+    "public/labs/launched.js",
+    "public/labs/memory/engine.js",
+    "public/labs/memory/game.js",
+    "public/labs/memory/rules.js",
+    "public/labs/memory/sprites.js",
     "public/labs/publish.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
@@ -1388,15 +1402,19 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
+    "public/labs/artifacts/engine.test.mjs",
     "public/labs/bodega.test.mjs",
     "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/dominorama/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/flap/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
     "public/labs/julep/engine.test.mjs",
+    "public/labs/launched.test.mjs",
     "public/labs/listed.test.mjs",
+    "public/labs/memory/engine.test.mjs",
     "public/labs/stack/engine.test.mjs",
     "public/labs/stick/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -1413,8 +1431,10 @@
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
+    "tools/agents/conflict-markers.test.mjs",
     "tools/agents/covers.test.mjs",
     "tools/agents/decision.test.mjs",
+    "tools/agents/design-lint.test.mjs",
     "tools/agents/document.test.mjs",
     "tools/agents/english.test.mjs",
     "tools/agents/failures.test.mjs",
@@ -1432,12 +1452,14 @@
     "tools/agents/processes.test.mjs",
     "tools/agents/repo-weight.test.mjs",
     "tools/agents/round-watch.test.mjs",
+    "tools/agents/tokens-rgb.test.mjs",
     "tools/agents/usability-lint.test.mjs",
     "tools/agents/wait-pr.test.mjs",
     "tools/cloudflare/inbox-worker.test.mjs",
     "tools/e2e/affected.test.mjs",
     "tools/e2e/already-tested.test.mjs",
     "tools/e2e/changes.test.mjs",
+    "tools/e2e/clock-jumps.test.mjs",
     "tools/e2e/groups.test.mjs",
     "tools/e2e/inert.test.mjs",
     "tools/e2e/narrow.test.mjs",
@@ -1463,6 +1485,7 @@
     "tools/push/release.test.mjs",
     "tools/push/schedule.test.mjs",
     "tools/push/webpush.test.mjs",
+    "tools/referee/gateway.test.mjs",
     "tools/release/changelog.test.mjs",
     "tools/release/json-ld.test.mjs",
     "tools/release/merge-report.test.mjs",
@@ -1477,6 +1500,7 @@
     "agents/game.mjs",
     "already-tested.mjs",
     "already-tested.test.mjs",
+    "artifacts/lab.mjs",
     "battleship/alignment.mjs",
     "battleship/chat.mjs",
     "battleship/languages.mjs",
@@ -1495,9 +1519,11 @@
     "changes.mjs",
     "changes.test.mjs",
     "ci.mjs",
+    "clock-jumps.test.mjs",
     "code/lab.mjs",
     "contact-sheet.mjs",
     "cup-games/languages.mjs",
+    "cup/again.mjs",
     "cup/archived.mjs",
     "cup/back-board.mjs",
     "cup/create-week.mjs",
@@ -1518,10 +1544,12 @@
     "daily-player.mjs",
     "daily-variants.mjs",
     "daily.mjs",
+    "design/page.mjs",
     "dominorama/lab.mjs",
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
     "feedback-prod.mjs",
+    "flap/lab.mjs",
     "fourth-king/game.mjs",
     "fourth-king/lab.mjs",
     "fourth-king/languages.mjs",
@@ -1550,6 +1578,7 @@
     "julep/languages.mjs",
     "julep/local.mjs",
     "julep/online.mjs",
+    "labs/launched.mjs",
     "labs/publish.mjs",
     "landing-fold.mjs",
     "lang-from-url.mjs",
@@ -1561,6 +1590,7 @@
     "liars-dice/rooms-classic.mjs",
     "liars-dice/shake-clock.mjs",
     "look.mjs",
+    "memory/lab.mjs",
     "narrow.mjs",
     "narrow.test.mjs",
     "output.mjs",
@@ -1627,8 +1657,16 @@
       "title": "Decisions"
     },
     {
+      "path": "docs/DESIGN.md",
+      "title": "The design system"
+    },
+    {
       "path": "docs/LANES.md",
       "title": "Merge lanes (D-519)"
+    },
+    {
+      "path": "docs/LEARNING.md",
+      "title": "The learning programme: AI in the game, and what the owner learns building it"
     },
     {
       "path": "docs/MERGING.md",
@@ -1675,8 +1713,16 @@
       "title": "Guía de usabilidad"
     },
     {
+      "path": "docs/design/cup-unification.md",
+      "title": "La Copa inside the design system: the analysis (phase 7, #1196)"
+    },
+    {
       "path": "docs/games/agents.md",
       "title": "🕵️ Agentes"
+    },
+    {
+      "path": "docs/games/artifacts.md",
+      "title": "⚙️ Artefactos (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/battleship.md",
@@ -1711,12 +1757,20 @@
       "title": "La Copa"
     },
     {
+      "path": "docs/games/design.md",
+      "title": "🎨 The components page (the design system, in the lab)"
+    },
+    {
       "path": "docs/games/dominorama.md",
       "title": "🎲 Dominorama (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/exploding-numbers.md",
       "title": "💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)"
+    },
+    {
+      "path": "docs/games/flap.md",
+      "title": "🐤 Aletazo (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/fourth-king.md",
@@ -1737,6 +1791,10 @@
     {
       "path": "docs/games/liars-dice.md",
       "title": "Diseño: Dudo"
+    },
+    {
+      "path": "docs/games/memory.md",
+      "title": "👀 Memorice (lab prototype, in Games being tried)"
     },
     {
       "path": "docs/games/paint-mines.md",
@@ -1761,6 +1819,30 @@
     {
       "path": "docs/games/timeline.md",
       "title": "Diseño: Línea de Tiempo"
+    },
+    {
+      "path": "docs/learning/01-content-pipeline.md",
+      "title": "Piece 1 · Endless content with quality control"
+    },
+    {
+      "path": "docs/learning/02-factory-metrics.md",
+      "title": "Piece 2 · The factory's dashboard"
+    },
+    {
+      "path": "docs/learning/03-taste-model.md",
+      "title": "Piece 3 · The owner's taste as data"
+    },
+    {
+      "path": "docs/learning/04-earned-autonomy.md",
+      "title": "Piece 4 · Earned autonomy"
+    },
+    {
+      "path": "docs/learning/05-hypothesis-loop.md",
+      "title": "Piece 5 · Closing the hypothesis loop"
+    },
+    {
+      "path": "docs/learning/06-model-placement.md",
+      "title": "Piece 6 · Where the model lives: one judge in three places"
     },
     {
       "path": "firebase/README.md",

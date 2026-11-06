@@ -185,3 +185,7 @@ export async function sha256, randomNonce, verifyPlayer({ layout, salt, commit, 
 ## Excepciones a los cánones
 
 Ninguna. La flota se compromete con `sha256(JSON(layout)+sal)` y se verifica al final, recalculando cada respuesta (C-10).
+
+## Migrated to the design system (D-533, #1193)
+
+The stylesheet lost its copies of the game shell (screens, the cover's hero, modes, fields and their error, the toggle row and its switch, the room's code, QR, "or" and waiting, whose turn, the result's hero), which live once in `base.css`; the ⚓ takes the shell's `.icon--cyan` glow and the toggle row's text sits in the shell's `.txt`. What is the game's own stays on the tokens: the sea and the fleet as its own tokens at the top of the sheet (`--mar`, `--casco-*`, and the fire's edges and flash), `.status.mine` / `.status.theirs` as a box on top of the shell's status (D-92), the boards, the chips and the battle. Its escapes in DESIGN.md §4: the cell's 4 px corner (2 px on the small board) and the small board's 0.55 rem glyphs and labels. The design lint reports zero on it beyond those. For the player: the shell's yellow 58 × 34 switch instead of the lime 52 × 30 one, whose-turn in the shell's size, the small board's labels a step smaller and a few sizes on the nearer step.

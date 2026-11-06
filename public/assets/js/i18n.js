@@ -407,7 +407,7 @@ export const COMMON = {
     },
   },
   en: {
-    appTitle: 'Party Games',
+    appTitle: 'Parlor Games',
     appSub: 'Short tabletop, logic and skill games to play alone or with friends.',
     appFree: 'Free, no install, no account.',
     players: 'players', minutes: 'min',
@@ -420,7 +420,7 @@ export const COMMON = {
     code: 'code on GitHub', privacy: 'Privacy', volverMenu: '🏠 Back to the menu', volverLab: '🧪 Back to the lab', atras: '‹ Back', menu: 'Menu', soon: 'Coming soon', newGame: 'New', popularGame: 'Popular', or: 'or',
     opening: 'Opening room…', joining: 'Joining…', playOnePhone: '📱 Play on one phone',
     backGuard: { title: 'Leave the game?', body: 'If you leave now, the game stays unfinished.', stay: '▶ Keep playing', leave: 'Leave' },
-    share: 'Share Party Games',
+    share: 'Share Parlor Games',
     shareApp: {
       context: '{n} games for your phone',
       lines: [
@@ -436,8 +436,8 @@ export const COMMON = {
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
     shareSheet: {
-      title: 'Share Party Games',
-      videoTitle: 'Party Games video',
+      title: 'Share Parlor Games',
+      videoTitle: 'Parlor Games video',
       invite: '💬 Invite to play',
       inviteNote: 'A message with the link to start playing.',
       video: '🎬 Share the video',
@@ -563,14 +563,14 @@ export const COMMON = {
       avSilenciado: "Done: you won't get any more One a Day notifications.",
       avListo: "✅ Done. We'll remind you every day at {h}:00.",
       avPrueba: 'This is how One a Day notifications will look.',
-      avPaso3: 'Open **Party Games** from the new icon, tap **One a Day** and pick the time again.',
-      avOtraApp: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in Safari and pick the time again.",
+      avPaso3: 'Open **Parlor Games** from the new icon, tap **One a Day** and pick the time again.',
+      avOtraApp: "You're inside another app, and from there Parlor Games can't be added to the home screen. Copy the link, open it in Safari and pick the time again.",
       avError: "Notifications couldn't be turned on. Try again.",
       mismosDados: 'Everyone starts with the same dice.',
       mismaFlota: 'Everyone faces the same phone fleet.',
     },
     ins: {
-      title: "Party Games as an app",
+      title: "Parlor Games as an app",
       sub: "Add it to your home screen and open it with one tap.",
       add: "Add",
       dismiss: "Don't show again",
@@ -591,8 +591,8 @@ export const COMMON = {
       close: "Close",
       otherTitleIos: "Open the link in Safari",
       otherTitleAndroid: "Open the link in Chrome",
-      otherLeadIos: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in **Safari** and tap **Add** again.",
-      otherLeadAndroid: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in **Chrome** and tap **Add** again.",
+      otherLeadIos: "You're inside another app, and from there Parlor Games can't be added to the home screen. Copy the link, open it in **Safari** and tap **Add** again.",
+      otherLeadAndroid: "You're inside another app, and from there Parlor Games can't be added to the home screen. Copy the link, open it in **Chrome** and tap **Add** again.",
       copy: "Copy link",
       copied: "Link copied.",
     },

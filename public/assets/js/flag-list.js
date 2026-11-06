@@ -15,12 +15,15 @@ export const FLAGS = {
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
   'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
   'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
+  'cup-podium-early': '🏆 La Copa: on the last day, once nothing left to play can change the first three places, the board announces the podium before the cup closes',
+  'cup-again': '🏆 La Copa: «Otra copa con este grupo» under a finished cup\'s podium, for its admin: the create screen comes filled from that cup, to check and confirm (#1165)',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stick': '🥷 Shinobi: the game, on the home page, the search and new cups (D-517)',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
+  'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'lab-ready': '✅ Labs: lab use of each flag is counted, and its card says when it is ready to 🚀 (D-528)',
 };
 

@@ -51,7 +51,7 @@ export const TEXTS = {
   },
   en: {
     title: 'Privacy',
-    lead: 'Party Games (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
+    lead: 'Parlor Games (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
     sections: [
       { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser.'] },
       {

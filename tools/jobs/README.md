@@ -15,7 +15,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 | `where` | What it is | Use it for |
 |---|---|---|
 | `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (push notifications) |
-| `mac` | a launchd job on the owner's Mac mini: a plain script, or `claude-task.mjs <prompt>` for a headless Claude session (D-451) | frequent checks (free to check, Claude only when there is work) and the rounds that are Claude's work every time (processes, weekly report), their prompt in `tools/jobs/prompts/<id>.md` |
+| `mac` | a launchd job on the owner's Mac mini: a plain script, or `claude-task.mjs <prompt>` for a headless Claude session (D-451) | frequent checks (free to check, Claude only when there is work) and the rounds that are Claude's work every time (processes, weekly report), their prompt in `tools/jobs/prompts/<id>.md`; or a **service** (`service: true`): a process launchd keeps alive instead of running on a schedule (the `referee` gateway, `tools/referee/`) |
 | `hook` | a Claude Code hook (`.claude/settings.json`) | what runs with each session |
 
 ## Adding a job
@@ -24,7 +24,9 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
    `mac`, `cron` for `github`), `what` and its `decisions`.
 2. `mac`: a script in `tools/jobs/` that exits 0 when all went well and prints a last line that sums
    it up (`status` shows it). Then `node tools/jobs/jobs.mjs install` on the Mac mini, after merging and
-   pulling the main folder: launchd runs the main folder's code, never a worktree's.
+   pulling the main folder: launchd runs the main folder's code, never a worktree's. A service has no
+   schedule: `service: true` and a `command` that never exits; launchd starts it on load and restarts it
+   (`KeepAlive`), so `jobs.mjs run <id>` refuses it.
 3. `github`: the workflow, with the same cron. A Claude round: a `mac` job whose command is
    `node tools/jobs/claude-task.mjs tools/jobs/prompts/<id>.md` (`jobs.test.mjs` checks every file the
    prompt names exists); not a desktop-app or claude.ai scheduled task, which stop or cannot reach the Mac (D-451).

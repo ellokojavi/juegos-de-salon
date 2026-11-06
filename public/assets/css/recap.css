@@ -1,15 +1,20 @@
 /* The recap window (D-423): splash.css draws the window; this sheet, its table. recap.js loads both
-   only when it opens one. Up to ten rows (a cup's maximum) fit a 320 px phone without scrolling sideways. */
+   only when it opens one. Up to ten rows (a cup's maximum) fit a 320 px phone without scrolling sideways.
+   Migrated to the design system (D-533, #1193): written on the tokens; its own colours are the tokens below. */
+:root {
+  --rc-sube: #4ade80;                  /* a player who climbed */
+  --rc-sombra: rgba(0, 0, 0, 0.45);    /* the shared image's drop */
+}
 .recap { width: min(94vw, 520px); }
 .recap-titulo { font-size: clamp(1.7rem, 6vw, 2.4rem); overflow-wrap: anywhere; }
 .recap-lead { color: var(--ink); font-weight: 800; }
 .recap-tabla-caja { flex: none; overflow-x: auto; } /* never shrunk: with ten rows the window scrolls, not the table */
-.recap-tabla { width: 100%; border-collapse: separate; border-spacing: 0 4px; font-size: 0.95rem; text-align: left; }
-.recap-tabla th { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0 6px; }
+.recap-tabla { width: 100%; border-collapse: separate; border-spacing: 0 4px; font-size: var(--fs-90); text-align: left; }
+.recap-tabla th { font-size: var(--fs-75); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0 6px; }
 .recap-tabla td { padding: 6px; background: var(--glass); }
 .recap-tabla td:first-child { border-radius: 12px 0 0 12px; }
 .recap-tabla td:last-child { border-radius: 0 12px 12px 0; }
-.recap-tabla tr.mia td { background: rgba(46, 230, 214, 0.18); box-shadow: 0 2px 0 -1px var(--cyan) inset, 0 -2px 0 -1px var(--cyan) inset; }
+.recap-tabla tr.mia td { background: rgb(var(--cyan-rgb) / 0.18); box-shadow: 0 2px 0 -1px var(--cyan) inset, 0 -2px 0 -1px var(--cyan) inset; }
 .recap-tabla tr.fuera td { opacity: 0.5; }
 .recap-lugar { width: 2.2em; text-align: center; font-weight: 900; }
 th.recap-lugar { text-align: center; }
@@ -20,19 +25,19 @@ th.recap-lugar { text-align: center; }
 .recap-linea circle { fill: var(--muted); }
 tr.mia .recap-linea polyline { stroke: var(--cyan); }
 tr.mia .recap-linea circle { fill: var(--cyan); }
-.recap-delta { display: inline-block; min-width: 2.2em; margin-left: 4px; font-size: 0.8rem; font-weight: 900; text-align: center; vertical-align: middle; }
-.recap-delta.sube { color: #4ade80; }
+.recap-delta { display: inline-block; min-width: 2.2em; margin-left: 4px; font-size: var(--fs-75); font-weight: 900; text-align: center; vertical-align: middle; }
+.recap-delta.sube { color: var(--rc-sube); }
 .recap-delta.baja { color: var(--pink); }
 .recap-delta.igual { color: var(--muted); }
 .recap-pts { text-align: right; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; }
 th.recap-pts { text-align: right; }
-.recap-imagen { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45); }
+.recap-imagen { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 6px 24px var(--rc-sombra); }
 .recap-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .recap-nota { margin: -6px 0 0; font-size: 0.85rem; color: var(--muted); }
 .recap-ir { align-self: center; min-width: 220px; text-align: center; text-decoration: none; }
 @media (max-width: 600px) {
   .recap-ir { width: 100%; box-sizing: border-box; }
-  .recap-tabla { font-size: 0.88rem; }
+  .recap-tabla { font-size: var(--fs-90); }
   .recap-tabla td { padding: 4px; }
   .recap-tabla { border-spacing: 0 3px; }
 }
@@ -42,5 +47,5 @@ th.recap-pts { text-align: right; }
 }
 @media (max-width: 360px) {
   .recap-linea { width: 40px; }
-  .recap-delta { min-width: 1.8em; margin-left: 2px; font-size: 0.74rem; }
+  .recap-delta { min-width: 1.8em; margin-left: 2px; font-size: var(--fs-75); }
 }

@@ -803,7 +803,7 @@ function renderSetup(mode, prefillCode = '') {
   else form.append(nameField('A', T.yourName, savedName));
   // Config (el que se une a una sala usa la config del anfitrión)
   const seg = el('div', { class: 'seg' }, ...DIGIT_OPTIONS.map(d => el('button', { type: 'button', class: d === config.digits ? 'on' : '', onClick: e => { config.digits = d; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, d)));
-  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
+  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'field' }, el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), hint ? el('small', {}, hint) : null), b)); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), mode === 'local' ? sw('replica', T.replica, T.replicaHint) : null, sw('zeroFirst', T.zeroFirst));
   const actions = $('#setup-actions'); actions.innerHTML = '';

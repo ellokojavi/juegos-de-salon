@@ -1,0 +1,27 @@
+/* The components page (D-533, phase 3 of #1188): layout only, on the tokens. Every component it
+   shows is the shared class itself, never a copy: the design lint reports zero here. */
+.ds-pagina { padding-bottom: var(--s-32); }
+.ds-pagina code { font-family: var(--font-num); font-size: var(--fs-85); background: var(--glass); padding: 0 var(--s-4); border-radius: var(--r-8); }
+.ds-pagina a { color: var(--cyan); }
+.ds-muestras { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: var(--s-10); }
+.ds-muestra { display: grid; gap: var(--s-4); font-size: var(--fs-85); overflow-wrap: anywhere; }
+.ds-muestra-color { display: block; height: 44px; border-radius: var(--r-12); border: 1px solid var(--glass-border); }
+.ds-escala { display: grid; gap: var(--s-8); }
+.ds-paso { display: flex; align-items: center; gap: var(--s-12); min-height: var(--s-24); }
+.ds-paso b { min-width: 56px; }
+.ds-barra { display: block; height: var(--s-12); background: var(--cyan); border-radius: var(--r-pill); }
+.ds-esquina { display: block; width: 44px; height: 44px; background: var(--glass); border: 2px solid var(--cyan); }
+.ds-escala--texto .ds-paso { min-height: 0; }
+.ds-num { font-family: var(--font-num); font-weight: 900; font-variant-numeric: tabular-nums; color: var(--yellow); }
+.ds-caja { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--r-12); padding: var(--s-10) var(--s-14); }
+/* The full-screen pieces (phase 3b, #1200): a phone-sized frame, and .ds-marco pins the piece to it
+   (absolute, not fixed). isolation keeps their z-index inside the frame, overflow keeps them in it. */
+.ds-rotulo { margin: var(--s-8) 0 0; font-size: var(--fs-100); }
+.ds-telefono { position: relative; isolation: isolate; overflow: hidden; width: 100%; max-width: 360px; height: 560px; margin: 0 auto; border: 2px solid var(--glass-border); border-radius: var(--r-22); background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3)); }
+.ds-telefono .ds-marco { position: absolute; }
+.ds-telefono--flujo { height: auto; }
+.ds-telefono--flujo > .panel { margin: 0; border: 0; }
+.ds-telefono--pie { padding: var(--s-8) var(--s-18) var(--s-32); }
+.ds-separa { margin-top: var(--s-18); }
+.ds-sin-margen { margin: 0; }
+.ds-quien { color: var(--yellow); }

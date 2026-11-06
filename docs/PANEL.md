@@ -380,7 +380,7 @@ de eso, un `401` en ese `fetch` es una señal de que las reglas y el código se 
 ```
 public/panel/
   index.html          Pantalla de entrada y el panel. English only (D-350, see below)
-  style.css           Lo específico del panel; el resto sale de base.css
+  style.css           What is the panel's own, on the design system's tokens (D-533; its three colours `--pn-*` and escapes in DESIGN.md §4); the rest comes from base.css
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
   aggregate.test.mjs  node public/panel/aggregate.test.mjs

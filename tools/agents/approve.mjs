@@ -132,6 +132,17 @@ export function invalidAction(action) {
   }
 }
 
+/** The label of a 🔴 PR, whose description carries the owner's decision (lanes.mjs). */
+export const PR_LABEL = 'needs-owner';
+
+/** Why an action may not ride in PR n's description, or null: only approve-pr and merge of n itself, or nothing. */
+export function invalidInPr(action, n) {
+  const a = normalizeAction(action);
+  if (a?.type === 'nothing') return null;
+  if (!['approve-pr', 'merge'].includes(a?.type)) return `${a?.type} is not allowed in a PR's description`;
+  return a.pr === n ? null : `a PR's description only decides that PR (#${n}), not #${a.pr}`;
+}
+
 /**
  * The checked boxes that still have no result next to them: those of a run GitHub cancelled.
  * With three boxes checked almost at once, GitHub keeps one run in progress and one pending, and
@@ -151,13 +162,17 @@ const yesNo = option => ({ si: 'Yes', pub: 'Yes, and publish', no: 'No' })[optio
  * `current` is the body as it is when running (it may be newer than the event's): the decisions
  * already made and the boxes left without a result come from it.
  */
-export function plan(event, owner = OWNER, current = event?.issue?.body) {
-  const { action, issue, sender, changes } = event || {};
+export function plan(event, owner = OWNER, current = (event?.issue || event?.pull_request)?.body) {
+  const { action, sender, changes } = event || {};
+  // A 🔴 PR carries its own decision in its description (docs/LANES.md): its edit counts like an issue's
+  const pr = event?.pull_request, issue = event?.issue || pr;
   if (action !== 'edited') return { ignore: 'not an edit' };
-  if (!issue?.labels?.some(l => LABELS.includes(l.name))) return { ignore: `the issue does not have the ${LABEL} label` };
-  if (issue.state !== 'open') return { ignore: 'the issue is closed' };
+  if (pr) {
+    if (!pr.labels?.some(l => l.name === PR_LABEL)) return { ignore: `the PR does not have the ${PR_LABEL} label` };
+  } else if (!issue?.labels?.some(l => LABELS.includes(l.name))) return { ignore: `the issue does not have the ${LABEL} label` };
+  if (issue.state !== 'open') return { ignore: `the ${pr ? 'PR' : 'issue'} is closed` };
   if (sender?.login !== owner) return { ignore: `edited by ${sender?.login}, not ${owner}` };
-  if (![owner, ...AUTHORS.slice(1)].includes(issue.user?.login)) return { ignore: `the issue was opened by ${issue.user?.login}: only those opened by the bot or ${owner} count` };
+  if (!pr && ![owner, ...AUTHORS.slice(1)].includes(issue.user?.login)) return { ignore: `the issue was opened by ${issue.user?.login}: only those opened by the bot or ${owner} count` };
   const before = changes?.body?.from;
   if (typeof before !== 'string') return { ignore: 'the edit did not change the body' };
   const actions = readActions(issue.body);
@@ -171,7 +186,8 @@ export function plan(event, owner = OWNER, current = event?.issue?.body) {
     if (alreadyDone.has(decision) || taken.has(decision)) { warnings.push(`${question(before, decision)}: already answered, so the new ${yesNo(option)} was not carried out.`); continue; }
     const list = actions[op];
     if (!Array.isArray(list)) { warnings.push(`${question(before, decision)}: the ${yesNo(option)} has no actions.`); continue; }
-    const bad = list.map(invalidAction).filter(Boolean);
+    // Anyone who can push writes a PR's description: there a box only approves, merges or leaves that same PR
+    const bad = list.map(a => (pr ? invalidInPr(a, pr.number) : null) || invalidAction(a)).filter(Boolean);
     if (bad.length) { warnings.push(`${question(before, decision)}: the ${yesNo(option)} was not carried out (${bad.join('; ')}).`); continue; }
     taken.add(decision);
     plans.push({ decision, option, actions: list });
@@ -253,6 +269,10 @@ function perform(action, repo) {
   }
 }
 
+// The issues API reads and writes a PR's description too: one path for both
+const readBody = (repo, n) => JSON.parse(gh('api', `repos/${repo}/issues/${n}`)).body || '';
+const writeBody = (repo, n, body) => gh('api', '-X', 'PATCH', `repos/${repo}/issues/${n}`, '-f', `body=${body}`);
+
 function main() {
   const i = process.argv.indexOf('--dry-run');
   const dryRun = i > 0;
@@ -260,12 +280,13 @@ function main() {
   if (!path) { console.error('Usage: node tools/agents/approve.mjs [--dry-run <event.json>]'); process.exit(2); }
   const event = JSON.parse(readFileSync(path, 'utf8'));
   // The current body: an earlier run may have written results after this event
-  const current = dryRun ? event.issue.body : JSON.parse(gh('issue', 'view', String(event.issue.number), '-R', process.env.GITHUB_REPOSITORY, '--json', 'body')).body;
+  const item = event.issue || event.pull_request;
+  const current = dryRun ? item.body : readBody(process.env.GITHUB_REPOSITORY, item.number);
   const p = plan(event, OWNER, current);
   if (p.ignore) { console.log(`Nothing to do: ${p.ignore}.`); return; }
   if (dryRun) { console.log(JSON.stringify(p, null, 2)); return; }
 
-  const repo = process.env.GITHUB_REPOSITORY, n = String(event.issue.number);
+  const repo = process.env.GITHUB_REPOSITORY, n = String(item.number);
   const lines = [...p.warnings.map(w => `⚠️ ${w}`)];
   let failed = false;
   for (const { decision, option, actions } of p.plans) {
@@ -280,15 +301,14 @@ function main() {
       const why = String(e.stderr || '').trim().split('\n').filter(Boolean).pop() || String(e.message || e).split('\n')[0];
       result = `❌ ${[...done, why].join('; ')}`;
     }
-    lines.push(`**${question(event.issue.body, decision)}** ${yesNo(option)}. ${result}`);
+    lines.push(`**${question(item.body, decision)}** ${yesNo(option)}. ${result}`);
     // Re-read the body before writing: another box may have been checked while this ran.
-    const body = JSON.parse(gh('issue', 'view', n, '-R', repo, '--json', 'body')).body;
-    gh('issue', 'edit', n, '-R', repo, '--body', recordDone(body, decision, option, result.split(';')[0], ok));
+    writeBody(repo, n, recordDone(readBody(repo, n), decision, option, result.split(';')[0], ok));
   }
   if (failed) lines.push('', 'To retry what failed, uncheck the box and check it again.');
   gh('issue', 'comment', n, '-R', repo, '--body', lines.join('\n'));
   // The PR is merged (or the owner said No): nothing is left to decide, so the question goes away
-  if (!failed && closesWhenDone(event.issue.title)) gh('issue', 'close', n, '-R', repo, '--reason', 'completed');
+  if (!failed && event.issue && closesWhenDone(event.issue.title)) gh('issue', 'close', n, '-R', repo, '--reason', 'completed');
   console.log(lines.join('\n'));
   if (failed) process.exit(1);
 }

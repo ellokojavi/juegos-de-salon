@@ -137,3 +137,7 @@ Ninguna. Se llevó al canon en el PR de Cuarto Rey (D-213): motor y tests (C-2, 
 cifras en `--font-num` (C-1, D-30; las esquinas de las cartas también, letras incluidas, para que el mazo se lea
 parejo), botones de género de 44 px (C-8), gancho `window.__cuartoRey` (C-14), mesa recordada con `createNameStore`
 (C-6) y `trackFinish` (C-7, D-210).
+
+## Migrated to the design system (D-533, #1193)
+
+Cuarto Rey's stylesheet lost its copies of the game shell (screens, the cover's hero, the player's row, the form's error, the handoff's scrolling), which live once in `base.css`, and the rest (the card, the table, the seats, the result, the mini-games, the ranking, the history) is written on the tokens. What the game adds to a shell component stays as a modifier with its reason: the player row's fourth column for the gender selector and its narrow ✕ with a 44 px touch area, the cover's crown that wiggles, the handoff compacted by its id. The king's gold and the big card's drop are its own tokens; the countdown (3.2 rem), the final crown (3.6 rem) and the handoff's glasses (3.8 rem) are allowlisted with their reason (DESIGN.md §4). The design lint went from 88 hits to zero beyond those three. The shell wins where the copy differed: the player row is a well with the name typed straight into it (no inner input box).

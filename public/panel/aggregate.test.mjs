@@ -1,7 +1,7 @@
 // Ejecutar: node public/panel/aggregate.test.mjs
 import assert from 'node:assert/strict';
 import { MODE_IDS } from '../assets/js/games.js';
-import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango, avisosDelRango, vueltaAtrasada, salud, compararVersion, navegadorLabel } from './aggregate.js';
+import { DAY, roomLog, paginate, flagOf, whenLabel, RANGOS, rangeOf, hoyUtcLabel, groupDays, periodLabel, ROOM_TTL, liveRooms, esJugada, connections, summarize, top, tzLabel, ago, dayLabel, codesOfDays, splitByEnv, liveLocal, VIVA_SIN_RED_MS, ZONA_PANEL, horaLabel, fechaLabel, diaPanel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, trafico, origenLabel, origenesAgrupados, idiomasDeSalas, idiomasDelRango, avisosDelRango, vueltaAtrasada, salud, compararVersion, navegadorLabel } from './aggregate.js';
 import { ZONA as ZONA_COPA } from '../cup/engine.js';
 
 const now = 20342 * DAY + 15 * 60 * 60 * 1000; // día 20342, 15:00 UTC
@@ -250,8 +250,11 @@ assert.equal(ninguna.ajenas.length, 3);
   const hoy = Math.floor(ahora / DAY);
   const largo = id => { const r = rangeOf(id, ahora); return r.to - r.from + 1; };
 
-  assert.deepEqual(RANGOS.map(r => r.id), ['7d', '30d', '60d', '90d', '1y', 'ytd'], 'los seis rangos, en orden');
+  assert.deepEqual(RANGOS.map(r => r.id), ['today', '7d', '30d', '60d', '90d', '1y', 'ytd'], 'los siete rangos, en orden');
+  assert.equal(largo('today'), 1, 'hoy: el día UTC en curso');
   assert.equal(largo('7d'), 7);
+  // 3 Nov 2026 is PST: midnight UTC is 16:00 the day before
+  assert.equal(hoyUtcLabel(Date.UTC(2026, 10, 3, 5, 20)), '5h 20m of 24 · since 16:00 Mon, Pacific time');
   assert.equal(largo('30d'), 30);
   assert.equal(largo('60d'), 60);
   assert.equal(largo('90d'), 90);

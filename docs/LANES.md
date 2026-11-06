@@ -20,12 +20,16 @@ first rule that matches a file gives its lane. A new kind of risky file is a new
 ## The 🔴 gate
 
 The `lane` job in `tests.yml` runs on every PR push. For 🔴 it adds the `needs-owner` label, sets the
-`owner-approval` status red on the PR's head commit and opens a one-tap decision issue (D-273). The
-owner's Yes runs `approve-pr` (`approve.mjs`), which turns `owner-approval` green **for that commit
-only**: a later push asks again. The same Yes then runs `merge`: it waits for `tests` and `end-to-end`,
-merges and publishes the site, and the issue closes itself, so an approved PR is never left waiting.
-If a check fails, the issue says so and stays open; ticking again after the fix retries. For 🟢/🟡 the job
-sets `owner-approval` green at once.
+`owner-approval` status red on the PR's head commit and writes a one-tap decision (D-273) **at the top
+of the PR's own description**, between `<!-- owner-approval:start -->` and `<!-- owner-approval:end -->`
+(D-531): no separate issue. A later push replaces that block with a fresh, unchecked one for the new
+commit, in the same place. The owner's Yes (from the PR page, on the phone too) runs `approve.yml`
+through `pull_request_target`, so main's copy of `approve.mjs` obeys, never the PR's; there a box may
+only approve and merge that same PR (`invalidInPr`). `approve-pr` turns `owner-approval` green **for
+that commit only**, then `merge` waits for `tests` and `end-to-end`, merges and publishes the site.
+If a check fails, the result is written next to the box; unticking and ticking again after the fix
+retries. A session that edits the PR description keeps that block as it is. For 🟢/🟡 the job sets
+`owner-approval` green at once.
 `owner-approval` is a required status on `main`, so a 🔴 PR cannot merge without the tick.
 
 A session never turns on auto-merge for a 🔴 PR; it says in the PR that it waits for the owner (whose Yes merges it).
@@ -33,8 +37,8 @@ Storing something new about players is 🔴 too even when no red file changes: t
 changes in the same PR (CLAUDE.md), which makes it red.
 
 **What the owner reads before deciding.** The owner approves or rejects a 🔴 PR in one tap, so the
-session gives them the decision ready to take, in plain Spanish with no jargon, at the top of the PR
-description and in its chat reply:
+session gives them the decision ready to take, in plain Spanish with no jargon, in the PR
+description (right under the approval block) and in its chat reply:
 
 - **Qué cambia**: one sentence, in player or owner terms (not file names).
 - **Si sale mal**: the concrete worst case (who notices it, what is lost or sent).

@@ -80,7 +80,12 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   Easter (JULIO is winter in Santiago and summer in Madrid). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
   VOLANTÍN) becomes the language's own (POPCORN, PIPA, DRACHEN), and a clue that does not work becomes
   another (TIEMPO is also the weather, so in Portuguese it is CALENDÁRIO). A new word is thought of as a
-  player: the association has to be seen without explaining it.
+  player: the association has to be seen without explaining it. **The rule the whole deck follows**
+  (made explicit by the owner in the learning programme, piece 1, 2026-11-04): the `si` words share
+  one relation with the clue (part of, instance of, happens at, cause of, symbol of) and each
+  temptation relates to it in another way, so the clue's number fits only one group and the player
+  deduces instead of guessing. It is told to nobody: the first board teaches it. The rubric that
+  judges new clues is in [docs/learning/01-content-pipeline.md](../learning/01-content-pipeline.md).
 - **What only one country knows** (D-187): the clues marked `local: 'cl'` (CHILE, DIECIOCHO, FERIA)
   or `'br'` (BRASIL, ARRAIAL) and the words in each deck's `LOCALES` (COCHE, TACO, ONCE, CABRITAS…;
   PIX, CEP, BRIGADEIRO…) stay out of a cup for another audience: `mazoPara(lang, aud)` in `engine.js`.
@@ -106,3 +111,7 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
 ## Exceptions to the canons
 
 None.
+
+## Migrated to the design system (D-533, #1193)
+
+Agentes' sheet (`public/cup/games/agents/style.css`) had no copies of the shell and is now written on the tokens: 43 lint hits to 0 beyond one escape in `docs/design-allowlist.json` and DESIGN.md §4 (the clue's word at 2.4 rem). The four clue colours stay as `--g` triplets, now also on the notice (`.ag-aviso.gN`, which read them as `rgb()` literals), so `palette.test.mjs` still reads and passes them; the assassin, the stamps' reds, the flash and the stamps' night are tokens at the top of the sheet, every value unchanged. What the player may notice: the clue panel's corner is 16 px (was 18), the stamps' padding 4 px (was 3), and the sizes between two steps took the nearer one (🔍 2.4 → 2 rem, the demo's magnifier 1.9 → 2, the end stamp 1.7 → 1.6, the stamps 0.95/0.72 → 0.9/0.75, the demo cards 0.78 → 0.75, a card's clue line 0.72 → 0.75).

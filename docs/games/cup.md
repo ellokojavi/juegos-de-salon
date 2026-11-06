@@ -11,7 +11,8 @@ serie de partidas en el tiempo (un macro-juego). El diseño completo, con la rev
 de construcción, se discutió en el documento *La Copa — requisitos del torneo de varios días*.
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
-  que todavía no entra al pozo (D-262).
+  que todavía no entra al pozo (D-262). Since D-498, La Copa's improvements on trial do sit there as cards
+  behind a flag (`copa-crear`, `cup-again`, `cup-podium-early`…), each described in its bullet or row below.
 - **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días
   en la pantalla de antes, D-100, D-262, D-437) · `?test` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
@@ -36,9 +37,17 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418); the 3-day cup has none since D-438, and its three days are all games of the pool.
   In the lab (D-425; flag `copa-crear`, D-498), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
   azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
-  13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
+  13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday in the cup's zone (renamed when the zone or the audience changes, #1187), the PIN once with 👁, and the language, audience and
   link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
+- **Another cup with the same group** (#1165, lab, flag `cup-again`): under a finished cup's podium the admin, and only the admin, sees
+  **🏆 Otra copa con este grupo** (after Compartir el resumen, before the way out). It opens the create screen filled from that
+  cup (`crearCopa({ desde: meta, quien })` in `create.js`): the name, the days and the 🏁 final (`modo.poner`), the language, the
+  audience, the zone when it was not the one the audience or the phone suggests, the admin's name, **Mañana** as the start so the group
+  gets the link today, and **new games** drawn as always (a week when the cup is one); the link is not repeated. A note on top (`#crear-desde`, `againNote`)
+  says it comes from «that cup» and asks to check it: nothing is created until Crear la copa, which lands on Administrar with the
+  invite. A cup the admin ended early (D-161) shows its podium too, so it offers it as well. The screen of before (the test store without `&lab`) comes filled too, with the 7-day cup. Demo `podium-admin`
+  (the podium seen by the admin) and `tools/e2e/cup/again.mjs`.
 - **On the site's home page** (lab, flag `copa-hoy`): La Copa's card shows **▶ Jugar hoy** and opens `/cup/?<code>&day=<n>` when one of this phone's cups has a day to play (the days left, `porJugar` in `engine.js`, which the cup keeps on the phone each time it is read; `assets/js/cup-today.js` reads them without loading La Copa, D-378); with nothing to play it stays as always. A day played on another phone shows until this phone opens the cup again (`tools/e2e/home/cup-today.mjs`).
 - **Its context on the home page** (lab, flag `copa-contexto`): the card adds the cup's name in a pill on its border (One a Day's month, in gold), the player's place first and then the day's game, a bar of the cup's days, and a yellow-to-orange ▶ that names the day (`Jugar el día N`, `Jugar la final`); two cups or more get a line each (two, then «y N más»); with none, «▶ Crea o únete a una Copa» in the plain yellow pill, like One a Day's «▶ Únete al mes». It reads the copy the cup keeps on the phone: `recorteLista` now adds the place (`place: { at, of, leader, gap }`, from `tabla`, without the others' scores) and each day's game (`games`, and `names` in the page's language from `game.js`), so the home page still does not load La Copa (D-378). Long names end in «…» (`contextCard` in `assets/js/cup-today.js`). A cup kept before that (no `games` or `place` in its copy) still shows «Día N de M. Hoy: <game>», the game read from the calendar the copy keeps (`meta.cal`, via `calendarIds`).
 
@@ -65,6 +74,7 @@ panel del dueño (D-137).
 | Inscripción | Abierta hasta que empieza la final (in a cup without one, the last day; whoever arrives later reads "Esta copa ya está en su último día…", D-438), salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
 | Out of the cup | Whoever lets **2 days in a row** close without playing them (each with its grace day) is out (D-347). Their points stay in the table, faded with 🚪, below everyone still playing, the days they will not play turned into one "Eliminado" pill; their line fades in the chart, and the shared image draws them faded with 🚪 and ELIMINADO (D-376); they can't play any more days, the final included, and nobody waits for them (the "missing" lists, the provisional table, the notifications). The day before, the board and the "Before closing" notification warn them. Only days that closed after they signed up count, and the last two days never do: they close with the cup. The admin can **bring them back** («Devolver a la copa»): the days missed before that are forgiven. It is not the admin removing someone (`out`). |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final (in the 3-day cup, on the last day, D-438); si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
+| Podio anticipado | In the lab, flag `cup-podium-early`: on the last day, once nothing left to play can change the first three places, the board announces them above the days («¡Cata ya ganó la copa!», the three steps without points, and why it is known), as the viewer sees the table: a day they have not played counts as open for everyone, the points of a day still open may drop as others play it, a free wildcard may still double a day, so it waits when in doubt (`podioDecidido` in `engine.js`). The podium with its medals, the closing notice and the splash come as always when the cup closes. Demo `decided`. |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
 ### Cuenta: nombre y PIN
@@ -172,7 +182,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `full`, `out` and `risk` for D-347, and `last-day` for D-444 (day 6 not played, the wildcard unused: its notice); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
+`final-admin`, `podium`, `podium-admin` (the finished cup seen by its admin, #1165), `full`, `out` and `risk` for D-347, `last-day` for D-444 (day 6 not played, the wildcard unused: its notice), `last-day-three` (the same in a 3-day cup without a final, D-438), `played` (whoever looks already played today's day) and `decided` (the last day with the first three places beyond reach, for the lab flag `cup-podium-early`); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`): recién ahí aparece el tablero, y
@@ -287,7 +297,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   para que se vea qué arreglar (#135). In both cases the red, its sound and the counter wait 1.5 s
   (`ROJO_MS`, restarted by each tap, D-337), because players found the instant red too abrupt. La casilla con sol es ámbar y la de luna azul noche, con la luna
   plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
-  vivo (el sol, además, el borde entero) y un candado chico (#61).
+  vivo (el sol, además, el borde entero) y un candado chico (#61). The given sun's amber is dark and
+  saturated, not yellow: on a yellow cell the yellow ☀️ emoji nearly vanished (the owner reported it),
+  and every sun carries a soft drop shadow that lifts it off its cell.
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
   secreta sale de la lista del idioma de la copa (`games/word/palabras.js`: 120 en español, 185 en
@@ -518,3 +530,77 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   «Tus copas»), so the button climbs one level at a time (#1040, C-19); the menu is one more tap.
   With `?labs` it goes to the lab. It carries a real `href`, so a long press or a new tab lands right
   too. Behind flag `cup-back-board`, published for everyone on 2026-10-30.
+
+## In the design system (D-533, phase 7, #1196)
+
+La Copa's stylesheet is dissolved into the shared one PR by PR, in the order of
+[docs/design/cup-unification.md](../design/cup-unification.md); the owner declined its PRs 6 and 7
+(2026-11-05), so "🏠 Volver al menú" stays on a Cup mini-game's cover and the cup's own colours keep
+their meaning.
+
+- **PR 1, the exact copies:** `cup/style.css` drops its copies of the game shell (`.screen`, the
+  `.field` rules, `.form-error`, `.seg`, `.result-hero`); the admin's small input (`input.mini`) keeps
+  its own rule on the tokens. 🔍 El caso's scene (`.cs-*`, ~120 lines) moves to
+  `games/case/style.css`, loaded by its `ui.js` with `loadCss()` like Babel's (D-468). The shell wins
+  where the copy differed: field labels at 0.9 rem (were 0.85), inputs at 1.1 rem (were 1.15) with no
+  48 px floor (they measure 52 px), the join screen's "Soy nuevo / Ya estoy inscrito" at the shell's
+  0.95 rem with 4 px padding (at 320 px both now fit in one line: the buttons were 66 px tall, now 44),
+  and the result's trophy at 4.2 rem on its own line (was 4 rem inline).
+- **PR 2, switches and chips:** the create screen's 🏁 row is the shell's `.toggle-row` with its
+  `.switch` (`.dur-switch` is gone; the button keeps `role="switch"` and `aria-checked`, and gains
+  `.on`); the three pill toggles (the names to sit as on the join screen, the week's styles, the
+  length shortcuts) are one `.chip-btn` in `base.css`; the final's ×2 is `base.css`'s `.chip--cyan`
+  (was `.chip--final`, same colours, D-151). Intended differences: the 🏁 switch is the shell's
+  58 × 34 one (dark track, yellow ring and knob when on; was 52 × 30, white knob on a yellow track),
+  its row a well at 25 % with a 14 px corner and no border (was 30 %, 16 px, a border) with 🏁 in the
+  title line; a chosen chip is yellow everywhere (the name to sit as was cyan, the length shortcut
+  yellow text): 2 px border, a yellow tint and ring like `.opcion.on`; the names to sit as are
+  0.85 rem at 800 (were 1 rem at 900), the length shortcuts' border 2 px (was 1) on a well (was glass).
+- **PR 3, the shared variants:** what was the cup's own variant of a shared control is now
+  `base.css`'s: the choice buttons (`.opciones`, `.opcion`: the cup's copy is gone, only its
+  `.variantes` narrow columns stay), the hero's dark-emoji outline (`.intro-hero .icon.emoji-claro`),
+  the PIN field (`input.pin`, `.pin-row` and its 👁 `.pin-show`, were `.pin-fila` and `.ver-pin`), the
+  character counter (`.counter`, `.counter.full`, were `.contador`, `.lleno`), the date field
+  (`.field input[type=date]`, was `input.fecha`), the inline link (`.link-inline`, was `.linkish`),
+  danger (`.btn--danger` and `.btn--ghost.btn--danger`, were `.btn--red` and `.btn--peligro`, with
+  `--edge-red` and `--danger-soft` as tokens; `.panel--danger`, was `.peligro`), the wrapping button
+  row (`.btn-row--wrap`, was `.btn-row.tres` and two `:has()` rules) and the sheet's head
+  (`.hoja-cabeza`); `.link-btn`'s copy is gone. Every colour keeps its value. Intended differences:
+  the covers' hero emoji at the shell's 4.2 rem (was 4 rem); "Reportar un problema" and the other
+  `.link-btn`s at the shell's 0.95 rem (were 0.85) with no 8 px above; the Uno al día sheet's
+  "Silenciar" on the home page and `/today/`, which had no style outside La Copa, now has the soft
+  pink it had inside it.
+- **PR 4, notices, the snackbar and waiting:** La Copa's notices and toast are `base.css`'s now,
+  under English names because two games already use the old ones for something else (Batalla
+  Naval's `.toast`, Aletazo's `.aviso`): `.aviso` → `.notice`, `.aviso.bien` / `.aviso.mal` →
+  `.notice--good` / `.notice--bad` (in the cup's screens and 11 of its mini-games' `ui.js`), `.toast` →
+  `.snackbar`; their two colours without a token are `base.css`'s `--ink-bad` and `--snackbar-bg`.
+  `espera()` draws with the shared `showWaiting()` (`assets/js/waiting.js`), whose `.waiting--screen`
+  replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended
+  difference is the waiting line's room, 32 px above and below (was 30). `uno-al-dia-ui.js`'s intro line
+  keeps `.aviso`: on the home games it has no style, and giving it one is their migration, not this one.
+- **PR 5, the rules in the shared block:** La Copa's own rules block (`.reglas`, the rules folded
+  under the board, D-133) is the shared folding panel, `details.panel`, the same block as a home
+  game's "🧠 Cómo se juega"; its eleven rules are gone from `cup/style.css` (the full-screen game's pill,
+  `body.pantalla-completa #jugar-reglas`, keeps its own placement). The covers' how-to-play (a day's
+  cover, a practice's cover, a final round) are the same `details.panel`, titled "🧠 Cómo se juega",
+  and stay **open** as before: whether to fold them like a home game's (U-16) is still the owner's
+  call. Intended differences, under the board: a glass panel with the panel's 18 px padding (was a
+  darker well, 18 % black, with no padding), the title at the left in ink, bold, 1.05 rem, with the
+  panel's ▾ (was centred, muted, 0.95 rem, with a line under it when open); its summary keeps a 44 px
+  target (was 48); 24 px above it (was 22). On the covers: the title is the summary ("🧠 Cómo se
+  juega", 1.05 rem bold, with ▾) instead of a `.lead` line, and it can be folded.
+- **On the tokens:** `cup/style.css` is written on `base.css`'s tokens (185 lint hits to 0 beyond two
+  allowlisted escapes: the podium's 4 px feet and the day card's 2.4 rem emoji). Token colours by hand
+  are the token or `rgb(var(--x-rgb) / a)`; what has no token is La Copa's own `--cp-*` at the
+  top of the sheet (DESIGN.md §4), every value unchanged, the floating widgets' night a fixed value
+  (`--cp-noche`) because Pintaminas' hard mode redeclares `--bg1`. Intended differences, the nearer
+  step: the table's day blocks and the eliminated pill at 0.75 rem (were 0.72 and 0.66) with an 8 px
+  corner (was 6), the ×2 chip beside a day 0.75 rem (was 0.65), the legend 0.75 rem (was 0.8) with
+  6 px gaps (were 5), Tus días' emoji and › 1.4 rem (were 1.5), the week's game names 0.9 rem (were
+  0.95), the day emoji 1.4 rem (was 1.35), the − / + of the length 1.6 rem (were 1.8) and its number
+  2 rem (was 1.9), the 🎲 at 320 px 1 rem (was 1.05), the words' keypad letters 1 rem and Probar
+  1.2 rem (were 1.05 and 1.3), Zip's and Desenredo's clock 1.1 rem (was 1.15), the rules' diagrams'
+  corners 8 px (were 5 and 6) and 24 px apart (were 22), Tango's = and ≠ 0.75 rem (were 0.7), the
+  podium's first step 28 px above (was 26), a few 3 px paddings and margins 4 px.
+

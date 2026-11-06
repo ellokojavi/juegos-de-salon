@@ -1,127 +1,79 @@
 /* ==========================================================
    Toque y Fama — estilos propios
+   Migrated to the design system (D-533, phase 5 of #1188, #1193): the screens, the cover's hero,
+   the modes, the form fields, the segmented control, the toggle and its switch, the room (code,
+   QR, "or", waiting), whose turn, La Copa's choice buttons and the result's hero come from
+   base.css; the keyboard and the boards from teclado.css (D-102). This file keeps what is the
+   game's own (the secret's reminder, the revealed secrets, the folded replay, the solo game's
+   card), on the tokens.
    ========================================================== */
-.screen { display: none; flex-direction: column; flex: 1; }
-.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
 
-.intro-hero { text-align: center; padding: 6px 0 8px; }
-.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(46, 230, 214, 0.6)); }
-.modes { display: grid; gap: 10px; }
-.mode {
-  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left;
-  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px;
-  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s, border-color 0.2s;
-}
-.mode:active { transform: scale(0.98); }
-.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
-.mode small { color: var(--muted); font-weight: 700; }
-.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+/* ---------- Configuración: what is Toque y Fama's own on top of the shell ---------- */
+/* Aire bajo los títulos de las pantallas de configuración y sala */
+#screen-setup > h2, #screen-lobby > h2 { margin-bottom: var(--s-16); }
 
-/* Setup */
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
-.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.field input {
-  width: 100%; font: 900 1.15rem var(--font-body); color: var(--ink); background: rgba(0,0,0,0.3);
-  border: 2px solid transparent; border-radius: 14px; padding: 13px 14px; outline: none;
-}
-.field input:focus { border-color: var(--cyan); }
-.field input::placeholder { color: rgba(255,255,255,0.35); }
-.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
-.seg { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 5px; }
-.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 1.05rem var(--font-body); padding: 10px; border-radius: 10px; cursor: pointer; }
-.seg button.on { background: var(--yellow); color: #3a1200; }
-.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; }
-.toggle-row b { display: block; }
-.toggle-row small { color: var(--muted); }
-.switch { width: 52px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.2); border: 0; position: relative; cursor: pointer; flex-shrink: 0; }
-.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
-.switch.on { background: var(--lime); }
-.switch.on::after { transform: translateX(22px); }
-.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: 6px 0; }
-.or { text-align: center; color: var(--muted); font-weight: 900; margin: 6px 0; }
-
-/* Lobby */
-.code-big { font-family: var(--font-display); font-size: clamp(3.4rem, 22vw, 5.5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 30px rgba(255, 210, 63, 0.6); margin: 4px 0; padding-left: 0.25em; }
-.qr { display: grid; place-items: center; margin: 8px auto; background: #fff; border-radius: 16px; padding: 8px; width: fit-content; }
-.qr svg { display: block; width: min(52vw, 220px); height: auto; }
-.waiting { text-align: center; color: var(--muted); font-weight: 800; }
-.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
-@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
-
-
-/* Tablero */
-.status { text-align: center; margin: 6px 0 10px; }
-.status .who { font-family: var(--font-display); font-size: clamp(1.6rem, 7.5vw, 2.3rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(46, 230, 214, 0.5); }
-.status .sub { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
-
-/* Resultado */
-.result-hero { text-align: center; padding: 2px 0 6px; }
-.result-hero .trophy { font-size: 4.2rem; display: block; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
-.secrets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-.secrets .s { background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; text-align: center; }
-.secrets .s .n { font: 900 1.6rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); }
-.secrets .s small { display: block; color: var(--muted); font-weight: 800; }
-
-
+/* ---------- Partida ---------- */
 /* Recordatorio del número propio */
 .my-secret {
-  display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto 8px; width: fit-content; max-width: 100%;
-  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 14px 6px 12px;
-  color: var(--ink); cursor: pointer; font: 800 0.9rem var(--font-body); transition: transform 0.1s;
+  display: flex; align-items: center; justify-content: center; gap: var(--s-10); margin: 0 auto var(--s-8); width: fit-content; max-width: 100%;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-6) var(--s-14) var(--s-6) var(--s-12);
+  color: var(--ink); cursor: pointer; font: 800 var(--fs-90) var(--font-body); transition: transform 0.1s;
 }
 .my-secret:active { transform: scale(0.97); }
 .my-secret .label { color: var(--muted); }
-.my-secret .num { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.2em; color: var(--muted); }
-.my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.5); }
-.my-secret .hint { color: var(--muted); font-size: 0.72rem; font-weight: 700; }
+.my-secret .num { font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.2em; color: var(--muted); }
+.my-secret.shown .num { color: var(--yellow); text-shadow: 0 0 12px rgb(var(--yellow-rgb) / 0.5); }
+.my-secret .hint { color: var(--muted); font-size: var(--fs-75); font-weight: 700; }
 
-/* Repaso de intentos en el resultado (colapsado por defecto) */
-.replay { margin-top: 10px; padding: 12px 16px; }
-.replay summary { font-size: 1rem; }
-.replay .boards { margin-top: 0; gap: 8px; }
-.replay .board { padding: 8px 6px; }
-.replay .board li { padding: 5px 6px; gap: 4px; }
-.replay .board h3 { font-size: 1rem; }
+/* Separador entre la respuesta y el pase del celular */
+.pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: var(--s-6) auto var(--s-2); }
+
+/* ---------- Resultado ---------- */
+.secrets { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-10); margin-top: var(--s-8); }
+.secrets .s { background: var(--well); border-radius: var(--r-14); padding: var(--s-10); text-align: center; }
+.secrets .s .n { font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); }
+.secrets .s small { display: block; color: var(--muted); font-weight: 800; }
+
+/* Repaso de intentos en el resultado (colapsado por defecto): the boards of teclado.css, denser */
+.replay { margin-top: var(--s-10); padding: var(--s-12) var(--s-16); }
+.replay summary { font-size: var(--fs-100); }
+.replay .boards { margin-top: 0; gap: var(--s-8); }
+.replay .board { padding: var(--s-8) var(--s-6); }
+.replay .board li { padding: var(--s-4) var(--s-6); gap: var(--s-4); }
+.replay .board h3 { font-size: var(--fs-100); }
 /* El aire con lo de arriba lo da el repaso o el panel marcado con data-tablero (D-309) */
 #screen-result #result-actions { margin-top: 0; }
 
-/* Aire bajo los títulos de las pantallas de configuración y sala */
-#screen-setup > h2, #screen-lobby > h2 { margin-bottom: 16px; }
-
-/* Separador entre la respuesta y el pase del celular */
-.pass-divider { width: 60%; height: 1px; background: var(--glass-border); margin: 6px auto 2px; }
-
+/* ---------- Jugar solo: el juego de La Copa (D-142). El tablero (.board--solo) ocupa todo el ancho ---------- */
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape el último intento */
-/* Jugar solo: el juego de La Copa (D-142). El tablero (.board--solo) ocupa todo el ancho */
-.como { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; color: var(--muted); font-weight: 700; }
-.solo-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
+.como { margin: 0; padding-left: 1.2em; display: grid; gap: var(--s-6); color: var(--muted); font-weight: 700; }
+.solo-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); margin-bottom: var(--s-8); min-height: 1.5em; }
 .solo-titulo { font-weight: 900; }
-.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
-.aviso { text-align: center; font-weight: 800; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); }
-.aviso.bien { background: rgba(157, 255, 58, 0.14); color: var(--lime); }
-.aviso.mal { background: rgba(224, 36, 60, 0.22); color: #ffd0d6; }
+.cron { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); }
+.aviso { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.aviso.bien { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
+.aviso.mal { background: rgb(var(--red-rgb) / 0.22); color: var(--ink); }
+/* The solo result's hero is smaller than the shell's: the score, the secret's card and the final
+   buttons fit on a phone without scrolling (C-8, local.mjs checks the buttons at 812 px) */
 #screen-solo-result .result-hero .trophy { font-size: 3.2rem; }
 #screen-solo-result .result-hero h2 { margin: 0; }
-#screen-solo-result .result-hero p { margin: 2px 0; }
-.score-big { font: 900 clamp(2.4rem, 12vw, 3.2rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+#screen-solo-result .result-hero p { margin: var(--s-2) 0; }
+.score-big { font: 900 clamp(2.4rem, 12vw, 3.2rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: var(--shadow-text); }
 /* El número secreto y la tarjeta lado a lado; las filas de la tarjeta se reparten en columnas para no gastar alto (C-8) */
-.solo-fin { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
-.solo-fin .n { font: 900 1.6rem var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-align: center; }
+.solo-fin { display: grid; grid-template-columns: auto 1fr; gap: var(--s-12); align-items: center; }
+.solo-fin .n { font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.16em; color: var(--yellow); text-align: center; }
 .solo-fin small { display: block; color: var(--muted); font-weight: 800; text-align: center; }
-.tarjeta { text-align: center; font-size: 0.95rem; line-height: 1.35; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 8px; }
+.tarjeta { text-align: center; font-size: var(--fs-90); line-height: 1.35; background: var(--well); border-radius: var(--r-14); padding: var(--s-8); }
 .tarjeta span { display: block; white-space: nowrap; }
 /* Con más de 5 intentos, en dos columnas que se leen de arriba abajo */
-.tarjeta--2 { columns: 2; column-gap: 8px; font-size: 0.85rem; }
+.tarjeta--2 { columns: 2; column-gap: var(--s-8); font-size: var(--fs-85); }
 
-/* 🔢 Número or 🔤 Palabra, the same two buttons as a variant in La Copa's waiting room (cup/style.css, D-331) */
-.opciones.dos { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
-.opcion {
-  text-align: center; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 6px;
-  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 44px;
-}
-.opcion b { display: block; font-size: 1rem; font-weight: 900; }
-/* Under the language, inside the hero: the first mode stays above the fold at 320×568 (landing-fold.mjs) */
-#variant-slot { margin-top: 10px; }
-.opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+/* ---------- Portada ---------- */
+/* 🔢 Número or 🔤 Palabra: the shell's .opciones.dos (D-331), compact here because they sit inside
+   the hero, under the language: with the shell's padding the first mode fell below the fold at
+   320×568, where landing-fold.mjs had 15 px to spare in English and Portuguese (U-39) */
+#variant-slot { margin-top: var(--s-10); }
+.variantes .opcion { padding: var(--s-6); min-height: 44px; }
+.variantes .opcion b { font-size: var(--fs-100); }
 /* A short phone (320×568): a smaller icon makes room for the Número / Palabra toggle, so the first mode stays above the fold */
 @media (max-height: 600px) { .intro-hero .icon { font-size: 3.2rem; } }

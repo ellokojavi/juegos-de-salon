@@ -19,7 +19,10 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 ## Where everything is (D-192)
 
 - **`public/` is the site** as served: folder = URL, in English. Serve it with `python3 -m http.server 87xx -d public`.
-- **A game's id is not its folder**: `'ahorcado'` lives in `/hangman/`, and ids never change. The old
+- **One name inside and out** (C-20, D-535, the owner's tenet): a game's folder, id, keys, hooks, tests
+  and docs are the English version of the name the player reads (Artefactos is `artifacts`), and a
+  rename renames them all, carrying over what was kept. Older games keep the ids they have until a PR
+  renames one with its migration: `'ahorcado'` lives in `/hangman/`. The old
   Spanish paths (`public/ahorcado/`, `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) are
   generated bridge pages: do not edit them.
 - **The workshop**: `docs/`, `firebase/`, `marketing/`, `tools/` by function (`release/`, `firebase/`, `generators/`, `agents/`, `e2e/<game>/`).
@@ -31,6 +34,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | What | Where | When to read it |
 |---|---|---|
 | How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
+| The design system: tokens, scales, components (D-533) | [docs/DESIGN.md](docs/DESIGN.md), the tokens in `public/assets/css/base.css` | Before writing any CSS, or adding a control a game does not have |
 | Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions; **U-41** visual proposals as images | Before writing anything the player reads, or proposing a design |
 | Why it is this way (D-n) | [docs/DECISIONS.md](docs/DECISIONS.md), the index (by topic, then one row each), and `docs/decisions/D-<n>.md` for each one (D-394): read the index, open only the ones you need | Before changing something that looks odd |
 | A new game, step by step | [docs/ADD-GAME.md](docs/ADD-GAME.md) | When starting one |
@@ -46,6 +50,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in three languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
 | Big files (videos, recordings) | [docs/REPO-WEIGHT.md](docs/REPO-WEIGHT.md): nothing over 5 MB enters git, `repo-weight.test.mjs` (D-494) | Before committing media |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
+| The learning programme (AI in the game, the owner's learning) | [docs/LEARNING.md](docs/LEARNING.md) and `docs/learning/<piece>.md` (D-532): no variable cost, the owner's plan never serves players, three free places for a model | Before any work that puts a model in a game or measures the factory; read only the index and the piece |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
 | Parallel sessions, worktrees, forks, tests side by side | [docs/SESSIONS.md](docs/SESSIONS.md) (D-135, D-189, D-252, D-301, D-303, D-428) | At the start of any work that will commit |
@@ -73,7 +78,7 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`) and listed in
   `/labs/`; the owner publishes it by flipping `flags/<id>` to *all* on its `/labs/` card (the one place, D-498),
-  no PR; its card moves to La Bodega keeping its switch (D-510), and a later PR removes the gate. Details: [docs/AGENTS.md](docs/AGENTS.md).
+  no PR; its card moves to La Bodega on its own, keeping its switch (D-510, D-534), and a later PR removes the gate. Details: [docs/AGENTS.md](docs/AGENTS.md).
 - **Tests**: run every `*.test.mjs` / `*.test.py` before the PR (commands in [docs/SESSIONS.md](docs/SESSIONS.md));
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
   the `end-to-end` check on GitHub is the gate.

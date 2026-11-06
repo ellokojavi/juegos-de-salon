@@ -26,7 +26,7 @@ export function montar(raiz, ctx) {
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack numero-juego letras-juego' });
     // El cierre va arriba; en la final (ctx.cierreAbajo), debajo del tablero
-    const cierre = e.fin ? [el('div', { class: 'aviso ' + (e.resuelto ? 'bien' : 'mal') }, e.resuelto ? `🎉 ${T.solvedWord}` : fmt(T.notSolvedWord, { v: p.secreto })),
+    const cierre = e.fin ? [el('div', { class: 'notice notice--' + (e.resuelto ? 'good' : 'bad') }, e.resuelto ? `🎉 ${T.solvedWord}` : fmt(T.notSolvedWord, { v: p.secreto })),
       el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)] : [];
     if (e.fin) {
       if (!ctx.cierreAbajo) caja.append(...cierre);

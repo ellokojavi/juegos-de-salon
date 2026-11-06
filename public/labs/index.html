@@ -14,6 +14,8 @@
   <link rel="preload" href="../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
+    /* ✨ Mejoras en prueba says it is empty only with no card left (D-510); the rule lived in experiments.css, which this page does not load */
+    #mejoras:has(> .seccion) .mejoras-vacio { display: none; }
     .hero { text-align: center; padding: 6px 0 4px; }
     .hero .icon { font-size: 3.6rem; display: block; }
     .hero h1 { margin: 4px 0; }
@@ -47,6 +49,9 @@
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
     /* 🚀 Publicar para todos (D-480): only the owner sees it, under each card being tried */
     .publicar { display: grid; gap: 10px; }
+    /* Its buttons wrap as the sheets' do (.hoja .btn-row in base.css): three in a row at 320 px scrolled the page sideways (U-10) and broke each label into three lines (U-17) */
+    .publicar .btn-row { flex-wrap: wrap; }
+    .publicar .btn-row .btn { flex: 1 0 auto; max-width: 100%; }
     .publicar-estado { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 210, 63, 0.5); }
     .publicar-estado--ok { border-color: rgba(120, 255, 160, 0.6); }
     .publicar-estado--bad { border-color: rgba(255, 110, 110, 0.7); }
@@ -96,6 +101,13 @@
 
 
 
+        <section class="panel seccion" id="seccion-memorice">
+          <h2>👀 Memorice</h2>
+          <p class="muted" style="margin:0">Una memoria que no para: unos dibujos en pixel art se muestran un momento y se tapan, y hay que tocar el que te piden: uno solo, los dos de un par o los tres de un trío, antes de que se acabe el tiempo. El tablero crece hasta 6×6, con más dibujos y menos tiempo, hasta que se acaban las vidas.</p>
+          <p class="muted" style="margin:0;font-size:0.85rem">Una idea nuestra, en los tres idiomas. Cada partida es nueva.</p>
+          <a class="btn btn--yellow" id="btn-memorice" href="memory/">👀 Jugar Memorice</a>
+        </section>
+
         <section class="panel seccion" id="seccion-dominorama">
           <h2>🎲 Dominorama</h2>
           <p class="muted" style="margin:0">Inspirado en <a href="https://www.nytimes.com/games/pips" target="_blank" rel="noopener">Pips</a>, de The New York Times Games: pon todas las fichas de dominó en el tablero para que cada zona de color cumpla su regla (suma, iguales, distintas, menos o más). Son tres tableros, de fácil a difícil, contra el reloj.</p>
@@ -110,6 +122,20 @@
           <a class="btn btn--yellow" id="btn-explosivos" href="exploding-numbers/">💥 Jugar Números explosivos</a>
         </section>
 
+        <section class="panel seccion" id="seccion-aletazo">
+          <h2>🐤 Aletazo</h2>
+          <p class="muted" style="margin:0">Inspirado en <a href="https://es.wikipedia.org/wiki/Flappy_Bird" target="_blank" rel="noopener">Flappy Bird</a>, de Dong Nguyen. Un toque, un aletazo: cada toque hace subir al pájaro y la gravedad lo baja. Pasa por los aros (justo al medio vale doble) y por los huecos de los muros, sin chocar. Cada 5 pasadas sube de nivel: más rápido y más justo. Tienes 3 vidas.</p>
+          <p class="muted" style="margin:0;font-size:0.85rem">En los tres idiomas, para uno solo.</p>
+          <a class="btn btn--yellow" id="btn-aletazo" href="flap/">🐤 Jugar Aletazo</a>
+        </section>
+
+        <section class="panel seccion" id="seccion-artifacts">
+          <h2>⚙️ Artefactos</h2>
+          <p class="muted" style="margin:0">Un juego de máquinas como <a href="https://es.wikipedia.org/wiki/The_Incredible_Machine" target="_blank" rel="noopener">The Incredible Machine</a>, de Sierra: pon rampas, tablas, camas elásticas y ventiladores en el tablero, toca Probar y mira si la pelota cae en la canasta. Seis niveles; menos piezas, más estrellas.</p>
+          <p class="muted" style="margin:0;font-size:0.85rem">Tablero, piezas y niveles nuestros, en los tres idiomas, para uno solo.</p>
+          <a class="btn btn--yellow" id="btn-artifacts" href="artifacts/">⚙️ Jugar Artefactos</a>
+        </section>
+
       </section>
 
       <section class="grupo" id="mejoras">
@@ -120,6 +146,17 @@
           <h2>🌐 Primera visita en el idioma del navegador</h2>
           <p class="muted" style="margin:0">Quien entra por primera vez, sin haber elegido idioma y sin un link con idioma, ve la app en el idioma de su navegador si es inglés o portugués; en cualquier otro caso, en español. Se decide una sola vez: el botón de idioma lo cambia cuando quiera y esa elección manda. Para probarlo hace falta un teléfono con el navegador en inglés o portugués, con la llave del laboratorio y que nunca haya elegido idioma.</p>
           <a class="btn btn--yellow" id="btn-browser-lang" href="../">🏠 Ir a la portada</a>
+        </section>
+        <section class="panel seccion" id="seccion-babel-tally">
+          <h2>🗼 Babel: el puntaje se suma solo</h2>
+          <p class="muted" style="margin:0">Al terminar una partida de Babel, sobre «Continuar» el puntaje se arma frente a ti: como una boleta: primero los pisos, luego cada bono entra de golpe mientras el total sube contando, y al final el total brilla, con confeti si hubo bonos. Por ejemplo: 🧱 Pisos 9, 🔥 Bono de racha +3, 📏 Largo de rachas +15 y 🏆 Puntos 27.</p>
+          <a class="btn btn--yellow" id="btn-babel-tally" href="../babel/">🗼 Jugar Babel</a>
+        </section>
+        <!-- The design system's components page (D-533, phase 3 of #1188): the owner's and the agents' reference, behind the lab's door; its page names this card (bodega.test.mjs) -->
+        <section class="panel seccion" id="seccion-design">
+          <h2>🎨 Sistema de diseño</h2>
+          <p class="muted" style="margin:0">Cada color, distancia, esquina, título y botón de la app, en vivo y desde las hojas compartidas: la referencia para diseñar una pantalla o un juego nuevo, y lo que el agente de usabilidad compara con los juegos (D-533).</p>
+          <a class="btn btn--yellow" id="btn-design" href="design/">🎨 Ver el sistema</a>
         </section>
         <section class="panel seccion" id="seccion-lab-ready">
           <h2>✅ Listo para publicar</h2>
@@ -205,6 +242,24 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-cup-podium-early" data-launched="2026-11-04">
+            <details>
+              <summary><h2>🏆 La Copa: el podio se anuncia el último día</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. El último día de la copa, cuando lo que falta por jugar ya no puede cambiar los tres primeros lugares, el tablero lo anuncia arriba con el podio tal como va a quedar: «¡Cata ya ganó la copa!». Cuenta solo con lo que cada jugador puede ver, así que si todavía no jugaste el último día, el anuncio espera. El podio con sus medallas y el aviso del cierre llegan igual cuando la copa termina.</p>
+                <a class="btn btn--yellow" id="btn-cup-podium-early" href="../cup/?test&amp;demo=decided">🏆 Ver el tablero del último día</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-cup-again" data-launched="2026-11-04">
+            <details>
+              <summary><h2>🏆 La Copa: otra copa con el mismo grupo</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando una copa termina, bajo el podio el administrador ve «🏆 Otra copa con este grupo». Abre la pantalla de crear ya llena con lo de esa copa: el nombre, cuántos días dura y si tiene final, el idioma, el público, la zona horaria y su nombre, con juegos nuevos y partiendo mañana. Arriba dice de dónde viene todo; revisa, cambia lo que quieras y confirma con Crear la copa. Queda en Administrar con la invitación lista para mandarla al mismo grupo.</p>
+                <a class="btn btn--yellow" id="btn-cup-again" href="../cup/?test&amp;demo=podium-admin">🏆 Ver el podio del administrador</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-stick" data-launched="2026-11-02">
             <details>
               <summary><h2>🥷 Shinobi</h2><span class="flecha" aria-hidden="true">›</span></summary>
@@ -685,8 +740,11 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
-    import('./bodega.js').then(m => m.start()); // ✨ Mejoras lanzadas by week and month, with search
-    import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
+    // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search,
+    // and the owner's 🚀 Publicar para todos (D-480) is drawn on each card where it already sits
+    const moved = import('./launched.js').then(m => m.move()).catch(() => {});
+    moved.then(() => import('./bodega.js')).then(m => m.start());
+    moved.then(() => import('./publish.js')).then(m => m.start());
   </script>
 </body>
 </html>

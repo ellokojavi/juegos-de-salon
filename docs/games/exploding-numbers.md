@@ -90,3 +90,12 @@ copia abajo los que quedan.».
 
 - Solo en español (C-3): es un prototipo del laboratorio, como permite D-191.
 - Las casillas miden menos de 44 px a 375 px de ancho: son 9 columnas, como el original (D-297).
+
+## Migrated to the design system (D-533, #1193)
+
+The stylesheet dropped its copy of the shell's `.link-btn` (identical to `base.css`'s) and writes the rest (the board, the explosions, the action bar, the result) on the tokens. The design lint reports zero on it beyond two escapes: the title's bomb emoji at 2.3 rem and the demo's «¡Limpio!» at 2.4 rem; the explosion's white core and warm halo are the game's own tokens (`--ne-luz`, `--ne-halo`). What the player may notice: the errors (a pair that does not join, the armed Rendirse, the "Rendido" stamp) are `--red` instead of a pale pink of their own; the lit ➕ is `--orange`; the stamp is 1.4 rem (was 1.3), the small title's bomb 1.6 rem (was 1.5), the cells' corners 8 px (were 9) and the action bar's 16 px (were 18).
+
+**Errors in a soft red** (2026-11-05): the notice of a pair that doesn't join, the armed "Give up"
+and a bad stamp were `--red` (#e0243c), about 3.5:1 on this page's night (under 4.5:1 for text);
+they are the game's own `--ne-mal` (#ff8a8a, the soft red Loteo and Rutas rotas use for alerts),
+about 7:1. The shaking number's border keeps `--red`.

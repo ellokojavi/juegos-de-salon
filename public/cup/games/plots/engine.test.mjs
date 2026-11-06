@@ -6,8 +6,13 @@ import assert from 'node:assert/strict';
 import {
   generar, generarEtapa, resolver, deducir, validar, poner, resuelto, pista, puntajePartida, tarjeta, area, casillas,
   ETAPAS, MAXIMO, PUNTOS_ETAPA, RESTA_AYUDA, generarDia, partida, jugada, etapasDe,
-  generarServicios, generarEtapaServicios, resolverServicios, deducirServicios, validarServicios, serviciosEn, ETAPAS_SERVICIOS,
+  generarServicios, generarEtapaServicios, resolverServicios, deducirServicios, validarServicios, serviciosEn, ETAPAS_SERVICIOS, trabajo,
 } from './engine.js';
+
+// How long a board takes to build, measured in work (candidate boards checked, the solvers' search
+// steps) and not in milliseconds: the count is the same on every run, while a stopwatch failed this
+// test when many others ran beside it. The bounds are about twice what today's boards need.
+const obra = f => { const c = trabajo.candidatos, n = trabajo.nodos; const v = f(); return { v, candidatos: trabajo.candidatos - c, nodos: trabajo.nodos - n }; };
 
 // Un tablero a mano: 3×3 con un 3 arriba (fila entera), un 6 abajo
 //  . 3 .
@@ -41,12 +46,11 @@ assert.equal(resolver({ lado: 2, numeros: [3, 0, 0, 1], pistas: [{ i: 0, n: 3 },
 const prom = {};
 for (const e of ETAPAS) {
   const { lado, dificil } = e, cuantos = dificil ? 80 : 200;
-  let lento = 0, rondas = 0, aLaVista = 0, vecinos = 0;
+  let cand = 0, nodos = 0, rondas = 0, aLaVista = 0, vecinos = 0;
   const areas = {};
   for (let s = 0; s < cuantos; s++) {
-    const t0 = performance.now();
-    const t = generar(`prueba-${lado}-${dificil}-${s}`, e);
-    lento = Math.max(lento, performance.now() - t0);
+    const { v: t, candidatos: c, nodos: n } = obra(() => generar(`prueba-${lado}-${dificil}-${s}`, e));
+    cand = Math.max(cand, c); nodos = Math.max(nodos, n);
     assert.equal(t.numeros.length, lado * lado);
     assert.equal(t.pistas.reduce((a, p) => a + p.n, 0), lado * lado, `${lado}-${s}: los números suman la grilla`);
     assert.equal(resolver(t, 2).n, 1, `${lado}-${s}: una sola solución`);
@@ -62,7 +66,8 @@ for (const e of ETAPAS) {
     // Los números, repartidos (pedido del dueño): pocos pares de números en casillas vecinas
     for (const { i } of t.pistas) for (const { i: j } of t.pistas) if (j > i && Math.abs(i % lado - j % lado) + Math.abs(Math.floor(i / lado) - Math.floor(j / lado)) === 1) vecinos++;
   }
-  assert.ok(lento < 400, `${lado}×${lado}: un tablero tarda ${lento.toFixed(0)} ms (máximo 400)`);
+  // Today at most 87 candidates and 2042 search steps (the 8×8)
+  assert.ok(cand <= 200 && nodos <= 5000, `${lado}×${lado}: a board takes ${cand} candidates and ${nodos} search steps (at most 200 and 5000)`);
   const total = Object.values(areas).reduce((a, b) => a + b, 0);
   assert.ok((areas[1] || 0) / total < (dificil ? 0.01 : 0.1), `${lado}×${lado}: pocos de 1`);
   assert.ok(vecinos / cuantos < 1, `${lado}×${lado}: números vecinos, ${(vecinos / cuantos).toFixed(2)} por tablero`);
@@ -129,12 +134,11 @@ const promS = [];
 ETAPAS_SERVICIOS.forEach((e, n) => {
   const { lado, tam, servicios } = e;
   assert.equal((lado * lado) % tam, 0, `${lado}×${lado} se divide en lotes de ${tam}`);
-  let lento = 0, rondas = 0, aLaVista = 0, profundas = 0, simples = 0;
+  let nodos = 0, rondas = 0, aLaVista = 0, profundas = 0, simples = 0;
   const cuantos = e.dificil ? 40 : 120;
   for (let s = 0; s < cuantos; s++) {
-    const t0 = performance.now();
-    const t = generarServicios(`prueba-s${n}-${s}`, e);
-    lento = Math.max(lento, performance.now() - t0);
+    const { v: t, nodos: k } = obra(() => generarServicios(`prueba-s${n}-${s}`, e));
+    nodos = Math.max(nodos, k);
     assert.equal(t.modo, 'servicios');
     assert.equal(t.iconos.length, lado * lado);
     assert.equal(resolverServicios(t, 2).n, 1, `servicios ${n + 1}-${s}: una sola solución`);
@@ -157,8 +161,9 @@ ETAPAS_SERVICIOS.forEach((e, n) => {
     // Ni más ni menos íconos que lotes
     for (const x of servicios) assert.equal(t.iconos.filter(i => i === x).length, t.solucion.length);
   }
-  // Holgado: en GitHub o con la máquina ocupada tarda el doble
-  assert.ok(lento < 1000, `servicios ${lado}×${lado} de ${tam}: un tablero tarda ${lento.toFixed(0)} ms (máximo 1000)`);
+  // The hard ones always use up their 6000 candidates, so the bound is on the search: today at most
+  // 63334 steps (8×8 of 8)
+  assert.ok(nodos <= 130000, `servicios ${lado}×${lado} de ${tam}: a board takes ${nodos} search steps (at most 130000)`);
   promS.push({ rondas: rondas / cuantos, aLaVista: aLaVista / cuantos, profundas: profundas / cuantos, dificil: e.dificil });
   // Las difíciles (pedido del dueño): casi siempre ninguno a la vista de entrada, y deducciones profundas
   if (e.dificil) {
@@ -195,10 +200,9 @@ console.log(`✓ loteo servicios: ${JSON.stringify(promS.map(x => [+x.rondas.toF
 // A day of La Copa (D-331): the same for everyone with the same code, day and variant; the variant
 // changes the boards; the trial (D-103) is shorter, with other boards; quick enough to build in the waiting room
 {
-  const t0 = performance.now();
-  const n = generarDia('KQRST', 2), s = generarDia('KQRST', 2, { variante: 'utilities' });
-  const lento = performance.now() - t0;
-  assert.ok(lento < 2500, `a cup day takes ${lento.toFixed(0)} ms`);
+  const { v: [n, s], nodos } = obra(() => [generarDia('KQRST', 2), generarDia('KQRST', 2, { variante: 'utilities' })]);
+  // Today 177944 search steps for both variants
+  assert.ok(nodos <= 400000, `a cup day takes ${nodos} search steps (at most 400000)`);
   assert.equal(n.variante, 'numbers'); assert.equal(s.variante, 'utilities');
   assert.deepEqual(generarDia('KQRST', 2), n, 'deterministic');
   assert.deepEqual(generarDia('KQRST', 2, { variante: 'nope' }), n, 'an unknown variant is the default one');

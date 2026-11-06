@@ -126,6 +126,51 @@
       ],
       "why": "Landed in the lab as D-381 (PR #560, refined in #568, #569, #571, #574); no lab plays in the check range yet, its proof (50%+ finish with 20+ starts) is read next round",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/560"
+    },
+    {
+      "id": "cup-next-week-same-group",
+      "title": "La Copa: otra semana con el mismo grupo",
+      "lane": "meta",
+      "evidence": "check, 2026-10-04 to 2026-10-31: cups active 15, created 13, sign-ups 98, participation 74%; La Copa is 392 of the games finished. Sharing: copa 49, invita 6 of 9312. Participation by day falls from 94% (day 1) to 51% (day 7). A group that finished a cup has to create a new one by hand and send the link again; no rematch exists for cups (rooms have one, D-322).",
+      "cost": "One PR: a button on the cup's final summary for the admin, «Otra copa con este grupo», that creates the next cup (same settings, a new set of games drawn as today) and shows the invite link to resend to the same group; three languages; no new Firebase path beyond what creating a cup writes; one end-to-end script on the cup's final.",
+      "prototype": "Behind its flag in /labs/ (D-395), Spanish only: the button appears only to lab browsers on a finished cup's summary.",
+      "proof": "Cups created per week: from about 3 (13 in four weeks) to 5 or more, with at least a third of new cups coming from the button, read two rounds after it lands.",
+      "recommendation": "Yes, in Labs: it is the cheapest way to turn a finished cup into the next week's habit, where the app's players already are.",
+      "question": "Try «La Copa: otra semana con el mismo grupo» in the lab?",
+      "status": "proposed",
+      "date": "2026-11-04",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
+      "history": [
+        {
+          "date": "2026-11-04",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        }
+      ]
+    },
+    {
+      "id": "mini-sudoku",
+      "title": "Mini Sudoku 6×6",
+      "lane": "new-game",
+      "evidence": "The LinkedIn-wave games already here lead the solo list: Reinas 125 finished (3rd of all games), Tango 83, Zip 29; Loteo (Shikaku, numbers) finishes 100% of its 22 starts in the numbers variant. No game-idea reports this range. A number puzzle needs no translation (C-3) and is deducible without guessing, scored 0 to 100 by time and errors with a daily seed (D-97).",
+      "cost": "The whole of docs/ADD-GAME.md: a generator with a unique-solution check and tests, the board, three languages, the panel signal, the result screen, end-to-end scripts, its document, README and social card. The lab step first is a Spanish-only page.",
+      "prototype": "A lab game in Juegos en prueba (D-304), Spanish only, solo, daily seed, 0 to 100, credit on its cover page.",
+      "proof": "In the lab: 20+ starts and a finish rate of 60% or more (Reinas is 68%), median under 3 minutes.",
+      "recommendation": "Yes, in Labs: it is the most played daily-puzzle format worldwide, it travels with no words, and it fits the house's LinkedIn line.",
+      "inspiration": "Sudoku (Number Place, Howard Garns, 1979; named by Nikoli), in the 6×6 daily form LinkedIn Games launched as Mini Sudoku in 2025: https://www.linkedin.com/games/mini-sudoku/",
+      "question": "Try «Mini Sudoku 6×6» in the lab?",
+      "status": "proposed",
+      "date": "2026-11-04",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
+      "history": [
+        {
+          "date": "2026-11-04",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        }
+      ]
     }
   ],
   "rounds": [
@@ -136,6 +181,14 @@
         "cup-come-back-wildcard",
         "tango-first-board-guide",
         "pips-dominoes"
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
+      "ideas": [
+        "cup-next-week-same-group",
+        "mini-sudoku"
       ]
     }
   ]

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101), y sin la llave no se entra (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sistema de diseño 🎨 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/ranking.css">
+  <link rel="stylesheet" href="../../assets/css/teclado.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- The components page of the design system (D-533, docs/DESIGN.md, phase 3 of #1188): every token
+       and every shared class of base.css, ranking.css and teclado.css drawn live, from those sheets
+       alone. The owner and the agents look here before a screen is designed, a new game copies from
+       here, and the usability agent's round compares it with the games. The tokens are read from
+       base.css itself (fetched and parsed), so a new token shows up by itself. lab: #seccion-design -->
+  <div class="app">
+    <header class="topbar">
+      <a class="back" href="../">‹ Laboratorio</a>
+      <div class="tools"><span class="chip">🎨 Sistema de diseño</span></div>
+    </header>
+
+    <main class="stack ds-pagina">
+      <h1 class="display display--lg rainbow center">Sistema de diseño</h1>
+      <p class="muted center">Cada token y cada componente de <code>base.css</code>, <code>ranking.css</code> y <code>teclado.css</code>, en vivo. Lo que un juego dibuja sale de aquí (D-533, <a href="https://github.com/ellokojavi/juegos-de-salon/blob/main/docs/DESIGN.md">DESIGN.md</a>).</p>
+
+      <section class="panel stack" id="ds-colores">
+        <h2 class="display display--sm">Colores</h2>
+        <p class="muted">Los tokens de <code>:root</code>. Un juego usa el nombre, nunca el valor.</p>
+        <div class="ds-muestras" id="ds-muestras"></div>
+      </section>
+
+      <section class="panel stack" id="ds-espacio">
+        <h2 class="display display--sm">Espacio</h2>
+        <p class="muted">Rejilla de 2 px hasta 20, luego de 4 en 4. Padding, gap y margin toman uno de estos.</p>
+        <div class="ds-escala" id="ds-escala-espacio"></div>
+      </section>
+
+      <section class="panel stack" id="ds-esquinas">
+        <h2 class="display display--sm">Esquinas</h2>
+        <p class="muted">8 fichas y celdas · 10 y 12 tarjetas e inputs · 14 filas · 16 hojas · 22 el panel · pastilla los botones.</p>
+        <div class="ds-escala ds-escala--esquinas" id="ds-escala-esquinas"></div>
+      </section>
+
+      <section class="panel stack" id="ds-tipografia">
+        <h2 class="display display--sm">Títulos y texto</h2>
+        <p class="display display--xl">Display XL</p>
+        <p class="display display--lg">Display LG</p>
+        <p class="display display--md">Display MD</p>
+        <p class="display display--sm">Display SM</p>
+        <p class="display display--md rainbow">Rainbow</p>
+        <div class="ds-escala ds-escala--texto" id="ds-escala-texto"></div>
+        <p><span class="lead">.lead</span> · <span class="muted">.muted</span> · cifras en <span class="ds-num">1 7 4 2</span> (<code>--font-num</code>, D-30)</p>
+      </section>
+
+      <section class="panel stack" id="ds-botones">
+        <h2 class="display display--sm">Botones</h2>
+        <p class="muted">60 px de alto (44 el pequeño, U-10); la etiqueta cabe en una línea a 320 px (U-17).</p>
+        <button class="btn" type="button">Botón</button>
+        <button class="btn btn--yellow" type="button">🏆 La acción</button>
+        <button class="btn btn--cyan" type="button">Secundario</button>
+        <button class="btn btn--ghost" type="button">Fantasma</button>
+        <div class="btn-row"><button class="btn btn--sm" type="button">Pequeño</button><button class="btn btn--ghost btn--sm" type="button">👻 Pequeño</button></div>
+        <button class="btn btn--yellow" type="button" disabled>Deshabilitado</button>
+        <button class="btn btn--danger" type="button">🗑️ Eliminar</button>
+        <button class="btn btn--ghost btn--danger" type="button">🔕 Silenciar</button>
+        <div class="btn-row"><button class="btn btn--ghost" type="button">Dos</button><button class="btn btn--yellow" type="button">En fila</button></div>
+        <div class="topbar" style="margin:0"><a class="back" href="#ds-botones">‹ Menú</a><div class="tools"><button class="icon-btn" type="button" aria-label="Icono">🔊</button><span class="lang-toggle"><button type="button" class="on"><span class="flag">🇨🇱</span></button><button type="button"><span class="flag">🇺🇸</span></button></span></div></div>
+      </section>
+
+      <section class="panel stack" id="ds-fichas">
+        <h2 class="display display--sm">Fichas y paneles</h2>
+        <div class="chips"><span class="chip">🎲 Ficha</span><span class="chip chip--hot">🔥 Popular</span><span class="chip chip--gold">🏆 Oro</span><span class="chip chip--cyan">×2 Final</span></div>
+        <div class="chips"><button class="chip-btn on" type="button" aria-pressed="true">⚖️ Elegida</button><button class="chip-btn" type="button" aria-pressed="false">🧩 Otra</button><button class="chip-btn" type="button" aria-pressed="false">Cata</button></div>
+        <details class="panel"><summary>Un panel desplegable</summary><p class="muted" style="margin:0">Lo que se pliega.</p></details>
+        <div class="stack"><div class="ds-caja">.stack</div><div class="ds-caja">12 px entre hijos</div></div>
+      </section>
+
+      <section class="panel stack" id="ds-armazon">
+        <h2 class="display display--sm">El armazón de un juego</h2>
+        <p class="muted">Lo que toda pantalla de juego tiene y antes cada juego copiaba (D-533, fase 4): la portada, los modos, el formulario, las filas, el interruptor, la sala y el resultado.</p>
+        <div class="intro-hero"><span class="icon">🪢</span><h2 class="display display--md rainbow">Portada</h2></div>
+        <div class="modes"><button class="mode" type="button"><span><b>Un modo</b><small>Lo que hace, en una línea</small></span><span class="go">›</span></button><button class="mode" type="button" disabled><span><b>Pronto</b><small>Aún no se puede</small></span><span class="soon">pronto</span></button></div>
+        <div class="field"><label>Un campo</label><input type="text" placeholder="Escribe algo"><p class="sub">La ayuda bajo el campo.</p></div>
+        <div class="field"><label>Tu nombre</label><input class="name" type="text" value="Javi"></div>
+        <div class="field"><label>Código de sala</label><input class="code" type="text" value="ABCD"></div>
+        <div class="field"><label>Tu PIN</label><div class="pin-row"><input class="pin" type="password" inputmode="numeric" value="1234"><button class="pin-show" type="button" aria-pressed="false" aria-label="Ver">👁</button></div></div>
+        <div class="field"><label>Con un máximo</label><input type="text" value="Copa de la oficina" maxlength="20"><small class="counter muted">18 / 20</small></div>
+        <div class="field"><label>Una fecha</label><input type="date" value="2026-11-20"></div>
+        <p class="muted" style="margin:0">Un texto con <button class="link-inline" type="button">un link adentro</button>.</p>
+        <div class="form-error">El error del formulario, en amarillo.</div>
+        <div class="seg"><button type="button" class="on">Uno</button><button type="button">Dos</button><button type="button">Tres</button></div>
+        <div class="opciones tres"><button class="opcion on" type="button"><b>Ahora</b></button><button class="opcion" type="button"><b>Mañana</b></button><button class="opcion" type="button"><b>Otra fecha</b></button></div>
+        <div class="opciones dos"><button class="opcion" type="button"><b>Sí</b><small>con detalle</small></button><button class="opcion on" type="button"><b>No</b><small>con detalle</small></button></div>
+        <div><div class="player-row"><span class="num">1</span><input type="text" value="Cata"><button class="del" type="button" aria-label="Quitar">✕</button></div><div class="player-row cpu"><span class="num">2</span><span class="cpu-name">🤖 La máquina</span><button class="del" type="button" aria-label="Quitar" disabled>✕</button></div></div>
+        <div class="toggle-row"><div class="txt"><b>Una opción con interruptor</b><small>Lo que cambia cuando está encendida.</small></div><button class="switch on" type="button" role="switch" aria-checked="true" aria-label="Opción"></button></div>
+        <div class="toggle-row"><div class="txt"><b>Apagada</b><small>Y su explicación.</small></div><button class="switch" type="button" role="switch" aria-checked="false" aria-label="Opción"></button></div>
+        <button class="link-btn" type="button">Un link que es botón</button>
+        <div class="code-big">KZMR</div>
+        <div class="qr"><svg viewBox="0 0 8 8" width="120" height="120" shape-rendering="crispEdges"><rect width="8" height="8" fill="#fff"/><path fill="#1a1a1a" d="M0 0h3v3H0zM5 0h3v3H5zM0 5h3v3H0zM4 1h1v1H4zM3 4h2v1H3zM6 4h1v2H6zM4 6h1v2H4zM6 7h2v1H6z"/></svg></div>
+        <div class="lobby-players"><span class="p me">🇨🇱 Javi</span><span class="p">Cata</span><span class="p off">Pedro</span></div>
+        <p class="or">o</p>
+        <p class="waiting">Esperando a los demás<span class="dots"></span></p>
+        <div class="notice">Un aviso: una línea que le dice algo al jugador.</div>
+        <div class="notice notice--good">🎉 ¡Lo lograste!</div>
+        <div class="notice notice--bad">Casi: te faltó una.</div>
+        <div class="snackbar" role="status" style="position:static;animation:none">Copiado (flota abajo un momento)</div>
+        <div class="status"><div class="who">Le toca a Cata</div><div class="sub">Elige una letra</div></div>
+        <div class="result-hero"><span class="trophy">🏆</span><h2 class="display display--md">Resultado</h2></div>
+      </section>
+
+      <section class="panel stack" id="ds-ranking">
+        <h2 class="display display--sm">Ranking</h2>
+        <div class="rk-lista">
+          <div class="rk-fila"><span class="rk-puesto">🥇</span><span class="rk-nombre"><span class="rk-n">🇨🇱 Cata</span></span><span class="rk-puntos">120</span><small class="rk-tiempo">1:02</small></div>
+          <div class="rk-fila yo"><span class="rk-puesto">🥈</span><span class="rk-nombre"><span class="rk-n">🇧🇷 Javi</span><small>(tú)</small></span><span class="rk-puntos">98</span><small class="rk-tiempo">1:15</small></div>
+          <div class="rk-fila"><span class="rk-puesto">3</span><span class="rk-nombre"><span class="rk-n">Un nombre muy largo que se corta</span></span><span class="rk-puntos">7</span><small class="rk-tiempo">🏆</small></div>
+        </div>
+        <p class="rk-record">🎉 ¡Nuevo récord!</p>
+        <div class="rk-seg" role="tablist"><button type="button" class="on">Semana</button><button type="button">Siempre</button><button type="button">Amigos</button></div>
+        <div class="rk-jugador"><label class="rk-campo"><span>Tu nombre</span><input type="text" value="Javi"></label><label class="rk-campo"><span>PIN</span><input type="password" class="rk-pin" value="1234"></label><button type="button" class="rk-link">Salir</button></div>
+      </section>
+
+      <section class="panel stack" id="ds-teclado">
+        <h2 class="display display--sm">Teclado</h2>
+        <!-- In a plain block: in a .stack (flex column) the keypad's `margin: 0 auto` would shrink it to its min-content -->
+        <div><div class="entry"><div class="box filled">4</div><div class="box active">7</div><div class="box hidden-digit">0</div><div class="box"></div></div>
+        <div class="keypad"><button type="button">1</button><button type="button">2</button><button type="button" class="blocked">3</button><button type="button">4</button><button type="button" disabled>5</button><button type="button">6</button><button type="button" class="del" aria-label="Borrar">⌫</button><button type="button">0</button><button type="button" class="ok">OK</button></div></div>
+      </section>
+
+      <!-- Not a .panel: its padding would make the frames narrower than a phone at 320 px -->
+      <section class="stack" id="ds-pantallas">
+        <h2 class="display display--sm">Pantallas completas</h2>
+        <p class="muted">Lo que en un juego tapa la pantalla entera, aquí dentro de un celular: el mismo marcado y las mismas clases de <code>base.css</code>; solo <code>.ds-marco</code> lo encierra en el marco en vez de fijarlo a la ventana.</p>
+
+        <h3 class="ds-rotulo">Pásale el celular · acierto</h3>
+        <div class="ds-telefono" data-pieza="handoff-bien"><div class="handoff ds-marco"><div class="stage">
+          <div class="title gold">¡Correcto!</div>
+          <div class="hint">La A está 2 veces</div>
+          <div class="stage"><div class="phone">📱</div><div class="hint" style="font-size:1.05rem">Pásale el celular a</div><div class="next-name">Cata</div><button class="btn btn--cyan" type="button">¡Lista!</button></div>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">Pásale el celular · error</h3>
+        <div class="ds-telefono" data-pieza="handoff-mal"><div class="handoff ds-marco"><div class="stage">
+          <div class="cheers"><span class="l">🍺</span><span class="r">🍺</span></div>
+          <div class="title">¡Fallaste!</div>
+          <div class="chips drinkers"><span class="chip">🍺 Javi toma</span></div>
+          <div class="hint">La Z no está</div>
+          <button class="btn btn--cyan" type="button">Seguir</button>
+        </div></div></div>
+        <p class="muted">Los estilos en línea son los de <code>handoff.js</code>. El fondo rojo del error es del Ahorcado (<code>.handoff.bad</code>, en su hoja), no del sistema.</p>
+
+        <h3 class="ds-rotulo">La pantalla opaca</h3>
+        <div class="ds-telefono" data-pieza="cover"><div class="cover ds-marco"><div>
+          <div class="eye">🙈</div><div class="hint" style="color:var(--muted);font-weight:800">Pásale el celular a</div><div class="big">Pedro</div>
+          <button class="btn btn--cyan ds-separa" type="button">Toca para ver</button>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">La cuenta regresiva</h3>
+        <div class="ds-telefono" data-pieza="cuenta"><div class="cuenta ds-marco" role="status"><p class="cuenta-juego">🎯 Tiro al blanco</p><span class="cuenta-num">3</span></div></div>
+
+        <h3 class="ds-rotulo">La hoja de abajo, abierta</h3>
+        <div class="ds-telefono" data-pieza="hoja"><div class="hoja-capa ds-marco"><div class="hoja-fondo"></div><div class="hoja" role="dialog">
+          <div class="hoja-asa" aria-hidden="true"></div>
+          <h2>Agrégalo al inicio</h2>
+          <p class="muted">Así vuelves en un toque.</p>
+          <div class="hoja-paso"><span class="hoja-num">1</span><div><p>Toca <b>Compartir</b></p><small class="muted">Abajo, al centro</small></div><span class="hoja-icono" aria-hidden="true">⬆️</span></div>
+          <div class="hoja-paso"><span class="hoja-num">2</span><div><p>Elige <b>Agregar a inicio</b></p></div><span class="hoja-icono" aria-hidden="true">+</span></div>
+          <button class="btn btn--ghost" type="button">Entendido</button>
+        </div></div></div>
+
+        <h3 class="ds-rotulo">El chat de la sala: la burbuja</h3>
+        <div class="ds-telefono" data-pieza="chat-burbuja"><div class="chat ds-marco">
+          <div class="chat-peek"><span class="who ds-quien">Cata</span><span class="txt">¡Esa letra era obvia! 😂</span></div>
+          <button class="chat-fab has-unread" type="button" aria-label="Abrir el chat">💬<span class="chat-badge">2</span></button>
+        </div></div>
+
+        <h3 class="ds-rotulo">El chat de la sala: la hoja</h3>
+        <div class="ds-telefono" data-pieza="chat-hoja"><div class="chat ds-marco"><div class="chat-sheet"><div class="chat-scrim"></div><div class="chat-panel">
+          <div class="chat-head"><b>Chat de la sala</b><button class="chat-x" type="button" aria-label="Cerrar">✕</button></div>
+          <div class="chat-list">
+            <div class="chat-msg"><span class="who ds-quien">Cata</span><span class="txt">¿Quién empieza?</span></div>
+            <div class="chat-msg grouped"><span class="txt">Yo no 🙈</span></div>
+            <div class="chat-msg mine"><span class="who">Javi</span><span class="txt">Empiezo yo</span></div>
+          </div>
+          <form class="chat-form" onsubmit="return false"><input type="text" placeholder="Escribe…" aria-label="Mensaje"><button class="chat-send" type="submit" aria-label="Enviar">➤</button></form>
+        </div></div></div></div>
+
+        <h3 class="ds-rotulo">Juego al azar</h3>
+        <div class="ds-telefono" data-pieza="azar"><div class="azar-capa listo ds-marco" role="dialog" aria-label="Juego al azar">
+          <div class="azar-escena"><div class="azar-sombra"></div><div class="azar-salto"><div class="azar-sin-3d">🪢</div></div></div>
+          <div class="azar-nombre"><small>¡Te tocó!</small><b>Ahorcado</b></div>
+        </div></div>
+
+        <h3 class="ds-rotulo">Uno al día</h3>
+        <div class="ds-telefono ds-telefono--flujo" data-pieza="uad"><div class="panel uad-tarjeta">
+          <p class="uad-racha">🔥 3 días seguidos</p>
+          <p class="muted ds-sin-margen">Vuelve mañana por el día 4</p>
+          <p class="uad-comodin">🃏 Ganaste un comodín.</p>
+          <div class="uad-acciones"><button class="btn" type="button">📤 Compartir</button><button class="btn btn--yellow" type="button">🎲 Jugar otro</button></div>
+          <button class="link-btn" type="button">Repetir el de hoy</button>
+        </div></div>
+
+        <h3 class="ds-rotulo">El pie del sitio</h3>
+        <div class="ds-telefono ds-telefono--flujo ds-telefono--pie" data-pieza="pie"><footer class="atardecer">
+          <p class="footer-msg">Toma con responsabilidad y con agua a mano. 🚕</p>
+          <div class="footer-links tiles"><button type="button" class="buzon-link op-buzon"><span class="ic" aria-hidden="true">💌</span> <span>Buzón</span></button><button type="button" class="op-apoyo"><span class="ic" aria-hidden="true">☕</span> <span>Invítame un café</span></button></div>
+        </footer></div>
+      </section>
+
+      <section class="panel stack" id="ds-escapes">
+        <h2 class="display display--sm">Excepciones</h2>
+        <p class="muted">Lo que un juego puede tener propio, con su motivo, está en DESIGN.md §4 y en <code>docs/design-allowlist.json</code>. Lo demás lo mide <code>node tools/agents/design-lint.mjs</code>.</p>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    // The tokens, read from base.css itself: a new one shows up here without touching this page.
+    const css = await (await fetch('../../assets/css/base.css')).text();
+    const root = css.match(/:root\s*\{([\s\S]*?)\n\}/)[1].replace(/\/\*[\s\S]*?\*\//g, '');
+    const tokens = [...root.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(m => [m[1], m[2].trim()]);
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    const swatches = document.getElementById('ds-muestras');
+    for (const [name, value] of tokens.filter(([, v]) => /^#|^rgba?\(/.test(v))) {
+      const s = el('div', 'ds-muestra'); s.append(el('span', 'ds-muestra-color'), el('b', '', name.slice(2)), el('small', 'muted', value));
+      s.querySelector('.ds-muestra-color').style.background = `var(${name})`; swatches.append(s);
+    }
+    const scale = (id, prefix, draw) => { const box = document.getElementById(id); for (const [name, value] of tokens.filter(([n]) => n.startsWith(prefix))) box.append(draw(name, value)); };
+    scale('ds-escala-espacio', '--s-', (name, value) => { const r = el('div', 'ds-paso'); const bar = el('span', 'ds-barra'); bar.style.width = value; r.append(bar, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
+    scale('ds-escala-esquinas', '--r-', (name, value) => { const r = el('div', 'ds-paso'); const box = el('span', 'ds-esquina'); box.style.borderRadius = value; r.append(box, el('b', '', name.slice(2)), el('small', 'muted', value)); return r; });
+    scale('ds-escala-texto', '--fs-', (name, value) => { const r = el('div', 'ds-paso'); const t = el('span', '', `${name.slice(2)} · ${value}`); t.style.fontSize = `var(${name})`; r.append(t); return r; });
+    // Each full-screen piece in its frame: drawn, inside the frame, never wider than it
+    const marcos = [...document.querySelectorAll('.ds-telefono')].map(f => { const r = f.getBoundingClientRect(), p = f.firstElementChild.getBoundingClientRect();
+      return { pieza: f.dataset.pieza, dibuja: p.width > 0 && p.height > 0 && f.firstElementChild.childElementCount > 0, dentro: p.left >= r.left - 1 && p.right <= r.right + 1 && p.top >= r.top - 1 }; });
+    window.__design = { tokens: tokens.length, marcos };
+  </script>
+</body>
+</html>

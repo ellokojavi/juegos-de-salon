@@ -1,28 +1,34 @@
 /* The lab's experiments bar (D-351, D-361, D-363): a dark pill floating at the bottom with the controls
    of what is being tried. Shared by the splash demo and the home page's experiments, which draws it on
-   the real home page (no frame: on an iPhone a frame grows to its page's height and nothing in it sticks). */
+   the real home page (no frame: on an iPhone a frame grows to its page's height and nothing in it sticks).
+   On the design system's tokens (D-533, docs/DESIGN.md). */
+
+/* The bar's own surface (DESIGN.md §4): darker than any page's night, so the pill reads over every page it floats on */
+:root { --barra-fondo: rgba(10, 4, 20, 0.9); }
+/* The panel's corner, not a pill: with many experiments the bar wraps to many rows and a pill would turn it into an oval */
 .demo-barra {
-  position: fixed; z-index: 1000; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;
-  width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
-  border-radius: 30px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);
+  position: fixed; z-index: 1000; left: 50%; bottom: calc(var(--s-12) + var(--safe-bottom)); transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-8); align-items: center;
+  width: max-content; max-width: calc(100vw - 2 * var(--s-12)); box-sizing: border-box; padding: var(--s-8) var(--s-10);
+  border-radius: var(--r-22); background: var(--barra-fondo); border: 1px solid var(--glass-border);
 }
 .demo-barra button, .demo-barra select, .demo-barra a, .demo-barra .demo-exp {
-  font: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink); background: var(--glass);
-  border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 12px; text-decoration: none;
+  font: inherit; font-weight: 800; font-size: var(--fs-85); color: var(--ink); background: var(--glass);
+  border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-6) var(--s-12); text-decoration: none;
   min-height: 44px; box-sizing: border-box;
 }
-.demo-barra select option { color: #000; }
+/* The native list is drawn light: its options take a card's ink */
+.demo-barra select option { color: var(--card-ink); }
 /* A switch: off is the page as players see it today, on is the experiment */
-.demo-barra button[aria-pressed="true"] { background: var(--yellow); color: #3a1200; border-color: var(--yellow); }
+.demo-barra button[aria-pressed="true"] { background: var(--yellow); color: var(--ink-on-yellow); border-color: var(--yellow); }
 /* An experiment's checkbox (D-389): the label is the whole pill, ticked it turns yellow */
-.demo-barra .demo-exp { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.demo-barra .demo-exp { display: inline-flex; align-items: center; gap: var(--s-6); cursor: pointer; }
 .demo-barra .demo-exp input { width: 18px; height: 18px; margin: 0; accent-color: var(--yellow); }
-.demo-barra .demo-exp:has(input:checked) { background: var(--yellow); color: #3a1200; border-color: var(--yellow); }
+.demo-barra .demo-exp:has(input:checked) { background: var(--yellow); color: var(--ink-on-yellow); border-color: var(--yellow); }
 /* The splash under the bar (U-10): it ends above the bar, so its last item and "Ahora no" are not hidden behind it.
    The bar is one row (60 px) and wraps to two on a narrow phone. */
 body:has(> .demo-barra) .splash-capa { --barra: 76px; padding-bottom: calc(var(--barra) + var(--safe-bottom, 0px)); }
-body:has(> .demo-barra) .splash { max-height: calc(100dvh - var(--barra) - 24px - var(--safe-top, 0px) - var(--safe-bottom, 0px)); }
+body:has(> .demo-barra) .splash { max-height: calc(100dvh - var(--barra) - var(--s-24) - var(--safe-top, 0px) - var(--safe-bottom, 0px)); }
 @media (max-width: 440px) { body:has(> .demo-barra) .splash-capa { --barra: 136px; } }
 /* ‹ Lab is a link: as a plain inline box its text sat at the top of its 44 px pill. Centered like the others */
 .demo-barra a { display: inline-flex; align-items: center; justify-content: center; }

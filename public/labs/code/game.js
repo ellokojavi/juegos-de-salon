@@ -83,7 +83,7 @@ const TRAZO14 = {
 };
 const lineas = (segs, color, geo = TRAZO) => segs.map(({ i, s }) => {
   const [x1, y1, x2, y2] = geo[s];
-  return svgEl('line', { x1: X0[i] + x1, y1: Y0 + y1, x2: X0[i] + x2, y2: Y0 + y2, class: 'seg', stroke: color });
+  return svgEl('line', { x1: X0[i] + x1, y1: Y0 + y1, x2: X0[i] + x2, y2: Y0 + y2, class: 'trazo', stroke: color });
 });
 const lamina = clase => svgEl('svg', { viewBox: '-8 -8 316 156', class: clase, 'aria-hidden': 'true' });
 
@@ -297,8 +297,8 @@ function jugar() {
     const ch = choques(clave, P.g, P.puestas);
     capaChoques.replaceChildren(...ch.flatMap(x => {
       const [fondo] = lineas([x], '#150726'), [rayas] = lineas([x], `url(#${rayado(x.capas)})`);
-      fondo.setAttribute('class', 'seg choque-fondo');
-      rayas.setAttribute('class', 'seg choque');
+      fondo.setAttribute('class', 'trazo choque-fondo');
+      rayas.setAttribute('class', 'trazo choque');
       return [fondo, rayas];
     }));
     P.choques = ch.length;
@@ -413,8 +413,8 @@ function jugarPalabra() {
     const ch = palabra.choques(clave, P.e, P.puestas);
     capaChoques.replaceChildren(...ch.flatMap(x => {
       const [fondo] = lineas([x], '#150726', TRAZO14), [rayas] = lineas([x], `url(#${rayado(x.capas)})`, TRAZO14);
-      fondo.setAttribute('class', 'seg choque-fondo');
-      rayas.setAttribute('class', 'seg choque');
+      fondo.setAttribute('class', 'trazo choque-fondo');
+      rayas.setAttribute('class', 'trazo choque');
       return [fondo, rayas];
     }));
     P.choques = ch.length;

@@ -55,7 +55,7 @@ try {
 
   const days = cal.split(',').slice(0, 2);
   for (let d = 1; d <= 2; d++) {
-    if (d === 2) { await ev(`__copa.store.adelantar(${DAY}); 1`); await b.open(`${SITE}/cup/?${CODE}&test&lang=es`, 1200); }
+    if (d === 2) { await ev(`(async()=>{const E=await import('/cup/engine.js');const m=__copa.estado.copa.meta;__copa.store.adelantar(E.medianoche(m.start,m.tz)+${DAY}+3*3600e3-__copa.store.now());return 1})()`); await b.open(`${SITE}/cup/?${CODE}&test&lang=es`, 1200); }
     const hard = days[d - 1].startsWith('pintaminas');
     const label = hard ? '⚡ Difícil' : '⚡💧 Servicios';
     ok(await b.until(`!!document.querySelector('[data-dia="${d}"]')`, 300, 20), `day ${d} can be played`);
