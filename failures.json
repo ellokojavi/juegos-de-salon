@@ -465,7 +465,11 @@
       "error": "✗ agentes: the rules are folded below the board (📖 Reglas de Agentes)",
       "signature": "0faec1e3e5",
       "date": "2026-11-06T03:57:35.825Z",
-      "fix": null,
+      "fix": {
+        "commit": "c2062fa5384f2aecd256e974aca6f45da15c72b3",
+        "date": "2026-11-06T04:15:51.009Z",
+        "stat": "9 file(s) +310 −100: changelog/ccr-03358154-lf7wxx.md, docs/games/contraption.md, public/labs/contraption/engine.js, public/labs/contraption/engine.test.mjs, public/labs/contraption/game.js, …"
+      },
       "flaky": false
     },
     {
