@@ -397,7 +397,11 @@
       "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
       "signature": "bb52322cc2",
       "date": "2026-11-06T03:22:13.209Z",
-      "fix": null,
+      "fix": {
+        "commit": "11007241f11c4812fc860988e74fafbed36e5ef7",
+        "date": "2026-11-06T03:26:29.763Z",
+        "stat": "21 file(s) +1855 −4: README.md, changelog/ccr-14bf451e-qic63j.md, changelog/ccr-9fd16d5f-jgf8sp.md, changelog/claude-incremental-memory-game-p9nlrr.md, docs/DESIGN.md, …"
+      },
       "flaky": false
     }
   ]
