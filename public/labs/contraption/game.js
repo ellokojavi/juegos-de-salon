@@ -8,6 +8,7 @@
  * input, the sound and the texts, in Spanish, English and Portuguese (C-3).
  */
 import { escena } from './scene.js';
+import { POOL } from './levels.js';
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
 import { getLang, langToggle } from '../../assets/js/i18n.js';
@@ -21,7 +22,7 @@ import {
 trackVisit();   // the site's traffic (D-208)
 
 const GAME_ID = 'artilugio';
-const KEY = 'juegos-de-salon:artilugio-stars';
+const KEY = 'juegos-de-salon:artilugio';
 const LOCALES = {
   es: {
     lema: 'Arma la máquina y lleva la pelota a la canasta.',
@@ -39,7 +40,7 @@ const LOCALES = {
     movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.',
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
     gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente nivel ›', otraVez: 'Jugar de nuevo este nivel',
-    fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', bloqueado: 'Bloqueado', niveles: 'Ver los niveles',
+    fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', otro: '🎲 Otro', dificultad: ['Aprendiendo', 'Fácil', 'Fácil +', 'Medio', 'Medio +', 'Difícil', 'Experto'],
     comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué nivel te costó, si las piezas se ponían fácil y qué pieza te gustaría.', ph: 'Por ejemplo: el nivel 3 me costó mucho.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
@@ -59,7 +60,7 @@ const LOCALES = {
     movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.',
     fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
     gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next level ›', otraVez: 'Play this level again',
-    fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', bloqueado: 'Locked', niveles: 'See the levels',
+    fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', otro: '🎲 Another', dificultad: ['Learning', 'Easy', 'Easy +', 'Medium', 'Medium +', 'Hard', 'Expert'],
     comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us which level was hard, if placing parts was easy and what part you would like.', ph: 'For example: level 3 was very hard.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
   },
@@ -79,7 +80,7 @@ const LOCALES = {
     movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.',
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
     gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próximo nível ›', otraVez: 'Jogar este nível de novo',
-    fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', bloqueado: 'Bloqueado', niveles: 'Ver os níveis',
+    fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', otro: '🎲 Outro', dificultad: ['Aprendendo', 'Fácil', 'Fácil +', 'Médio', 'Médio +', 'Difícil', 'Expert'],
     comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que achou?', lead: 'Conte qual nível foi difícil, se era fácil colocar as peças e que peça você gostaria.', ph: 'Por exemplo: o nível 3 foi muito difícil.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
   },
@@ -123,13 +124,29 @@ const SOUND = {
   boom: () => { tone(160, 40, 0.6, 'sawtooth', 0.14); tone(90, 30, 0.8, 'square', 0.08, 0.05); noise(0.5); },
 };
 
-/* Progress: the stars of each level solved, on this phone */
-let stars = [];
-try { stars = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { stars = []; }
-const unlocked = i => i === 0 || (stars[i - 1] || 0) > 0;
-// The level the cover offers: the first one not solved yet (the last one when every one is)
-const firstOpen = () => { const i = LEVELS.findIndex((_, k) => !stars[k]); return i < 0 ? LEVELS.length - 1 : i; };
-let current = firstOpen();
+/*
+ * The levels: three to learn the parts (the ramp, the trampoline, the fan), then an endless run dealt at
+ * random from the generated pool (levels.js), one tier harder every 4 levels: one part, then two, then
+ * three, with decoys in the tray and more hazards. A level already played is not dealt again until its
+ * tier runs out. The run, the stars and the level in progress are kept on this phone.
+ */
+const TUTORIAL = [0, 2, 3].map((i, k) => ({ id: `tut-${k + 1}`, tier: 0, ...LEVELS[i] }));
+const TIERS = Math.max(...POOL.map(l => l.tier));
+const tierFor = n => n <= TUTORIAL.length ? 0 : Math.min(TIERS, 1 + Math.floor((n - TUTORIAL.length - 1) / 4));
+const byId = id => TUTORIAL.find(l => l.id === id) || POOL.find(l => l.id === id) || null;
+let save = { n: 1, stars: {}, seen: [], id: null };
+try { save = { ...save, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (_) { /* a fresh run */ }
+const keep = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (_) { /* not kept */ } };
+const totalStars = () => Object.values(save.stars).reduce((a, b) => a + b, 0);
+/** The level for step n: the tutorial, or a random one of its tier not played yet. */
+function deal(n, avoid = null) {
+  if (n <= TUTORIAL.length) return TUTORIAL[n - 1];
+  const tier = tierFor(n);
+  let left = POOL.filter(l => l.tier === tier && !save.seen.includes(l.id) && l.id !== avoid);
+  if (!left.length) { save.seen = save.seen.filter(id => byId(id)?.tier !== tier); left = POOL.filter(l => l.tier === tier && l.id !== avoid); }
+  return left[Math.floor(Math.random() * left.length)];
+}
+let level = byId(save.id) || deal(save.n);
 
 /* ------------------------------------------------------------------ */
 /* The cover                                                           */
@@ -145,19 +162,19 @@ function texts() {
   $('btn-jugar').textContent = L.jugar;
   $('btn-probar').textContent = L.probar; $('btn-limpiar').textContent = L.limpiar; $('btn-deshacer').textContent = L.deshacer;
   $('btn-girar').textContent = L.girar; $('btn-quitar').textContent = L.quitar;
-  $('btn-otra').textContent = L.otraVez;
+  $('btn-otra').textContent = L.otraVez; $('btn-otro').textContent = L.otro;
   $('pie').replaceChildren(el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
-    onClick: () => abrirComentario({ T: L.comentario, contexto: { juego: GAME_ID, nivel: current + 1, pantalla: $('s-juego').classList.contains('active') ? 'juego' : 'portada', url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } }),
+    onClick: () => abrirComentario({ T: L.comentario, contexto: { juego: GAME_ID, nivel: save.n, nivelId: level?.id, pantalla: $('s-juego').classList.contains('active') ? 'juego' : 'portada', url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } }),
   }, L.comentarAbrir));
   levelChips();
 }
 function levelChips() {
-  $('niveles').replaceChildren(...LEVELS.map((_, i) => el('button', {
-    type: 'button', class: `chip-btn${i === current ? ' on' : ''}`, 'data-nivel': i + 1, disabled: !unlocked(i),
-    'aria-label': unlocked(i) ? fmt(L.nivel, i + 1) : `${fmt(L.nivel, i + 1)} · ${L.bloqueado}`,
-    onClick: () => { current = i; levelChips(); },
-  }, unlocked(i) ? String(i + 1) : '🔒', stars[i] ? el('small', {}, '★'.repeat(stars[i])) : '')));
+  // The cover: where the run is, how hard it gets there and the stars so far
+  $('niveles').replaceChildren(
+    el('span', { class: 'chip chip--gold', id: 'progreso' }, fmt(L.nivel, save.n)),
+    el('span', { class: 'chip' }, L.dificultad[tierFor(save.n)]),
+    totalStars() ? el('span', { class: 'chip', id: 'estrellas-total' }, `★ ${totalStars()}`) : '');
 }
 
 /* ------------------------------------------------------------------ */
@@ -166,10 +183,12 @@ function levelChips() {
 const canvas = $('lienzo');
 let board = null, run = null, picked = null, chosen = null, trail = [], startedAt = 0;
 
-function startLevel(i) {
-  current = i; board = newBoard(i); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null;
+function startLevel(lv = level) {
+  level = lv; save.id = lv.id; keep();
+  board = newBoard(lv); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null;
   $('resultado').hidden = true; document.body.classList.remove('ganado');
-  $('nivel').textContent = fmt(L.nivel, i + 1); $('objetivo').textContent = L.objetivo;
+  $('nivel').textContent = fmt(L.nivel, save.n); $('dificultad').textContent = L.dificultad[lv.tier]; $('objetivo').textContent = L.objetivo;
+  $('btn-otro').hidden = lv.tier === 0;
   say(L.elige);
   startedAt = Date.now();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
@@ -324,26 +343,25 @@ $('btn-probar').addEventListener('click', () => {
   run = newRun(board); last = performance.now(); acc = 0;
   say(''); tray(); controls();
 });
-$('btn-jugar').addEventListener('click', () => { unlockAudio(); startLevel(current); });
-$('btn-siguiente').addEventListener('click', () => {
-  if (current + 1 < LEVELS.length) startLevel(current + 1);
-  else { current = firstOpen(); show('s-portada'); levelChips(); }
-});
-$('btn-otra').addEventListener('click', () => startLevel(current));
+$('btn-jugar').addEventListener('click', () => { unlockAudio(); startLevel(level); });
+$('btn-siguiente').addEventListener('click', () => startLevel(deal(save.n)));
+$('btn-otra').addEventListener('click', () => { save.n--; startLevel(level); });   // the same level again, as the same step
+// Stuck on one? Another of the same difficulty, at random
+$('btn-otro').addEventListener('click', () => { if (run) return; save.seen.push(level.id); startLevel(deal(save.n, level.id)); });
 
 function finish(state) {
   if (state === 'won') {
     SOUND.won(); vibrate([30, 40, 30]);
-    const n = board.placed.length, s = starsOf(current, n);
-    stars[current] = Math.max(stars[current] || 0, s);
-    try { localStorage.setItem(KEY, JSON.stringify(stars)); } catch (_) { /* not kept */ }
-    trackFinish({ detalle: `level ${current + 1} · ${n} parts · ${s} stars · ${Math.round((Date.now() - startedAt) / 1000)}s` });
-    const last = current + 1 >= LEVELS.length;
-    $('res-titulo').textContent = last ? L.fin : L.gano;
+    const n = board.placed.length, s = starsOf(level, n);
+    save.stars[level.id] = Math.max(save.stars[level.id] || 0, s);
+    if (!save.seen.includes(level.id)) save.seen.push(level.id);
+    trackFinish({ detalle: `level ${save.n} · ${level.id} · ${n} parts · ${s} stars · ${Math.round((Date.now() - startedAt) / 1000)}s` });
+    save.n++; save.id = null; keep();
+    $('res-titulo').textContent = L.gano;
     $('res-estrellas').textContent = '★'.repeat(s) + '☆'.repeat(3 - s);
     $('res-linea').textContent = fmt(L.linea[n === 1 ? 0 : 1], n);
     document.body.classList.add('ganado');
-    $('btn-siguiente').textContent = last ? L.niveles : L.siguiente;
+    $('btn-siguiente').textContent = L.siguiente;
     $('res-salidas').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
     $('resultado').hidden = false;
     $('btn-siguiente').focus({ preventScroll: true });
@@ -410,8 +428,8 @@ function frame(now) {
 /* The cover's demo: a level playing its own solution over and over, behind the title */
 const demo = { scene: escena($('demo')), board: null, run: null, trail: [], wait: 0, n: 0, roll: 0, won: false };
 function demoNext() {
-  const order = [5, 2, 3, 4, 1, 0], i = order[demo.n++ % order.length];
-  demo.board = newBoard(i); LEVELS[i].solution.forEach(p => place(demo.board, p.type, p.c, p.r, p.dir ?? 1));
+  const lv = POOL[Math.floor(Math.random() * POOL.length)];
+  demo.board = newBoard(lv); demo.board.placed = lv.solution.map(p => ({ dir: 1, ...p }));
   demo.run = newRun(demo.board); demo.trail = []; demo.wait = 0; demo.won = false;
 }
 new ResizeObserver(() => demo.scene.size()).observe($('demo'));
@@ -438,4 +456,4 @@ initSound();
 texts();
 requestAnimationFrame(frame);
 // For the end-to-end script: the game's state, and a level's solution to play it like a player would
-window.__artilugio = { get board() { return board; }, get run() { return run; }, LEVELS, start: startLevel, fits, fixedSegments };
+window.__artilugio = { get board() { return board; }, get run() { return run; }, LEVELS, POOL, get level() { return level; }, start: startLevel, fits, fixedSegments };

@@ -17,6 +17,7 @@ export const SPRING_V = 18;       // a trampoline's throw: up about 7 rows
 export const FAN = 26;            // a fan's push, cells/s²
 export const MAX_T = 14;          // a run that lasts longer has failed
 export const STILL = 1.4;         // seconds almost still: stuck
+export const ROLL = 1.6;          // rolling resistance on flat ground, per second
 export const SETTLE = 0.5;        // seconds at rest in the basket: passed
 export const SETTLE_V = 0.6;      // below this speed the ball is at rest
 export const PARTS = ['ramp', 'plank', 'spring', 'fan'];
@@ -113,8 +114,8 @@ export function blockedCells(level) {
 }
 
 /** A board to build on: the level, the parts placed and what is left in the tray. */
-export function newBoard(index) {
-  const level = LEVELS[index];
+export function newBoard(which) {
+  const level = typeof which === 'number' ? LEVELS[which] : which, index = typeof which === 'number' ? which : -1;
   return { index, level, placed: [], left: { ...level.tray }, blocked: blockedCells(level) };
 }
 /** Whether a part fits at c, r: inside the board, on free cells. */
@@ -152,7 +153,7 @@ export function flip(p) { if (p.type === 'ramp' || p.type === 'fan') { p.dir = -
 /* The run                                                             */
 /* ------------------------------------------------------------------ */
 /** Starts a run of the board as it is: the ball at the start, every segment fixed. */
-export function newRun(board) {
+export function newRun(board, opts = {}) {
   const { level } = board;
   const parts = [...level.fixed.filter(f => f.type !== 'wall' && f.type !== 'spikes'), ...board.placed];
   return {
@@ -160,6 +161,7 @@ export function newRun(board) {
     segs: [...fixedSegments(level), ...board.placed.flatMap(p => segmentsOf(p).map(x => [...x, p]))],
     fans: parts.filter(p => p.type === 'fan'),
     goal: level.goal, t: 0, still: 0, state: 'running', events: [],
+    path: opts.path ? [] : null,
   };
 }
 
@@ -197,16 +199,19 @@ export function stepRun(run, dt) {
     } else {
       const e = vn < -4 ? 0.35 : 0;
       b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny;
-      // A little rolling friction along the surface
+      // A little rolling friction along the surface, more on a flat floor so a ball rolling there comes to rest
       b.vx *= 0.998; b.vy *= 0.998;
+      if (ny < -0.97) b.vx *= 1 - ROLL * dt;
       if (vn < -4) run.events.push({ type: 'knock' });
     }
   }
   run.t += dt;
+  if (run.path) run.path.push(b.x, b.y);
   // The floor of the board: the ball that touches it blows up
   if (b.y + R >= ROWS) { b.y = ROWS - R; run.state = 'boom'; run.events.push({ type: 'boom', x: b.x, y: b.y }); return run; }
   // The basket: the level is passed only once the ball has come to rest inside it, not as it flies through
-  const { c, r } = run.goal, inCup = b.x > c + 0.1 && b.x < c + 1.9 && b.y > r && b.y < r + 1;
+  // In the basket means down on its floor, not only past its rim: it may still roll from side to side
+  const { c, r } = run.goal, inCup = b.x > c + 0.1 && b.x < c + 1.9 && b.y > r + 1 - R - 0.08 && b.y < r + 1;
   const slow = Math.hypot(b.vx, b.vy) < SETTLE_V;
   run.settle = inCup && slow ? (run.settle || 0) + dt : 0;
   if (run.settle >= SETTLE) { run.state = 'won'; run.events.push({ type: 'won' }); return run; }
@@ -215,13 +220,13 @@ export function stepRun(run, dt) {
   return run;
 }
 /** Plays a whole run without drawing; the state it ends in: 'won', 'spiked', 'boom' (the floor) or 'stuck'. */
-export function simulate(board, dt = 1 / 120) {
-  const run = newRun(board);
+export function simulate(board, dt = 1 / 120, opts = {}) {
+  const run = newRun(board, opts);
   while (run.state === 'running') stepRun(run, dt);
   return run;
 }
 /** Stars for a solved level: 3 using the fewest parts the level needs, fewer with more. */
-export function starsOf(index, used) {
-  const need = LEVELS[index].solution.length;
+export function starsOf(which, used) {
+  const need = (typeof which === 'number' ? LEVELS[which] : which).solution.length;
   return used <= need ? 3 : used === need + 1 ? 2 : 1;
 }

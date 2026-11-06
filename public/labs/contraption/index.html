@@ -32,13 +32,13 @@
       </div>
       <details class="panel" id="como"><summary id="como-titulo"></summary><ul class="pasos" id="pasos"></ul></details>
       <div class="idioma" id="lang-slot"></div>
-      <div class="niveles" id="niveles" role="group"></div>
+      <div class="chips niveles" id="niveles"></div>
       <button type="button" class="btn btn--yellow" id="btn-jugar"></button>
     </section>
 
     <!-- The workshop: the board, the tray of parts and the buttons to try it -->
     <section class="screen stack" id="s-juego">
-      <div class="cabecera"><b id="nivel"></b><span class="muted" id="objetivo"></span></div>
+      <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="muted objetivo" id="objetivo"></span><button type="button" class="link-btn" id="btn-otro" hidden></button></div>
       <div class="tablero" id="tablero" data-tablero>
         <canvas id="lienzo"></canvas>
         <div class="capa" id="resultado" hidden>

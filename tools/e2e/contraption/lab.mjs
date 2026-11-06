@@ -29,7 +29,7 @@ ok(await waitFor(`!!document.getElementById('btn-jugar')?.textContent`), 'the co
 ok(/Arma la máquina/.test(await ev(`document.getElementById('lema').textContent`)), 'the tagline');
 ok(/The Incredible Machine/.test(await ev(`document.getElementById('credito').textContent`)) && /wikipedia/.test(await ev(`document.getElementById('link-tim')?.href || ''`)), 'the credit, with its link');
 ok(await ev(`document.querySelectorAll('#pasos li').length`) === 3, 'three steps under «Cómo se juega»');
-ok(await ev(`document.querySelectorAll('#niveles button').length`) === 6 && await ev(`document.querySelectorAll('#niveles button:disabled').length`) === 5, 'six levels, the first open');
+ok(await ev(`document.getElementById('progreso')?.textContent`) === 'Nivel 1' && /Aprendiendo/.test(await ev(`document.getElementById('niveles').textContent`)), 'the run: «Nivel 1», learning');
 ok(await ev(`!!(document.getElementById('lang-slot').compareDocumentPosition(document.getElementById('btn-jugar')) & Node.DOCUMENT_POSITION_FOLLOWING)`), 'the language toggle comes before Jugar (C-5)');
 ok(await ev(`(() => { const r = document.getElementById('btn-jugar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Jugar in the first screen');
 await b.shot('01-cover');
@@ -88,7 +88,7 @@ ok(await waitFor(`document.getElementById('nivel').textContent === 'Nivel 2'`), 
 
 await b.go(`${SITE}/labs/contraption/?lang=en&test`, 1000);
 ok(await waitFor(`/Build the machine/.test(document.getElementById('lema').textContent)`), 'in English, the cover is in English');
-ok(await ev(`document.querySelector('#niveles button[data-nivel="1"]').textContent.includes('★★★') && !document.querySelector('#niveles button[data-nivel="2"]').disabled`), 'the stars are kept and level 2 is open');
+ok(await ev(`document.getElementById('progreso')?.textContent`) === 'Level 2' && /★ 3/.test(await ev(`document.getElementById('estrellas-total')?.textContent || ''`)), 'the run and its stars are kept: Level 2, ★ 3');
 ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
 b.close();
 
@@ -98,6 +98,18 @@ ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'no s
 await s.evaluate(`document.getElementById('btn-jugar').click(); 1`); await sleep(500);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'nor on the board');
 await s.shot('04-board-320');
+// Further on: a level dealt at random from its tier, and 🎲 Otro deals another of the same difficulty
+await s.evaluate(`localStorage.setItem('juegos-de-salon:artilugio', JSON.stringify({ n: 9, stars: {}, seen: [], id: null })); 1`);
+await s.go(`${SITE}/labs/contraption/?test`, 1000);
+ok(await s.evaluate(`document.getElementById('progreso')?.textContent`) === 'Nivel 9', 'the cover picks the run up at Nivel 9');
+await s.evaluate(`document.getElementById('btn-jugar').click(); 1`); await sleep(400);
+const first = await s.evaluate(`__artilugio.level.id`);
+ok(/^t2-/.test(first) && await s.evaluate(`document.getElementById('dificultad').textContent`) === 'Fácil +', `level 9 is dealt from the second tier (${first}), «Fácil +»`);
+ok(!await s.evaluate(`document.getElementById('btn-otro').hidden`), '🎲 Otro is offered');
+await s.evaluate(`document.getElementById('btn-otro').click(); 1`); await sleep(300);
+const second = await s.evaluate(`__artilugio.level.id`);
+ok(second !== first && /^t2-/.test(second) && await s.evaluate(`document.getElementById('nivel').textContent`) === 'Nivel 9', `🎲 Otro deals another of the same tier (${second}), still Nivel 9`);
+await s.shot('06-dealt-320');
 ok(!s.errors.length, `no errors at 320 px ${JSON.stringify(s.errors)}`);
 s.close();
 if (failures) { console.log(`✗ ${failures} failures`); process.exit(1); }

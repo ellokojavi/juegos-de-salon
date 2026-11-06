@@ -17,12 +17,12 @@
 .pasos li { display: grid; grid-template-columns: 30px 1fr; gap: var(--s-8); align-items: center; font-size: var(--fs-90); }
 .idioma { display: flex; justify-content: center; }
 
-/* The levels, one chip each: done ones show their stars, locked ones are dimmed */
-.niveles { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-6); }
-.niveles .chip-btn { justify-content: center; flex-direction: column; padding: var(--s-4) 0; gap: 0; }
-.niveles .chip-btn small { color: var(--yellow); font-size: var(--fs-75); line-height: 1; }
+/* The run on the cover: the level, its difficulty, the stars */
+.niveles { justify-content: center; }
 
-.cabecera { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-10); }
+.cabecera { display: flex; align-items: center; gap: var(--s-8); flex-wrap: wrap; }
+.cabecera .objetivo { flex: 1; text-align: right; font-size: var(--fs-90); }
+.cabecera .link-btn { min-height: 44px; }
 .cabecera b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; }
 
 /* The board: an 8 × 11 grid, as wide as the screen allows and never taller than it */
@@ -52,3 +52,5 @@ body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: no
 /* Once won, only the result card speaks: the tray and the buttons under the board step aside */
 body.ganado #s-juego > .bandeja, body.ganado #s-juego > .btn-row, body.ganado .mensaje { visibility: hidden; }
 .herramientas .btn { padding-inline: var(--s-8); white-space: nowrap; }
+/* On a narrow phone the header keeps the level, its difficulty and 🎲 Otro; the glowing basket says the goal */
+@media (max-width: 400px) { .cabecera .objetivo { visibility: hidden; } }

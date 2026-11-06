@@ -1,5 +1,6 @@
 // Artilugio's engine: placing parts, and every level solved by its solution and failed without parts.
 import assert from 'node:assert/strict';
+import { POOL } from './levels.js';
 import { SETTLE, ROWS as FLOOR, LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf } from './engine.js';
 
 // Every level: its solution fits its tray and wins; an empty board does not; its parts are known
@@ -11,6 +12,23 @@ LEVELS.forEach((L, i) => {
   for (const t of Object.keys(L.tray)) assert.ok(PARTS.includes(t));
   assert.ok(L.goal.c >= 0 && L.goal.c + 1 < COLS && L.goal.r < ROWS);
 });
+
+// The generated pool: every level's answer fits its tray and wins, the board alone does not, the ids
+// are unique and the tiers grow from 1 part to 3
+{
+  const ids = new Set();
+  for (const L of POOL) {
+    assert.ok(!ids.has(L.id), `${L.id} is unique`); ids.add(L.id);
+    assert.notEqual(simulate(newBoard(L)).state, 'won', `${L.id} must not solve itself`);
+    const b = newBoard(L);
+    for (const p of L.solution) assert.ok(place(b, p.type, p.c, p.r, p.dir ?? 1), `${L.id}: the answer's ${p.type} fits its tray`);
+    assert.equal(simulate(b).state, 'won', `${L.id}: its answer wins`);
+  }
+  const tiers = [...new Set(POOL.map(l => l.tier))].sort();
+  assert.ok(tiers.length >= 6 && POOL.length >= 60, `six tiers and plenty of levels (${POOL.length})`);
+  const need = t => Math.max(...POOL.filter(l => l.tier === t).map(l => l.solution.length));
+  assert.ok(need(tiers[0]) === 1 && need(tiers.at(-1)) === 3, 'from one part to three');
+}
 
 // Placing: from the tray, on free cells only, and back to it
 {
@@ -66,4 +84,4 @@ LEVELS.forEach((L, i) => {
 
 // Stars: the fewest parts, three
 assert.equal(starsOf(0, 1), 3); assert.equal(starsOf(0, 2), 2); assert.equal(starsOf(5, 4), 1);
-console.log(`✓ artilugio engine: ${LEVELS.length} levels solved, placing, physics`);
+console.log(`✓ artilugio engine: ${LEVELS.length} hand-made and ${POOL.length} generated levels solved, placing, physics`);

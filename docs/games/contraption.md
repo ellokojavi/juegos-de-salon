@@ -16,11 +16,11 @@ no name, art, sound or level comes from it.
 ## Cover
 
 The demo board solving levels by itself, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
-(`details.panel`), the language toggle, the six levels as chips (solved ones show their stars, the next
-unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in C-5's order.
+(`details.panel`), the language toggle, where the run is (the level, its difficulty, the stars so far)
+and a yellow «⚙️ Jugar», in C-5's order.
 
-1. 🧩 Elige una pieza abajo y toca el tablero para ponerla.
-2. ↔️ Toca una pieza puesta para girarla, moverla o quitarla.
+1. 🧩 Arrastra una pieza de abajo al tablero.
+2. ↔️ Toca una rampa o un ventilador para girarlo; arrastra para moverlo; suéltalo fuera para quitarlo.
 3. ▶️ Toca Probar: la pelota tiene que caer en la canasta 🧺.
 
 ## How it is played
@@ -45,8 +45,10 @@ unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in 
   small tick on each snap and a pulse on placing.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
 - **▶ Probar** runs the ball with a fixed-step physics (gravity, bounces, a little friction). It ends
-  **won** only once the ball **rests in the basket** (slower than 0.6 cells/s for 0.5 s inside it: a
-  ball that flies through or bounces out does not count); **boom** when it touches the bottom of the
+  **won** only once the ball **rests on the basket's floor** (down on it, slower than 0.6 cells/s for
+  0.5 s: a ball that flies through, bounces out or is still rolling does not count; arriving with
+  speed, it rolls and knocks from side to side inside the basket until a flat floor's rolling
+  resistance stops it); **boom** when it touches the bottom of the
   board: it blows up (a flash, a fireball, a shock wave, sparks and smoke, the board shakes, a bang)
   and only after it plays out (1.1 s) the stage is marked failed, «¡Bum! 💥 Tocó el fondo»; **popped**
   on spikes; or **stuck** (still outside the basket for 1.4 s, or 14 s in all). A failure says which
@@ -56,14 +58,39 @@ unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in 
 
 ## The levels
 
-In `LEVELS` (`engine.js`), each with a `solution`. `engine.test.mjs` checks that every solution fits
-its tray and wins, and that no level solves itself with an empty board. They were tuned with a brute
-force over every placement of one and two parts, so each has a few answers, not just one.
+**A run of levels, dealt at random, harder as it goes.** The first three teach the parts, hand-made in
+`LEVELS` (`engine.js`): the ramp, the trampoline, the fan. From the fourth on, each level is dealt at
+random from the generated pool (`levels.js`, 72 levels in six tiers of 12), one tier harder every 4
+levels, never repeating one until its tier runs out:
+
+| Tier | Label | The answer needs | Tray | Hazards |
+|---|---|---|---|---|
+| 1 | Fácil | 1 ramp | exact | 1–2 |
+| 2 | Fácil + | 1 part of any kind | one decoy | 2–3 |
+| 3 | Medio | 2 parts | exact | 2–3 |
+| 4 | Medio + | 2 parts | one decoy | 3–4 |
+| 5 | Difícil | 3 parts | exact | 3–4 |
+| 6 | Experto | 3 parts | one decoy | 4–6 |
+
+**🎲 Otro** (beside the level, not in the tutorial) deals another level of the same tier, as the same
+step, for when one gets stuck. The cover shows where the run is («Nivel 9», its difficulty and the
+stars so far); the run, the stars per level, the levels seen and the one in progress are kept on the
+phone (`juegos-de-salon:artilugio`). Stars: 3 with the parts the answer needs, 2 with one more, 1 otherwise.
+
+**How the pool is made** (`tools/generators/contraption-levels.mjs`): each level is built backwards
+from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
+chained on its real path, each where the ball passes; the basket goes where that machine brings the
+ball down, and the run must end at rest in it; hazards (spikes, girders, fixed planks and ramps) are
+added only where the machine still works. A level is kept only if an exhaustive search finds no answer
+with fewer parts from its tray: the search is exact while pruned, because a part the ball never comes
+near (and no fan blows on) cannot change the run. `engine.test.mjs` plays every level's answer and
+checks that no board solves itself. To make a new pool: run each tier side by side
+(`node tools/generators/contraption-levels.mjs 12 <seed> <tier>`) and join them (`… merge /tmp/contraption-tiers-*.json`).
 
 ## For tests
 
 `window.__artilugio` exposes the board and the run. End to end: `tools/e2e/contraption/lab.mjs`
-(cover, a failed run, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
+(cover, a level dealt at random at step 9 and 🎲 Otro, a failed run, the explosion on the bottom, dragging from the tray, one-tap turning, dragging to move, Deshacer, dropping off the board, a win, the next level, English, 320 px).
 
 ## The look (`scene.js`)
 
