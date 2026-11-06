@@ -73,7 +73,8 @@ public/<carpeta>/
 
 ## C-3 · Idiomas
 
-- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés y portugués son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47). El alemán salió (D-514): quien lo tenía guardado, o llega con `?lang=de` o por `/de/`, queda en inglés (`RETIRADOS` en `i18n.js`).
+- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador. Inglés y portugués son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47). El alemán salió (D-514): quien lo tenía guardado, o llega con `?lang=de` o por `/de/`, queda en inglés (`RETIRADOS` en `i18n.js`).
+- **First visit in the browser's language (D-536, behind the flag `browser-lang` until the owner publishes it):** on a device where no language was ever chosen, the first page saves the first of `navigator.languages` the app speaks (or Spanish) as the choice, once, and reloads in it; from then on the saved choice and the toggle rule, and `?lang=` in a link still wins. Only `idiomaInicial()` in `i18n.js` reads it to decide.
 - **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/` y `/en/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
 - Todo texto visible vive en `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
