@@ -38,7 +38,8 @@
 
     <!-- The workshop: the board, the tray of parts and the buttons to try it -->
     <section class="screen stack" id="s-juego">
-      <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="muted objetivo" id="objetivo"></span><button type="button" class="link-btn" id="btn-otro" hidden></button></div>
+      <!-- The stage, its difficulty, the five dots and the game's clock, always in view -->
+      <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj" id="reloj" role="timer"></span></div>
       <div class="tablero" id="tablero" data-tablero>
         <canvas id="lienzo"></canvas>
         <div class="capa" id="resultado" hidden>
@@ -47,8 +48,6 @@
             <p class="estrellas" id="res-estrellas"></p>
             <p class="muted" id="res-linea"></p>
             <button type="button" class="btn btn--yellow" id="btn-siguiente"></button>
-            <button type="button" class="btn btn--ghost btn--sm" id="btn-otra"></button>
-            <div id="res-salidas"></div>
           </div>
         </div>
       </div>
@@ -64,6 +63,18 @@
       <div class="stack">
         <button type="button" class="btn btn--yellow" id="btn-probar"></button>
       </div>
+    </section>
+    <!-- The result: the total, how it adds up stage by stage, and the way to play again -->
+    <section class="screen stack" id="s-fin">
+      <div class="result-hero">
+        <p class="sello" id="fin-sello"></p>
+        <div class="score-big" id="fin-puntos">0</div>
+        <p class="muted" id="fin-linea"></p>
+      </div>
+      <div class="panel"><table class="tabla-fin" id="fin-tabla"></table><p class="muted leyenda" id="fin-leyenda"></p></div>
+      <p class="muted center" id="fin-mejor"></p>
+      <button type="button" class="btn btn--yellow" id="btn-otra"></button>
+      <div id="fin-salidas"></div>
     </section>
     <div id="pie" class="pie"></div>
   </main>
