@@ -83,7 +83,7 @@ export function fixedSegments(level) {
   for (const f of level.fixed) {
     if (f.type === 'wall') s.push([f.x1, f.y1, f.x2, f.y2, 'solid']);
     else if (f.type === 'spikes') s.push([f.c, f.r + 0.7, f.c + f.w, f.r + 0.7, 'spikes']);
-    else s.push(...segmentsOf(f));
+    else s.push(...segmentsOf(f).map(x => [...x, f]));
   }
   const { c, r } = level.goal;
   s.push([c + 0.1, r, c + 0.1, r + 1, 'solid'], [c + 1.9, r, c + 1.9, r + 1, 'solid'], [c + 0.1, r + 1, c + 1.9, r + 1, 'solid']);
@@ -155,7 +155,7 @@ export function newRun(board) {
   const parts = [...level.fixed.filter(f => f.type !== 'wall' && f.type !== 'spikes'), ...board.placed];
   return {
     ball: { x: level.start.x, y: level.start.y, vx: level.start.vx || 0, vy: 0 },
-    segs: [...fixedSegments(level), ...board.placed.flatMap(segmentsOf)],
+    segs: [...fixedSegments(level), ...board.placed.flatMap(p => segmentsOf(p).map(x => [...x, p]))],
     fans: parts.filter(p => p.type === 'fan'),
     goal: level.goal, t: 0, still: 0, state: 'running', events: [],
   };
@@ -185,13 +185,13 @@ export function stepRun(run, dt) {
     const d = Math.hypot(nx, ny);
     if (d >= R || d === 0) continue;
     nx /= d; ny /= d;
-    if (s[4] === 'spikes') { run.state = 'spiked'; run.events.push({ type: 'spiked' }); return run; }
+    if (s[4] === 'spikes') { run.state = 'spiked'; run.events.push({ type: 'spiked', x: b.x, y: b.y }); return run; }
     b.x += nx * (R - d); b.y += ny * (R - d);
     const vn = b.vx * nx + b.vy * ny;
     if (vn >= 0) continue;
     if (s[4] === 'spring' && ny < -0.5) {
       b.vy = -SPRING_V; b.vx *= 0.9;
-      run.events.push({ type: 'boing' });
+      run.events.push({ type: 'boing', part: s[5] });
     } else {
       const e = vn < -4 ? 0.35 : 0;
       b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny;

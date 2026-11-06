@@ -7,6 +7,7 @@
  * The engine (board, placing, physics, levels) is engine.js; this file is the screens, the drawing, the
  * input, the sound and the texts, in Spanish, English and Portuguese (C-3).
  */
+import { escena } from './scene.js';
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
 import { getLang, langToggle } from '../../assets/js/i18n.js';
@@ -37,7 +38,7 @@ const LOCALES = {
     elige: 'Elige una pieza y toca el tablero.', toca: 'Toca el tablero para poner la {p}.', noCabe: 'Ahí no cabe.',
     movida: 'Toca otra casilla para moverla, o usa los botones.', sinPiezas: 'Prueba primero sin piezas, o pon una.',
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', lost: 'Se cayó del tablero. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
-    gano: '¡Funciona!', linea: 'Con {n} pieza(s).', siguiente: 'Siguiente nivel ›', otraVez: 'Jugar de nuevo este nivel',
+    gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente nivel ›', otraVez: 'Jugar de nuevo este nivel',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', bloqueado: 'Bloqueado', niveles: 'Ver los niveles',
     comentarAbrir: '💬 Dejar un comentario',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué nivel te costó, si las piezas se ponían fácil y qué pieza te gustaría.', ph: 'Por ejemplo: el nivel 3 me costó mucho.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -57,7 +58,7 @@ const LOCALES = {
     elige: 'Pick a part and tap the board.', toca: 'Tap the board to place the {p}.', noCabe: 'It does not fit there.',
     movida: 'Tap another cell to move it, or use the buttons.', sinPiezas: 'Try it with no parts first, or place one.',
     fallos: { spiked: 'Popped! 📌 Try something else.', lost: 'It fell off the board. Try something else.', stuck: 'It got stuck. Try something else.' },
-    gano: 'It works!', linea: 'With {n} part(s).', siguiente: 'Next level ›', otraVez: 'Play this level again',
+    gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next level ›', otraVez: 'Play this level again',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', bloqueado: 'Locked', niveles: 'See the levels',
     comentarAbrir: '💬 Leave a comment',
     comentario: { titulo: 'What did you think?', lead: 'Tell us which level was hard, if placing parts was easy and what part you would like.', ph: 'For example: level 3 was very hard.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
@@ -77,7 +78,7 @@ const LOCALES = {
     elige: 'Escolha uma peça e toque o tabuleiro.', toca: 'Toque o tabuleiro para colocar a {p}.', noCabe: 'Aí não cabe.',
     movida: 'Toque outra casa para movê-la, ou use os botões.', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.',
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', lost: 'Caiu do tabuleiro. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
-    gano: 'Funciona!', linea: 'Com {n} peça(s).', siguiente: 'Próximo nível ›', otraVez: 'Jogar este nível de novo',
+    gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próximo nível ›', otraVez: 'Jogar este nível de novo',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', bloqueado: 'Bloqueado', niveles: 'Ver os níveis',
     comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que achou?', lead: 'Conte qual nível foi difícil, se era fácil colocar as peças e que peça você gostaria.', ph: 'Por exemplo: o nível 3 foi muito difícil.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -120,7 +121,7 @@ let current = firstOpen();
 /* ------------------------------------------------------------------ */
 /* The cover                                                           */
 /* ------------------------------------------------------------------ */
-function show(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('active', s.id === id); scrollTo(0, 0); }
+function show(id) { document.body.classList.toggle('jugando', id === 's-juego'); document.body.classList.remove('ganado'); for (const s of document.querySelectorAll('.screen')) s.classList.toggle('active', s.id === id); scrollTo(0, 0); }
 function texts() {
   document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang;
   $('btn-volver').textContent = L.laboratorio;
@@ -149,15 +150,12 @@ function levelChips() {
 /* ------------------------------------------------------------------ */
 /* The workshop                                                        */
 /* ------------------------------------------------------------------ */
-const canvas = $('lienzo'), ctx = canvas.getContext('2d');
+const canvas = $('lienzo');
 let board = null, run = null, picked = null, chosen = null, trail = [], startedAt = 0;
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || '#fff';
-const C = {};
-function colours() { for (const k of ['yellow', 'cyan', 'pink', 'lime', 'orange', 'purple', 'ink', 'muted', 'red']) C[k] = css(`--${k}`); }
 
 function startLevel(i) {
-  current = i; board = newBoard(i); run = null; picked = null; chosen = null; trail = [];
-  $('resultado').hidden = true;
+  current = i; board = newBoard(i); run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null;
+  $('resultado').hidden = true; document.body.classList.remove('ganado');
   $('nivel').textContent = fmt(L.nivel, i + 1); $('objetivo').textContent = L.objetivo;
   say(L.elige);
   startedAt = Date.now();
@@ -177,6 +175,7 @@ function controls() {
   $('acciones-pieza').hidden = !chosen || !!run;
   $('btn-girar').disabled = !chosen || !(chosen.type === 'ramp' || chosen.type === 'fan');
   $('btn-probar').textContent = run ? L.parar : L.probar;
+  $('btn-probar').disabled = !!run && run.state === 'won';
   $('btn-limpiar').disabled = !!run || !board.placed.length;
 }
 
@@ -208,7 +207,7 @@ $('btn-limpiar').addEventListener('click', () => { for (const p of [...board.pla
 $('btn-probar').addEventListener('click', () => {
   unlockAudio();
   if (run) { run = null; say(L.elige); tray(); controls(); draw(); return; }
-  picked = null; chosen = null; trail = [];
+  picked = null; chosen = null; trail = []; ghost = null; popped = false; won = false;
   run = newRun(board); last = performance.now(); acc = 0;
   say(''); tray(); controls();
 });
@@ -229,7 +228,8 @@ function finish(state) {
     const last = current + 1 >= LEVELS.length;
     $('res-titulo').textContent = last ? L.fin : L.gano;
     $('res-estrellas').textContent = '★'.repeat(s) + '☆'.repeat(3 - s);
-    $('res-linea').textContent = fmt(L.linea, n);
+    $('res-linea').textContent = fmt(L.linea[n === 1 ? 0 : 1], n);
+    document.body.classList.add('ganado');
     $('btn-siguiente').textContent = last ? L.niveles : L.siguiente;
     $('res-salidas').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
     $('resultado').hidden = false;
@@ -241,102 +241,89 @@ function finish(state) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Drawing                                                             */
+/* Drawing (scene.js) and the loop                                     */
 /* ------------------------------------------------------------------ */
-let px = 40;
-function size() {
-  const r = canvas.getBoundingClientRect(), d = devicePixelRatio || 1;
-  if (!r.width) return;
-  canvas.width = Math.round(r.width * d); canvas.height = Math.round(r.height * d);
-  px = canvas.width / COLS;
-  colours(); draw();
-}
+const scene = escena(canvas);
+let ghost = null, popped = false, won = false, roll = 0;
+function size() { if (scene.size()) draw(); }
 new ResizeObserver(size).observe($('tablero'));
-
-function line(x1, y1, x2, y2, colour, w = 0.12) {
-  ctx.strokeStyle = colour; ctx.lineWidth = w * px; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(x1 * px, y1 * px); ctx.lineTo(x2 * px, y2 * px); ctx.stroke();
+/** The free cells the picked part can go to, to light them up */
+function freeCells() {
+  if (!picked || run) return null;
+  const out = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS - 1; c++) if (fits(board, { type: picked, c, r })) out.push([c, r], [c + 1, r]);
+  return out;
 }
-function drawPart(p, alpha = 1, glow = false) {
-  ctx.globalAlpha = alpha;
-  const { c, r } = p;
-  if (glow) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(c * px, r * px, 2 * px, px); ctx.strokeStyle = C.yellow; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.strokeRect(c * px + 1, r * px + 1, 2 * px - 2, px - 2); ctx.setLineDash([]); }
-  if (p.type === 'ramp') p.dir > 0 ? line(c, r + 0.1, c + 2, r + 0.9, C.orange, 0.16) : line(c, r + 0.9, c + 2, r + 0.1, C.orange, 0.16);
-  else if (p.type === 'plank') line(c, r + 0.8, c + 2, r + 0.8, C.orange, 0.16);
-  else if (p.type === 'spring') {
-    line(c + 0.1, r + 0.75, c + 1.9, r + 0.75, C.lime, 0.12);
-    for (let i = 0; i < 4; i++) line(c + 0.3 + i * 0.45, r + 0.8, c + 0.3 + i * 0.45, r + 1, C.lime, 0.06);
-  } else if (p.type === 'fan') {
-    line(c + 0.1, r + 0.85, c + 1.9, r + 0.85, C.cyan, 0.12);
-    ctx.font = `${0.7 * px}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.cyan; ctx.fillText('🌀', (c + 1) * px, (r + 0.4) * px);
-    const t = performance.now() / 300;
-    for (let k = 0; k < 3; k++) {
-      const off = ((t + k / 3) % 1) * 3, x = p.dir > 0 ? c + 2 + off : c - off;
-      ctx.globalAlpha = alpha * 0.5 * (1 - off / 3); line(x - 0.2 * p.dir, r + 0.1 + k * 0.3, x, r + 0.1 + k * 0.3, C.cyan, 0.05);
-    }
-  }
-  ctx.globalAlpha = 1;
-}
-function draw() {
-  if (!board || !canvas.width) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // The grid while building
-  if (!run) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
-    for (let c = 1; c < COLS; c++) { ctx.beginPath(); ctx.moveTo(c * px, 0); ctx.lineTo(c * px, ROWS * px); ctx.stroke(); }
-    for (let r = 1; r < ROWS; r++) { ctx.beginPath(); ctx.moveTo(0, r * px); ctx.lineTo(COLS * px, r * px); ctx.stroke(); }
-  }
-  const { level } = board;
-  // The fixed pieces: walls, spikes and the level's own parts, in grey-violet so they read as not movable
-  for (const f of level.fixed) {
-    if (f.type === 'wall') line(f.x1, f.y1, f.x2, f.y2, C.purple, 0.18);
-    else if (f.type === 'spikes') {
-      ctx.fillStyle = C.red;
-      for (let i = 0; i < f.w * 3; i++) { const x = f.c + i / 3; ctx.beginPath(); ctx.moveTo(x * px, (f.r + 1) * px); ctx.lineTo((x + 1 / 6) * px, (f.r + 0.6) * px); ctx.lineTo((x + 1 / 3) * px, (f.r + 1) * px); ctx.fill(); }
-    } else { drawPart(f); ctx.fillStyle = 'rgba(0,0,0,0.25)'; }
-  }
-  for (const f of level.fixed) if (f.type !== 'wall' && f.type !== 'spikes') { ctx.font = `${0.32 * px}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText('🔩', (f.c + 0.2) * px, (f.r + 0.25) * px); }
-  // The cup
-  const g = level.goal;
-  line(g.c + 0.1, g.r, g.c + 0.1, g.r + 1, C.yellow, 0.1); line(g.c + 1.9, g.r, g.c + 1.9, g.r + 1, C.yellow, 0.1); line(g.c + 0.1, g.r + 1, g.c + 1.9, g.r + 1, C.yellow, 0.1);
-  ctx.font = `${0.55 * px}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.yellow; ctx.fillText('🧺', (g.c + 1) * px, (g.r + 0.55) * px);
-  // The start: a little pipe
-  line(level.start.x - 0.35, 0, level.start.x - 0.35, 0.3, C.muted, 0.08); line(level.start.x + 0.35, 0, level.start.x + 0.35, 0.3, C.muted, 0.08);
-  // The player's parts
-  for (const p of board.placed) drawPart(p, 1, p === chosen);
-  // The trail and the ball
-  ctx.fillStyle = C.pink;
-  trail.forEach(([x, y], i) => { ctx.globalAlpha = 0.25 * i / trail.length; ctx.beginPath(); ctx.arc(x * px, y * px, R * px * 0.6, 0, 7); ctx.fill(); });
-  ctx.globalAlpha = 1;
-  const b = run ? run.ball : level.start;
-  ctx.beginPath(); ctx.arc(b.x * px, b.y * px, R * px, 0, 7); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.beginPath(); ctx.arc((b.x - R / 3) * px, (b.y - R / 3) * px, R * px / 3, 0, 7); ctx.fill();
-}
+function draw() { scene.draw({ board, run, chosen, ghost, trail, roll, won, popped, free: freeCells() }); }
+// With a mouse, the picked part (or the chosen one) follows the pointer as a ghost before the click
+canvas.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || run || !board || !(picked || chosen)) { if (ghost) { ghost = null; draw(); } return; }
+  let [c, r] = cellAt(e); c = Math.min(c, COLS - 2);
+  if (!picked && partAt(board, c, r)) { ghost = null; draw(); return; }
+  const g = picked ? { type: picked, c, r, dir: 1 } : { ...chosen, c, r };
+  g.ok = fits(board, g, picked ? null : chosen);
+  ghost = g; draw();
+});
+canvas.addEventListener('pointerleave', () => { ghost = null; draw(); });
 
 /* The loop: a fixed step, so the ball runs the same on every phone (and as the tests play it) */
 const STEP = 1 / 120;
 let last = performance.now(), acc = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const onBoard = $('s-juego').classList.contains('active');
+  if (onBoard) scene.tick(dt);
   if (run && run.state === 'running') {
     acc += dt;
     while (acc >= STEP && run.state === 'running') {
+      const vx = run.ball.vx;
       stepRun(run, STEP); acc -= STEP;
+      roll += vx * STEP / R;
       for (const e of run.events.splice(0)) {
         if (e.type === 'knock') SOUND.knock();
-        else if (e.type === 'boing') SOUND.boing();
+        else if (e.type === 'boing') { SOUND.boing(); if (e.part) scene.boing(e.part); scene.burst(run.ball.x, run.ball.y + R, [scene.C.lime, '#ffffff'], 8, 3); }
+        else if (e.type === 'spiked') { popped = true; scene.burst(e.x, e.y, [scene.C.pink, scene.C.red, '#ffffff'], 26, 5); }
+        else if (e.type === 'won') { won = true; const g = board.level.goal; scene.burst(g.c + 1, g.r + 0.3, [scene.C.yellow, scene.C.pink, scene.C.cyan, scene.C.lime], 46, 7); }
       }
     }
-    trail.push([run.ball.x, run.ball.y]); if (trail.length > 24) trail.shift();
+    trail.push([run.ball.x, run.ball.y]); if (trail.length > 18) trail.shift();
     if (run.state !== 'running') {
       const s = run.state;
-      finish(s);
-      if (s !== 'won') { run = null; tray(); controls(); } else controls();
+      // the result waits a moment, so the pop or the confetti is seen
+      setTimeout(() => {
+        finish(s);
+        if (s !== 'won') { run = null; popped = false; trail = []; tray(); controls(); draw(); } else controls();
+      }, s === 'won' ? 650 : 450);
     }
-    draw();
-  } else if (board && board.placed.concat(board.level.fixed).some(p => p.type === 'fan') && $('s-juego').classList.contains('active')) draw();
+  }
+  if (onBoard && board) draw();
+  demoFrame(dt);
   requestAnimationFrame(frame);
+}
+
+/* The cover's demo: a level playing its own solution over and over, behind the title */
+const demo = { scene: escena($('demo')), board: null, run: null, trail: [], wait: 0, n: 0, roll: 0, won: false };
+function demoNext() {
+  const order = [5, 2, 3, 4, 1, 0], i = order[demo.n++ % order.length];
+  demo.board = newBoard(i); LEVELS[i].solution.forEach(p => place(demo.board, p.type, p.c, p.r, p.dir ?? 1));
+  demo.run = newRun(demo.board); demo.trail = []; demo.wait = 0; demo.won = false;
+}
+new ResizeObserver(() => demo.scene.size()).observe($('demo'));
+function demoFrame(dt) {
+  if (!$('s-portada').classList.contains('active')) return;
+  if (!demo.board) demoNext();
+  demo.scene.tick(dt);
+  if (demo.run.state === 'running') {
+    for (let t = 0; t < dt && demo.run.state === 'running'; t += STEP) {
+      demo.roll += demo.run.ball.vx * STEP / R; stepRun(demo.run, STEP);
+      for (const e of demo.run.events.splice(0)) {
+        if (e.type === 'boing' && e.part) demo.scene.boing(e.part);
+        if (e.type === 'won') { demo.won = true; const g = demo.board.level.goal; demo.scene.burst(g.c + 1, g.r + 0.3, [demo.scene.C.yellow, demo.scene.C.pink, demo.scene.C.cyan], 30, 6); }
+      }
+    }
+    demo.trail.push([demo.run.ball.x, demo.run.ball.y]); if (demo.trail.length > 18) demo.trail.shift();
+  } else if ((demo.wait += dt) > 1.6) demoNext();
+  demo.scene.draw({ board: demo.board, run: demo.run, chosen: null, ghost: null, trail: demo.trail, roll: demo.roll, won: demo.won, popped: false, free: null });
 }
 
 $('sound-slot').append(soundToggle());

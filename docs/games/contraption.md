@@ -15,7 +15,7 @@ no name, art, sound or level comes from it.
 
 ## Cover
 
-The ⚙️ hero, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
+The demo board solving levels by itself, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
 (`details.panel`), the language toggle, the six levels as chips (solved ones show their stars, the next
 unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in C-5's order.
 
@@ -49,6 +49,18 @@ force over every placement of one and two parts, so each has a few answers, not 
 
 `window.__artilugio` exposes the board and the run. End to end: `tools/e2e/contraption/lab.mjs`
 (cover, a failed run, placing/turning/moving by taps, a win, the next level, English, 320 px).
+
+## The look (`scene.js`)
+
+Everything is drawn on the canvas, no image files: the app's neon night with a dotted grid; wooden
+ramps and planks with grain and brass bolts (the level's fixed ones in a cooler wood with steel
+bolts); a trampoline with two coils whose pad squashes on a bounce; a fan whose blades spin, with
+breeze streaks across its reach and a chevron for its direction; violet steel girders with rivets;
+red spikes that glow; a woven basket that glows and pulses; a steel pipe the ball drops from; a ball
+with light, shadow and a stripe that turns as it rolls, and a fading trail. Particles mark a bounce,
+a pop on the spikes (the ball bursts) and a win (confetti from the basket). While a part is picked the
+free cells glow; with a mouse, a ghost of the part follows the pointer (red when it does not fit).
+The cover shows a small board solving the levels by itself, one after another.
 
 ## Exceptions to the canons
 
