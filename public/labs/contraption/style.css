@@ -40,11 +40,11 @@
 .bandeja .pieza-ico { font-size: var(--fs-140); line-height: 1; }
 body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: none; user-select: none; }
 /* Dragging a part off the board: the board's edge goes red, as in «let go here to remove it» */
-.tablero.fuera { border-color: var(--red); box-shadow: 0 0 0 2px rgb(from var(--red) r g b / 0.4); }
+.tablero.fuera { border-color: var(--red); box-shadow: 0 0 0 2px rgb(var(--red-rgb) / 0.4); }
 .bandeja .chip-btn b { margin-left: var(--s-4); color: var(--yellow); }
 
 /* The result, over the board */
-.capa { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-14); background: rgb(from var(--bg1) r g b / 0.6); }
+.capa { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-14); background: rgb(var(--bg1-rgb) / 0.6); }
 .tarjeta { text-align: center; width: 100%; }
 .tarjeta p { margin: 0; }
 .estrellas { font-size: var(--fs-200); letter-spacing: 0.2em; color: var(--yellow); text-shadow: var(--shadow-text); }
