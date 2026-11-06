@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- The lab is not announced: it is not in the menu or the search engines (D-101), and without the key nobody gets in (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Artilugio ⚙️ · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-volver">‹ Laboratorio</a>
+      <div class="tools"><span class="chip">⚙️</span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- The cover: the title, how to play, the levels and Jugar -->
+    <section class="screen active stack" id="s-portada">
+      <div class="intro-hero">
+        <span class="icon" aria-hidden="true">⚙️</span>
+        <h1 class="display display--xl rainbow">Artilugio</h1>
+        <p class="lead muted" id="lema"></p>
+        <p class="credito muted" id="credito"></p>
+      </div>
+      <details class="panel" id="como"><summary id="como-titulo"></summary><ul class="pasos" id="pasos"></ul></details>
+      <div class="idioma" id="lang-slot"></div>
+      <div class="niveles" id="niveles" role="group"></div>
+      <button type="button" class="btn btn--yellow" id="btn-jugar"></button>
+    </section>
+
+    <!-- The workshop: the board, the tray of parts and the buttons to try it -->
+    <section class="screen stack" id="s-juego">
+      <div class="cabecera"><b id="nivel"></b><span class="muted" id="objetivo"></span></div>
+      <div class="tablero" id="tablero" data-tablero>
+        <canvas id="lienzo"></canvas>
+        <div class="capa" id="resultado" hidden>
+          <div class="panel tarjeta stack">
+            <p class="display display--lg" id="res-titulo"></p>
+            <p class="estrellas" id="res-estrellas"></p>
+            <p class="muted" id="res-linea"></p>
+            <button type="button" class="btn btn--yellow" id="btn-siguiente"></button>
+            <button type="button" class="btn btn--ghost btn--sm" id="btn-otra"></button>
+            <div id="res-salidas"></div>
+          </div>
+        </div>
+      </div>
+      <p class="mensaje" id="mensaje" aria-live="polite"></p>
+      <div class="bandeja" id="bandeja" role="group"></div>
+      <div class="btn-row" id="acciones-pieza" hidden>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-girar"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-quitar"></button>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-limpiar"></button>
+        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
+      </div>
+    </section>
+    <div id="pie" class="pie"></div>
+  </main>
+  <script type="module">import './game.js';</script>
+</body>
+</html>

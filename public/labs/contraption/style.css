@@ -1,0 +1,39 @@
+/* Artilugio (lab). The shell (screens, hero, panel, buttons, chips) is base.css's; this sheet holds only
+   the board, the tray and the result card, on the design system's tokens (D-533, docs/DESIGN.md). */
+
+/* The board's own colour (DESIGN.md §4): the workshop's darker floor behind the canvas */
+:root { --artilugio-fondo: rgba(10, 4, 24, 0.45); }
+
+.credito { margin: 0; font-size: var(--fs-85); text-wrap: balance; }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: var(--s-10) 0 0; padding: 0; display: grid; gap: var(--s-8); }
+.pasos li { display: grid; grid-template-columns: 30px 1fr; gap: var(--s-8); align-items: center; font-size: var(--fs-90); }
+.idioma { display: flex; justify-content: center; }
+
+/* The levels, one chip each: done ones show their stars, locked ones are dimmed */
+.niveles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
+.niveles .chip-btn { justify-content: center; }
+.niveles .chip-btn small { color: var(--yellow); margin-left: var(--s-4); }
+
+.cabecera { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-10); }
+.cabecera b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; }
+
+/* The board: an 8 × 11 grid, as wide as the screen allows and never taller than it */
+.tablero {
+  position: relative; width: min(100%, max(220px, calc((100svh - 400px) * 8 / 11))); aspect-ratio: 8 / 11; margin: 0 auto;
+  border: 1px solid var(--glass-border); border-radius: var(--radius); background: var(--artilugio-fondo);
+  overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+#lienzo { display: block; width: 100%; height: 100%; cursor: pointer; }
+.mensaje { margin: 0; min-height: 1.4em; text-align: center; font-weight: 700; color: var(--muted); }
+
+/* The tray: one button per kind of part, with how many are left */
+.bandeja { display: flex; flex-wrap: wrap; gap: var(--s-8); justify-content: center; }
+.bandeja .chip-btn b { margin-left: var(--s-4); }
+
+/* The result, over the board */
+.capa { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-14); background: rgb(from var(--bg1) r g b / 0.6); }
+.tarjeta { text-align: center; width: 100%; }
+.tarjeta p { margin: 0; }
+.estrellas { font-size: var(--fs-140); letter-spacing: 0.2em; }
+.pie { text-align: center; margin-top: var(--s-16); }
