@@ -599,6 +599,7 @@ node tools/cloudflare/inbox-worker.test.mjs
 node tools/e2e/affected.test.mjs
 node tools/e2e/already-tested.test.mjs
 node tools/e2e/changes.test.mjs
+node tools/e2e/clock-jumps.test.mjs
 node tools/e2e/groups.test.mjs
 node tools/e2e/inert.test.mjs
 node tools/e2e/narrow.test.mjs

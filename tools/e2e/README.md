@@ -320,6 +320,9 @@ Firebase project, so they need internet and leave test rooms that expire after h
   run without a folder or with a flag first (`tournament.mjs --part cup`), the script no longer leaves
   `undefined/` or `--part/` with a Chrome profile inside the worktree. `output.test.mjs` fails if
   a script reads `process.argv[2]` by hand, and `launch` doesn't open Chrome with a profile like that.
+- **Moving the clock** (D-518): the first `__copa.store.adelantar()` in a script jumps to a time anchored
+  with `medianoche(start, tz)` from `/cup/engine.js`, never a fixed day: a fixed jump lands on another day
+  depending on the hour CI runs and on summer time. `clock-jumps.test.mjs` fails otherwise.
 - **Zombie Chromes:** each Chrome dies with its script, however it ends: fine, with an
   exception, with Ctrl-C or with a `kill` (SIGINT, SIGTERM, SIGHUP; `cdp.mjs`). No need for
   `pkill`. The only exit that skips it is a `kill -9` to the node process. If one is ever left
