@@ -386,6 +386,19 @@
         "stat": "4 file(s) +5 −3: README.md, docs/design/cup-unification.md, docs/facts.json, docs/games/cup.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42155942309,
+      "check": "tests",
+      "pr": 1244,
+      "branch": "ccr-9fd16d5f-jgf8sp",
+      "commit": "9865754edf2f31d2b323fb9f9e73fac9d5558366",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
+      "signature": "bb52322cc2",
+      "date": "2026-11-06T03:22:13.209Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
