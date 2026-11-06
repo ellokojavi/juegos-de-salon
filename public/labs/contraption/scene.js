@@ -13,7 +13,8 @@ export function escena(canvas) {
   const C = {};
   const sparks = [];          // particles: { x, y, vx, vy, life, max, colour, size }
   const squash = new Map();   // part → seconds left of its bounce
-  let spin = 0, clock = 0;
+  const rings = [];           // shock waves: { x, y, t }
+  let shake = 0, spin = 0, clock = 0;
   colours();   // before the first measure: the cover's demo may draw first
 
   function colours() {
@@ -173,7 +174,10 @@ export function escena(canvas) {
   function draw(s) {
     if (!s.board || !canvas.width) return;
     const { level } = s.board, building = !s.run;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // the board shakes for a moment after an explosion
+    if (shake > 0) ctx.translate((Math.random() - 0.5) * X(0.25) * shake, (Math.random() - 0.5) * X(0.25) * shake);
     // the floor: a soft violet light from the top, dots at the grid's corners
     const bg = ctx.createRadialGradient(canvas.width / 2, 0, 0, canvas.width / 2, 0, canvas.height);
     bg.addColorStop(0, 'rgba(120,70,220,0.22)'); bg.addColorStop(1, 'rgba(0,0,0,0)');
@@ -207,18 +211,42 @@ export function escena(canvas) {
     // particles
     for (const p of sparks) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.colour; ctx.beginPath(); ctx.arc(X(p.x), X(p.y), X(p.size), 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
+    // the explosion: a white flash, an orange fireball and a shock wave that spreads and fades
+    for (const w of rings) {
+      const k = w.t / 0.9;
+      if (k < 0.35) {
+        const f = ctx.createRadialGradient(X(w.x), X(w.y), 0, X(w.x), X(w.y), X(0.4 + k * 4));
+        f.addColorStop(0, `rgba(255,255,255,${1 - k / 0.35})`); f.addColorStop(0.35, `rgba(255,200,80,${0.9 - k * 2})`); f.addColorStop(1, 'rgba(255,80,40,0)');
+        ctx.fillStyle = f; ctx.beginPath(); ctx.arc(X(w.x), X(w.y), X(0.4 + k * 4), 0, 7); ctx.fill();
+      }
+      ctx.save(); ctx.globalAlpha = Math.max(0, 1 - k); glow(C.orange, 20);
+      ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = X(0.12 * (1 - k)) + 1;
+      ctx.beginPath(); ctx.arc(X(w.x), X(w.y), X(0.3 + k * 3.2), 0, 7); ctx.stroke(); ctx.restore();
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   /** Time passes for the moving bits: the blades, the springs, the particles. */
   function tick(dt) {
     clock += dt; spin += dt * 9;
+    shake = Math.max(0, shake - dt * 2.2);
+    for (let i = rings.length - 1; i >= 0; i--) if ((rings[i].t += dt) > 0.9) rings.splice(i, 1);
     for (const [p, k] of squash) k - dt <= 0 ? squash.delete(p) : squash.set(p, k - dt);
     for (let i = sparks.length - 1; i >= 0; i--) {
       const p = sparks[i]; p.life -= dt; p.vy += 9 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
       if (p.life <= 0) sparks.splice(i, 1);
     }
   }
-  const busy = () => sparks.length > 0 || squash.size > 0;
+  const busy = () => sparks.length > 0 || squash.size > 0 || rings.length > 0;
+  /** The ball blows up: fire, sparks, smoke that drifts up, a shock wave and a shake */
+  function explode(x, y) {
+    rings.push({ x, y, t: 0 }); shake = 1;
+    burst(x, y, ['#ffffff', '#ffd27a', C.orange, C.red, C.pink], 60, 9);
+    for (let i = 0; i < 14; i++) {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.6, v = 1 + Math.random() * 1.5;
+      sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2.5, life: 1 + Math.random() * 0.6, max: 1.6, colour: 'rgba(120,110,140,0.55)', size: 0.12 + Math.random() * 0.12 });
+    }
+  }
   function burst(x, y, colours, n = 18, speed = 4) {
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, v = speed * (0.4 + Math.random());
@@ -226,5 +254,5 @@ export function escena(canvas) {
     }
   }
   function boing(part) { squash.set(part, 0.25); }
-  return { size, draw, tick, burst, boing, busy, get C() { return C; } };
+  return { size, draw, tick, burst, boing, busy, explode, get C() { return C; } };
 }

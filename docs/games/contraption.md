@@ -45,8 +45,12 @@ unsolved one is chosen, later ones show 🔒) and a yellow «⚙️ Jugar», in 
   small tick on each snap and a pulse on placing.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
 - **▶ Probar** runs the ball with a fixed-step physics (gravity, bounces, a little friction). It ends
-  **won** in the basket, or **popped** on spikes, **fallen** off the board or **stuck** (still for 1.4 s
-  or 14 s in all); a failure says which and leaves the parts where they were. ■ Parar stops a run.
+  **won** only once the ball **rests in the basket** (slower than 0.6 cells/s for 0.5 s inside it: a
+  ball that flies through or bounces out does not count); **boom** when it touches the bottom of the
+  board: it blows up (a flash, a fireball, a shock wave, sparks and smoke, the board shakes, a bang)
+  and only after it plays out (1.1 s) the stage is marked failed, «¡Bum! 💥 Tocó el fondo»; **popped**
+  on spikes; or **stuck** (still outside the basket for 1.4 s, or 14 s in all). A failure says which
+  and leaves the parts where they were. ■ Parar stops a run.
 - **Stars:** 3 with the fewest parts the level needs, 2 with one more, 1 otherwise. Kept on the phone
   (`juegos-de-salon:artilugio-stars`); a level opens when the one before is solved.
 
@@ -69,7 +73,7 @@ bolts); a trampoline with two coils whose pad squashes on a bounce; a fan whose 
 breeze streaks across its reach and a chevron for its direction; violet steel girders with rivets;
 red spikes that glow; a woven basket that glows and pulses; a steel pipe the ball drops from; a ball
 with light, shadow and a stripe that turns as it rolls, and a fading trail. Particles mark a bounce,
-a pop on the spikes (the ball bursts) and a win (confetti from the basket). While a part is picked the
+a pop on the spikes (the ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
 part floats over a green or red slot where it would land.
 The cover shows a small board solving the levels by itself, one after another.
 

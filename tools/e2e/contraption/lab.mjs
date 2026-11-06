@@ -41,6 +41,12 @@ ok(await ev(`document.querySelector('#bandeja [data-pieza="ramp"]')?.textContent
 ok(await ev(`(() => { const r = document.getElementById('btn-probar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Probar in view with the board');
 await ev(`document.getElementById('btn-probar').click(); 1`);
 ok(await waitFor(`/Pinchazo/.test(document.getElementById('mensaje').textContent)`, 6000), 'with no parts the ball ends on the spikes, and it says so');
+// Past the basket, down to the floor: it blows up, and only then it says the stage failed
+await ev(`document.getElementById('btn-probar').click(); __artilugio.run.ball.x = 7.5; 1`);
+ok(await waitFor(`__artilugio.run?.state === 'boom'`, 4000), 'a ball that touches the bottom blows up');
+ok(await ev(`document.getElementById('mensaje').textContent`) === '', 'the explosion plays out first, with no verdict yet');
+await sleep(250); await b.shot('02-boom');
+ok(await waitFor(`/Bum/.test(document.getElementById('mensaje').textContent)`, 3000), 'then «¡Bum! 💥 Tocó el fondo»');
 
 // Real drags, as a mouse makes them: press, a few moves, let go (x, y in cells of the board; null = off the board)
 const DRAG = (from, to) => `(async () => {

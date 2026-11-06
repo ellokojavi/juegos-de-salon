@@ -37,7 +37,7 @@ const LOCALES = {
     probar: '▶ Probar', parar: '■ Parar', limpiar: '🧹 Limpiar', girar: '↔ Girar', quitar: '🗑 Quitar',
     elige: 'Arrastra una pieza al tablero (o tócala y toca una casilla).', toca: 'Toca el tablero para poner la {p}.', noCabe: 'Ahí no cabe.',
     movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.',
-    fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', lost: 'Se cayó del tablero. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
+    fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
     gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente nivel ›', otraVez: 'Jugar de nuevo este nivel',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', bloqueado: 'Bloqueado', niveles: 'Ver los niveles',
     comentarAbrir: '💬 Dejar un comentario',
@@ -57,7 +57,7 @@ const LOCALES = {
     probar: '▶ Try', parar: '■ Stop', limpiar: '🧹 Clear', girar: '↔ Turn', quitar: '🗑 Remove',
     elige: 'Drag a part onto the board (or tap it, then tap a cell).', toca: 'Tap the board to place the {p}.', noCabe: 'It does not fit there.',
     movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.',
-    fallos: { spiked: 'Popped! 📌 Try something else.', lost: 'It fell off the board. Try something else.', stuck: 'It got stuck. Try something else.' },
+    fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
     gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next level ›', otraVez: 'Play this level again',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', bloqueado: 'Locked', niveles: 'See the levels',
     comentarAbrir: '💬 Leave a comment',
@@ -77,7 +77,7 @@ const LOCALES = {
     probar: '▶ Testar', parar: '■ Parar', limpiar: '🧹 Limpar', girar: '↔ Girar', quitar: '🗑 Tirar',
     elige: 'Arraste uma peça para o tabuleiro (ou toque nela e numa casa).', toca: 'Toque o tabuleiro para colocar a {p}.', noCabe: 'Aí não cabe.',
     movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.',
-    fallos: { spiked: 'Furou! 📌 Tente outra coisa.', lost: 'Caiu do tabuleiro. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
+    fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
     gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próximo nível ›', otraVez: 'Jogar este nível de novo',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', bloqueado: 'Bloqueado', niveles: 'Ver os níveis',
     comentarAbrir: '💬 Deixar um comentário',
@@ -102,6 +102,16 @@ function tone(f0, f1, dur, type = 'sine', vol = 0.1, delay = 0) {
     o.connect(g).connect(ac.destination); o.start(s); o.stop(s + dur + 0.02);
   } catch (_) { /* a missed beep is fine */ }
 }
+/** A burst of noise: the bang of the explosion */
+function noise(dur) {
+  if (isMuted() || !ac || ac.state !== 'running') return;
+  try {
+    const n = ac.sampleRate * dur, buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n) ** 2;
+    const src = ac.createBufferSource(), g = ac.createGain(); g.gain.value = 0.25;
+    src.buffer = buf; src.connect(g).connect(ac.destination); src.start();
+  } catch (_) { /* silent */ }
+}
 const SOUND = {
   place: () => tone(520, 700, 0.07, 'triangle', 0.07),
   flip: () => { tone(700, 500, 0.05, 'triangle', 0.06); tone(500, 760, 0.06, 'triangle', 0.06, 0.05); },
@@ -110,6 +120,7 @@ const SOUND = {
   boing: () => tone(200, 900, 0.18, 'sine', 0.1),
   won: () => { tone(660, 660, 0.1, 'triangle'); tone(880, 880, 0.1, 'triangle', 0.1, 0.1); tone(1320, 1320, 0.25, 'triangle', 0.1, 0.2); },
   fail: () => tone(300, 90, 0.35, 'sawtooth', 0.08),
+  boom: () => { tone(160, 40, 0.6, 'sawtooth', 0.14); tone(90, 30, 0.8, 'square', 0.08, 0.05); noise(0.5); },
 };
 
 /* Progress: the stars of each level solved, on this phone */
@@ -376,6 +387,7 @@ function frame(now) {
       for (const e of run.events.splice(0)) {
         if (e.type === 'knock') SOUND.knock();
         else if (e.type === 'boing') { SOUND.boing(); if (e.part) scene.boing(e.part); scene.burst(run.ball.x, run.ball.y + R, [scene.C.lime, '#ffffff'], 8, 3); }
+        else if (e.type === 'boom') { popped = true; trail = []; scene.explode(e.x, e.y); SOUND.boom(); vibrate([40, 30, 80]); }
         else if (e.type === 'spiked') { popped = true; scene.burst(e.x, e.y, [scene.C.pink, scene.C.red, '#ffffff'], 26, 5); }
         else if (e.type === 'won') { won = true; const g = board.level.goal; scene.burst(g.c + 1, g.r + 0.3, [scene.C.yellow, scene.C.pink, scene.C.cyan, scene.C.lime], 46, 7); }
       }
@@ -387,7 +399,7 @@ function frame(now) {
       setTimeout(() => {
         finish(s);
         if (s !== 'won') { run = null; popped = false; trail = []; tray(); controls(); draw(); } else controls();
-      }, s === 'won' ? 650 : 450);
+      }, s === 'won' ? 650 : s === 'boom' ? 1100 : 450);   // the explosion plays out before the verdict
     }
   }
   if (onBoard && board) draw();

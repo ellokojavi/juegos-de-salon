@@ -17,6 +17,8 @@ export const SPRING_V = 18;       // a trampoline's throw: up about 7 rows
 export const FAN = 26;            // a fan's push, cells/s²
 export const MAX_T = 14;          // a run that lasts longer has failed
 export const STILL = 1.4;         // seconds almost still: stuck
+export const SETTLE = 0.5;        // seconds at rest in the basket: passed
+export const SETTLE_V = 0.6;      // below this speed the ball is at rest
 export const PARTS = ['ramp', 'plank', 'spring', 'fan'];
 
 /** A part's segments, [x1, y1, x2, y2, kind]. */
@@ -201,14 +203,18 @@ export function stepRun(run, dt) {
     }
   }
   run.t += dt;
-  const { c, r } = run.goal;
-  if (b.x > c + 0.1 && b.x < c + 1.9 && b.y > r + 0.2 && b.y < r + 1) { run.state = 'won'; run.events.push({ type: 'won' }); return run; }
-  if (b.y > ROWS + 1) { run.state = 'lost'; run.events.push({ type: 'lost' }); return run; }
-  run.still = Math.hypot(b.vx, b.vy) < 0.3 ? run.still + dt : 0;
+  // The floor of the board: the ball that touches it blows up
+  if (b.y + R >= ROWS) { b.y = ROWS - R; run.state = 'boom'; run.events.push({ type: 'boom', x: b.x, y: b.y }); return run; }
+  // The basket: the level is passed only once the ball has come to rest inside it, not as it flies through
+  const { c, r } = run.goal, inCup = b.x > c + 0.1 && b.x < c + 1.9 && b.y > r && b.y < r + 1;
+  const slow = Math.hypot(b.vx, b.vy) < SETTLE_V;
+  run.settle = inCup && slow ? (run.settle || 0) + dt : 0;
+  if (run.settle >= SETTLE) { run.state = 'won'; run.events.push({ type: 'won' }); return run; }
+  run.still = slow && !inCup ? run.still + dt : 0;
   if (run.still > STILL || run.t > MAX_T) { run.state = 'stuck'; run.events.push({ type: 'stuck' }); }
   return run;
 }
-/** Plays a whole run without drawing; the state it ends in. */
+/** Plays a whole run without drawing; the state it ends in: 'won', 'spiked', 'boom' (the floor) or 'stuck'. */
 export function simulate(board, dt = 1 / 120) {
   const run = newRun(board);
   while (run.state === 'running') stepRun(run, dt);

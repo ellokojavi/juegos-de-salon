@@ -1,6 +1,6 @@
 // Artilugio's engine: placing parts, and every level solved by its solution and failed without parts.
 import assert from 'node:assert/strict';
-import { LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf } from './engine.js';
+import { SETTLE, ROWS as FLOOR, LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf } from './engine.js';
 
 // Every level: its solution fits its tray and wins; an empty board does not; its parts are known
 LEVELS.forEach((L, i) => {
@@ -43,6 +43,25 @@ LEVELS.forEach((L, i) => {
   const r = newRun(s); let boing = false;
   while (r.state === 'running') { stepRun(r, 1 / 120); if (r.events.some(e => e.type === 'boing')) boing = true; }
   assert.ok(boing, 'the trampoline throws it');
+}
+
+// The basket passes the level only once the ball rests in it; the floor blows it up
+{
+  const b = newBoard(0); place(b, 'ramp', 0, 4, 1);
+  const run = newRun(b); let inside = null;
+  while (run.state === 'running') {
+    stepRun(run, 1 / 120);
+    const { c, r } = run.goal, x = run.ball.x, y = run.ball.y;
+    if (inside === null && x > c + 0.1 && x < c + 1.9 && y > r && y < r + 1) inside = run.t;
+  }
+  assert.equal(run.state, 'won');
+  assert.ok(run.t >= inside + SETTLE - 1e-9, `it waits for the ball to rest (in at ${inside.toFixed(2)} s, passed at ${run.t.toFixed(2)} s)`);
+  assert.ok(Math.hypot(run.ball.vx, run.ball.vy) < 0.6, 'and the ball is at rest');
+  const f = newRun(newBoard(0)); f.ball.x = 7.5;   // past the basket, straight down to the floor
+  const events = [];
+  while (f.state === 'running') { stepRun(f, 1 / 120); events.push(...f.events.splice(0)); }
+  assert.equal(f.state, 'boom', 'the floor blows it up');
+  assert.ok(events.some(e => e.type === 'boom' && e.y <= FLOOR), 'with where it happened, for the explosion');
 }
 
 // Stars: the fewest parts, three
