@@ -1,0 +1,3 @@
+level: patch
+
+- La Copa's end-to-end scripts reach a new day from the cup's midnight, so they no longer depend on the hour they run (clock-jumps.test.mjs).
