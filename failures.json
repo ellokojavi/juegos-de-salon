@@ -499,7 +499,11 @@
       "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
       "signature": "bb52322cc2",
       "date": "2026-11-06T04:04:40.130Z",
-      "fix": null,
+      "fix": {
+        "commit": "8691b70198837919e5b62c0107d0ac8796ac75c3",
+        "date": "2026-11-06T04:46:07.888Z",
+        "stat": "57 file(s) +935 −579: README.md, changelog/ccr-03358154-lf7wxx.md, changelog/ccr-9fd16d5f-jgf8sp.md, docs/AGENTS.md, docs/DESIGN.md, …"
+      },
       "flaky": false
     },
     {
@@ -512,7 +516,11 @@
       "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
       "signature": "bb52322cc2",
       "date": "2026-11-06T04:23:53.408Z",
-      "fix": null,
+      "fix": {
+        "commit": "8691b70198837919e5b62c0107d0ac8796ac75c3",
+        "date": "2026-11-06T04:46:07.888Z",
+        "stat": "48 file(s) +601 −512: README.md, changelog/ccr-9fd16d5f-jgf8sp.md, docs/AGENTS.md, docs/DESIGN.md, docs/facts.json, …"
+      },
       "flaky": false
     }
   ]
