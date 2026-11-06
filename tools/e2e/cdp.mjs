@@ -53,7 +53,9 @@ export async function launch({ port: requested, dir, out, width = 390, height = 
   mkdirSync(dir, { recursive: true });
   // The one from an earlier run with the same profile would name a port that is gone
   rmSync(`${dir}/DevToolsActivePort`, { force: true });
-  const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${fixed}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });
+  // The browser in Spanish, like a player in Chile: with the flag browser-lang on, a first visit follows
+  // navigator.languages (D-536); `--accept-lang` sets it from the first page, `--lang` does not on Linux
+  const chrome = spawn(CHROME, ['--headless=new', '--accept-lang=es-CL,es', `--remote-debugging-port=${fixed}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });
   alive.add(chrome);
   let exited = false;
   chrome.on('exit', () => { exited = true; alive.delete(chrome); });

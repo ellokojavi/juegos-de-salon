@@ -4,7 +4,7 @@
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang, BANDERAS, NOMBRES_IDIOMA } from './i18n.js';
+import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang, idiomaDelNavegador, BANDERAS, NOMBRES_IDIOMA } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS } from './games.js';
 import { JUEGOS_COPA, juegosCopa } from '../../cup/rules.js';
 import { FRASES } from './frases.js';
@@ -129,5 +129,16 @@ for (const g of TRADUCIDOS) {
   assert.equal(new Set(Object.values(cuantas)).size, 1,
     `rules.js de ${g.id}: los tres idiomas no dieron la misma cantidad de claves (${JSON.stringify(cuantas)})`);
 }
+
+
+// The browser's language on the first visit (D-536): the first one the app speaks, else Spanish
+assert.equal(idiomaDelNavegador(['en-US', 'es']), 'en');
+assert.equal(idiomaDelNavegador(['pt-BR']), 'pt');
+assert.equal(idiomaDelNavegador(['es-CL', 'en']), 'es');
+assert.equal(idiomaDelNavegador(['fr-FR', 'en-GB']), 'en');
+assert.equal(idiomaDelNavegador(['de-DE']), 'en', 'German left (D-514): its speakers get English');
+assert.equal(idiomaDelNavegador(['ja', 'zh']), 'es');
+assert.equal(idiomaDelNavegador([]), 'es');
+assert.equal(idiomaDelNavegador([undefined]), 'es');
 
 console.log(`i18n: los ${IDIOMAS.length} idiomas tienen las mismas claves en menú, frases, mazos y los ${GAMES.length} juegos`);

@@ -22,6 +22,7 @@ export const FLAGS = {
   'stick': '🥷 Shinobi: the game, on the home page, the search and new cups (D-517)',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
+  'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'lab-ready': '✅ Labs: lab use of each flag is counted, and its card says when it is ready to 🚀 (D-528)',
 };

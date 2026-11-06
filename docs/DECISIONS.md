@@ -34,7 +34,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, moving pillars, English only) | `docs/games/stick.md` | D-446, D-455 |
 | 🧱 Stack, the lab's one-tap tower game (the overhang is cut off, perfect drops, judged at the tap's own moment, English only) | `docs/games/stack.md` | D-445 |
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
-| Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404, D-514, D-524 |
+| Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404, D-514, D-524, D-536 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491, D-495 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477, D-502, D-505, D-507, D-517, D-529 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (519)
+## In force (520)
 
 | D | Title | Status |
 |---|---|---|
@@ -103,7 +103,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349, D-461, D-471 |
 | [D-45](decisions/D-45.md) | The panel also separates live rooms by environment | current |
 | [D-46](decisions/D-46.md) | Two languages in the usage signals, not one | amended by D-47 |
-| [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324, D-514 |
+| [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324, D-514, D-536 |
 | [D-48](decisions/D-48.md) | Brazilian Portuguese as the third language, with the same keys | amended by D-197, D-222 |
 | [D-49](decisions/D-49.md) | The footer phrases drop party humor for generic after-dinner jokes | current |
 | [D-50](decisions/D-50.md) | A canceled room closes itself: explicit goodbye and immediate deletion | current |
@@ -129,7 +129,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-71](decisions/D-71.md) | Dudo is said in Chilean, and in a duel there is no calzar | amended by D-490, D-491 |
 | [D-72](decisions/D-72.md) | The card shown when sharing a link | amended by D-205 |
 | [D-73](decisions/D-73.md) | The panel learns about new games on its own | current |
-| [D-74](decisions/D-74.md) | The language can come in the link | amended by D-197 |
+| [D-74](decisions/D-74.md) | The language can come in the link | amended by D-197, D-536 |
 | [D-75](decisions/D-75.md) | The app measures what is seen, not what the screen says it measures | amended by D-77 |
 | [D-76](decisions/D-76.md) | Screenshots are taken with the screen still | amended by D-77 |
 | [D-77](decisions/D-77.md) | The app is built for the small height of the screen | current |
@@ -578,6 +578,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-533](decisions/D-533.md) | The design system: one visual language, owned by the usability agent | current |
 | [D-534](decisions/D-534.md) | A flag on *all* moves its card to La Bodega on its own, when /labs/ opens | current |
 | [D-535](decisions/D-535.md) | One name inside and out: everything internal is the English version of the game's name | current |
+| [D-536](decisions/D-536.md) | The first visit opens in the browser's language | current |
 
 ## No longer in force (12)
 

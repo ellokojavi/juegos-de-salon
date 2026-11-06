@@ -59,8 +59,8 @@ export function setLang(lang) {
 /**
  * El idioma también puede venir en el link: `juegosdesalon.cl/?lang=pt`, o pegado a la
  * invitación de una sala, `/liars-dice/?room=WFBN&lang=pt`. Quien comparte elige el idioma con el que
- * va a llegar el que recibe, que es lo mismo que hace el toggle pero para otra persona: sigue
- * sin detectarse nada del navegador (D-47, D-74).
+ * va a llegar el que recibe, que es lo mismo que hace el toggle pero para otra persona (D-74).
+ * It wins over the browser's language of the first visit (D-536).
  *
  * Se aplica al cargar cualquier página, se guarda como cualquier elección, y el parámetro se
  * saca de la barra de direcciones: lo que circula es la URL de siempre y el `?room=` queda
@@ -86,6 +86,36 @@ function idiomaDeLaUrl() {
   } catch (_) { /* una URL rara no puede dejar la app sin idioma */ }
 }
 idiomaDeLaUrl();
+
+/**
+ * The browser's language on the first visit (D-536, amends D-47): the first of the browser's
+ * languages that the app speaks, or Spanish. Pure, for node.
+ */
+export function idiomaDelNavegador(prefs = []) {
+  for (const p of prefs) {
+    const base = String(p || '').toLowerCase().split('-')[0];
+    const l = RETIRADOS[base] || base;
+    if (LANGS.includes(l)) return l;
+  }
+  return 'es';
+}
+
+/**
+ * Only when nothing was chosen on this device (no toggle, no `?lang=`): the browser's language is
+ * saved as the choice, once, and the page reloads in it. The toggle still changes it at any time.
+ * Behind the flag browser-lang until the owner publishes it. lab: #seccion-browser-lang
+ */
+async function idiomaInicial() {
+  try {
+    if (typeof document === 'undefined' || localStorage.getItem(KEY)) return;
+    const { flag } = await import('./flags.js');
+    if (!(await flag('browser-lang')) || localStorage.getItem(KEY)) return;
+    const l = idiomaDelNavegador(navigator.languages?.length ? navigator.languages : [navigator.language]);
+    localStorage.setItem(KEY, l);
+    if (l !== 'es') location.reload();
+  } catch (_) { /* without storage the app stays in Spanish, as before */ }
+}
+idiomaInicial();
 
 // En el laboratorio, cada página suma sus pestañas 🧪 y 🐞 y no deja que la navegación se salga
 if (LABS_IDIOMA && typeof document !== 'undefined') {
