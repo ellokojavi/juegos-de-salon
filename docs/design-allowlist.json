@@ -32,10 +32,28 @@
       "reason": "the podium step (.escalon): flat 4 px feet so the three steps read as one podium; a shape, not a size on the scale"
     },
     {
+      "file": "public/cup/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.4rem",
+      "reason": "the day card's game emoji (.dia-emoji), the board's hero beside the game's name: between the text steps and the display steps, as the covers' icons"
+    },
+    {
       "file": "public/cup/games/case/style.css",
       "rule": "radius",
       "what": "border-radius: 14px 14px 14px 4px",
       "reason": "the speech bubble's tail (.cs-globo), the same 4 px tail as base.css's chat bubble; a shape, not a size on the scale"
+    },
+    {
+      "file": "public/cup/games/case/style.css",
+      "rule": "text-size",
+      "what": "font-size: 2.6rem",
+      "reason": "the stamp that falls on a card when it is marked (.cs-persona .sello), drawn over the whole card: the board's own message, as Babel's"
+    },
+    {
+      "file": "public/cup/games/case/style.css",
+      "rule": "text-size",
+      "what": "font-size: 0.64rem",
+      "reason": "a suspect's trade under the name (.cs-persona .ofi), one line with ellipsis in four ~68 px cards at 320 px (C-8): the smallest text step cuts most trades"
     },
     {
       "file": "public/hangman/style.css",
