@@ -97,7 +97,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
   let nombreGuardado = '';
   try { nombreGuardado = localStorage.getItem(NOMBRE) || ''; } catch (_) { /* nada */ }
   // None typed here yet: the name this phone already knows (D-210), so a report is not «Someone»
-  if (!nombreGuardado) nombreGuardado = nombreDelCelular('');
+  if (!nombreGuardado) nombreGuardado = nombreDelCelular('').slice(0, 40);
   const err = el('div', { class: 'labs-error', role: 'alert' });
   const texto = el('textarea', { class: 'labs-texto', maxlength: '1000', rows: '5', placeholder: T.ph, 'aria-label': T.titulo });
   const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'given-name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
