@@ -1258,6 +1258,19 @@
         "stat": "1 file(s) +2 −0: README.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42418714111,
+      "check": "tests",
+      "pr": 1295,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "af324a36c7197ba14eaacbe4b391ffe9dd9d49da",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": ".github/pull_request_template.md  (.github/**: workflows: secrets, permissions, publishing)\nWarning: Detected unsettled top-level await at file:///home/runner/work/juegos-de-salon/juegos-de-salon/tools/agents/lanes.mjs:176\nif (cmd === 'ci') await ci();",
+      "signature": "4efa47c011",
+      "date": "2026-11-07T22:08:29.796Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
