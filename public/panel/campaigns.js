@@ -35,11 +35,46 @@ export function switches({ remote, active = [], campaigns = {} }) {
   return rows.sort((a, b) => a.order - b.order || ids.indexOf(a.id) - ids.indexOf(b.id));
 }
 
-/** Where a campaign stands today: 'off', 'scheduled' (its start is ahead), 'live' or 'ended'. */
-export function status(s, today) {
+/** A start or end is a day ('2026-11-08', the whole day in the player's time) or an exact moment in ISO ('2026-11-09T08:00:00Z'). */
+export const isMoment = v => typeof v === 'string' && v.includes('T');
+const pad = n => String(n).padStart(2, '0');
+const localDay = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+/** The day a start or end falls on, in this device's time. */
+export const dayOf = v => (isMoment(v) ? localDay(new Date(v)) : v);
+/** Its first (a start) or last (an end) millisecond. */
+export const startMs = v => (v ? Date.parse(isMoment(v) ? v : `${v}T00:00:00`) : NaN);
+export const endMs = v => (v ? Date.parse(isMoment(v) ? v : `${v}T23:59:59`) : NaN);
+/** For a `datetime-local` input: 'YYYY-MM-DDTHH:mm' in this device's time (a day's start at 00:00, an end at 23:59). */
+export function toLocalInput(v, end = false) {
+  if (!v) return '';
+  if (!isMoment(v)) return `${v}T${end ? '23:59' : '00:00'}`;
+  const d = new Date(v);
+  return `${localDay(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+/**
+ * A start or end picked in the panel, checked: `{ value }` (the moment in ISO, UTC) or `{ error }`.
+ * The end must come after the start and must not have passed; an empty pick clears it.
+ */
+export function checkPick(s, field, local, now = Date.now()) {
+  if (!local) return { value: null };
+  const ms = Date.parse(local);   // a datetime-local value has no zone: it is read in this device's time
+  if (!Number.isFinite(ms)) return { error: 'That date and time is not valid.' };
+  const from = field === 'from' ? ms : startMs(s.from), until = field === 'until' ? ms : endMs(s.until);
+  if (Number.isFinite(from) && Number.isFinite(until) && until <= from) return { error: 'The end must come after the start.' };
+  if (field === 'until' && ms <= now) return { error: 'The end is already past: pick a later moment.' };
+  return { value: new Date(ms).toISOString() };
+}
+
+/**
+ * Where a campaign stands today: 'off', 'scheduled' (its start is ahead), 'live' or 'ended'. With
+ * `now` (ms), an exact start or end is compared to the minute; without it, by its day.
+ */
+export function status(s, today, now = null) {
   if (!s.on) return 'off';
-  if (s.from && today < s.from) return 'scheduled';
-  if (s.until && today > s.until) return 'ended';
+  if (s.from && today < dayOf(s.from)) return 'scheduled';
+  if (s.until && today > dayOf(s.until)) return 'ended';
+  if (now !== null && isMoment(s.from) && now < startMs(s.from)) return 'scheduled';
+  if (now !== null && isMoment(s.until) && now > endMs(s.until)) return 'ended';
   return 'live';
 }
 
@@ -99,11 +134,12 @@ export function toRemote(rows, at = Date.now()) {
 export function span(s, today, days) {
   if (!s.on) return null;
   const last = dayPlus(today, days - 1);
-  const a = s.from && s.from > today ? s.from : today;
-  const b = s.until && s.until < last ? s.until : last;
+  const from = dayOf(s.from), until = dayOf(s.until);
+  const a = from && from > today ? from : today;
+  const b = until && until < last ? until : last;
   if (a > b) return null;
-  const idx = d => Math.round((Date.parse(`${d.slice(0, 10)}T12:00:00`) - Date.parse(`${today}T12:00:00`)) / DAY);
-  return { start: idx(a), end: idx(b), open: !s.until || s.until > last };
+  const idx = d => Math.round((Date.parse(`${d}T12:00:00`) - Date.parse(`${today}T12:00:00`)) / DAY);
+  return { start: idx(a), end: idx(b), open: !until || until > last };
 }
 
 /**

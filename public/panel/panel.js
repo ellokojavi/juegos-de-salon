@@ -37,7 +37,7 @@ import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KIND
 import { feedbackRows, countStages, STAGES, FILTERS } from './feedback.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
-import { switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
+import { dayOf as diaDe, toLocalInput, checkPick, switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
 import { stateOf as flagState } from '../assets/js/flags.js';
 import { FLAGS } from '../assets/js/flag-list.js';
@@ -1797,7 +1797,7 @@ function vistaSplash(today) {
   const rows = todas.filter(s => !s.archived);
   const archivadas = todas.filter(s => s.archived);
   const cambiar = (id, cambio) => guardarCampanas(todas.map(s => (s.id === id ? { ...s, ...cambio } : s)));
-  const vivas = rows.filter(s => campaignStatus(s, today) === 'live');
+  const vivas = rows.filter(s => campaignStatus(s, today, Date.now()) === 'live');
   // The owner's label first, else the title players read
   const nombreDe = id => todas.find(r => r.id === id)?.label || CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es || id;
   const cruces = overlaps(rows, today, 60);
@@ -1822,7 +1822,7 @@ function vistaSplash(today) {
 
   const tarjetas = rows.map((s, i) => {
     const c = CAMPAIGNS[s.id];
-    const st = campaignStatus(s, today);
+    const st = campaignStatus(s, today, Date.now());
     const [ico, txt] = ESTADO_CAMPANA[st];
     const nombre = nombreDe(s.id);
     const titulo = c.title?.[PANEL_LANG] || c.title?.es || s.id;
@@ -1843,15 +1843,20 @@ function vistaSplash(today) {
     }
     const detalle = st === 'scheduled' ? `starts ${diaCorto(s.from)}` : st === 'live' ? (s.until ? `until ${diaCorto(s.until)}` : 'no end day')
       : st === 'ended' ? `ended ${diaCorto(s.until)}` : '';
-    // A day is a pill with the native picker laid over it: one tap opens the phone's calendar
+    // A start or end is a pill with the native date-and-time picker laid over it (the owner's request):
+    // one tap opens the calendar and the clock. The pick is checked before it is saved (checkPick)
     const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
       el('span', { class: 'campana-dia-label' }, label),
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
-      el('input', { type: 'date', value: (s[campo] || '').slice(0, 10), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
-        min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
-        onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
+      el('input', { type: 'datetime-local', value: toLocalInput(s[campo], campo === 'until'), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+        min: campo === 'until' ? (toLocalInput(s.from) || null) : null, max: campo === 'from' ? (toLocalInput(s.until, true) || null) : null,
+        onChange: e => {
+          const r = checkPick(s, campo, e.target.value);
+          if (r.error) { S.splashMsg = `Not saved: ${r.error}`; e.target.value = toLocalInput(s[campo], campo === 'until'); render(); return; }
+          cambiar(s.id, { [campo]: r.value });
+        } }),
       s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
-    const base = s.from && s.from > today ? s.from : today;
+    const base = s.from && diaDe(s.from) > today ? diaDe(s.from) : today;
     return el('article', { class: `campana campana--con-vista campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
       el('header', { class: 'campana-cabeza' },
         // Its place in the queue, left of the emoji, compact (the owner's request)
@@ -1997,7 +2002,7 @@ function vistaSkins(today) {
 function vistaCampanas(now) {
   const today = todayOf(now);
   if (S.splash === undefined || S.controls === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
-  const splashVivas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS }).filter(s => campaignStatus(s, today) === 'live').length;
+  const splashVivas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS }).filter(s => campaignStatus(s, today, Date.now()) === 'live').length;
   const skinViva = skinRows({ remote: S.controls?.skins, templates: SKINS, today }).filter(s => s.status === 'live');
   const funciones = Object.entries(FUNCIONES).map(([id, f]) => [f, f.parts.filter(([p]) => S.controls?.features?.[id]?.[p] !== false).length]);
   const TABS = [

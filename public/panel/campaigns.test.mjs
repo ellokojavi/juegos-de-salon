@@ -119,3 +119,22 @@ const back = switches({ remote: toRemote(arch, 1), campaigns });
 assert.deepEqual(back.map(s => [s.id, s.archived]), [['b', false], ['c', false], ['a', true]]);
 assert.equal(fromRemote(toRemote(arch, 1)).some(c => c.id === 'a'), false, 'an archived campaign is not shown');
 assert.deepEqual(archive(arch, 'a', false).find(s => s.id === 'a'), { ...arch[2], archived: false, order: 2 });
+
+// Exact moments (date and time from the panel's picker): checked, compared to the minute
+{
+  const { checkPick, status: st, toLocalInput, dayOf } = await import('./campaigns.js');
+  const now = Date.parse('2026-11-07T12:00:00Z');
+  const ok = checkPick({}, 'until', '2026-11-08T23:59', now);
+  assert.ok(ok.value && ok.value.endsWith('Z'), 'a valid end is saved as an ISO moment');
+  assert.match(checkPick({}, 'until', '2026-11-01T10:00', now).error, /past/, 'an end already past is refused');
+  assert.match(checkPick({ from: '2026-11-10' }, 'until', '2026-11-09T10:00', now).error, /after the start/, 'an end before the start is refused');
+  assert.match(checkPick({ until: '2026-11-09T08:00:00Z' }, 'from', '2026-11-10T00:00', now).error, /after the start/, 'a start after the end is refused');
+  assert.match(checkPick({}, 'from', 'nonsense', now).error, /not valid/);
+  assert.deepEqual(checkPick({}, 'until', '', now), { value: null }, 'an empty pick clears it');
+  const s = { on: true, until: '2026-11-09T08:00:00Z' };
+  assert.equal(st(s, dayOf(s.until), Date.parse('2026-11-09T07:59:00Z')), 'live');
+  assert.equal(st(s, dayOf(s.until), Date.parse('2026-11-09T08:01:00Z')), 'ended');
+  assert.equal(toLocalInput('2026-11-08', true), '2026-11-08T23:59');
+  assert.match(toLocalInput('2026-11-09T08:00:00Z'), /^\d{4}-\d\d-\d\dT\d\d:\d\d$/);
+}
+console.log('✓ campaigns: exact moments');
