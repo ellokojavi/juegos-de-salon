@@ -1218,7 +1218,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/offline-sheet.js\nERROR · appeared tests: public/assets/js/offline-sheet.test.mjs",
       "signature": "d124900a6a",
       "date": "2026-11-07T20:51:26.842Z",
-      "fix": null,
+      "fix": {
+        "commit": "c06e0b34f4a8a114b3093c4287f07eb314b1dca7",
+        "date": "2026-11-07T21:37:57.647Z",
+        "stat": "115 file(s) +2066 −1005: .claude/agents/documentation.md, .claude/agents/ideas.md, .claude/agents/usability.md, .claude/skills/owner-tools/SKILL.md, .claude/skills/promo-video/SKILL.md, …"
+      },
       "flaky": false
     },
     {
