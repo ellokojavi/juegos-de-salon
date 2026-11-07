@@ -18,6 +18,7 @@ import { crearDado } from './dado3d.js';
 import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
 import { LLEGA } from './llegada.js';
+import { markOrigin } from './transport/stats.js';
 
 export const TEXTOS = {
   // `corto`: el nombre cuando va en la misma fila que Uno al día (D-230)
@@ -51,7 +52,7 @@ export function botonAzar({ candidatos, lang, base = '' }) {
  * elegido (`elegido`, que cae siempre igual) y su propio `destino`; `T.tocó` es lo que va sobre el
  * nombre, y `T.boton` el nombre del diálogo.
  */
-export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.length)], destino = base + elegido.path }) {
+export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.length)], destino = base + elegido.path, origen = 'random' }) {
   if (document.querySelector('.azar-capa')) return;
   // Las otras cinco caras: juegos distintos del elegido, repetidos solo si no alcanzan
   const otros = barajar(pool.filter(g => g.id !== elegido.id));
@@ -87,6 +88,8 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
     const escena = { emoji: elegido.emoji, img: foto(), alto, sombra: [som.transform, som.opacity], para: new URL(destino, location.href).pathname };
     if (revelado) Object.assign(escena, { chico: T.tocó, nombre: pickLang(elegido.name, lang) });
     try { sessionStorage.setItem(LLEGA, JSON.stringify(escena)); } catch { /* sin espacio, el juego abre como siempre */ }
+    // Where the game came from, for the panel's timeline: the dice, or One a Day's
+    markOrigin(origen, destino);
     location.href = destino;
   };
   capa.addEventListener('click', ir);

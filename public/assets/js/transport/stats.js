@@ -358,12 +358,13 @@ export function nombresDe(lista) {
 }
 
 /** Registro de una partida sin red que empieza: juego, modo, cuántos juegan, el país y, si se sabe, quién (D-210). */
-export function liveRecord(fp, { game, mode, players, name = '' }) {
+export function liveRecord(fp, { game, mode, players, name = '', origin = '' }) {
   const n = Math.min(MAX_PLAYERS, Math.max(1, Number(players) || 1));
   const r = { game, mode, n, at: STAMP, beat: STAMP, v: fp.v };
   if (fp.co) r.co = fp.co;
   if (idiomaDe(fp)) r.l = idiomaDe(fp);
   if (name) r.name = String(name).slice(0, NOMBRE_MAX);
+  if (ORIGINS.includes(origin)) r.o = origin;
   return r;
 }
 
@@ -383,12 +384,12 @@ export function finRecord({ ganador = '', empate = false, detalle = '' } = {}) {
  * Arranca el latido de una partida sin red y devuelve con qué pararlo. Todo lo de afuera
  * (reloj, documento, temporizador) entra por parámetro para probarlo con node.
  */
-export function startLive(api, fp, { game, mode, players, name = '' }, {
+export function startLive(api, fp, { game, mode, players, name = '', origin = '' }, {
   id = liveId(), now = Date.now, doc = globalThis.document,
   every = (f, ms) => setInterval(f, ms), stopEvery = clearInterval,
 } = {}) {
   const path = dayPath(fp.env, dayOf(now()));
-  quiet(() => api.patch(path, { [`live/${id}`]: liveRecord(fp, { game, mode, players, name }) }));
+  quiet(() => api.patch(path, { [`live/${id}`]: liveRecord(fp, { game, mode, players, name, origin }) }));
   let tocado = now();
   const toque = () => { tocado = now(); };
   const opts = { capture: true, passive: true };
@@ -428,6 +429,30 @@ export function seenRecord(fp, { c, name = '' }) {
 }
 export function noteSeen(c, { api, fp } = stats(), { id = liveId(), now = Date.now(), name = nombreDelCelular('') } = {}) {
   return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`seen/${id}`]: seenRecord(fp, { c, name }) }));
+}
+
+/**
+ * Where a game came from, for the panel's timeline: a card tapped on the home page (`card`), the
+ * 🎲 dice (`random`) or One a Day (`daily`). The page that opens it leaves `{ o, para, at }` in this
+ * tab's sessionStorage just before leaving; the game page it was for takes it on its first start.
+ * La Copa needs none: its games carry their own mode. Any other way in (a shared link, a bookmark,
+ * "play again" from the end screen) leaves no mark.
+ */
+export const ORIGIN_KEY = 'juegos-de-salon:origin';
+export const ORIGIN_MS = 10 * 60 * 1000;
+export const ORIGINS = ['card', 'random', 'daily'];
+const sinIndex = p => String(p || '').replace(/index\.html$/, '');
+export function markOrigin(o, href, sesion = globalThis.sessionStorage, now = Date.now(), base = globalThis.location?.href) {
+  try { poner(sesion, ORIGIN_KEY, JSON.stringify({ o, para: new URL(href, base).pathname, at: now })); } catch (_) { /* best effort */ }
+}
+/** The origin left for this page, once (it is removed), or '' when there is none, it is old or for another page. */
+export function takeOrigin(pathname = globalThis.location?.pathname, sesion = globalThis.sessionStorage, now = Date.now()) {
+  try {
+    const v = JSON.parse(leer(sesion, ORIGIN_KEY) || 'null');
+    sesion?.removeItem?.(ORIGIN_KEY);
+    if (!v || !ORIGINS.includes(v.o) || !(now - v.at < ORIGIN_MS) || sinIndex(v.para) !== sinIndex(pathname)) return '';
+    return v.o;
+  } catch (_) { return ''; }
 }
 
 /** Lo que usan los juegos y el transporte: la API real y la huella del navegador, de una. */
@@ -475,6 +500,8 @@ export function trackEnd(info) {
  * el de la anterior, así el mismo celular nunca se ve jugando dos a la vez.
  */
 let pararVivo = null;
+/** Where this page's games came from (`takeOrigin`), read once: a replay keeps it. */
+let origenPagina = null;
 /** The previous start in this page: its game, and whether its live game was finished (replay detection). */
 let anterior = null;
 /** Is this start a replay? Same game as the previous start in this page, and that one had finished. */
@@ -489,7 +516,8 @@ export function trackStart(info) {
     anterior = { game: info?.game, mode: info?.mode, finished: false };
     // Quién juega: los nombres de la partida o, si no los hay, el que este celular ya conoce (D-210)
     const name = nombresDe(info?.nombres) || nombreDelCelular(info?.game);
-    if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, { ...info, name });
+    if (origenPagina === null) origenPagina = takeOrigin();
+    if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, { ...info, name, origin: origenPagina });
     notePlayed(s.api, s.fp);
     noteActive(s.api, s.fp, { level: 2 });
     noteSplashStep('start');

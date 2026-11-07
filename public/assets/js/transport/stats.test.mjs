@@ -529,3 +529,23 @@ console.log('stats.test.mjs: todo en verde');
   assert.equal(envFor({ hostname: 'juegosdesalon.cl' }, { getItem() { throw new Error('blocked'); } }), 'prod');
   assert.ok(ENVS.includes('owner'));
 }
+
+// Where a game came from (the panel's timeline): marked by the page that opens it, taken once by the game
+{
+  const { markOrigin, takeOrigin, ORIGIN_MS, liveRecord: lr } = await import('./stats.js');
+  const mem = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; };
+  const s = mem();
+  markOrigin('random', 'hangman/', s, 1000, 'https://juegosdesalon.cl/');
+  assert.equal(takeOrigin('/hangman/index.html', s, 2000), 'random');
+  assert.equal(takeOrigin('/hangman/', s, 2000), '', 'taken once');
+  markOrigin('card', '/hangman/', s, 1000, 'https://juegosdesalon.cl/');
+  assert.equal(takeOrigin('/trivia/', s, 2000), '', 'another page');
+  markOrigin('card', '/hangman/', s, 1000, 'https://juegosdesalon.cl/');
+  assert.equal(takeOrigin('/hangman/', s, 1000 + ORIGIN_MS), '', 'too old');
+  markOrigin('bogus', '/hangman/', s, 1000, 'https://juegosdesalon.cl/');
+  assert.equal(takeOrigin('/hangman/', s, 2000), '');
+  assert.equal(takeOrigin('/hangman/', { getItem() { throw new Error('blocked'); } }, 2000), '');
+  const fp = { v: '1', co: '' };
+  assert.equal(lr(fp, { game: 'ahorcado', mode: 'solo', players: 1, origin: 'daily' }).o, 'daily');
+  assert.equal('o' in lr(fp, { game: 'ahorcado', mode: 'solo', players: 1 }), false);
+}

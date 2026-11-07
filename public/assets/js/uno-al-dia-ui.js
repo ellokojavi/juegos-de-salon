@@ -55,7 +55,7 @@ export async function tirarHoy({ lang, raiz = '' }) {
   const T = textos(lang).uad;
   tirar(pool, {
     lang, T: { boton: T.nombre, tocó: fmt(T.tocó, { n: e.numero }) },
-    elegido: pool.find(g => g.id === e.juego), destino: raiz + rutaHoy(e.juego),
+    elegido: pool.find(g => g.id === e.juego), destino: raiz + rutaHoy(e.juego), origen: 'daily',
   });
 }
 

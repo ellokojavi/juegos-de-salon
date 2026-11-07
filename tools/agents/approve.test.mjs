@@ -133,3 +133,11 @@ assert.throws(() => settle(ideasBody, '7', 'x'), /no decision 7/);
 // Checking a box of a settled decision carries nothing out
 const lateYes = check(settled, '2:si');
 assert.match(plan(event(settled, lateYes)).warnings[0], /already answered/);
+
+// The merge waits until end-to-end exists: it appears only after its scripts end (#1273)
+{
+  const { checksMissing } = await import('./approve.mjs');
+  assert.deepEqual(checksMissing([{ name: 'tests' }, { name: 'g01 · x' }]), ['end-to-end']);
+  assert.deepEqual(checksMissing([{ name: 'tests' }, { name: 'end-to-end' }]), []);
+  assert.deepEqual(checksMissing(), ['tests', 'end-to-end']);
+}
