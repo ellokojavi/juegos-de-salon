@@ -33,3 +33,16 @@ assert.equal(uploadText({ sent: 0, full: 2 }, 'en'), 'Not uploaded: 2 that did n
 assert.equal(uploadText({ sent: 0 }, 'pt'), '', 'nothing to say, no toast');
 console.log('✓ offline-ui: the upload toast says how many went and why any did not;');
 console.log('✓ offline-ui: what needs signal is exactly what the phone does not keep; the chip in three languages');
+
+// A minigame's own cover (Shinobi, Zip…) is found by COVER: it lives in #screen-jugar as an .intro-hero,
+// which is not the waiting room of La Copa (body.antesala). Missing it left every minigame cover in its
+// normal colours offline (2026-11-07)
+{
+  const { COVER } = await import('./offline-ui.js');
+  const { readFileSync } = await import('node:fs');
+  assert.ok(COVER.includes('#screen-jugar.active .intro-hero'), 'COVER finds a minigame\'s cover');
+  const game = readFileSync(new URL('../../cup/game.js', import.meta.url), 'utf8');
+  assert.match(game, /class: 'intro-hero'/, 'cup/game.js still draws the minigame cover as .intro-hero (rename COVER with it)');
+  const ui = readFileSync(new URL('./offline-ui.js', import.meta.url), 'utf8');
+  assert.match(ui, /childList: true, attributes: true/, 'Start swaps the cover for the board with no class change: children are watched too');
+}

@@ -33,10 +33,13 @@ export function isGamePage(pathname = globalThis.location?.pathname || '/', root
 
 /**
  * A game's cover (the owner, 2026-11-07): its first screen, before playing. Party games show it as
- * `#screen-intro` or `#screen-setup`; the minigames as the waiting room (`body.antesala`). Offline,
- * a cover takes the offline palette like the rest of the site; the play screens keep their colours.
+ * `#screen-intro` or `#screen-setup`. A minigame's own page (Shinobi, Zip, Babel…) draws its cover
+ * inside `#screen-jugar` with an `.intro-hero`, which Start replaces with the board; `body.antesala`
+ * is only La Copa's day cover, never a standalone minigame's (that miss left every minigame cover in
+ * its normal colours, 2026-11-07). Offline, a cover takes the offline palette like the rest of the
+ * site; the play screens keep their colours.
  */
-export const COVER = '#screen-intro.active, #screen-setup.active, body.antesala';
+export const COVER = '#screen-intro.active, #screen-setup.active, #screen-jugar.active .intro-hero, body.antesala';
 export const onCover = (doc = globalThis.document) => !!doc.querySelector(COVER);
 
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
@@ -126,7 +129,9 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
   // The palette: every page that is not a game's, and a game's page while its cover shows
   const shell = () => html.classList.toggle('offline-shell', html.classList.contains('offline') && (!isGamePage(win.location?.pathname) || onCover(doc)));
   const screens = new win.MutationObserver(shell);
-  screens.observe(doc.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  // Classes (a screen turning active) and children (a minigame's Start swaps its cover for the board
+  // without any class changing)
+  screens.observe(doc.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   function apply(mode) {
     const off = mode === 'offline';
     html.classList.toggle('offline', off);
