@@ -41,6 +41,18 @@ export function chipText(n, lang = getLang()) {
   return n > 0 ? `📴 ${T.chip} · ${T.pending.replace('{n}', n)}` : `📴 ${T.chip}`;
 }
 
+/**
+ * The toast when queued games upload (D-538, PR 5): how many went, and if any did not, how many and
+ * why. Empty when there is nothing to say. `r` is jugador.js's `pendientes-subidas` detail.
+ */
+export function uploadText(r, lang = getLang()) {
+  const T = (COMMON[lang] || COMMON.es).offline;
+  const out = [];
+  if (r?.sent) out.push(r.sent === 1 ? T.uploaded1 : T.uploaded.replace('{n}', r.sent));
+  for (const [k, t] of [['old', T.lostOld], ['full', T.lostFull], ['refused', T.lostRefused]]) if (r?.[k]) out.push(t.replace('{n}', r[k]));
+  return out.join(' ');
+}
+
 /** Marks what needs signal under `scope`: `.needs-signal` and the tag text, read by offline.css. */
 export function mark(scope, { lang = getLang(), root = ROOT } = {}) {
   const tag = `📡 ${(COMMON[lang] || COMMON.es).offline.tag}`;
@@ -69,14 +81,20 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
 
   const drawChip = () => { if (chip) chip.textContent = chipText(pendingCount(storage), lang); };
 
-  function toast() {
+  function toast(text = (COMMON[lang] || COMMON.es).offline.needsSignal, ms = 3200) {
     let t = doc.querySelector('.offline-toast');
     if (!t) { t = doc.createElement('div'); t.className = 'offline-toast'; t.setAttribute('role', 'status'); doc.body.append(t); }
-    t.textContent = (COMMON[lang] || COMMON.es).offline.needsSignal;
+    t.textContent = text;
     t.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
+    toastTimer = setTimeout(() => { t.hidden = true; }, ms);
   }
+  // Queued games uploaded (jugador.js): one toast, online or not, and the chip's count goes down
+  win.addEventListener('pendientes-subidas', e => {
+    drawChip();
+    const text = uploadText(e.detail, lang);
+    if (text) toast(text, 5000);
+  });
 
   // A tap on something that needs signal says why, in the capture phase so the page never sees it
   doc.addEventListener('click', e => {

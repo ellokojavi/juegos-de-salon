@@ -8,14 +8,14 @@
  * becomes a link when drawn.
  */
 export const CONTACT = 'hola@juegosdesalon.cl';
-export const UPDATED = '2026-10-29';
+export const UPDATED = '2026-11-07';
 
 export const TEXTS = {
   es: {
     title: 'Privacidad',
     lead: 'Juegos de Salón (juegosdesalon.cl) se juega sin cuenta, sin publicidad y sin cookies de seguimiento. Aquí está lo poco que guardamos, para qué, dónde y por cuánto tiempo.',
     sections: [
-      { h: '📱 En tu celular', p: ['Tu navegador guarda en el celular el idioma, el sonido, tus favoritos, la partida en curso, tus puntajes y los nombres que escribiste, para que no tengas que repetirlos. No son cookies y se borran al borrar los datos de este sitio en el navegador.'] },
+      { h: '📱 En tu celular', p: ['Tu navegador guarda en el celular el idioma, el sonido, tus favoritos, la partida en curso, tus puntajes y los nombres que escribiste, para que no tengas que repetirlos. No son cookies y se borran al borrar los datos de este sitio en el navegador. Si juegas sin señal, guarda también una copia de los juegos y las partidas que faltan por subir (hasta 200, por 30 días); se borran al subirse.'] },
       {
         h: '☁️ En nuestra base de datos',
         p: ['Usamos Firebase, de Google, en Estados Unidos. Guardamos solo esto:'],
@@ -47,13 +47,13 @@ export const TEXTS = {
       },
     ],
     who: 'Responsable: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Actualizada el 29 de octubre de 2026.',
+    updated: 'Actualizada el 7 de noviembre de 2026.',
   },
   en: {
     title: 'Privacy',
     lead: 'Parlor Games (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
     sections: [
-      { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser.'] },
+      { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser. If you play without signal, it also keeps a copy of the games and the games still to upload (up to 200, for 30 days); those go once uploaded.'] },
       {
         h: '☁️ In our database',
         p: ['We use Google\'s Firebase, in the United States. We keep only this:'],
@@ -85,13 +85,13 @@ export const TEXTS = {
       },
     ],
     who: 'Controller: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Updated on October 29, 2026.',
+    updated: 'Updated on November 7, 2026.',
   },
   pt: {
     title: 'Privacidade',
     lead: 'O Jogos de Salão (juegosdesalon.cl) se joga sem conta, sem anúncios e sem cookies de rastreamento. Aqui está o pouco que guardamos, para quê, onde e por quanto tempo.',
     sections: [
-      { h: '📱 No seu celular', p: ['Seu navegador guarda no celular o idioma, o som, seus favoritos, a partida em andamento, suas pontuações e os nomes que você digitou, para você não ter que repetir. Não são cookies, e somem quando você apaga os dados deste site no navegador.'] },
+      { h: '📱 No seu celular', p: ['Seu navegador guarda no celular o idioma, o som, seus favoritos, a partida em andamento, suas pontuações e os nomes que você digitou, para você não ter que repetir. Não são cookies, e somem quando você apaga os dados deste site no navegador. Se você joga sem sinal, guarda também uma cópia dos jogos e as partidas que faltam enviar (até 200, por 30 dias); somem ao serem enviadas.'] },
       {
         h: '☁️ No nosso banco de dados',
         p: ['Usamos o Firebase, do Google, nos Estados Unidos. Guardamos só isto:'],
@@ -123,6 +123,6 @@ export const TEXTS = {
       },
     ],
     who: 'Responsável: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Atualizada em 29 de outubro de 2026.',
+    updated: 'Atualizada em 7 de novembro de 2026.',
   },
 };
