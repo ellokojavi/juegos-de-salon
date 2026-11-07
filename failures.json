@@ -1220,6 +1220,19 @@
       "date": "2026-11-07T20:51:26.842Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42413221295,
+      "check": "tests",
+      "pr": 1284,
+      "branch": "offline-7-e2e",
+      "commit": "a2ac9c6293295e579035ebaaba6c9887046eac2b",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update",
+      "signature": "13e7a7848e",
+      "date": "2026-11-07T20:56:28.362Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
