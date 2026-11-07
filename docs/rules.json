@@ -47,6 +47,24 @@
    "debt": "docs/architecture-allowlist.json"
   },
   {
+   "id": "R-10",
+   "title": "Every bug leaves a seed: a reproducible bug becomes a replay test",
+   "doc": "docs/RULES.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "public/hangman/replay.test.mjs",
+    "public/hangman/fuzz.test.mjs"
+   ],
+   "reviewer": "the session that fixes the bug",
+   "why": "whether a fix kept its bug as a replay is seen in the fix's PR; the replay and fuzz tests keep the kept ones",
+   "applies": [
+    "public/**/engine.js"
+   ]
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",
