@@ -279,3 +279,46 @@ export async function verifySetter({ word, salt, commit, replies = [] }) {
   });
   return { hashOk, repliesOk, ok: hashOk && repliesOk };
 }
+
+/* ------------------------------------------------------------------ */
+/* Pure state machine (#1249, step 11, docs/REPLAY.md)                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * A thin pure adapter over buildState for a device that sees every word (deck play): the state
+ * is the inputs plus the plays so far and `view(state)` is what buildState derives from them.
+ * `step` returns a new state, or the very same object when the action is illegal.
+ */
+export function initialState({ players, config = {}, words = {}, lang = 'es' }) {
+  return { players: players.slice(), config: { ...config }, words: { ...words }, lang, plays: [] };
+}
+
+export const view = s => buildState(s);
+
+/** Every legal action: each letter not used yet by whoever may play now, and a buy where allowed. */
+export function legalActions(s, v = view(s)) {
+  if (v.phase !== 'play') return [];
+  const alpha = ALPHABETS[s.lang] || ALPHABETS.es;
+  const who = s.config.turns ? [v.current] : s.players.filter(p => !v.st[p].done);
+  const out = [];
+  for (const from of who) {
+    for (const letter of alpha) if (!v.st[from].used.includes(letter)) out.push({ from, letter });
+    if (v.st[from].canBuy) out.push({ from, buy: true });
+  }
+  return out;
+}
+
+export function isLegal(s, a, v = view(s)) {
+  if (!a || v.phase !== 'play' || !v.st[a.from] || v.st[a.from].done) return false;
+  if (s.config.turns && v.current !== a.from) return false;
+  if (a.buy) return v.st[a.from].canBuy;
+  const l = normalize(a.letter);
+  return l.length === 1 && (ALPHABETS[s.lang] || ALPHABETS.es).includes(l) && !v.st[a.from].used.includes(l);
+}
+
+export function step(s, a) {
+  if (!isLegal(s, a)) return s;
+  const play = { from: a.from, ms: a.ms || 0 };
+  if (a.buy) play.buy = true; else play.letter = normalize(a.letter);
+  return { ...s, plays: [...s.plays, play] };
+}

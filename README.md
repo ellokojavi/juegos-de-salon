@@ -560,6 +560,7 @@ node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
 node public/cup/screens.test.mjs
 node public/cup/store.test.mjs
+node public/hangman/fuzz.test.mjs
 node public/hangman/replay.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs

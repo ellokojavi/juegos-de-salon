@@ -1412,6 +1412,7 @@
     "public/cup/store.test.mjs",
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
+    "public/hangman/fuzz.test.mjs",
     "public/hangman/replay.test.mjs",
     "public/home-preload.test.mjs",
     "public/labs/artifacts/engine.test.mjs",
