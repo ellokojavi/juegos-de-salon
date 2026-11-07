@@ -108,4 +108,15 @@ function rig({ online = true } = {}) {
   assert.deepEqual(r.seen, ['offline', 'online']);
 }
 
+// '0' keeps it off whatever happens (end-to-end scripts that test a screen's own network error)
+{
+  const r = rig();
+  r.storage.setItem(FORCE_KEY, '0');
+  r.c.start();
+  r.nav.onLine = false; r.net.mode = 'down';
+  r.handlers.offline();
+  assert.equal(r.c.mode(), 'online', 'kept online');
+  assert.equal(r.c.forced(), false);
+}
+
 console.log('✓ connection: offline at once, poor after two probes, online after two steady ones, testers can force it');

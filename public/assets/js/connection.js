@@ -6,7 +6,8 @@
  * - On when the connection is too poor to use: two probes in a row fail or take over PROBE_TIMEOUT.
  *   A probe is a HEAD of `precache.json`, which the service worker never answers from its cache.
  * - Off only after two good probes at least STEADY apart, so a flaky signal does not flip the screen.
- * - Testers can force it from the offline card in /labs/ (FORCE_KEY on this phone); players cannot.
+ * - Testers can force it from the offline card in /labs/ (FORCE_KEY '1' on this phone); players cannot.
+ *   FORCE_KEY '0' keeps it off, for end-to-end scripts that cut the network on purpose.
  *
  * Started by instalable.js on every page, and only while the flag `offline` is on. The state is also
  * on `<html data-connection="online|offline">`, for CSS, and announced as a `connection` event.
@@ -34,8 +35,11 @@ export function createConnection({
   let next = null;
   let started = false;
 
-  const forced = () => { try { return storage?.getItem(FORCE_KEY) === '1'; } catch (_) { return false; } };
-  const mode = () => (forced() ? 'offline' : detected);
+  const stored = () => { try { return storage?.getItem(FORCE_KEY); } catch (_) { return null; } };
+  const forced = () => stored() === '1';
+  // '0' keeps the mode off whatever the connection does: for end-to-end scripts that cut the network
+  // to test a screen's own error (room-error.mjs), never shown to players or testers
+  const mode = () => (forced() ? 'offline' : stored() === '0' ? 'online' : detected);
   let shown = mode();
 
   function publish() {

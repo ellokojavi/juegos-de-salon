@@ -39,7 +39,9 @@ async function attempt(lang, game, label) {
   await network(true);
   const route = gameById(game).path;
   await b.go(`${SITE}/${route}`);
-  await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
+  // Offline mode (D-538) would dim the two-phone mode once the network is cut: this script tests the
+  // room's own error, so it keeps that mode off ('0', connection.js)
+  await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); localStorage.setItem('juegos-de-salon:offline-forced','0'); 1`);
   await b.go(`${SITE}/${route}`);
   // The site's root from the page's own vigia.js, so a game under /labs/ (Julepe, D-434) preloads the same module
   const preload = await b.evaluate(`import(new URL('assets/js/transport/firebase.js', document.querySelector('script[src$="assets/js/vigia.js"]').src.split('assets/js/vigia.js')[0]).href).then(()=>'ok',e=>'failed: '+e)`);
