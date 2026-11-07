@@ -30,12 +30,12 @@ assert.equal(englishMeta(new Map([['Estado', 'vigente']])).get('Status'), 'curre
 // The old file split: the text word for word (links one folder deeper), topics from the old index's rows
 const TOPICS = [{ key: 'tests', name: 'Tests', rule: 'C-12', es: 'Pruebas' }, { key: 'cup', name: 'La Copa', rule: '`docs/games/cup.md`', es: 'La Copa' }];
 const LEGACY = '# Decisiones\n\n| Tema | Regla | D |\n|---|---|---|\n| Pruebas | C-12 | D-01, D-2 |\n| La Copa | x | D-2 |\n\n---\n\n'
-  + '## D-01 · Uno\n**Fecha:** 2026-01-01 · **Estado:** vigente\n**Decisión:** ver [CANONES.md](CANONES.md) y [web](https://x.cl).\n\n---\n\n'
+  + '## D-01 · Uno\n**Fecha:** 2026-01-01 · **Estado:** vigente\n**Decisión:** ver [CANONS.md](CANONS.md) y [web](https://x.cl).\n\n---\n\n'
   + '## D-2 · Dos\n**Fecha:** 2026-01-02 · **Estado:** derogada\nTexto.\n\n'
   + '## D-3 · (número sin usar)\nNo se usó.\n';
 const { files } = splitLegacy(LEGACY, TOPICS, { 1: 'One' });
 assert.deepEqual([...files.keys()], ['D-1.md', 'D-2.md', 'D-3.md']);
-assert.equal(files.get('D-1.md'), '## D-1 · One\n**Date:** 2026-01-01 · **Status:** current · **Topics:** tests\n**Decisión:** ver [CANONES.md](../CANONES.md) y [web](https://x.cl).\n');
+assert.equal(files.get('D-1.md'), '## D-1 · One\n**Date:** 2026-01-01 · **Status:** current · **Topics:** tests\n**Decisión:** ver [CANONS.md](../CANONS.md) y [web](https://x.cl).\n');
 assert.equal(files.get('D-2.md'), '## D-2 · Dos\n**Date:** 2026-01-02 · **Status:** revoked · **Topics:** tests, cup\nTexto.\n');
 assert.equal(files.get('D-3.md'), '## D-3 · (número sin usar)\nNo se usó.\n');
 assert.throws(() => splitLegacy('| Otro | x | D-1 |\n## D-1 · a\n**Estado:** vigente\n', TOPICS), /not in/);

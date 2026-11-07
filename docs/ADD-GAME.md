@@ -1,6 +1,6 @@
 # Adding a game
 
-> A game is **its folder plus one entry in `games.js`**. The rules live in the [canons](CANONES.md)
+> A game is **its folder plus one entry in `games.js`**. The rules live in the [canons](CANONS.md)
 > and the [usability rules](USABILIDAD.md); this page is only the order and where each piece goes
 > (D-213). Every step names the test that fails without it.
 

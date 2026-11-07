@@ -15,7 +15,7 @@
     "docs/CANONES.md": {
       "to": "docs/CANONS.md",
       "phase": 5,
-      "state": "pending"
+      "state": "done"
     },
     "docs/DECISIONES.md": {
       "to": "docs/DECISIONS.md",

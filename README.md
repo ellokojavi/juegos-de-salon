@@ -804,7 +804,7 @@ Fork the repo, work on a topic branch and open a pull request to `main`; the tes
 These documents are being moved to English (D-316); the ones with a Spanish title are still in Spanish.
 
 <!-- generated: docs · written by python3 tools/release/readme.py update -->
-- [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
+- [Canons and standards of Juegos de Salón](docs/CANONS.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisions](docs/DECISIONS.md)
 - [Adding a game](docs/ADD-GAME.md)
