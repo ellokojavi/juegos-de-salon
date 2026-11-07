@@ -1207,6 +1207,19 @@
         "stat": "2 file(s) +5 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42412729146,
+      "check": "tests",
+      "pr": 1282,
+      "branch": "offline-6-sheet",
+      "commit": "492fd2ad85e0ee9444a8e7eaf3074d58d20d07c6",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/offline-sheet.js\nERROR · appeared tests: public/assets/js/offline-sheet.test.mjs",
+      "signature": "d124900a6a",
+      "date": "2026-11-07T20:51:26.842Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
