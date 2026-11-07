@@ -31,7 +31,7 @@ export function exportedNames(src) {
 }
 
 /** The JavaScript files the ratchet reads: tracked .js/.mjs under public/ and tools/. */
-export const sources = (paths = trackedPaths()) => paths.filter(p => /^(public|tools)\//.test(p) && /\.m?js$/.test(p));
+export const sources = (paths = trackedPaths()) => paths.filter(p => /^(public|tools)\//.test(p) && /\.m?js$/.test(p) && !/\.test\.m?js$/.test(p));
 
 /** Every Spanish exported name, as { file, name }. `read(path)` gives a file's text. */
 export function scan(files, read = p => readFileSync(join(ROOT, p), 'utf8')) {
