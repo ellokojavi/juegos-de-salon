@@ -360,9 +360,15 @@ export function nombreDelCelular(game, storage = globalThis.localStorage) {
   return '';
 }
 
+/**
+ * A seat label the game filled in, not a name someone typed ("Jugador 1", "Player 2", "Jogador 3"):
+ * it says nothing about who plays, so it never stands in for the name this phone knows (the One a
+ * Day button of four games sent "Jugador 1" while the phone knew the player's name from La Copa).
+ */
+export const esRelleno = n => /^(jugador|player|jogador)\s*\d*$/i.test(String(n || '').trim());
 /** Los nombres de una partida en una línea: "Javi, Cata", sin repetidos ni vacíos, acotada. */
 export function nombresDe(lista) {
-  const vistos = [...new Set((lista || []).map(x => String(x || '').replace(/\s+/g, ' ').trim()).filter(Boolean))];
+  const vistos = [...new Set((lista || []).map(x => String(x || '').replace(/\s+/g, ' ').trim()).filter(n => n && !esRelleno(n)))];
   return vistos.join(', ').slice(0, NOMBRE_MAX);
 }
 

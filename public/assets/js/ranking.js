@@ -6,6 +6,7 @@
  *
  * Nada de esto frena el juego: si la red falla, el bloque lo dice y el resto de la pantalla sigue.
  */
+import { esRelleno } from './transport/stats.js';
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
 import { jugador, leerYo, rankingsVisibles } from './jugador.js';
@@ -315,7 +316,8 @@ function nombreLocal() {
 
 function ofrecerContar(caja, { nombre = '', alTocar = () => {}, alEntrar }) {
   const T = R();
-  nombre = nombre || nombreLocal();
+  // A seat label ("Jugador 1") is not a name: the one this phone knows comes instead
+  nombre = (esRelleno(nombre) ? '' : nombre) || nombreLocal();
   caja.classList.add('rk-contar');
   // One line with its Sign in button, the same card as everywhere (C-19): tapping it opens the form with the
   // name already in, so the PIN is still all it takes (D-274)
