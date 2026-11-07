@@ -85,7 +85,7 @@ PR that changes what is kept on the phone.
    cache-first, the Firebase SDK kept once loaded; flag off = nothing cached, caches deleted.
    No update toast: pages are network-first and assets are content-hashed, so a new release is
    picked up on the next load with no prompt (`sw.test.mjs`, `precache.test.mjs`).
-3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` (`connection.test.mjs`).
+3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` and the T tab (`connection.test.mjs`).
 4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Con señal", the chip, the
    one-line explanation on tap (`offline-ui.test.mjs`).
 5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.

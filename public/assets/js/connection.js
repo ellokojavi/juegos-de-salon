@@ -6,7 +6,7 @@
  * - On when the connection is too poor to use: two probes in a row fail or take over PROBE_TIMEOUT.
  *   A probe is a HEAD of `precache.json`, which the service worker never answers from its cache.
  * - Off only after two good probes at least STEADY apart, so a flaky signal does not flip the screen.
- * - Testers can force it from the offline card in /labs/ (FORCE_KEY '1' on this phone); players cannot.
+ * - Testers can force it from the offline card in /labs/ or the T tab (FORCE_KEY '1' on this phone); players cannot.
  *   FORCE_KEY '0' keeps it off, for end-to-end scripts that cut the network on purpose.
  *
  * Started by instalable.js on every page, and only while the flag `offline` is on. The state is also
