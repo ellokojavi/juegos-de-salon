@@ -1143,6 +1143,19 @@
         "stat": "2 file(s) +5 −0: public/shinobi/index.html, public/sitemap.xml"
       },
       "flaky": false
+    },
+    {
+      "run": 42403480546,
+      "check": "end-to-end",
+      "pr": 1272,
+      "branch": "offline-4-screens",
+      "commit": "4ccaaf516cfbdbb7a080062b17fab5c54166147d",
+      "test": "Scripts",
+      "error": "g05 · room-error.mjs +6\tScripts\t﻿2026-11-07T18:53:49.2004750Z ##[group]Run node tools/e2e/ci.mjs $SCRIPTS\nSCRIPTS: room-error.mjs bridges/game.mjs julep/languages.mjs paint-mines/game.mjs plots/utilities.mjs artifacts/lab.mjs timeline/choice.mjs\n▶ room-error.mjs",
+      "signature": "a5f89469d1",
+      "date": "2026-11-07T19:00:18.465Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
