@@ -54,6 +54,19 @@ for (const route of ['/zip/', '/today/', '/']) {
   else ok(`${route} opens offline, in offline mode`);
 }
 
+// A game's cover takes the offline palette (the owner, 2026-11-07); its play screens do not
+await b.go(`${SITE}/battleship/?lang=es`, 1500);
+if (!(await until(`document.documentElement.classList.contains('offline-shell')`, 6000))) bad('the battleship cover does not take the offline palette');
+else ok('a game cover takes the offline palette');
+
+// The random game works offline: it lands on a game this phone keeps, which opens
+await b.go(`${SITE}/?lang=es`, 1500);
+await b.evaluate(`localStorage.setItem('juegos-de-salon:offline-sheet-seen', '1'); document.querySelector('.btn-azar').click()`);
+const landed = await until(`location.pathname !== '/' && document.documentElement.classList.contains('offline') && document.querySelectorAll('.screen').length > 0`, 15000);
+if (!landed) bad(`the random game did not open offline (at ${await b.evaluate('location.href').catch(() => '?')})`);
+else ok(`the random game opens offline (${await b.evaluate('location.pathname')})`);
+await b.go(`${SITE}/?lang=es`, 1200);
+
 // The sheet showed once (on the first offline page), and not again
 const sheetAgain = await b.evaluate(`!!document.getElementById('hoja-offline')`);
 const sheetSeen = await b.evaluate(`localStorage.getItem('juegos-de-salon:offline-sheet-seen') === '1'`);

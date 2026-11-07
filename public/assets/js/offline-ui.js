@@ -31,6 +31,14 @@ export function isGamePage(pathname = globalThis.location?.pathname || '/', root
   return [...GAME_PATHS].some(g => g && (path === g || path.startsWith(`${g}/`)));
 }
 
+/**
+ * A game's cover (the owner, 2026-11-07): its first screen, before playing. Party games show it as
+ * `#screen-intro` or `#screen-setup`; the minigames as the waiting room (`body.antesala`). Offline,
+ * a cover takes the offline palette like the rest of the site; the play screens keep their colours.
+ */
+export const COVER = '#screen-intro.active, #screen-setup.active, body.antesala';
+export const onCover = (doc = globalThis.document) => !!doc.querySelector(COVER);
+
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
 export function needsSignal(href, { root = ROOT, base = root } = {}) {
   let u;
@@ -115,10 +123,14 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     toast();
   }, true);
 
+  // The palette: every page that is not a game's, and a game's page while its cover shows
+  const shell = () => html.classList.toggle('offline-shell', html.classList.contains('offline') && (!isGamePage(win.location?.pathname) || onCover(doc)));
+  const screens = new win.MutationObserver(shell);
+  screens.observe(doc.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
   function apply(mode) {
     const off = mode === 'offline';
     html.classList.toggle('offline', off);
-    html.classList.toggle('offline-shell', off && !isGamePage(win.location?.pathname));
+    shell();
     if (off) {
       mark(doc, { lang });
       // In the page's flow, first thing: it pushes the screen down a line instead of covering its top bar
