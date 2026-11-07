@@ -5,7 +5,8 @@
  * - On at once when the browser says it is offline (`offline` event, `navigator.onLine === false`).
  * - On when the connection is too poor to use: two probes in a row fail or take over PROBE_TIMEOUT.
  *   A probe is a HEAD of `precache.json`, which the service worker never answers from its cache.
- * - Off only after two good probes at least STEADY apart, so a flaky signal does not flip the screen.
+ * - Off at once when the browser says it is back online (`online` event) and a probe agrees; otherwise
+ *   only after two good probes at least STEADY apart, so a flaky signal does not flip the screen.
  * - Testers can force it from the offline card in /labs/ or the T tab (FORCE_KEY '1' on this phone); players cannot.
  *   FORCE_KEY '0' keeps it off, for end-to-end scripts that cut the network on purpose.
  *
@@ -53,7 +54,7 @@ export function createConnection({
 
   function set(m) { detected = m; publish(); }
 
-  async function probe() {
+  async function probe({ trusted = false } = {}) {
     let ok = false;
     let slow = null;
     try {
@@ -69,9 +70,12 @@ export function createConnection({
       if (++fails >= 2 || nav?.onLine === false) set('offline');
     } else {
       fails = 0;
-      // Back online only after two good probes STEADY apart
+      // Back online only after two good probes STEADY apart, unless the browser itself said it is back
+      // (the `online` event) and a probe agrees: then at once, on the screen the player is on (the
+      // owner, 2026-11-07: it waited for the next page)
       if (detected === 'offline') {
-        if (lastGood !== null && now() - lastGood >= STEADY) set('online');
+        if (trusted && nav?.onLine !== false) set('online');
+        else if (lastGood !== null && now() - lastGood >= STEADY) set('online');
         else if (lastGood === null) lastGood = now();
       }
     }
@@ -116,7 +120,7 @@ export function createConnection({
       shown = mode();
       if (doc?.documentElement) doc.documentElement.dataset.connection = shown;
       win?.addEventListener?.('offline', () => { lastGood = null; set('offline'); schedule(EVERY_OFFLINE); });
-      win?.addEventListener?.('online', () => { lastGood = null; probe().then(() => schedule(STEADY)); });
+      win?.addEventListener?.('online', () => { lastGood = null; probe({ trusted: true }).then(ok => schedule(ok ? EVERY_ONLINE : EVERY_OFFLINE)); });
       win?.addEventListener?.('storage', e => { if (e.key === FORCE_KEY) publish(); });
       schedule(detected === 'offline' ? EVERY_OFFLINE : 0);
       return api;

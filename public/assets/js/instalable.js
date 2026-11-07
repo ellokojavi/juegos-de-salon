@@ -54,6 +54,8 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
   const forced = (() => { try { return globalThis.localStorage?.getItem('juegos-de-salon:offline-forced') === '1'; } catch (_) { return false; } })();
   // The flag went off while a tester's cut was on: the cut goes too, or the page would stay without network
   if (!on && forced && encendido === undefined) { try { globalThis.localStorage.removeItem('juegos-de-salon:offline-forced'); } catch (_) { /* no storage */ } globalThis.location?.reload(); }
+  // Remembered for each page's first inline script, which paints an offline phone in the offline palette
+  if (encendido === undefined) { try { globalThis.localStorage?.setItem('juegos-de-salon:offline-flag', on ? '1' : '0'); } catch (_) { /* no storage */ } }
   const msg = { type: 'offline', on: !!on, release, forced: !!on && forced };
   sw.active.postMessage(msg);
   // With the flag on, the page also watches the connection (connection.js, PR 3) and, offline, dims

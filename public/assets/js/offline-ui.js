@@ -132,7 +132,17 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
   // Classes (a screen turning active) and children (a minigame's Start swaps its cover for the board
   // without any class changing)
   screens.observe(doc.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
-  function apply(mode) {
+  // A switch while the page is open crossfades (~600 ms, offline.css) instead of jumping: the browser's
+  // View Transitions where it has them, a plain switch where it does not or with reduced motion. The
+  // first apply never animates: a page opened offline already painted the palette (its inline script)
+  let first = true;
+  const smooth = f => {
+    const still = first || !doc.startViewTransition || win.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    first = false;
+    if (still) f(); else doc.startViewTransition(f);
+  };
+  function apply(mode) { smooth(() => paint(mode)); }
+  function paint(mode) {
     const off = mode === 'offline';
     html.classList.toggle('offline', off);
     shell();

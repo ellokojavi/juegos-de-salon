@@ -133,10 +133,14 @@ PR that changes what is kept on the phone.
      `--purple #8c6a4a`, `--lime #c8c08a`; `--fondo` glows `rgba(230,150,70,.20)`,
      `rgba(240,200,120,.08)`, `rgba(150,90,40,.25)` over `linear-gradient(160deg, #1a120b, #2a1d12 55%, #14100c)`.
      Colours hard-coded outside the tokens (La Copa and Uno al día cards) are dimmed offline anyway.
-   - **Transitions**: entering fades the palette in (~600 ms, a crossfade layer for `--fondo`, since
-     gradients do not animate) with the chip; leaving fades back, the chip saying it reconnected; a page
-     opened already offline paints it with no animation; `prefers-reduced-motion` switches instantly.
-     Offline wins over a seasonal template's `--fondo`.
+   - **Transitions** (built, the owner, 2026-11-07): a page opened while the phone is offline paints its
+     first frame in the palette, with no flash of the normal one: each page's first inline script sets
+     `html.offline.offline-shell` when the flag is on (`juegos-de-salon:offline-flag`, kept by
+     `instalable.js`) and the phone is offline or forced, and the palette lives in `base.css` so it is
+     there before anything else loads. Going offline or back online with a page open switches on that
+     same screen and crossfades (~600 ms, View Transitions; instant without them or with reduced
+     motion). Back online is immediate when the browser says so and a probe agrees; only a recovered
+     poor connection still waits for two good probes 10 s apart.
    - **Readable**: text and the dimmed "📡 Con señal" tags on the new background pass WCAG AA contrast
      (4.5:1), checked by a test.
    - **The random game offline** (the owner, 2026-11-07): the 🎲 picks only games this phone keeps and

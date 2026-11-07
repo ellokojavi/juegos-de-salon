@@ -62,7 +62,7 @@ function rig({ online = true } = {}) {
   assert.equal(r.c.mode(), 'offline', 'two in a row do');
 }
 
-// Back online only after two good probes STEADY apart, so a flaky signal does not flip
+// Back online: at once when the browser says so and a probe agrees, on the same screen
 {
   const r = rig({ online: false });
   r.net.mode = 'down';
@@ -71,12 +71,35 @@ function rig({ online = true } = {}) {
   r.nav.onLine = true; r.net.mode = 'up';
   r.handlers.online();
   await r.advance(0);
-  assert.equal(r.c.mode(), 'offline', 'one good probe is not enough');
-  await r.advance(STEADY - 1);
-  assert.equal(r.c.mode(), 'offline', 'not before STEADY');
-  await r.advance(1);
-  assert.equal(r.c.mode(), 'online', 'two good probes STEADY apart switch back');
+  assert.equal(r.c.mode(), 'online', 'the online event and one good probe: back at once');
   assert.deepEqual(r.seen, ['online']);
+}
+
+// The online event with a probe that fails: still offline
+{
+  const r = rig({ online: false });
+  r.net.mode = 'down';
+  r.c.start();
+  r.nav.onLine = true;
+  r.handlers.online();
+  await r.advance(0);
+  assert.equal(r.c.mode(), 'offline', 'the browser says online but nothing answers');
+}
+
+// Without the browser's word (a poor connection that recovers): two good probes STEADY apart
+{
+  const r = rig();
+  r.c.start();
+  await r.advance(0);
+  r.net.mode = 'slow';
+  await r.advance(2 * (EVERY_ONLINE + PROBE_TIMEOUT));
+  assert.equal(r.c.mode(), 'offline');
+  r.net.mode = 'up';
+  assert.equal(await r.c.probe(), true);
+  assert.equal(r.c.mode(), 'offline', 'one good probe is not enough');
+  r.t.now += STEADY;
+  await r.c.probe();
+  assert.equal(r.c.mode(), 'online', 'two good probes STEADY apart switch back');
 }
 
 // A bad probe in between starts the count again
