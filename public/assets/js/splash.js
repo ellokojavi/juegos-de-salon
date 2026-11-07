@@ -423,7 +423,8 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
   const list = node('div', 'splash-items');
   list.style.setProperty('--n', String(Math.max(1, items.length)));
-  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  // `?paused` (the panel's card preview): the still, until the owner presses ▶
+  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || param('paused') !== null;
   for (const it of items) {
     // The whole item is the way in: tapping the clip, the name or Play opens the game
     const teaser = !it.name && !it.text && !it.href;

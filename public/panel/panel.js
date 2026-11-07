@@ -1852,7 +1852,7 @@ function vistaSplash(today) {
         onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
       s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
     const base = s.from && s.from > today ? s.from : today;
-    return el('article', { class: `campana campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
+    return el('article', { class: `campana campana--con-vista campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
       el('header', { class: 'campana-cabeza' },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('div', { class: 'campana-nombre' },
@@ -1880,12 +1880,10 @@ function vistaSplash(today) {
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
           el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-vistas' },
-          el('button', { type: 'button', class: 'campana-preview vistazo-btn', 'aria-expanded': S.campPeek.has(s.id) ? 'true' : 'false',
-            onClick: () => { S.campPeek.has(s.id) ? S.campPeek.delete(s.id) : S.campPeek.add(s.id); render(); } }, 'Quick look 👀'),
           el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
         el('button', { type: 'button', class: 'campana-archivar', 'aria-label': `Archive ${nombre}`,
           onClick: () => { S.campOpen.delete(s.id); guardarCampanas(archive(todas, s.id, true)); } }, '🗄️ Archive')),
-      S.campPeek.has(s.id) ? vistazo(s.id, nombre) : null);
+      vistazo(s.id, nombre, S.campPeek.has(s.id)));
   });
 
   return [
@@ -1902,12 +1900,15 @@ function vistaSplash(today) {
   ];
 }
 
-/* A quick look at a splash without leaving the panel: the real home page with that campaign forced
-   (`?splash=`, which records nothing), drawn at phone size and shrunk. Opened by Quick look 👀 in the card's footer;
-   it stays open across re-renders for this visit */
-function vistazo(id, nombre) {
-  return el('div', { class: 'vistazo-marco' },
-    el('iframe', { src: `../?splash=${encodeURIComponent(id)}`, title: `${nombre}: splash preview`, tabindex: '-1' }));
+/* A look at a splash without leaving the panel, in a column at the card's right (the owner's request):
+   the real home page with that campaign forced (`?splash=`, which records nothing), drawn at phone size
+   and shrunk. It shows still (`&paused`) until ▶ is pressed, like a video; then it plays for this visit */
+function vistazo(id, nombre, playing) {
+  const play = () => { S.campPeek.add(id); render(); };
+  return el('div', { class: 'vistazo-marco', 'data-play': playing ? '1' : '0' },
+    el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' }),
+    playing ? null : el('button', { type: 'button', class: 'vistazo-play', 'aria-label': `Play ${nombre}`, title: 'Play', onClick: play },
+      el('span', { 'aria-hidden': 'true' })));
 }
 
 /* 🧩 Site features and 🎨 skins (D-477): `controls/`, read by the site through assets/js/controls.js */
@@ -2111,7 +2112,8 @@ function render() {
 function pintarVista(nodos) {
   const vista = $('#vista');
   const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(':scope > .vistazo-marco')).map(a => [a.id, a]));
-  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco'));
+  // A card is kept only if its preview did not change from still to playing
+  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco')?.dataset.play === viejos.get(n.id).querySelector(':scope > .vistazo-marco').dataset.play);
   const enOrden = quedan.map(n => n.id).join() === [...viejos.keys()].filter(id => quedan.some(n => n.id === id)).join();
   if (!quedan.length || !enOrden) { vista.replaceChildren(...nodos); return; }
   const fijos = new Set();
