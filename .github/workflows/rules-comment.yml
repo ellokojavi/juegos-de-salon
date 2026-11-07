@@ -1,0 +1,57 @@
+# 👁 rules surfaced on the PR (#1249 step 6, docs/RULES.md rule 7): one comment, marked
+# <!-- judged-rules -->, lists the judged rules the PR's files touch, each with its reviewer and doc.
+# No comment when it touches none (an earlier one is removed).
+#
+# pull_request_target runs main's copy of this file and of rules.mjs, never the PR's: the PR's code
+# is not checked out, only its file NAMES are read from the API and passed as arguments, so a fork's
+# PR gets its comment too without running anything it wrote.
+# By hand (Actions → Rules comment → Run workflow, input `pr`) for any PR number.
+
+name: Rules comment
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: rules-comment-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # main, never the PR's code
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          set -euo pipefail
+          [[ "$PR" =~ ^[0-9]+$ ]] || { echo "not a PR number: $PR"; exit 1; }
+          gh api --paginate "repos/$REPO/pulls/$PR/files" --jq '.[].filename' > "$RUNNER_TEMP/files.txt"
+          mapfile -t files < "$RUNNER_TEMP/files.txt"
+          node tools/agents/rules.mjs touched --markdown -- "${files[@]}" > "$RUNNER_TEMP/body.md"
+          old=$(gh api --paginate "repos/$REPO/issues/$PR/comments" --jq '.[] | select(.body | startswith("<!-- judged-rules -->")) | .id' | head -1)
+          if [ -s "$RUNNER_TEMP/body.md" ]; then
+            if [ -n "$old" ]; then gh api -X PATCH "repos/$REPO/issues/comments/$old" -F "body=@$RUNNER_TEMP/body.md" > /dev/null; echo "updated $old"
+            else gh api -X POST "repos/$REPO/issues/$PR/comments" -F "body=@$RUNNER_TEMP/body.md" > /dev/null; echo posted; fi
+          elif [ -n "$old" ]; then gh api -X DELETE "repos/$REPO/issues/comments/$old"; echo "removed $old: no judged rule touched"
+          else echo "no judged rule touched"; fi

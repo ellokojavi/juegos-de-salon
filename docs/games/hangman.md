@@ -9,7 +9,7 @@ Quinto juego de la app. El ahorcado de toda la vida, con el arreglo que le falta
 su propia palabra, por turnos de una letra, y al final se comparan. Con dos jugadores es un duelo;
 con seis, una carrera.
 
-Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en “Excepciones a los cánones”.
+Sigue los [cánones](../CANONS.md). Dos excepciones documentadas, ambas en “Excepciones a los cánones”.
 
 ### Decisiones que deja este juego
 
@@ -283,3 +283,9 @@ Ahorcado was the first game migrated to the design system: its stylesheet lost i
 **The lives on one line** (2026-11-05): at 320 px «Normal · 6», the longest of the three, broke after
 the dot while «Difícil · 5» and «Fácil · 8» did not. The control is `.seg.seg--lives` and its buttons
 don't wrap; each takes the width of its label (73, 85 and 68 px at 320), at 390 they are still equal.
+
+## Manifest (`game.json`, #1249 step 7)
+
+Its catalogue entry, modes, session key, Firebase paths and the exceptions above live in
+`public/hangman/game.json`, a pilot of the per-game manifest (docs/ADD-GAME.md). Edit it there and run
+`node tools/generators/manifests.mjs`; games.js reads the generated module.

@@ -13,7 +13,7 @@ PR for the owner and move on.
 1. The repo's `CLAUDE.md`: which documents exist and how things are tested. Read it in full, and also
    the `readme-and-cards` skill (`.claude/skills/readme-and-cards/SKILL.md`): how the README is maintained
    (`tools/release/readme.py`) and the social cards (`tools/release/og.mjs`).
-2. `docs/CANONES.md` (C-n), especially C-13 (documentation) and the checklist at the end.
+2. `docs/CANONS.md` (C-n), especially C-13 (documentation) and the checklist at the end.
 3. `docs/DECISIONS.md` (D-n), the index, and `docs/decisions/D-<n>.md`, one file each (D-394): what was decided is not re-argued; it is only documented.
 
 The README is **in English** (C-13, D-78), and since D-316 so is everything else you write (see
@@ -72,7 +72,7 @@ changelog entries are written in English, even inside files that are still in Sp
      fix, a new flag of an existing tool) lives in its `changelog/` entry and the code comment; do
      not ask for a decision for it, and do not flag its absence.
    - **`docs/REQUERIMIENTOS.md`:** a fulfilled requirement is marked ✅ with its version.
-   - **`docs/games/<carpeta>.md`** of the game that changed, `docs/CANONES.md` if a general rule
+   - **`docs/games/<carpeta>.md`** of the game that changed, `docs/CANONS.md` if a general rule
      changed, `docs/USABILIDAD.md` only if the owner resolved a dilemma and it still needs recording.
    - **`CLAUDE.md`:** every new tool in `tools/` is explained (tests do not go in a
      list: each `*.test.mjs` says on its first line what it tests). `tools/e2e/README.md` has

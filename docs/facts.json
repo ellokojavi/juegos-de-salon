@@ -473,6 +473,7 @@
         "public/hangman/decks/index.js",
         "public/hangman/engine.js",
         "public/hangman/game.js",
+        "public/hangman/game.json",
         "public/hangman/index.html",
         "public/hangman/rules.js",
         "public/hangman/style.css"
@@ -520,6 +521,7 @@
       "files": [
         "public/liars-dice/engine.js",
         "public/liars-dice/game.js",
+        "public/liars-dice/game.json",
         "public/liars-dice/index.html",
         "public/liars-dice/rules.js",
         "public/liars-dice/style.css"
@@ -1078,6 +1080,7 @@
     "public/assets/js/flag-list.js",
     "public/assets/js/flags.js",
     "public/assets/js/frases.js",
+    "public/assets/js/game-manifest.js",
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
     "public/assets/js/hidden-match.js",
@@ -1096,6 +1099,8 @@
     "public/assets/js/labs-puerta.js",
     "public/assets/js/llegada.js",
     "public/assets/js/load-css.js",
+    "public/assets/js/manifests/hangman.js",
+    "public/assets/js/manifests/liars-dice.js",
     "public/assets/js/month-end.js",
     "public/assets/js/music.js",
     "public/assets/js/name-guard.js",
@@ -1349,6 +1354,7 @@
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/flags.test.mjs",
+    "public/assets/js/game-manifest.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/hidden-match.test.mjs",
     "public/assets/js/home-windows.test.mjs",
@@ -1414,6 +1420,8 @@
     "public/cup/store.test.mjs",
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
+    "public/hangman/fuzz.test.mjs",
+    "public/hangman/replay.test.mjs",
     "public/home-preload.test.mjs",
     "public/labs/artifacts/engine.test.mjs",
     "public/labs/bodega.test.mjs",
@@ -1443,6 +1451,7 @@
     "public/sw.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
+    "tools/agents/architecture.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
     "tools/agents/conflict-markers.test.mjs",
     "tools/agents/covers.test.mjs",
@@ -1664,8 +1673,12 @@
       "title": "El alemán"
     },
     {
-      "path": "docs/CANONES.md",
-      "title": "Cánones y estándares de Juegos de Salón"
+      "path": "docs/ARCHITECTURE.md",
+      "title": "The architecture boundary (#1249 step 5)"
+    },
+    {
+      "path": "docs/CANONS.md",
+      "title": "Canons and standards of Juegos de Salón"
     },
     {
       "path": "docs/DECISIONS.md",
@@ -1702,6 +1715,10 @@
     {
       "path": "docs/PWA-NOTIFICACIONES.md",
       "title": "App instalable y avisos al celular (PWA + Web Push)"
+    },
+    {
+      "path": "docs/REPLAY.md",
+      "title": "Seeded randomness and replay"
     },
     {
       "path": "docs/REPO-WEIGHT.md",

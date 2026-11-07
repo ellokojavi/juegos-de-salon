@@ -1,0 +1,24 @@
+{
+  "id": "dudo",
+  "path": "liars-dice/",
+  "emoji": "🎲",
+  "name": { "es": "Dudo", "en": "Liar's Dice", "pt": "Dado Mentiroso" },
+  "tagline": { "es": "Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.", "en": "Shake the cup, bid how many dice are on the table and keep a straight face.", "pt": "Sacuda o copo, aposte quantos dados tem na mesa sem entregar o jogo." },
+  "keywords": {
+    "es": ["dados", "cacho", "mentiroso", "mentir", "apuesta", "farol", "previa", "carrete", "cubilete"],
+    "en": ["dice", "liar", "lie", "bluff", "bet", "party", "cup"],
+    "pt": ["dados", "mentiroso", "mentir", "aposta", "blefe", "copo", "festa"]
+  },
+  "players": { "min": 1, "max": 6 },
+  "duration": "10–20",
+  "tipos": ["tabletop"],
+  "jugadas": ["bid", "dudo", "calza"],
+  "unoAlDia": { "orden": 9, "desde": "2026-10-07", "grupo": true },
+  "available": true,
+  "modes": ["local", "online", "cpu", "uno-al-dia"],
+  "ai": true,
+  "memory": "juegos-de-salon:dudo:session",
+  "languages": ["es", "en", "pt"],
+  "firebasePaths": ["rooms/{code}"],
+  "canonExceptions": []
+}

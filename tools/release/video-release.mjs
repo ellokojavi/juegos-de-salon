@@ -4,7 +4,7 @@
 // a branch adds there. The release is the archive; YouTube and the social networks keep the public copy.
 //   node tools/release/video-release.mjs <folder> <version> <file>...
 //   node tools/release/video-release.mjs promo-video 9 marketing/promo-video/output/*.mp4
-// It prints the download URLs to write in marketing/registro.json and the asset's README.
+// It prints the download URLs to write in marketing/log.json and the asset's README.
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { basename } from 'node:path';

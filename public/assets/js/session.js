@@ -1,5 +1,5 @@
 /**
- * Sesión de partida compartida por todos los juegos (canon C-6 en docs/CANONES.md).
+ * Sesión de partida compartida por todos los juegos (canon C-6 en docs/CANONS.md).
  *
  * Guarda la partida en curso en localStorage bajo `juegos-de-salon:<juego>:session`
  * para poder retomarla si el jugador vuelve al menú, recarga o cierra el navegador.
