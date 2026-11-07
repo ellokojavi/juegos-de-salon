@@ -33,6 +33,9 @@ retries. A session that edits the PR description keeps that block as it is. For 
 `owner-approval` is a required status on `main`, so a 🔴 PR cannot merge without the tick.
 
 A session never turns on auto-merge for a 🔴 PR; it says in the PR that it waits for the owner (whose Yes merges it).
+Exception (D-540): when the owner asked for the work directly in that session's dialogue, the session ticks
+the box itself (it acts as the owner on GitHub) once the head is final, and says so in the PR. A 🔴 PR
+from an agent's round, a job or a session's own initiative still waits for the owner.
 Storing something new about players is 🔴 too even when no red file changes: the privacy page
 changes in the same PR (CLAUDE.md), which makes it red.
 
