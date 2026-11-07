@@ -14,7 +14,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
@@ -1014,7 +1014,7 @@ function introDeHoy() {
     introHoy(HOY, { lang, extra: COMMON[lang].uad.mismaFlota }),
     el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
       SFX.tap();
-      startLocalMode('cpu', { A: names_.get() || T.p1, B: T.cpuName }, { ...DEFAULT_CONFIG }, HOY);
+      startLocalMode('cpu', { A: names_.get() || nombreDelCelular(GAME_ID) || T.p1, B: T.cpuName }, { ...DEFAULT_CONFIG }, HOY);
     } }, COMMON[lang].uad.jugar));
 }
 

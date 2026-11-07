@@ -18,7 +18,7 @@ import { crearDado } from '../assets/js/dado3d.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -1468,7 +1468,7 @@ function introDeHoy() {
     introHoy(HOY, { lang, extra: COMMON[lang].uad.mismosDados }),
     el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
       SFX.tap();
-      startMatch('cpu', { A: nameStore.get() || fmt(T.playerPlaceholder, { n: 1 }), B: T.cpuName }, { ...DEFAULT_CONFIG, players: ['A', 'B'] }, HOY);
+      startMatch('cpu', { A: nameStore.get() || nombreDelCelular(GAME_ID) || fmt(T.playerPlaceholder, { n: 1 }), B: T.cpuName }, { ...DEFAULT_CONFIG, players: ['A', 'B'] }, HOY);
     } }, COMMON[lang].uad.jugar));
 }
 

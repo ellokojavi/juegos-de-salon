@@ -17,7 +17,7 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida, mmss } from '../assets/js/ranking.js';
 import { leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
@@ -803,7 +803,7 @@ function introDeHoy() {
     introHoy(HOY, { lang, extra: T.hoyExtra }),
     el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
       SFX.tap();
-      startMatch('solo', { A: nameStore.get() || fmt(T.playerPlaceholder, { n: 1 }) }, { ...DEFAULT_CONFIG, players: ['A'] }, HOY);
+      startMatch('solo', { A: nameStore.get() || nombreDelCelular(GAME_ID) || fmt(T.playerPlaceholder, { n: 1 }) }, { ...DEFAULT_CONFIG, players: ['A'] }, HOY);
     } }, COMMON[lang].uad.jugar));
 }
 

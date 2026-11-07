@@ -5,7 +5,7 @@ import {
   noteStart, noteRoom, notePlayer, noteEnd, endRecord, countryOf, regionOfLang, restApi,
   liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
   paginaDe, origenDe, canalDe, dispositivoDe, avisoDe, pwaDe, sinMarcas, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
-  nombreDelCelular, nombresDe, finRecord,
+  nombreDelCelular, nombresDe, esRelleno, finRecord,
   esOtraVez, finChanges, vueltaBand, frecBand, diasConHoy, habitChanges, deviceId, noteActive, shareKey, shareKeyOfPage,
   ULTIMA_KEY, DIAS_KEY, DISPOSITIVO_KEY,
 } from './stats.js';
@@ -365,6 +365,11 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.equal(nombreDelCelular('x', { getItem() { throw new Error('bloqueado'); } }), '');
   assert.equal(nombresDe(['Javi', ' Cata ', '', 'Javi', null]), 'Javi, Cata');
   assert.equal(nombresDe([]), '');
+  // A seat label the game filled in is not a name: it never hides the one this phone knows
+  assert.equal(nombresDe(['Jugador 1']), '');
+  assert.equal(nombresDe(['Player 2', 'Cata', 'jogador 3']), 'Cata');
+  assert.ok(esRelleno('Jugador 1') && esRelleno(' PLAYER  12 ') && esRelleno('Jogador'));
+  assert.ok(!esRelleno('Sebastian') && !esRelleno('Jugador Uno') && !esRelleno('') && !esRelleno('Phone'));
   assert.equal(liveRecord({ v: '1' }, { game: 'dudo', mode: 'cpu', players: 1, name: 'Javi' }).name, 'Javi');
   assert.equal('name' in liveRecord({ v: '1' }, { game: 'dudo', mode: 'cpu', players: 1 }), false, 'sin nombre no va el campo');
   assert.deepEqual(finRecord({ ganador: 'Javi', detalle: '7 intentos' }), { at: { '.sv': 'timestamp' }, g: 'Javi', d: '7 intentos' });

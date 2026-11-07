@@ -16,7 +16,7 @@ import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/erro
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
 import { rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
@@ -1048,7 +1048,7 @@ function renderSetup(mode, prefillCode = '') {
  */
 function introDeHoy() {
   const seed = Math.floor(azarDel(HOY.semilla, GAME_ID)() * 2 ** 32);
-  const nombre = nameStore.get() || fmt(T.playerPlaceholder, { n: 1 });
+  const nombre = nameStore.get() || nombreDelCelular(GAME_ID) || fmt(T.playerPlaceholder, { n: 1 });
   $('#modes').replaceChildren(
     introHoy(HOY, { lang }),
     el('button', { class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => {
