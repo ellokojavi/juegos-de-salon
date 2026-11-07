@@ -102,7 +102,7 @@ export function span(s, today, days) {
   const a = s.from && s.from > today ? s.from : today;
   const b = s.until && s.until < last ? s.until : last;
   if (a > b) return null;
-  const idx = d => Math.round((Date.parse(`${d}T12:00:00`) - Date.parse(`${today}T12:00:00`)) / DAY);
+  const idx = d => Math.round((Date.parse(`${d.slice(0, 10)}T12:00:00`) - Date.parse(`${today}T12:00:00`)) / DAY);
   return { start: idx(a), end: idx(b), open: !s.until || s.until > last };
 }
 

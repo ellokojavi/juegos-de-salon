@@ -1707,7 +1707,10 @@ const periodLabelDia = d => new Date(d * DAY).toLocaleDateString('en-US', { time
 /* ------------------------------------------------------------------ */
 const ESTADO_CAMPANA = { live: ['🟢', 'Showing'], scheduled: ['🕒', 'Scheduled'], ended: ['⏹', 'Ended'], off: ['⚪', 'Off'] };
 const STRIP_DAYS = 30;
-const diaCorto = d => new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { month: 'short', day: 'numeric' });
+// A day, or an exact moment (a campaign's `until: '2026-11-09T08:00:00Z'`, splash.js): that one with its hour, in this computer's time
+const diaCorto = d => String(d).includes('T')
+  ? new Date(d).toLocaleString(LOCALE, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
+  : new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { month: 'short', day: 'numeric' });
 
 /** Saves every switch at once: what the home page reads on its next visit. */
 async function guardarCampanas(rows) {
@@ -1844,7 +1847,7 @@ function vistaSplash(today) {
     const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
       el('span', { class: 'campana-dia-label' }, label),
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
-      el('input', { type: 'date', value: s[campo] || '', 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+      el('input', { type: 'date', value: (s[campo] || '').slice(0, 10), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
         min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
         onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
       s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
@@ -1963,7 +1966,7 @@ function vistaSkins(today) {
     const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
       el('span', { class: 'campana-dia-label' }, label),
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
-      el('input', { type: 'date', value: s[campo] || '', 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+      el('input', { type: 'date', value: (s[campo] || '').slice(0, 10), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
         min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
         onChange: e => guardar(s, { [campo]: e.target.value || null }) }));
     // "These days" starts from its next yearly run, so one tap keeps the dates it already had
