@@ -473,6 +473,7 @@
         "public/hangman/decks/index.js",
         "public/hangman/engine.js",
         "public/hangman/game.js",
+        "public/hangman/game.json",
         "public/hangman/index.html",
         "public/hangman/rules.js",
         "public/hangman/style.css"
@@ -520,6 +521,7 @@
       "files": [
         "public/liars-dice/engine.js",
         "public/liars-dice/game.js",
+        "public/liars-dice/game.json",
         "public/liars-dice/index.html",
         "public/liars-dice/rules.js",
         "public/liars-dice/style.css"
@@ -1078,6 +1080,7 @@
     "public/assets/js/flag-list.js",
     "public/assets/js/flags.js",
     "public/assets/js/frases.js",
+    "public/assets/js/game-manifest.js",
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
     "public/assets/js/hidden-match.js",
@@ -1096,6 +1099,8 @@
     "public/assets/js/labs-puerta.js",
     "public/assets/js/llegada.js",
     "public/assets/js/load-css.js",
+    "public/assets/js/manifests/hangman.js",
+    "public/assets/js/manifests/liars-dice.js",
     "public/assets/js/month-end.js",
     "public/assets/js/music.js",
     "public/assets/js/name-guard.js",
@@ -1348,6 +1353,7 @@
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/flags.test.mjs",
+    "public/assets/js/game-manifest.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/hidden-match.test.mjs",
     "public/assets/js/home-windows.test.mjs",
