@@ -438,7 +438,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
 - **Languages:** Spanish (default), English and Brazilian Portuguese, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
 - **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. A back swipe or «‹ Menú» mid-game asks before leaving (D-432).
-- **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
+- **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); an offline mode is being built in the lab (D-538, [docs/OFFLINE.md](docs/OFFLINE.md)).
 - **Privacy** (D-463): [`/privacy/`](https://juegosdesalon.cl/privacy/), in the three languages and linked from the menu's footer and every feedback form, says what is kept on the phone and in Firebase, why, for how long and how to have it deleted; an email left for a reply is deleted once we answer or after 90 days.
 
 ---

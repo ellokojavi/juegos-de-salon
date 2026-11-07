@@ -84,7 +84,7 @@ PR that changes what is kept on the phone.
 
 ## Risks
 
-- Stale versions: the reason D-221 waited. Network-first pages and the update toast are required.
+- Stale versions: the reason D-221 waited. Network-first pages and content-hashed assets (D-467) are the answer, so no update toast is needed.
 - iPhone may drop the cache of a site not added to the home screen after about a week unused: offline
   is reliable in the installed app, and `instalar.js` is where to say so.
 - A too-eager "poor connection" would push players out of rooms they could play: start conservative and
