@@ -45,6 +45,7 @@ import { salidasFin } from '../assets/js/fin.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
+import { PANTALLAS, redibujarCon } from './screens.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -184,7 +185,17 @@ function rotuloMenu() {
   document.body.classList.toggle('antesala', !!S.antesala || aInicio);
 }
 
+/** How each screen that depends on the cup is drawn again (screens.js); `false`: nothing to redraw. */
+const DIBUJAR = {
+  tablero: () => tablero(),
+  admin: () => admin(),
+  resultado: () => (S.verDia ? resultado(S.verDia) : false),
+  entrar: () => entrar({ mantener: true }),
+};
+const redibujar = (id = S.pantalla, solo) => redibujarCon(DIBUJAR, id, solo);
+
 function mostrar(id) {
+  if (!PANTALLAS.includes(id)) console.error(`La Copa: unknown screen "${id}"`);
   S.pantalla = id;
   S.antesala = false;
   rotuloMenu();
@@ -592,10 +603,7 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
     }
     vincularJugador(L);
     // Lo que llega mientras se mira algo que depende de la copa, se redibuja
-    if (S.pantalla === 'tablero') tablero();
-    else if (S.pantalla === 'admin') admin();
-    else if (S.pantalla === 'resultado' && S.verDia) resultado(S.verDia);
-    else if (S.pantalla === 'entrar') entrar({ mantener: true });
+    redibujar();
   }, e => espera(errorDe(e), { error: true, reintentar: () => location.reload() }));
 }
 
@@ -1155,7 +1163,7 @@ const avisos = () => (avisosCopa ||= crearAvisos({
   T, lang: LANG, cuenta, fmt, toast,
   store: () => store,
   copa: () => ({ code: S.code, pid: S.yo, nombre: L()?.meta?.name || '', url: urlPublica(S.code), final: L()?.meta ? tieneFinal(L().meta) : true }),
-  redibujar: () => { if (S.pantalla === 'resultado' && S.verDia) resultado(S.verDia); else if (S.pantalla === 'tablero') tablero(); },
+  redibujar: () => { redibujar(S.pantalla, ['resultado', 'tablero']); },
   tap: () => SFX.tap(),
 }));
 
@@ -2151,11 +2159,7 @@ function reportar(extra = {}) {
     dia: S.verDia || S.juego?.d || null, ...extra,
     url: location.pathname + location.search, navegador: navigator.userAgent.slice(0, 160),
   };
-  const volver = () => {
-    if (volverA === 'tablero') tablero();
-    else if (volverA === 'resultado' && S.verDia) resultado(S.verDia);
-    else mostrar(volverA || 'intro');
-  };
+  const volver = () => { if (!redibujar(volverA, ['tablero', 'resultado'])) mostrar(volverA || 'intro'); };
   mostrar('reporte');
   const body = $('#reporte-body');
   body.innerHTML = '';
