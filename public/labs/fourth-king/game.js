@@ -5,7 +5,7 @@
  * Todos los textos salen de LOCALES[lang] (rules.js); el idioma se elige en el menú o en la intro.
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../../assets/js/ui.js';
-import { getLang, langToggle, applyStatic } from '../../assets/js/i18n.js';
+import { getLang, coverLangToggle, applyStatic } from '../../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { createSessionStore, createNameStore } from '../../assets/js/session.js';
 import { showHandoff, passBlock } from '../../assets/js/handoff.js';
@@ -489,7 +489,7 @@ function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
   applyStatic(T);
-  $('#lang-slot').append(langToggle());
+  $('#lang-slot').append(coverLangToggle());
   $('#sound-slot').append(soundToggle());
   initSound();
   // Click suave en todos los botones (excepto la carta, que tiene su propio sonido).

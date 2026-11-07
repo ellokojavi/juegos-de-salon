@@ -82,7 +82,7 @@ public/<carpeta>/
 - **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/` y `/en/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
 - Todo texto visible vive en `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
-- El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
+- El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego, con `coverLangToggle()`: behind the flag `compact-lang` it becomes one flag button in the top bar instead (D-537).
 - **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.

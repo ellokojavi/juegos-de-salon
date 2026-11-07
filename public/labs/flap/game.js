@@ -8,7 +8,7 @@
  */
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
-import { getLang, langToggle, COMMON } from '../../assets/js/i18n.js';
+import { getLang, coverLangToggle, COMMON } from '../../assets/js/i18n.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -327,7 +327,7 @@ labAccess().then(ok => {
 }).catch(() => {});
 
 $('sound-slot').append(soundToggle());
-$('lang-slot').append(langToggle());
+$('lang-slot').append(coverLangToggle());
 initSound();
 toCover();
 requestAnimationFrame(frame);

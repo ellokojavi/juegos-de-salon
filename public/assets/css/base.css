@@ -427,6 +427,11 @@ details.panel summary::-webkit-details-marker { display: none; }
 .lang-toggle button.on { background: var(--yellow); transform: scale(1.04); }
 .lang-toggle button:active { transform: scale(0.96); }
 .topbar .tools:has(> #lang-slot) { flex-wrap: wrap; justify-content: flex-end; }
+/* The top bar's language button on game covers (D-537): the flag, and the toggle under it */
+.lang-btn { position: relative; display: inline-flex; }
+.lang-btn .flag { font-size: 1.25rem; line-height: 1; }
+.lang-pop { position: absolute; top: calc(100% + 6px); right: 0; z-index: 30; }
+.lang-pop .lang-toggle { background: var(--bg2); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
 
 /* --- Botones redondos de la barra de arriba (sonido, rankings, compartir) --- */
 .sound-toggle, .icon-btn {

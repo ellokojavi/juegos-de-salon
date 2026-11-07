@@ -8,7 +8,7 @@ import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
-import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
+import { getLang, coverLangToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
@@ -1026,7 +1026,7 @@ function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
   applyStatic(T);
-  $('#lang-slot').append(langToggle());
+  $('#lang-slot').append(coverLangToggle());
   $('#sound-slot').append(soundToggle());
   initSound();
   sparkles(12);

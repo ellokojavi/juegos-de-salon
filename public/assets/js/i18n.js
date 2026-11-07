@@ -4,6 +4,7 @@
  * y se guarda en localStorage. Por defecto: español. Idiomas: es, en y pt (D-47); el alemán salió (D-514).
  */
 import { el } from './ui.js';
+import { flag, cachedFlags, stateOf } from './flags.js';
 
 const KEY = 'juegos-de-salon:lang';
 
@@ -931,6 +932,47 @@ export function langToggle(onChange = () => location.reload()) {
       onClick: () => { if (lang === getLang()) return; setLang(lang); onChange(lang); },
     }, el('span', { class: 'flag', 'aria-hidden': 'true' }, BANDERAS[lang])));
   }
+  return wrap;
+}
+
+/**
+ * The language on a game's cover (C-3, D-537). Behind the flag `compact-lang` the cover keeps no
+ * toggle: choosing a language is set and forget, so the top bar gets one round button with the
+ * current flag, which opens the three. Without the flag, the full toggle stays under the title.
+ * The returned node goes where the toggle always went; it empties itself when the button takes over.
+ */
+export function coverLangToggle(onChange) {
+  const slot = el('div', { class: 'cover-lang' }, langToggle(onChange));
+  const compact = () => {
+    const tools = document.querySelector('.topbar .tools');
+    if (!tools || tools.querySelector('.lang-btn')) return;
+    tools.insertBefore(langButton(onChange), tools.querySelector('#sound-slot'));
+    slot.replaceChildren();
+    slot.hidden = true;
+  };
+  // Published for everyone: no wait and no flash; in the lab, once the key answers
+  // lab: #seccion-compact-lang
+  if (stateOf(cachedFlags(), 'compact-lang') === 'all') queueMicrotask(compact);
+  else flag('compact-lang').then(on => { if (on) compact(); }).catch(() => {});
+  return slot;
+}
+
+/** The top bar's language button: the current flag; a tap shows the toggle under it. */
+export function langButton(onChange) {
+  const lang = getLang();
+  const pop = el('div', { class: 'lang-pop', hidden: true }, langToggle(onChange));
+  const btn = el('button', {
+    type: 'button', class: 'icon-btn', 'aria-haspopup': 'true', 'aria-expanded': 'false',
+    title: NOMBRES_IDIOMA[lang], 'aria-label': 'Idioma / Language / Idioma: ' + NOMBRES_IDIOMA[lang],
+  }, el('span', { class: 'flag', 'aria-hidden': 'true' }, BANDERAS[lang]));
+  const wrap = el('span', { class: 'lang-btn' }, btn, pop);
+  const close = () => { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+  btn.addEventListener('click', () => {
+    pop.hidden = !pop.hidden;
+    btn.setAttribute('aria-expanded', String(!pop.hidden));
+  });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
   return wrap;
 }
 
