@@ -4,7 +4,7 @@
  * result) → topic … → end. The whole game is saved to resume it (C-6). Lab only (#898).
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../../assets/js/ui.js';
-import { getLang, langToggle, applyStatic } from '../../assets/js/i18n.js';
+import { getLang, coverLangToggle, applyStatic } from '../../assets/js/i18n.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { createSessionStore, createNameStore } from '../../assets/js/session.js';
 import { showHandoff, passBlock } from '../../assets/js/handoff.js';
@@ -247,7 +247,7 @@ function init() {
   document.documentElement.lang = lang;
   document.title = T.docTitle;
   applyStatic(T);
-  $('#lang-slot').append(langToggle());
+  $('#lang-slot').append(coverLangToggle());
   $('#sound-slot').append(soundToggle());
   initSound();
   document.addEventListener('click', e => { if (e.target.closest('.btn, .cell, .lang-toggle button')) SFX.tap(); });

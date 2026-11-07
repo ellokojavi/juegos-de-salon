@@ -11,7 +11,7 @@ import { escena } from './scene.js';
 import { POOL } from './levels.js';
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
-import { getLang, langToggle } from '../../assets/js/i18n.js';
+import { getLang, coverLangToggle } from '../../assets/js/i18n.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -526,7 +526,7 @@ function demoFrame(dt) {
 }
 
 $('sound-slot').append(soundToggle());
-$('lang-slot').append(langToggle());
+$('lang-slot').append(coverLangToggle());
 initSound();
 texts();
 requestAnimationFrame(frame);
