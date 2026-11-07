@@ -951,7 +951,7 @@ function startLocalMode(mode, names, config, hoy = null) {
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['cpu', T.modeCpu, T.modeCpuHint, true]];
-  for (const [m, label, hint, available] of modes) box.append(el('button', { class: 'mode', disabled: !available, onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, available ? '›' : '⏳')));
+  for (const [m, label, hint, available] of modes) box.append(el('button', { class: 'mode', 'data-mode': m, disabled: !available, onClick: () => { SFX.tap(); renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, available ? '›' : '⏳')));
 }
 
 function renderSetup(mode, prefillCode = '') {

@@ -696,7 +696,7 @@ function startLocalMode(mode, names, config) {
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint, true], ['online', T.modeOnline, T.modeOnlineHint, true], ['solo', T.modeSolo, T.modeSoloHint, true]];
-  for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', disabled: !ok, onClick: () => { SFX.tap(); if (m === 'solo') renderSoloSetup(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
+  for (const [m, label, hint, ok] of modes) box.append(el('button', { class: 'mode', 'data-mode': m, disabled: !ok, onClick: () => { SFX.tap(); if (m === 'solo') renderSoloSetup(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, ok ? '›' : '⏳')));
 }
 
 function renderResumeSlot() {

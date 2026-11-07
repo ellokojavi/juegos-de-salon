@@ -748,7 +748,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
 function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint], ['online', T.modeOnline, T.modeOnlineHint], ['solo', T.modeSolo, T.modeSoloHint]];
-  for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
+  for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', 'data-mode': m, onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
   // 🔢 Número or 🔤 Palabra, like a game's variants (D-331): one home card for both (#767)
   $('#variant-slot').replaceChildren(el('div', { class: 'opciones dos variantes', id: 'selector-variante' },
     el('button', { type: 'button', class: 'opcion on', 'aria-pressed': 'true' }, el('b', {}, T.variantNumber)),
