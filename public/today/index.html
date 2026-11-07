@@ -159,7 +159,7 @@
 
   <script type="module">
     import { el, conEmoji } from '../assets/js/ui.js';
-    import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
+    import { getLang, coverLangToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
     import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { juegosCopa } from '../cup/rules.js';
@@ -180,7 +180,7 @@
     document.getElementById('uad-h1').textContent = T.nombre;
     document.getElementById('uad-sub').textContent = T.sub;
     document.getElementById('btn-menu').textContent = `‹ ${C.menu}`;
-    document.getElementById('lang-slot').append(langToggle());
+    document.getElementById('lang-slot').append(coverLangToggle());
     document.getElementById('sound-slot').append(soundToggle());
     const tap = () => SFX.tap();
     const pagina = document.getElementById('uad-pagina');

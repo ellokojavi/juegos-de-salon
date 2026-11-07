@@ -12,7 +12,7 @@
 import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { showWaiting } from '../assets/js/waiting.js';
-import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, coverLangToggle, withLang } from '../assets/js/i18n.js';
+import { applyStatic, COMMON, SITIO, LANGS, getLang, coverLangToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
@@ -387,7 +387,7 @@ function portada() {
   }).catch(() => {});
   poner(body, 
     // El idioma se elige a mano, como en todos los juegos (C-3)
-    el('div', { class: 'center' }, langToggle()),
+    el('div', { class: 'center' }, coverLangToggle()),
     el('button', { class: 'btn btn--yellow', id: 'btn-crear', onClick: () => { SFX.tap(); crearCopa(); } }, T.create),
     mias,
     el('div', { class: 'panel' },
