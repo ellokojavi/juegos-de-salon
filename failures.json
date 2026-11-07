@@ -1244,7 +1244,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update",
       "signature": "13e7a7848e",
       "date": "2026-11-07T20:57:00.509Z",
-      "fix": null,
+      "fix": {
+        "commit": "489cadff79015d185895aa9b64c936aec3ffa6de",
+        "date": "2026-11-07T21:10:52.277Z",
+        "stat": "1 file(s) +2 −0: README.md"
+      },
       "flaky": false
     }
   ]
