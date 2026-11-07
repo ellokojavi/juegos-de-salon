@@ -1390,6 +1390,19 @@
         "stat": "5 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/where-intro.png"
       },
       "flaky": false
+    },
+    {
+      "run": 42425156086,
+      "check": "end-to-end",
+      "pr": 1301,
+      "branch": "offline-fix-transitions",
+      "commit": "4316524d133d0486c1fd6c4ff741016f559398fb",
+      "test": "offline.mjs",
+      "error": "✗ no \"Se subió 1 partida ✓\" toast",
+      "signature": "7b2eae8020",
+      "date": "2026-11-07T23:39:36.525Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
