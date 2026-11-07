@@ -34,6 +34,7 @@ import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE,
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+import { roomMessage } from '../assets/js/room-state.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -102,15 +103,10 @@ function newMatch(config) {
 }
 
 function apply(msg) {
-  if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
+  const room = roomMessage(M, msg, { minPlayers: MIN_PLAYERS });
+  if (room === 'seen') return;
+  if (room) return null;
   switch (msg.t) {
-    case 'hello': M.names[msg.from] = msg.name; break;
-    case 'start': {
-      if (M.players || msg.from !== 'A') return;                  // solo el anfitrión y una vez
-      const order = (msg.order || []).filter(r => M.names[r]);
-      if (order.length >= MIN_PLAYERS) M.players = order;
-      break;
-    }
     case 'place': {
       const v = view();
       if (v.lobby || v.done || v.current !== msg.from) return;    // sin empezar o fuera de turno
@@ -121,7 +117,6 @@ function apply(msg) {
       M.moves.push({ from: msg.from, card: msg.card, at: msg.slot, ms: Number.isFinite(msg.ms) ? msg.ms : 0 });
       break;
     }
-    case 'rematch': if (!M.rematch[msg.from]) M.rematch[msg.from] = msg.code || true; break;
     // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
     case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }

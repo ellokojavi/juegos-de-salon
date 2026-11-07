@@ -34,6 +34,7 @@ import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+import { roomMessage } from '../assets/js/room-state.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -91,16 +92,9 @@ function newMatch(config) {
 const JUGADAS = ['roll', 'score'];
 
 function apply(msg) {
-  if (msg.id && M.seen.has(msg.id)) return;
-  if (msg.id) M.seen.add(msg.id);
+  // hello, start and rematch: the shared room machine (lobby → playing, first rematch offer wins)
+  if (roomMessage(M, msg, { minPlayers: MIN_PLAYERS })) return;
   switch (msg.t) {
-    case 'hello': M.names[msg.from] = msg.name; return;
-    case 'start':
-      // Solo el anfitrión, y una sola vez: el orden de la mesa es el de llegada a la sala
-      if (M.players || msg.from !== 'A') return;
-      if ((msg.order || []).filter(r => M.names[r]).length >= MIN_PLAYERS) M.players = msg.order.filter(r => M.names[r]);
-      return;
-    case 'rematch': M.rematch[msg.from] = msg.code; return;
     // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
     case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
     default: if (JUGADAS.includes(msg.t)) M.plays.push(msg);
