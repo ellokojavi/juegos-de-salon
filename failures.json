@@ -1133,7 +1133,11 @@
       "error": "ERROR · public/shinobi/index.html fell behind public/cup/suelto/index.html or games.js  →  node tools/release/og.mjs cards\nERROR · public/sitemap.xml is missing or fell behind games.js  →  node tools/release/og.mjs cards",
       "signature": "4b2dc4b19b",
       "date": "2026-11-07T16:30:35.787Z",
-      "fix": null,
+      "fix": {
+        "commit": "700934b098197baee02f51cc7341a4feed028377",
+        "date": "2026-11-07T16:34:12.177Z",
+        "stat": "2 file(s) +5 −0: public/shinobi/index.html, public/sitemap.xml"
+      },
       "flaky": false
     }
   ]
