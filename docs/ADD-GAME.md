@@ -69,7 +69,7 @@ old debt in `docs/manifest-debt.json`, which only shrinks; an old entry moves wi
 - `modes`, `ai`, `memory` (the C-6 session key), `languages`, `firebasePaths` and `canonExceptions`.
 - La Copa is a manifest too (`public/cup/game.json`): a tournament, with `torneo: true`, `durationUnit` and `formato`, which only a tournament may carry.
 - **La Copa's standalone games (`SUELTOS`) are not manifests:** they are not a game folder with C-2's files but engines and screens inside `public/cup/games/`, played through La Copa's page (`cup/suelto/`), so their entries stay in `SUELTOS`.
-- Fields the schema does not have yet (`copa: { pozo }`, `lanza`, `oculto`, La Copa's tournament fields)
+- Fields the schema does not have yet (`copa: { pozo }`, `lanza`, `oculto`)
   stay in a games.js entry written by hand until the schema takes them:
   - `copa: { pozo }` if a cup week can pick it: the next free place in the pool. `POZO` in
     `cup/engine.js` is derived from it. Variants go in `VARIANTES` there (D-331).
