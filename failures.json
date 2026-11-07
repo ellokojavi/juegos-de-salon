@@ -1235,7 +1235,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update",
       "signature": "13e7a7848e",
       "date": "2026-11-07T20:56:28.362Z",
-      "fix": null,
+      "fix": {
+        "commit": "0999a7fdc3ed4683cef0293381295c0545793393",
+        "date": "2026-11-07T21:59:39.835Z",
+        "stat": "123 file(s) +3206 −1029: .claude/agents/documentation.md, .claude/agents/ideas.md, .claude/agents/usability.md, .claude/skills/promo-video/SKILL.md, .github/pull_request_template.md, …"
+      },
       "flaky": false
     },
     {
