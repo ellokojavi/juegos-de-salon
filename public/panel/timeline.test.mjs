@@ -24,7 +24,7 @@ const days = {
       SOLO: { game: 'dudo', at: now - 3 * H, players: { A: 'Fausto' } },
     },
     live: {
-      a: { game: 'generala', mode: 'cpu', o: 'random', name: 'Sofi', co: 'PE', at: now - 50 * 60000, beat: now - 40 * 60000, fin: { at: now - 40 * 60000, g: 'Sofi' } },
+      a: { game: 'generala', mode: 'cpu', o: 'random', r: true, name: 'Sofi', co: 'PE', at: now - 50 * 60000, beat: now - 40 * 60000, fin: { at: now - 40 * 60000, g: 'Sofi' } },
       b: { game: 'reinas', mode: 'uno-al-dia', name: 'Seba', co: 'CL', at: now - 20 * 60000, beat: now - 15 * 60000, fin: { at: now - 15 * 60000, d: '2:10' } },
       // Left halfway: not a key event
       c: { game: 'reinas', mode: 'solo', name: 'Pía', at: now - 10 * 60000, beat: now - 9 * 60000 },
@@ -129,3 +129,6 @@ console.log('timeline campaigns ok');
 
 // Where an offline game came from, when the app knew it
 assert.equal(ev.find(e => e.kind === 'offline' && e.game === 'generala').origin, 'random');
+
+// A robot keeps its row, marked
+assert.equal(ev.find(e => e.kind === 'offline' && e.game === 'generala').who[0].bot, true);

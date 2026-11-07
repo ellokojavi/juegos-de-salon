@@ -327,7 +327,7 @@ const enlace = (sec, args, attrs, ...hijos) => el('a', { href: ir(sec, args), ..
 const bandera = co => (co ? el('span', { class: 'flag', title: nombreDePais(co) }, ` ${flagOf(co)}`) : null);
 
 /** Un nombre con la bandera de su país (D-207): saber dónde se juega es lo que pidió el dueño. */
-const quien = (name, co) => el('span', { class: 'quien' }, name, bandera(co));
+const quien = (name, co, bot = false) => el('span', { class: 'quien' }, name, bandera(co), bot ? el('span', { title: 'A robot: its browser says it is automated or a crawler' }, ' 🤖') : null);
 
 /**
  * El idioma en que se jugó, como etiqueta corta (`ES`) con su nombre al pasar el dedo (D-211).
@@ -1552,7 +1552,7 @@ const FEEDBACK_TIPO = { sugerencia: 'a suggestion', problema: 'a problem report'
 
 /** "Javi", "Javi and Cata", "Ana, Leo and Bia", each with their flag; no name is "Someone". */
 const quienes = who => {
-  const xs = who.map(w => (w.name ? quien(w.name, w.co) : el('span', { class: 'quien' }, 'Someone', bandera(w.co))));
+  const xs = who.map(w => (w.name ? quien(w.name, w.co, w.bot) : quien('Someone', w.co, w.bot)));
   return xs.flatMap((x, i) => [i === 0 ? '' : i === xs.length - 1 ? ' and ' : ', ', x]);
 };
 const copaTxt = c => [`La Copa (${c.name})`, c.lab ? el('span', { class: 'tag' }, 'lab') : null];

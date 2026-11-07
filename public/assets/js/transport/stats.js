@@ -207,8 +207,17 @@ export function fingerprint({ storage = globalThis.localStorage, loc = globalThi
     lang: langKey(nav?.language),
     app: langKey(app),
     hour: now.getHours(),
+    bot: esRobot(nav),
   };
 }
+
+/**
+ * Does this browser say it is a robot? The automation flag (`navigator.webdriver`, set by test and
+ * scraping tools) or a crawler's own name in its user agent. A robot that hides both passes as a
+ * person; the panel marks the rest with 🤖 next to the name and flag, it does not drop them.
+ */
+export const BOT_UA = /bot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|whatsapp|telegram|discord|embedly|bingpreview|phantom|puppeteer|playwright|selenium/i;
+export const esRobot = nav => !!nav?.webdriver || BOT_UA.test(String(nav?.userAgent || ''));
 
 /**
  * Cambios de los contadores que suben con cada celular que empieza o entra a una partida.
@@ -365,6 +374,7 @@ export function liveRecord(fp, { game, mode, players, name = '', origin = '' }) 
   if (idiomaDe(fp)) r.l = idiomaDe(fp);
   if (name) r.name = String(name).slice(0, NOMBRE_MAX);
   if (ORIGINS.includes(origin)) r.o = origin;
+  if (fp.bot) r.r = true;
   return r;
 }
 
@@ -424,6 +434,7 @@ export function startLive(api, fp, { game, mode, players, name = '', origin = ''
 export function seenRecord(fp, { c, name = '' }) {
   const r = { c: String(c).slice(0, 40), at: STAMP };
   if (fp.co) r.co = fp.co;
+  if (fp.bot) r.r = true;
   if (name) r.name = String(name).slice(0, NOMBRE_MAX);
   return r;
 }
