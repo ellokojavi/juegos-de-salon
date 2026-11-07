@@ -1103,7 +1103,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/room-state.js\nERROR · appeared tests: public/assets/js/room-state.test.mjs",
       "signature": "03c382f9d0",
       "date": "2026-11-07T04:39:11.668Z",
-      "fix": null,
+      "fix": {
+        "commit": "82c79b55d9d93220ba131cf3d8b5c90178abad7d",
+        "date": "2026-11-07T04:41:13.570Z",
+        "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
