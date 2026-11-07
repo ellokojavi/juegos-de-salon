@@ -1,7 +1,7 @@
 // Run: node public/assets/js/offline-ui.test.mjs
 // What offline mode shows (D-538, PR 4): which links need signal, and the chip's words.
 import assert from 'node:assert/strict';
-import { needsSignal, KEPT, chipText, pendingCount, PENDING_KEY } from './offline-ui.js';
+import { needsSignal, KEPT, chipText, pendingCount, PENDING_KEY, uploadText } from './offline-ui.js';
 import { GAMES, SUELTOS, offlineOk } from './games.js';
 
 const root = new URL('https://juegosdesalon.cl/');
@@ -27,4 +27,9 @@ assert.equal(chipText(3, 'pt'), '📴 Sem conexão · 3 para enviar');
 const ls = new Map([[PENDING_KEY, JSON.stringify([{}, {}])]]);
 assert.equal(pendingCount({ getItem: k => ls.get(k) ?? null }), 2);
 assert.equal(pendingCount({ getItem: () => 'not json' }), 0);
+assert.equal(uploadText({ sent: 1 }, 'es'), 'Se subió 1 partida ✓');
+assert.equal(uploadText({ sent: 3, old: 1 }, 'es'), 'Se subieron 3 partidas ✓ Sin subir: 1 con más de 30 días.');
+assert.equal(uploadText({ sent: 0, full: 2 }, 'en'), 'Not uploaded: 2 that did not fit (200 at most).');
+assert.equal(uploadText({ sent: 0 }, 'pt'), '', 'nothing to say, no toast');
+console.log('✓ offline-ui: the upload toast says how many went and why any did not;');
 console.log('✓ offline-ui: what needs signal is exactly what the phone does not keep; the chip in three languages');

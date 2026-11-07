@@ -45,6 +45,11 @@ const KEY = 'juegos-de-salon:jugador';
 const MEJORES = 'juegos-de-salon:jugador:mejores';
 const AMIGOS = 'juegos-de-salon:jugador:amigos';
 const PENDIENTES = 'juegos-de-salon:jugador:pendientes';
+/** How many queued games fell off the full queue since the last upload, for its toast (D-538). */
+const PERDIDAS = 'juegos-de-salon:jugador:pendientes-perdidas';
+/** The queue of games to upload (D-538, PR 5): up to 200 games, for 30 days. */
+export const MAX_PENDIENTES = 200;
+export const MAX_DIAS_PENDIENTE = 30;
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -66,6 +71,24 @@ export function activarRankings(si, storage = globalThis.localStorage) {
 /** El jugador guardado en este celular, sin esperar a nada: para dibujar de una. */
 export function leerYo(storage = globalThis.localStorage) {
   try { const y = JSON.parse(storage.getItem(KEY)); return y && esJid(y.jid) ? y : null; } catch (_) { return null; }
+}
+
+/**
+ * Queues a finished game on this phone for `subirPendientes`, without loading Firebase: offline, the
+ * SDK may never have reached this phone, and the game must still be kept (D-538, PR 5). Each one gets
+ * an id; past MAX_PENDIENTES the oldest goes, and is counted for the toast. False without a player.
+ */
+export function guardarPendienteLocal({ juego, variante = '', s, ms }, { storage = globalThis.localStorage, now = () => Date.now() } = {}) {
+  const yo = leerYo(storage);
+  if (!yo || !normalizar({ s, ms })) return false;
+  try {
+    const t = now();
+    const cola = [...(JSON.parse(storage.getItem(PENDIENTES)) || []), { id: `${t.toString(36)}${Math.random().toString(36).slice(2, 6)}`, jid: yo.jid, juego, variante, s, ms, t }];
+    const fuera = Math.max(0, cola.length - MAX_PENDIENTES);
+    storage.setItem(PENDIENTES, JSON.stringify(cola.slice(fuera)));
+    if (fuera) storage.setItem(PERDIDAS, String((Number(storage.getItem(PERDIDAS)) || 0) + fuera));
+    return true;
+  } catch (_) { return false; }
 }
 
 /** Cuántas filas se leen de una tabla: las 10 que se muestran y las de alrededor de quien mira. */
@@ -298,18 +321,21 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * hace nada y devuelve null. Si el PIN cambió en otro celular, este queda afuera ('pin').
      * Un 0 (rendirse) cuenta como partida jugada, pero no entra a las tablas (dilema #185).
      */
-    async anotar({ juego, variante = '', s, ms, cuando = now() }) {
+    async anotar({ juego, variante = '', s, ms, cuando = now(), contado = false }) {
       const yo = api.yo();
       const r = normalizar({ s, ms });
       if (!yo || !r) return null;
       podarMejores();
-      try {
-        await almacen.update({ [`jugadores/${yo.jid}/juegos/${juego}/n`]: MAS_UNO, [`jugadores/${yo.jid}/juegos/${juego}/at`]: HORA });
-      } catch (e) {
-        if (e.code === 'permiso') { escribir(KEY, null); avisar(); throw falla('pin'); }
-        throw e;
+      // `contado`: a queued game whose counter the server already took (subirPendientes)
+      if (!contado) {
+        try {
+          await almacen.update({ [`jugadores/${yo.jid}/juegos/${juego}/n`]: MAS_UNO, [`jugadores/${yo.jid}/juegos/${juego}/at`]: HORA });
+        } catch (e) {
+          if (e.code === 'permiso') { escribir(KEY, null); avisar(); throw falla('pin'); }
+          throw e;
+        }
+        await sumarPartida(yo);
       }
-      await sumarPartida(yo);
       const t = tablaId(juego, variante);
       const sem = semana(cuando);
       const out = {};
@@ -343,36 +369,50 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
 
     /**
      * A finished game the network did not let `anotar` save: kept on this phone, with its time so
-     * it lands in the week it was played, until `subirPendientes` sends it. Up to 20, for 30 days.
+     * it lands in the week it was played, until `subirPendientes` sends it (`guardarPendienteLocal`).
      */
-    guardarPendiente({ juego, variante = '', s, ms }) {
-      const yo = api.yo();
-      if (!yo || !normalizar({ s, ms })) return false;
-      escribir(PENDIENTES, [...leer(PENDIENTES, []), { jid: yo.jid, juego, variante, s, ms, t: now() }].slice(-20));
-      return true;
-    },
+    guardarPendiente: x => guardarPendienteLocal(x, { storage, now }),
     pendientes: () => leer(PENDIENTES, []),
 
     /**
      * Sends the games `guardarPendiente` kept (on loading the page and when the phone is back
      * online). One that the network stops again stays for next time; one of another player, one
-     * older than 30 days or one the rules refuse is dropped. Returns how many it sent.
+     * older than 30 days or one the rules refuse is dropped. Returns how many it sent, and announces
+     * `{ sent, refused, old, full }` as the `pendientes-subidas` event when anything changed (offline
+     * mode's toast, D-538).
+     *
+     * Exactly once (D-538, PR 5): the records are best-of, so sending one twice changes nothing, but the
+     * game counter is +1. Before each try the queue keeps the server's counter (`n0`); if a try is cut
+     * after the server took it, the next try sees the counter past `n0` and does not count it again.
      */
     subirPendientes() {
       // One run at a time: the page's load and the 'online' event can ask together
       return subiendo ||= (async () => {
         const yo = api.yo();
-        let enviados = 0;
+        const res = { sent: 0, refused: 0, old: 0, full: 0 };
         if (!yo) return 0;   // signed out: kept until someone signs in, and then only theirs go
+        const misma = (x, y) => (x.id && x.id === y.id) || (!x.id && y.t === x.t && y.juego === x.juego);
         for (const x of leer(PENDIENTES, [])) {
-          const quitar = () => escribir(PENDIENTES, leer(PENDIENTES, []).filter(y => y.t !== x.t || y.juego !== x.juego));
-          if (x.jid !== yo.jid || now() - x.t > 30 * 86400000) { quitar(); continue; }
-          try { await api.anotar({ ...x, cuando: x.t }); quitar(); enviados++; } catch (e) {
-            if (e?.code === 'pin' || e?.code === 'permiso') { quitar(); continue; }
+          const quitar = () => escribir(PENDIENTES, leer(PENDIENTES, []).filter(y => !misma(x, y)));
+          if (x.jid !== yo.jid) { quitar(); continue; }
+          if (now() - x.t > MAX_DIAS_PENDIENTE * 86400000) { quitar(); res.old++; continue; }
+          try {
+            const n = (await almacen.get(`jugadores/${yo.jid}/juegos/${x.juego}/n`)) || 0;
+            const contado = Number.isInteger(x.n0) && n > x.n0;
+            if (!contado) escribir(PENDIENTES, leer(PENDIENTES, []).map(y => misma(x, y) ? { ...y, n0: n } : y));
+            await api.anotar({ ...x, cuando: x.t, contado });
+            quitar(); res.sent++;
+          } catch (e) {
+            if (e?.code === 'pin' || e?.code === 'permiso') { quitar(); res.refused++; continue; }
             break;
           }
         }
-        return enviados;
+        res.full = Number(leer(PERDIDAS, 0)) || 0;
+        if (res.full) escribir(PERDIDAS, null);
+        if (res.sent || res.refused || res.old || res.full) {
+          try { globalThis.dispatchEvent?.(new CustomEvent('pendientes-subidas', { detail: res })); } catch (_) { /* not a page */ }
+        }
+        return res.sent;
       })().finally(() => { subiendo = null; });
     },
 

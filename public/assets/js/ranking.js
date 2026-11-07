@@ -9,7 +9,7 @@
 import { esRelleno } from './transport/stats.js';
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
-import { jugador, leerYo, rankingsVisibles } from './jugador.js';
+import { jugador, leerYo, rankingsVisibles, guardarPendienteLocal } from './jugador.js';
 import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS, UAD_RACHA, UAD_PUNTOS, periodoDia, periodoMes } from './records.js';
 import { sumarDias } from './uno-al-dia.js';
 import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
@@ -359,6 +359,12 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
     }
   };
   const anotar = async () => {
+    // Offline mode (D-538, PR 5): no waiting on a network that is not there; straight to the phone's queue
+    if (globalThis.document?.documentElement?.dataset.connection === 'offline') {
+      const guardada = guardarPendienteLocal({ juego, variante, s, ms });
+      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, guardada ? T.savedPhone : T.notSaved));
+      return;
+    }
     try {
       const J = await jugador();
       const r = await reintentos(J);
@@ -372,8 +378,9 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
       alAnotar(r);
     } catch (e) {
       // Kept on the phone and sent when the signal is back, instead of lost (`subirPendientes`)
-      const guardada = e?.code !== 'pin' && await jugador().then(J => J.guardarPendiente({ juego, variante, s, ms })).catch(() => false);
-      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? T.savedLater : T.notSaved));
+      // Without Firebase on this phone (offline, the SDK may never have come) it is still queued
+      const guardada = e?.code !== 'pin' && guardarPendienteLocal({ juego, variante, s, ms });
+      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? (globalThis.document?.documentElement?.dataset.connection ? T.savedPhone : T.savedLater) : T.notSaved));
     }
   };
   if (!rankingsVisibles()) return caja;
