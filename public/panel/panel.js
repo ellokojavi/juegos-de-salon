@@ -1711,8 +1711,10 @@ const diaCorto = d => new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { mon
 
 /** Saves every switch at once: what the home page reads on its next visit. */
 async function guardarCampanas(rows) {
-  S.splashMsg = 'Saving…'; render();
-  try { await set(ref(db, 'splash'), toRemote(rows)); S.splashMsg = `Saved ✓ ${horaLabel(Date.now())}: players get it on their next visit to the home page.`; }
+  // Shown at once, before Firebase answers: the card, the strip and the queue follow the change
+  const remote = toRemote(rows);
+  S.splash = remote; S.splashMsg = 'Saving…'; render();
+  try { await set(ref(db, 'splash'), remote); S.splashMsg = `Saved ✓ ${horaLabel(Date.now())}: players get it on their next visit to the home page.`; }
   catch (e) { S.splashMsg = `Not saved (${e?.code || e?.message || 'error'}). Nothing changed for players.`; }
   render();
 }
@@ -1788,6 +1790,7 @@ function bloqueApoyo() {
   () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown: r.shown, open: r.open, pay: r.pay, thanks: r.thanks })));
 }
 
+const PRESETS = [[7, '1 week'], [14, '2 weeks'], [30, '1 month']];
 function vistaSplash(today) {
   const todas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS });
   // Archived campaigns (off for good) live in their own section at the bottom; the rest is the queue
@@ -1866,11 +1869,14 @@ function vistaSplash(today) {
           el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${nombre} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
           el('span', { class: 'interruptor-pista', 'aria-hidden': 'true' }))),
       el('div', { class: 'campana-dias' }, dia('from', 'Starts', 'Now'), el('span', { class: 'campana-flecha', 'aria-hidden': 'true' }, '→'), dia('until', 'Ends', 'Never')),
+      // A preset only fills the end day: the day stays editable, and an end day no preset gives is Custom
       el('div', { class: 'campana-segmento', role: 'group', 'aria-label': 'End in' },
-        ...[[7, '1 week'], [14, '2 weeks'], [30, '1 month']].map(([d, t]) => {
+        ...PRESETS.map(([d, t]) => {
           const fin = dayPlus(base, d - 1);
           return el('button', { type: 'button', 'aria-pressed': s.until === fin ? 'true' : 'false', onClick: () => cambiar(s.id, { on: true, until: fin }) }, t);
-        })),
+        }),
+        el('button', { type: 'button', 'aria-pressed': s.until && !PRESETS.some(([d]) => s.until === dayPlus(base, d - 1)) ? 'true' : 'false',
+          onClick: e => { const i = e.currentTarget.closest('.campana')?.querySelector('.campana-dia:last-of-type input'); try { i?.showPicker(); } catch { i?.focus(); } } }, 'Custom')),
       el('footer', { class: 'campana-pie' },
         el('span', { class: 'campana-orden' },
           el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
