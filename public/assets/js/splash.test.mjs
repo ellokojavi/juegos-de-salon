@@ -16,6 +16,9 @@ assert.deepEqual(queue({ active: [{ id: 'zz' }], campaigns, today }), [], 'an id
 assert.deepEqual(queue({ active: [{ id: 'a' }], campaigns, today }), ['a']);
 assert.deepEqual(queue({ active: [{ id: 'a' }], campaigns, seen: ['a'], today }), [], 'already closed');
 assert.deepEqual(queue({ active: [{ id: 'b' }], campaigns, seen: ['a'], today }), ['b'], 'a new campaign shows again');
+// until as an exact moment, the same for everyone
+assert.deepEqual(queue({ active: [{ id: 'a', until: new Date(today.getTime() + 1000).toISOString() }], campaigns, today }), ['a']);
+assert.deepEqual(queue({ active: [{ id: 'a', until: new Date(today.getTime() - 1000).toISOString() }], campaigns, today }), []);
 // until is inclusive
 assert.deepEqual(queue({ active: [{ id: 'a', until: '2026-10-20' }], campaigns, today }), ['a']);
 assert.deepEqual(queue({ active: [{ id: 'a', until: '2026-10-19' }], campaigns, today }), []);
