@@ -168,6 +168,8 @@ a.splash-cart:hover, a.splash-cart:focus-visible { transform: translateY(-3px); 
   border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); color: var(--muted); }
 .splash-compat-nexo { font-family: 'Press Start 2P', var(--font-num); font-size: 0.45rem; letter-spacing: 0.06em; }
 .splash-compat-sitio { font-weight: 800; color: var(--ink); font-size: var(--fs-75); }
+/* A teaser's closing line under the clip («Próximamente en Juegos de Salón») */
+.splash-foot { margin: 0; text-align: center; font-weight: 900; font-size: var(--fs-90); letter-spacing: 0.04em; color: var(--yellow); }
 @media (max-width: 440px) {
   .splash-cart { padding: var(--s-16) var(--s-8) var(--s-8); }
   .splash-cart-sticker b { font-size: var(--fs-110); }
