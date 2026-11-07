@@ -31,6 +31,7 @@ import {
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LARGOS, RIVALES, RIVALES_POR_DEFECTO, LOCALES } from './rules.js';
 import { renderQr } from '../../assets/js/qr.js';
+import { roomMessage } from '../../assets/js/room-state.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -76,19 +77,10 @@ function newMatch(config) {
 const JUGADAS = ['reparte', 'va', 'paso', 'cambia', 'juega', 'regala', 'revela'];
 
 function apply(msg) {
-  if (msg.id && M.seen.has(msg.id)) return;
-  if (msg.id) M.seen.add(msg.id);
+  // hello, start and rematch: the shared room machine (D-539); a hello also brings the seat's key,
+  // which closes its sealed hand (D-81)
+  if (roomMessage(M, msg, { minPlayers: MIN_PLAYERS, onHello: m => { if (m.pub) M.llaves[m.from] = m.pub; } })) return;
   switch (msg.t) {
-    case 'hello':
-      M.names[msg.from] = msg.name;
-      if (msg.pub) M.llaves[msg.from] = msg.pub;   // su sobre se cierra con esta llave (D-81)
-      return;
-    case 'start':
-      // Solo el anfitrión, y una sola vez: el orden de la mesa es el de llegada a la sala
-      if (M.players || msg.from !== 'A') return;
-      if ((msg.order || []).filter(r => M.names[r]).length >= MIN_PLAYERS) M.players = msg.order.filter(r => M.names[r]);
-      return;
-    case 'rematch': M.rematch[msg.from] = msg.code; return;
     // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
     case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
     default: if (JUGADAS.includes(msg.t)) M.plays.push(msg);

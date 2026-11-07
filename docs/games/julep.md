@@ -155,6 +155,7 @@ public/labs/julep/
   engine.test.mjs   node public/labs/julep/engine.test.mjs
   game.js           Máquina de estados y render; lo único que toca el DOM
 public/assets/js/sobre.js  Sobres cerrados de la sala (compartido, D-81)
+public/assets/js/room-state.js  roomMessage: the room's hello, start and rematch; onHello keeps each seat's key (D-539)
 tools/e2e/julep/local.mjs    Partida completa contra el celular y en un celular
 tools/e2e/julep/online.mjs   Sala de tres celulares contra Firebase
 ```
