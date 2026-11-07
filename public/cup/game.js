@@ -127,7 +127,7 @@ if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) locat
  * date) it always opens: they chose it for everyone alike, and a cup chose it when it
  * was out. lab: #seccion-stick, lab: #seccion-stack
  */
-const LANZA = { stick: () => flag('stick'), stack: () => flag('stack') };
+const LANZA = { stack: () => flag('stack') };
 // Not awaited: the module must not pause halfway, its listeners need everything below defined
 if (SUELTO && !HOY && gameById(PRACTICA)?.oculto) (LANZA[PRACTICA]?.() ?? Promise.resolve(false)).then(si => { if (!si) location.replace(RAIZ); }).catch(() => location.replace(RAIZ));
 // En la genérica, el juego queda con su nombre en inglés: `?linea&hoy` → `?timeline-flash&today` (D-266)

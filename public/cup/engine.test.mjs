@@ -77,7 +77,7 @@ test('calendario a elección (D-163): juegos del pozo sin repetir y la final al 
   }
   // The games still waiting for their launch flag (D-517) are not drawn: in node no flag is saved
   assert.equal(vistos.size, POZO_ABIERTO.length, 'cualquier juego puede tocar el primer día');
-  assert.ok(POZO_ABIERTO.length < POZO.length && !POZO_ABIERTO.includes('stick') && POZO_FIJO.every(id => POZO_ABIERTO.includes(id)), 'a flag-launched game is in POZO but not drawn before its launch');
+  assert.ok(POZO_ABIERTO.length < POZO.length && !POZO_ABIERTO.includes('stack') && POZO_FIJO.includes('stick') && POZO_FIJO.every(id => POZO_ABIERTO.includes(id)), 'a flag-launched game is in POZO but not drawn before its launch');
   // nuevaMeta guarda el calendario elegido y rechaza uno que no se puede jugar
   const base = { nombre: 'X', dias: 3, inicio: '2026-10-01', admin: 'abc123', creada: 0 };
   assert.equal(nuevaMeta({ ...base, cal: ['donde', 'zip', 'final'] }).cal, 'donde,zip,final');
