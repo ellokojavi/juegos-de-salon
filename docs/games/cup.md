@@ -489,6 +489,7 @@ Todo bajo `public/cup/`:
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |
 | `table-image.js` | The cup's table as a 1080 × 1350 image (D-126, D-141, D-153): the trajectory chart and the table, with the podium on plates once the cup ended (`imagenDeTabla`, `cabeceraTabla`, `COLORES_GRAFICO`). No screen state: `game.js` shares it from the board and the podium, `admin.js` from Administrar, and `recap.js` draws it for the home page's recap (D-427) |
 | `game.js` | Screens, except Administrar, Crear, Entrar and the day's result |
+| `screens.js` · `screens.test.mjs` | The list of La Copa's screens (the ones `game.js` opens) and the shared rule for which ones redraw on a data change; the test checks every screen the code opens is on the list. A new screen goes here first (`PANTALLAS`; redrawn ones in `REDIBUJABLES`) |
 | `admin.js` | The admin screen (Administrar), loaded with `import()` the first time it opens (#860); what it needs from `game.js` comes in its context `c` |
 | `create.js` | The create-a-Cup screen (Crear), loaded with `import()` the first time it opens (#860), like `admin.js`; what it needs from `game.js` comes in its context |
 | `join.js` | The join screen (Entrar: sign up or sit back down), loaded with `import()` the first time it opens (#860), like `create.js`; what it needs from `game.js` comes in its context |

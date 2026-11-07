@@ -1,3 +1,3 @@
 level: patch
 
-- **Online rooms follow one set of rules** in Hangman, Timeline, Generala and Liar's Dice: joining, the host's start and the rematch offer now go through one shared, tested piece (`room-state.js`). In Generala and Liar's Dice a second rematch offer from the same player no longer replaces the first, and in Hangman a reveal that arrives before the game starts no longer breaks the page.
+- **La Copa's screens are written down in one place** (`cup/screens.js`): the list of screens and which ones are drawn again when the cup changes, which was repeated three times in slightly different forms. A test now checks that every screen the code opens exists on the page. Nothing changes for players.
