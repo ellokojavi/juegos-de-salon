@@ -1,3 +1,3 @@
 level: patch
 
-- **🐤 A weekend teaser for Aletazo**: a splash where the bird glides calmly over the city from day into night, under «Alguien nuevo vuela sobre la ciudad» and closing with «Próximamente en Juegos de Salón». On until 2026-11-08. A splash campaign can now carry a closing line under its clip (`foot`).
+- **A splash campaign can end at an exact moment** (`until: '2026-11-09T08:00:00Z'`), the same for every player, besides a bare day that ends at each player's midnight. The `launch` workflow can now set that end (`until`), put a campaign first (`first`) and turn on one the panel never saved, if it is in the code: 🐤 Aletazo's teaser runs until midnight PST on Sunday 2026-11-08.

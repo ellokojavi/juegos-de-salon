@@ -20,6 +20,14 @@ on:
         description: 'Write nothing before this moment (ISO, UTC)'
         type: string
         default: ''
+      until:
+        description: 'End the campaigns turned on: a day or an exact moment (ISO, UTC)'
+        type: string
+        default: ''
+      first:
+        description: 'Put the campaigns turned on first in the queue'
+        type: boolean
+        default: false
       dry_run:
         description: 'Only say what it would write'
         type: boolean
@@ -47,6 +55,8 @@ jobs:
           FLAGS: ${{ inputs.flags }}
           SPLASH: ${{ inputs.splash }}
           NOT_BEFORE: ${{ inputs.not_before }}
+          UNTIL: ${{ inputs.until }}
+          FIRST: ${{ inputs.first }}
           DRY: ${{ inputs.dry_run }}
         run: |
           if [ -z "$KEY_JSON" ]; then echo "::error::The FIREBASE_ADMIN_JSON secret is missing"; exit 1; fi
@@ -57,5 +67,7 @@ jobs:
           for f in $FLAGS; do args+=(--flag "$f"); done
           for s in $SPLASH; do args+=(--splash "$s"); done
           [ -n "$NOT_BEFORE" ] && args+=(--not-before "$NOT_BEFORE")
+          [ -n "$UNTIL" ] && args+=(--until "$UNTIL")
+          [ "$FIRST" = "true" ] && args+=(--first)
           [ "$DRY" = "true" ] || args+=(--apply)
           node tools/firebase/launch.mjs "${args[@]}"

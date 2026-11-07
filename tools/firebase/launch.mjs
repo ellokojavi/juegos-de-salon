@@ -5,26 +5,34 @@
  * which a scheduled task dispatches at the hour.
  *
  *   node tools/firebase/launch.mjs --flag stick --flag stack --splash shinobi-babel \
- *     --not-before 2026-11-02T08:00:00Z [--apply]
+ *     --not-before 2026-11-02T08:00:00Z [--until 2026-11-09T08:00:00Z] [--first] [--apply]
+ *
+ * `--until` ends the campaigns it turns on (a day, or an exact moment in ISO, splash.js); `--first`
+ * puts them ahead of the others in the queue. A campaign the panel never saved is created, if it is in
+ * splash.js's CAMPAIGNS.
  *
  * Without --apply it only says what it would write. Before --not-before it writes nothing and ends
  * green, so an early run is harmless; a second run rewrites the same values.
  */
 import { token, read, write, fail } from './firebase-admin.mjs';
+import { CAMPAIGNS } from '../../public/assets/js/splash.js';
 
 export function parse(argv) {
-  const o = { flags: [], splash: [], notBefore: null, apply: false };
+  const o = { flags: [], splash: [], notBefore: null, until: null, first: false, apply: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i], v = argv[i + 1];
     if (a === '--flag') { o.flags.push(v); i++; }
     else if (a === '--splash') { o.splash.push(v); i++; }
     else if (a === '--not-before') { o.notBefore = v; i++; }
+    else if (a === '--until') { o.until = v; i++; }
+    else if (a === '--first') o.first = true;
     else if (a === '--apply') o.apply = true;
     else throw new Error(`Unknown argument: ${a}`);
   }
   const id = /^[a-z][a-z0-9-]{0,40}$/;
   for (const x of [...o.flags, ...o.splash]) if (!id.test(x || '')) throw new Error(`Not an id: ${x}`);
   if (o.notBefore && Number.isNaN(Date.parse(o.notBefore))) throw new Error(`Not a date: ${o.notBefore}`);
+  if (o.until && (!/^\d{4}-\d{2}-\d{2}/.test(o.until) || Number.isNaN(Date.parse(o.until)))) throw new Error(`Not a date: ${o.until}`);
   if (!o.flags.length && !o.splash.length) throw new Error('Nothing to launch: give --flag or --splash');
   return o;
 }
@@ -32,7 +40,7 @@ export function parse(argv) {
 /** What to write, `[path, method, body]`, at moment `now`. */
 export const plan = (o, now) => [
   ...o.flags.map(f => [`flags/${f}`, 'PUT', { state: 'all', at: now }]),
-  ...o.splash.map(s => [`splash/${s}`, 'PATCH', { on: true, at: now }]),
+  ...o.splash.map(s => [`splash/${s}`, 'PATCH', { on: true, at: now, ...(o.until ? { until: o.until } : {}), ...(o.first ? { order: -1 } : {}) }]),
 ];
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -44,7 +52,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(0);
   }
   const t = o.apply ? await token() : null;
-  for (const s of o.splash) if (o.apply && !(await read(`splash/${s}`, t))) fail(`splash/${s} does not exist: create the campaign first.`);
+  for (const s of o.splash) if (!CAMPAIGNS[s] && !(o.apply && (await read(`splash/${s}`, t)))) fail(`${s} is not a campaign in splash.js's CAMPAIGNS: create the campaign first.`);
   for (const [path, method, body] of plan(o, now)) {
     console.log(`${o.apply ? '✓' : '(dry run)'} ${method} ${path} ${JSON.stringify(body)}`);
     if (o.apply) await write(path, method, body, t);

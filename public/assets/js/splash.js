@@ -30,7 +30,7 @@
 import { param, tiene } from './parametros.js';
 import { PAYMENT_LINK } from './support.js';
 
-/** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
+/** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows; `until` may also be an exact moment in ISO (`2026-11-09T08:00:00Z`). */
 export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }, { id: 'flap-soon', until: '2026-11-08' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
@@ -259,7 +259,8 @@ export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], force
     if ((campaigns[a.id].requires || []).some(f => !launched(f))) return false;
     const start = a.from ? Date.parse(`${a.from}T00:00:00`) : NaN;
     if (Number.isFinite(start) && today.getTime() < start) return false;
-    const end = a.until ? Date.parse(`${a.until}T23:59:59`) : NaN;
+    // A bare day ends at the player's own midnight; a full moment (`2026-11-09T08:00:00Z`) ends there for everyone
+    const end = a.until ? Date.parse(a.until.includes('T') ? a.until : `${a.until}T23:59:59`) : NaN;
     return !(Number.isFinite(end) && today.getTime() > end);
   };
   return [...new Set((active || []).filter(live).map(a => a.id))];
