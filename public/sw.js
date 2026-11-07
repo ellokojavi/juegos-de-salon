@@ -45,6 +45,9 @@ async function store(rel) {
       .then(r => (r.ok ? cache.put(u, r) : null)).catch(() => null)));
   }
   for (const k of await caches.keys()) if (k.startsWith('jds-release-') && k !== release(list.release || rel)) await caches.delete(k);
+  // Pages an earlier version of this worker kept in the runtime cache: they belong to an old release
+  const rt = await caches.open(RUNTIME);
+  for (const req of (await rt.keys?.()) || []) if (new URL(req.url).pathname.endsWith('/')) await rt.delete(req);
   return true;
 }
 
@@ -82,7 +85,10 @@ async function fromCache(req) {
 async function page(req) {
   const url = new URL(req.url);
   const net = fetch(req).then(r => {
-    if (r.ok) { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(url.origin + url.pathname, copy)); }
+    // A page's fresh copy goes in the current release's cache, never the runtime one: its modules carry
+    // that release's ?h=, so it must go when the release goes. Kept across releases, an old page asked
+    // for files the new release no longer stores and drew blank (Shinobi, 2026-11-07)
+    if (r.ok) { const copy = r.clone(); config().then(c => caches.open(release(c.release || 'dev'))).then(c => c.put(url.origin + url.pathname, copy)); }
     return r;
   });
   const timeout = new Promise(res => setTimeout(() => res(null), PAGE_TIMEOUT));
