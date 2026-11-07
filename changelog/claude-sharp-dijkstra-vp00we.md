@@ -1,3 +1,3 @@
 level: patch
 
-- **Workshop in English** (#1249 step 13): the 41 Spanish paths left in phase 3 of D-316, all under `marketing/` (agents-card, case-teaser, coming-soon-teaser, three-new, the promo video and share tutorial scripts, `marketing/log.json`), are renamed with every reference; `english.mjs status` reports phase 3 = 0. `repo-weight.test.mjs` no longer counts a blob main already has (a renamed video) as new weight.
+- **Architecture boundary** (#1249 step 5): `tools/agents/architecture.test.mjs` fails when a game imports another game's folder, calls an external host or writes a storage key outside `juegos-de-salon:`; today's hits (40 imports, the Firebase SDK from its CDN, `uad-pts-cache` and `copa:prueba:uid`) are frozen in `docs/architecture-allowlist.json` with reasons, and Firebase paths are counted for step 7's manifests. `docs/ARCHITECTURE.md` explains it; registered as the `architecture` ratchet.

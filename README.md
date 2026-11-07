@@ -577,6 +577,7 @@ node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
 node public/sw.test.mjs
 node tools/agents/approve.test.mjs
+node tools/agents/architecture.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/conflict-markers.test.mjs
 node tools/agents/covers.test.mjs
@@ -840,6 +841,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
+- [The architecture boundary (#1249 step 5)](docs/ARCHITECTURE.md)
 - [The design system](docs/DESIGN.md)
 - [Merge lanes (D-519)](docs/LANES.md)
 - [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)

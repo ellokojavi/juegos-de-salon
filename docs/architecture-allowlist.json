@@ -1,0 +1,305 @@
+{
+  "_about": "Exceptions to the architecture boundary (tools/agents/architecture.mjs, docs/ARCHITECTURE.md), each with its reason. Entries { file, rule, what, why }: rule is import, external or storage-key; what is the hit exactly as the tool prints it. One entry covers every hit with the same file, rule and what. An entry that no longer hits fails architecture.test.mjs as stale: remove it when the debt is paid. The list only shrinks.",
+  "entries": [
+    {
+      "file": "public/assets/js/buzon-form.js",
+      "rule": "import",
+      "what": "../../cup/reportes.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/jugador-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/jugador-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/jugador-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/labs-idioma.js",
+      "rule": "import",
+      "what": "../../cup/reportes.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/transport/firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/transport/firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/uno-al-dia-ui.js",
+      "rule": "storage-key",
+      "what": "uad-pts-cache",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/assets/js/uno-al-dia.js",
+      "rule": "import",
+      "what": "../../cup/games/semilla.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/bulls-and-cows/game.js",
+      "rule": "import",
+      "what": "../cup/code.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/bulls-and-cows/game.js",
+      "rule": "import",
+      "what": "../cup/games/number/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/bulls-and-cows/game.js",
+      "rule": "import",
+      "what": "../cup/games/number/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/bulls-and-cows/game.js",
+      "rule": "import",
+      "what": "../cup/games/solo.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../timeline/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../number/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../queens/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../word/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../year/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/engine.js",
+      "rule": "import",
+      "what": "../../engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../timeline/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../number/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../queens/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../word/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../year/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../timeline/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../number/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../queens/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../word/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../year/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/final/ui.js",
+      "rule": "import",
+      "what": "../../rules.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/mazos.js",
+      "rule": "import",
+      "what": "../../timeline/decks/index.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/number/engine.js",
+      "rule": "import",
+      "what": "../../../bulls-and-cows/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/number/ui.js",
+      "rule": "import",
+      "what": "../../../bulls-and-cows/rules.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/timeline/ui.js",
+      "rule": "import",
+      "what": "../year/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/timeline/ui.js",
+      "rule": "import",
+      "what": "../../../timeline/rules.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/games/word/ui.js",
+      "rule": "import",
+      "what": "../number/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/store-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/store-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/store-firebase.js",
+      "rule": "external",
+      "what": "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js",
+      "why": "the Firebase SDK from its CDN (no npm, no build): debt before #1249 step 5"
+    },
+    {
+      "file": "public/cup/store-local.js",
+      "rule": "storage-key",
+      "what": "copa:prueba:uid",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/generala/game.js",
+      "rule": "import",
+      "what": "../cup/games/solo.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/labs/bridges/trains/sheet.js",
+      "rule": "import",
+      "what": "../../../cup/games/bridges/trains.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/labs/bridges/visitors/sheet.js",
+      "rule": "import",
+      "what": "../../../cup/games/bridges/neon-visitors.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/labs/bridges/visitors/sheet.js",
+      "rule": "import",
+      "what": "../../../cup/games/bridges/pixel.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/labs/code/engine-palabra.js",
+      "rule": "import",
+      "what": "../../cup/games/word/palabras.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/labs/code/game.js",
+      "rule": "import",
+      "what": "../../cup/games/word/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/timeline/game.js",
+      "rule": "import",
+      "what": "../cup/games/timeline/engine.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/timeline/game.js",
+      "rule": "import",
+      "what": "../cup/games/timeline/ui.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/timeline/game.js",
+      "rule": "import",
+      "what": "../cup/games/solo.js",
+      "why": "debt before #1249 step 5"
+    },
+    {
+      "file": "public/timeline/game.js",
+      "rule": "import",
+      "what": "../cup/code.js",
+      "why": "debt before #1249 step 5"
+    }
+  ]
+}
