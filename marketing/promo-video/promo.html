@@ -160,7 +160,7 @@
 </div>
 
 <script>
-/* ---------- Idioma: ?lang=en usa las capturas de plays-en/ (LANG_PROMO=en en jugar.mjs) y los textos de EN ---------- */
+/* ---------- Idioma: ?lang=en usa las capturas de plays-en/ (LANG_PROMO=en en play.mjs) y los textos de EN ---------- */
 const LANG = new URLSearchParams(location.search).get('lang') || 'es';
 const PDIR = LANG === 'es' ? 'plays' : `plays-${LANG}`;
 document.write(`<script src="${PDIR}/plays.js"><\/script>`);
@@ -308,7 +308,7 @@ function animarTitulo(w, lt, t, o = 1) {
   css(ch, { opacity: clamp(pc) * o, transform: `translateY(${(1 - pc) * 60}px)` });
 }
 
-/* Los juegos se juegan de verdad: una captura real por jugada (jugar.mjs), con un círculo donde fue el
+/* Los juegos se juegan de verdad: una captura real por jugada (play.mjs), con un círculo donde fue el
    dedo. Las capturas son de 390×844 px css; `sc` y `ox` las llevan a una pantalla. */
 function makePlayer(box, play, sc, ox, touchSize = 74) {
   const P = { frames: play.map(f => { const img = document.createElement('img'); img.src = `${PDIR}/${f.img}`; box.appendChild(img); return img; }) };

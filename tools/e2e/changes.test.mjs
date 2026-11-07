@@ -6,7 +6,7 @@ import { noBrowser as docsOnly } from './changes.mjs';
 // Skipped: the documentation round, the usability one without fixes, the video
 assert.equal(docsOnly(['CHANGELOG.md', 'docs/decisions/D-1.md', 'docs/documentation.json']), true);
 assert.equal(docsOnly(['docs/screenshots/cup/01.png', 'README.md', 'CLAUDE.md']), true);
-assert.equal(docsOnly(['marketing/registro.json', '.claude/agents/usability.md']), true);
+assert.equal(docsOnly(['marketing/log.json', '.claude/agents/usability.md']), true);
 // D-299: also the workshop that neither the site nor the scripts import, the rules and the other workflows
 assert.equal(docsOnly(['CHANGELOG.md', 'tools/agents/processes.mjs', 'tools/agents/processes.test.mjs']), true);
 assert.equal(docsOnly(['tools/firebase/rules.mjs', 'firebase/database.rules.json']), true);
