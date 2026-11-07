@@ -506,7 +506,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
   día y, en lugar de los modos, un solo botón **Jugar hoy**. El Ahorcado juega solo con el
   mazo del celular; Batalla Naval y Dudo, contra el celular (Dudo, un rival). Los ajustes son los de
-  siempre y el nombre, el que se recuerda o "Jugador 1": no se pide nada. En Batalla Naval el
+  siempre y el nombre, el que se recuerda, el que el celular conoce de otro juego (`nombreDelCelular`, D-210) o "Jugador 1": no se pide nada. En Batalla Naval el
   jugador igual coloca su flota (con **Al azar** a mano).
 - **Lo común sale de la semilla del día** con `azarDel(semilla, que)`: la palabra del Ahorcado (la
   semilla del mazo), la flota del celular en Batalla Naval y los dados de cada ronda de Dudo (por

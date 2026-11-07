@@ -96,7 +96,7 @@ cargar un dado en la mesa: se aceptó, como en un juego entre amigos (D-246).
 
 Cuando Generala es el juego de Uno al día, `/generala/?today` no ofrece modos: la intro lleva la línea
 de Uno al día y "Los dados salen iguales para todos: lo que cambia es qué guardas.", y un solo
-botón, **Jugar hoy**, que abre 🧍 Jugar solo con el nombre que se recuerda. Cada tiro sale de
+botón, **Jugar hoy**, que abre 🧍 Jugar solo con el nombre que se recuerda (o el que el celular conoce de otro juego, `nombreDelCelular`, D-210). Cada tiro sale de
 `azarDel(semilla, 'generala:<turno>:<tiro>')`, consumido en orden de posición: quien guarda lo mismo
 que otro recibe lo mismo. Ahí sí se pueden calcular los tiros con el código, igual que en los
 solitarios de La Copa (D-97).
