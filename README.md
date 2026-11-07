@@ -626,6 +626,7 @@ node tools/firebase/stats-retention.test.mjs
 node tools/firebase/uad-index.test.mjs
 node tools/firebase/uad-points-backfill.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
+node tools/generators/manifests.test.mjs
 node tools/generators/new-game.test.mjs
 node tools/jobs/claude-task.test.mjs
 node tools/jobs/inbox-watch.test.mjs

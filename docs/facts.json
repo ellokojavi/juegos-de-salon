@@ -368,6 +368,7 @@
         "public/timeline/decks/pop.js",
         "public/timeline/engine.js",
         "public/timeline/game.js",
+        "public/timeline/game.json",
         "public/timeline/index.html",
         "public/timeline/rules.js",
         "public/timeline/style.css"
@@ -419,6 +420,7 @@
       "files": [
         "public/bulls-and-cows/engine.js",
         "public/bulls-and-cows/game.js",
+        "public/bulls-and-cows/game.json",
         "public/bulls-and-cows/index.html",
         "public/bulls-and-cows/rules.js",
         "public/bulls-and-cows/style.css"
@@ -618,6 +620,7 @@
         "public/battleship/engine.js",
         "public/battleship/flota.js",
         "public/battleship/game.js",
+        "public/battleship/game.json",
         "public/battleship/index.html",
         "public/battleship/rules.js",
         "public/battleship/style.css"
@@ -1099,8 +1102,11 @@
     "public/assets/js/labs-puerta.js",
     "public/assets/js/llegada.js",
     "public/assets/js/load-css.js",
+    "public/assets/js/manifests/battleship.js",
+    "public/assets/js/manifests/bulls-and-cows.js",
     "public/assets/js/manifests/hangman.js",
     "public/assets/js/manifests/liars-dice.js",
+    "public/assets/js/manifests/timeline.js",
     "public/assets/js/month-end.js",
     "public/assets/js/music.js",
     "public/assets/js/name-guard.js",
@@ -1495,6 +1501,7 @@
     "tools/firebase/uad-index.test.mjs",
     "tools/firebase/uad-points-backfill.test.mjs",
     "tools/firebase/unnoted-rooms.test.mjs",
+    "tools/generators/manifests.test.mjs",
     "tools/generators/new-game.test.mjs",
     "tools/jobs/claude-task.test.mjs",
     "tools/jobs/inbox-watch.test.mjs",

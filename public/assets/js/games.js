@@ -18,6 +18,9 @@ import { SAVED_KEY } from './lab-access.js';
 import { catalogEntry } from './game-manifest.js';
 import hangmanManifest from './manifests/hangman.js';
 import liarsDiceManifest from './manifests/liars-dice.js';
+import timelineManifest from './manifests/timeline.js';
+import bullsAndCowsManifest from './manifests/bulls-and-cows.js';
+import battleshipManifest from './manifests/battleship.js';
 
 /**
  * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
@@ -60,45 +63,13 @@ export const GAMES = [
     // días, la práctica con semilla y las demos).
     available: true,
   },
-  {
-    id: 'linea-de-tiempo',
-    tipos: ['trivia'],
-    emoji: '⏳',
-    name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
-    tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia a la música.', en: 'Put the milestones in the right order. Six themes, from history to music.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história à música.' },
-    keywords: {
-      es: ['historia', 'orden', 'ordenar', 'fechas', 'hitos', 'futbol', 'cultura', 'preguntas'],
-      en: ['timeline', 'history', 'order', 'sort', 'dates', 'events', 'soccer', 'football', 'trivia', 'quiz'],
-      pt: ['história', 'ordem', 'ordenar', 'datas', 'marcos', 'futebol', 'cultura', 'perguntas', 'quiz'],
-    },
-    players: '1–6',
-    duration: '10–20',
-    jugadas: ['place'],
-    path: 'timeline/',
-    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
-    reuses: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
-    available: true,
-  },
-  {
-    id: 'toque-y-fama',
-    tipos: ['logic'],
-    emoji: '🔢',
-    name: { es: 'Toque y Fama', en: 'Bulls and Cows', pt: 'Toque e Fama' },
-    // Its card also holds 🔤 Palabra (#767), so the tagline names both
-    tagline: { es: 'Adivina el número o la palabra secreta con toques y famas.', en: 'Crack the secret number or word with bulls and cows.', pt: 'Descubra o número ou a palavra secreta com toques e famas.' },
-    keywords: {
-      es: ['numeros', 'adivinar', 'codigo', 'secreto', 'mastermind', 'duelo', 'logica'],
-      en: ['numbers', 'guess', 'code', 'secret', 'mastermind', 'bulls', 'cows', 'duel', 'logic'],
-      pt: ['números', 'adivinhar', 'código', 'secreto', 'mastermind', 'duelo', 'lógica'],
-    },
-    players: '1–2',
-    duration: '5–12',
-    jugadas: ['guess'],
-    path: 'bulls-and-cows/',
-    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
-    reuses: ['cup/games/number/'],
-    available: true,
-  },
+  // linea-de-tiempo: from public/timeline/game.json
+  // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+  catalogEntry(timelineManifest),
+  // toque-y-fama: from public/bulls-and-cows/game.json
+  // Its card also holds 🔤 Palabra (#767), so the tagline names both
+  // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+  catalogEntry(bullsAndCowsManifest),
   // From their manifests (public/<folder>/game.json, #1249 step 7): edit the JSON, then run
   // node tools/generators/manifests.mjs
   catalogEntry(hangmanManifest),
@@ -125,25 +96,9 @@ export const GAMES = [
     nuevoDesde: '2026-10-20',
     available: true,
   },
-  {
-    id: 'batalla-naval',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 8, desde: '2026-10-07', grupo: true },
-    tipos: ['logic'],
-    emoji: '⚓',
-    name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval' },
-    tagline: { es: 'Hunde la flota del rival antes de que hunda la tuya.', en: 'Sink your rival\'s fleet before they sink yours.', pt: 'Afunde a frota do rival antes que ele afunde a sua.' },
-    keywords: {
-      es: ['barcos', 'flota', 'hundir', 'mar', 'guerra', 'duelo', 'estrategia'],
-      en: ['battleship', 'ships', 'fleet', 'sink', 'sea', 'war', 'duel', 'strategy'],
-      pt: ['navios', 'barcos', 'frota', 'afundar', 'mar', 'guerra', 'duelo', 'estratégia'],
-    },
-    players: '1–2',
-    duration: '10–20',
-    jugadas: ['shot'],
-    path: 'battleship/',
-    available: true,
-  },
+  // batalla-naval: from public/battleship/game.json
+  // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+  catalogEntry(battleshipManifest),
   {
     id: 'julepe',
     tipos: ['tabletop'],
