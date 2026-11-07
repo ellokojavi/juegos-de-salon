@@ -15,6 +15,9 @@
  */
 import { cachedFlags, stateOf } from './flags.js';
 import { SAVED_KEY } from './lab-access.js';
+import { catalogEntry } from './game-manifest.js';
+import hangmanManifest from './manifests/hangman.js';
+import liarsDiceManifest from './manifests/liars-dice.js';
 
 /**
  * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
@@ -96,44 +99,10 @@ export const GAMES = [
     reuses: ['cup/games/number/'],
     available: true,
   },
-  {
-    id: 'ahorcado',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 7, desde: '2026-10-07', grupo: true },
-    tipos: ['words'],
-    emoji: '🪢',
-    name: { es: 'El Ahorcado', en: 'Hangman', pt: 'Forca' },
-    tagline: { es: 'Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.', en: 'Crack your word before you run out of lives. Nobody sits this one out.', pt: 'Descubra sua palavra antes de ficar sem vidas. Aqui ninguém fica só olhando.' },
-    keywords: {
-      es: ['palabras', 'letras', 'adivinar', 'vocabulario', 'vidas'],
-      en: ['hangman', 'words', 'letters', 'guess', 'vocabulary', 'lives'],
-      pt: ['forca', 'palavras', 'letras', 'adivinhar', 'vocabulário', 'vidas'],
-    },
-    players: '1–6',
-    duration: '5–12',
-    jugadas: ['word', 'guess', 'buy'],
-    path: 'hangman/',
-    available: true,
-  },
-  {
-    id: 'dudo',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 9, desde: '2026-10-07', grupo: true },
-    tipos: ['tabletop'],
-    emoji: '🎲',
-    name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso' },
-    tagline: { es: 'Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.', en: 'Shake the cup, bid how many dice are on the table and keep a straight face.', pt: 'Sacuda o copo, aposte quantos dados tem na mesa sem entregar o jogo.' },
-    keywords: {
-      es: ['dados', 'cacho', 'mentiroso', 'mentir', 'apuesta', 'farol', 'previa', 'carrete', 'cubilete'],
-      en: ['dice', 'liar', 'lie', 'bluff', 'bet', 'party', 'cup'],
-      pt: ['dados', 'mentiroso', 'mentir', 'aposta', 'blefe', 'copo', 'festa'],
-    },
-    players: '1–6',
-    duration: '10–20',
-    jugadas: ['bid', 'dudo', 'calza'],
-    path: 'liars-dice/',
-    available: true,
-  },
+  // From their manifests (public/<folder>/game.json, #1249 step 7): edit the JSON, then run
+  // node tools/generators/manifests.mjs
+  catalogEntry(hangmanManifest),
+  catalogEntry(liarsDiceManifest),
   {
     id: 'generala',
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
