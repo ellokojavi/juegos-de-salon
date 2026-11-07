@@ -1706,6 +1706,10 @@
       "title": "Requerimientos"
     },
     {
+      "path": "docs/RULES.md",
+      "title": "Rules for making rules (D-541)"
+    },
+    {
       "path": "docs/SEASONS.md",
       "title": "Seasonal templates (D-457)"
     },
