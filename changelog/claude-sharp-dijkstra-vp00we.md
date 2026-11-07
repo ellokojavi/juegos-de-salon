@@ -1,3 +1,3 @@
 level: patch
 
-- **Rules for making rules** (D-541, #1249 step 1): `docs/RULES.md` says every rule is a check, a ratchet or a judgement with a named reviewer, with the ten rules for making rules; `CLAUDE.md` links it.
+- **Rule registry** (D-541, #1249 step 2): `docs/rules.json` lists every rule with its form (🤖 check, 📈 ratchet, 👁 judged): the design system, English and the 33 usability rules; `tools/agents/rules.mjs index` generates the index in `docs/RULES.md`, and `rules.test.mjs` fails on a rule without its form, a check naming a file that does not exist, a judged rule without its reviewer, or a usability mark that disagrees with `docs/USABILIDAD.md`.

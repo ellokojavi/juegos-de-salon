@@ -1,0 +1,421 @@
+{
+ "about": "The rule registry (D-541, docs/RULES.md rule 2): every rule with its form. check and ratchet name the files that enforce them; judged names its reviewer and why it cannot be measured. The index in docs/RULES.md is generated from this file: node tools/agents/rules.mjs index.",
+ "rules": [
+  {
+   "id": "R-1",
+   "title": "No rule without its enforcement",
+   "doc": "docs/RULES.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/agents/rules.test.mjs"
+   ]
+  },
+  {
+   "id": "R-2",
+   "title": "One registry, generated index",
+   "doc": "docs/RULES.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/agents/rules.test.mjs"
+   ]
+  },
+  {
+   "id": "design-system",
+   "title": "Stylesheets use the design system's tokens and components (D-533)",
+   "doc": "docs/DESIGN.md",
+   "form": [
+    "ratchet"
+   ],
+   "enforcedBy": [
+    "tools/agents/design-lint.test.mjs"
+   ],
+   "debt": "docs/design-allowlist.json"
+  },
+  {
+   "id": "english",
+   "title": "Every name in the repo is English; the Spanish ones left only shrink (D-316, D-354)",
+   "doc": "CLAUDE.md",
+   "form": [
+    "ratchet"
+   ],
+   "enforcedBy": [
+    "tools/agents/english.test.mjs"
+   ],
+   "debt": "docs/english-renames.json"
+  },
+  {
+   "id": "U-1",
+   "title": "Frases completas y explícitas",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-2",
+   "title": "Emojis al inicio de línea o en botones y títulos",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json"
+  },
+  {
+   "id": "U-3",
+   "title": "Los textos nuevos salen con la mejor propuesta",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-4",
+   "title": "Nombres propios sin artículo",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json"
+  },
+  {
+   "id": "U-5",
+   "title": "Un mismo concepto, una misma palabra",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json",
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-6",
+   "title": "El plural y el singular concuerdan con el número",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json",
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-7",
+   "title": "Los juegos por significado, no por juegos de palabras",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-8",
+   "title": "Cada regla, una vez por pantalla",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-18",
+   "title": "Instrucciones concisas",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs",
+    "public/cup/games/juegos.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json",
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-36",
+   "title": "La portada al día",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/covers.test.mjs"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-10",
+   "title": "Botones de 44 px o más",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/languages-common.mjs"
+   ]
+  },
+  {
+   "id": "U-11",
+   "title": "Botones con aire",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/spacing-common.mjs"
+   ]
+  },
+  {
+   "id": "U-12",
+   "title": "Nada se encima",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/e2e/spacing-common.mjs"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-13",
+   "title": "Lo que se muestra es lo que se juega",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-14",
+   "title": "Cada cosa en su momento de la copa",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-15",
+   "title": "Las acciones que no se deshacen piden confirmación",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-16",
+   "title": "Las reglas están a mano sin estorbar",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-39",
+   "title": "The start button is seen without scrolling",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/landing-fold.mjs"
+   ]
+  },
+  {
+   "id": "U-17",
+   "title": "El botón dice la acción, nada más",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "exceptions": "docs/usability-allowlist.json",
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-20",
+   "title": "El reloj corre solo mientras se juega",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-21",
+   "title": "Nada cambia a mitad de un día",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-22",
+   "title": "Un reintento nunca traba",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-23",
+   "title": "Lo que se escribe no se pierde",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-37",
+   "title": "Waiting on the network shows, and a room that doesn't open has a way out",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-38",
+   "title": "The inbox sits at the end of the experience and never interrupts",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-30",
+   "title": "Formato de los mensajes",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-33",
+   "title": "La imagen dice lo mismo que el texto",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-31",
+   "title": "Completo",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-32",
+   "title": "Sin spoilers",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-35",
+   "title": "La app se presenta entera",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-34",
+   "title": "El marketing muestra la app de hoy",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/agents/marketing.test.mjs"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "the lint measures the part a program can; the rest needs a reader"
+  },
+  {
+   "id": "U-40",
+   "title": "Promotional material looks like the app (D-380)",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  },
+  {
+   "id": "U-41",
+   "title": "Visual proposals come as images",
+   "doc": "docs/USABILIDAD.md",
+   "form": [
+    "judged"
+   ],
+   "reviewer": "usability agent (.claude/agents/usability.md)",
+   "why": "meaning, timing and clarity need a reader"
+  }
+ ]
+}
