@@ -6,7 +6,7 @@ import { $, $$, con, el } from '../assets/js/ui.js';
 import { MAX_JUGADORES, activos, calendario, claveNombre, diaActual, esPin, fuera, hashPin, inscripcionAbierta, limpiarNombre, pidAlAzar, terminada, tieneFinal } from './engine.js';
 import { SFX } from '../assets/js/sound.js';
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
-import { langToggle } from '../assets/js/i18n.js';
+import { coverLangToggle } from '../assets/js/i18n.js';
 import { nombres, tiene } from '../assets/js/parametros.js';
 
 let c;
@@ -200,7 +200,7 @@ function pantallaEntrar({ mantener = false, modo } = {}) {
       el('p', { class: 'lead' }, info),
       avisoPalabras(meta),
       avisoAudiencia(meta),
-      el('div', { style: 'margin-top:6px' }, langToggle())),
+      el('div', { style: 'margin-top:6px' }, coverLangToggle())),
     el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: JUEGOS_COPA[j].nombre, class: con('', JUEGOS_COPA[j].emoji) }, JUEGOS_COPA[j].emoji))),
     // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded
