@@ -45,6 +45,9 @@ async function store(rel) {
       .then(r => (r.ok ? cache.put(u, r) : null)).catch(() => null)));
   }
   for (const k of await caches.keys()) if (k.startsWith('jds-release-') && k !== release(list.release || rel)) await caches.delete(k);
+  // Pages an earlier version of this worker kept in the runtime cache: they belong to an old release
+  const rt = await caches.open(RUNTIME);
+  for (const req of (await rt.keys?.()) || []) if (new URL(req.url).pathname.endsWith('/')) await rt.delete(req);
   return true;
 }
 
@@ -72,17 +75,20 @@ self.addEventListener('message', e => {
 let encendido = null;
 const leido = config().then(c => { encendido = !!c.on; });
 
-async function fromCache(req) {
+async function fromCache(req, opts) {
   // The runtime cache first: it holds the last version of a page seen online, newer than the release's
   const keys = (await caches.keys()).filter(k => k.startsWith('jds-') && k !== CONFIG).sort((a, b) => (b === RUNTIME) - (a === RUNTIME));
-  for (const k of keys) { const r = await (await caches.open(k)).match(req); if (r) return r; }
+  for (const k of keys) { const r = await (await caches.open(k)).match(req, opts); if (r) return r; }
   return null;
 }
 
 async function page(req) {
   const url = new URL(req.url);
   const net = fetch(req).then(r => {
-    if (r.ok) { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(url.origin + url.pathname, copy)); }
+    // A page's fresh copy goes in the current release's cache, never the runtime one: its modules carry
+    // that release's ?h=, so it must go when the release goes. Kept across releases, an old page asked
+    // for files the new release no longer stores and drew blank (Shinobi, 2026-11-07)
+    if (r.ok) { const copy = r.clone(); config().then(c => caches.open(release(c.release || 'dev'))).then(c => c.put(url.origin + url.pathname, copy)); }
     return r;
   });
   const timeout = new Promise(res => setTimeout(() => res(null), PAGE_TIMEOUT));
@@ -102,7 +108,14 @@ async function page(req) {
 async function keep(req) {
   const hit = await fromCache(req);
   if (hit) return hit;
-  const r = await fetch(req);
+  let r;
+  try { r = await fetch(req); } catch (e) {
+    // No signal and not this exact file: another version of it (another ?h=) beats a page whose
+    // modules fail to load, which leaves it half drawn (the home page without its buttons, 2026-11-07)
+    const near = await fromCache(req, { ignoreSearch: true });
+    if (near) return near;
+    throw e;
+  }
   if (r.ok || r.type === 'opaque') { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(req, copy)); }
   return r;
 }

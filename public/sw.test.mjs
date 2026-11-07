@@ -17,8 +17,14 @@ function worker({ site }) {
       if (!store.has(name)) store.set(name, new Map());
       const m = store.get(name);
       return {
-        match: async r => (m.has(key(r)) ? new Response(m.get(key(r))) : undefined),
+        match: async (r, o) => {
+          if (m.has(key(r))) return new Response(m.get(key(r)));
+          const near = o?.ignoreSearch && [...m.keys()].find(u => u.split('?')[0] === key(r).split('?')[0]);
+          return near ? new Response(m.get(near)) : undefined;
+        },
         put: async (r, res) => { m.set(key(r), await res.text()); },
+        keys: async () => [...m.keys()].map(url => ({ url })),
+        delete: async r => m.delete(key(r)),
       };
     },
     keys: async () => [...store.keys()],
@@ -96,6 +102,9 @@ assert.equal(await w.get('/zip/', 'navigate'), 'zip v2', 'offline: the last page
 assert.equal(await w.get('/zip/?lang=en', 'navigate'), 'zip v2', 'the query does not matter for a page');
 assert.equal(await w.get('/cup/', 'navigate'), 'REDIRECT https://juegosdesalon.cl/', 'a page never cached: a redirect to the home page, so its relative links resolve (it drew unstyled under /labs/)');
 
+// Offline, a module whose exact version is not stored: another stored version of it, not a failure
+assert.equal(await w.get('/assets/js/ui.js?h=bbbb2222'), 'ui', 'a different ?h= of a stored file, when the network is out');
+
 // Firebase's own traffic is never touched; the SDK is kept once loaded
 assert.equal(await w.get('https://juegos-de-salon-default-rtdb.firebaseio.com/x.json'), 'UNTOUCHED');
 w.net.up = true;
@@ -108,6 +117,13 @@ w.net.up = true;
 site.list = { release: '0.2.0-def', urls: ['./', 'zip/'] };
 await w.tell({ type: 'offline', on: true, release: '0.2.0-def' });
 assert.ok(w.store.has('jds-release-0.2.0-def') && !w.store.has('jds-release-0.1.0-abc'), 'the old release\'s cache goes');
+
+// A page seen online under the old release does not outlive it: offline, the new release's copy wins
+w.net.up = false;
+site.files['/zip/'] = 'zip v3';
+assert.equal(await w.get('/zip/', 'navigate'), 'zip v2', 'the page stored with release 0.2.0 (fetched when it was stored)');
+assert.ok(![...(w.store.get('jds-runtime')?.keys() || [])].some(u => u.endsWith('/zip/')), 'no page is kept in the runtime cache');
+w.net.up = true;
 
 // Off again: everything goes
 await w.tell({ type: 'offline', on: false, release: '0.2.0-def' });
