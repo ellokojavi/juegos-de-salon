@@ -1092,6 +1092,19 @@
         "stat": "3 file(s) +4 −4: docs/DECISIONS.md, docs/decisions/D-231.md, docs/decisions/D-344.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42339260059,
+      "check": "tests",
+      "pr": 1259,
+      "branch": "claude/epic-brahmagupta-6f2f4o",
+      "commit": "587ce67f6d3c78bc2e219e51be59ae5291ba0eec",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/room-state.js\nERROR · appeared tests: public/assets/js/room-state.test.mjs",
+      "signature": "03c382f9d0",
+      "date": "2026-11-07T04:39:11.668Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
