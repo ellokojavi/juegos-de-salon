@@ -213,6 +213,11 @@ export const closesWhenDone = (title = '') => /^Owner approval: PR #\d+$/.test(t
 
 /* ------------------------------------------------------------------ */
 
+/** The checks a merge needs (D-216); `end-to-end` appears only once its scripts end. */
+export const REQUIRED_CHECKS = ['tests', 'end-to-end'];
+/** Which required checks the PR does not have yet, from `gh pr checks --json name`. */
+export const checksMissing = (checks = []) => REQUIRED_CHECKS.filter(n => !checks.some(c => c?.name === n));
+
 const gh = (...args) => execFileSync('gh', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 45 * 60 * 1000 });
 
 /**
@@ -230,6 +235,11 @@ function perform(action, repo) {
       if (pr.state !== 'OPEN') throw new Error(`#${a.pr} is closed: not merged`);
       if (pr.baseRefName !== 'main') throw new Error(`#${a.pr} targets ${pr.baseRefName}, not main`);
       // Waits for the required checks (tests and end-to-end, D-216); if one fails, it does not merge.
+      // `--watch` only waits for checks that already exist, and end-to-end is created only after its
+      // scripts finish: a tick right after a push saw nothing pending and the merge was refused (#1273).
+      for (let i = 0; i < 80 && checksMissing(JSON.parse(gh('pr', 'checks', String(a.pr), ...R, '--json', 'name') || '[]')).length; i++) {
+        execFileSync('sleep', ['30']);
+      }
       try { gh('pr', 'checks', String(a.pr), ...R, '--required', '--watch', '--fail-fast', '--interval', '30'); }
       catch (e) { throw new Error(`the checks of #${a.pr} did not pass`); }
       // No --delete-branch: GitHub deletes the branch (the repo has it enabled) and so retargets
