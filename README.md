@@ -560,6 +560,8 @@ node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
 node public/cup/screens.test.mjs
 node public/cup/store.test.mjs
+node public/hangman/fuzz.test.mjs
+node public/hangman/replay.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
@@ -849,6 +851,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Offline mode (RP-13)](docs/OFFLINE.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
+- [Seeded randomness and replay](docs/REPLAY.md)
 - [Repo weight (D-494, #856)](docs/REPO-WEIGHT.md)
 - [Rules for making rules (D-541)](docs/RULES.md)
 - [Seasonal templates (D-457)](docs/SEASONS.md)

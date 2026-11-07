@@ -1412,6 +1412,8 @@
     "public/cup/store.test.mjs",
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
+    "public/hangman/fuzz.test.mjs",
+    "public/hangman/replay.test.mjs",
     "public/home-preload.test.mjs",
     "public/labs/artifacts/engine.test.mjs",
     "public/labs/bodega.test.mjs",
@@ -1704,6 +1706,10 @@
     {
       "path": "docs/PWA-NOTIFICACIONES.md",
       "title": "App instalable y avisos al celular (PWA + Web Push)"
+    },
+    {
+      "path": "docs/REPLAY.md",
+      "title": "Seeded randomness and replay"
     },
     {
       "path": "docs/REPO-WEIGHT.md",
