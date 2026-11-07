@@ -59,6 +59,21 @@
    "debt": "docs/english-renames.json"
   },
   {
+   "id": "flags",
+   "title": "Anything new on a player page sits behind its runtime flag, listed in /labs/ (D-395, D-498)",
+   "doc": "CLAUDE.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "public/labs/listed.test.mjs",
+    "public/assets/js/flags.test.mjs"
+   ],
+   "reviewer": "the session building the feature, and the owner on the PR preview",
+   "why": "listed.test.mjs checks every flag('<id>') outside /labs/ is a row of FLAGS with its card, and every row is still asked; whether a change is a new feature that needed a flag is a judgment"
+  },
+  {
    "id": "C-1",
    "title": "Identity and tone",
    "doc": "docs/CANONS.md",
