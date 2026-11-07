@@ -1432,6 +1432,7 @@
     "public/panel/rutas.test.mjs",
     "public/panel/timeline.test.mjs",
     "public/privacy/texts.test.mjs",
+    "public/sw.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
@@ -1494,6 +1495,7 @@
     "tools/release/json-ld.test.mjs",
     "tools/release/merge-report.test.mjs",
     "tools/release/pages-5xx.test.mjs",
+    "tools/release/precache.test.mjs",
     "tools/release/syntax.test.mjs",
     "tools/release/version.test.mjs",
     "tools/reports/weekly-data.test.mjs"

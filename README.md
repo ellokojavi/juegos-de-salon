@@ -438,7 +438,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
 - **Languages:** Spanish (default), English and Brazilian Portuguese, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
 - **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. A back swipe or «‹ Menú» mid-game asks before leaving (D-432).
-- **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
+- **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); an offline mode is being built in the lab (D-538, [docs/OFFLINE.md](docs/OFFLINE.md)).
 - **Privacy** (D-463): [`/privacy/`](https://juegosdesalon.cl/privacy/), in the three languages and linked from the menu's footer and every feedback form, says what is kept on the phone and in Firebase, why, for how long and how to have it deleted; an email left for a reply is deleted once we answer or after 90 days.
 
 ---
@@ -572,6 +572,7 @@ node public/panel/rooms-watch.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
+node public/sw.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/conflict-markers.test.mjs
@@ -633,6 +634,7 @@ node tools/release/changelog.test.mjs
 node tools/release/json-ld.test.mjs
 node tools/release/merge-report.test.mjs
 node tools/release/pages-5xx.test.mjs
+node tools/release/precache.test.mjs
 node tools/release/syntax.test.mjs
 node tools/release/version.test.mjs
 node tools/reports/weekly-data.test.mjs

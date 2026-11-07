@@ -83,6 +83,7 @@ job's log, find the cause, fix it on the branch and push, without asking the own
   node tools/release/changelog.mjs collect                 # processes round: the pending ones into CHANGELOG.md, older months → changelog/archive/ (D-497)
   python3 tools/release/set-version.py --version             # today's version
   python3 tools/release/set-version.py --site /tmp/site    # stamps a copy, as when publishing
+  node tools/release/precache.mjs --site /tmp/site --print  # offline mode's precache list of that copy (D-538)
   ```
 - The pages in `public/` carry no `?h=` and no import map (on publish each file gets `?h=` of its own content, D-467): `.github/workflows/publish.yml` runs
   the tests **and the end-to-end suite** (D-302; a merge whose PR passed runs only `smoke.mjs` plus the scripts reached by what main gained since that PR head, D-496, D-506; if they fail twice, it does not publish and opens the

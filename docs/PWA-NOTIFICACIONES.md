@@ -298,6 +298,11 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   celular quede pegado con una versión vieja del sitio (el sitio cambia varias veces por semana y
   `publish.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
   aparte y opcional, con su propio cuidado.
+- **Offline mode (D-538, amends D-221; [OFFLINE.md](OFFLINE.md)):** since offline PR 2 `sw.js` has a
+  `fetch` handler, but it caches only while a page reports the lab flag `offline` on (a message from
+  `instalable.js`); with the flag off every request goes to the network as before. Pages are
+  network-first, `?h=` files cache-first, and the list it stores is `precache.json`, written at
+  publish by `tools/release/precache.mjs`.
 - **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
   con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
   pestaña de la app si ya está abierta, llevándola a la URL, o abre una).
@@ -468,7 +473,7 @@ copa y el aviso llegó a su Android y a su iPhone; con eso se abrieron a todos (
 - **iOS cambia de una versión a otra** (dónde está Compartir, cómo abre la app instalada). La hoja
   de iPhone se revisa con cada versión nueva de iOS.
 - **Un service worker mal hecho deja celulares con la versión vieja.** Por eso el primero no
-  cachea nada y el modo sin conexión va aparte.
+  cachea nada y el modo sin conexión va aparte. (Since D-538 it caches behind the flag `offline`, with network-first pages.)
 - **Avisos de más = avisos apagados.** El tope de 2 al día y "solo si no jugaste" son parte del
   diseño, no un detalle.
 - **Puntualidad de GitHub Actions**: aceptable para avisos de día; no sirve para nada en tiempo real.

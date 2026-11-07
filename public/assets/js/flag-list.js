@@ -24,6 +24,7 @@ export const FLAGS = {
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'compact-lang': '🌐 Game covers: the language as one flag button in the top bar, not the toggle under the title (D-537)',
+  'offline': '📴 Offline mode: the app stores the offline-capable games on the phone and opens them with no signal (D-538, PR 2 of 8)',
   'lab-ready': '✅ Labs: lab use of each flag is counted, and its card says when it is ready to 🚀 (D-528)',
 };
 

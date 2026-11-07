@@ -187,6 +187,8 @@ jobs:
         if: steps.head.outputs.go == 'true'
         run: |
           python3 tools/release/set-version.py --site _site --commit "$GITHUB_SHA"
+          # Offline mode's list of what the service worker stores (D-538), with the ?h= just stamped
+          node tools/release/precache.mjs --site _site >> "$GITHUB_STEP_SUMMARY"
           node tools/release/changelog.mjs show >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/configure-pages@v5

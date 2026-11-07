@@ -42,9 +42,10 @@ await caso('los íconos de tools/release/icons.mjs están todos, con su medida',
   for (const i of ICONS) assert.deepEqual(medida(join(PUBLIC, 'assets/icons', i.file)), [i.size, i.size], i.file);
 });
 
-await caso('el service worker vive en la raíz y no toca la red (sin evento fetch)', () => {
+await caso('the service worker caches only in offline mode, pages network-first (D-538; sw.test.mjs tests it)', () => {
   const sw = readFileSync(join(PUBLIC, 'sw.js'), 'utf8');
-  assert.ok(!/addEventListener\(\s*['"]fetch/.test(sw), 'sw.js no debe manejar fetch: dejaría celulares con versiones viejas');
+  assert.match(sw, /if \(encendido\) e\.respondWith\(keep\(req\)\)/, 'files are touched only with offline mode on');
+  assert.match(sw, /encendido \? page\(req\) : fetch\(req\)/, 'pages go to the network as before with it off');
 });
 
 await caso('cada juego del registro tiene su página con manifest (un juego nuevo no queda afuera)', () => {
