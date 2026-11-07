@@ -25,6 +25,14 @@
         setTimeout(listo, 1500);
       } catch (_) { /* sin almacenamiento: se pinta como siempre */ }
     })();
+    // Offline mode (D-538): a phone already offline paints its first frame in the offline palette,
+    // with no flash of the normal one (offline-ui.js takes over once the page has loaded)
+    (function () {
+      try {
+        var f = localStorage.getItem('juegos-de-salon:offline-forced');
+        if (localStorage.getItem('juegos-de-salon:offline-flag') === '1' && f !== '0' && (f === '1' || navigator.onLine === false)) document.documentElement.classList.add('offline', 'offline-shell');
+      } catch (_) { /* sin almacenamiento: se pinta como siempre */ }
+    })();
   </script>
   <!-- generated: og · rewritten by node tools/release/og.mjs cards -->
   <meta name="description" content="Levanta tu torre lo más alto que puedas. Un jugador, 1–3 min. Gratis, sin instalar y sin cuenta.">

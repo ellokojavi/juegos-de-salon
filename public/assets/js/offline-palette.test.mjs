@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isGamePage } from './offline-ui.js';
 
-const css = readFileSync(new URL('../css/offline.css', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../css/base.css', import.meta.url), 'utf8');
 const block = css.slice(css.indexOf('html.offline-shell {'));
 const token = n => (block.match(new RegExp(`--${n}:\\s*(#[0-9a-f]{6})`, 'i')) || [])[1];
 const lum = hex => {
