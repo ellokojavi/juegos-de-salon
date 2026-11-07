@@ -32,6 +32,7 @@ import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLA
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+import { roomMessage } from '../assets/js/room-state.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -95,15 +96,10 @@ function playsResolved() {
 }
 
 function apply(msg) {
-  if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
+  const room = roomMessage(M, msg, { minPlayers: MIN_PLAYERS, onStart: m => { M.config = { ...M.config, seed: m.seed ?? M.config.seed }; } });
+  if (room === 'seen') return;
+  if (room) return null;
   switch (msg.t) {
-    case 'hello': M.names[msg.from] = msg.name; break;
-    case 'start': {
-      if (M.players || msg.from !== 'A') return;                     // solo el anfitrión y una vez
-      const order = (msg.order || []).filter(r => M.names[r]);
-      if (order.length >= MIN_PLAYERS) { M.players = order; M.config = { ...M.config, seed: msg.seed ?? M.config.seed }; }
-      break;
-    }
     case 'word': {
       if (!M.players || M.words[msg.to] || deckRoles().includes(msg.to)) return;
       if (msg.from !== setterOf(msg.to)) return;                     // la palabra la pone quien va antes
@@ -134,8 +130,8 @@ function apply(msg) {
       M.replies.push({ to: msg.to, n: msg.n, letter: normalize(msg.letter), pos });
       break;
     }
-    case 'reveal': if (!M.reveals[msg.to] && msg.from === setterOf(msg.to)) M.reveals[msg.to] = { word: msg.word, salt: msg.salt }; break;
-    case 'rematch': if (!M.rematch[msg.from]) M.rematch[msg.from] = msg.code || true; break;
+    // Before the start there is no chain yet: setterOf() needs the players
+    case 'reveal': if (M.players && !M.reveals[msg.to] && msg.from === setterOf(msg.to)) M.reveals[msg.to] = { word: msg.word, salt: msg.salt }; break;
     // El chat no es parte del estado de la partida: se dibuja y se olvida (canon C-15)
     case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }
