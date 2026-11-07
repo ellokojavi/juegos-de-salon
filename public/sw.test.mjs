@@ -42,7 +42,7 @@ function worker({ site }) {
     clients: { claim: async () => {}, matchAll: async () => [] },
     skipWaiting() {},
   };
-  vm.runInNewContext(SRC, { self, caches, fetch, Response, URL, Promise, setTimeout, JSON, console });
+  vm.runInNewContext(SRC, { self, Response, caches, fetch, Response, URL, Promise, setTimeout, JSON, console });
   const event = (type, data) => {
     let waited = null, responded = null;
     const e = { ...data, waitUntil: p => { waited = p; }, respondWith: p => { responded = p; } };
@@ -54,7 +54,9 @@ function worker({ site }) {
     async tell(msg) { await event('message', { data: msg }).waited; },
     async get(path, mode = 'no-cors') {
       const { responded } = event('fetch', { request: { url: new URL(path, ORIGIN + '/').href, method: 'GET', mode } });
-      return responded ? (await responded).text() : 'UNTOUCHED';
+      if (!responded) return 'UNTOUCHED';
+      const r = await responded;
+      return r.status === 302 ? `REDIRECT ${r.headers.get('location')}` : r.text();
     },
     ready: () => new Promise(r => setTimeout(r, 0)),
   };
@@ -92,7 +94,7 @@ w.net.up = false;
 await w.ready();
 assert.equal(await w.get('/zip/', 'navigate'), 'zip v2', 'offline: the last page seen');
 assert.equal(await w.get('/zip/?lang=en', 'navigate'), 'zip v2', 'the query does not matter for a page');
-assert.equal(await w.get('/cup/', 'navigate'), 'home v1', 'a page never cached: the home page');
+assert.equal(await w.get('/cup/', 'navigate'), 'REDIRECT https://juegosdesalon.cl/', 'a page never cached: a redirect to the home page, so its relative links resolve (it drew unstyled under /labs/)');
 
 // Firebase's own traffic is never touched; the SDK is kept once loaded
 assert.equal(await w.get('https://juegos-de-salon-default-rtdb.firebaseio.com/x.json'), 'UNTOUCHED');

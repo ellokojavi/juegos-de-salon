@@ -9,7 +9,7 @@
  * for this visitor (a message from instalable.js; with it off nothing is cached and every request
  * goes to the network exactly as before, D-221):
  * - Pages: network first, with a timeout; the cache only when the network fails, so an online
- *   player always gets the latest version. A page never cached falls back to the home page.
+ *   player always gets the latest version. A page never cached redirects to the home page.
  * - Files with `?h=` (every module and stylesheet, D-467): cache first. The hash is the content,
  *   so a cached one is never stale.
  * - Other files of the site (decks, pictures, music once played) and the Firebase SDK on gstatic:
@@ -90,8 +90,13 @@ async function page(req) {
     const r = await Promise.race([net.catch(() => null), timeout]);
     if (r) return r;
   } catch (_) { /* to the cache */ }
-  const cached = await fromCache(url.origin + url.pathname) || await fromCache(new URL('./', self.registration.scope).href);
-  return cached || net;   // nothing cached: wait for the network after all
+  const cached = await fromCache(url.origin + url.pathname);
+  if (cached) return cached;
+  // A page never stored: send the browser to the home page, so its address is the home page's too.
+  // Served under the old address, its relative links (assets/…) would miss and it drew unstyled
+  const home = new URL('./', self.registration.scope).href;
+  if (url.href !== home && await fromCache(home)) return Response.redirect(home, 302);
+  return net;   // not even the home page: wait for the network after all
 }
 
 async function keep(req) {
