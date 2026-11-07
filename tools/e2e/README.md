@@ -274,6 +274,43 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `home/popular.mjs` | What players see since D-369: the 🔥 Popular label on three cards (not La Copa nor "New"), the ✨ Nuevos / 🔥 Populares chips above the types in three languages at 320 px and their filtering, ⭐ Favoritos in that row and centered, the app's name on the floating menu and its tap, the space under the floating filters, and the menu still floating after a tap on a short result until the player scrolls up (D-371) |
 | `splash/languages.mjs` | Every splash campaign in all languages: each one as `?splash=<id>` against the Spanish one (D-199, D-355; a campaign that is not on needs a lab key, which localhost always counts as, D-395) |
 
+## Visual regression (#1249)
+
+[`visual.mjs`](visual.mjs) photographs each game's intro screen (`visualScreens()` in
+[`paths.mjs`](paths.mjs): every game with an `intro` path, 25 today) in Spanish at 390×812 and 1×, and
+compares it with its reference in [`visual/ref/<game>-intro.png`](visual/ref/). A screen whose pixels
+moved more than the tolerance is ❌, and its new image and a diff (the reference faded, what changed in
+red) are left in the output folder, the `screenshots-g<n>` artifact on GitHub.
+
+```bash
+node tools/e2e/visual.mjs /tmp/visual                   # compare every screen
+node tools/e2e/visual.mjs /tmp/visual --part hangman    # one game (its folder's last segment)
+node tools/e2e/visual.mjs /tmp/visual --update          # approve: rewrite the references
+```
+
+- **Approving is committing the reference.** `--update` rewrites only the screens that really changed,
+  so a PR that changes how a screen looks shows the new PNG in its diff, and whoever reviews it sees it.
+- **Deterministic:** `?test`, a clean `localStorage` in Spanish, a fixed clock (10 March 2026, Santiago)
+  that still ticks, a seeded `Math.random`, `prefers-reduced-motion` and every animation and
+  transition off, no caret or focus. Infinite decorations (bubbles) stay still where they start.
+- **Small:** the shot is kept and compared at half size (195×406, [`png.mjs`](png.mjs) writes it with
+  no npm): ~57 KB a screen, ~1.4 MB for all 25, far under the 5 MB a file of D-494. Halving also
+  averages out a glyph's antialiasing.
+- **Tolerance:** a pixel differs when a channel moves more than 48 of 255, and a screen fails when more
+  than 0.3 % of its pixels differ (about 240 of the 79,000). A moved button, a new colour or a changed
+  line of text goes past it; antialiasing and Chrome's small raster changes do not.
+- **In CI** it runs as one job per game (`PARTS` in `ci.mjs`, `visual.mjs:<folder>`), named after the
+  game's page, so a PR compares only the games it reaches (`affected.mjs`, D-329), and a change to
+  `base.css` compares them all. Each part takes ~8 s (`durations.json`).
+- **Whose pixels:** the site's fonts are its own (`assets/fonts/`), so text renders alike everywhere;
+  what can still differ between a laptop and GitHub's runner is the emoji font and Chrome's build.
+  The references are therefore the runner's: if `end-to-end` fails a screen nobody changed, run the
+  **Visual references** workflow (`.github/workflows/visual-refs.yml`, "Run workflow" on the PR's
+  branch, optionally one game) and it commits the runner's PNGs to that branch; a commit pushed with
+  the workflow's token starts no checks, so push again (or re-run the check) after it. A reference made
+  on your machine is fine when it matches the runner (the first ones were made in a Linux container
+  with the same fonts).
+
 ## All languages (D-199)
 
 Each game has its `<folder>/languages.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
