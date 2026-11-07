@@ -50,7 +50,15 @@ const css = c => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${c[3].toFixed(3)})`;
  * event looks like (sparks, rings, points); `tick(dt, g)` moves the effects. `measure()` returns the
  * stage's width over its height, the engine's `W`.
  */
-export function escena(canvas) {
+export function escena(canvas, opts = {}) {
+  // `loop: { scroll, seconds }` (the splash teaser, the owner's request): over that much scroll and
+  // time every layer moves by whole repeats of its pattern and every flicker runs whole cycles, so the
+  // last frame leads into the first with nothing to notice. The game passes nothing and is unchanged
+  const L = opts.loop;
+  /** How far a layer that moves at `k` times the course and repeats every `p` has moved. */
+  const mov = (s, k, p) => (L ? (s / L.scroll) * Math.round((L.scroll * k) / p) * p : s * k);
+  /** A flicker's speed, rounded to whole cycles over the loop. */
+  const hz = w => (L ? (2 * Math.PI * Math.round((w * L.seconds) / (2 * Math.PI))) / L.seconds : w);
   const ctx = canvas.getContext('2d');
   let CW = 0, CH = 0, dpr = 1, W = 1;
   let birdSprite, glowSprite, spikeSprite;
@@ -187,36 +195,36 @@ export function escena(canvas) {
       for (const [dx, dy, r] of [[-0.015, -0.012, 0.011], [0.018, 0.01, 0.008], [-0.006, 0.02, 0.006]]) { ctx.beginPath(); ctx.arc(W * 0.8 + dx, 0.14 + dy, r, 0, 7); ctx.fill(); }
     }
     if (P.stars > 0.01) for (const s of sky.stars) {
-      const x = ((s.x - g.scroll * 0.03) % 4 + 4) % 4; if (x > W + 0.1) continue;
-      ctx.globalAlpha = P.stars * (QUIET ? 0.5 : 0.35 + 0.35 * Math.sin(t * 2 + s.p));
+      const x = ((s.x - mov(g.scroll, 0.03, 4)) % 4 + 4) % 4; if (x > W + 0.1) continue;
+      ctx.globalAlpha = P.stars * (QUIET ? 0.5 : 0.35 + 0.35 * Math.sin(t * hz(2) + s.p));
       ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x, s.y, s.s, 0, 7); ctx.fill();
     }
     ctx.globalAlpha = 1;
     // Clouds drift slower than the city
     ctx.fillStyle = css(P.cloud);
     for (const c of sky.clouds) {
-      const x = ((c.x - g.scroll * 0.06) % 4 + 4) % 4 - 0.3; if (x > W + 0.1) continue;
+      const x = ((c.x - mov(g.scroll, 0.06, 4)) % 4 + 4) % 4 - 0.3; if (x > W + 0.1) continue;
       ctx.beginPath(); ctx.ellipse(x, c.y, c.w, c.w * 0.22, 0, 0, 7); ctx.ellipse(x - c.w * 0.35, c.y + 0.005, c.w * 0.45, c.w * 0.2, 0, 0, 7); ctx.ellipse(x + c.w * 0.2, c.y - c.w * 0.12, c.w * 0.4, c.w * 0.25, 0, 0, 7); ctx.fill();
     }
     // Far birds in small flocks, beating their wings, by day and in the afternoon
     if (P.bird[3] > 0.01) {
       ctx.strokeStyle = css(P.bird); ctx.lineWidth = 0.004; ctx.lineCap = 'round';
       for (const f of sky.flocks) {
-        const x0 = ((f.x - g.scroll * 0.09 - t * 0.03) % 4 + 4) % 4 - 0.2; if (x0 > W + 0.1) continue;
+        const x0 = ((f.x - mov(g.scroll, 0.09, 4) - (L ? 0 : t * 0.03)) % 4 + 4) % 4 - 0.2; if (x0 > W + 0.1) continue;
         for (let j = 0; j < f.n; j++) {
-          const x = x0 + j * 0.035, y = f.y + (j % 2) * 0.02 + Math.sin(t * 0.8 + f.p) * 0.01, s = 0.011, up = Math.sin(t * 7 + f.p + j) * 0.006;
+          const x = x0 + j * 0.035, y = f.y + (j % 2) * 0.02 + Math.sin(t * hz(0.8) + f.p) * 0.01, s = 0.011, up = Math.sin(t * hz(7) + f.p + j) * 0.006;
           ctx.beginPath(); ctx.moveTo(x - s, y - up); ctx.quadraticCurveTo(x - s * 0.4, y - s * 0.5, x, y); ctx.quadraticCurveTo(x + s * 0.4, y - s * 0.5, x + s, y - up); ctx.stroke();
         }
       }
     }
     const strip = (list, k, fill, winC, masts) => {
-      const off = (g.scroll * k) % 4;
+      const off = mov(g.scroll, k, 4) % 4;
       for (const rep of [0, 4]) for (const b of list) {
         const x = b.x - off + rep; if (x > W || x + b.w < 0) continue;
         ctx.fillStyle = fill; ctx.fillRect(x, GROUND - b.h, b.w, b.h + 0.01);
         if (masts && b.mast) {
           ctx.fillRect(x + b.w / 2 - 0.002, GROUND - b.h - 0.05, 0.004, 0.05);
-          ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 3 + b.p); ctx.fillStyle = '#ff2e88';
+          ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * hz(3) + b.p); ctx.fillStyle = '#ff2e88';
           ctx.beginPath(); ctx.arc(x + b.w / 2, GROUND - b.h - 0.05, 0.005, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
         }
         if (winC && b.wins.length) { ctx.fillStyle = winC; const top = GROUND - b.h; for (let i = 0; i < b.wins.length; i += 2) ctx.fillRect(x + b.wins[i], top + b.wins[i + 1], 0.012, 0.014); }
@@ -225,7 +233,7 @@ export function escena(canvas) {
     strip(sky.far, 0.12, css(P.far), css(P.farWin), true);
     strip(sky.near, 0.3, css(P.near), P.win[3] > 0.01 ? css(P.win) : null, false);
     // Street lamps along the ground, lit from the afternoon on
-    const lo = (g.scroll * 0.6) % 0.4;
+    const lo = mov(g.scroll, 0.6, 0.4) % 0.4;
     for (let x = -lo; x < W + 0.1; x += 0.4) {
       ctx.fillStyle = 'rgba(21,7,38,0.9)'; ctx.fillRect(x, GROUND - 0.07, 0.005, 0.07); ctx.fillRect(x - 0.004, GROUND - 0.072, 0.02, 0.005);
       if (P.lamps > 0.01) {
@@ -253,16 +261,16 @@ export function escena(canvas) {
     const sx = W * 0.72;
     for (let r = 0; r < 7; r++) {
       const y = top + 0.008 + r * 0.011, half = 0.02 + r * 0.008;
-      ctx.globalAlpha = A * w[1] * (0.55 - r * 0.06) * (0.75 + 0.25 * Math.sin(t * 3 + r * 1.7));
+      ctx.globalAlpha = A * w[1] * (0.55 - r * 0.06) * (0.75 + 0.25 * Math.sin(t * hz(3) + r * 1.7));
       ctx.fillStyle = r % 2 ? '#ffd23f' : '#ff9a4a';
-      ctx.fillRect(sx - half + Math.sin(t * 2 + r) * 0.006, y, half * 2, 0.004);
+      ctx.fillRect(sx - half + Math.sin(t * hz(2) + r) * 0.006, y, half * 2, 0.004);
     }
     // Waves: short light crests in three rows, the nearer ones faster
     ctx.fillStyle = 'rgba(255,255,255,1)';
     for (let r = 0; r < 3; r++) {
-      const y = top + 0.018 + r * 0.024, gap = 0.09 + r * 0.03, k = 0.5 + r * 0.35, off = ((g.scroll * k) % gap + gap) % gap;
+      const y = top + 0.018 + r * 0.024, gap = 0.09 + r * 0.03, k = 0.5 + r * 0.35, off = (mov(g.scroll, k, gap) % gap + gap) % gap;
       ctx.globalAlpha = A * (0.16 + r * 0.06);
-      for (let x = -off + (r % 2) * gap / 2; x < W; x += gap) ctx.fillRect(x, y + Math.sin(t * 2 + x * 9) * 0.002, 0.03 + r * 0.008, 0.0035);
+      for (let x = -off + (r % 2) * gap / 2; x < W; x += gap) ctx.fillRect(x, y + Math.sin(t * hz(2) + x * 9) * 0.002, 0.03 + r * 0.008, 0.0035);
     }
     ctx.globalAlpha = A;
   }
@@ -279,7 +287,7 @@ export function escena(canvas) {
     ctx.fillStyle = sw; ctx.fillRect(0, Y, W, side);
     ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fillRect(0, Y, W, 0.002);
     ctx.fillStyle = 'rgba(14,5,28,0.35)';
-    const to = g.scroll % 0.06; for (let x = -to; x < W; x += 0.06) ctx.fillRect(x, Y, 0.0025, side);
+    const to = mov(g.scroll, 1, 0.06) % 0.06; for (let x = -to; x < W; x += 0.06) ctx.fillRect(x, Y, 0.0025, side);
     // The curb: a neon edge, its glow a wide see-through line
     ctx.fillStyle = 'rgba(255,46,136,0.22)'; ctx.fillRect(0, Y + side - 0.004, W, curb + 0.008);
     ctx.fillStyle = '#ff2e88'; ctx.fillRect(0, Y + side, W, curb * 0.6);
@@ -289,11 +297,11 @@ export function escena(canvas) {
     as.addColorStop(0, css(mix([52, 34, 84, 1], [22, 9, 40, 1], dusk))); as.addColorStop(1, css(mix([30, 18, 52, 1], [10, 4, 20, 1], dusk)));
     ctx.fillStyle = as; ctx.fillRect(0, road, W, 1 - road);
     ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    const fo = (g.scroll % 1 + 1) % 1;
+    const fo = (mov(g.scroll, 1, 1) % 1 + 1) % 1;
     for (const f of sky.flecks) { const x = ((f.x - fo) % 1 + 1) % 1 * (W + 0.1) - 0.05; ctx.fillRect(x, road + f.y * (1 - road), f.s, f.s * 0.6); }
     // The lamps' pools of light on the road, from the afternoon on
     if (dusk > 0.01) {
-      const lo = (g.scroll * 0.6) % 0.4;
+      const lo = mov(g.scroll, 0.6, 0.4) % 0.4;
       for (let x = -lo; x < W + 0.1; x += 0.4) {
         ctx.globalAlpha = dusk * 0.14; ctx.fillStyle = '#ffd23f';
         ctx.beginPath(); ctx.ellipse(x + 0.014, road + 0.012, 0.06, 0.008, 0, 0, 7); ctx.fill();
@@ -301,7 +309,7 @@ export function escena(canvas) {
       ctx.globalAlpha = 1;
     }
     // The lane: dashes with a soft glow, at the speed of the course
-    const ly = road + (1 - road) * 0.5, off = g.scroll % 0.16;
+    const ly = road + (1 - road) * 0.5, off = mov(g.scroll, 1, 0.16) % 0.16;
     for (let x = -off; x < W; x += 0.16) {
       ctx.fillStyle = 'rgba(46,230,214,0.18)'; ctx.fillRect(x - 0.003, ly - 0.004, 0.076, 0.014);
       ctx.fillStyle = 'rgba(46,230,214,0.7)'; ctx.fillRect(x, ly, 0.07, 0.006);

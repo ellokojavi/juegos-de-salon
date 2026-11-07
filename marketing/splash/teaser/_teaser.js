@@ -40,7 +40,6 @@ export function teaser({ seconds = 8, fps = 30, setup, background, draw, loop = 
   const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
   const o = salida.getContext('2d');
   const frames = fps * seconds;
-  const primeros = [];
   const frame = i => {
     const t = i / fps;
     reloj = t * 1000;
@@ -48,14 +47,8 @@ export function teaser({ seconds = 8, fps = 30, setup, background, draw, loop = 
     draw(state, t);
     o.drawImage(fondo, 0, 0);
     o.drawImage(juego, 0, 0, W, H);
-    // `loop` (seconds): no black; the last seconds dissolve into the first frames, so the clip never visibly restarts
-    if (loop) {
-      const n = Math.round(loop * fps);
-      if (i < n) { const c = Object.assign(document.createElement('canvas'), { width: W, height: H }); c.getContext('2d').drawImage(salida, 0, 0); primeros[i] = c; }
-      const j = i - (frames - n);
-      if (j >= 0 && primeros[j]) { o.globalAlpha = (j + 1) / n; o.drawImage(primeros[j], 0, 0); o.globalAlpha = 1; }
-      return salida;
-    }
+    // `loop`: a teaser whose last frame leads into its first (Aletazo's): no fade to black
+    if (loop) return salida;
     const f = Math.max(0, 1 - t / 0.4, 1 - (seconds - t) / 0.5);
     if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
     return salida;

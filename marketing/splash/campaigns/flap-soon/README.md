@@ -6,7 +6,7 @@ calmly over the city, no hoops and no walls, and a line under the clip says wher
 | | |
 |---|---|
 | Texts | title "Alguien nuevo vuela sobre la ciudad / Someone new is flying over the city / Alguém novo voa sobre a cidade"; under the clip "Próximamente en Juegos de Salón / Coming soon at Parlor Games / Em breve no Jogos de Salão" (the campaign's new `foot`) |
-| Item | `public/assets/splash/flap-teaser.mp4` (512×320, a 12 s endless loop at 30 fps: day, afternoon, night and day again, its last 0.6 s dissolving into its start), its first frame `flap-teaser-start.png` as the poster and its still `flap-teaser.png`, made by [`teaser.mjs`](../../teaser.mjs) from [`teaser/flap.html`](../../teaser/flap.html) |
+| Item | `public/assets/splash/flap-teaser.mp4` (512×320, a 24 s seamless loop at 30 fps: day, afternoon, night and day again; the scene's loop mode moves every layer by whole repeats, so the last frame leads into the first), its first frame `flap-teaser-start.png` as the poster and its still `flap-teaser.png`, made by [`teaser.mjs`](../../teaser.mjs) from [`teaser/flap.html`](../../teaser/flap.html) |
 | The scene | the game's own scene (`public/labs/flap/scene.js`) in the countdown's glide: the bird floats over the city by day, over the sea in the afternoon, under the moon at night and back to day, with no cut (the owner's request). No gates, spikes, taps or score |
 | On | the weekend of 2026-11-07/08 (`ACTIVE`, until 2026-11-08); the panel's 📣 Campaigns decides if it has been saved |
 
