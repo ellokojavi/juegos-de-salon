@@ -35,6 +35,7 @@ public/<carpeta>/
   engine.js       Pure rules, no DOM or global state. Testable with node
   engine.test.mjs Engine tests (node public/<carpeta>/engine.test.mjs)
   game.js         State machine and render. The only thing that touches the DOM
+  game.json       Its manifest: what the catalog, the conformance suite and the boundary read (#1249)
 ```
 
 - **The id is not the folder** (D-192): the `id` is data —rooms, the panel and
@@ -58,7 +59,7 @@ public/<carpeta>/
   time it opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that
   removes the gate moves its HTML for good. The owner sends a feature live from its own card with **🚀 Publicar para todos**,
   which a headless session on the Mac mini turns into a PR with auto-merge (D-480).
-- The game is registered in `public/assets/js/games.js` with `id`, `emoji`, `name` and `tagline` per language, `players`, `duration`, `path` and `available`. With a room, also `jugadas`: the message types a person makes, which is what the panel counts as plays (D-138).
+- The game describes itself in its `game.json` (validated by `game-manifest.js`; `node tools/generators/new-game.mjs <id>` writes it with the rest of a lab game) and `games.js` imports it through `node tools/generators/manifests.mjs`. The catalog entry carries `id`, `emoji`, `name` and `tagline` per language, `players`, `duration`, `path` and `available`. With a room, also `jugadas`: the message types a person makes, which is what the panel counts as plays (D-138).
 - The `<head>` of every app page carries the manifest, the icon and the iPhone name
   (`apple-touch-icon` and `apple-mobile-web-app-title`), the script that picks the language's manifest
   right after the `<link rel="manifest">`, the watchdog (`vigia.js`) before the stylesheets
