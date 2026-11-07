@@ -75,11 +75,26 @@ const barajar = xs => { const a = xs.slice(); for (let i = a.length - 1; i > 0; 
  * El botón. `candidatos()` devuelve los juegos de la portada (all of them, whatever filter is on,
  * D-374); `alAzar` leaves out what cannot come out. `base` es lo que se antepone a `g.path` para abrirlo.
  */
+/** The games of `pool` that play offline: offline-capable and with their page on this phone. */
+export async function guardados(pool, base = '', { cache = globalThis.caches } = {}) {
+  const { offlineOk } = await import('./games.js');
+  const ok = pool.filter(offlineOk);
+  if (!cache?.match) return ok;
+  const hay = await Promise.all(ok.map(g => cache.match(new URL(base + g.path, location.href).href, { ignoreSearch: true }).then(Boolean, () => false)));
+  const kept = ok.filter((_, i) => hay[i]);
+  return kept.length ? kept : ok;
+}
+
 export function botonAzar({ candidatos, lang, base = '' }) {
   const T = TEXTOS[lang] || TEXTOS.es;
   return el('button', {
     type: 'button', class: 'btn-azar', 'aria-label': T.aria,
-    onClick: () => { const pool = candidatos().filter(alAzar); if (pool.length) tirar(pool, { lang, base, T }); },
+    onClick: async () => {
+      let pool = candidatos().filter(alAzar);
+      // Offline mode (D-538): only games this phone keeps and can play alone, so the dice never lands on a page that cannot open
+      if (document.documentElement.classList.contains('offline')) pool = await guardados(pool, base);
+      if (pool.length) tirar(pool, { lang, base, T });
+    },
   }, el('span', { class: 'btn-azar-dado', 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.boton));
 }
 

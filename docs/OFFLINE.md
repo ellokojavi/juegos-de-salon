@@ -120,9 +120,9 @@ PR that changes what is kept on the phone.
    with its toast. The queue does not try to upload while offline mode is on. The way back (flag off
    forgets the stored files) is `sw.test.mjs`'s.
 8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `offline.css`, set by
-   `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers keep their
-   colours: a game's page cannot tell its cover from play in general, so the whole game page is left as
-   is. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
+   `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers take it
+   too (the owner, 2026-11-07): `#screen-intro`, `#screen-setup` or the minigames' `body.antesala`
+   (`COVER` in `offline-ui.js`); the play screens keep their colours. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
    players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
    their colours. A second set of the design tokens under `html.offline`. Built last, after everything else.
@@ -139,6 +139,8 @@ PR that changes what is kept on the phone.
      Offline wins over a seasonal template's `--fondo`.
    - **Readable**: text and the dimmed "📡 Con señal" tags on the new background pass WCAG AA contrast
      (4.5:1), checked by a test.
+   - **The random game offline** (the owner, 2026-11-07): the 🎲 picks only games this phone keeps and
+     can play (`guardados` in `azar.js`), so it never lands on a page that cannot open.
 9. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
 
 ## Risks

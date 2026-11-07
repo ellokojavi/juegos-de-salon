@@ -730,7 +730,7 @@ async function crear() {
   J.refrescarNombre().catch(() => {});
   // Games the network did not let save (`guardarPendiente`): sent now, and again when the signal is back
   // Not while offline mode says there is no signal (D-538): the try would only fail; it goes on its way back
-  const subir = () => { if (globalThis.document?.documentElement?.dataset.connection !== 'offline') J.subirPendientes().catch(() => {}); };
+  const subir = () => { if (globalThis.navigator?.onLine !== false && globalThis.document?.documentElement?.dataset.connection !== 'offline') J.subirPendientes().catch(() => {}); };
   subir();
   globalThis.addEventListener?.('online', subir);
   globalThis.addEventListener?.('connection', e => { if (e.detail?.mode === 'online') subir(); });
