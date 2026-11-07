@@ -562,7 +562,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-516](decisions/D-516.md) | A change to a module runs only the pages that use what it changed | current |
 | [D-517](decisions/D-517.md) | A game can launch by flag: Shinobi and Babel wait, finished, for the owner's 🚀 | amended by D-525 |
 | [D-518](decisions/D-518.md) | CI failures are logged and promoted to mechanisms automatically | current |
-| [D-519](decisions/D-519.md) | Merge lanes by blast radius | amended by D-531 |
+| [D-519](decisions/D-519.md) | Merge lanes by blast radius | amended by D-531, D-540 |
 | [D-520](decisions/D-520.md) | Measurable usability rules are tests; the usability agent judges the rest | current |
 | [D-521](decisions/D-521.md) | La Copa: the admin chooses its length (3 to 14 days) and its time zone | current |
 | [D-522](decisions/D-522.md) | Sessions always open the PR and drive it to merge, without asking | current |
