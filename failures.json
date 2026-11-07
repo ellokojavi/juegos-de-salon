@@ -1269,7 +1269,11 @@
       "error": ".github/pull_request_template.md  (.github/**: workflows: secrets, permissions, publishing)\nWarning: Detected unsettled top-level await at file:///home/runner/work/juegos-de-salon/juegos-de-salon/tools/agents/lanes.mjs:176\nif (cmd === 'ci') await ci();",
       "signature": "4efa47c011",
       "date": "2026-11-07T22:08:29.796Z",
-      "fix": null,
+      "fix": {
+        "commit": "4c666516f20cded6645cae8486cf5a5b1ced92ab",
+        "date": "2026-11-07T22:11:00.310Z",
+        "stat": "3 file(s) +16 −13: tools/agents/glob.mjs, tools/agents/lanes.mjs, tools/agents/rules.mjs"
+      },
       "flaky": false
     },
     {
