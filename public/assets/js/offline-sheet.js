@@ -19,7 +19,7 @@ export const TEXTS = {
   es: {
     title: '📴 Estás sin conexión',
     lines: [
-      '🎲 Puedes seguir jugando los juegos de este celular.',
+      '🎲 Puedes seguir jugando los juegos que se juegan en un solo celular.',
       '📡 Las salas con varios celulares, La Copa y los rankings vuelven con la señal.',
       '💾 Tus puntajes quedan guardados aquí y se suben solos al volver la señal.',
     ],
@@ -29,7 +29,7 @@ export const TEXTS = {
   en: {
     title: '📴 You are offline',
     lines: [
-      '🎲 You can keep playing this phone\'s games.',
+      '🎲 You can keep playing the games that need only one phone.',
       '📡 Rooms with several phones, La Copa and the leaderboards come back with the signal.',
       '💾 Your scores are saved here and upload by themselves when the signal is back.',
     ],
@@ -39,7 +39,7 @@ export const TEXTS = {
   pt: {
     title: '📴 Você está sem conexão',
     lines: [
-      '🎲 Você pode continuar jogando os jogos deste celular.',
+      '🎲 Você pode continuar jogando os jogos que se jogam em um só celular.',
       '📡 As salas com vários celulares, La Copa e os rankings voltam com o sinal.',
       '💾 Suas pontuações ficam salvas aqui e são enviadas sozinhas quando o sinal voltar.',
     ],

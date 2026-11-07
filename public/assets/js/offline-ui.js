@@ -19,7 +19,7 @@ import { loadCss } from './load-css.js';
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
 const ROOT = new URL('../../', import.meta.url);
 
-/** The site's paths a phone keeps offline: the home page and each offline-capable game's page. */
+/** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
 export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...[...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
 
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
