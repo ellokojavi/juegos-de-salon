@@ -24,6 +24,17 @@
    ]
   },
   {
+   "id": "outside-lane",
+   "title": "A PR from a fork or by anyone but the owner is red, never auto-merged",
+   "doc": "docs/LANES.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/agents/lanes.test.mjs"
+   ]
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",

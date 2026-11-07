@@ -1,7 +1,7 @@
 // Merge lanes by blast radius (docs/LANES.md, D-519): the glob table and the PR lane.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { laneOf, laneOfPr, globRe, decision, report, CONFIG, ORDER, approvalBlock, withApproval, APPROVAL_START } from './lanes.mjs';
+import { laneOf, laneOfPr, outsideReason, INSIDERS, globRe, decision, report, CONFIG, ORDER, approvalBlock, withApproval, APPROVAL_START } from './lanes.mjs';
 import { invalidAction, closesWhenDone, plan, OWNER } from './approve.mjs';
 import { decisionsBody } from './processes.mjs';
 
@@ -96,3 +96,20 @@ const closing = approvalBlock(decisionsBody({ decisions: [{ question: 'Q', yes: 
 assert.match(plan(prEvent(closing, tick(closing))).warnings[0], /not allowed in a PR/);
 
 console.log('lanes ok');
+
+// An outside PR (#1249 step 4): from a fork or not by the owner, it is red whatever its files
+const repo = { full_name: 'ellokojavi/juegos-de-salon' };
+const inside = { user: { login: 'ellokojavi' }, head: { repo }, base: { repo } };
+assert.equal(outsideReason(inside), null);
+assert.equal(laneOfPr(['docs/LANES.md'], { outside: outsideReason(inside) }).lane, 'green');
+const fork = { user: { login: 'ellokojavi' }, head: { repo: { full_name: 'someone/juegos-de-salon' } }, base: { repo } };
+assert.match(outsideReason(fork), /fork/);
+const stranger = { user: { login: 'someone' }, head: { repo }, base: { repo } };
+assert.match(outsideReason(stranger), /not the owner/);
+assert.match(outsideReason({ user: { login: 'someone' }, head: { repo: null }, base: { repo } }), /fork/);
+for (const pr of [fork, stranger]) {
+  const r = laneOfPr(['docs/LANES.md', 'changelog/x.md'], { outside: outsideReason(pr) });
+  assert.equal(r.lane, 'red', 'an outside PR with only green files is still red');
+  assert.match(report(r), /outside PR/);
+}
+assert.ok(INSIDERS.includes(OWNER), 'the owner is an insider');
