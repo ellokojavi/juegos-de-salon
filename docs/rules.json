@@ -80,16 +80,19 @@
    "doc": "docs/CANONS.md",
    "form": [
     "check",
+    "ratchet",
     "judged"
    ],
    "enforcedBy": [
     "public/assets/js/games.test.mjs",
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/manifest.test.mjs",
-    "public/labs/bodega.test.mjs"
+    "public/labs/bodega.test.mjs",
+    "tools/agents/structure.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "reusing shared modules before writing one is a design call; the file layout becomes a check in #1249 step 12"
+   "why": "reusing shared modules before writing one is a design call; the file layout is checked by structure.test.mjs (engine and its tests by games.test.mjs)",
+   "debt": "docs/structure-debt.json"
   },
   {
    "id": "C-3",

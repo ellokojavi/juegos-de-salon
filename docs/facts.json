@@ -1464,6 +1464,7 @@
     "tools/agents/repo-weight.test.mjs",
     "tools/agents/round-watch.test.mjs",
     "tools/agents/rules.test.mjs",
+    "tools/agents/structure.test.mjs",
     "tools/agents/tokens-rgb.test.mjs",
     "tools/agents/usability-lint.test.mjs",
     "tools/agents/wait-pr.test.mjs",

@@ -600,6 +600,7 @@ node tools/agents/processes.test.mjs
 node tools/agents/repo-weight.test.mjs
 node tools/agents/round-watch.test.mjs
 node tools/agents/rules.test.mjs
+node tools/agents/structure.test.mjs
 node tools/agents/tokens-rgb.test.mjs
 node tools/agents/usability-lint.test.mjs
 node tools/agents/wait-pr.test.mjs
