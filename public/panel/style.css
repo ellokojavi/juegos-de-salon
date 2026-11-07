@@ -347,7 +347,7 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-dia input::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
 .campana-dia-x { position: absolute; top: 50%; right: 4px; transform: translateY(-50%); z-index: 1; width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--muted); font: inherit; cursor: pointer; }
 .campana-dia-x:hover, .campana-dia-x:focus-visible { background: var(--glass); color: var(--ink); outline: none; }
-.campana-segmento { display: grid; grid-template-columns: repeat(3, 1fr); padding: var(--s-4); border-radius: var(--r-14); background: var(--pn-fila); }
+.campana-segmento { display: grid; grid-template-columns: repeat(4, 1fr); padding: var(--s-4); border-radius: var(--r-14); background: var(--pn-fila); }
 .campana-segmento button { min-height: 44px; border: 0; border-radius: var(--r-12); background: none; color: var(--muted); font: inherit; font-weight: 800; font-size: var(--fs-85); cursor: pointer; }
 .campana-segmento button[aria-pressed="true"] { background: var(--ink); color: var(--bg1); }
 .campana-segmento button:focus-visible { outline: 2px solid var(--cyan); }
