@@ -1109,6 +1109,19 @@
         "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42391003458,
+      "check": "tests",
+      "pr": 1265,
+      "branch": "offline-1-inventory",
+      "commit": "70fda77d924f584bcda83647d9fc0a55f47d2330",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/offline.test.mjs",
+      "signature": "0f2865442e",
+      "date": "2026-11-07T16:25:04.000Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
