@@ -137,10 +137,15 @@
    "title": "Game memory, in every mode",
    "doc": "docs/CANONS.md",
    "form": [
+    "ratchet",
     "judged"
    ],
+   "enforcedBy": [
+    "tools/agents/memory.test.mjs"
+   ],
+   "debt": "docs/memory-debt.json",
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "no test checks resume yet; it becomes a check in #1249 step 12"
+   "why": "memory.test.mjs measures that each available game uses createSessionStore; saving after every action, the resume panel and the one-phone cover need a reader"
   },
   {
    "id": "C-7",

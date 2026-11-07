@@ -1,0 +1,9 @@
+{
+  "_about": "Available games of GAMES that do not save their game with createSessionStore (C-6; tools/agents/memory.mjs, #1249 step 12), each { id, reason }. An entry whose game now uses it fails memory.test.mjs as stale: remove it.",
+  "entries": [
+    {
+      "id": "copa",
+      "reason": "La Copa is a tournament of days, not a game in progress: its state lives on the server (the cup, its days and each player's results), so there is nothing on the phone to resume; each day's game is a Cup game with its own rules"
+    }
+  ]
+}

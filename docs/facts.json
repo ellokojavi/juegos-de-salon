@@ -1458,6 +1458,7 @@
     "tools/agents/labs-key.test.mjs",
     "tools/agents/lanes.test.mjs",
     "tools/agents/marketing.test.mjs",
+    "tools/agents/memory.test.mjs",
     "tools/agents/pending.test.mjs",
     "tools/agents/popularity.test.mjs",
     "tools/agents/processes.test.mjs",

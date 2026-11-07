@@ -594,6 +594,7 @@ node tools/agents/lab-ready.test.mjs
 node tools/agents/labs-key.test.mjs
 node tools/agents/lanes.test.mjs
 node tools/agents/marketing.test.mjs
+node tools/agents/memory.test.mjs
 node tools/agents/pending.test.mjs
 node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
