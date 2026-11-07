@@ -498,6 +498,7 @@ node public/assets/js/azar.test.mjs
 node public/assets/js/back-guard.test.mjs
 node public/assets/js/buzon.test.mjs
 node public/assets/js/compartir.test.mjs
+node public/assets/js/conformance.test.mjs
 node public/assets/js/connection.test.mjs
 node public/assets/js/controls.test.mjs
 node public/assets/js/cup-today.test.mjs
@@ -634,6 +635,8 @@ node tools/firebase/stats-retention.test.mjs
 node tools/firebase/uad-index.test.mjs
 node tools/firebase/uad-points-backfill.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
+node tools/generators/manifests.test.mjs
+node tools/generators/new-game.test.mjs
 node tools/jobs/claude-task.test.mjs
 node tools/jobs/inbox-watch.test.mjs
 node tools/jobs/jobs.test.mjs
