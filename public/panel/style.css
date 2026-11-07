@@ -352,8 +352,9 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-segmento button[aria-pressed="true"] { background: var(--ink); color: var(--bg1); }
 .campana-segmento button:focus-visible { outline: 2px solid var(--cyan); }
 .campana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--s-8); }
-.campana-orden { display: inline-flex; align-items: center; gap: var(--s-2); }
-.campana-pos { min-width: 52px; text-align: center; font-size: var(--fs-75); font-weight: 800; color: var(--muted); }
+.campana-orden { display: inline-flex; flex-direction: column; align-items: center; flex: none; }
+.campana-orden .icono-btn { width: 36px; height: 30px; border-radius: var(--r-8); font-size: var(--fs-100); }
+.campana-pos { min-width: 0; text-align: center; font-size: var(--fs-75); font-weight: 800; color: var(--muted); }
 .icono-btn { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); font: inherit; font-size: var(--fs-110); font-weight: 900; cursor: pointer; }
 .icono-btn:disabled { opacity: 0.25; cursor: default; }
 .icono-btn:not(:disabled):hover, .icono-btn:focus-visible { background: var(--glass); outline: none; }

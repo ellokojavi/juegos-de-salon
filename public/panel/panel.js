@@ -1854,6 +1854,11 @@ function vistaSplash(today) {
     const base = s.from && s.from > today ? s.from : today;
     return el('article', { class: `campana campana--con-vista campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
       el('header', { class: 'campana-cabeza' },
+        // Its place in the queue, left of the emoji, compact (the owner's request)
+        el('span', { class: 'campana-orden', role: 'group', 'aria-label': `Order: ${i + 1} of ${rows.length}` },
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
+          el('span', { class: 'campana-pos', title: `${i + 1} of ${rows.length}` }, `${i + 1}/${rows.length}`),
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('div', { class: 'campana-nombre' },
           el('span', { class: 'campana-titulo-fila' },
@@ -1875,10 +1880,6 @@ function vistaSplash(today) {
           return el('button', { type: 'button', 'aria-pressed': s.until === fin ? 'true' : 'false', onClick: () => cambiar(s.id, { on: true, until: fin }) }, t);
         })),
       el('footer', { class: 'campana-pie' },
-        el('span', { class: 'campana-orden' },
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
-          el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-vistas' },
           el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
         el('button', { type: 'button', class: 'campana-archivar', 'aria-label': `Archive ${nombre}`,
