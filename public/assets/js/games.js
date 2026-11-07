@@ -24,6 +24,7 @@ import battleshipManifest from './manifests/battleship.js';
 import generalaManifest from './manifests/generala.js';
 import julepManifest from './manifests/labs/julep.js';
 import fourthKingManifest from './manifests/labs/fourth-king.js';
+import cupManifest from './manifests/cup.js';
 
 /**
  * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
@@ -39,33 +40,15 @@ export function lanzado(id, { flags = cachedFlags(), store = globalThis.localSto
 }
 
 export const GAMES = [
-  {
-    id: 'copa',
-    emoji: '🏆',
-    name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa' },
-    tagline: { es: 'Un torneo de una semana entre amigos, con un juego distinto cada día.', en: 'A week-long tournament among friends, with a different game every day.', pt: 'Um torneio de uma semana entre amigos, com um jogo diferente por dia.' },
-    keywords: {
-      es: ['torneo', 'copa', 'semana', 'amigos', 'competencia', 'campeonato', 'grupo', 'diario', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
-      en: ['tournament', 'cup', 'week', 'friends', 'competition', 'championship', 'group', 'daily', 'ranking', 'final', '3 days', '7 days', 'global', 'chile', 'brazil'],
-      pt: ['torneio', 'copa', 'semana', 'amigos', 'competição', 'campeonato', 'grupo', 'diário', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
-    },
-    players: '2–10',
-    duration: '7',
-    // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
-    durationUnit: { es: 'días', en: 'days', pt: 'dias' },
-    // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
-    formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
-    // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
-    torneo: true,
-    // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
-    offline: false,
-    // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
-    tipos: ['words', 'logic', 'trivia'],
-    path: 'cup/',
-    // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
-    // días, la práctica con semilla y las demos).
-    available: true,
-  },
+  // copa: from public/cup/game.json
+  // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
+  // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
+  // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
+  // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
+  // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
+  // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
+  // días, la práctica con semilla y las demos).
+  catalogEntry(cupManifest),
   // linea-de-tiempo: from public/timeline/game.json
   // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
   catalogEntry(timelineManifest),

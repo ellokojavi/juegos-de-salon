@@ -532,6 +532,8 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   With `?labs` it goes to the lab. It carries a real `href`, so a long press or a new tab lands right
   too. Behind flag `cup-back-board`, published for everyone on 2026-10-30.
 
+- **C-6 · No session.js store (#1249 step 14).** A cup's state lives on the server (`torneos/{code}` in Firebase), not in a `session.js` store: each day resumes from its own saved moves and the server's start, and the intro has no resume panel because the board is the cup's home. Recorded in `public/cup/game.json`.
+
 ## In the design system (D-533, phase 7, #1196)
 
 La Copa's stylesheet is dissolved into the shared one PR by PR, in the order of
@@ -605,3 +607,9 @@ their meaning.
   corners 8 px (were 5 and 6) and 24 px apart (were 22), Tango's = and ≠ 0.75 rem (were 0.7), the
   podium's first step 28 px above (was 26), a few 3 px paddings and margins 4 px.
 
+
+## Manifest (`game.json`, #1249 step 14)
+
+Its catalogue entry (a tournament: `torneo`, `durationUnit`, `formato`), its mode, Firebase paths and the exception above live in
+`public/cup/game.json`, moved out of games.js by `node tools/generators/manifests.mjs migrate`. Edit it there
+and run `node tools/generators/manifests.mjs`; games.js reads the generated module.

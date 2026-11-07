@@ -38,6 +38,7 @@ for (const k of ['players', 'languages', 'extra', 'memory', 'emoji']) assert.ok(
 assert.ok(validateManifest({ ...good, modes: [...good.modes, 'cpu'] }).some(p => p.startsWith('ai:')), 'cpu without ai');
 assert.ok(validateManifest({ ...good, firebasePaths: [] }).some(p => p.startsWith('firebasePaths:')), 'online without a room path');
 assert.ok(validateManifest({ ...good, canonExceptions: [{ canon: 'C8', why: '' }] }).some(p => p.startsWith('canonExceptions:')));
+assert.ok(validateManifest({ ...good, formato: { es: 'a', en: 'a', pt: 'a' } }).some(p => p.startsWith('formato:')), 'formato only on a tournament');
 assert.ok(Object.values(MANIFEST_SCHEMA).every(s => typeof s.check === 'function' && s.about), 'every field documented');
 
 console.log(`game-manifest: ${folders.length} manifests ok`);

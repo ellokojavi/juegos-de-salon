@@ -27,7 +27,8 @@ assert.equal(failures, 0, `${failures} game(s) fail conformance; fix them, or re
 assert.deepEqual([...PARTS['conformance.mjs']].sort(), folders.map(f => f.split('/').pop()).sort(), 'tools/e2e/ci.mjs PARTS covers every manifest');
 
 // The debt: a game in GAMES without a game.json is listed, and only these may ever be (the ratchet)
-const FROZEN = ['copa', 'linea-de-tiempo', 'toque-y-fama', 'generala', 'batalla-naval', 'julepe', 'cuarto-rey'];
+// Paid off in #1249 step 14: no game may be debt any more
+const FROZEN = [];
 const debt = JSON.parse(readFileSync(new URL('../../../docs/manifest-debt.json', import.meta.url), 'utf8')).games;
 for (const g of GAMES) {
   if (byId[g.id]) continue;

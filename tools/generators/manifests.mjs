@@ -34,7 +34,7 @@ export const generatedPath = folder => join(PUBLIC, 'assets', 'js', 'manifests',
 
 const GAMES_JS = join(PUBLIC, 'assets', 'js', 'games.js');
 /** The order a game.json lists its fields in. */
-const ORDER = ['id', 'path', 'emoji', 'name', 'tagline', 'keywords', 'players', 'duration', 'tipos', 'jugadas', 'unoAlDia', 'reuses', 'offline', 'nuevoDesde', 'slug', 'labs', 'available', 'modes', 'ai', 'memory', 'languages', 'firebasePaths', 'canonExceptions'];
+const ORDER = ['id', 'path', 'emoji', 'name', 'tagline', 'keywords', 'players', 'duration', 'durationUnit', 'formato', 'torneo', 'tipos', 'jugadas', 'unoAlDia', 'reuses', 'offline', 'nuevoDesde', 'slug', 'labs', 'available', 'modes', 'ai', 'memory', 'languages', 'firebasePaths', 'canonExceptions'];
 
 /** A GAMES entry as games.js has it, read by a fresh node (games.js may have just changed). */
 const entryNow = id => execFileSync(process.execPath, ['--input-type=module', '-e',

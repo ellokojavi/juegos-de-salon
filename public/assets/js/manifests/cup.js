@@ -1,0 +1,113 @@
+// Generated from game.json by node tools/generators/manifests.mjs: do not edit by hand.
+export default {
+  "id": "copa",
+  "path": "cup/",
+  "emoji": "🏆",
+  "name": {
+    "es": "La Copa",
+    "en": "The Cup",
+    "pt": "A Copa"
+  },
+  "tagline": {
+    "es": "Un torneo de una semana entre amigos, con un juego distinto cada día.",
+    "en": "A week-long tournament among friends, with a different game every day.",
+    "pt": "Um torneio de uma semana entre amigos, com um jogo diferente por dia."
+  },
+  "keywords": {
+    "es": [
+      "torneo",
+      "copa",
+      "semana",
+      "amigos",
+      "competencia",
+      "campeonato",
+      "grupo",
+      "diario",
+      "ranking",
+      "final",
+      "3 dias",
+      "7 dias",
+      "global",
+      "chile",
+      "brasil"
+    ],
+    "en": [
+      "tournament",
+      "cup",
+      "week",
+      "friends",
+      "competition",
+      "championship",
+      "group",
+      "daily",
+      "ranking",
+      "final",
+      "3 days",
+      "7 days",
+      "global",
+      "chile",
+      "brazil"
+    ],
+    "pt": [
+      "torneio",
+      "copa",
+      "semana",
+      "amigos",
+      "competição",
+      "campeonato",
+      "grupo",
+      "diário",
+      "ranking",
+      "final",
+      "3 dias",
+      "7 dias",
+      "global",
+      "chile",
+      "brasil"
+    ]
+  },
+  "players": {
+    "min": 2,
+    "max": 10
+  },
+  "duration": "7",
+  "durationUnit": {
+    "es": "días",
+    "en": "days",
+    "pt": "dias"
+  },
+  "formato": {
+    "es": "Cada uno en su celular, un juego por día",
+    "en": "Each on their own phone, one game a day",
+    "pt": "Cada um no seu celular, um jogo por dia"
+  },
+  "torneo": true,
+  "tipos": [
+    "words",
+    "logic",
+    "trivia"
+  ],
+  "offline": false,
+  "available": true,
+  "modes": [
+    "copa"
+  ],
+  "ai": false,
+  "memory": "juegos-de-salon:copa:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [
+    "torneos/{code}",
+    "torneoAlias",
+    "torneoPodios"
+  ],
+  "canonExceptions": [
+    {
+      "canon": "C-6",
+      "why": "A cup's state lives on the server (torneos/{code} in Firebase), not in a session.js store: each day resumes from its own saved moves and the server's start, and the intro has no resume panel because the board is the cup's home."
+    }
+  ]
+};

@@ -14,7 +14,7 @@ assert.equal(m.ai, true, 'ai follows cpu');
 assert.deepEqual(m.firebasePaths, ['rooms/{code}'], 'an online game writes its room');
 assert.equal(JSON.stringify(catalogEntry(m)), JSON.stringify(entry), 'the entry comes back byte-identical');
 assert.deepEqual(manifestOf({ ...entry, players: '2' }, { modes: ['local'] }).players, { min: 2, max: 2 });
-assert.throws(() => manifestOf({ ...entry, torneo: true }, { modes: ['local'] }), /torneo/, 'a field the schema lacks is refused');
+assert.throws(() => manifestOf({ ...entry, oculto: true }, { modes: ['local'] }), /oculto/, 'a field the schema lacks is refused');
 
 const src = `import a from './manifests/a.js';\n\nexport const GAMES = [\n  {\n    id: 'y',\n    path: 'y/',\n  },\n  {\n    id: 'x-game',\n    // a comment that stays\n    path: 'x/',\n  },\n];\n`;
 const out = rewriteGamesJs(src, 'x-game', 'x', 'xManifest');
