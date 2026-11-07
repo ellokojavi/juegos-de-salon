@@ -1452,6 +1452,7 @@
     "tools/agents/feedback-templates.test.mjs",
     "tools/agents/feedback.test.mjs",
     "tools/agents/ideas.test.mjs",
+    "tools/agents/identifiers.test.mjs",
     "tools/agents/inbox.test.mjs",
     "tools/agents/lab-publish.test.mjs",
     "tools/agents/lab-ready.test.mjs",

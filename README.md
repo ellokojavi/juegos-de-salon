@@ -588,6 +588,7 @@ node tools/agents/failures.test.mjs
 node tools/agents/feedback-templates.test.mjs
 node tools/agents/feedback.test.mjs
 node tools/agents/ideas.test.mjs
+node tools/agents/identifiers.test.mjs
 node tools/agents/inbox.test.mjs
 node tools/agents/lab-publish.test.mjs
 node tools/agents/lab-ready.test.mjs
