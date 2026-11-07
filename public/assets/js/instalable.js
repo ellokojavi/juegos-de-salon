@@ -11,6 +11,7 @@
  *
  * Mejor esfuerzo: si el navegador no tiene service workers, o algo falla, la página sigue igual.
  */
+import './offline-cut.js'; // first: a tester's forced offline mode cuts the network before anything asks for it
 import { COMMON, getLang } from './i18n.js';
 import './llegada.js'; // el dado de Juego al azar, encima hasta que el juego está dibujado (D-237)
 
@@ -50,7 +51,10 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
   if (!sw?.active) return null;
   const on = encendido ?? await import('./flags.js').then(m => m.flag('offline')).catch(() => false);
   const release = doc?.querySelector('meta[name="release"]')?.content || 'dev';
-  const msg = { type: 'offline', on: !!on, release };
+  const forced = (() => { try { return globalThis.localStorage?.getItem('juegos-de-salon:offline-forced') === '1'; } catch (_) { return false; } })();
+  // The flag went off while a tester's cut was on: the cut goes too, or the page would stay without network
+  if (!on && forced && encendido === undefined) { try { globalThis.localStorage.removeItem('juegos-de-salon:offline-forced'); } catch (_) { /* no storage */ } globalThis.location?.reload(); }
+  const msg = { type: 'offline', on: !!on, release, forced: !!on && forced };
   sw.active.postMessage(msg);
   // With the flag on, the page also watches the connection (connection.js, PR 3) and, offline, dims
   // what needs signal and shows the chip (offline-ui.js, PR 4)

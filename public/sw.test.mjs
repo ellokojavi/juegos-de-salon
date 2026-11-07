@@ -9,8 +9,8 @@ import vm from 'node:vm';
 const ORIGIN = 'https://juegosdesalon.cl';
 const SRC = readFileSync(new URL('./sw.js', import.meta.url), 'utf8');
 
-function worker({ site }) {
-  const store = new Map();   // cache name → Map(url → body)
+function worker({ site, seed = [] }) {
+  const store = new Map(seed);   // a worker woken again starts with the caches the last one left   // cache name → Map(url → body)
   const key = r => new URL(typeof r === 'string' ? r : r.url, ORIGIN + '/').href;
   const caches = {
     open: async name => {
@@ -38,7 +38,8 @@ function worker({ site }) {
     const path = url.slice(ORIGIN.length);
     if (path.startsWith('/precache.json')) return new Response(JSON.stringify(site.list));
     if (url.startsWith('https://www.gstatic.com/')) return new Response('sdk');
-    return site.files[path] != null ? new Response(site.files[path]) : new Response('', { status: 404 });
+    const body = site.files[path] ?? (path.includes('?h=') ? null : site.files[path.split('?')[0]]);   // a server ignores a page's query
+    return body != null ? new Response(body) : new Response('', { status: 404 });
   };
   const handlers = {};
   const self = {
@@ -58,10 +59,11 @@ function worker({ site }) {
   return {
     store, net,
     async tell(msg) { await event('message', { data: msg }).waited; },
-    async get(path, mode = 'no-cors') {
-      const { responded } = event('fetch', { request: { url: new URL(path, ORIGIN + '/').href, method: 'GET', mode } });
+    async get(path, mode = 'no-cors', method = 'GET') {
+      const { responded } = event('fetch', { request: { url: new URL(path, ORIGIN + '/').href, method, mode } });
       if (!responded) return 'UNTOUCHED';
       const r = await responded;
+      if (r.type === 'error') return 'ERROR';
       return r.status === 302 ? `REDIRECT ${r.headers.get('location')}` : r.text();
     },
     ready: () => new Promise(r => setTimeout(r, 0)),
@@ -130,4 +132,27 @@ await w.tell({ type: 'offline', on: false, release: '0.2.0-def' });
 assert.deepEqual([...w.store.keys()], [], 'turning the flag off forgets everything');
 assert.equal(await w.get('/assets/js/ui.js?h=aaaa1111'), 'UNTOUCHED');
 
-console.log('✓ sw: off changes nothing; on stores the release, pages network-first, ?h= from the cache, old releases go');
+// A tester's cut (the T tab's switch): with the network up, nothing reaches it, as in airplane mode
+await w.tell({ type: 'offline', on: true, release: '0.2.0-def' });
+await w.tell({ type: 'offline', on: true, release: '0.2.0-def', forced: true });
+site.files['/zip/'] = 'zip v4';
+w.net.asked.length = 0;
+assert.equal(await w.get('/zip/', 'navigate'), 'zip v3', 'cut: a kept page comes from the cache, not the newer one online');
+assert.equal(await w.get('/cup/', 'navigate'), 'REDIRECT https://juegosdesalon.cl/', 'cut: a page never kept goes home');
+assert.equal(await w.get('/assets/js/missing.js'), 'ERROR', 'cut: a file never kept fails');
+assert.equal(await w.get('https://juegos-de-salon-default-rtdb.firebaseio.com/x.json'), 'ERROR', 'cut: Firebase fails too');
+assert.equal(await w.get('https://example.com/a.png'), 'ERROR', 'cut: and every other site');
+assert.equal(await w.get('/precache.json'), 'ERROR', 'cut: the connection probe fails, so the page agrees it is offline');
+assert.equal(await w.get('/x', 'cors', 'POST'), 'ERROR', 'cut: a POST fails');
+assert.deepEqual(w.net.asked, [], 'cut: the network is never asked');
+// Remembered when the worker wakes again
+const w2 = worker({ site: { ...site }, seed: [...w.store].map(([k, v]) => [k, new Map(v)]) });
+await w2.ready();
+assert.equal(await w2.get('/assets/js/missing.js'), 'ERROR', 'a worker woken again remembers the cut');
+assert.deepEqual(w2.net.asked, [], 'and asks no network');
+// The way out: ?connection=online goes through and ends the cut
+assert.equal(await w.get('/zip/?connection=online', 'navigate'), 'zip v4', 'the way out reaches the network');
+assert.equal(await w.get('/zip/', 'navigate'), 'zip v4', 'and the cut is over');
+await w.tell({ type: 'offline', on: true, release: '0.2.0-def', forced: false });
+
+console.log('✓ sw: off changes nothing; on stores the release, pages network-first, ?h= from the cache, old releases go; a tester\'s cut answers only from the cache');

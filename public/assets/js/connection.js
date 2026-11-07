@@ -87,10 +87,26 @@ export function createConnection({
     mode,
     isOffline: () => mode() === 'offline',
     onChange(f) { listeners.add(f); return () => listeners.delete(f); },
-    /** Testers only (the /labs/ card): force offline mode on this phone, or stop forcing it. */
-    force(on) {
+    /**
+     * Testers only (the T tab, the /labs/ card): force offline mode on this phone, or stop forcing it.
+     * Forced is a real cut (offline-cut.js, sw.js): the service worker is told, and the page reloads so
+     * nothing opened before keeps a connection.
+     */
+    async force(on) {
       try { if (on) storage?.setItem(FORCE_KEY, '1'); else storage?.removeItem(FORCE_KEY); } catch (_) { /* no storage */ }
       publish();
+      try {
+        const sw = await nav?.serviceWorker?.ready;
+        const release = doc?.querySelector?.('meta[name="release"]')?.content || 'dev';
+        // Waits for the worker to hold it (or 2 s): reloaded sooner, the page would come from the network
+        if (sw?.active) await new Promise(done => {
+          const ch = new MessageChannel();
+          ch.port1.onmessage = done;
+          setTimeout(done, 2000);
+          sw.active.postMessage({ type: 'offline', on: true, release, forced: !!on }, [ch.port2]);
+        });
+      } catch (_) { /* no worker: the page's own cut still holds */ }
+      try { win?.location?.reload(); } catch (_) { /* not a page */ }
     },
     forced,
     probe,
