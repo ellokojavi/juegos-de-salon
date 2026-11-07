@@ -1120,7 +1120,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/offline.test.mjs",
       "signature": "0f2865442e",
       "date": "2026-11-07T16:25:04.000Z",
-      "fix": null,
+      "fix": {
+        "commit": "e48795fe9b54bc59966ea3c7abe2c30c4945dfb8",
+        "date": "2026-11-07T16:40:40.282Z",
+        "stat": "2 file(s) +7 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
