@@ -156,6 +156,7 @@ public/battleship/
   game.js (reductor, agentes, bot, render: colocación y batalla)
 public/assets/js/transport/ (local.js, firebase.js con parámetro game) · public/assets/js/handoff.js
 public/assets/js/hidden-match.js (phaseOf: lobby → placing → play → reveal → done, shared with Bulls and Cows)
+public/assets/js/room-state.js (roomMessage: the room's hello and rematch, shared, D-539)
 ```
 
 Batalla Naval fue el juego que movió los transportes de Toque y Fama a `public/assets/js/transport/`
