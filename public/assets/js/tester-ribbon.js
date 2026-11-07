@@ -2,16 +2,17 @@
  * The tester ribbon (lab flag `tester-ribbon`): for lab key holders, a folded tab with a «T» on the
  * screen's right edge, just under the top bar, over the page and never pushing it. Opened, it gives
  * what the key gives: (i) the tester sheet, a link to Labs, and the control the current screen
- * registers with `setTesterContext` (Babel's «Simular final»). It replaces the home page's «tester»
+ * registers with `setTesterContext` (Babel's «Simular final»), and while the flag `offline` is on, a
+ * switch that forces offline mode on this phone (connection.js), so testing it needs no airplane mode. It replaces the home page's «tester»
  * chip and Babel's 🧪 tab on the left edge. On every screen (tester-boot.js), hidden while playing. Texts in the three languages (C-3). lab: #seccion-tester-ribbon
  */
 import { el } from './ui.js';
 import { openTesterSheet } from './tester-badge.js';
 
 const T = {
-  es: { tab: 'Tester', info: 'Qué es ser tester', labs: 'Ir a Labs' },
-  en: { tab: 'Tester', info: 'What being a tester means', labs: 'Go to Labs' },
-  pt: { tab: 'Tester', info: 'O que é ser tester', labs: 'Ir para o Labs' },
+  es: { tab: 'Tester', info: 'Qué es ser tester', labs: 'Ir a Labs', offline: '📴 Modo sin conexión', offlineHint: 'Solo en este celular' },
+  en: { tab: 'Tester', info: 'What being a tester means', labs: 'Go to Labs', offline: '📴 Offline mode', offlineHint: 'On this phone only' },
+  pt: { tab: 'Tester', info: 'O que é ser tester', labs: 'Ir para o Labs', offline: '📴 Modo sem conexão', offlineHint: 'Só neste celular' },
 };
 export const RIBBON_TEXTS = T;
 
@@ -43,6 +44,9 @@ html[data-en-juego] .tr:not(.con-ctx), body.jugando .tr:not(.con-ctx) { display:
 .tr-cab b { font: 400 1.25rem/1 var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
 .tr-info { flex: none; width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: 900 0.95rem/1 var(--font-body); cursor: pointer; }
 .tr-labs { color: var(--cyan); font-weight: 900; text-decoration: none; display: flex; justify-content: space-between; min-height: 32px; align-items: center; }
+.tr-off { border-top: 1px solid var(--glass-border); padding-top: 10px; }
+.tr-off .toggle-row { padding: var(--s-8) var(--s-10); }
+.tr-off[hidden] { display: none; }
 .tr-ctx { border-top: 1px solid var(--glass-border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
 .tr-sim { display: flex; flex-direction: column; gap: 8px; }
 .tr-ctx small { color: var(--muted); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.68rem; }
@@ -85,6 +89,7 @@ export function testerRibbon({ lang = 'es', labsUrl = new URL('../../labs/', imp
     el('div', { class: 'tr-cab' }, el('b', {}, '🧪 Tester'),
       el('button', { type: 'button', class: 'tr-info', id: 'tr-info', 'aria-label': t.info, onClick: () => openTesterSheet(lang, labsUrl) }, 'i')),
     el('a', { class: 'tr-labs', id: 'tr-labs', href: labsUrl }, t.labs, el('span', { 'aria-hidden': 'true' }, '›')),
+    el('div', { class: 'tr-off', id: 'tr-off', hidden: true }),
     el('div', { class: 'tr-ctx', id: 'tr-ctx' }));
   ribbon = el('div', { class: 'tr', id: 'tester-ribbon' }, el('div', { class: 'tr-tab-wrap' }, tab, el('span', { class: 'tr-punto', 'aria-hidden': 'true' })), panel);
   const toggle = open => { ribbon.classList.toggle('abierto', open); tab.setAttribute('aria-expanded', String(open)); };
@@ -94,10 +99,33 @@ export function testerRibbon({ lang = 'es', labsUrl = new URL('../../labs/', imp
   ribbon.addEventListener('keydown', e => { if (e.key === 'Escape') { toggle(false); tab.focus(); } });
   document.body.append(ribbon);
   drawContext(); place();
+  offlineSwitch(panel.querySelector('.tr-off'));
   addEventListener('resize', placeSoon);
   addEventListener('scroll', placeSoon, { passive: true });
   document.fonts?.ready.then(place);
   return ribbon;
+}
+
+/**
+ * The offline switch (D-538): only while the flag `offline` is on for this tester, since without it
+ * nothing on the page reacts to the mode. It forces the mode on this phone, every page and tab
+ * (connection.js keeps it in localStorage), until switched off; the connection is never touched.
+ */
+export async function offlineSwitch(box, {
+  isOn = () => import('./flags.js').then(m => m.flag('offline')),
+  conn = () => import('./connection.js').then(m => m.connection()),
+} = {}) {
+  if (!box || !(await isOn().catch(() => false))) return null;
+  const c = await conn();
+  const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'tr-offline', 'aria-label': t.offline });
+  const draw = () => { const on = c.forced(); sw.classList.toggle('on', on); sw.setAttribute('aria-checked', String(on)); };
+  sw.addEventListener('click', () => { c.force(!c.forced()); draw(); });
+  c.onChange(draw);
+  box.replaceChildren(el('div', { class: 'toggle-row' },
+    el('div', { class: 'txt' }, el('b', {}, t.offline), el('small', {}, t.offlineHint)), sw));
+  box.hidden = false;
+  draw();
+  return sw;
 }
 
 /** The current screen's control (a node), or null when it has none. Folds the ribbon when it changes. */
