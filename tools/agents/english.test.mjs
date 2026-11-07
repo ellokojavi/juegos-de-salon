@@ -5,10 +5,10 @@ import { tokens, isSpanish, propose, phaseOf, scan, trackedPaths, readRegistry }
 
 assert.deepEqual(tokens('uno-al-dia-ui.js'), ['uno', 'al', 'dia', 'ui']);
 assert.deepEqual(tokens('jugadorFirebase.mjs'), ['jugador', 'firebase']);
-assert.ok(isSpanish('compartir.js') && isSpanish('CANONS.md'));
+assert.ok(isSpanish('compartir.js') && isSpanish('CANONES.md'));
 assert.ok(!isSpanish('share.js') && !isSpanish('red.png') && !isSpanish('de.webmanifest'), 'short or shared words alone are not Spanish');
 assert.equal(propose('uno-al-dia-ui.js'), 'one-a-day-ui.js');
-assert.equal(propose('CANONS.md'), 'CANONS.md');
+assert.equal(propose('CANONES.md'), 'CANONS.md');
 assert.equal(propose('engine-palabra.test.mjs'), 'engine-word.test.mjs');
 assert.equal(phaseOf('public/assets/js/azar.js'), 4);
 assert.equal(phaseOf('docs/ALEMAN.md'), 5);
