@@ -42,7 +42,7 @@ export function pacificRange({ from, to }, now = Date.now()) {
 
 /**
  * Every key event of the range, newest first. Each one: `{ at, kind, day, who: [{ name, co }],
- * game?, mode?, detail?, winner?, tie?, cup?: { code, name, lab, day }, startedAt?, text?, to? }`,
+ * game?, mode?, origin? ('card' | 'random' | 'daily', how an offline game was opened), detail?, winner?, tie?, cup?: { code, name, lab, day }, startedAt?, text?, to? }`,
  * where `to` is the panel card it opens (`['sala', [code, day]]`).
  */
 export function keyEvents({ days = {}, torneos = {}, feedback = {} } = {}, range, now = Date.now()) {
@@ -64,7 +64,7 @@ export function keyEvents({ days = {}, torneos = {}, feedback = {} } = {}, range
   for (const p of localLog(days, span)) {
     if (!p.fin || isTorneo(p.game) || p.mode === 'copa') continue;
     push({ at: p.fin.at || p.beat, kind: p.mode === MODO_UNO_AL_DIA ? 'daily' : 'offline', game: p.game, mode: p.mode,
-      who: [{ name: p.name, co: p.co }], winner: p.fin.ganador, tie: p.fin.empate, detail: p.fin.detalle, startedAt: p.at, to: ['juego', [p.game]] });
+      who: [{ name: p.name, co: p.co }], winner: p.fin.ganador, tie: p.fin.empate, detail: p.fin.detalle, origin: p.origin, startedAt: p.at, to: ['juego', [p.game]] });
   }
 
   // Cups: each day played, each cup created and joined, and each one that ended with a winner

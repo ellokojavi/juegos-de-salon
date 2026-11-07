@@ -1557,6 +1557,8 @@ const quienes = who => {
 };
 const copaTxt = c => [`La Copa (${c.name})`, c.lab ? el('span', { class: 'tag' }, 'lab') : null];
 
+/** How an offline game was opened (stats.js `markOrigin`); nothing when it is not known. */
+const ORIGEN = { card: '👆 from its card', random: '🎲 from Random game', daily: '📅 from One a Day' };
 /** One key event as a sentence: who did what, and a second line with how it went. */
 function frase(e) {
   const modo = e.mode && MODES[e.mode] ? ` ${MODES[e.mode].label}` : '';
@@ -1566,7 +1568,7 @@ function frase(e) {
     case 'cup-game': return [[...quienes(e.who), ' played ', ...copaTxt(e.cup), `, day ${e.cup.day}: `, miniLabel(e.game)],
       [`${e.s} of 100 in ${duracion(e.ms)}`, empezo].filter(Boolean).join(' · ')];
     case 'room': return [[...quienes(e.who), ' played ', gameLabel(e.game), ' on two phones'], [gano, empezo].filter(Boolean).join(' · ')];
-    case 'offline': return [[...quienes(e.who), ' finished ', gameLabel(e.game), modo ? `,${modo}` : ''], [gano, e.detail, empezo].filter(Boolean).join(' · ')];
+    case 'offline': return [[...quienes(e.who), ' finished ', gameLabel(e.game), modo ? `,${modo}` : ''], [gano, e.detail, ORIGEN[e.origin], empezo].filter(Boolean).join(' · ')];
     case 'daily': return [[...quienes(e.who), ' finished their One a Day: ', gameLabel(e.game)], [e.detail, empezo].filter(Boolean).join(' · ')];
     case 'cup-new': return [[...quienes(e.who), ' created ', ...copaTxt(e.cup)], `${e.cup.days} days`];
     case 'cup-join': return [[...quienes(e.who), ' joined ', ...copaTxt(e.cup)], ''];
