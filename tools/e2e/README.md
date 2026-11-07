@@ -181,6 +181,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `battleship/alignment.mjs` | That row numbers line up with the cells at three widths |
 | `battleship/online.mjs` | Two phones against real Firebase, with reload and rematch; first a rematch without network, which must show the room text under the button and give the button back (D-322) |
 | `battleship/chat.mjs` | Room chat: saved when placing your own fleet, bubble and label, doesn't move the game, comes back on reload and stays in the result. |
+| `conformance.mjs` | The conformance suite's browser half (#1249 step 8), driven by each `game.json`: the page loads with no console errors, each of its `languages` renders with every `data-i18n` key, the header ‹ goes to its logical parent (home for a registered game, `/labs/` for a lab one), a started game offers to continue after a reload (C-6), and the page goes through `compartir.js` (C-7) and `fin.js` (C-19); a canon in `canonExceptions` is skipped with its reason. `node tools/e2e/conformance.mjs hangman` for one game; CI runs one part per manifest. The node half is `public/assets/js/conformance.test.mjs` |
 | `hangman/local.mjs` | Chain of three on one phone, buying a letter, resuming and solitaire |
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
 | `liars-dice/local.mjs` | Duel against the phone and a three-player game on one phone, with resuming midway |

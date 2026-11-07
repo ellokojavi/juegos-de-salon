@@ -1,0 +1,12 @@
+{
+  "about": "Games in GAMES (public/assets/js/games.js) still without a game.json (#1249). A ratchet: public/assets/js/conformance.test.mjs fails on a new entry or a stale one. Migrate with node tools/generators/manifests.mjs migrate <folder>.",
+  "games": {
+    "copa": "Not yet migrated (#1249 step 14).",
+    "linea-de-tiempo": "Not yet migrated (#1249 step 14).",
+    "toque-y-fama": "Not yet migrated (#1249 step 14).",
+    "generala": "Not yet migrated (#1249 step 14).",
+    "batalla-naval": "Not yet migrated (#1249 step 14).",
+    "julepe": "Not yet migrated (#1249 step 14).",
+    "cuarto-rey": "Not yet migrated (#1249 step 14)."
+  }
+}
