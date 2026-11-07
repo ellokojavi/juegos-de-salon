@@ -1,0 +1,1221 @@
+{
+ "_about": "Spanish exported names under public/ and tools/ (tools/agents/identifiers.mjs, #1249 step 12), each { file, name }. The reason for every entry: written before the move to English (D-316) and frozen when this ratchet started; it is renamed only when a PR touches its file anyway (D-497), and an entry whose name is gone fails identifiers.test.mjs as stale. A new exported name is English: never add one here.",
+ "entries": [
+  {
+   "file": "public/assets/js/arrastre.js",
+   "name": "crearArrastre"
+  },
+  {
+   "file": "public/assets/js/azar.js",
+   "name": "alAzar"
+  },
+  {
+   "file": "public/assets/js/azar.js",
+   "name": "botonAzar"
+  },
+  {
+   "file": "public/assets/js/buzon.js",
+   "name": "tocaBuzon"
+  },
+  {
+   "file": "public/assets/js/buzon.js",
+   "name": "buzonEnviado"
+  },
+  {
+   "file": "public/assets/js/buzon.js",
+   "name": "enlaceBuzon"
+  },
+  {
+   "file": "public/assets/js/buzon.js",
+   "name": "ponerBuzon"
+  },
+  {
+   "file": "public/assets/js/buzon.js",
+   "name": "abrirBuzon"
+  },
+  {
+   "file": "public/assets/js/compartir-portada.js",
+   "name": "botonCompartirPortada"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "compartir"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "compartirApp"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "botonCompartir"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "textoResultadoSolo"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "botonResultadoSolo"
+  },
+  {
+   "file": "public/assets/js/compartir.js",
+   "name": "laminaResultado"
+  },
+  {
+   "file": "public/assets/js/cuenta-regresiva.js",
+   "name": "CUENTA_SALE_MS"
+  },
+  {
+   "file": "public/assets/js/cuenta-regresiva.js",
+   "name": "cuentaRegresiva"
+  },
+  {
+   "file": "public/assets/js/dado3d.js",
+   "name": "crearDado"
+  },
+  {
+   "file": "public/assets/js/dato.js",
+   "name": "PAUSA_DATO_MS"
+  },
+  {
+   "file": "public/assets/js/dato.js",
+   "name": "datoDe"
+  },
+  {
+   "file": "public/assets/js/dato.js",
+   "name": "bloqueDato"
+  },
+  {
+   "file": "public/assets/js/dato.js",
+   "name": "conDato"
+  },
+  {
+   "file": "public/assets/js/favoritos.js",
+   "name": "favoritos"
+  },
+  {
+   "file": "public/assets/js/frases.js",
+   "name": "FRASES"
+  },
+  {
+   "file": "public/assets/js/games.js",
+   "name": "ordenPortada"
+  },
+  {
+   "file": "public/assets/js/games.js",
+   "name": "PORTADA"
+  },
+  {
+   "file": "public/assets/js/games.js",
+   "name": "rangoJugadores"
+  },
+  {
+   "file": "public/assets/js/games.js",
+   "name": "MODO_UNO_AL_DIA"
+  },
+  {
+   "file": "public/assets/js/i18n.js",
+   "name": "LABS_IDIOMA"
+  },
+  {
+   "file": "public/assets/js/i18n.js",
+   "name": "idiomaDelNavegador"
+  },
+  {
+   "file": "public/assets/js/i18n.js",
+   "name": "NOMBRES_IDIOMA"
+  },
+  {
+   "file": "public/assets/js/instalar.js",
+   "name": "INSTALAR_NO_KEY"
+  },
+  {
+   "file": "public/assets/js/instalar.js",
+   "name": "globoInstalar"
+  },
+  {
+   "file": "public/assets/js/jugador.js",
+   "name": "crearJugador"
+  },
+  {
+   "file": "public/assets/js/jugador.js",
+   "name": "jugador"
+  },
+  {
+   "file": "public/assets/js/parametros.js",
+   "name": "nombres"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "AVISOS_EN_LABS"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "LABS_AVISOS_KEY"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "VAPID_PRUEBA_KEY"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "avisosVisibles"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "activarAvisos"
+  },
+  {
+   "file": "public/assets/js/push.js",
+   "name": "avisoDePrueba"
+  },
+  {
+   "file": "public/assets/js/ranking.js",
+   "name": "fijarIdioma"
+  },
+  {
+   "file": "public/assets/js/ranking.js",
+   "name": "bloqueJugador"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "hashPinJugador"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "VARIANTE_COPA"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "esCuenta"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "UNO_AL_DIA"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "periodoDia"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "ZONA_SEMANA"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "semana"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "vistaTabla"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "podioDe"
+  },
+  {
+   "file": "public/assets/js/records.js",
+   "name": "ultimasCopas"
+  },
+  {
+   "file": "public/assets/js/share-grid.js",
+   "name": "agentesGrid"
+  },
+  {
+   "file": "public/assets/js/share-grid.js",
+   "name": "planillaGrid"
+  },
+  {
+   "file": "public/assets/js/teclado.js",
+   "name": "teclado"
+  },
+  {
+   "file": "public/assets/js/transport/stats.js",
+   "name": "idiomaDe"
+  },
+  {
+   "file": "public/assets/js/transport/stats.js",
+   "name": "nombresDe"
+  },
+  {
+   "file": "public/assets/js/transport/stats.js",
+   "name": "trackUnoAlDia"
+  },
+  {
+   "file": "public/assets/js/uad-days.js",
+   "name": "historiaDeDias"
+  },
+  {
+   "file": "public/assets/js/ui.js",
+   "name": "ICONO_COMPARTIR"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-avisos.js",
+   "name": "leerAvisos"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-avisos.js",
+   "name": "estadoAvisos"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-avisos.js",
+   "name": "globo"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-red.js",
+   "name": "recordarInvitacion"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-red.js",
+   "name": "conMiCuenta"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-red.js",
+   "name": "tablaConMiCuenta"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-red.js",
+   "name": "tengoJugador"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "rotuloJugar"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "botonUnoAlDia"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "tarjetaUnoAlDia"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "jugarOtro"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "compartirHoy"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "tarjetaResultado"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "tarjetaInvitar"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "tarjetaDesafio"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "ponerTarjeta"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia-ui.js",
+   "name": "botonCompartirRanking"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "DESDE_AGENTES"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "JUEGOS_DIA"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "juegoDia"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "numDia"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "semanaDe"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "numeroDel"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "juegoDel"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "semillaDel"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "azarDel"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "puntajeAhorcado"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "CASILLAS_FLOTA"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "puntajeDudo"
+  },
+  {
+   "file": "public/assets/js/uno-al-dia.js",
+   "name": "porJuego"
+  },
+  {
+   "file": "public/cup/avisos.js",
+   "name": "crearAvisos"
+  },
+  {
+   "file": "public/cup/avisos.js",
+   "name": "hojaVisible"
+  },
+  {
+   "file": "public/cup/code.js",
+   "name": "LETRAS"
+  },
+  {
+   "file": "public/cup/code.js",
+   "name": "codigoAlAzar"
+  },
+  {
+   "file": "public/cup/create.js",
+   "name": "crearCopa"
+  },
+  {
+   "file": "public/cup/cuenta.js",
+   "name": "juntarCopas"
+  },
+  {
+   "file": "public/cup/cuenta.js",
+   "name": "createCuenta"
+  },
+  {
+   "file": "public/cup/demo.js",
+   "name": "MIS_COPAS"
+  },
+  {
+   "file": "public/cup/desglose.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "POZO"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "POZO_ABIERTO"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "POZO_FIJO"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "diaDeCal"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "TRIO_JUEGOS"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "rondasDelDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "findeAlAzar"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "calendarioAlAzar"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "ESTILOS_SEMANA"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "semanaAlAzar"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "MIN_JUGADORES"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "MAX_JUGADORES"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "COPA_MAX"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "DIA_MS"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "ZONAS_POR_IDIOMA"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "zonaDeIdioma"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "pidAlAzar"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "juegoDelDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "varianteDelDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "diaActual"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "pasarDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "estadoDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "ultimoDiaComodin"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "porJugar"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "posicionesDelDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "visibleDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "podioDecidido"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "menosJuegos"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "ultimoDiaVisto"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "marcaDelDia"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "LETRAS"
+  },
+  {
+   "file": "public/cup/engine.js",
+   "name": "codigoAlAzar"
+  },
+  {
+   "file": "public/cup/games/agents/clues-en.js",
+   "name": "PISTAS"
+  },
+  {
+   "file": "public/cup/games/agents/clues-pt.js",
+   "name": "PISTAS"
+  },
+  {
+   "file": "public/cup/games/agents/clues.js",
+   "name": "PISTAS"
+  },
+  {
+   "file": "public/cup/games/agents/engine.js",
+   "name": "MAZOS"
+  },
+  {
+   "file": "public/cup/games/agents/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/agents/engine.js",
+   "name": "agentesDe"
+  },
+  {
+   "file": "public/cup/games/agents/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/agents/engine.js",
+   "name": "AGENTES"
+  },
+  {
+   "file": "public/cup/games/agents/numbers.js",
+   "name": "AGENTES"
+  },
+  {
+   "file": "public/cup/games/agents/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/agents/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/audiencia.js",
+   "name": "audienciaDe"
+  },
+  {
+   "file": "public/cup/games/bridges/engine.js",
+   "name": "TIEMPO_ENSAYO_S"
+  },
+  {
+   "file": "public/cup/games/bridges/engine.js",
+   "name": "CATALOGO_URL"
+  },
+  {
+   "file": "public/cup/games/bridges/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/bridges/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/bridges/engine.js",
+   "name": "TIEMPO_S"
+  },
+  {
+   "file": "public/cup/games/bridges/physics.js",
+   "name": "TIEMPO_S"
+  },
+  {
+   "file": "public/cup/games/bridges/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/bridges/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/bridges/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/case/engine.js",
+   "name": "LETRAS_COL"
+  },
+  {
+   "file": "public/cup/games/case/engine.js",
+   "name": "pistasVerdaderas"
+  },
+  {
+   "file": "public/cup/games/case/engine.js",
+   "name": "deSemilla"
+  },
+  {
+   "file": "public/cup/games/case/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/case/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/case/ui.js",
+   "name": "pruebaCompleta"
+  },
+  {
+   "file": "public/cup/games/case/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/connections/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/connections/grillas-en.js",
+   "name": "GRILLAS"
+  },
+  {
+   "file": "public/cup/games/connections/grillas-pt.js",
+   "name": "GRILLAS"
+  },
+  {
+   "file": "public/cup/games/connections/grillas.js",
+   "name": "GRILLAS"
+  },
+  {
+   "file": "public/cup/games/connections/grillas.js",
+   "name": "CAMBIO_D128"
+  },
+  {
+   "file": "public/cup/games/connections/grillas.js",
+   "name": "GRILLAS_ANTES_D128"
+  },
+  {
+   "file": "public/cup/games/connections/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/deshacer.js",
+   "name": "botonDeshacer"
+  },
+  {
+   "file": "public/cup/games/final/engine.js",
+   "name": "NUMERO_CIFRAS"
+  },
+  {
+   "file": "public/cup/games/final/engine.js",
+   "name": "NUMERO_INTENTOS"
+  },
+  {
+   "file": "public/cup/games/final/engine.js",
+   "name": "LETRAS_INTENTOS"
+  },
+  {
+   "file": "public/cup/games/final/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/final/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/index.js",
+   "name": "JUEGOS"
+  },
+  {
+   "file": "public/cup/games/mazos.js",
+   "name": "temasDeLaCopa"
+  },
+  {
+   "file": "public/cup/games/number/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/number/ui.js",
+   "name": "pistas"
+  },
+  {
+   "file": "public/cup/games/number/ui.js",
+   "name": "tablero"
+  },
+  {
+   "file": "public/cup/games/number/ui.js",
+   "name": "tableroFin"
+  },
+  {
+   "file": "public/cup/games/number/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/paint-mines/dibujos.js",
+   "name": "DIBUJOS"
+  },
+  {
+   "file": "public/cup/games/paint-mines/engine.js",
+   "name": "numero"
+  },
+  {
+   "file": "public/cup/games/paint-mines/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/paint-mines/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/paint-mines/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/paint-mines/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/paint-mines/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/plots/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/plots/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/plots/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/plots/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/plots/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/queens/engine.js",
+   "name": "toque"
+  },
+  {
+   "file": "public/cup/games/queens/engine.js",
+   "name": "toqueLargo"
+  },
+  {
+   "file": "public/cup/games/queens/engine.js",
+   "name": "puntosPorTiempo"
+  },
+  {
+   "file": "public/cup/games/queens/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/queens/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/routes/engine.js",
+   "name": "TIEMPO_S"
+  },
+  {
+   "file": "public/cup/games/routes/engine.js",
+   "name": "TIEMPO_ENSAYO_S"
+  },
+  {
+   "file": "public/cup/games/routes/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/routes/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/routes/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/routes/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/routes/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/semilla.js",
+   "name": "azar"
+  },
+  {
+   "file": "public/cup/games/solo.js",
+   "name": "jugarSolo"
+  },
+  {
+   "file": "public/cup/games/stack/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/stack/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/stack/engine.js",
+   "name": "DIA_K"
+  },
+  {
+   "file": "public/cup/games/stack/engine.js",
+   "name": "puntajeDia"
+  },
+  {
+   "file": "public/cup/games/stack/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/stack/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/stack/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/stick/engine.js",
+   "name": "generarDia"
+  },
+  {
+   "file": "public/cup/games/stick/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/stick/engine.js",
+   "name": "DIA_K"
+  },
+  {
+   "file": "public/cup/games/stick/engine.js",
+   "name": "puntajeDia"
+  },
+  {
+   "file": "public/cup/games/stick/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/stick/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/stick/ui.js",
+   "name": "desglose"
+  },
+  {
+   "file": "public/cup/games/tango/engine.js",
+   "name": "DESHACER"
+  },
+  {
+   "file": "public/cup/games/tango/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/tango/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/timeline/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/timeline/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/untangle/engine.js",
+   "name": "TIEMPO_MS"
+  },
+  {
+   "file": "public/cup/games/untangle/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/untangle/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/where/ciudades.js",
+   "name": "CIUDADES"
+  },
+  {
+   "file": "public/cup/games/where/engine.js",
+   "name": "CIUDADES_POR_JUEGO"
+  },
+  {
+   "file": "public/cup/games/where/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/where/globo.js",
+   "name": "vista"
+  },
+  {
+   "file": "public/cup/games/where/mapa.js",
+   "name": "MAPA"
+  },
+  {
+   "file": "public/cup/games/where/nombres.js",
+   "name": "CIUDADES"
+  },
+  {
+   "file": "public/cup/games/where/ui.js",
+   "name": "portada"
+  },
+  {
+   "file": "public/cup/games/where/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/word/engine.js",
+   "name": "PUNTOS_FAMA"
+  },
+  {
+   "file": "public/cup/games/word/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/word/palabras.js",
+   "name": "PALABRAS"
+  },
+  {
+   "file": "public/cup/games/word/palabras.js",
+   "name": "PALABRAS_EN"
+  },
+  {
+   "file": "public/cup/games/word/palabras.js",
+   "name": "PALABRAS_PT"
+  },
+  {
+   "file": "public/cup/games/word/palabras.js",
+   "name": "palabrasDe"
+  },
+  {
+   "file": "public/cup/games/word/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/year/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/year/engine.js",
+   "name": "anioLabel"
+  },
+  {
+   "file": "public/cup/games/year/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/games/zip/engine.js",
+   "name": "ultimoNumero"
+  },
+  {
+   "file": "public/cup/games/zip/engine.js",
+   "name": "TIEMPO_MS"
+  },
+  {
+   "file": "public/cup/games/zip/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/cup/games/zip/ui.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/planilla.js",
+   "name": "filasPlanilla"
+  },
+  {
+   "file": "public/cup/planilla.js",
+   "name": "planilla"
+  },
+  {
+   "file": "public/cup/result.js",
+   "name": "resultado"
+  },
+  {
+   "file": "public/cup/rules.js",
+   "name": "juegosCopa"
+  },
+  {
+   "file": "public/cup/rules.js",
+   "name": "JUEGOS_COPA"
+  },
+  {
+   "file": "public/cup/table-image.js",
+   "name": "COLORES_GRAFICO"
+  },
+  {
+   "file": "public/cup/table-image.js",
+   "name": "llegada"
+  },
+  {
+   "file": "public/generala/engine.js",
+   "name": "JUEGOS"
+  },
+  {
+   "file": "public/generala/engine.js",
+   "name": "puntajeDia"
+  },
+  {
+   "file": "public/hangman/decks/animales.js",
+   "name": "ANIMALES"
+  },
+  {
+   "file": "public/hangman/decks/comida.js",
+   "name": "COMIDA"
+  },
+  {
+   "file": "public/hangman/decks/deportes.js",
+   "name": "DEPORTES"
+  },
+  {
+   "file": "public/labs/code/engine-palabra.js",
+   "name": "LETRAS_PALABRA"
+  },
+  {
+   "file": "public/labs/code/engine-palabra.js",
+   "name": "CARTAS_PALABRA"
+  },
+  {
+   "file": "public/labs/code/engine-palabra.js",
+   "name": "LETRAS"
+  },
+  {
+   "file": "public/labs/code/engine-palabra.js",
+   "name": "PALABRAS_CLAVE"
+  },
+  {
+   "file": "public/labs/dominorama/engine.js",
+   "name": "PUNTOS_TABLERO"
+  },
+  {
+   "file": "public/labs/dominorama/engine.js",
+   "name": "azar"
+  },
+  {
+   "file": "public/labs/dominorama/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/labs/exploding-numbers/engine.js",
+   "name": "linea"
+  },
+  {
+   "file": "public/labs/exploding-numbers/engine.js",
+   "name": "agregar"
+  },
+  {
+   "file": "public/labs/exploding-numbers/engine.js",
+   "name": "tarjeta"
+  },
+  {
+   "file": "public/labs/julep/engine.js",
+   "name": "esCarta"
+  },
+  {
+   "file": "public/labs/julep/engine.js",
+   "name": "escribirCartas"
+  },
+  {
+   "file": "public/labs/julep/engine.js",
+   "name": "puedeJugar"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "diaPanel"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "salaDe"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "avisosDelRango"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "unoAlDiaDelRango"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "salud"
+  },
+  {
+   "file": "public/panel/aggregate.js",
+   "name": "navegadorLabel"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "copaDe"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "copasDe"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "ultimoResultado"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "estadoCopa"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "copasEnCurso"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "resumenCopas"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "bitacoraCopas"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "buscarCopa"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "historiaCopa"
+  },
+  {
+   "file": "public/panel/copas.js",
+   "name": "fichaCopa"
+  },
+  {
+   "file": "public/panel/dominios.js",
+   "name": "embudoCopas"
+  },
+  {
+   "file": "public/timeline/decks/futbol.js",
+   "name": "FUTBOL"
+  },
+  {
+   "file": "public/timeline/decks/historia.js",
+   "name": "HISTORIA"
+  },
+  {
+   "file": "public/timeline/decks/musica.js",
+   "name": "MUSICA"
+  },
+  {
+   "file": "tools/generators/map.mjs",
+   "name": "MAPA"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "diaSemana"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "semanaCerrada"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "fechaDia"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "nombreJuego"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "versionesDeLaSemana"
+  },
+  {
+   "file": "tools/reports/weekly-data.mjs",
+   "name": "semana"
+  },
+  {
+   "file": "tools/reports/weekly-html.mjs",
+   "name": "cambio"
+  }
+ ]
+}

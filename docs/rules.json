@@ -107,6 +107,26 @@
    "debt": "docs/english-renames.json"
   },
   {
+   "id": "flags",
+   "title": "Anything new on a player page sits behind its runtime flag, listed in /labs/ (D-395, D-498)",
+   "doc": "CLAUDE.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "public/labs/listed.test.mjs",
+    "public/assets/js/flags.test.mjs"
+   ],
+   "reviewer": "the session building the feature, and the owner on the PR preview",
+   "why": "listed.test.mjs checks every flag('<id>') outside /labs/ is a row of FLAGS with its card, and every row is still asked; whether a change is a new feature that needed a flag is a judgment",
+   "applies": [
+    "public/**/*.js",
+    "public/**/*.html",
+    "public/assets/js/flag-list.js"
+   ]
+  },
+  {
    "id": "C-1",
    "title": "Identity and tone",
    "doc": "docs/CANONS.md",
@@ -135,16 +155,19 @@
    "doc": "docs/CANONS.md",
    "form": [
     "check",
+    "ratchet",
     "judged"
    ],
    "enforcedBy": [
     "public/assets/js/games.test.mjs",
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/manifest.test.mjs",
-    "public/labs/bodega.test.mjs"
+    "public/labs/bodega.test.mjs",
+    "tools/agents/structure.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "reusing shared modules before writing one is a design call; the file layout becomes a check in #1249 step 12",
+   "why": "reusing shared modules before writing one is a design call; the file layout is checked by structure.test.mjs (engine and its tests by games.test.mjs)",
+   "debt": "docs/structure-debt.json",
    "applies": [
     "public/**/index.html",
     "public/**/game.js",
@@ -208,10 +231,15 @@
    "title": "Game memory, in every mode",
    "doc": "docs/CANONS.md",
    "form": [
+    "ratchet",
     "judged"
    ],
+   "enforcedBy": [
+    "tools/agents/memory.test.mjs"
+   ],
+   "debt": "docs/memory-debt.json",
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "no test checks resume yet; it becomes a check in #1249 step 12",
+   "why": "memory.test.mjs measures that each available game uses createSessionStore; saving after every action, the resume panel and the one-phone cover need a reader",
    "applies": [
     "public/**/*.js"
    ]

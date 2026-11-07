@@ -1,0 +1,4 @@
+{
+  "_about": "Files C-2 asks for that a game folder still lacks (tools/agents/structure.mjs, #1249 step 12), each { folder, file, reason }. An entry whose file now exists fails structure.test.mjs as stale: remove it. Empty today: every folder has its files.",
+  "entries": []
+}
