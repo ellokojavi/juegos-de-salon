@@ -1160,6 +1160,19 @@
         "stat": "3 file(s) +21 −4: public/assets/js/connection.js, public/assets/js/connection.test.mjs, tools/e2e/room-error.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 42407900351,
+      "check": "tests",
+      "pr": 1273,
+      "branch": "claude/gallant-edison-6vas0k",
+      "commit": "bc1fd0322c07f7bab1a584a6015f36ee6c4e8957",
+      "test": "tools/agents/document.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "4d927cbbd6",
+      "date": "2026-11-07T19:49:44.743Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
