@@ -281,7 +281,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-228](decisions/D-228.md) | La Copa notifications open to everyone | current |
 | [D-229](decisions/D-229.md) | Notifications: cap of 2 per day, ties in plural, the exact day, buttons and cups together | amended by D-266 |
 | [D-230](decisions/D-230.md) | Uno al día: one game per day, the same for everyone, with a streak and notifications the player requests | amended by D-239, D-262, D-266, D-421, D-433, D-475 |
-| [D-231](decisions/D-231.md) | The language selector always carries the flags | amended by D-244, D-524 |
+| [D-231](decisions/D-231.md) | The language selector always carries the flags | amended by D-244, D-524, D-537 |
 | [D-232](decisions/D-232.md) | A globe on the home page invites adding the app to the home screen (first in the lab; for everyone since v0.121.0) | amended by D-262 |
 | [D-233](decisions/D-233.md) | Notifications are measured in the panel: sent, tapped, the installed app and the last round | amended by D-266 |
 | [D-234](decisions/D-234.md) | "Tus copas" marks the finished ones and hides them behind a switch | amended by D-336 |
@@ -389,7 +389,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-341](decisions/D-341.md) | "Suggestions and comments": the feedback inbox in production, at the end of the experience | current |
 | [D-342](decisions/D-342.md) | Tango: ↩️ Undo, without giving back mistakes or hints | current |
 | [D-343](decisions/D-343.md) | The way out of a result screen, the same in every context | current |
-| [D-344](decisions/D-344.md) | The start button of every landing page is above the fold | current |
+| [D-344](decisions/D-344.md) | The start button of every landing page is above the fold | amended by D-537 |
 | [D-345](decisions/D-345.md) | The lab keys live in Firebase: giving or removing one is instant | current |
 | [D-346](decisions/D-346.md) | Test levels: the least testing that keeps the site safe | amended by D-388 |
 | [D-347](decisions/D-347.md) | Out of the cup after two days in a row without playing | current |
