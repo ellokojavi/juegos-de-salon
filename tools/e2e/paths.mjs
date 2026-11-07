@@ -5,7 +5,7 @@
  * Each path is a list of JS snippets run in the page, one every 700 ms; a `1` step is just a
  * wait. It is keyed by the game's id ('ahorcado'), not by its folder.
  */
-import { SUELTOS } from '../../public/assets/js/games.js';
+import { SUELTOS, gameById } from '../../public/assets/js/games.js';
 import { CAMPAIGNS } from '../../public/assets/js/splash.js';
 
 /** Uno al día (D-414): six days played up to yesterday on this phone, then the page again. */
@@ -740,3 +740,12 @@ PATHS.copa['privacy'] = [`location.href='/privacy/'`, `1`, `1`, `1`];
 for (const g of ['ahorcado', 'batalla-naval', 'toque-y-fama']) {
   if (PATHS[g]) PATHS[g]['intro-rules'] = [`document.querySelector('details.panel').open=true; document.querySelector('details.panel').scrollIntoView({block:'start'}); 1`, `1`];
 }
+
+/**
+ * The screens the visual check compares with their reference (visual.mjs, #1249): each game's intro,
+ * named by its folder's last segment (`labs/case/` → 'case'), which is also its part in CI, so a PR
+ * only compares the games it reaches (affected.mjs, D-329).
+ */
+export const visualScreens = () => Object.entries(PATHS)
+  .filter(([id, p]) => gameById(id)?.path && p.intro)
+  .map(([id, p]) => ({ id, part: gameById(id).path.replace(/\/$/, '').split('/').pop(), route: gameById(id).path, screen: 'intro', steps: p.intro }));
