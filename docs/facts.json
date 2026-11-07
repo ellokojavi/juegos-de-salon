@@ -1608,6 +1608,7 @@
     "memory/lab.mjs",
     "narrow.mjs",
     "narrow.test.mjs",
+    "offline.mjs",
     "output.mjs",
     "output.test.mjs",
     "paint-mines/game.mjs",
