@@ -1340,6 +1340,32 @@
       "date": "2026-11-07T22:43:45.871Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42422187534,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "8beb75ba9fa2e3a9692fd486fded68ab5ef561b4",
+      "test": "visual.mjs:babel",
+      "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
+      "signature": "d2724dfcb7",
+      "date": "2026-11-07T22:48:27.521Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42422187534,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "8beb75ba9fa2e3a9692fd486fded68ab5ef561b4",
+      "test": "visual.mjs:where",
+      "error": "❌ where-intro: 1.26 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part where; the new and the diff images are in /home/runner/work/_temp/e",
+      "signature": "73e3cc2f12",
+      "date": "2026-11-07T22:48:27.521Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
