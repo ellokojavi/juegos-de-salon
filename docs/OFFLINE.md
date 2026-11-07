@@ -1,6 +1,6 @@
 # Offline mode (RP-13)
 
-**Status:** approved by the owner (D-538), PRs 1 to 3 of 8 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
+**Status:** approved by the owner (D-538), PRs 1 to 4 of 9 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
 
 The app keeps working with no signal or a poor one. It switches to a reduced **Sin conexión** mode by
 itself; there is no switch for players. Games that run on the phone keep working, online rooms and La
@@ -42,9 +42,12 @@ No new control on the home page while online. Offline:
 1. **Once, on entering the mode**: a sheet on the dark purple (the existing sheet component) with three
    lines: you can keep playing this phone's games; rooms, La Copa and rankings come back with the
    signal; your scores are saved here and upload by themselves. One button, "Entendido".
-2. **While offline**: a slim chip in the existing header, "📴 Sin conexión · 2 por subir". Online-only
-   cards and mode chips stay in place, dimmed and tagged **"📡 Con señal"** (Needs signal / Com sinal);
-   a tap shows one line: "Este juego necesita conexión. Vuelve cuando vuelva la señal."
+2. **While offline** (`offline-ui.js`, `offline.css`, PR 4): a small pill "📴 Sin conexión · 2 por subir"
+   as the page's first line (in its flow, so it never covers a top bar). Every link to a page the phone
+   does not keep (La Copa, Rankings, /privacy/…) and every game's two-phone mode stay in place, dimmed
+   and tagged **"📡 Con señal"** (Needs signal / Com sinal); small icon buttons and things inside a
+   dimmed card are dimmed without a tag of their own. A tap shows one line: "Esto necesita conexión.
+   Vuelve cuando vuelva la señal." The games mark their modes with `data-mode`.
 3. **End screen**: "Guardado en tu celular. Se sube al volver la señal." instead of the ranking place;
    a new best shows as provisional.
 4. **Back online**: one toast, "Se subieron 3 partidas ✓", or how many were refused and why.
@@ -83,11 +86,17 @@ PR that changes what is kept on the phone.
    No update toast: pages are network-first and assets are content-hashed, so a new release is
    picked up on the next load with no prompt (`sw.test.mjs`, `precache.test.mjs`).
 3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` (`connection.test.mjs`).
-4. Home page and game covers: dimmed cards and modes with "📡 Con señal", the chip.
+4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Con señal", the chip, the
+   one-line explanation on tap (`offline-ui.test.mjs`).
 5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.
 6. The first-time sheet and every text in es, en and pt.
 7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
-8. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
+8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
+   page, menus, top bars, sheets, /labs/, Rankings) takes a quieter palette, so players feel they are in
+   the offline version of Juegos de Salón. Game screens keep their colours. A second set of the design
+   tokens under `html.offline`; proposed on the real screens before it is built (U-41). Built last,
+   after everything else.
+9. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
 
 ## Risks
 

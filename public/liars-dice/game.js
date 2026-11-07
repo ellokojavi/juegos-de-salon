@@ -1265,7 +1265,7 @@ function renderModes() {
   const box = $('#modes');
   box.innerHTML = '';
   MODES.forEach(m => {
-    box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); renderSetup(m.id); } },
+    box.append(el('button', { class: 'mode', 'data-mode': m.id, onClick: () => { SFX.tap(); renderSetup(m.id); } },
       el('div', { class: 'mode-main' }, el('b', {}, m.title()), el('small', {}, m.sub())),
       el('span', { class: 'go' }, '›')));
   });
