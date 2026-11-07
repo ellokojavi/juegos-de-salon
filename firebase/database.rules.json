@@ -444,6 +444,9 @@
                 "o": {
                   ".validate": "newData.isString() && newData.val().matches(/^(card|random|daily)$/)"
                 },
+                "r": {
+                  ".validate": "newData.isBoolean() && newData.val() === true"
+                },
                 "name": {
                   ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
                 },
@@ -603,6 +606,9 @@
                 },
                 "co": {
                   ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
+                },
+                "r": {
+                  ".validate": "newData.isBoolean() && newData.val() === true"
                 },
                 "name": {
                   ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"

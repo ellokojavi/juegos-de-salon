@@ -174,7 +174,7 @@ export function localLog(days, { from, to, game = null } = {}) {
       // Quién jugó y cómo terminó, si la app lo supo (D-210). Con final, lo que duró es exacto
       const fin = r.fin && typeof r.fin === 'object' ? { at: Number(r.fin.at) || 0, ganador: r.fin.g || '', empate: !!r.fin.e, detalle: r.fin.d || '' } : null;
       const hasta = fin?.at > at ? fin.at : beat;
-      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', lang: r.l || '', name: r.name || '', origin: r.o || '', v: r.v || '', at, beat, fin, minMs: Math.max(0, hasta - at) });
+      out.push({ id, day: d, game: r.game, mode: r.mode, n: Number(r.n) || 1, co: r.co || '', lang: r.l || '', name: r.name || '', origin: r.o || '', bot: !!r.r, v: r.v || '', at, beat, fin, minMs: Math.max(0, hasta - at) });
     }
   }
   return out.sort((a, b) => b.at - a.at || a.id.localeCompare(b.id));

@@ -549,3 +549,17 @@ console.log('stats.test.mjs: todo en verde');
   assert.equal(lr(fp, { game: 'ahorcado', mode: 'solo', players: 1, origin: 'daily' }).o, 'daily');
   assert.equal('o' in lr(fp, { game: 'ahorcado', mode: 'solo', players: 1 }), false);
 }
+
+// A browser that says it is a robot is marked, not dropped (🤖 in the panel's timeline)
+{
+  const { esRobot, liveRecord: lr, seenRecord: sr } = await import('./stats.js');
+  assert.equal(esRobot({ webdriver: true, userAgent: 'Mozilla/5.0 Chrome/140' }), true);
+  assert.equal(esRobot({ userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1)' }), true);
+  assert.equal(esRobot({ userAgent: 'Mozilla/5.0 HeadlessChrome/140' }), true);
+  assert.equal(esRobot({ userAgent: 'WhatsApp/2.23' }), true);
+  assert.equal(esRobot({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) Safari/604.1' }), false);
+  assert.equal(esRobot(undefined), false);
+  assert.equal(lr({ v: '1', bot: true }, { game: 'ahorcado', mode: 'solo', players: 1 }).r, true);
+  assert.equal('r' in lr({ v: '1' }, { game: 'ahorcado', mode: 'solo', players: 1 }), false);
+  assert.equal(sr({ bot: true }, { c: 'support' }).r, true);
+}
