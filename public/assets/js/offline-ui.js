@@ -6,7 +6,7 @@
  *   offline (La Copa, Rankings, /privacy/…; the kept ones are the offline-capable games and the home
  *   page) and every game's two-phone mode (`.mode[data-mode="online"]`). They stay in place; a tap
  *   says in one line why, instead of opening.
- * - **The chip** "📴 Sin conexión · 2 por subir": one small pill at the top of the page, in its flow (it never covers the top bar), with how
+ * - **The chip** "📴 Sin conexión · 2 por subir": one small pill floating at the bottom centre (it moves nothing on the page), with how
  *   many finished games wait to upload (jugador.js's pending queue).
  *
  * The page's own code is not touched: one class on <html> and the CSS in offline.css do the dimming,
@@ -149,9 +149,9 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     shell();
     if (off) {
       mark(doc, { lang });
-      // In the page's flow, first thing: it pushes the screen down a line instead of covering its top bar
+      // Floating at the bottom (offline.css): it moves nothing on the page when it comes or goes
       chip ||= doc.querySelector('.offline-chip');
-      if (!chip) { chip = doc.createElement('div'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); doc.body.prepend(chip); }
+      if (!chip) { chip = doc.createElement('div'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); doc.body.append(chip); }
       drawChip();
       // The first time on this phone, one sheet says what works and what happens to the scores (PR 6)
       import('./offline-sheet.js').then(m => m.showOfflineSheetOnce({ doc, storage, lang })).catch(() => {});
