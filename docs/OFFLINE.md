@@ -92,10 +92,20 @@ PR that changes what is kept on the phone.
 6. The first-time sheet and every text in es, en and pt.
 7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
 8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
-   page, menus, top bars, sheets, /labs/, Rankings) takes a quieter palette, so players feel they are in
-   the offline version of Juegos de Salón. Game screens keep their colours. A second set of the design
-   tokens under `html.offline`; proposed on the real screens before it is built (U-41). Built last,
-   after everything else.
+   page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
+   players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
+   their colours. A second set of the design tokens under `html.offline`. Built last, after everything else.
+   - **Chosen: "Candlelight"** (the owner, 2026-11-07, from four mockups: blue-grey night, greyscale +
+     cyan, candlelight, deep sea): dark warm brown with amber and cream. Starting values:
+     `--bg1 #1a120b`, `--bg2 #2a1d12`, `--bg3 #14100c`; `--pink #d9944a` (main accent),
+     `--pink-deep`/`--edge-pink #9a5f26`, `--yellow #f0d39a`, `--orange #d9944a`, `--cyan #c9b48a`,
+     `--purple #8c6a4a`, `--lime #c8c08a`; `--fondo` glows `rgba(230,150,70,.20)`,
+     `rgba(240,200,120,.08)`, `rgba(150,90,40,.25)` over `linear-gradient(160deg, #1a120b, #2a1d12 55%, #14100c)`.
+     Colours hard-coded outside the tokens (La Copa and Uno al día cards) are dimmed offline anyway.
+   - **Transitions**: entering fades the palette in (~600 ms, a crossfade layer for `--fondo`, since
+     gradients do not animate) with the chip; leaving fades back, the chip saying it reconnected; a page
+     opened already offline paints it with no animation; `prefers-reduced-motion` switches instantly.
+     Offline wins over a seasonal template's `--fondo`.
 9. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
 
 ## Risks
