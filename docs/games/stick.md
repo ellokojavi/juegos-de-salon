@@ -4,8 +4,9 @@
 > (engine, scene, screen, texts in es, en and pt) that serves its page `/shinobi/`, Uno al día (from the
 > deck shuffled on 2026-11-08) and La Copa. **Score (D-525):** its own points, no cap (the Grand Final caps at 100; Uno al día uses a soft curve, D-526). It went live when the launch workflow switched
 > the flag `stick` to everyone at 00:00 Pacific on 2026-11-02 (D-529); the gate stays until the cleanup PR, with «Nuevo» for 10 days. The cover credits the original with a link, as every inspired game
-> does. What follows describes the English lab prototype, still at `/labs/stick/` until the cleanup PR;
-> the play is the same in the new module. End to end: `tools/e2e/stick/game.mjs`.
+> does. The English lab prototype is gone: `/labs/stick/` is now a generated bridge page to `/shinobi/`
+> (`deLabs: 'stick'` in `games.js`), and its engine copy was deleted, so the game has one engine. What follows
+> describes the prototype as it was; the play is the same in the module. End to end: `tools/e2e/stick/game.mjs`.
 
 A hold-and-release bridge game for one player, or for a group passing the phone (D-446): hold to stretch a
 stick, let go and it falls across the gap. **Inspired by [Stick Hero](https://www.ketchappgames.com/), by
@@ -16,7 +17,7 @@ the bonus. Find nice improvements".
 
 ## Summary
 
-- **Where:** `https://juegosdesalon.cl/labs/stick/`, in the lab (each person's key, D-281, D-284). Id
+- **Where (then):** `https://juegosdesalon.cl/labs/stick/`, in the lab (each person's key, D-281, D-284); today that URL leads to `/shinobi/`. Id
   `stick` in the usage signal.
 - **For whom:** one player, or several taking turns on the same phone. **English only**, like Stack (D-445):
   the page is `lang="en"`. The lab card is in Spanish, like the rest of `/labs/`, and says "Por ahora, solo
@@ -145,6 +146,6 @@ game's own `scene.js` on the teaser engine (`marketing/splash/TEASERS.md`, D-505
 
 ## Migrated to the design system (D-533, #1193)
 
-The lab's stylesheet, `public/labs/stick/style.css`, lost its copy of the shell's `.link-btn` (identical to `base.css`'s) and writes the rest on the tokens: 47 lint hits to 0 beyond two escapes in `docs/design-allowlist.json` (the cover's 🥷 at 2.2 rem, the black of the canvas' fade mask). The pause's word takes the title step `.display--lg` (in `game.js`) instead of 2.6 rem of its own. What changed for the player, all intended: the night's corner is 16 px (was 18), the streak chip and today's runs are 1 px taller each side (4 px padding, was 3), the result's stamp is one step larger (1.4 rem, was 1.3), the line before the comment is fully rounded, the achievement's shadow is `--shadow-panel`, the ink on yellow is `--ink-on-yellow`, and sizes between two steps moved to the nearer one (the heading's 🥷, the best, the lives, the pause's text, the achievement's icon and text).
+The lab's stylesheet (labs/stick/style.css, deleted with the prototype since) lost its copy of the shell's `.link-btn` (identical to `base.css`'s) and writes the rest on the tokens: 47 lint hits to 0 beyond two escapes in `docs/design-allowlist.json` (the cover's 🥷 at 2.2 rem, the black of the canvas' fade mask). The pause's word takes the title step `.display--lg` (in `game.js`) instead of 2.6 rem of its own. What changed for the player, all intended: the night's corner is 16 px (was 18), the streak chip and today's runs are 1 px taller each side (4 px padding, was 3), the result's stamp is one step larger (1.4 rem, was 1.3), the line before the comment is fully rounded, the achievement's shadow is `--shadow-panel`, the ink on yellow is `--ink-on-yellow`, and sizes between two steps moved to the nearer one (the heading's 🥷, the best, the lives, the pause's text, the achievement's icon and text).
 
 Shinobi's sheet (`public/cup/games/stick/style.css`) had no copies of the shell and is now written on the tokens: 33 lint hits to 0 beyond two escapes in `docs/design-allowlist.json` and DESIGN.md §4 (the pause's title at 2.6 rem, as Babel's; the masks' `#000`). Its own shadows are two tokens at the top of the sheet (`--sn-hundido`, `--sn-sombra`), every value unchanged; the streak chip's ink is `--ink-on-yellow`, the banner's and the pause's night `--bg2`/`--bg1` at an alpha. What the player may notice: the night's corner is 16 px (was 18), the streak chip's padding 4 px (was 3), and the sizes between two steps took the nearer one (🥷 2.2 → 2 rem, the lives and the pause line 1.05 → 1, the achievement's icon 1.7 → 1.6, its name 1.25 → 1.2, its line 0.8 → 0.75, the stamp 1.3 → 1.2; on a short screen the banner's padding 5 → 6 px, its icon 1.35 → 1.4 and its name 1.05 → 1 rem).

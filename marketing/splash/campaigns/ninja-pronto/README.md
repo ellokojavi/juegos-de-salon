@@ -7,7 +7,7 @@ name and no link: a hint the game makes clear once it launches.
 |---|---|
 | Texts | kicker "Muy pronto / Coming soon / Em breve / Demnächst"; title "El ninja enfrenta una misión nunca antes vista / The ninja faces a mission never seen before / O ninja enfrenta uma missão nunca vista / Eine Mission wie keine andere für den Ninja" |
 | Item | a teaser: `public/assets/splash/ninja-teaser.mp4` (512×320, 8 s loop at 30 fps, 39 KB), its first frame `ninja-teaser-start.png` as the poster and its still `ninja-teaser.png`, made by [`teaser.mjs`](../../teaser.mjs) from [`teaser/ninja.html`](../../teaser/ninja.html) |
-| The scene | drawn with the game's own scene (`public/labs/stick/scene.js`), cryptic on purpose: the night with its crescent moon and mountains, the neon-edged pillars with their flags; the ninja dashes to the edge of its pillar and stops, looking across the gap at the next one, and stays. No stick grows: the play is not shown |
+| The scene | drawn with the game's own scene (`public/cup/games/stick/scene.js`), cryptic on purpose: the night with its crescent moon and mountains, the neon-edged pillars with their flags; the ninja dashes to the edge of its pillar and stops, looking across the gap at the next one, and stays. No stick grows: the play is not shown |
 | On | off: made 2026-10-28, waiting for the owner to turn it on from the panel (📣 Campaigns) |
 | Usability | full pass before it is turned on (D-355) |
 
