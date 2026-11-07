@@ -571,6 +571,7 @@
       "files": [
         "public/generala/engine.js",
         "public/generala/game.js",
+        "public/generala/game.json",
         "public/generala/index.html",
         "public/generala/rules.js",
         "public/generala/style.css"
@@ -1104,7 +1105,10 @@
     "public/assets/js/load-css.js",
     "public/assets/js/manifests/battleship.js",
     "public/assets/js/manifests/bulls-and-cows.js",
+    "public/assets/js/manifests/generala.js",
     "public/assets/js/manifests/hangman.js",
+    "public/assets/js/manifests/labs/fourth-king.js",
+    "public/assets/js/manifests/labs/julep.js",
     "public/assets/js/manifests/liars-dice.js",
     "public/assets/js/manifests/timeline.js",
     "public/assets/js/month-end.js",

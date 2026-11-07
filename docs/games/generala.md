@@ -195,3 +195,9 @@ Generala's stylesheet lost its copies of the game shell (screens, the cover's he
 «Doble generala», «Double generala», «Four of a kind» and «General dupla» were cut with "…". The
 name now wraps between words onto a second line (that row grows); the score columns keep their
 width, so six players still fit.
+
+## Manifest (`game.json`, #1249 step 14)
+
+Its catalogue entry, modes, session key, Firebase paths and the exceptions above live in
+`public/generala/game.json`, moved out of games.js by `node tools/generators/manifests.mjs migrate`. Edit it there
+and run `node tools/generators/manifests.mjs`; games.js reads the generated module.

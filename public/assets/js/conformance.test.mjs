@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { GAMES } from './games.js';
 import { manifestFolders, readManifest } from '../../../tools/generators/manifests.mjs';
-import { staticConformance, leafKeys } from '../../../tools/generators/conformance.mjs';
+import { staticConformance, leafKeys, excuses } from '../../../tools/generators/conformance.mjs';
 import { PARTS } from '../../../tools/e2e/ci.mjs';
 
 const PUBLIC = fileURLToPath(new URL('../..', import.meta.url));
@@ -43,6 +43,12 @@ for (const [id, why] of Object.entries(debt)) {
 // The checks themselves catch what they claim to
 const fake = { a: 1, b: { c: 2 } };
 assert.deepEqual(leafKeys(fake), ['a', 'b.c']);
+// An exception excuses a check only when its reason names the check's subject: Generala's C-7 (the
+// dice and the seed) does not excuse sharing outside compartir.js
+const ex = { canonExceptions: [{ canon: 'C-7', why: 'The dice do not come from the seed (D-246).' }] };
+assert.equal(excuses(ex, 'C-7', 'compartir.js'), null);
+assert.ok(excuses({ canonExceptions: [{ canon: 'C-7', why: 'nothing goes through compartir.js' }] }, 'C-7', 'compartir.js'));
+assert.equal(excuses({ canonExceptions: [{ canon: 'C-19', why: 'nothing goes through compartir.js' }] }, 'C-7', 'compartir.js'), null);
 const pilot = folders.includes('hangman') ? 'hangman' : folders[0];
 assert.deepEqual(await staticConformance(PUBLIC, pilot), []);
 assert.deepEqual(await staticConformance(PUBLIC, 'assets'), ['manifest: no game.json']);

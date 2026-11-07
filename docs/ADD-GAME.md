@@ -41,7 +41,8 @@ The game inside is a placeholder (a race to ten). Replace it, keeping what surro
 `node public/assets/js/conformance.test.mjs` (the files, the languages, the shared modules; in the
 `tests` check) and `node tools/e2e/conformance.mjs labs/<id>` in the browser (load, languages, back,
 resume, share, result; one CI part per game). A canon the game breaks on purpose goes in
-`canonExceptions` with its reason, copied from its doc's "Excepciones a los cánones", and the check skips it.
+`canonExceptions` with its reason, copied from its doc's "Excepciones a los cánones"; the check skips it
+when that reason names what the check is about (`compartir.js`, `fin.js`, `session.js`, a C-2 file).
 
 The PR that adds it runs `python3 tools/release/readme.py update` and, once the README is reread, `seal`.
 

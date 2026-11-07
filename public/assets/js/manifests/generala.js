@@ -1,0 +1,95 @@
+// Generated from game.json by node tools/generators/manifests.mjs: do not edit by hand.
+export default {
+  "id": "generala",
+  "path": "generala/",
+  "emoji": "📝",
+  "name": {
+    "es": "Generala",
+    "en": "Generala",
+    "pt": "General"
+  },
+  "tagline": {
+    "es": "Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala! Como el Kniffel o el Yatzy.",
+    "en": "Roll five dice up to three times and fill your score card. Straight, full house… and generala! Like Kniffel or Yatzy.",
+    "pt": "Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general! Como o Kniffel ou o Yatzy."
+  },
+  "keywords": {
+    "es": [
+      "dados",
+      "escalera",
+      "full",
+      "poker",
+      "planilla",
+      "cubilete",
+      "kniffel",
+      "yatzy"
+    ],
+    "en": [
+      "dice",
+      "yahtzee",
+      "kniffel",
+      "yatzy",
+      "straight",
+      "full",
+      "house",
+      "poker",
+      "scorecard"
+    ],
+    "pt": [
+      "dados",
+      "sequência",
+      "full",
+      "poker",
+      "general",
+      "yahtzee",
+      "kniffel",
+      "yatzy",
+      "copo"
+    ]
+  },
+  "players": {
+    "min": 1,
+    "max": 6
+  },
+  "duration": "5–30",
+  "tipos": [
+    "tabletop"
+  ],
+  "jugadas": [
+    "roll",
+    "score"
+  ],
+  "unoAlDia": {
+    "orden": 16,
+    "desde": "2026-10-23",
+    "grupo": true
+  },
+  "nuevoDesde": "2026-10-20",
+  "available": true,
+  "modes": [
+    "local",
+    "online",
+    "solo",
+    "uno-al-dia"
+  ],
+  "ai": false,
+  "memory": "juegos-de-salon:generala:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [
+    "rooms/{code}"
+  ],
+  "canonExceptions": [
+    {
+      "canon": "C-7",
+      "why": "The dice do not come from the seed outside One a Day: the seed would tell the next rolls to whoever reads it (D-246)."
+    },
+    {
+      "canon": "C-10",
+      "why": "No secrets to commit: the dice are in the open, as at the table (D-246)."
+    }
+  ]
+};

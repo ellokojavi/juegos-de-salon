@@ -29,6 +29,10 @@ assert.deepEqual(labsExits("@@ -20,3 +20,3 @@\n-  zip: { emoji: '〰️', labs: 
 assert.deepEqual(labsExits('', 'R100\tpublic/labs/routes/game.js\tpublic/routes/game.js\nM\tpublic/index.html'), ['routes']);
 assert.deepEqual(labsExits('', 'R090\tpublic/labs/routes/a.js\tpublic/labs/routes/b.js'), [], 'moving within the lab is not leaving');
 assert.deepEqual(labsExits("@@ -1,3 +1,3 @@\n-    labs: true,\n+    labs: true,", ''), [], 'a line rewritten the same takes nobody out');
+// A migration to game.json (#1249) moves `labs: true` from games.js to the manifest: nobody leaves
+const migrated = "@@ -1,6 +1,2 @@\n-  {\n-    id: 'julepe',\n-    slug: 'julep',\n-    labs: true,\n-  },\n+  catalogEntry(julepManifest),\ndiff --git a/public/labs/julep/game.json b/public/labs/julep/game.json\n@@ -0,0 +1,5 @@\n+{\n+  \"id\": \"julepe\",\n+  \"slug\": \"julep\",\n+  \"labs\": true,\n+}";
+assert.deepEqual(labsExits(migrated, ''), [], 'moved into game.json is not leaving');
+assert.deepEqual(labsExits('@@ -1,4 +1,3 @@\n   "id": "julepe",\n   "slug": "julep",\n-  "labs": true,\n   "available": true,', ''), ['julep'], 'a game.json that loses labs leaves');
 assert.equal(stage(['public/labs/routes/game.js', 'public/labs/index.html', 'docs/games/routes.md'], []), 'labs');
 assert.equal(stage(['public/labs/routes/game.js', 'public/assets/js/i18n.js'], []), 'site');
 assert.equal(stage(['public/assets/js/games.js'], ['untangle']), 'leaves');

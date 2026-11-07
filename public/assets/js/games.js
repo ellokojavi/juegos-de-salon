@@ -21,6 +21,9 @@ import liarsDiceManifest from './manifests/liars-dice.js';
 import timelineManifest from './manifests/timeline.js';
 import bullsAndCowsManifest from './manifests/bulls-and-cows.js';
 import battleshipManifest from './manifests/battleship.js';
+import generalaManifest from './manifests/generala.js';
+import julepManifest from './manifests/labs/julep.js';
+import fourthKingManifest from './manifests/labs/fourth-king.js';
 
 /**
  * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
@@ -74,64 +77,24 @@ export const GAMES = [
   // node tools/generators/manifests.mjs
   catalogEntry(hangmanManifest),
   catalogEntry(liarsDiceManifest),
-  {
-    id: 'generala',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 16, desde: '2026-10-23', grupo: true },
-    tipos: ['tabletop'],
-    emoji: '📝',
-    name: { es: 'Generala', en: 'Generala', pt: 'General' },
-    tagline: { es: 'Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala! Como el Kniffel o el Yatzy.', en: 'Roll five dice up to three times and fill your score card. Straight, full house… and generala! Like Kniffel or Yatzy.', pt: 'Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general! Como o Kniffel ou o Yatzy.' },
-    keywords: {
-      es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete', 'kniffel', 'yatzy'],
-      en: ['dice', 'yahtzee', 'kniffel', 'yatzy', 'straight', 'full', 'house', 'poker', 'scorecard'],
-      pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'kniffel', 'yatzy', 'copo'],
-    },
-    players: '1–6',
-    duration: '5–30',
-    jugadas: ['roll', 'score'],
-    path: 'generala/',
-    // Announced as "Próximamente" first (D-248), opened on the owner's request (D-405): it joins
-    // Uno al día with the deck shuffled on 2026-10-23 (DESDE_GENERALA in uno-al-dia.js)
-    nuevoDesde: '2026-10-20',
-    available: true,
-  },
+  // generala: from public/generala/game.json
+  // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+  // Announced as "Próximamente" first (D-248), opened on the owner's request (D-405): it joins
+  // Uno al día with the deck shuffled on 2026-10-23 (DESDE_GENERALA in uno-al-dia.js)
+  catalogEntry(generalaManifest),
   // batalla-naval: from public/battleship/game.json
   // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
   catalogEntry(battleshipManifest),
-  {
-    id: 'julepe',
-    tipos: ['tabletop'],
-    emoji: '🍹',
-    name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo' },
-    tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.' },
-    players: '1–6',
-    duration: '15–30',
-    jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],
-    // In La Bodega since D-434 (the owner's request, after D-88 had paused it): off the home page,
-    // behind the lab's door at /labs/julep/; /julep/ and /julepe/ are bridges there
-    path: 'labs/julep/',
-    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
-    slug: 'julep',
-    labs: true,
-    available: false,
-  },
-  {
-    id: 'cuarto-rey',
-    tipos: ['tabletop'],
-    emoji: '👑',
-    name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },
-    tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
-    players: '4–6',
-    duration: '20–40',
-    // In La Bodega since D-420 (the owner's request): off the home page, behind the lab's door at
-    // /labs/fourth-king/; /fourth-king/ and /cuarto-rey/ are bridges there
-    path: 'labs/fourth-king/',
-    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
-    slug: 'fourth-king',
-    labs: true,
-    available: false,
-  },
+  // julepe: from public/labs/julep/game.json
+  // In La Bodega since D-434 (the owner's request, after D-88 had paused it): off the home page,
+  // behind the lab's door at /labs/julep/; /julep/ and /julepe/ are bridges there
+  // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+  catalogEntry(julepManifest),
+  // cuarto-rey: from public/labs/fourth-king/game.json
+  // In La Bodega since D-420 (the owner's request): off the home page, behind the lab's door at
+  // /labs/fourth-king/; /fourth-king/ and /cuarto-rey/ are bridges there
+  // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+  catalogEntry(fourthKingManifest),
 ];
 
 /**

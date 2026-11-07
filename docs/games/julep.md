@@ -166,6 +166,14 @@ Gancho de pruebas (C-14): `window.__julepe` (`view`, `match`, `session`).
 
 Ninguna. Las cartas no salen de la semilla (C-7) a propósito: van en sobres cerrados y se verifican al cerrar la mano, que es como se cumple C-10 cuando el secreto hay que entregarlo (ver “De dónde salen las cartas”).
 
+- **C-19 · Its own exits (#1249 step 14).** In La Bodega since D-434 and not worked on, its result screen builds its own actions from before `fin.js` (D-343); the exits from `fin.js` come when it leaves La Bodega. Recorded in `game.json` so the conformance suite skips it.
+
 ## Migrated to the design system (D-533, #1193)
 
 Julepe followed DESIGN.md §6 after Línea de Tiempo: its stylesheet lost its copies of the game shell (screens, the cover's hero, modes, player rows, the form's error, the toggle row and its switch, the fields, the room's code, QR, "or", players and waiting line, whose turn, the result's hero), which live once in `base.css`, and what is its own (the playing card, the pot, the seats, the trick, the hand, the sticky action bar, the hand's close, the board and the history) is written on the tokens; the guest's waiting line in the room wraps its text in the shell's `.dots` span for the animated dots. The design lint reports zero on it beyond four escapes: the card's rank and suit (1.35 and 1.15 rem) and the tiny card's (0.8 and 0.7 rem), sizes of the card, not text steps. What changed for the player, all intended: the shell's "whose turn" air (2 px above, not 4), the player row's ✕ at 44 px (U-10), the mode's disabled opacity (0.5), the room's players on `--well`; the sizes that sat off the text steps moved to the nearer one (the pot's number at 2 rem, its label and the seats' lines at 0.75 rem, the hand count and the "my hand" label at 0.85 rem, the length picker and the drinks counter at 1.2 rem); the odd gaps to the nearer step (the rules list 7 → 8 px, the seats and tables 5 → 4 px, 3 → 2 px inside a seat or a trick card); the card's corner 9 → 8 px; the hand's corner 18 → 16 px; and the black shadows under the cards and the titles at `--well-deep` (30 %, from 35 and 40).
+
+## Manifest (`game.json`, #1249 step 14)
+
+Its catalogue entry, modes, session key, Firebase paths and the exceptions above live in
+`public/labs/julep/game.json`, moved out of games.js by `node tools/generators/manifests.mjs migrate`. Edit it there
+and run `node tools/generators/manifests.mjs`; games.js reads the generated module.

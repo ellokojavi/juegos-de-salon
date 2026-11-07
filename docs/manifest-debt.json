@@ -1,9 +1,6 @@
 {
   "about": "Games in GAMES (public/assets/js/games.js) still without a game.json (#1249). A ratchet: public/assets/js/conformance.test.mjs fails on a new entry or a stale one. Migrate with node tools/generators/manifests.mjs migrate <folder>.",
   "games": {
-    "copa": "Not a game folder with modes but a week-long tournament: its entry has fields the manifest schema lacks (durationUnit, formato, torneo), so manifests.mjs migrate refuses it.",
-    "generala": "Not yet migrated (#1249 step 14).",
-    "julepe": "Not yet migrated (#1249 step 14).",
-    "cuarto-rey": "Not yet migrated (#1249 step 14)."
+    "copa": "Not a game folder with modes but a week-long tournament: its entry has fields the manifest schema lacks (durationUnit, formato, torneo), so manifests.mjs migrate refuses it."
   }
 }

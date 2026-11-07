@@ -1,0 +1,54 @@
+{
+  "id": "julepe",
+  "path": "labs/julep/",
+  "emoji": "🍹",
+  "name": {
+    "es": "Julepe",
+    "en": "Julep",
+    "pt": "Paga o Bolo"
+  },
+  "tagline": {
+    "es": "Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.",
+    "en": "Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.",
+    "pt": "Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro."
+  },
+  "players": {
+    "min": 1,
+    "max": 6
+  },
+  "duration": "15–30",
+  "tipos": [
+    "tabletop"
+  ],
+  "jugadas": [
+    "va",
+    "paso",
+    "cambia",
+    "juega",
+    "regala"
+  ],
+  "slug": "julep",
+  "labs": true,
+  "available": false,
+  "modes": [
+    "local",
+    "online",
+    "cpu"
+  ],
+  "ai": true,
+  "memory": "juegos-de-salon:julepe:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [
+    "rooms/{code}"
+  ],
+  "canonExceptions": [
+    {
+      "canon": "C-19",
+      "why": "In La Bodega since D-434, not worked on: its result screen builds its own actions from before fin.js (D-343); the exits from fin.js come when it leaves La Bodega."
+    }
+  ]
+}

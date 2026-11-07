@@ -9,10 +9,11 @@
 // with every data-i18n key found), back (the header ‹ goes to its logical parent: the home page for
 // a registered game, /labs/ for a lab one), resume (C-6: a started game offers to continue after a
 // reload), share (the page loads compartir.js, C-7) and result (the exits come from fin.js, C-19).
-// A check whose canon is in the game's canonExceptions is skipped, with the reason printed.
+// A check is skipped by an exception to its canon whose reason names what it checks, printed.
 import { output, isFolder } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { manifestFolders, readManifest } from '../generators/manifests.mjs';
+import { excuses } from '../generators/conformance.mjs';
 import { gameById } from '../../public/assets/js/games.js';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
@@ -50,8 +51,8 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 for (const folder of chosen) {
   const m = readManifest(folder);
   const url = `${SITE}/${folder}/`;
-  const excused = Object.fromEntries(m.canonExceptions.map(e => [e.canon, e.why]));
-  const skip = canon => { if (!excused[canon]) return false; console.log(`– ${folder} · ${canon} skipped: ${excused[canon]}`); return true; };
+  // Skipped only by an exception to that canon whose reason names the check's subject (conformance.mjs's rule)
+  const skip = (canon, subject) => { const e = excuses(m, canon, subject); if (e) console.log(`– ${folder} · ${canon} skipped: ${e.why}`); return !!e; };
   const fresh = async (lang = 'es') => {
     await b.open(url, 1500);
     await b.evaluate(`localStorage.clear(); sessionStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); 1`);
@@ -68,8 +69,8 @@ for (const folder of chosen) {
 
   // share and result: the page goes through the shared modules
   const loaded = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').map(r => new URL(r.name).pathname))`).then(JSON.parse);
-  if (!skip('C-7')) ok(loaded.includes('/assets/js/compartir.js'), `${folder} · share: the page loads compartir.js (C-7)`);
-  if (!skip('C-19')) {
+  if (!skip('C-7', 'compartir.js')) ok(loaded.includes('/assets/js/compartir.js'), `${folder} · share: the page loads compartir.js (C-7)`);
+  if (!skip('C-19', 'fin.js')) {
     ok(loaded.includes('/assets/js/fin.js'), `${folder} · result: the page loads fin.js (C-19)`);
     const exits = await b.evaluate(`import('/assets/js/fin.js').then(f => { const n = f.salidasFin('suelto', { lang: 'es' }); return n && n.querySelectorAll ? n.querySelectorAll('a,button').length : -1; })`);
     ok(exits > 0, `${folder} · result: fin.js builds the exits of a game played on its own (${exits})`);
@@ -103,7 +104,7 @@ for (const folder of chosen) {
   }
 
   // resume (C-6)
-  if (!skip('C-6')) {
+  if (!skip('C-6', 'session.js')) {
     await fresh();
     for (const step of START[folder] || START.default) {
       try { await b.evaluate(`(() => { ${step}; return 1 })()`); } catch (e) { ok(false, `${folder} · resume: a start step failed (${e.message.split('\n')[0]})`); break; }
