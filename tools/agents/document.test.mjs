@@ -113,13 +113,13 @@ test('a Status outside the four, one citing what does not exist and an unmarked 
 
 test('the cited paths, without templates, phrases or code blocks', () => {
   const text = [
-    'Ver `public/hangman/engine.js:120`, `docs/CANONES.md#c-8` y `tools/e2e/`.',
+    'Ver `public/hangman/engine.js:120`, `docs/CANONS.md#c-8` y `tools/e2e/`.',
     'Moldes: `docs/games/<carpeta>.md`, `public/minijuegos/…`, `tools/e2e/*.mjs`, `public/{a,b}/`.',
     'No son rutas: `public/ es el sitio`, `assets/js/i18n.js`, `node tools/e2e/ci.mjs`, `/cup/?x=1`.',
     'Con consulta: `public/cup/?practica=zip`.',
     '```bash', 'node `tools/no/existe.mjs`', '```',
   ].join('\n');
-  assert.deepEqual(citedPaths(text), ['public/hangman/engine.js', 'docs/CANONES.md', 'tools/e2e/', 'public/cup/']);
+  assert.deepEqual(citedPaths(text), ['public/hangman/engine.js', 'docs/CANONS.md', 'tools/e2e/', 'public/cup/']);
 });
 
 test('the cited decisions, without confusing other acronyms', () => {

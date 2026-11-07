@@ -7,14 +7,14 @@ rehacerse (D-178).
 | Asset | Versión | Archivos | Memoria |
 |---|---|---|---|
 | Video promocional | 8 · 2026-10-26 · 41,1 s | [16:9 para YouTube](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-youtube-16x9.mp4) · [vertical](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical.mp4) · [vertical in English](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical-en.mp4) | [promo-video/README.md](promo-video/README.md) |
-| Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/compartir-vertical.mp4) · [16:9](share-tutorial/output/compartir-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
-| Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
-| Tarjeta de Agentes (imagen y video; off the site since D-421) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agentes-tarjeta/output/agentes-1200x630.jpg) · [video](agentes-tarjeta/output/agentes-6s.mp4) · [GIF](agentes-tarjeta/output/agentes-6s.gif) | [agentes-tarjeta/README.md](agentes-tarjeta/README.md) |
+| Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/share-vertical.mp4) · [16:9](share-tutorial/output/share-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
+| Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](case-teaser/output/case-6s.mp4) · [GIF](case-teaser/output/case-6s.gif) | [case-teaser/README.md](case-teaser/README.md) |
+| Tarjeta de Agentes (imagen y video; off the site since D-421) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agents-card/output/agents-1200x630.jpg) · [video](agents-card/output/agents-6s.mp4) · [GIF](agents-card/output/agents-6s.gif) | [agents-card/README.md](agents-card/README.md) |
 | Tarjetas para compartir y cabecera del correo | 1 · 2026-10-18 | [`public/assets/og/`](../public/assets/og/) · [cabecera](../public/assets/email/header.jpg) | [share-cards/README.md](share-cards/README.md) |
-| Se vienen cositas (adelanto del laboratorio) | 1 · 2026-10-13 · 6,0 s, sin audio | [video 1:1](proximamente-teaser/output/se-vienen-cositas-6s.mp4) | [proximamente-teaser/README.md](proximamente-teaser/README.md) |
+| Se vienen cositas (adelanto del laboratorio) | 1 · 2026-10-13 · 6,0 s, sin audio | [video 1:1](coming-soon-teaser/output/coming-soon-6s.mp4) | [coming-soon-teaser/README.md](coming-soon-teaser/README.md) |
 | Reddit r/chile: solo o con amigos | 1 · 2026-10-19 | [imagen 1080×1350](reddit-chile/output/reddit-chile-1080x1350.jpg) · [post](reddit-chile/reddit.md) | [reddit-chile/README.md](reddit-chile/README.md) |
 
-[`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
+[`log.json`](log.json) es la misma lista para leer con código: versión, fecha,
 archivos, formatos, duración y estado de cada asset, y qué juegos muestra: `juegos`, con
 `"seleccion": true` si son solo algunos a propósito y `"laboratorio"` para los que salen sin estar
 todavía en la portada (U-34).
@@ -25,7 +25,7 @@ todavía en la portada (U-34).
   dueño en cada vuelta, lo que ya se probó y las trampas conocidas.
 - **Al terminar cada vuelta se anota:** una entrada en la Historia de su README (lo que pidió el
   dueño, en sus palabras cuando importa, y lo que se hizo), lo que cambió en "Lo que el dueño
-  quiere" si aprendimos algo de sus gustos, y la versión, fecha y archivos en `registro.json` y
+  quiere" si aprendimos algo de sus gustos, y la versión, fecha y archivos en `log.json` y
   en la tabla de arriba.
 - **Solo la última versión de cada archivo final** vive en el repo (en `output/`); las anteriores
   quedan en la historia de git. Lo que se rehace solo (capturas, cuadros sueltos, intermedios)
@@ -33,11 +33,11 @@ todavía en la portada (U-34).
 - Todo lo de esta carpeta se publica con el sitio (GitHub Pages): nada privado acá.
 - **All promotional material has its asset here** (D-356): the sources (drawing, template, build
   script, originals) live in the asset's folder. What the site serves stays in `public/`, and the asset
-  names it in `servido` in `registro.json`: `served.test.mjs` fails if a promotional file in the site
+  names it in `servido` in `log.json`: `served.test.mjs` fails if a promotional file in the site
   (share cards, splash clips, the email header, a page's `og:image`) has no asset.
 - **El agente de usabilidad revisa cada asset en su ronda** (U-34; la lanza el agente de procesos, D-276): `node tools/agents/marketing.mjs
   revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
-  que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo
+  que tocaron lo que muestra) y lo anota en el campo `revision` de `log.json`. Rehacerlo lo
   decide el dueño.
 - **Every promotional item follows the app's design** (U-40, D-380): its colors, its fonts
   (Bangers and Nunito, from `public/assets/css/base.css`) and its look, read from the app's CSS,

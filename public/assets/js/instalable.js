@@ -59,6 +59,9 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
   // With the flag on, the page also watches the connection (connection.js, PR 3) and, offline, dims
   // what needs signal and shows the chip (offline-ui.js, PR 4)
   if (on && encendido === undefined) {
+    // Asks the browser not to wipe this site's storage on its own (D-538, PR 5): Safari clears it after
+    // about 7 days unvisited unless the app is installed, and with it the queued scores and the player
+    nav?.storage?.persist?.().catch(() => false);
     Promise.all([import('./connection.js'), import('./offline-ui.js')])
       .then(([c, ui]) => ui.startOfflineUi({ connection: c.connection() })).catch(() => {});
   }

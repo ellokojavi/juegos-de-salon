@@ -1443,6 +1443,7 @@
     "public/sw.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
+    "tools/agents/architecture.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
     "tools/agents/conflict-markers.test.mjs",
     "tools/agents/covers.test.mjs",
@@ -1663,8 +1664,12 @@
       "title": "El alemán"
     },
     {
-      "path": "docs/CANONES.md",
-      "title": "Cánones y estándares de Juegos de Salón"
+      "path": "docs/ARCHITECTURE.md",
+      "title": "The architecture boundary (#1249 step 5)"
+    },
+    {
+      "path": "docs/CANONS.md",
+      "title": "Canons and standards of Juegos de Salón"
     },
     {
       "path": "docs/DECISIONS.md",

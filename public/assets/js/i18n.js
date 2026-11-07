@@ -211,7 +211,7 @@ export const COMMON = {
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
     cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}', join: 'Crea o únete a una Copa', place: 'Vas {pos} de {n}.', behind: 'Vas {pos}, a {pts} pts de {name}.', today: 'Hoy: {game}.', dayOf: 'Día {day} de {days}.', games: { linea: 'Línea Relámpago', numero: 'Toque y Fama: Número', final: 'La Gran Final', trio: 'Tres juegos' }, next: 'Sigue: {game}.', cups: '{n} copas', more: 'y {n} más', final: 'Final', playDay: 'Jugar el día {day}', playFinal: 'Jugar la final' },
     // Offline mode (D-538): the chip, the tag on what needs signal and the line on tapping it
-    offline: { chip: 'Sin conexión', pending: '{n} por subir', tag: 'Con señal', needsSignal: 'Esto necesita conexión. Vuelve cuando vuelva la señal.' },
+    offline: { chip: 'Sin conexión', pending: '{n} por subir', tag: 'Con señal', needsSignal: 'Esto necesita conexión. Vuelve cuando vuelva la señal.', uploaded1: 'Se subió 1 partida ✓', uploaded: 'Se subieron {n} partidas ✓', lostOld: 'Sin subir: {n} con más de 30 días.', lostFull: 'Sin subir: {n} que no cupieron (máximo 200).', lostRefused: 'Sin subir: {n} rechazadas (cambió tu PIN).' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy', unirse: 'Únete al mes',
@@ -385,6 +385,7 @@ export const COMMON = {
       best: 'Tu mejor puntaje: {s} en {t}.',
       notSaved: 'Esta vez no se pudo guardar en el ranking.',
       savedLater: 'Sin señal: tu puntaje se sube al ranking apenas vuelva la conexión.',
+      savedPhone: '📴 Guardado en tu celular. Se sube solo al volver la señal.',
       allRounder: 'Todoterreno', allRounderHint: 'Suma tu mejor puntaje en cada juego: gana quien juega bien a todo.',
       champions: 'Campeones de La Copa', championsHint: 'Medallas de las copas terminadas: oro, plata y bronce.',
       noChampions: 'Todavía no termina ninguna copa.',
@@ -462,7 +463,7 @@ export const COMMON = {
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
     cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}', join: 'Create or join a Cup', place: "You're {pos} of {n}.", behind: "You're {pos}, {pts} pts behind {name}.", today: 'Today: {game}.', dayOf: 'Day {day} of {days}.', games: { linea: 'Timeline Flash', numero: 'Bulls and Cows: Number', final: 'The Grand Final', trio: 'Three games' }, next: 'Next: {game}.', cups: '{n} cups', more: 'and {n} more', final: 'Final', playDay: 'Play day {day}', playFinal: 'Play the final' },
     // Offline mode (D-538): the chip, the tag on what needs signal and the line on tapping it
-    offline: { chip: 'Offline', pending: '{n} to upload', tag: 'Needs signal', needsSignal: 'This needs a connection. It comes back with the signal.' },
+    offline: { chip: 'Offline', pending: '{n} to upload', tag: 'Needs signal', needsSignal: 'This needs a connection. It comes back with the signal.', uploaded1: '1 game uploaded ✓', uploaded: '{n} games uploaded ✓', lostOld: 'Not uploaded: {n} over 30 days old.', lostFull: 'Not uploaded: {n} that did not fit (200 at most).', lostRefused: 'Not uploaded: {n} refused (your PIN changed).' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today', unirse: 'Join this month',
@@ -634,6 +635,7 @@ export const COMMON = {
       best: 'Your best score: {s} in {t}.',
       notSaved: 'This time it couldn\'t be saved to the leaderboard.',
       savedLater: 'No signal: your score goes up to the leaderboard as soon as you\'re back online.',
+      savedPhone: '📴 Saved on your phone. It uploads by itself when the signal is back.',
       allRounder: 'All-Rounder', allRounderHint: 'Adds up your best score in each game: whoever is good at everything wins.',
       champions: 'Cup Champions', championsHint: 'Medals from finished cups: gold, silver and bronze.',
       noChampions: 'No cup has finished yet.',
@@ -711,7 +713,7 @@ export const COMMON = {
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
     cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}', join: 'Crie ou entre em uma Copa', place: 'Você está em {pos} lugar de {n}.', behind: 'Você está em {pos} lugar, a {pts} pts de {name}.', today: 'Hoje: {game}.', dayOf: 'Dia {day} de {days}.', games: { linea: 'Linha Relâmpago', numero: 'Toque e Fama: Número', final: 'A Grande Final', trio: 'Três jogos' }, next: 'Depois: {game}.', cups: '{n} copas', more: 'e mais {n}', final: 'Final', playDay: 'Jogar o dia {day}', playFinal: 'Jogar a final' },
     // Offline mode (D-538): the chip, the tag on what needs signal and the line on tapping it
-    offline: { chip: 'Sem conexão', pending: '{n} para enviar', tag: 'Com sinal', needsSignal: 'Isto precisa de conexão. Volta quando o sinal voltar.' },
+    offline: { chip: 'Sem conexão', pending: '{n} para enviar', tag: 'Com sinal', needsSignal: 'Isto precisa de conexão. Volta quando o sinal voltar.', uploaded1: '1 partida enviada ✓', uploaded: '{n} partidas enviadas ✓', lostOld: 'Não enviadas: {n} com mais de 30 dias.', lostFull: 'Não enviadas: {n} que não couberam (no máximo 200).', lostRefused: 'Não enviadas: {n} recusadas (seu PIN mudou).' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje', unirse: 'Entre no mês',
@@ -883,6 +885,7 @@ export const COMMON = {
       best: 'Sua melhor pontuação: {s} em {t}.',
       notSaved: 'Desta vez não deu para salvar no ranking.',
       savedLater: 'Sem sinal: sua pontuação vai para o ranking assim que a conexão voltar.',
+      savedPhone: '📴 Salvo no seu celular. É enviado sozinho quando o sinal voltar.',
       allRounder: 'Faz-Tudo', allRounderHint: 'Soma sua melhor pontuação em cada jogo: ganha quem joga bem tudo.',
       champions: 'Campeões da Copa', championsHint: 'Medalhas das copas terminadas: ouro, prata e bronze.',
       noChampions: 'Nenhuma copa terminou ainda.',

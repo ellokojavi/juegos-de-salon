@@ -59,9 +59,26 @@ PR that changes what is kept on the phone.
 
 - The existing queue (`guardarPendiente` / `subirPendientes` in `jugador.js`), raised from 20 to 200
   games, still 30 days, still only for the player who played them and into the week they were played.
-- **Uno al día counts for its day** if it uploads within 48 h; the Firebase rules cap `cuando` at 48 h
-  back for the daily table and refuse future times.
-- Background Sync where the browser has it (Android); elsewhere on the next open, as today.
+  `guardarPendienteLocal` queues without loading Firebase, since offline the SDK may never have reached
+  the phone; the end screen goes straight to it while offline, with no retries, and says
+  "📴 Guardado en tu celular".
+- **Exactly once.** Records are best-of, so a game sent twice changes no table, but the game counter is
+  +1. Each queued game has an id and, before each try, the server's counter (`n0`); a try cut after the
+  server took it is seen on the next try (counter past `n0`) and not counted again. Another phone
+  playing the same game in between can make it skip one count: an undercount of one, never a double.
+- **A full or old queue is said, not hidden.** Past 200 the oldest goes and is counted; past 30 days a
+  game is dropped and counted; the reconnect toast says how many and why (`uploadText` in `offline-ui.js`).
+- **Storage that lasts.** With the flag on, the page asks `navigator.storage.persist()`: Safari wipes a
+  site's storage after about 7 days unvisited unless installed, and with it the queue and the player.
+- **Uno al día counts for its day** if it uploads within 48 h: yesterday's, played on this phone and not
+  on the server, goes to its day, its week and its month (`uno-al-dia-red.js`); older days go to the
+  history only, as before. "The day" is the phone's local date, as for everything in Uno al día. The
+  clock is the phone's, so the rules are the guard: they already refuse a day's week sum or points more
+  than 48 h back (`w`, `p` in `unoAlDia`) and the day's row needs the history, so a changed clock gets at
+  most yesterday. No rule change.
+- **Signing in.** The queue waits for its player: signed out, nothing goes; the Firebase sign-in renews
+  itself with the signal, from the anonymous id the phone keeps (the same storage `persist()` protects).
+- Background Sync is left out: the next open with signal, and the `online` event, are enough.
 - La Copa is never queued.
 
 ## Caching (amends D-221)
@@ -88,7 +105,9 @@ PR that changes what is kept on the phone.
 3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` and the T tab, a real cut while on (`offline-cut.js` and the service worker: nothing reaches the network, `navigator.onLine` false; `?connection=online` is the way out) (`connection.test.mjs`).
 4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Con señal", the chip, the
    one-line explanation on tap (`offline-ui.test.mjs`).
-5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.
+5. ✅ Scores: queue of 200 with ids and exactly-once counting, queued without Firebase, end-screen wording,
+   reconnect toast with what was lost and why, `storage.persist()`, Uno al día yesterday within 48 h,
+   privacy page (`pending-scores.test.mjs`, `offline-ui.test.mjs`).
 6. ✅ The first-time sheet (`offline-sheet.js`, once per phone, on the support card's `.hoja`), in es,
    en and pt, with one more line on an iPhone outside the installed app: scores are safest with the app
    on the home screen. Uno al día's page (`today/`) kept offline (`OFFLINE_PAGES` in `games.js`, used by
@@ -96,6 +115,7 @@ PR that changes what is kept on the phone.
    unless it says `offline: false`, and `offline.test.mjs` fails when an offline-capable page (Babel,
    Shinobi and later ones included) imports another site as it opens (`offline-sheet.test.mjs`).
 7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
+   Also the way back: the flag off forgets the stored files (`sw.js`) and the forced cut, tested.
 8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
    players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
@@ -111,6 +131,8 @@ PR that changes what is kept on the phone.
      gradients do not animate) with the chip; leaving fades back, the chip saying it reconnected; a page
      opened already offline paints it with no animation; `prefers-reduced-motion` switches instantly.
      Offline wins over a seasonal template's `--fondo`.
+   - **Readable**: text and the dimmed "📡 Con señal" tags on the new background pass WCAG AA contrast
+     (4.5:1), checked by a test.
 9. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
 
 ## Risks
@@ -120,4 +142,4 @@ PR that changes what is kept on the phone.
   is reliable in the installed app, and `instalar.js` is where to say so.
 - A too-eager "poor connection" would push players out of rooms they could play: start conservative and
   send mode changes to the panel to tune.
-- Double uploads: already guarded (one run at a time); the end-to-end test keeps proving it.
+- Double uploads: one run at a time, and a cut try is not counted again (`n0`, PR 5); the end-to-end test keeps proving it.

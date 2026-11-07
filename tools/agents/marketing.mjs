@@ -13,7 +13,7 @@
  * decides it. The registry's fields (`titulo`, `fecha`, `juegos`, `revision.al_dia`…) are data and
  * keep their names.
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -21,8 +21,7 @@ import { GAMES, SUELTOS, PORTADA } from '../../public/assets/js/games.js';
 import { todayVersion } from '../release/version.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-// marketing/log.json from D-316 on; marketing/registro.json while that file has not been renamed
-const REGISTRY = ['log.json', 'registro.json'].map(f => join(ROOT, 'marketing', f)).find(existsSync) || join(ROOT, 'marketing', 'log.json');
+const REGISTRY = join(ROOT, 'marketing', 'log.json');
 
 /** What an asset has fallen behind on compared to today's app. Pure: tested without disk. */
 export function behind(asset, { cover, version, name = id => id }) {

@@ -150,8 +150,18 @@ export async function sincronizar() {
   if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor, totales: !noche }).catch(() => null);
   // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
   // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
+  // Offline mode (D-538, PR 5): yesterday's, played without signal, still counts for its day, its week
+  // and its month (the rules take a day up to 48 h back, so a wrong clock cannot reach further)
+  const ayer = await flag('offline').catch(() => false) ? fechaDeNum(numDia(hoy) - 1) : null;
   for (const [f, x] of Object.entries(locales)) {
     if (f === hoy || dias[f] || !x?.j) continue;
+    if (f === ayer) {
+      const n = numDia(f);
+      await j.empezarDia({ n }).catch(() => false);
+      const ok = await j.anotarDia({ n, j: x.j, s: x.s, ms: x.ms, semanaP: semanaDe(f), mejor: estado().mejor, totales: !noche }).catch(() => null);
+      if (ok?.historia && !noche) await j.anotarPuntosDia({ n, mesP: periodoMes(f), racha: estado().racha }).catch(() => false);
+      continue;
+    }
     await j.anotarDia({ n: numDia(f), j: x.j, s: x.s, ms: x.ms, soloHistoria: true }).catch(() => null);
   }
   // The days this phone's 🧊 saved go up as markers (D-415), so the server's walk keeps the streak

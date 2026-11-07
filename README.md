@@ -578,6 +578,7 @@ node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
 node public/sw.test.mjs
 node tools/agents/approve.test.mjs
+node tools/agents/architecture.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/conflict-markers.test.mjs
 node tools/agents/covers.test.mjs
@@ -805,7 +806,7 @@ Fork the repo, work on a topic branch and open a pull request to `main`; the tes
 These documents are being moved to English (D-316); the ones with a Spanish title are still in Spanish.
 
 <!-- generated: docs · written by python3 tools/release/readme.py update -->
-- [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
+- [Canons and standards of Juegos de Salón](docs/CANONS.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisions](docs/DECISIONS.md)
 - [Adding a game](docs/ADD-GAME.md)
@@ -841,6 +842,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
+- [The architecture boundary (#1249 step 5)](docs/ARCHITECTURE.md)
 - [The design system](docs/DESIGN.md)
 - [Merge lanes (D-519)](docs/LANES.md)
 - [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
