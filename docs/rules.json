@@ -475,18 +475,21 @@
    "doc": "docs/CANONS.md",
    "form": [
     "check",
+    "ratchet",
     "judged"
    ],
    "enforcedBy": [
-    "tools/agents/english.test.mjs"
+    "tools/agents/english.test.mjs",
+    "tools/agents/identifiers.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "that a game's internal name matches the player's name is a naming call; new identifiers in English become a check in #1249 step 12",
+   "why": "that a game's internal name matches the player's name is a naming call; file names and exported identifiers are checked",
    "applies": [
     "public/**",
     "docs/games/**",
     "tools/e2e/**"
-   ]
+   ],
+   "debt": "docs/english-identifiers-debt.json"
   },
   {
    "id": "U-1",

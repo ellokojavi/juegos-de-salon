@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT, readRegistry, problems, problemsOf, withIndex, touched, commentFor, MARKER, CONTRIB_FILES, withRules } from './rules.mjs';
+import { ROOT, readRegistry, problems, problemsOf, withIndex, touched, commentFor, MARKER, CONTRIB_FILES, withRules, debtCount, buildReport, formatReport, repeatedFixes, lastRecorded, readDebtLog } from './rules.mjs';
 
 // the shape check itself
 const yes = () => true, no = () => false;
@@ -61,4 +61,31 @@ for (const [file, kind] of Object.entries(CONTRIB_FILES)) {
   const text = readFileSync(join(ROOT, file), 'utf8');
   assert.equal(withRules(text, kind, rules), text, `${file} rules block is stale: node tools/agents/rules.mjs contributing`);
 }
+// the rules round (#1249 step 16): debt per ratchet, judged without reviewer, repeated fixes
+assert.equal(debtCount([1, 2, 3]), 3);
+assert.equal(debtCount({ _about: 'x', entries: [1, 2] }), 2);
+assert.equal(debtCount({ about: 'x', a: {}, b: {} }), 2);
+assert.equal(debtCount({ about: 'x', paths: { a: { state: 'pending' }, b: { state: 'done' } } }), 1);
+const fakeRound = [
+  { id: 'R', title: 't', doc: 'd', form: ['ratchet'], debt: 'list.json' },
+  { id: 'C-4', title: 't', doc: 'd', form: ['judged'], reviewer: 'x' },
+  { id: 'C-9', title: 't', doc: 'd', form: ['check'] },
+  { id: 'J', title: 't', doc: 'd', form: ['judged'] },
+];
+const rep = buildReport({ rules: fakeRound, read: () => [1, 2], date: '2026-11-07', log: { '2026-11-01': { R: 5 }, '2026-11-07': { R: 1 } },
+  subjects: ['Fix C-4 sound', 'fix: C-4 again', 'Fix C-9 x', 'fixes C-9 y', 'Add C-4 thing', 'fix D-12 once'] });
+assert.deepEqual(rep.debt, [{ id: 'R', debt: 'list.json', count: 2, last: 5, delta: -3 }], 'the trend is against the round before today');
+assert.deepEqual(rep.unreviewed, ['J']);
+assert.deepEqual(rep.repeated.map(c => [c.id, c.count]), [['C-4', 2]], 'a checked rule and a single fix are not candidates');
+assert.match(formatReport(rep), /R: 2 in list\.json \(shrank by 3/);
+assert.equal(repeatedFixes(['fix english x', 'fix english y'], [{ id: 'english', form: ['judged'] }])[0]?.id, 'english');
+
+// the ratchet's teeth: a 📈 rule's debt never exceeds its last recorded count (docs/rules-debt.json)
+const now = buildReport({ rules, log: readDebtLog() });
+const recorded = lastRecorded(readDebtLog());
+for (const d of now.debt) {
+  assert.ok(recorded[d.id] !== undefined, `${d.id}: no count in docs/rules-debt.json: node tools/agents/rules.mjs report --record`);
+  assert.ok(d.count <= recorded[d.id], `${d.id}: its debt grew to ${d.count} (last recorded ${recorded[d.id]}); pay it down, never add to it`);
+}
+
 console.log(`ok · rules: ${rules.length} registered`);
