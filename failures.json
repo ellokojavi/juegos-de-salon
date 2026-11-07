@@ -1271,6 +1271,19 @@
       "date": "2026-11-07T22:08:29.796Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42418263611,
+      "check": "end-to-end",
+      "pr": 1284,
+      "branch": "offline-7-e2e",
+      "commit": "0999a7fdc3ed4683cef0293381295c0545793393",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the ones left out stay outside, in the hand",
+      "signature": "6fad0784f2",
+      "date": "2026-11-07T22:09:28.061Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
