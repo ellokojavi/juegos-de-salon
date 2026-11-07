@@ -1,5 +1,3 @@
 level: patch
 
-- **Shinobi's launch gate is gone**: it launched to everyone on 2026-11-02, so it is now in the home page, the search, the rankings and new cups on every phone without reading its flag, and La Copa can draw it for a weekend of three. Its row leaves the lab's flag list.
-- **An online game's room goes through `room-state.js`** (D-539): C-7 and the checklist now ask every game with online rooms to apply `hello`, `start` and `rematch` through it.
-- **D-523 is written down as an unused number**: it was reserved for Babel scoring on a branch deleted without a PR.
+- **Every online game's room follows the same rules** (D-539): Battleship, Bulls and Cows and the lab's Julep now apply joining and rematch through `room-state.js`, like Hangman, Timeline, Generala and Liar's Dice. In Julep a second rematch offer from the same player no longer replaces the first, so two phones cannot end up in different rooms. A join can carry more than a name through `onHello` (Julep's key for its sealed hand).

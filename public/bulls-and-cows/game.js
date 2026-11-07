@@ -33,6 +33,7 @@ import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
 import { phaseOf } from '../assets/js/hidden-match.js';
+import { roomMessage } from '../assets/js/room-state.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -63,10 +64,12 @@ function newMatch(config) {
 }
 
 function apply(msg) {
-  if (msg.id && M.seen.has(msg.id)) return; if (msg.id) M.seen.add(msg.id);
+  // Seen ids, hello and rematch: the shared room machine (D-539); two seats, no host start
+  const room = roomMessage(M, msg);
+  if (room === 'seen') return;
+  if (room) return null;
   const from = msg.from;
   switch (msg.t) {
-    case 'hello': M.names[from] = msg.name; break;
     case 'commit': if (!M.commits[from]) M.commits[from] = { hash: msg.hash }; break;
     case 'guess': {
       const v = view();
@@ -84,7 +87,6 @@ function apply(msg) {
       break;
     }
     case 'reveal': if (!M.reveals[from]) M.reveals[from] = { secret: msg.secret, salt: msg.salt }; break;
-    case 'rematch': if (!M.rematch[from]) M.rematch[from] = msg.code || true; break;
     // El chat no es parte del estado: se dibuja y se olvida (canon C-15)
     case 'chat': if (chat) chat.add(msg, { live: !!S?.live }); return 'chat';
   }

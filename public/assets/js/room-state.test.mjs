@@ -42,4 +42,14 @@ const o = { minPlayers: 2, onStart: () => starts++ };
 roomMessage(M, { t: 'start', from: 'A', order: ['A', 'B'] }, o);
 roomMessage(M, { t: 'start', from: 'A', order: ['A', 'B'] }, o);
 assert.equal(starts, 1);
+// onHello: a seat's hello can carry more (Julep's key); it runs on every hello, a reconnect too
+M = match(); const keys = {};
+roomMessage(M, { t: 'hello', from: 'B', name: 'Beto', pub: 'k1' }, { onHello: m => { if (m.pub) keys[m.from] = m.pub; } });
+assert.deepEqual(keys, { B: 'k1' }); assert.equal(M.names.B, 'Beto');
+
+// A two-seat game with no host start: hello and rematch only
+M = match();
+roomMessage(M, { t: 'hello', from: 'A', name: 'Ana' });
+roomMessage(M, { t: 'rematch', from: 'B', code: 'X' }); roomMessage(M, { t: 'rematch', from: 'B', code: 'Y' });
+assert.equal(M.rematch.B, 'X'); assert.equal(roomPhase(M), 'lobby');
 console.log('room-state ok');
