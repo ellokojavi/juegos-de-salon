@@ -1,6 +1,6 @@
 # Offline mode (RP-13)
 
-**Status:** approved by the owner (D-538), PR 1 of 8 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
+**Status:** approved by the owner (D-538), PRs 1 and 2 of 8 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
 
 The app keeps working with no signal or a poor one. It switches to a reduced **Sin conexión** mode by
 itself; there is no switch for players. Games that run on the phone keep working, online rooms and La
@@ -59,16 +59,22 @@ PR that changes what is kept on the phone.
 - Pages: network-first with a timeout, cache as fallback, so an online player always gets the latest.
 - Assets: cache-first in a cache named after the release version; old caches deleted on `activate`.
 - Precache list generated from the manifest: each offline-capable game's folder and its `reuses`, the
-  shared JS and CSS, fonts and icons. Not La Copa, not the OG cards, not the panel. Target under ~8 MB.
+  shared JS and CSS, fonts and icons. Not La Copa, not the OG cards, not the panel. About 4 MB today; `precache.test.mjs` fails over 8 MB.
 - **Music is never precached**: it is cached once a song plays online; until then offline is silent.
   Sound effects are precached.
 - The Firebase SDK on gstatic is cached at runtime when used, for when the signal returns.
-- A waiting new version shows "Hay una versión nueva · Actualizar" in the chip's place.
+- No update prompt is needed: pages are network-first and every module and stylesheet is content-hashed (D-467).
+- Big pictures (Dónde's satellite tiles, over 100 KB each) are cached the first time they are seen.
 
 ## The PRs (all behind `flag('offline')`)
 
 1. ✅ Decision D-538, this plan, `offlineOk` in the manifest, `offline.test.mjs`.
-2. Service worker caching: generated precache, network-first pages, update toast.
+2. ✅ Service worker caching, behind the flag: `tools/release/precache.mjs` writes `precache.json` at
+   publish (about 4 MB: every offline-capable game, what its modules import, shared JS/CSS, fonts,
+   icons); `sw.js` stores it when a page reports a new release, pages network-first, `?h=` files
+   cache-first, the Firebase SDK kept once loaded; flag off = nothing cached, caches deleted.
+   No update toast: pages are network-first and assets are content-hashed, so a new release is
+   picked up on the next load with no prompt (`sw.test.mjs`, `precache.test.mjs`).
 3. `connection.js`: probes, hysteresis, Firebase signal, the tester switch in `/labs/`.
 4. Home page and game covers: dimmed cards and modes with "📡 Con señal", the chip.
 5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.

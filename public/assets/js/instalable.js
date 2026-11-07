@@ -40,8 +40,24 @@ export function registrar({ nav = globalThis.navigator, raiz = RAIZ } = {}) {
     .catch(() => null);
 }
 
+/**
+ * Offline mode (D-538, PR 2; lab: #seccion-offline): tells the service worker whether the flag
+ * `offline` is on for this visitor and which release this page is, so it stores that release's
+ * files, or forgets everything when the flag is off. Asked after the page has loaded, never before.
+ */
+export async function avisarOffline({ nav = globalThis.navigator, doc = globalThis.document, encendido } = {}) {
+  const sw = await nav?.serviceWorker?.ready;
+  if (!sw?.active) return null;
+  const on = encendido ?? await import('./flags.js').then(m => m.flag('offline')).catch(() => false);
+  const release = doc?.querySelector('meta[name="release"]')?.content || 'dev';
+  const msg = { type: 'offline', on: !!on, release };
+  sw.active.postMessage(msg);
+  return msg;
+}
+
 if (globalThis.window?.addEventListener) {
   try { nombrar(); } catch (_) { /* el nombre queda el del español */ }
-  if (document.readyState === 'complete') registrar();
-  else window.addEventListener('load', () => registrar(), { once: true });
+  const empezar = () => registrar().then(() => avisarOffline()).catch(() => {});
+  if (document.readyState === 'complete') empezar();
+  else window.addEventListener('load', empezar, { once: true });
 }

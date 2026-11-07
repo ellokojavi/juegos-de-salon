@@ -572,6 +572,7 @@ node public/panel/rooms-watch.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
+node public/sw.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/conflict-markers.test.mjs
@@ -633,6 +634,7 @@ node tools/release/changelog.test.mjs
 node tools/release/json-ld.test.mjs
 node tools/release/merge-report.test.mjs
 node tools/release/pages-5xx.test.mjs
+node tools/release/precache.test.mjs
 node tools/release/syntax.test.mjs
 node tools/release/version.test.mjs
 node tools/reports/weekly-data.test.mjs
