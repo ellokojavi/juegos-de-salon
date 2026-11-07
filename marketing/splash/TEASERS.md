@@ -19,7 +19,7 @@ away. Players should want the game before they know what it is. These are the ow
    play. It may name the world or the character (the ninja, the sky), never the game. Kicker "Muy
    pronto"; no game name, no link, no Play. *(tested: no `fillText`)*
 5. **One format.** 8 s at 30 fps, 512×320 (`ratio: '8 / 5'`, `smooth: true`), in and out of black,
-   all given by the engine. *(tested: on the engine)*
+   all given by the engine. *(tested: on the engine)* A teaser that cycles (Aletazo's day → night → day) may run longer and pass `loop` instead: no black, its last moment dissolving into its first frames.
 6. **Looked at as players see it.** `look.mjs splash <id>` at 320, 390 and 1280 px, in the four
    languages; a title that breaks a word or takes four lines is shortened.
 

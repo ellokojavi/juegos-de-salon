@@ -352,8 +352,9 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-segmento button[aria-pressed="true"] { background: var(--ink); color: var(--bg1); }
 .campana-segmento button:focus-visible { outline: 2px solid var(--cyan); }
 .campana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--s-8); }
-.campana-orden { display: inline-flex; align-items: center; gap: var(--s-2); }
-.campana-pos { min-width: 52px; text-align: center; font-size: var(--fs-75); font-weight: 800; color: var(--muted); }
+.campana-orden { display: inline-flex; flex-direction: column; align-items: center; flex: none; }
+.campana-orden .icono-btn { width: 36px; height: 30px; border-radius: var(--r-8); font-size: var(--fs-100); }
+.campana-pos { min-width: 0; text-align: center; font-size: var(--fs-75); font-weight: 800; color: var(--muted); }
 .icono-btn { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); font: inherit; font-size: var(--fs-110); font-weight: 900; cursor: pointer; }
 .icono-btn:disabled { opacity: 0.25; cursor: default; }
 .icono-btn:not(:disabled):hover, .icono-btn:focus-visible { background: var(--glass); outline: none; }
@@ -362,11 +363,22 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-pie { flex-wrap: wrap; }
 .campana-vistas { display: flex; gap: var(--s-8); flex: 1 0 100%; }
 .campana-vistas .campana-preview { flex: 1; justify-content: center; padding: 0 var(--s-10); }
-.vistazo-btn { background: none; font: inherit; font-weight: 800; font-size: var(--fs-90); cursor: pointer; }
-.vistazo-btn[aria-expanded="true"] { border-color: var(--cyan); }
 /* A 390×780 phone drawn at half size */
 .vistazo-marco { width: 195px; height: 390px; margin: var(--s-4) auto var(--s-8); overflow: hidden; border-radius: var(--r-16); border: 1px solid var(--glass-border); background: var(--pn-marco); }
+.vistazo-marco { position: relative; }
 .vistazo-marco iframe { width: 390px; height: 780px; border: 0; transform: scale(0.5); transform-origin: 0 0; pointer-events: none; }
+/* ▶ over the still preview, as on a video */
+.vistazo-play { position: absolute; inset: 0; display: grid; place-items: center; border: 0; background: rgb(var(--bg1-rgb) / 0.2); cursor: pointer; }
+.vistazo-play span { width: 64px; height: 44px; border-radius: var(--r-12); background: rgb(var(--bg1-rgb) / 0.75); position: relative; transition: background 0.15s; }
+.vistazo-play span::after { content: ''; position: absolute; left: 26px; top: 12px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent var(--ink); }
+.vistazo-play:hover span, .vistazo-play:focus-visible span { background: var(--pink); }
+.vistazo-play:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+/* The preview in its own column, right of the whole form, on a screen wide enough */
+@media (min-width: 720px) {
+  .campana--con-vista { grid-template-columns: minmax(0, 1fr) 195px; column-gap: var(--s-20); grid-template-rows: repeat(4, auto) 1fr; align-items: start; }
+  .campana--con-vista > * { grid-column: 1; }
+  .campana--con-vista > .vistazo-marco { grid-column: 2; grid-row: 1 / span 5; margin: 0; }
+}
 .campana-plegada { display: flex; align-items: center; gap: var(--s-12); width: 100%; margin-bottom: var(--s-8); padding: var(--s-8) var(--s-14) var(--s-8) var(--s-8); border-radius: var(--r-16); border: 1px solid var(--glass-border); background: rgb(var(--ink-rgb) / 0.04); text-align: left; font: inherit; color: var(--muted); cursor: pointer; }
 .campana-plegada .campana-emoji { width: 40px; height: 40px; font-size: var(--fs-120); filter: grayscale(0.6); }
 .campana-plegada .campana-titulo { flex: 0 1 auto; min-width: 0; font-size: var(--fs-90); }

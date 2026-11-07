@@ -257,7 +257,7 @@ export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], force
     if (campaigns[a.id].audience === 'regulars' && !isRegular(profile)) return false;
     // A campaign announcing games launched by a flag waits for them (D-517): `launched(flag)` for this visitor
     if ((campaigns[a.id].requires || []).some(f => !launched(f))) return false;
-    const start = a.from ? Date.parse(`${a.from}T00:00:00`) : NaN;
+    const start = a.from ? Date.parse(a.from.includes('T') ? a.from : `${a.from}T00:00:00`) : NaN;
     if (Number.isFinite(start) && today.getTime() < start) return false;
     // A bare day ends at the player's own midnight; a full moment (`2026-11-09T08:00:00Z`) ends there for everyone
     const end = a.until ? Date.parse(a.until.includes('T') ? a.until : `${a.until}T23:59:59`) : NaN;
@@ -423,7 +423,8 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
   const list = node('div', 'splash-items');
   list.style.setProperty('--n', String(Math.max(1, items.length)));
-  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  // `?paused` (the panel's card preview): the still, until the owner presses ▶
+  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || param('paused') !== null;
   for (const it of items) {
     // The whole item is the way in: tapping the clip, the name or Play opens the game
     const teaser = !it.name && !it.text && !it.href;

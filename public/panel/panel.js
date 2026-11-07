@@ -37,7 +37,7 @@ import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KIND
 import { feedbackRows, countStages, STAGES, FILTERS } from './feedback.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
-import { switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
+import { dayOf as diaDe, toLocalInput, checkPick, switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
 import { stateOf as flagState } from '../assets/js/flags.js';
 import { FLAGS } from '../assets/js/flag-list.js';
@@ -1707,7 +1707,10 @@ const periodLabelDia = d => new Date(d * DAY).toLocaleDateString('en-US', { time
 /* ------------------------------------------------------------------ */
 const ESTADO_CAMPANA = { live: ['🟢', 'Showing'], scheduled: ['🕒', 'Scheduled'], ended: ['⏹', 'Ended'], off: ['⚪', 'Off'] };
 const STRIP_DAYS = 30;
-const diaCorto = d => new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { month: 'short', day: 'numeric' });
+// A day, or an exact moment (a campaign's `until: '2026-11-09T08:00:00Z'`, splash.js): that one with its hour, in this computer's time
+const diaCorto = d => String(d).includes('T')
+  ? new Date(d).toLocaleString(LOCALE, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
+  : new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { month: 'short', day: 'numeric' });
 
 /** Saves every switch at once: what the home page reads on its next visit. */
 async function guardarCampanas(rows) {
@@ -1797,7 +1800,7 @@ function vistaSplash(today) {
   const rows = todas.filter(s => !s.archived);
   const archivadas = todas.filter(s => s.archived);
   const cambiar = (id, cambio) => guardarCampanas(todas.map(s => (s.id === id ? { ...s, ...cambio } : s)));
-  const vivas = rows.filter(s => campaignStatus(s, today) === 'live');
+  const vivas = rows.filter(s => campaignStatus(s, today, Date.now()) === 'live');
   // The owner's label first, else the title players read
   const nombreDe = id => todas.find(r => r.id === id)?.label || CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es || id;
   const cruces = overlaps(rows, today, 60);
@@ -1822,7 +1825,7 @@ function vistaSplash(today) {
 
   const tarjetas = rows.map((s, i) => {
     const c = CAMPAIGNS[s.id];
-    const st = campaignStatus(s, today);
+    const st = campaignStatus(s, today, Date.now());
     const [ico, txt] = ESTADO_CAMPANA[st];
     const nombre = nombreDe(s.id);
     const titulo = c.title?.[PANEL_LANG] || c.title?.es || s.id;
@@ -1843,17 +1846,27 @@ function vistaSplash(today) {
     }
     const detalle = st === 'scheduled' ? `starts ${diaCorto(s.from)}` : st === 'live' ? (s.until ? `until ${diaCorto(s.until)}` : 'no end day')
       : st === 'ended' ? `ended ${diaCorto(s.until)}` : '';
-    // A day is a pill with the native picker laid over it: one tap opens the phone's calendar
+    // A start or end is a pill with the native date-and-time picker laid over it (the owner's request):
+    // one tap opens the calendar and the clock. The pick is checked before it is saved (checkPick)
     const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
       el('span', { class: 'campana-dia-label' }, label),
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
-      el('input', { type: 'date', value: s[campo] || '', 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
-        min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
-        onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
+      el('input', { type: 'datetime-local', value: toLocalInput(s[campo], campo === 'until'), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+        min: campo === 'until' ? (toLocalInput(s.from) || null) : null, max: campo === 'from' ? (toLocalInput(s.until, true) || null) : null,
+        onChange: e => {
+          const r = checkPick(s, campo, e.target.value);
+          if (r.error) { S.splashMsg = `Not saved: ${r.error}`; e.target.value = toLocalInput(s[campo], campo === 'until'); render(); return; }
+          cambiar(s.id, { [campo]: r.value });
+        } }),
       s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
-    const base = s.from && s.from > today ? s.from : today;
-    return el('article', { class: `campana campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
+    const base = s.from && diaDe(s.from) > today ? diaDe(s.from) : today;
+    return el('article', { class: `campana campana--con-vista campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
       el('header', { class: 'campana-cabeza' },
+        // Its place in the queue, left of the emoji, compact (the owner's request)
+        el('span', { class: 'campana-orden', role: 'group', 'aria-label': `Order: ${i + 1} of ${rows.length}` },
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
+          el('span', { class: 'campana-pos', title: `${i + 1} of ${rows.length}` }, `${i + 1}/${rows.length}`),
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('div', { class: 'campana-nombre' },
           el('span', { class: 'campana-titulo-fila' },
@@ -1878,17 +1891,11 @@ function vistaSplash(today) {
         el('button', { type: 'button', 'aria-pressed': s.until && !PRESETS.some(([d]) => s.until === dayPlus(base, d - 1)) ? 'true' : 'false',
           onClick: e => { const i = e.currentTarget.closest('.campana')?.querySelector('.campana-dia:last-of-type input'); try { i?.showPicker(); } catch { i?.focus(); } } }, 'Custom')),
       el('footer', { class: 'campana-pie' },
-        el('span', { class: 'campana-orden' },
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas([...move(rows, s.id, -1), ...archivadas]) }, '↑'),
-          el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
-          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas([...move(rows, s.id, 1), ...archivadas]) }, '↓')),
         el('span', { class: 'campana-vistas' },
-          el('button', { type: 'button', class: 'campana-preview vistazo-btn', 'aria-expanded': S.campPeek.has(s.id) ? 'true' : 'false',
-            onClick: () => { S.campPeek.has(s.id) ? S.campPeek.delete(s.id) : S.campPeek.add(s.id); render(); } }, 'Quick look 👀'),
           el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
         el('button', { type: 'button', class: 'campana-archivar', 'aria-label': `Archive ${nombre}`,
           onClick: () => { S.campOpen.delete(s.id); guardarCampanas(archive(todas, s.id, true)); } }, '🗄️ Archive')),
-      S.campPeek.has(s.id) ? vistazo(s.id, nombre) : null);
+      vistazo(s.id, nombre, S.campPeek.has(s.id)));
   });
 
   return [
@@ -1905,12 +1912,15 @@ function vistaSplash(today) {
   ];
 }
 
-/* A quick look at a splash without leaving the panel: the real home page with that campaign forced
-   (`?splash=`, which records nothing), drawn at phone size and shrunk. Opened by Quick look 👀 in the card's footer;
-   it stays open across re-renders for this visit */
-function vistazo(id, nombre) {
-  return el('div', { class: 'vistazo-marco' },
-    el('iframe', { src: `../?splash=${encodeURIComponent(id)}`, title: `${nombre}: splash preview`, tabindex: '-1' }));
+/* A look at a splash without leaving the panel, in a column at the card's right (the owner's request):
+   the real home page with that campaign forced (`?splash=`, which records nothing), drawn at phone size
+   and shrunk. It shows still (`&paused`) until ▶ is pressed, like a video; then it plays for this visit */
+function vistazo(id, nombre, playing) {
+  const play = () => { S.campPeek.add(id); render(); };
+  return el('div', { class: 'vistazo-marco', 'data-play': playing ? '1' : '0' },
+    el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' }),
+    playing ? null : el('button', { type: 'button', class: 'vistazo-play', 'aria-label': `Play ${nombre}`, title: 'Play', onClick: play },
+      el('span', { 'aria-hidden': 'true' })));
 }
 
 /* 🧩 Site features and 🎨 skins (D-477): `controls/`, read by the site through assets/js/controls.js */
@@ -1969,7 +1979,7 @@ function vistaSkins(today) {
     const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
       el('span', { class: 'campana-dia-label' }, label),
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
-      el('input', { type: 'date', value: s[campo] || '', 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+      el('input', { type: 'date', value: (s[campo] || '').slice(0, 10), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
         min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
         onChange: e => guardar(s, { [campo]: e.target.value || null }) }));
     // "These days" starts from its next yearly run, so one tap keeps the dates it already had
@@ -1998,7 +2008,7 @@ function vistaSkins(today) {
 function vistaCampanas(now) {
   const today = todayOf(now);
   if (S.splash === undefined || S.controls === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
-  const splashVivas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS }).filter(s => campaignStatus(s, today) === 'live').length;
+  const splashVivas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS }).filter(s => campaignStatus(s, today, Date.now()) === 'live').length;
   const skinViva = skinRows({ remote: S.controls?.skins, templates: SKINS, today }).filter(s => s.status === 'live');
   const funciones = Object.entries(FUNCIONES).map(([id, f]) => [f, f.parts.filter(([p]) => S.controls?.features?.[id]?.[p] !== false).length]);
   const TABS = [
@@ -2114,7 +2124,8 @@ function render() {
 function pintarVista(nodos) {
   const vista = $('#vista');
   const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(':scope > .vistazo-marco')).map(a => [a.id, a]));
-  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco'));
+  // A card is kept only if its preview did not change from still to playing
+  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco')?.dataset.play === viejos.get(n.id).querySelector(':scope > .vistazo-marco').dataset.play);
   const enOrden = quedan.map(n => n.id).join() === [...viejos.keys()].filter(id => quedan.some(n => n.id === id)).join();
   if (!quedan.length || !enOrden) { vista.replaceChildren(...nodos); return; }
   const fijos = new Set();
