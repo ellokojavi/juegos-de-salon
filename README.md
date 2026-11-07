@@ -507,6 +507,7 @@ node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/flags.test.mjs
 node public/assets/js/games.test.mjs
+node public/assets/js/hidden-match.test.mjs
 node public/assets/js/home-windows.test.mjs
 node public/assets/js/how-to-play-facts.test.mjs
 node public/assets/js/i18n.test.mjs

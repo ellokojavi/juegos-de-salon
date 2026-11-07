@@ -29,6 +29,7 @@ import { renderQr } from '../assets/js/qr.js';
 import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+import { phaseOf } from '../assets/js/hidden-match.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -90,8 +91,6 @@ function apply(msg) {
 const repliesBy = from => M.shots.filter(s => s.from === from && s.result !== null);
 
 function view() {
-  const both = M.names.A && M.names.B;
-  const committed = M.commits.A && M.commits.B;
   const pending = M.shots.find(s => s.result === null) || null;
   let shooter = M.starter;
   const salvo = M.config.salvo ? salvoTurn(M.shots, M.starter) : null;
@@ -101,12 +100,7 @@ function view() {
   if (allSunk(repliesBy('A'))) winner = 'A';
   else if (allSunk(repliesBy('B'))) winner = 'B';
   const done = !!winner;
-  let phase;
-  if (!both) phase = 'lobby';
-  else if (!committed) phase = 'placing';
-  else if (!done) phase = 'play';
-  else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
-  else phase = 'done';
+  const phase = phaseOf(M, done, 'placing');
   const last = M.shots.length ? M.shots[M.shots.length - 1] : null;
   return { phase, pending, shooter, done, winner, last, salvo };
 }
