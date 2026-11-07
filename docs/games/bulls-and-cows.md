@@ -172,6 +172,7 @@ public/bulls-and-cows/
   index.html · style.css · rules.js (LOCALES es/en/pt/de, config por defecto)
   engine.js (score, isValid, randomSecret, sha256, verifyPlayer) · engine.test.mjs
   game.js (reductor, agentes locales, render; jugar solo con public/cup/games/number/ui.js y solo.js)
+public/assets/js/hidden-match.js (phaseOf: lobby → secret → play → reveal → done, shared with Battleship)
 firebase/database.rules.json · public/assets/js/firebase-config.js
 ```
 Tests del motor: `node public/bulls-and-cows/engine.test.mjs`.

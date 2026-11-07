@@ -155,6 +155,7 @@ public/battleship/
   flota.js (pixel art de los barcos; lo genera tools/generators/fleet.py)
   game.js (reductor, agentes, bot, render: colocación y batalla)
 public/assets/js/transport/ (local.js, firebase.js con parámetro game) · public/assets/js/handoff.js
+public/assets/js/hidden-match.js (phaseOf: lobby → placing → play → reveal → done, shared with Bulls and Cows)
 ```
 
 Batalla Naval fue el juego que movió los transportes de Toque y Fama a `public/assets/js/transport/`
