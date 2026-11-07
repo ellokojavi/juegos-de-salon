@@ -1490,6 +1490,7 @@
     "tools/e2e/inert.test.mjs",
     "tools/e2e/narrow.test.mjs",
     "tools/e2e/output.test.mjs",
+    "tools/e2e/png.test.mjs",
     "tools/e2e/scope-guard.test.mjs",
     "tools/e2e/scope.test.mjs",
     "tools/e2e/since-passed.test.mjs",
@@ -1627,6 +1628,8 @@
     "paths.mjs",
     "plots/numbers.mjs",
     "plots/utilities.mjs",
+    "png.mjs",
+    "png.test.mjs",
     "room-cap.mjs",
     "room-error.mjs",
     "rooms/online.mjs",
@@ -1659,7 +1662,8 @@
     "timeline/table.mjs",
     "timeline/tie.mjs",
     "timeline/verdict.mjs",
-    "versioning.mjs"
+    "versioning.mjs",
+    "visual.mjs"
   ],
   "documents": [
     {

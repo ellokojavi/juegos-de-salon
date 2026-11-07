@@ -83,6 +83,18 @@
    ]
   },
   {
+   "id": "visual",
+   "title": "A screen does not change its look without an approved reference",
+   "doc": "tools/e2e/README.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/visual.mjs",
+    "tools/e2e/png.test.mjs"
+   ]
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",
