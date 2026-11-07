@@ -115,7 +115,6 @@
  "timeline/table.mjs": 18,
  "timeline/tie.mjs": 21,
  "visual.mjs:agents": 8,
- "visual.mjs:babel": 8,
  "visual.mjs:battleship": 8,
  "visual.mjs:bridges": 8,
  "visual.mjs:bulls-and-cows": 8,
@@ -135,7 +134,6 @@
  "visual.mjs:tango": 8,
  "visual.mjs:timeline": 8,
  "visual.mjs:untangle": 8,
- "visual.mjs:where": 8,
  "visual.mjs:word": 8,
  "visual.mjs:year": 8,
  "visual.mjs:zip": 8
