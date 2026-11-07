@@ -75,10 +75,10 @@ self.addEventListener('message', e => {
 let encendido = null;
 const leido = config().then(c => { encendido = !!c.on; });
 
-async function fromCache(req) {
+async function fromCache(req, opts) {
   // The runtime cache first: it holds the last version of a page seen online, newer than the release's
   const keys = (await caches.keys()).filter(k => k.startsWith('jds-') && k !== CONFIG).sort((a, b) => (b === RUNTIME) - (a === RUNTIME));
-  for (const k of keys) { const r = await (await caches.open(k)).match(req); if (r) return r; }
+  for (const k of keys) { const r = await (await caches.open(k)).match(req, opts); if (r) return r; }
   return null;
 }
 
@@ -108,7 +108,14 @@ async function page(req) {
 async function keep(req) {
   const hit = await fromCache(req);
   if (hit) return hit;
-  const r = await fetch(req);
+  let r;
+  try { r = await fetch(req); } catch (e) {
+    // No signal and not this exact file: another version of it (another ?h=) beats a page whose
+    // modules fail to load, which leaves it half drawn (the home page without its buttons, 2026-11-07)
+    const near = await fromCache(req, { ignoreSearch: true });
+    if (near) return near;
+    throw e;
+  }
   if (r.ok || r.type === 'opaque') { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(req, copy)); }
   return r;
 }

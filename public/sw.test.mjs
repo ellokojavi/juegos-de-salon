@@ -17,7 +17,11 @@ function worker({ site }) {
       if (!store.has(name)) store.set(name, new Map());
       const m = store.get(name);
       return {
-        match: async r => (m.has(key(r)) ? new Response(m.get(key(r))) : undefined),
+        match: async (r, o) => {
+          if (m.has(key(r))) return new Response(m.get(key(r)));
+          const near = o?.ignoreSearch && [...m.keys()].find(u => u.split('?')[0] === key(r).split('?')[0]);
+          return near ? new Response(m.get(near)) : undefined;
+        },
         put: async (r, res) => { m.set(key(r), await res.text()); },
         keys: async () => [...m.keys()].map(url => ({ url })),
         delete: async r => m.delete(key(r)),
@@ -97,6 +101,9 @@ await w.ready();
 assert.equal(await w.get('/zip/', 'navigate'), 'zip v2', 'offline: the last page seen');
 assert.equal(await w.get('/zip/?lang=en', 'navigate'), 'zip v2', 'the query does not matter for a page');
 assert.equal(await w.get('/cup/', 'navigate'), 'REDIRECT https://juegosdesalon.cl/', 'a page never cached: a redirect to the home page, so its relative links resolve (it drew unstyled under /labs/)');
+
+// Offline, a module whose exact version is not stored: another stored version of it, not a failure
+assert.equal(await w.get('/assets/js/ui.js?h=bbbb2222'), 'ui', 'a different ?h= of a stored file, when the network is out');
 
 // Firebase's own traffic is never touched; the SDK is kept once loaded
 assert.equal(await w.get('https://juegos-de-salon-default-rtdb.firebaseio.com/x.json'), 'UNTOUCHED');
