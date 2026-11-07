@@ -1299,7 +1299,11 @@
       "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "d2724dfcb7",
       "date": "2026-11-07T22:39:39.874Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "7 file(s) +20 −7: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual.mjs, tools/e2e/visual/ref/babel-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1312,7 +1316,11 @@
       "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "d2724dfcb7",
       "date": "2026-11-07T22:43:45.871Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "6 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/bridges-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1325,7 +1333,11 @@
       "error": "❌ bridges-intro: 0.34 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges; the new and the diff images are in /home/runner/work/_te",
       "signature": "c99ad676c9",
       "date": "2026-11-07T22:43:45.871Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "6 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/bridges-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1338,7 +1350,11 @@
       "error": "❌ where-intro: 1.26 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part where; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "73e3cc2f12",
       "date": "2026-11-07T22:43:45.871Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "6 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/bridges-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1351,7 +1367,11 @@
       "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "d2724dfcb7",
       "date": "2026-11-07T22:48:27.521Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "5 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/where-intro.png"
+      },
       "flaky": false
     },
     {
@@ -1364,7 +1384,11 @@
       "error": "❌ where-intro: 1.26 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part where; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "73e3cc2f12",
       "date": "2026-11-07T22:48:27.521Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a03bfdd293b8dc2da0f119e79b356bdd1cf26ed",
+        "date": "2026-11-07T23:01:04.870Z",
+        "stat": "5 file(s) +11 −3: changelog/claude-sharp-dijkstra-vp00we.md, tools/e2e/durations.json, tools/e2e/paths.mjs, tools/e2e/visual/ref/babel-intro.png, tools/e2e/visual/ref/where-intro.png"
+      },
       "flaky": false
     }
   ]
