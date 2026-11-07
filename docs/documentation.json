@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+  "checkedUpTo": "22b534e84a431b78d8716871e67d9784bc72ad28",
   "pending": [
     "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
     "D-523 (Babel scoring) cited in docs/processes.json, only on unmerged branch ccr-bedc08fa-e4itbx"
@@ -217,6 +217,16 @@
       "date": "2026-11-06",
       "from": "1e1bb1e7048c4bb144d82b406d04bd7c144490a8",
       "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
+        "D-523 (Babel scoring) cited in docs/processes.json, only on unmerged branch ccr-bedc08fa-e4itbx"
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "from": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+      "to": "22b534e84a431b78d8716871e67d9784bc72ad28",
       "pr": null,
       "pending": [
         "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
