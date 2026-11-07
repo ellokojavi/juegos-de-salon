@@ -32,6 +32,7 @@ import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+import { phaseOf } from '../assets/js/hidden-match.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -93,8 +94,6 @@ function apply(msg) {
 /** Vista derivada del estado: fase, turno, resultado. */
 function view() {
   const d = M.config.digits;
-  const both = M.names.A && M.names.B;
-  const committed = M.commits.A && M.commits.B;
   const starter = M.starter;
   const pending = M.guesses.find(g => g.famas === null) || null;
   const pendings = M.guesses.filter(g => g.famas === null);
@@ -112,12 +111,7 @@ function view() {
     const done = !!(solvedIn.A && solvedIn.B);
     const tie = done && solvedIn.A === solvedIn.B;
     const winner = done && !tie ? (solvedIn.A < solvedIn.B ? 'A' : 'B') : null;
-    let phase;
-    if (!both) phase = 'lobby';
-    else if (!committed) phase = 'secret';
-    else if (!done) phase = 'play';
-    else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
-    else phase = 'done';
+    const phase = phaseOf(M, done, 'secret');
     return { phase, pending, pendings, expected: null, done, winner, tie, replicaFor: null, starter, parallel, solvedIn, canGuess };
   }
   const expected = starter ? (M.guesses.length % 2 === 0 ? starter : other(starter)) : null;
@@ -134,12 +128,7 @@ function view() {
     } else { done = true; winner = g.from; }
     break;
   }
-  let phase;
-  if (!both) phase = 'lobby';
-  else if (!committed) phase = 'secret';
-  else if (!done) phase = 'play';
-  else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
-  else phase = 'done';
+  const phase = phaseOf(M, done, 'secret');
   return { phase, pending, pendings, expected, done, winner, tie, replicaFor, starter, parallel: false };
 }
 
