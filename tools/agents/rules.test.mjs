@@ -1,5 +1,5 @@
 // The rule registry (D-541): every rule has its form, every check names files that exist, every
-// judged rule names its reviewer, the usability marks agree with docs/USABILIDAD.md and the index is fresh
+// judged rule names its reviewer, every canon is registered, the usability marks agree with docs/USABILIDAD.md and the index is fresh
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -28,6 +28,12 @@ for (const [, m, id] of found) {
   assert.ok(byId[id], `${id} is in docs/USABILIDAD.md but not in docs/rules.json`);
   assert.deepEqual(byId[id].form, marks[m], `${id}: docs/USABILIDAD.md marks it ${m}`);
 }
+
+// every canon (C-n) in docs/CANONES.md is registered (#1249 step 3)
+const canons = readFileSync(join(ROOT, 'docs', 'CANONES.md'), 'utf8');
+const canonIds = [...canons.matchAll(/^## (C-\d+b?) ·/gm)].map(m => m[1]);
+assert.ok(canonIds.length >= 20, 'the canons are read');
+for (const id of canonIds) assert.ok(byId[id], `${id} is in docs/CANONES.md but not in docs/rules.json`);
 
 // the index in docs/RULES.md is generated and fresh
 const doc = readFileSync(join(ROOT, 'docs', 'RULES.md'), 'utf8');
