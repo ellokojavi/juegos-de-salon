@@ -33,6 +33,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 
 | What | Where | When to read it |
 |---|---|---|
+| How a rule is made: its form (🤖 check, 📈 ratchet, 👁 judged) | [docs/RULES.md](docs/RULES.md) (D-541) | Before adding or changing any rule, canon or check |
 | How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
 | The design system: tokens, scales, components (D-533) | [docs/DESIGN.md](docs/DESIGN.md), the tokens in `public/assets/css/base.css` | Before writing any CSS, or adding a control a game does not have |
 | Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions; **U-41** visual proposals as images | Before writing anything the player reads, or proposing a design |
