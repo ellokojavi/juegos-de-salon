@@ -2,7 +2,7 @@
 //   node render.mjs [salida.mp4] [--wide] [--desde s] [--hasta s]
 //   node render.mjs --fotos <dir> (--cada n | --tiempos 1.5,20.3)   → PNG sueltos, para mirar
 //   --pagina <archivo.html>   otra página con el mismo contrato (render(t), DURATION, FPS, #stage); la usan otros assets de marketing/
-import { abrir } from './navegador.mjs';
+import { abrir } from './browser.mjs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';

@@ -19,15 +19,15 @@ may only shrink. Since step 2 it also rejects any video (`.mp4`, `.mov`, `.webm`
 
 1. Each video version is a release `promo-video-v<n>` with the MP4s as assets
    (`gh release create promo-video-v<n> output/*.mp4 --notes …`); YouTube keeps being the public copy.
-2. `construir.sh` writes the MP4s to a scratch folder outside git (or `output/` in `.gitignore`), and
+2. `build.sh` writes the MP4s to a scratch folder outside git (or `output/` in `.gitignore`), and
    the step that publishes uploads them to the release.
 3. `marketing/promo-video/README.md` (its "Archivos" row and the note that Pages serves the MP4s),
-   `marketing/README.md` and `marketing/registro.json` link the release instead of `output/`.
-4. `git rm` the three MP4s and empty `GRANDFATHERED`. Thumbnails (`miniatura-*.jpg`) stay: small.
+   `marketing/README.md` and `marketing/log.json` link the release instead of `output/`.
+4. `git rm` the three MP4s and empty `GRANDFATHERED`. Thumbnails (`thumbnail-*.jpg`) stay: small.
 
 Every future marketing video takes the same path: git ignores `marketing/**/*.mp4|mov|webm` and
 `tools/release/video-release.mjs <folder> <version> <file>...` makes the release `<folder>-v<n>` and
-prints the URLs. The small clips already in git (`share-tutorial`, `caso-teaser`, ~2 MB) stay; a new
+prints the URLs. The small clips already in git (`share-tutorial`, `case-teaser`, ~2 MB) stay; a new
 version of one goes to a release too.
 
 ## 3. README screenshots: re-commit only real changes (done for 1, #1037)

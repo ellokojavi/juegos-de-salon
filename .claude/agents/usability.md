@@ -123,7 +123,7 @@ before and after screenshots at 390 and 320 px and the intended differences list
    partial table, card, final summary) against U-30 to U-32.
 5. **Interactions:** timers, disabled buttons, confirmations, back and forth between screens.
 6. **Marketing material** (U-34, U-40): it must look like the app (its colors, Bangers and Nunito, never a look-alike font, D-380). `node tools/agents/marketing.mjs check` compares each asset in
-   `marketing/registro.json` with the home page and today's version, and lists the commits that touched
+   `marketing/log.json` with the home page and today's version, and lists the commits that touched
    the games it shows. Read the asset's memory (its README) and, if needed, look at its
    files (for the video, single frames with `ffmpeg -ss <s> -i <mp4> -frames:v 1 <png>`).
    Also run `node tools/release/og.mjs check` (social cards). Record the result with

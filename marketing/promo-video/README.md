@@ -3,7 +3,7 @@
 La memoria del video promocional de Juegos de Salón: qué es, qué quiere el dueño, cómo está
 hecho, cómo se rehace y todo lo que pasó en cada versión. **Se lee entero antes de tocar el
 video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y en
-[`../registro.json`](../registro.json).
+[`../log.json`](../log.json).
 
 ## Hoy: versión 8 (2026-10-26)
 
@@ -12,17 +12,17 @@ video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y e
 | Archivos | [`promo-youtube-16x9.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`promo-vertical.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`promo-vertical-en.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical-en.mp4) (the vertical in English, since v7) |
 | Duración | 41,1 s (89 golpes, all the song has), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
 | Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas); since v7 also a vertical in English (`?lang=en`, see [In English](#in-english)) |
-| Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
+| Música | [`music/song.mp3`](music/song.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
 | App que muestra | 0.211.3 |
 
 Each version lives in a GitHub release `promo-video-v<n>` (since v8, D-494,
-[docs/REPO-WEIGHT.md](../../docs/REPO-WEIGHT.md)); YouTube keeps the public copy. `construir.sh`
+[docs/REPO-WEIGHT.md](../../docs/REPO-WEIGHT.md)); YouTube keeps the public copy. `build.sh`
 still writes the mp4s to `output/`, which git ignores, and to publish a version:
 `node tools/release/video-release.mjs promo-video <n> marketing/promo-video/output/*.mp4`, then
-the URLs it prints go here, in `../README.md` and in `../registro.json`. Any video a branch adds
+the URLs it prints go here, in `../README.md` and in `../log.json`. Any video a branch adds
 under `marketing/` fails `repo-weight.test.mjs`. Versions up to v8 remain in git history.
 
-**Muestra una selección de juegos, no todos** (`"seleccion": true` en `registro.json`): un juego
+**Muestra una selección de juegos, no todos** (`"seleccion": true` en `log.json`): un juego
 nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs check` solo avisa si
 uno de los que salen ya no está, o si la app cambió de versión.
 
@@ -78,7 +78,7 @@ La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 | La Copa | 14 | 30,5 – 36,9 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
 | Cierre | 9 | 36,9 – 41,1 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
 
-Los juegos, en orden (cada uno con su semilla, ver `jugar.mjs`):
+Los juegos, en orden (cada uno con su semilla, ver `play.mjs`):
 
 | Juego | Golpes | La jugada |
 |---|---|---|
@@ -97,12 +97,12 @@ desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesi
   (`window.render(t)`), así que cada render sale idéntico. Abierta en un navegador se reproduce
   sola; con `?wide` es la versión 16:9 (el celular a la derecha y los textos a la izquierda, el
   mismo guion). Las escenas se definen en golpes (`S` y `GAMES`).
-- **Las jugadas son capturas reales:** `jugar.mjs` abre cada juego en Chrome, lo juega con el
+- **Las jugadas son capturas reales:** `play.mjs` abre cada juego en Chrome, lo juega con el
   mouse y saca una captura por jugada, anotando dónde fue el toque (y el recorrido, si arrastró).
   `promo.html` las pasa una tras otra y dibuja un círculo donde va el dedo, con una onda al
   tocar. Los arrastres llevan capturas intermedias (`mids`), así el globo gira y el trazo crece.
 - **El azar está fijo:** cada juego entra con una `?seed=` (los sueltos usan `WNDRN`) y
-  `jugar.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
+  `play.mjs` reemplaza `Math.random` y `crypto.getRandomValues` por uno con semilla. Así cada
   corrida reparte lo mismo y los toques caen donde deben. Las soluciones de Reinas, Tango y Zip
   salen de `generar(semilla, 1)` de cada motor (`public/cup/games/*.js`).
 - **Lo que se mueve después de un toque** (el dado, el acercamiento y el vuelo del mapa) se graba
@@ -111,26 +111,26 @@ desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesi
   página corre más lenta mientras tanto (`performance.now`, `setTimeout` y `requestAnimationFrame`
   por un reloj propio, y las animaciones CSS por CDP): así el dado sale a unos 30 cuadros por
   segundo aunque cada captura tarde 100 ms.
-- **Dudo's shake** (`agite` in `jugar.mjs`, v8): one calm `devicemotion` reading says the phone
+- **Dudo's shake** (`agite` in `play.mjs`, v8): one calm `devicemotion` reading says the phone
   has a sensor (so no roll button), then jolts every 200 ms of page time, run at half speed, and
   every frame notes its moment (`tras`) and whether the phone was still shaking (`sacude`).
   `promo.html` shakes the whole phone while `sacude` frames play.
 - **El globo de ¿Dónde queda?** se gira con `globo.girarA` paso a paso (el paso `globo` de
-  `jugar.mjs`), con el dedo dibujando el mismo arrastre.
-- **Uno al día** (`hoy` en `jugar.mjs`) fija el reloj de la página en el 29 de octubre de 2026 (un
+  `play.mjs`), con el dedo dibujando el mismo arrastre.
+- **Uno al día** (`hoy` en `play.mjs`) fija el reloj de la página en el 29 de octubre de 2026 (un
   día de Reinas, el n.° 24) y siembra en el celular diez días seguidos jugados antes: así la
   racha sale en 11. La solución de las reinas sale del motor (`generar(semilla, d)` de
   `public/cup/games/queens/engine.js`, con la semilla y el día de la partida).
-- **La Copa** es la demo `podium` del laboratorio, capturada entera de arriba abajo (`copa.mjs`).
+- **La Copa** es la demo `podium` del laboratorio, capturada entera de arriba abajo (`cup.mjs`).
 - **`render.mjs`** dibuja cuadro a cuadro con Playwright y se los pasa a ffmpeg (sin audio).
-- **`construir.sh`** hace todo: capturas, `preparar.py` (achica y escribe `plays/plays.js`),
+- **`build.sh`** hace todo: capturas, `prepare.py` (achica y escribe `plays/plays.js`),
   los dos renders, la música y los mp4 de `output/`.
 
 ## Rehacerlo
 
 ```bash
 python3 -m http.server 8765 -d public         # en otra terminal
-marketing/promo-video/construir.sh            # unos 15 min: capturas, dos renders y la música
+marketing/promo-video/build.sh            # unos 15 min: capturas, dos renders y la música
 ```
 
 Necesita Playwright (`npm i -g playwright`, o `PLAYWRIGHT=<ruta a index.mjs>`), ffmpeg y Pillow
@@ -142,9 +142,9 @@ por otra sesión (D-135). Las capturas (`plays/`) no van al repo: se rehacen.
 Para trabajar por partes:
 
 ```bash
-node jugar.mjs hoy donde           # vuelve a jugar solo esos (deja los demás en plays/)
-python3 preparar.py                # siempre después de capturar
-python3 hoja.py hoy donde          # hoja.png: las capturas con el toque marcado, para revisarlas
+node play.mjs hoy donde           # vuelve a jugar solo esos (deja los demás en plays/)
+python3 prepare.py                # siempre después de capturar
+python3 sheet.py hoy donde          # hoja.png: las capturas con el toque marcado, para revisarlas
 node render.mjs --fotos fotos --tiempos 9.5,17.4,19.6          # cuadros sueltos, para mirar
 node render.mjs --wide --fotos fotos --tiempos 18.5,34.0
 open promo.html                    # o ?wide: se reproduce en el navegador, sin música
@@ -153,7 +153,7 @@ open promo.html                    # o ?wide: se reproduce en el navegador, sin 
 `render.mjs --pagina <archivo.html>` dibuja otra página en vez de `promo.html`, si cumple el mismo
 contrato (`render(t)`, `DURATION`, `FPS` y `#stage`). Así lo usa el tutorial de compartir
 ([`../share-tutorial/`](../share-tutorial/README.md)): un cambio a `render.mjs` se prueba también
-con su `construir.sh`.
+con su `build.sh`.
 
 **Antes de entregar se miran cuadros sueltos de las dos versiones** (`--tiempos` en los cortes y
 en medio de cada jugada) y la hoja de las capturas. Rehacerlas no es revisarlas (D-76).
@@ -165,20 +165,20 @@ Since v7 the video has an English version (only the vertical so far). The same `
 the captures from `plays-en/`. They are made with the app in English:
 
 ```bash
-LANG_PROMO=en node jugar.mjs            # every game, in English, into plays-en/
-LANG_PROMO=en node copa.mjs
-LANG_PROMO=en python3 preparar.py       # and LANG_PROMO=en python3 hoja.py to review them
-node render.mjs trabajo-en.mp4 --lang en    # then the music as in construir.sh
+LANG_PROMO=en node play.mjs            # every game, in English, into plays-en/
+LANG_PROMO=en node cup.mjs
+LANG_PROMO=en python3 prepare.py       # and LANG_PROMO=en python3 sheet.py to review them
+node render.mjs trabajo-en.mp4 --lang en    # then the music as in build.sh
 ```
 
-`jugar.mjs` finds buttons by text in both languages (`/Dudo|Liar/`) and plays the puzzles whose
+`play.mjs` finds buttons by text in both languages (`/Dudo|Liar/`) and plays the puzzles whose
 content changes with the language with their English answers (Connections: the fonts group; ¿En
 qué año?: 1913; Toque y Fama: Palabra: the secret word from the engine, `generar(…, { lang })`).
-Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answers in `jugar.mjs`.
+Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answers in `play.mjs`.
 
 ## La canción
 
-`music/cancion.mp3` (47,1 s) la subió el dueño. Lo que se sabe de ella:
+`music/song.mp3` (47,1 s) la subió el dueño. Lo que se sabe de ella:
 
 - **130 BPM**; un compás = 1,846 s. Tiene **2,975 s de silencio al principio**: el video parte
   ahí, en su primer golpe. La música termina a los 44,07 s del archivo.
@@ -191,38 +191,38 @@ Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answer
 - Fundido de entrada y de salida de 1 s (pedido en v5).
 
 Si el video cambia de largo, se ajustan los golpes de las escenas para que sumen lo que alcanza
-la música (89 golpes sola) y la cuenta de `construir.sh` (since v8, 89: the song is used up).
+la música (89 golpes sola) y la cuenta de `build.sh` (since v8, 89: the song is used up).
 
 ## Trampas conocidas
 
 - **Chrome se cae decodificando** las ~150 capturas a 780 px ("EncodingError: The source image
-  cannot be decoded"): por eso `preparar.py` las deja en 546 px. `render.mjs` dice cuáles no
+  cannot be decoded"): por eso `prepare.py` las deja en 546 px. `render.mjs` dice cuáles no
   cargaron.
 - **Algunos juegos sortean con `crypto`**, no con `Math.random`: sin fijarlo, Línea de Tiempo
   daba "¡Te equivocaste!" y El Ahorcado cambiaba de palabra.
-- **Los toques dependen de la app.** Si cambia un texto o un tamaño, un botón se mueve; `jugar.mjs`
+- **Los toques dependen de la app.** Si cambia un texto o un tamaño, un botón se mueve; `play.mjs`
   busca casi todo por su texto o su `data-i`. ¿Dónde queda? toca Santiago donde el globo lo dibuja
-  (`canvas.mapa-globo`.globo.aPantalla; `DONDE=x,y` lo fija a mano). Se revisa con `hoja.py`
+  (`canvas.mapa-globo`.globo.aPantalla; `DONDE=x,y` lo fija a mano). Se revisa con `sheet.py`
   después de cada captura.
 - **El globo satelital de ¿Dónde queda? no gira en las capturas** al arrastrarlo con el mouse de
   Playwright (todas las capturas del arrastre salían iguales): por eso lo gira `girarA`.
 - **Cuarto Rey responde a la posición real del mouse**, no a `.click()`; los arrastres de Reinas
-  y Zip necesitan eventos de puntero de verdad: por eso `jugar.mjs` usa el mouse de Playwright.
+  y Zip necesitan eventos de puntero de verdad: por eso `play.mjs` usa el mouse de Playwright.
 - **El "null" de Toque y Fama: Palabra** (un error de la app en `public/cup/games/word/ui.js`: un
   `append` nativo recibe `null`) se borra de la pantalla al capturar. Cuando se arregle en la app,
-  sobra ese paso de `jugar.mjs`.
-- **Los guiones a mano dependen de las capturas:** si `jugar.mjs` cambia los toques de `hoy` o de
+  sobra ese paso de `play.mjs`.
+- **Los guiones a mano dependen de las capturas:** si `play.mjs` cambia los toques de `hoy` o de
   `donde`, se revisan los `guion` de `promo.html` (los toques van por número, `'t0'`, `'t1'`…).
 - **Son ~280 capturas.** Con más, Chrome puede no alcanzar a decodificarlas (ver la primera trampa):
   `render.mjs` avisa cuáles no cargaron. El dado son unas 100.
-- **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.
+- **El servidor local se cae** en sesiones largas: `build.sh` avisa si `SITIO` no responde.
 - La Copa del video es la demo del laboratorio (`?test&labs&demo=podium`): no toca Firebase.
 - **Check that `SITIO` serves this worktree** (`lsof -iTCP:<port>` and its `cwd`): with several
   sessions, a port that seems free may be another session's server, and the captures come from its
   worktree. v7 was captured that way, from a worktree a few commits behind `main`.
-- **A killed `jugar.mjs` saves nothing:** `plays.json` is written once, at the end of the run. In
+- **A killed `play.mjs` saves nothing:** `plays.json` is written once, at the end of the run. In
   v8 a run hung on Uno al día (the app had changed) and the games before it were lost; run the
-  games one at a time with a time limit, as v8 did (`for g in …; do node jugar.mjs $g & …`).
+  games one at a time with a time limit, as v8 did (`for g in …; do node play.mjs $g & …`).
 - **Uno al día's home card** (v8): tapping the card opens `/today/` since D-414; the die rolls
   from its ▶ Jugar hoy chip (`#btn-uad-chip`). With the old `#btn-uno-al-dia` the run waits for
   `/queens/` forever.
@@ -341,7 +341,7 @@ the owner from the phone; the v6 ones stay on @eljotairi.
   in `SHORTS` in `public/assets/js/compartir-portada.js` (Spanish and English tabs; every language
   other than Spanish opens on English). The sheet no longer uses the 16:9 or its thumbnail
   (`public/assets/img/trailer.jpg` stays, for the share tutorial).
-- **Miniaturas:** `output/miniatura-youtube.jpg` (1280×720) y `output/miniatura-short.jpg`
+- **Miniaturas:** `output/thumbnail-youtube.jpg` (1280×720) y `output/thumbnail-short.jpg`
   (720×1280), sacadas de la escena del logo (`render.mjs --fotos … --tiempos 4.6`). Sin miniatura
   propia, YouTube elige un cuadro del medio (en la v6, Uno al día). Se suben en *Details →
   Thumbnail* con `file_upload` sobre el input `#file-loader`.
@@ -374,7 +374,7 @@ podio y confeti) y se nombraron los 13 juegos, los minijuegos de 1 s cada uno.
 > como si se estuviesen jugando en realidad. Al final, cambiemos el slogan 'Arma la noche' por
 > algo más general. También, indica explícitamente que puedes escoger de tres idiomas."
 
-Nació `jugar.mjs`: siete juegos jugados de verdad con el dedo a la vista; La Copa se desliza;
+Nació `play.mjs`: siete juegos jugados de verdad con el dedo a la vista; La Copa se desliza;
 "¡JUNTOS SE JUEGA MEJOR!"; "Y en tres idiomas: tú eliges" y las banderas en el cierre.
 
 ### v4 · 2026-10-02 · 41,5 s, vertical y 16:9
@@ -396,7 +396,7 @@ de 4 a 5,1 s. Se eligió hacer **los dos formatos** (16:9 con diseño propio y v
 Ocho juegos (ver el guion); la grilla de cinco celulares en bucle (6,5 s); Tango y Zip jugados;
 "🏆 LA COPA" con tres pasadas (7,4 s); la canción con los compases 4 a 8 repetidos para alcanzar
 y los dos fundidos. Al registrarlo en el repo se fijó también el azar de `crypto` en
-`jugar.mjs`: las capturas que se rehagan desde ahora pueden mostrar otras palabras que las de la
+`play.mjs`: las capturas que se rehagan desde ahora pueden mostrar otras palabras que las de la
 v5 (en la v5 El Ahorcado adivina "PISCO").
 
 ### v6 · 2026-10-08 · 39,2 s, vertical y 16:9
@@ -409,7 +409,7 @@ Seis escenas en 76 golpes: gancho y logo más cortos, cuatro juegos (Línea de T
 reinas y la racha), La Copa igual que en la v5, y un cierre con "📲 Agrégala a tu inicio" y "En 4
 idiomas". Salen la grilla de "¡Y muchos más!" y la escena de modos; la canción ya no repite
 compases. Todo recapturado con la app 0.129.1 (textos cortos, Tango y Toque y Fama ya no salen).
-Se arregló `construir.sh`, que todavía buscaba `musica/` y `salida/` (las carpetas son `music/` y
+Se arregló `build.sh`, que todavía buscaba `musica/` y `salida/` (las carpetas son `music/` y
 `output/` desde D-192), y `marketing.mjs check` aprendió `"seleccion": true`.
 
 Segunda vuelta, el mismo día:
@@ -428,7 +428,7 @@ con los diez juegos restantes (suma 🧶 Desenredo, que no estaba en la v5). Que
 > changes made since its creation. If so, create a new one." Then: "Make the Short in English too."
 
 It was stale: five games had reached the home page since v6 (Generala, Julepe, Rutas rotas, Loteo
-and Pintaminas) and the grid promises every other game. They were added to `jugar.mjs` (Rutas rotas
+and Pintaminas) and the grid promises every other game. They were added to `play.mjs` (Rutas rotas
 solved in its minimum by searching the engine's rectangles; Loteo's whole first board; Pintaminas
 painting from the engine's solution) and the grid went to 15 phones. Everything was recaptured with
 app 0.190.2; Línea de Tiempo's card moved to the first slot (see Trampas). Then the English vertical

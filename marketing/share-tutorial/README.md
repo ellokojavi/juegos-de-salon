@@ -3,13 +3,13 @@
 La memoria del video corto que enseña a compartir Juegos de Salón desde la portada, con la hoja de
 compartir (D-253) en un iPhone. Sigue el modelo de [`../promo-video/`](../promo-video/README.md)
 (D-178): **se lee entero antes de tocarlo** y cada vuelta se anota en [Historia](#historia) y en
-[`../registro.json`](../registro.json).
+[`../log.json`](../log.json).
 
 ## Hoy: versión 1 (2026-10-09)
 
 | | |
 |---|---|
-| Archivos | [`output/compartir-vertical.mp4`](output/compartir-vertical.mp4) (1080×1920: estados de WhatsApp, Reels, Shorts) · [`output/compartir-16x9.mp4`](output/compartir-16x9.mp4) (1920×1080) |
+| Archivos | [`output/share-vertical.mp4`](output/share-vertical.mp4) (1080×1920: estados de WhatsApp, Reels, Shorts) · [`output/share-16x9.mp4`](output/share-16x9.mp4) (1920×1080) |
 | Duración | 6,0 s, H.264, 30 cuadros por segundo, **sin audio** |
 | Idioma | Español (it shows the sheet as it was in v1: 16:9 thumbnail, Spanish only, D-254; since D-410 the sheet plays the Shorts in Spanish and English tabs, so a new version should redraw it) |
 | Dispositivo | iPhone: la pantalla de 390×844 puntos, la isla dinámica y el menú de compartir de iOS |
@@ -37,7 +37,7 @@ vertical el celular va al 120 %, para que se lea en la pantalla de un teléfono.
 
 ## Cómo está hecho
 
-- **`capturar.mjs`** abre la portada en español a 390×844 (el ancho de un iPhone), sin las
+- **`capture.mjs`** abre la portada en español a 390×844 (el ancho de un iPhone), sin las
   partículas que flotan, y saca dos capturas: la portada y la hoja abierta. Anota dónde están el
   botón de compartir y las dos opciones (`capturas/puntos.json` y `puntos.js`, que la página
   carga como script porque se abre como `file://`).
@@ -45,11 +45,11 @@ vertical el celular va al 120 %, para que se lea en la pantalla de un teléfono.
   La hoja sube como en la app: el fondo oscurecido aparece y el panel sube desde abajo (dos capas de
   la misma captura, recortadas en `puntos.hoja`). El menú de iOS y el chat están dibujados en HTML.
 - **`../promo-video/render.mjs --pagina tutorial.html`** lo renderiza cuadro a cuadro (la opción
-  `--pagina` se agregó para este asset); `construir.sh` hace todo, sin pista de audio.
+  `--pagina` se agregó para este asset); `build.sh` hace todo, sin pista de audio.
 
 ```bash
 python3 -m http.server 8765 -d public          # en otra terminal (o SITIO=… con otro puerto)
-marketing/share-tutorial/construir.sh          # ~1 min: capturas y los dos renders
+marketing/share-tutorial/build.sh          # ~1 min: capturas y los dos renders
 node marketing/promo-video/render.mjs --pagina marketing/share-tutorial/tutorial.html --fotos /tmp/fotos --tiempos 1.05,2.55,3.95,5.6
 ```
 
