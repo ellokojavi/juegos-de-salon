@@ -114,9 +114,15 @@ PR that changes what is kept on the phone.
    the precache and the dimming). New games need no step of their own: every game is offline-capable
    unless it says `offline: false`, and `offline.test.mjs` fails when an offline-capable page (Babel,
    Shinobi and later ones included) imports another site as it opens (`offline-sheet.test.mjs`).
-7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
-   Also the way back: the flag off forgets the stored files (`sw.js`) and the forced cut, tested.
-8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
+7. ✅ End-to-end (`tools/e2e/offline.mjs`): online the phone stores the site; with the network cut,
+   `/zip/`, `/today/` and the home page open in offline mode, the sheet shows once, the chip counts a
+   queued game and links that need signal are dimmed; back online it uploads once (counter +1 exactly)
+   with its toast. The queue does not try to upload while offline mode is on. The way back (flag off
+   forgets the stored files) is `sw.test.mjs`'s.
+8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `offline.css`, set by
+   `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers keep their
+   colours: a game's page cannot tell its cover from play in general, so the whole game page is left as
+   is. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
    players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
    their colours. A second set of the design tokens under `html.offline`. Built last, after everything else.

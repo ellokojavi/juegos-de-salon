@@ -523,6 +523,7 @@ node public/assets/js/manifest.test.mjs
 node public/assets/js/month-end.test.mjs
 node public/assets/js/name-guard.test.mjs
 node public/assets/js/offline-cut.test.mjs
+node public/assets/js/offline-palette.test.mjs
 node public/assets/js/offline-sheet.test.mjs
 node public/assets/js/offline-ui.test.mjs
 node public/assets/js/offline.test.mjs
