@@ -1358,6 +1358,7 @@
     "public/assets/js/manifest.test.mjs",
     "public/assets/js/month-end.test.mjs",
     "public/assets/js/name-guard.test.mjs",
+    "public/assets/js/offline.test.mjs",
     "public/assets/js/on-screen.test.mjs",
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/pending-scores.test.mjs",
@@ -1673,6 +1674,10 @@
     {
       "path": "docs/MERGING.md",
       "title": "Merging and publishing"
+    },
+    {
+      "path": "docs/OFFLINE.md",
+      "title": "Offline mode (RP-13)"
     },
     {
       "path": "docs/PANEL.md",

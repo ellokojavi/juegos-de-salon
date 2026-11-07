@@ -520,6 +520,7 @@ node public/assets/js/llegada.test.mjs
 node public/assets/js/manifest.test.mjs
 node public/assets/js/month-end.test.mjs
 node public/assets/js/name-guard.test.mjs
+node public/assets/js/offline.test.mjs
 node public/assets/js/on-screen.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/pending-scores.test.mjs
@@ -837,6 +838,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Merge lanes (D-519)](docs/LANES.md)
 - [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
 - [Merging and publishing](docs/MERGING.md)
+- [Offline mode (RP-13)](docs/OFFLINE.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
 - [Repo weight (D-494, #856)](docs/REPO-WEIGHT.md)
