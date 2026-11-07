@@ -20,7 +20,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-10 | Sin dependencias ni paso de build: abrir el repo publicado debe bastar. | ✅ v0.1 |
 | RP-11 | Instalable como “app” en la pantalla de inicio (manifest PWA básico). | ✅ v0.1; con service worker e íconos PNG desde v0.105.0 (D-221), y con el nombre en el idioma del jugador desde v0.106.1 (D-222). Un globo en la portada invita a agregarla, para todos desde v0.121.0 (D-232) |
 | RP-12 | Idioma español chileno, informal. | ✅ v0.1 |
-| RP-13 | Funcionar sin conexión (service worker). | ⏳ pendiente |
+| RP-13 | Funcionar sin conexión (service worker). | ⏳ en curso: D-538, [OFFLINE.md](OFFLINE.md) |
 | RP-14 | Sonidos en las acciones clave, con botón para silenciar. | ✅ v0.3 |
 | RP-15 | Jugar en español o inglés, con un toggle al inicio (menú) que aplica a todos los juegos. Después se sumaron el portugués (RP-25, D-48) y el alemán (RP-35, D-197). | ✅ v0.2 |
 | RP-16 | Toda partida en curso se puede retomar, en todos los juegos y en todos los modos (canon C-6). | ✅ v0.7 |
