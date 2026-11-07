@@ -119,7 +119,10 @@ PR that changes what is kept on the phone.
    queued game and links that need signal are dimmed; back online it uploads once (counter +1 exactly)
    with its toast. The queue does not try to upload while offline mode is on. The way back (flag off
    forgets the stored files) is `sw.test.mjs`'s.
-8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
+8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `offline.css`, set by
+   `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers keep their
+   colours: a game's page cannot tell its cover from play in general, so the whole game page is left as
+   is. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
    players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
    their colours. A second set of the design tokens under `html.offline`. Built last, after everything else.

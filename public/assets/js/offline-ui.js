@@ -22,6 +22,15 @@ const ROOT = new URL('../../', import.meta.url);
 /** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
 export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...[...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
 
+/** The games' own pages: they keep their colours offline; every other page takes the offline palette (PR 8). */
+export const GAME_PATHS = new Set([...GAMES, ...SUELTOS].filter(g => g.path).map(g => g.path.replace(/^\/|\/$/g, '')));
+/** Whether `pathname` is a game's page, under the site's root. */
+export function isGamePage(pathname = globalThis.location?.pathname || '/', root = ROOT) {
+  const p = pathname.startsWith(root.pathname) ? pathname.slice(root.pathname.length) : pathname.replace(/^\//, '');
+  const path = p.replace(/index\.html$/, '').replace(/\/$/, '');
+  return [...GAME_PATHS].some(g => g && (path === g || path.startsWith(`${g}/`)));
+}
+
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
 export function needsSignal(href, { root = ROOT, base = root } = {}) {
   let u;
@@ -109,6 +118,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
   function apply(mode) {
     const off = mode === 'offline';
     html.classList.toggle('offline', off);
+    html.classList.toggle('offline-shell', off && !isGamePage(win.location?.pathname));
     if (off) {
       mark(doc, { lang });
       // In the page's flow, first thing: it pushes the screen down a line instead of covering its top bar
