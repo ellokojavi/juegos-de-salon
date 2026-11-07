@@ -1301,6 +1301,45 @@
       "date": "2026-11-07T22:39:39.874Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42421643881,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "48a3696c8912783fa7233a6b011a73b554011237",
+      "test": "visual.mjs:babel",
+      "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
+      "signature": "d2724dfcb7",
+      "date": "2026-11-07T22:43:45.871Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42421643881,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "48a3696c8912783fa7233a6b011a73b554011237",
+      "test": "visual.mjs:bridges",
+      "error": "❌ bridges-intro: 0.34 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges; the new and the diff images are in /home/runner/work/_te",
+      "signature": "c99ad676c9",
+      "date": "2026-11-07T22:43:45.871Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42421643881,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "48a3696c8912783fa7233a6b011a73b554011237",
+      "test": "visual.mjs:where",
+      "error": "❌ where-intro: 1.26 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part where; the new and the diff images are in /home/runner/work/_temp/e",
+      "signature": "73e3cc2f12",
+      "date": "2026-11-07T22:43:45.871Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
