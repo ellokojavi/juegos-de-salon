@@ -1177,6 +1177,19 @@
         "stat": "2 file(s) +2 −2: docs/DECISIONS.md, docs/decisions/D-519.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42409310574,
+      "check": "tests",
+      "pr": 1276,
+      "branch": "claude/sweet-carson-i06v0t",
+      "commit": "1bb8effb270a2eee98b29edde87986512e9e4cf7",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/offline-cut.js\nERROR · appeared tests: public/assets/js/offline-cut.test.mjs",
+      "signature": "62678b62de",
+      "date": "2026-11-07T20:07:52.382Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
