@@ -19,7 +19,6 @@ export const FLAGS = {
   'cup-again': '🏆 La Copa: «Otra copa con este grupo» under a finished cup\'s podium, for its admin: the create screen comes filled from that cup, to check and confirm (#1165)',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
-  'stick': '🥷 Shinobi: the game, on the home page, the search and new cups (D-517)',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',

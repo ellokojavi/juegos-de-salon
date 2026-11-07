@@ -831,7 +831,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🗼 Babel (La Copa game, launched by flag; Stack in the lab)](docs/games/stack.md)
-- [🥷 Shinobi (La Copa game, launched by flag; Stick Ninja in the lab)](docs/games/stick.md)
+- [🥷 Shinobi (La Copa game; Stick Ninja in the lab before)](docs/games/stick.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)

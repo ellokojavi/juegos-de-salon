@@ -157,6 +157,7 @@ modo que el juego piensa tener.
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
 - Creating and joining an online room goes through `public/assets/js/room-flow.js` (`roomFlow({ game, maxPlayers, defaultConfig, start })`, #860): the game keeps only its own `startOnline`.
+- The room's own messages go through `public/assets/js/room-state.js` (D-539): `apply()` calls `roomMessage(M, msg, { minPlayers, onStart })` first and handles only the game's moves after it (seen ids dropped, the host's single `start`, the first rematch offer of each seat). A game with something hidden works out its phase with `phaseOf()` in `hidden-match.js` and accepts the commit and the reveal in any phase.
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - **Firebase no guarda una lista vacía:** el campo simplemente no queda. Una lista que puede ir vacía viaja como texto (`"1,4,8"`, o `""`) y el motor la lee aceptando la cadena, la lista cruda del transporte local y el campo ausente (D-60).
@@ -647,6 +648,7 @@ folder (`tools/e2e/artifacts/`), its generators and its page in `docs/games/`.
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia; creating or joining a room goes through `tryRoom` (C-14, U-37).
+- [ ] The room's `hello`, `start` and `rematch` go through `roomMessage()` in `room-state.js` (C-7, D-539).
 - [ ] Tests del motor y `node public/assets/js/games.test.mjs` en verde, y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs new`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
