@@ -146,6 +146,7 @@ export function debtCount(data) {
   if (data.paths && typeof data.paths === 'object') return Object.values(data.paths).filter(v => v?.state === 'pending').length;
   if (data.pending !== undefined) return debtCount(data.pending);
   if (data.entries !== undefined) return debtCount(data.entries);
+  if (data.games !== undefined) return debtCount(data.games);
   return Object.entries(data).filter(([k, v]) => !(typeof v === 'string' && /^_?(about|policy)$/.test(k))).length;
 }
 

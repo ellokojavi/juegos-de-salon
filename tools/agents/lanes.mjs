@@ -110,9 +110,9 @@ const git = (...a) => run('git', a);
 const gh = (...a) => run('gh', a);
 
 async function stageOf(base) {
-  const { stage, labsExits, STAGES } = await import('./covers.mjs');
+  const { stage, labsExits, STAGES, LABS_PATHS } = await import('./covers.mjs');
   const files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
-  const exits = labsExits(git('diff', `${base}...HEAD`, '--', 'public/assets/js/games.js', 'public/cup/rules.js'), git('diff', '--name-status', '-M', `${base}...HEAD`));
+  const exits = labsExits(git('diff', `${base}...HEAD`, '--', ...LABS_PATHS), git('diff', '--name-status', '-M', `${base}...HEAD`));
   return STAGES[stage(files, exits)](exits);
 }
 

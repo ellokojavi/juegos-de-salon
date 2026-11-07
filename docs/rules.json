@@ -95,6 +95,39 @@
    ]
   },
   {
+   "id": "conformance",
+   "title": "Every game passes the conformance suite driven by its game.json",
+   "doc": "docs/ADD-GAME.md",
+   "form": [
+    "check",
+    "ratchet"
+   ],
+   "enforcedBy": [
+    "public/assets/js/conformance.test.mjs",
+    "tools/e2e/conformance.mjs"
+   ],
+   "debt": "docs/manifest-debt.json"
+  },
+  {
+   "id": "R-9",
+   "title": "A new game is born from the generator",
+   "doc": "docs/RULES.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "tools/generators/new-game.test.mjs",
+    "public/assets/js/conformance.test.mjs"
+   ],
+   "reviewer": "the session building the game",
+   "why": "that a game started from the generator rather than by hand is seen in its first PR; the conformance suite fails a hand-built game that misses what the generator gives",
+   "applies": [
+    "public/**/game.json",
+    "public/assets/js/games.js"
+   ]
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",
@@ -497,9 +530,9 @@
    "reviewer": "the session building the game, with the checklist at the end of the canons",
    "why": "that a game's internal name matches the player's name is a naming call; file names and exported identifiers are checked",
    "applies": [
-    "public/**",
-    "docs/games/**",
-    "tools/e2e/**"
+    "public/**/game.json",
+    "public/assets/js/games.js",
+    "docs/games/**"
    ],
    "debt": "docs/english-identifiers-debt.json"
   },
@@ -915,8 +948,7 @@
    "applies": [
     "public/assets/js/compartir*.js",
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -930,8 +962,7 @@
    "why": "meaning, timing and clarity need a reader",
    "applies": [
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -945,8 +976,7 @@
    "why": "meaning, timing and clarity need a reader",
    "applies": [
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -960,8 +990,7 @@
    "why": "meaning, timing and clarity need a reader",
    "applies": [
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -979,8 +1008,7 @@
    "why": "the lint measures the part a program can; the rest needs a reader",
    "applies": [
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -994,8 +1022,7 @@
    "why": "meaning, timing and clarity need a reader",
    "applies": [
     "marketing/**",
-    "docs/capturas.json",
-    "README.md"
+    "docs/capturas.json"
    ]
   },
   {
@@ -1008,8 +1035,8 @@
    "reviewer": "usability agent (.claude/agents/usability.md)",
    "why": "meaning, timing and clarity need a reader",
    "applies": [
-    "docs/**",
-    "marketing/**"
+    "marketing/**",
+    "docs/design/**"
    ]
   }
  ]

@@ -23,6 +23,7 @@ import { noBrowser } from './changes.mjs';
 import { affectedJobs, changeLevel, scopeReport } from './affected.mjs';
 import { group, readDurations, NOTICE } from './groups.mjs';
 import { visualScreens } from './paths.mjs';
+import { manifestFolders } from '../generators/manifests.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // E2E_OUT; SALIDA_E2E is its old name (D-316)
@@ -57,6 +58,8 @@ export const PARTS = {
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
   // One job per game's screens, named after its page, so a PR compares only the games it reaches (#1249)
   'visual.mjs': visualScreens().map(s => s.part),
+  // The conformance suite, one part per game with a game.json, named after its folder's last segment (#1249 step 8)
+  'conformance.mjs': manifestFolders().map(f => f.split('/').pop()),
 };
 
 /** The scripts, with their path from tools/e2e/: each game's go in its folder (D-192). */

@@ -1,0 +1,4 @@
+{
+  "about": "Games in GAMES (public/assets/js/games.js) without a game.json (#1249). Paid off: every game has its manifest. A ratchet: public/assets/js/conformance.test.mjs requires this list to stay empty, so a new game is born with its game.json (node tools/generators/new-game.mjs).",
+  "games": {}
+}

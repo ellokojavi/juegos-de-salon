@@ -18,6 +18,13 @@ import { SAVED_KEY } from './lab-access.js';
 import { catalogEntry } from './game-manifest.js';
 import hangmanManifest from './manifests/hangman.js';
 import liarsDiceManifest from './manifests/liars-dice.js';
+import timelineManifest from './manifests/timeline.js';
+import bullsAndCowsManifest from './manifests/bulls-and-cows.js';
+import battleshipManifest from './manifests/battleship.js';
+import generalaManifest from './manifests/generala.js';
+import julepManifest from './manifests/labs/julep.js';
+import fourthKingManifest from './manifests/labs/fourth-king.js';
+import cupManifest from './manifests/cup.js';
 
 /**
  * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
@@ -33,150 +40,44 @@ export function lanzado(id, { flags = cachedFlags(), store = globalThis.localSto
 }
 
 export const GAMES = [
-  {
-    id: 'copa',
-    emoji: '🏆',
-    name: { es: 'La Copa', en: 'The Cup', pt: 'A Copa' },
-    tagline: { es: 'Un torneo de una semana entre amigos, con un juego distinto cada día.', en: 'A week-long tournament among friends, with a different game every day.', pt: 'Um torneio de uma semana entre amigos, com um jogo diferente por dia.' },
-    keywords: {
-      es: ['torneo', 'copa', 'semana', 'amigos', 'competencia', 'campeonato', 'grupo', 'diario', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
-      en: ['tournament', 'cup', 'week', 'friends', 'competition', 'championship', 'group', 'daily', 'ranking', 'final', '3 days', '7 days', 'global', 'chile', 'brazil'],
-      pt: ['torneio', 'copa', 'semana', 'amigos', 'competição', 'campeonato', 'grupo', 'diário', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
-    },
-    players: '2–10',
-    duration: '7',
-    // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
-    durationUnit: { es: 'días', en: 'days', pt: 'dias' },
-    // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
-    formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
-    // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
-    torneo: true,
-    // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
-    offline: false,
-    // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
-    tipos: ['words', 'logic', 'trivia'],
-    path: 'cup/',
-    // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
-    // días, la práctica con semilla y las demos).
-    available: true,
-  },
-  {
-    id: 'linea-de-tiempo',
-    tipos: ['trivia'],
-    emoji: '⏳',
-    name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo' },
-    tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia a la música.', en: 'Put the milestones in the right order. Six themes, from history to music.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história à música.' },
-    keywords: {
-      es: ['historia', 'orden', 'ordenar', 'fechas', 'hitos', 'futbol', 'cultura', 'preguntas'],
-      en: ['timeline', 'history', 'order', 'sort', 'dates', 'events', 'soccer', 'football', 'trivia', 'quiz'],
-      pt: ['história', 'ordem', 'ordenar', 'datas', 'marcos', 'futebol', 'cultura', 'perguntas', 'quiz'],
-    },
-    players: '1–6',
-    duration: '10–20',
-    jugadas: ['place'],
-    path: 'timeline/',
-    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
-    reuses: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
-    available: true,
-  },
-  {
-    id: 'toque-y-fama',
-    tipos: ['logic'],
-    emoji: '🔢',
-    name: { es: 'Toque y Fama', en: 'Bulls and Cows', pt: 'Toque e Fama' },
-    // Its card also holds 🔤 Palabra (#767), so the tagline names both
-    tagline: { es: 'Adivina el número o la palabra secreta con toques y famas.', en: 'Crack the secret number or word with bulls and cows.', pt: 'Descubra o número ou a palavra secreta com toques e famas.' },
-    keywords: {
-      es: ['numeros', 'adivinar', 'codigo', 'secreto', 'mastermind', 'duelo', 'logica'],
-      en: ['numbers', 'guess', 'code', 'secret', 'mastermind', 'bulls', 'cows', 'duel', 'logic'],
-      pt: ['números', 'adivinhar', 'código', 'secreto', 'mastermind', 'duelo', 'lógica'],
-    },
-    players: '1–2',
-    duration: '5–12',
-    jugadas: ['guess'],
-    path: 'bulls-and-cows/',
-    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
-    reuses: ['cup/games/number/'],
-    available: true,
-  },
+  // copa: from public/cup/game.json
+  // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
+  // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
+  // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
+  // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
+  // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
+  // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
+  // días, la práctica con semilla y las demos).
+  catalogEntry(cupManifest),
+  // linea-de-tiempo: from public/timeline/game.json
+  // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+  catalogEntry(timelineManifest),
+  // toque-y-fama: from public/bulls-and-cows/game.json
+  // Its card also holds 🔤 Palabra (#767), so the tagline names both
+  // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+  catalogEntry(bullsAndCowsManifest),
   // From their manifests (public/<folder>/game.json, #1249 step 7): edit the JSON, then run
   // node tools/generators/manifests.mjs
   catalogEntry(hangmanManifest),
   catalogEntry(liarsDiceManifest),
-  {
-    id: 'generala',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 16, desde: '2026-10-23', grupo: true },
-    tipos: ['tabletop'],
-    emoji: '📝',
-    name: { es: 'Generala', en: 'Generala', pt: 'General' },
-    tagline: { es: 'Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala! Como el Kniffel o el Yatzy.', en: 'Roll five dice up to three times and fill your score card. Straight, full house… and generala! Like Kniffel or Yatzy.', pt: 'Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general! Como o Kniffel ou o Yatzy.' },
-    keywords: {
-      es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete', 'kniffel', 'yatzy'],
-      en: ['dice', 'yahtzee', 'kniffel', 'yatzy', 'straight', 'full', 'house', 'poker', 'scorecard'],
-      pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'kniffel', 'yatzy', 'copo'],
-    },
-    players: '1–6',
-    duration: '5–30',
-    jugadas: ['roll', 'score'],
-    path: 'generala/',
-    // Announced as "Próximamente" first (D-248), opened on the owner's request (D-405): it joins
-    // Uno al día with the deck shuffled on 2026-10-23 (DESDE_GENERALA in uno-al-dia.js)
-    nuevoDesde: '2026-10-20',
-    available: true,
-  },
-  {
-    id: 'batalla-naval',
-    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
-    unoAlDia: { orden: 8, desde: '2026-10-07', grupo: true },
-    tipos: ['logic'],
-    emoji: '⚓',
-    name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval' },
-    tagline: { es: 'Hunde la flota del rival antes de que hunda la tuya.', en: 'Sink your rival\'s fleet before they sink yours.', pt: 'Afunde a frota do rival antes que ele afunde a sua.' },
-    keywords: {
-      es: ['barcos', 'flota', 'hundir', 'mar', 'guerra', 'duelo', 'estrategia'],
-      en: ['battleship', 'ships', 'fleet', 'sink', 'sea', 'war', 'duel', 'strategy'],
-      pt: ['navios', 'barcos', 'frota', 'afundar', 'mar', 'guerra', 'duelo', 'estratégia'],
-    },
-    players: '1–2',
-    duration: '10–20',
-    jugadas: ['shot'],
-    path: 'battleship/',
-    available: true,
-  },
-  {
-    id: 'julepe',
-    tipos: ['tabletop'],
-    emoji: '🍹',
-    name: { es: 'Julepe', en: 'Julep', pt: 'Paga o Bolo' },
-    tagline: { es: 'Dices si vas o te pasas. Si vas y no haces dos bazas, te tomas todo el plato.', en: 'Say if you are in or out. Go in, miss two tricks, and you drink the whole pot.', pt: 'Você diz se entra ou passa. Se entrar e não fizer duas vazas, bebe o bolo inteiro.' },
-    players: '1–6',
-    duration: '15–30',
-    jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],
-    // In La Bodega since D-434 (the owner's request, after D-88 had paused it): off the home page,
-    // behind the lab's door at /labs/julep/; /julep/ and /julepe/ are bridges there
-    path: 'labs/julep/',
-    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
-    slug: 'julep',
-    labs: true,
-    available: false,
-  },
-  {
-    id: 'cuarto-rey',
-    tipos: ['tabletop'],
-    emoji: '👑',
-    name: { es: 'Cuarto Rey', en: 'Fourth King', pt: 'Quarto Rei' },
-    tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.' },
-    players: '4–6',
-    duration: '20–40',
-    // In La Bodega since D-420 (the owner's request): off the home page, behind the lab's door at
-    // /labs/fourth-king/; /fourth-king/ and /cuarto-rey/ are bridges there
-    path: 'labs/fourth-king/',
-    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
-    slug: 'fourth-king',
-    labs: true,
-    available: false,
-  },
+  // generala: from public/generala/game.json
+  // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+  // Announced as "Próximamente" first (D-248), opened on the owner's request (D-405): it joins
+  // Uno al día with the deck shuffled on 2026-10-23 (DESDE_GENERALA in uno-al-dia.js)
+  catalogEntry(generalaManifest),
+  // batalla-naval: from public/battleship/game.json
+  // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+  catalogEntry(battleshipManifest),
+  // julepe: from public/labs/julep/game.json
+  // In La Bodega since D-434 (the owner's request, after D-88 had paused it): off the home page,
+  // behind the lab's door at /labs/julep/; /julep/ and /julepe/ are bridges there
+  // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+  catalogEntry(julepManifest),
+  // cuarto-rey: from public/labs/fourth-king/game.json
+  // In La Bodega since D-420 (the owner's request): off the home page, behind the lab's door at
+  // /labs/fourth-king/; /fourth-king/ and /cuarto-rey/ are bridges there
+  // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+  catalogEntry(fourthKingManifest),
 ];
 
 /**

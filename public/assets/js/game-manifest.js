@@ -15,17 +15,22 @@ const isStr = v => typeof v === 'string' && v.trim() !== '';
 /** The schema as data: field → { required, check(value) → true when valid, about }. */
 export const MANIFEST_SCHEMA = {
   id: { required: true, about: 'the persisted id (Firebase, localStorage, panel); never changes', check: v => /^[a-z][a-z0-9-]*$/.test(v) },
-  path: { required: true, about: 'the folder under public/, the URL, with a trailing slash', check: v => /^[a-z0-9-]+\/$/.test(v) },
+  path: { required: true, about: 'the folder under public/, the URL, with a trailing slash (labs/<folder>/ in the lab)', check: v => /^(labs\/)?[a-z0-9-]+\/$/.test(v) },
   emoji: { required: true, about: 'the card emoji', check: isStr },
   name: { required: true, about: 'the name the player reads, es/en/pt', check: isText3 },
   tagline: { required: true, about: 'the one-line pitch, es/en/pt', check: isText3 },
-  keywords: { required: true, about: 'the 🔎 search words per language (D-404)', check: v => !!v && LANGS.every(l => isList(v[l], isStr)) },
+  keywords: { required: false, about: 'the 🔎 search words per language (D-404); required unless labs', check: v => !!v && LANGS.every(l => isList(v[l], isStr)) },
   players: { required: true, about: '{ min, max } players', check: v => !!v && Number.isInteger(v.min) && Number.isInteger(v.max) && v.min >= 1 && v.max >= v.min },
   duration: { required: true, about: 'minutes, "a–b" or "n"', check: v => /^\d+(–\d+)?$/.test(v) },
   tipos: { required: true, about: 'the home page filters (TIPOS keys)', check: v => isList(v, isStr) && v.length > 0 },
   jugadas: { required: false, about: 'the move keys the signals count', check: v => isList(v, isStr) },
   unoAlDia: { required: false, about: 'One a Day: deck order (never reorder), since when, group', check: v => !!v && Number.isInteger(v.orden) && /^\d{4}-\d{2}-\d{2}$/.test(v.desde) },
   nuevoDesde: { required: false, about: 'date it opened, for the "new" badge', check: v => /^\d{4}-\d{2}-\d{2}$/.test(v) },
+  slug: { required: false, about: 'its name in URLs and docs when its path is under labs/ (C-18)', check: v => /^[a-z][a-z0-9-]*$/.test(v) },
+  labs: { required: false, about: 'true while it lives in the lab or La Bodega (off the home page)', check: v => v === true },
+  durationUnit: { required: false, about: 'a tournament: what `duration` counts (days), es/en/pt (D-170)', check: isText3 },
+  formato: { required: false, about: 'a tournament: how it is played, for the README table, es/en/pt', check: isText3 },
+  torneo: { required: false, about: 'a tournament, not a game: each day sends its own signal (MAX_PLAYERS ignores it)', check: v => v === true },
   reuses: { required: false, about: 'paths it plays from La Copa, for the end-to-end scope', check: v => isList(v, isStr) },
   offline: { required: false, about: 'false when it cannot be played offline (D-538)', check: v => typeof v === 'boolean' },
   available: { required: true, about: 'opens from the menu', check: v => typeof v === 'boolean' },
@@ -46,6 +51,9 @@ export function validateManifest(m) {
     if (!s.check(m[k])) out.push(`${k}: invalid (${s.about})`);
   }
   for (const k of Object.keys(m)) if (!MANIFEST_SCHEMA[k]) out.push(`${k}: unknown field`);
+  for (const k of ['durationUnit', 'formato']) if (k in m && !m.torneo) out.push(`${k}: only a tournament (torneo: true) has it`);
+  if (!m.labs && !('keywords' in m)) out.push('keywords: missing (only a lab game may go without)');
+  if (typeof m.path === 'string' && m.path.startsWith('labs/') !== !!m.labs) out.push('labs: must be true exactly when path is under labs/');
   if (isStr(m.id) && m.memory !== `juegos-de-salon:${m.id}:session`) out.push(`memory: must be juegos-de-salon:${m.id}:session (C-6)`);
   if (Array.isArray(m.modes) && m.modes.includes('cpu') !== m.ai) out.push('ai: must be true exactly when modes has cpu');
   if (Array.isArray(m.modes) && Array.isArray(m.firebasePaths) && m.modes.includes('online') && !m.firebasePaths.some(p => p.startsWith('rooms/'))) out.push('firebasePaths: an online game writes rooms/{code}');
@@ -53,12 +61,15 @@ export function validateManifest(m) {
 }
 
 /** The keys of a GAMES entry, in the order games.js writes them. */
-const ENTRY_KEYS = ['id', 'unoAlDia', 'tipos', 'emoji', 'name', 'tagline', 'keywords', 'players', 'duration', 'jugadas', 'path', 'reuses', 'offline', 'nuevoDesde', 'available'];
+const ENTRY_KEYS = ['id', 'unoAlDia', 'tipos', 'emoji', 'name', 'tagline', 'keywords', 'players', 'duration', 'jugadas', 'path', 'slug', 'labs', 'reuses', 'offline', 'nuevoDesde', 'available'];
+
+/** A tournament's entry keeps the order La Copa's always had. */
+const TOURNAMENT_KEYS = ['id', 'emoji', 'name', 'tagline', 'keywords', 'players', 'duration', 'durationUnit', 'formato', 'torneo', 'offline', 'tipos', 'path', 'available'];
 
 /** The GAMES entry for a manifest, with the shape games.js has always had (players as "1–6"). */
 export function catalogEntry(m) {
   const e = {};
-  for (const k of ENTRY_KEYS) if (k in m) e[k] = m[k];
+  for (const k of m.torneo ? TOURNAMENT_KEYS : ENTRY_KEYS) if (k in m) e[k] = m[k];
   e.players = m.players.min === m.players.max ? String(m.players.min) : `${m.players.min}–${m.players.max}`;
   return e;
 }

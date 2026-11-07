@@ -63,7 +63,23 @@ export function touchedGames(files) {
 export function labsExits(diff, names) {
   const leaving = new Set();
   const lines = diff.split('\n');
+  // A game.json (#1249) says `"labs": true` next to its id and slug: one that gains it took over the
+  // entry games.js lost (a migration, not an exit); one that loses it leaves the lab
+  const near = (i, dir) => {
+    const ids = [];
+    for (let j = i + dir; j >= 0 && j < lines.length && !lines[j].startsWith('@@') && !lines[j].startsWith('diff '); j += dir) {
+      const m = lines[j].match(/^[ +-]\s*"(?:id|slug)": "([^"]+)"/);
+      if (m) ids.push(m[1]);
+    }
+    return ids;
+  };
+  const kept = new Set();
   lines.forEach((l, i) => {
+    if (/^\+\s*"labs": true/.test(l)) [...near(i, -1), ...near(i, 1)].forEach(id => kept.add(id));
+    else if (/^-\s*"labs": true/.test(l) && !lines.some(x => x === '+' + l.slice(1))) leaving.add([...near(i, -1).reverse(), ...near(i, 1)].at(-1) || '(a game)');
+  });
+  lines.forEach((l, i) => {
+    if (/^[+-]\s*"labs": true/.test(l)) return;
     if (!/^-.*\blabs: true\b/.test(l) || lines.some(x => x === '+' + l.slice(1))) return; // moved, not removed
     const inLine = l.match(/^-\s*'?([\w-]+)'?: \{.*labs: true/);
     if (inLine) return leaving.add(inLine[1]);
@@ -78,8 +94,11 @@ export function labsExits(diff, names) {
     const m = /^R/.test(status || '') && before.match(/^public\/labs\/([a-z-]+)\//);
     if (m && !after.startsWith('public/labs/')) leaving.add(m[1]);
   }
-  return [...leaving];
+  return [...leaving].filter(id => !kept.has(id));
 }
+
+/** What labsExits reads: games.js, La Copa's rules.js and every game.json. */
+export const LABS_PATHS = ['public/assets/js/games.js', 'public/cup/rules.js', 'public/*/game.json', 'public/labs/*/game.json'];
 
 /**
  * The splash campaigns a PR changes (D-355), from the diff of public/assets/js/splash.js: each one
@@ -125,7 +144,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, base = 'origin/main'] = process.argv.slice(2);
   if (cmd !== 'check') { console.error('Usage: node tools/agents/covers.mjs check [base]'); process.exit(1); }
   const files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
-  const exits = labsExits(git('diff', `${base}...HEAD`, '--', 'public/assets/js/games.js', 'public/cup/rules.js'), git('diff', '--name-status', '-M', `${base}...HEAD`));
+  const exits = labsExits(git('diff', `${base}...HEAD`, '--', ...LABS_PATHS), git('diff', '--name-status', '-M', `${base}...HEAD`));
   console.log(`Stage: ${STAGES[stage(files, exits)](exits)}`);
   const campaigns = splashChanges(git('diff', `${base}...HEAD`, '--', 'public/assets/js/splash.js'));
   if (campaigns.length) {
