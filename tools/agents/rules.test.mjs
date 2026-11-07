@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT, readRegistry, problems, problemsOf, withIndex } from './rules.mjs';
+import { ROOT, readRegistry, problems, problemsOf, withIndex, touched, commentFor, MARKER, CONTRIB_FILES, withRules } from './rules.mjs';
 
 // the shape check itself
 const yes = () => true, no = () => false;
@@ -13,6 +13,24 @@ assert.ok(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['check'] }, yes).so
 assert.ok(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['check'], enforcedBy: ['gone.mjs'] }, no).some(p => /does not exist/.test(p)));
 assert.ok(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['ratchet'], enforcedBy: ['a'] }, yes).some(p => /debt/.test(p)));
 assert.ok(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['judged'] }, yes).some(p => /reviewer/.test(p)));
+assert.ok(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['judged'], reviewer: 'r', why: 'w' }, yes).some(p => /applies/.test(p)), 'a judged rule needs applies');
+assert.deepEqual(problemsOf({ id: 'X', title: 't', doc: 'd', form: ['judged'], reviewer: 'r', why: 'w', applies: ['a/**'] }, yes), []);
+
+// touched: which rules a list of changed files touches (#1249 step 6)
+const fake = [
+  { id: 'J', title: 'judged', doc: 'd', form: ['judged'], reviewer: 'r', applies: ['public/**/rules.js'] },
+  { id: 'K', title: 'checked', doc: 'd', form: ['check'], applies: ['docs/**'] },
+  { id: 'N', title: 'nothing', doc: 'd', form: ['check'] },
+];
+assert.deepEqual(touched(['public/hangman/rules.js', 'x.md'], fake).map(h => [h.rule.id, h.files]), [['J', ['public/hangman/rules.js']]]);
+assert.deepEqual(touched(['docs/a.md'], fake).map(h => h.rule.id), ['K']);
+assert.deepEqual(touched(['docs/a.md'], fake, { judgedOnly: true }), []);
+assert.equal(commentFor([]), '', 'no comment when no judged rule is touched');
+assert.ok(commentFor(touched(['public/a/rules.js'], fake)).startsWith(MARKER));
+// the real registry: a text change surfaces the usability rules, a tools-only change none
+const real = touched(['public/hangman/rules.js'], readRegistry(), { judgedOnly: true }).map(h => h.rule.id);
+assert.ok(real.includes('U-1') && real.includes('C-3'), 'texts touch U-1 and C-3');
+assert.deepEqual(touched(['tools/agents/x.mjs'], readRegistry(), { judgedOnly: true }), []);
 
 // the registry as it is
 const rules = readRegistry();
@@ -38,4 +56,9 @@ for (const id of canonIds) assert.ok(byId[id], `${id} is in docs/CANONS.md but n
 // the index in docs/RULES.md is generated and fresh
 const doc = readFileSync(join(ROOT, 'docs', 'RULES.md'), 'utf8');
 assert.equal(withIndex(doc, rules), doc, 'docs/RULES.md index is stale: node tools/agents/rules.mjs index');
+// CONTRIBUTING.md and the PR template carry rule lists generated from the registry
+for (const [file, kind] of Object.entries(CONTRIB_FILES)) {
+  const text = readFileSync(join(ROOT, file), 'utf8');
+  assert.equal(withRules(text, kind, rules), text, `${file} rules block is stale: node tools/agents/rules.mjs contributing`);
+}
 console.log(`ok · rules: ${rules.length} registered`);

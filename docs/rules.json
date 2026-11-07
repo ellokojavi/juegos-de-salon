@@ -72,7 +72,14 @@
     "tools/agents/design-lint.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "tone, humour and celebration need a reader; fonts, instruction length and tokens are checked"
+   "why": "tone, humour and celebration need a reader; fonts, instruction length and tokens are checked",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html",
+    "public/**/*.css"
+   ]
   },
   {
    "id": "C-2",
@@ -89,7 +96,12 @@
     "public/labs/bodega.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "reusing shared modules before writing one is a design call; the file layout becomes a check in #1249 step 12"
+   "why": "reusing shared modules before writing one is a design call; the file layout becomes a check in #1249 step 12",
+   "applies": [
+    "public/**/index.html",
+    "public/**/game.js",
+    "tools/generators/**"
+   ]
   },
   {
    "id": "C-3",
@@ -103,7 +115,13 @@
     "public/assets/js/i18n.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "a translation that adapts rather than copies needs a reader; key parity is checked"
+   "why": "a translation that adapts rather than copies needs a reader; key parity is checked",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "C-4",
@@ -113,7 +131,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "whether the key moments sound and vibrate is heard and felt, not read from code"
+   "why": "whether the key moments sound and vibrate is heard and felt, not read from code",
+   "applies": [
+    "public/**/*.js",
+    "public/**/*.mp3",
+    "public/**/*.ogg"
+   ]
   },
   {
    "id": "C-5",
@@ -127,7 +150,10 @@
     "tools/e2e/landing-fold.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "which modes a game offers is a design call; the start above the fold is measured"
+   "why": "which modes a game offers is a design call; the start above the fold is measured",
+   "applies": [
+    "public/**/*.js"
+   ]
   },
   {
    "id": "C-6",
@@ -137,7 +163,10 @@
     "judged"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "no test checks resume yet; it becomes a check in #1249 step 12"
+   "why": "no test checks resume yet; it becomes a check in #1249 step 12",
+   "applies": [
+    "public/**/*.js"
+   ]
   },
   {
    "id": "C-7",
@@ -155,7 +184,11 @@
     "public/assets/js/compartir.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "deriving state from the message list is an architecture call each game makes"
+   "why": "deriving state from the message list is an architecture call each game makes",
+   "applies": [
+    "public/**/*.js",
+    "firebase/**"
+   ]
   },
   {
    "id": "C-8",
@@ -171,7 +204,11 @@
     "public/assets/js/back-guard.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "nothing preselected, confirm buttons that name their target and visible turns need a look at the screen"
+   "why": "nothing preselected, confirm buttons that name their target and visible turns need a look at the screen",
+   "applies": [
+    "public/**/*.css",
+    "public/**/game.js"
+   ]
   },
   {
    "id": "C-8b",
@@ -181,7 +218,14 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "how an error reads and who sees it is judged on the screen"
+   "why": "how an error reads and who sees it is judged on the screen",
+   "applies": [
+    "public/**/*.js",
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "C-9",
@@ -191,7 +235,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "result before the pass and covered secrets are judged on the screen and in the e2e screenshots"
+   "why": "result before the pass and covered secrets are judged on the screen and in the e2e screenshots",
+   "applies": [
+    "public/**/game.js",
+    "public/assets/js/handoff.js"
+   ]
   },
   {
    "id": "C-10",
@@ -201,7 +249,11 @@
     "judged"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "commit-and-verify is a protocol each hidden-information game designs"
+   "why": "commit-and-verify is a protocol each hidden-information game designs",
+   "applies": [
+    "public/**/game.js",
+    "firebase/**"
+   ]
   },
   {
    "id": "C-11",
@@ -240,7 +292,12 @@
     "public/assets/js/games.test.mjs"
    ],
    "reviewer": "documentation agent (.claude/agents/documentation.md)",
-   "why": "whether prose still tells the truth needs a reader; generated blocks and spec sections are checked"
+   "why": "whether prose still tells the truth needs a reader; generated blocks and spec sections are checked",
+   "applies": [
+    "docs/**",
+    "README.md",
+    "CONTRIBUTING.md"
+   ]
   },
   {
    "id": "C-14",
@@ -255,7 +312,10 @@
     "public/assets/js/transport/best-effort.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "an error message that does not invent its cause needs a reader"
+   "why": "an error message that does not invent its cause needs a reader",
+   "applies": [
+    "public/**/*.js"
+   ]
   },
   {
    "id": "C-15",
@@ -265,7 +325,11 @@
     "judged"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "no test covers the chat module's use yet"
+   "why": "no test covers the chat module's use yet",
+   "applies": [
+    "public/assets/js/chat.js",
+    "public/**/chat*.js"
+   ]
   },
   {
    "id": "C-16",
@@ -292,7 +356,13 @@
     "tools/e2e/home/instant.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "order, labels and look of the cards need a look at the page"
+   "why": "order, labels and look of the cards need a look at the page",
+   "applies": [
+    "public/index.html",
+    "public/assets/js/games.js",
+    "public/assets/js/home*.js",
+    "public/privacy/**"
+   ]
   },
   {
    "id": "C-18",
@@ -317,7 +387,11 @@
     "public/assets/js/fin.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "each fact said once and the right exits for the moment need a reader"
+   "why": "each fact said once and the right exits for the moment need a reader",
+   "applies": [
+    "public/assets/js/fin.js",
+    "public/**/game.js"
+   ]
   },
   {
    "id": "C-20",
@@ -331,7 +405,12 @@
     "tools/agents/english.test.mjs"
    ],
    "reviewer": "the session building the game, with the checklist at the end of the canons",
-   "why": "that a game's internal name matches the player's name is a naming call; new identifiers in English become a check in #1249 step 12"
+   "why": "that a game's internal name matches the player's name is a naming call; new identifiers in English become a check in #1249 step 12",
+   "applies": [
+    "public/**",
+    "docs/games/**",
+    "tools/e2e/**"
+   ]
   },
   {
    "id": "U-1",
@@ -341,7 +420,13 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-2",
@@ -363,7 +448,13 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-4",
@@ -390,7 +481,13 @@
    ],
    "exceptions": "docs/usability-allowlist.json",
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-6",
@@ -405,7 +502,13 @@
    ],
    "exceptions": "docs/usability-allowlist.json",
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-7",
@@ -415,7 +518,15 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/index.html",
+    "public/assets/js/games.js",
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-8",
@@ -425,7 +536,13 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-18",
@@ -441,7 +558,13 @@
    ],
    "exceptions": "docs/usability-allowlist.json",
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-36",
@@ -455,7 +578,12 @@
     "tools/agents/covers.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/index.html",
+    "public/assets/js/games.js",
+    "public/assets/js/home*.js"
+   ]
   },
   {
    "id": "U-10",
@@ -491,7 +619,11 @@
     "tools/e2e/spacing-common.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/**/*.css",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-13",
@@ -501,7 +633,14 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/game.js",
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-14",
@@ -511,7 +650,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/cup/**",
+    "public/assets/js/cup*.js"
+   ]
   },
   {
    "id": "U-15",
@@ -521,7 +664,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/game.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-16",
@@ -531,7 +678,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/game.js"
+   ]
   },
   {
    "id": "U-39",
@@ -557,7 +708,13 @@
    ],
    "exceptions": "docs/usability-allowlist.json",
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "public/**/rules.js",
+    "public/**/texts.js",
+    "public/**/i18n*.js",
+    "public/**/*.html"
+   ]
   },
   {
    "id": "U-20",
@@ -567,7 +724,10 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/game.js"
+   ]
   },
   {
    "id": "U-21",
@@ -577,7 +737,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/today/**",
+    "public/assets/js/daily*.js",
+    "public/**/game.js"
+   ]
   },
   {
    "id": "U-22",
@@ -587,7 +752,10 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/*.js"
+   ]
   },
   {
    "id": "U-23",
@@ -597,7 +765,10 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/**/*.js"
+   ]
   },
   {
    "id": "U-37",
@@ -607,7 +778,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/assets/js/connection.js",
+    "public/assets/js/offline*.js",
+    "public/**/game.js"
+   ]
   },
   {
    "id": "U-38",
@@ -617,7 +793,10 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/assets/js/buzon*.js"
+   ]
   },
   {
    "id": "U-30",
@@ -627,7 +806,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/assets/js/compartir*.js",
+    "public/**/share*.js"
+   ]
   },
   {
    "id": "U-33",
@@ -637,7 +820,13 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "public/assets/js/compartir*.js",
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-31",
@@ -647,7 +836,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-32",
@@ -657,7 +851,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-35",
@@ -667,7 +866,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-34",
@@ -681,7 +885,12 @@
     "tools/agents/marketing.test.mjs"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "the lint measures the part a program can; the rest needs a reader"
+   "why": "the lint measures the part a program can; the rest needs a reader",
+   "applies": [
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-40",
@@ -691,7 +900,12 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "marketing/**",
+    "docs/capturas.json",
+    "README.md"
+   ]
   },
   {
    "id": "U-41",
@@ -701,7 +915,11 @@
     "judged"
    ],
    "reviewer": "usability agent (.claude/agents/usability.md)",
-   "why": "meaning, timing and clarity need a reader"
+   "why": "meaning, timing and clarity need a reader",
+   "applies": [
+    "docs/**",
+    "marketing/**"
+   ]
   }
  ]
 }
