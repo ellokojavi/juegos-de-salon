@@ -1,1 +1,1 @@
-References come from GitHub's runner: run the "Visual references" workflow (#1249).
+References made on GitHub's runner by the "Visual references" workflow (#1249). To approve a visual change, run that workflow on your branch (or `node tools/e2e/visual.mjs --update --part <game>` where rendering matches the runner).

@@ -746,6 +746,16 @@ for (const g of ['ahorcado', 'batalla-naval', 'toque-y-fama']) {
  * named by its folder's last segment (`labs/case/` → 'case'), which is also its part in CI, so a PR
  * only compares the games it reaches (affected.mjs, D-329).
  */
+/**
+ * Screens the visual check leaves out, each with why (docs/RULES.md rule 4: no silent exception).
+ * Remove an entry once its screen renders the same in two runs on GitHub's runner.
+ */
+export const VISUAL_SKIP = {
+  babel: 'its cover depends on the live flags/stack value from Firebase, so the end-to-end job and the Visual references workflow draw it differently (7.63 %)',
+  where: 'its intro differed 1.26 % between two runs on the same runner: something on it is not fixed yet (#1249 step 15)',
+};
+
 export const visualScreens = () => Object.entries(PATHS)
   .filter(([id, p]) => gameById(id)?.path && p.intro)
+  .filter(([id]) => !VISUAL_SKIP[gameById(id).path.replace(/\/$/, '').split('/').pop()])
   .map(([id, p]) => ({ id, part: gameById(id).path.replace(/\/$/, '').split('/').pop(), route: gameById(id).path, screen: 'intro', steps: p.intro }));

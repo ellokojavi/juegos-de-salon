@@ -9,7 +9,7 @@
  *   node tools/e2e/visual.mjs [out] --update [--part hangman]
  *
  * Deterministic on purpose: `?test` (the test store), a fixed clock and time zone, a seeded
- * Math.random, reduced motion with every animation and transition off, no caret and no focus.
+ * Math.random (the clock stopped: Date, performance.now and frame timestamps), reduced motion with every animation and transition off, no caret and no focus.
  * The fonts are the site's own (assets/fonts/), so the text renders alike on any machine. The
  * screens come from `visualScreens()` in paths.mjs; the PNG reader, writer and diff are png.mjs.
  */
@@ -38,10 +38,15 @@ const DELTA = 48, MAX_RATIO = 0.003;
 const screens = visualScreens().filter(s => !part || s.part === part);
 if (!screens.length) { console.log(`✗ no visual screen named "${part}"`); process.exit(1); }
 
-// Before any of the page's code: a fixed clock that still ticks, a seeded Math.random
+// Before any of the page's code: a stopped clock (Date, performance.now and the frames' timestamp all
+// read the same instant, so a cover's demo animated in JS, like Babel's tower, draws the same frame on
+// every run) and a seeded Math.random
 const FREEZE = `(() => {
-  const T0 = Date.UTC(2026, 2, 10, 18, 0, 0), start = performance.now(), Real = Date;
-  const now = () => T0 + Math.floor(performance.now() - start);
+  const T0 = Date.UTC(2026, 2, 10, 18, 0, 0), Real = Date, PERF = 1000;
+  performance.now = () => PERF;
+  const raf = globalThis.requestAnimationFrame.bind(globalThis);
+  globalThis.requestAnimationFrame = cb => raf(() => cb(PERF));
+  const now = () => T0;
   class D extends Real { constructor(...a) { super(...(a.length ? a : [now()])); } static now() { return now(); } }
   globalThis.Date = D;
   let s = 0x2f6b1c3d; Math.random = () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
