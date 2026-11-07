@@ -2,7 +2,7 @@
 <!--
   The teaser of flap for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md) with the
   game's own scene (public/labs/flap/scene.js): the bird glides calmly over the city from day,
-  over the sea in the afternoon, into the night under the moon. No hoops, walls, flaps of play or score.
+  over the sea in the afternoon, into the night under the moon and back to day, looping with no cut. No hoops, walls, flaps of play or score.
   Made by `node marketing/splash/teaser.mjs new flap labs/flap`.
 -->
 <html lang="es">
@@ -23,14 +23,17 @@ import { teaser, beats, W, H } from './_teaser.js';
 import { newGame, step, SKY_EVERY } from '../../../public/labs/flap/engine.js';
 import { escena } from '../../../public/labs/flap/scene.js';
 
-const SECONDS = 8, FPS = 30;
-// The story in three beats (TEASERS.md, rule 3): the city by day, the sea in the afternoon, the night
-const STORY = [[0, 'day'], [2.4, 'afternoon'], [5, 'night']];
-const SKY = { day: 0, afternoon: 1, night: 2 };
+const SECONDS = 12, FPS = 30;
+// The story (the owner's request): day, the sea in the afternoon, the night, and day again, in an endless
+// loop. The sky index keeps rising (3 is day again in the scene's cycle), and the last 0.6 s dissolve
+// into the first frames
+const STORY = [[0, 'day'], [2.6, 'afternoon'], [5.8, 'night'], [8.6, 'day again']];
+const SKY = { day: 0, afternoon: 1, night: 2, 'day again': 3 };
 
 teaser({
   seconds: SECONDS,
   fps: FPS,
+  loop: 0.6,
   setup(canvas) {
     const sc = escena(canvas);
     const w = sc.measure();

@@ -32,7 +32,7 @@ export function beats(list, t, end) {
  * `draw(state, t)` moves and draws the scene at `t` seconds. The page needs
  * `<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>`.
  */
-export function teaser({ seconds = 8, fps = 30, setup, background, draw }) {
+export function teaser({ seconds = 8, fps = 30, setup, background, draw, loop = 0 }) {
   const fondo = document.getElementById('fondo'), juego = document.getElementById('juego');
   fondo.width = W; fondo.height = H;
   const ctx = fondo.getContext('2d');
@@ -40,6 +40,7 @@ export function teaser({ seconds = 8, fps = 30, setup, background, draw }) {
   const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
   const o = salida.getContext('2d');
   const frames = fps * seconds;
+  const primeros = [];
   const frame = i => {
     const t = i / fps;
     reloj = t * 1000;
@@ -47,6 +48,14 @@ export function teaser({ seconds = 8, fps = 30, setup, background, draw }) {
     draw(state, t);
     o.drawImage(fondo, 0, 0);
     o.drawImage(juego, 0, 0, W, H);
+    // `loop` (seconds): no black; the last seconds dissolve into the first frames, so the clip never visibly restarts
+    if (loop) {
+      const n = Math.round(loop * fps);
+      if (i < n) { const c = Object.assign(document.createElement('canvas'), { width: W, height: H }); c.getContext('2d').drawImage(salida, 0, 0); primeros[i] = c; }
+      const j = i - (frames - n);
+      if (j >= 0 && primeros[j]) { o.globalAlpha = (j + 1) / n; o.drawImage(primeros[j], 0, 0); o.globalAlpha = 1; }
+      return salida;
+    }
     const f = Math.max(0, 1 - t / 0.4, 1 - (seconds - t) / 0.5);
     if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
     return salida;
