@@ -154,11 +154,11 @@ export const CAMPAIGNS = {
     }],
   },
   // 🥷 Shinobi and 🗼 Babel leave the lab (D-517): two game cartridges with a pixel HUD (the owner's choice,
-  // option B3 of the prototypes). `requires` keeps it waiting until both launch flags are on for this
+  // option B3 of the prototypes). `requires` keeps it waiting until Babel's launch flag is on for this
   // visitor, so it can be switched on in the panel before the owner's 🚀 and appear with the games
   'shinobi-babel': {
     look: 'cartuchos',
-    requires: ['stick', 'stack'],
+    requires: ['stack'],
     title: { es: '¿Cansado de pensar?', en: 'Tired of thinking?', pt: 'Cansado de pensar?' },
     lead: {
       es: 'Llegó el momento de demostrar destreza: los dos primeros juegos de habilidad de Juegos de Salón.',

@@ -486,11 +486,10 @@ export const SUELTOS = [
     nuevoDesde: '2026-10-26',
   },
   {
-    // Out of the lab in D-517, launched by its flag (`lanza`): until the owner switches flags/stick to
-    // 🚀 on its /labs/ card, it is hidden from the home page, the search, the rankings and new cups
-    // (`oculto`). Its lab page /labs/stick/ is a bridge to /shinobi/ (`deLabs: 'stick'`: the folder kept the old name)
+    // Out of the lab in D-517, launched by flags/stick on 2026-11-02 (D-529); its gate (`lanza`) is gone, so
+    // it is in every list on every phone. Its lab page /labs/stick/ is a bridge to /shinobi/ (`deLabs: 'stick'`:
+    // the folder kept the old name)
     id: 'stick',
-    lanza: 'stick',
     deLabs: 'stick',
     // Its name is Shinobi (the owner's choice, first called Ninja); the id stays `stick`
     // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
