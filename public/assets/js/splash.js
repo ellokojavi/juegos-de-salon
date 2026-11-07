@@ -31,7 +31,7 @@ import { param, tiene } from './parametros.js';
 import { PAYMENT_LINK } from './support.js';
 
 /** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
-export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }];
+export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }, { id: 'flap-soon', until: '2026-11-08' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
@@ -177,6 +177,15 @@ export const CAMPAIGNS = {
       { game: 'stack', color: 'cyan',
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
+  },
+  // A teaser of 🐤 Aletazo, still in the lab, for a weekend (the owner's request): the bird glides
+  // calmly over the city from day into night, drawn with the game's own scene. No hoops, no walls, no
+  // link; the line under the clip says where it is coming
+  'flap-soon': {
+    emoji: '🐤',
+    title: { es: 'Alguien nuevo vuela sobre la ciudad', en: 'Someone new is flying over the city', pt: 'Alguém novo voa sobre a cidade' },
+    items: [{ video: 'assets/splash/flap-teaser.mp4', img: 'assets/splash/flap-teaser-start.png', still: 'assets/splash/flap-teaser.png', ratio: '8 / 5', smooth: true }],
+    foot: { es: 'Próximamente en Juegos de Salón', en: 'Coming soon at Parlor Games', pt: 'Em breve no Jogos de Salão' },
   },
   // A teaser of 🥷 Stick Ninja, still in the lab, drawn with the game's own scene and cryptic on
   // purpose: the ninja dashes to the edge of its pillar and stays, looking at the next one. No name, no link
@@ -467,7 +476,9 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   // «COMPATIBLE CON 🏆 La Copa Y 📅 Uno al Día»: information, not buttons
   const compat = c.compat ? node('p', 'splash-compat') : null;
   if (compat) pick(c.compat, lang).forEach((t, i) => compat.append(node('span', i % 2 ? 'splash-compat-sitio' : 'splash-compat-nexo', t)));
-  card.append(...[x, head, list, compat, done].filter(Boolean));
+  // A line under the clip (a teaser's «Próximamente en Juegos de Salón»)
+  const foot = c.foot ? node('p', 'splash-foot', pick(c.foot, lang)) : null;
+  card.append(...[x, head, list, compat, foot, done].filter(Boolean));
   layer.append(backdrop, card);
   document.body.append(layer);
   const prevOverflow = document.body.style.overflow;

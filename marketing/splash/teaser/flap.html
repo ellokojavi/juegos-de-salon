@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+  The teaser of flap for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md) with the
+  game's own scene (public/labs/flap/scene.js): the bird glides calmly over the city from day,
+  over the sea in the afternoon, into the night under the moon. No hoops, walls, flaps of play or score.
+  Made by `node marketing/splash/teaser.mjs new flap labs/flap`.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Teaser · flap</title>
+<style>
+  body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
+  .marco { position: relative; width: 512px; height: 320px; }
+  .marco canvas { position: absolute; inset: 0; width: 512px; height: 320px; }
+</style>
+</head>
+<body>
+<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
+<script type="module">
+import { teaser, beats, W, H } from './_teaser.js';
+// The game's own engine and scene (TEASERS.md, rule 1): the countdown's glide, which has no gates
+import { newGame, step, SKY_EVERY } from '../../../public/labs/flap/engine.js';
+import { escena } from '../../../public/labs/flap/scene.js';
+
+const SECONDS = 8, FPS = 30;
+// The story in three beats (TEASERS.md, rule 3): the city by day, the sea in the afternoon, the night
+const STORY = [[0, 'day'], [2.4, 'afternoon'], [5, 'night']];
+const SKY = { day: 0, afternoon: 1, night: 2 };
+
+teaser({
+  seconds: SECONDS,
+  fps: FPS,
+  setup(canvas) {
+    const sc = escena(canvas);
+    const w = sc.measure();
+    return { sc, w, g: null, last: Infinity };
+  },
+  // The scene paints its own sky: behind it, the app's night
+  background(ctx) {
+    ctx.fillStyle = '#14081f'; ctx.fillRect(0, 0, W, H);
+  },
+  draw(s, t) {
+    // A new loop (or the first frame) starts the flight over, so every capture draws the same clip
+    if (t < s.last) {
+      s.g = newGame({ W: s.w, mode: 'glide', random: () => 0.5 });
+      s.g.bird.x = s.w * 0.36;
+      s.sc.clear();
+    }
+    s.last = t;
+    const g = s.g, dt = 1 / FPS;
+    const b = beats(STORY, t, SECONDS);
+    // The time of day follows the beats: the scene eases from one sky to the next on its own
+    g.score = SKY[b.name] * SKY_EVERY;
+    if (t > 0) step(g, dt);
+    // A calm wing beat now and then, never a flap of play
+    if (Math.round(t * FPS) % 45 === 0) g.bird.flapT = 1;
+    s.sc.tick(dt, g);
+    s.sc.draw(g);
+  },
+});
+</script>
+</body>
+</html>
