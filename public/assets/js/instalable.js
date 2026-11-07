@@ -52,6 +52,9 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
   const release = doc?.querySelector('meta[name="release"]')?.content || 'dev';
   const msg = { type: 'offline', on: !!on, release };
   sw.active.postMessage(msg);
+  // PR 3: with the flag on, the page also watches the connection (connection.js); nothing on screen
+  // changes yet, the screens that listen come in PR 4
+  if (on && encendido === undefined) import('./connection.js').then(m => m.connection()).catch(() => {});
   return msg;
 }
 

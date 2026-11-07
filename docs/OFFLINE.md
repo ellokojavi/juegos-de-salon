@@ -1,6 +1,6 @@
 # Offline mode (RP-13)
 
-**Status:** approved by the owner (D-538), PRs 1 and 2 of 8 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
+**Status:** approved by the owner (D-538), PRs 1 to 3 of 8 done · **Date:** 2026-11-07 · **Touches:** RP-13, D-221, D-538
 
 The app keeps working with no signal or a poor one. It switches to a reduced **Sin conexión** mode by
 itself; there is no switch for players. Games that run on the phone keep working, online rooms and La
@@ -21,12 +21,19 @@ site when it opens (the Firebase SDK is loaded with `import()` only when a room 
 
 ## How it switches on
 
+`public/assets/js/connection.js` (PR 3), started by `instalable.js` on every page while the flag is on:
+
 - `offline` event or `navigator.onLine === false`: on at once.
-- Poor connection: a no-cache probe of a tiny versioned file takes over ~4 s or fails twice in a row,
-  or Firebase's `.info/connected` stays false for 8 s on a page that needs it.
-- Off only after two good probes ~10 s apart, so a flaky signal does not flip the screen.
-- One module, `public/assets/js/connection.js`, exposes the state and an event; pages only listen.
-- Testers: "Forzar modo sin conexión" on the offline card in `/labs/`. Nothing for players.
+- Poor connection: two probes in a row fail or take over 4 s. A probe is a no-cache `HEAD` of
+  `precache.json`, which the service worker never answers from its cache; one a minute online, every
+  15 s offline.
+- Off only after two good probes at least 10 s apart, so a flaky signal does not flip the screen.
+- The state is `connection().mode()`, an `onChange` listener, `<html data-connection>` and a
+  `connection` event; screens only listen.
+- Testers: "Forzar modo sin conexión en este celular" on the offline card in `/labs/`
+  (`juegos-de-salon:offline-forced`), which also shows what the app detects. Nothing for players.
+- Firebase's `.info/connected` is not used: it would load the SDK on pages that do not need it, and
+  the probe already catches a dead connection.
 
 ## What the player sees
 
@@ -75,7 +82,7 @@ PR that changes what is kept on the phone.
    cache-first, the Firebase SDK kept once loaded; flag off = nothing cached, caches deleted.
    No update toast: pages are network-first and assets are content-hashed, so a new release is
    picked up on the next load with no prompt (`sw.test.mjs`, `precache.test.mjs`).
-3. `connection.js`: probes, hysteresis, Firebase signal, the tester switch in `/labs/`.
+3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` (`connection.test.mjs`).
 4. Home page and game covers: dimmed cards and modes with "📡 Con señal", the chip.
 5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.
 6. The first-time sheet and every text in es, en and pt.

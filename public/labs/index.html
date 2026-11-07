@@ -166,7 +166,9 @@
         <!-- Offline mode (D-538, docs/OFFLINE.md): the cards and switches of PRs 3 to 6 land here -->
         <section class="panel seccion" id="seccion-offline">
           <h2>📴 Modo sin conexión</h2>
-          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. Por ahora no se ve nada nuevo: los avisos y el cartel de «Sin conexión» llegan en los próximos pasos.</p>
+          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app ya se da cuenta sola cuando no hay señal o es muy mala, pero todavía no lo muestra: el cartel de «Sin conexión» y los juegos atenuados llegan en los próximos pasos.</p>
+          <p class="muted" id="offline-estado" style="margin:0">Conexión: midiendo…</p>
+          <label class="offline-forzar" style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" id="offline-forzar"> Forzar modo sin conexión en este celular</label>
           <a class="btn btn--yellow" id="btn-offline" href="../zip/">〰️ Probar con Zip</a>
         </section>
         <section class="panel seccion" id="seccion-lab-ready">
@@ -755,6 +757,20 @@
     const moved = import('./launched.js').then(m => m.move()).catch(() => {});
     moved.then(() => import('./bodega.js')).then(m => m.start());
     moved.then(() => import('./publish.js')).then(m => m.start());
+    // Offline mode's tester switch (D-538, PR 3): forces the mode on this phone only, and shows what
+    // the app detects. Players never see it
+    import('../assets/js/connection.js').then(({ connection }) => {
+      const c = connection(), box = document.getElementById('offline-forzar'), estado = document.getElementById('offline-estado');
+      const draw = () => {
+        box.checked = c.forced();
+        estado.textContent = c.isOffline()
+          ? (c.forced() ? 'Conexión: 📴 sin conexión (forzado aquí)' : 'Conexión: 📴 sin conexión (detectado)')
+          : 'Conexión: 📶 con señal';
+      };
+      box.addEventListener('change', () => { c.force(box.checked); draw(); });
+      c.onChange(draw);
+      draw();
+    }).catch(() => {});
   </script>
 </body>
 </html>
