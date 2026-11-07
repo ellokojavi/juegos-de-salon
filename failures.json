@@ -1401,7 +1401,11 @@
       "error": "✗ no \"Se subió 1 partida ✓\" toast",
       "signature": "7b2eae8020",
       "date": "2026-11-07T23:39:36.525Z",
-      "fix": null,
+      "fix": {
+        "commit": "9203cbd9aecdfca73d7b325d79460270b8f76d16",
+        "date": "2026-11-07T23:48:43.714Z",
+        "stat": "1 file(s) +6 −3: public/assets/js/offline-ui.js"
+      },
       "flaky": false
     }
   ]
