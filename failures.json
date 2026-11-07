@@ -1201,7 +1201,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/RULES.md\", \"title\": \"Rules for making rules (",
       "signature": "b10a1b157f",
       "date": "2026-11-07T20:15:30.401Z",
-      "fix": null,
+      "fix": {
+        "commit": "69dc4b5bcd147aaac79e7de4c31c91d0d70b7e87",
+        "date": "2026-11-07T20:16:28.217Z",
+        "stat": "2 file(s) +5 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
