@@ -16,6 +16,9 @@
  *   from the cache if there, else the network, and kept. Firebase's own traffic is never touched.
  * - The release's list (`precache.json`, tools/release/precache.mjs) is stored when the page
  *   reports a release this worker has not stored yet; then older releases' caches go.
+ * - **Cut** (`forced`, the testers' switch, connection.js): the network is gone for this site, as in
+ *   airplane mode. Every request this worker sees, of any site and method, is answered from the
+ *   cache or fails; nothing reaches the network. The page cuts what a worker cannot see (sockets).
  */
 const CONFIG = 'jds-config';
 const RUNTIME = 'jds-runtime';
@@ -56,24 +59,42 @@ async function forget() {
   for (const k of await caches.keys()) if (k.startsWith('jds-')) await caches.delete(k);
 }
 
-/** A message from a page: `{ type: 'offline', on, release }`. */
-async function told({ on, release: rel }) {
+/** A message from a page: `{ type: 'offline', on, release, forced }`. */
+async function told({ on, release: rel, forced = false }) {
   const c = await config();
   encendido = !!on;
+  cortado = !!on && !!forced;
   if (!on) { if (c.on) await forget(); return; }
-  if (c.on && c.release === rel) return;
-  await setConfig({ on: true, release: rel });
-  if (rel) await store(rel);
+  if (c.on && c.release === rel && !!c.forced === cortado) return;
+  await setConfig({ on: true, release: rel ?? c.release, forced: cortado });
+  // Cut, there is no network to store a release from: what is kept is what there is
+  if (rel && !cortado && !(c.on && c.release === rel)) await store(rel);
 }
 
 self.addEventListener('message', e => {
-  if (e.data?.type === 'offline') e.waitUntil(told(e.data));
+  // A reply port, when the page waits for the change to hold (the testers' switch reloads after it)
+  if (e.data?.type === 'offline') e.waitUntil(told(e.data).finally(() => e.ports?.[0]?.postMessage('ok')));
 });
 
 // Whether offline mode is on, known without waiting: read at each worker start and kept up to date by
 // told(). A page load always waits for it; a file asked before it is known goes to the network untouched
 let encendido = null;
-const leido = config().then(c => { encendido = !!c.on; });
+let cortado = null;
+const leido = config().then(c => { encendido = !!c.on; cortado = !!c.on && !!c.forced; });
+
+/** Cut: from the cache or nothing, like a phone with no signal. A page never kept goes home. */
+async function cut(req) {
+  if (req.method !== 'GET') return Response.error();
+  const url = new URL(req.url);
+  if (req.mode === 'navigate') {
+    const page = await fromCache(url.origin + url.pathname);
+    if (page) return page;
+    const home = new URL('./', self.registration.scope).href;
+    if (url.href !== home && await fromCache(home)) return Response.redirect(home, 302);
+    return Response.error();
+  }
+  return (await fromCache(req)) || (url.origin === self.location.origin && await fromCache(req, { ignoreSearch: true })) || Response.error();
+}
 
 async function fromCache(req, opts) {
   // The runtime cache first: it holds the last version of a page seen online, newer than the release's
@@ -120,8 +141,27 @@ async function keep(req) {
   return r;
 }
 
+/** What an uncut worker does with a request, once it knows whether offline mode is on. */
+function normal(req) {
+  const url = new URL(req.url);
+  const mine = url.origin === self.location.origin;
+  if (req.method !== 'GET' || (!mine && !SDK.test(req.url))) return fetch(req);
+  if (mine && (url.pathname.endsWith('/sw.js') || url.pathname.endsWith('/precache.json'))) return fetch(req);
+  if (req.mode === 'navigate') return encendido ? page(req) : fetch(req);
+  return encendido ? keep(req) : fetch(req);
+}
+
 self.addEventListener('fetch', e => {
   const req = e.request;
+  // The way out of a cut with nothing cached to show (offline-cut.js): this address goes through and ends it
+  if (cortado !== false && req.mode === 'navigate' && req.url.includes('connection=online')) {
+    cortado = false;
+    e.respondWith(config().then(c => setConfig({ ...c, forced: false })).then(() => fetch(req)));
+    return;
+  }
+  if (cortado) { e.respondWith(cut(req)); return; }
+  // Just woken, not yet known whether it is cut: every request waits for the answer
+  if (cortado === null) { e.respondWith(leido.then(() => (cortado ? cut(req) : normal(req)))); return; }
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   const mine = url.origin === self.location.origin;
