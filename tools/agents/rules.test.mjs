@@ -29,11 +29,11 @@ for (const [, m, id] of found) {
   assert.deepEqual(byId[id].form, marks[m], `${id}: docs/USABILIDAD.md marks it ${m}`);
 }
 
-// every canon (C-n) in docs/CANONES.md is registered (#1249 step 3)
-const canons = readFileSync(join(ROOT, 'docs', 'CANONES.md'), 'utf8');
+// every canon (C-n) in docs/CANONS.md is registered (#1249 step 3)
+const canons = readFileSync(join(ROOT, 'docs', 'CANONS.md'), 'utf8');
 const canonIds = [...canons.matchAll(/^## (C-\d+b?) ·/gm)].map(m => m[1]);
 assert.ok(canonIds.length >= 20, 'the canons are read');
-for (const id of canonIds) assert.ok(byId[id], `${id} is in docs/CANONES.md but not in docs/rules.json`);
+for (const id of canonIds) assert.ok(byId[id], `${id} is in docs/CANONS.md but not in docs/rules.json`);
 
 // the index in docs/RULES.md is generated and fresh
 const doc = readFileSync(join(ROOT, 'docs', 'RULES.md'), 'utf8');

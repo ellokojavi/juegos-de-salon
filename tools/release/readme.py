@@ -146,7 +146,7 @@ def test_order(tests):
 
 # From the general to the particular: new documents fall at the end, where they are seen.
 # Both spellings of each document, while the docs are being renamed to English (D-316).
-DOC_ORDER = ['docs/CANONES.md', 'docs/CANONS.md', 'docs/REQUERIMIENTOS.md', 'docs/REQUIREMENTS.md',
+DOC_ORDER = ['docs/CANONS.md', 'docs/CANONS.md', 'docs/REQUERIMIENTOS.md', 'docs/REQUIREMENTS.md',
              'docs/DECISIONES.md', 'docs/DECISIONS.md', 'docs/AGREGAR-JUEGO.md', 'docs/ADD-GAME.md',
              'docs/PANEL.md', 'tools/e2e/README.md', 'firebase/README.md']
 

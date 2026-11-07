@@ -28,7 +28,7 @@ A game's name is quoted as the app shows it (Spanish, C-3).
    order is a fixed list, refreshed by hand), new games are not in the Gran Final (D-332), the
    scoring is 0 to 100 in every cup game and variant (D-331), the result screen credits nobody
    (D-288: the credit goes on the cover page).
-3. `docs/CANONES.md` (C-n) and `docs/USABILIDAD.md` (U-n): what a game must be to be built here.
+3. `docs/CANONS.md` (C-n) and `docs/USABILIDAD.md` (U-n): what a game must be to be built here.
    `docs/ADD-GAME.md` is the real cost of a new game: engine with tests, three languages,
    modes, the panel signal, the result screen, end-to-end scripts, its document, the README and
    the social card. Quote that cost honestly.

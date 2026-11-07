@@ -20,7 +20,7 @@ assert.equal(destination(['public/assets/js/flags.js']), '/labs/', 'a lab flag')
 assert.equal(destination(['public/hangman/game.js']), '/hangman/', 'a game');
 assert.equal(destination(['public/panel/panel.js']), '/panel/', 'the panel');
 assert.equal(destination(['public/assets/css/base.css']), '/', 'the rest of the site');
-assert.equal(destination(['docs/CANONES.md', 'tools/e2e/x.mjs']), null, 'nothing the site serves');
+assert.equal(destination(['docs/CANONS.md', 'tools/e2e/x.mjs']), null, 'nothing the site serves');
 
 // The message: short, with the PR, the version, the feature and where the tap goes
 const ok = message({ pr: 981, title: 'Stack teaser', what: 'Teasers de Stack y Stick Ninja', version: '0.233.0', at: '/panel/#/campaigns/splash/stack-pronto' });

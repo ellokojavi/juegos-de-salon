@@ -50,7 +50,7 @@ many as you need.
 
 ## Before writing code
 
-- **[docs/CANONES.md](docs/CANONES.md)**: today's rules for every game (languages, sound, modes,
+- **[docs/CANONS.md](docs/CANONS.md)**: today's rules for every game (languages, sound, modes,
   game memory, touch interface, anti-cheating, tests, documentation). At the end it has a
   checklist.
 - **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: how texts are written and where buttons go.

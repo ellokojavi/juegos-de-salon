@@ -9,7 +9,7 @@ Cuarto juego de la app y el primero **colectivo sin alcohol**: cada jugador reci
 sin cartas. Se elige una **temática** al empezar; la primera versión trajo **Historia** y **Música** (hoy son seis, ver “Contenido”),
 y el mazo es un archivo de datos, así que agregar temáticas es solo contenido.
 
-Sigue los [cánones](../CANONES.md). Admite **hasta seis jugadores en todos los modos**, también en
+Sigue los [cánones](../CANONS.md). Admite **hasta seis jugadores en todos los modos**, también en
 varios celulares, lo que obligó a ampliar los roles de sala de A–B a A–F. Lo que no le aplica está en
 “Excepciones a los cánones”.
 

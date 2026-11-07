@@ -9,7 +9,7 @@ Quinto juego de la app. El ahorcado de toda la vida, con el arreglo que le falta
 su propia palabra, por turnos de una letra, y al final se comparan. Con dos jugadores es un duelo;
 con seis, una carrera.
 
-Sigue los [cánones](../CANONES.md). Dos excepciones documentadas, ambas en “Excepciones a los cánones”.
+Sigue los [cánones](../CANONS.md). Dos excepciones documentadas, ambas en “Excepciones a los cánones”.
 
 ### Decisiones que deja este juego
 
