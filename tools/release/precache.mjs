@@ -6,7 +6,7 @@
  *
  *   { "release": "<the release meta>", "urls": ["./", "zip/", "assets/js/ui.js?h=1a2b3c4d", …] }
  *
- * - Pages: the home page and each offline-capable game's folder (offlineOk in games.js). La Copa, the
+ * - Pages: the home page, each offline-capable game's folder (offlineOk in games.js) and OFFLINE_PAGES (Uno al día). La Copa, the
  *   panel and the bridge pages stay out.
  * - Each of those games' files and its `reuses`, every shared module and stylesheet, the fonts, the
  *   icons and the manifests. JS and CSS carry the same `?h=` set-version.py puts on them (8 hex of
@@ -44,9 +44,9 @@ function files(site, rel) {
 /** The list for a site folder: `{ release, urls }`, sorted and without repeats. */
 export async function precache(site) {
   site = resolve(site);
-  const { GAMES, SUELTOS, offlineOk } = await import(pathToFileURL(join(site, 'assets/js/games.js')).href);
+  const { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES = [] } = await import(pathToFileURL(join(site, 'assets/js/games.js')).href);
   const games = [...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path);
-  const roots = [...SHARED, ...games.flatMap(g => [g.path, ...(g.reuses || [])])];
+  const roots = [...SHARED, ...OFFLINE_PAGES, ...games.flatMap(g => [g.path, ...(g.reuses || [])])];
   const all = new Set(roots.flatMap(r => files(site, r)).map(f => f.split(sep).join('/')));
   // A game also plays what its modules import from elsewhere (a minigame's engine under cup/games/):
   // follow every relative import, static or import(), from what is already in
@@ -60,7 +60,7 @@ export async function precache(site) {
       if (/\.(js|html)$/.test(dep)) queue.push(dep);
     }
   }
-  const urls = new Set(['./', ...games.map(g => g.path)]);
+  const urls = new Set(['./', ...OFFLINE_PAGES, ...games.map(g => g.path)]);
   for (const f of [...all].sort()) {
     if (SKIP.test(f) || NEVER.some(n => f.startsWith(n))) continue;
     if (f.endsWith('/index.html')) continue;

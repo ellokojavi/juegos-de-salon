@@ -703,6 +703,8 @@ export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
  * whatever the game: that is the mode (ROOM_MODE), not the game.
  */
 export const offlineOk = g => !!g && g.offline !== false;
+/** Pages that are not a game's and are kept offline too (D-538, PR 6): Uno al día's page, whose ▶ plays offline. */
+export const OFFLINE_PAGES = ['today/'];
 
 /** A mode played by one person (D-348): solo and Uno al día. */
 export const isIndividualMode = mode => !!MODES[mode]?.individual;

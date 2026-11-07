@@ -89,7 +89,12 @@ PR that changes what is kept on the phone.
 4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Con señal", the chip, the
    one-line explanation on tap (`offline-ui.test.mjs`).
 5. Scores: queue limits, end-screen wording, reconnect toast, Uno al día 48 h, rule caps, privacy page.
-6. The first-time sheet and every text in es, en and pt.
+6. ✅ The first-time sheet (`offline-sheet.js`, once per phone, on the support card's `.hoja`), in es,
+   en and pt, with one more line on an iPhone outside the installed app: scores are safest with the app
+   on the home screen. Uno al día's page (`today/`) kept offline (`OFFLINE_PAGES` in `games.js`, used by
+   the precache and the dimming). New games need no step of their own: every game is offline-capable
+   unless it says `offline: false`, and `offline.test.mjs` fails when an offline-capable page (Babel,
+   Shinobi and later ones included) imports another site as it opens (`offline-sheet.test.mjs`).
 7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
 8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
