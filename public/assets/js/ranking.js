@@ -380,7 +380,7 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
       // Kept on the phone and sent when the signal is back, instead of lost (`subirPendientes`)
       // Without Firebase on this phone (offline, the SDK may never have come) it is still queued
       const guardada = e?.code !== 'pin' && guardarPendienteLocal({ juego, variante, s, ms });
-      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? T.savedLater : T.notSaved));
+      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? (globalThis.document?.documentElement?.dataset.connection ? T.savedPhone : T.savedLater) : T.notSaved));
     }
   };
   if (!rankingsVisibles()) return caja;
