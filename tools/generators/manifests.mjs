@@ -5,16 +5,16 @@
  *
  *   node tools/generators/manifests.mjs [--check]
  */
-import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateManifest } from '../../public/assets/js/game-manifest.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public');
 
-/** The folders that have a game.json. */
-export const manifestFolders = () => readdirSync(PUBLIC, { withFileTypes: true })
-  .filter(d => d.isDirectory() && existsSync(join(PUBLIC, d.name, 'game.json'))).map(d => d.name).sort();
+/** The folders that have a game.json: 'hangman', and 'labs/julep' for one in the lab. */
+export const manifestFolders = (root = PUBLIC) => ['', 'labs/'].flatMap(pre => existsSync(join(root, pre)) ? readdirSync(join(root, pre), { withFileTypes: true })
+  .filter(d => d.isDirectory() && existsSync(join(root, pre, d.name, 'game.json'))).map(d => pre + d.name) : []).sort();
 
 export const readManifest = folder => JSON.parse(readFileSync(join(PUBLIC, folder, 'game.json'), 'utf8'));
 
@@ -34,7 +34,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const path = generatedPath(f);
     const old = existsSync(path) ? readFileSync(path, 'utf8') : '';
     if (old === text) continue;
-    if (check) { bad++; console.error(`assets/js/manifests/${f}.js is stale: run node tools/generators/manifests.mjs`); } else { writeFileSync(path, text); console.log(`wrote assets/js/manifests/${f}.js`); }
+    if (check) { bad++; console.error(`assets/js/manifests/${f}.js is stale: run node tools/generators/manifests.mjs`); } else { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); console.log(`wrote assets/js/manifests/${f}.js`); }
   }
   process.exit(bad ? 1 : 0);
 }
