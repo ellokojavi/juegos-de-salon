@@ -14,6 +14,7 @@
  * screens come from `visualScreens()` in paths.mjs; the PNG reader, writer and diff are png.mjs.
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync } from 'node:fs';
+const hasAnyReference = () => { try { return readdirSync(new URL('./visual/ref/', import.meta.url)).some(f => f.endsWith('.png')); } catch { return false; } };
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launch, sleep } from './cdp.mjs';
@@ -81,6 +82,9 @@ for (const s of screens) {
     console.log(`${same ? '·' : '✎'} ${name}${same ? ' unchanged' : ' reference written'}`);
     continue;
   }
+  // Before the first references come from GitHub's runner (the "Visual references" workflow, #1249),
+  // there is nothing to compare: say so and pass, rather than compare against another machine's rendering
+  if (!existsSync(ref) && !hasAnyReference()) { console.log(`· ${name}: no references yet; make them with the "Visual references" workflow`); continue; }
   if (!existsSync(ref)) { failed++; console.log(`❌ ${name}: no reference (run node tools/e2e/visual.mjs --update --part ${s.part} and commit it)`); continue; }
   const r = compare(decode(readFileSync(ref)), now, { delta: DELTA });
   const pct = (r.ratio * 100).toFixed(2);
