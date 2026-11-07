@@ -48,6 +48,8 @@ export const GAMES = [
     formato: { es: 'Cada uno en su celular, un juego por día', en: 'Each on their own phone, one game a day', pt: 'Cada um no seu celular, um jogo por dia' },
     // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
     torneo: true,
+    // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
+    offline: false,
     // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
     tipos: ['words', 'logic', 'trivia'],
     path: 'cup/',
@@ -694,6 +696,14 @@ export const LOCAL_MODES = MODE_IDS.filter(m => !MODES[m].room);
 export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
 
 /** ¿Esta clave es un modo sin red, que sube contador? Vale para uno que todavía no existe. */
+/**
+ * Whether a game can be played with no connection (D-538, docs/OFFLINE.md): every game is, in its
+ * local modes, unless its entry says `offline: false` (La Copa). Offline mode dims the rest with
+ * "📡 Con señal", and the service worker precaches only these. A two-phone room is never offline,
+ * whatever the game: that is the mode (ROOM_MODE), not the game.
+ */
+export const offlineOk = g => !!g && g.offline !== false;
+
 /** A mode played by one person (D-348): solo and Uno al día. */
 export const isIndividualMode = mode => !!MODES[mode]?.individual;
 
