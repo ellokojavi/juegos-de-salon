@@ -238,6 +238,8 @@ export function select({ changes, graph, scripts, shared, exists = () => true, f
       const rel = raw.slice('tools/e2e/'.length);
       if (rel.endsWith('.test.mjs') || rel.endsWith('.md')) continue;
       if (scripts.some(s => s.name === rel)) changedScripts.add(rel);
+      // A visual reference (#1249) is visual.mjs's data: it runs that script, not every one
+      else if (rel.startsWith('visual/') && scripts.some(s => s.name === 'visual.mjs')) changedScripts.add('visual.mjs');
       else return null; // cdp.mjs, ci.mjs, paths.mjs…: everything
     }
     // The workshop the scripts don't import (tools/release/, tools/generators/…): it never reaches them

@@ -22,6 +22,7 @@ import { SUELTOS } from '../../public/assets/js/games.js';
 import { noBrowser } from './changes.mjs';
 import { affectedJobs, changeLevel, scopeReport } from './affected.mjs';
 import { group, readDurations, NOTICE } from './groups.mjs';
+import { visualScreens } from './paths.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // E2E_OUT; SALIDA_E2E is its old name (D-316)
@@ -29,7 +30,7 @@ const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
 const CAP_MS = 15 * 60 * 1000;
 
 // Not tests: they look at screens or build screenshot sheets
-const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs', 'inert.mjs', 'narrow.mjs']);
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs', 'inert.mjs', 'narrow.mjs', 'png.mjs']);
 // They open rooms or join them in the production Firebase: still run by hand
 const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const ALSO_FIREBASE = new Set([
@@ -54,6 +55,8 @@ export const PARTS = {
   'cup/tournament.mjs': ['cup', 'labs', 'demos', 'weekend'],
   'cup/languages.mjs': ['cup', 'standalone', 'screens-a', 'screens-b'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
+  // One job per game's screens, named after its page, so a PR compares only the games it reaches (#1249)
+  'visual.mjs': visualScreens().map(s => s.part),
 };
 
 /** The scripts, with their path from tools/e2e/: each game's go in its folder (D-192). */
