@@ -28,7 +28,9 @@
  *   - whom to dispatch today (D-276): the documentation agent if something entered main since its
  *     last round, the usability agent if something in public/ changed since it was last launched,
  *     and the game-ideas agent once a week (D-360);
- *   - whether the home page's order is a week old and due for `popularity.mjs update` (D-361).
+ *   - whether the home page's order is a week old and due for `popularity.mjs update` (D-361);
+ *   - the rules round (#1249 step 16, rules.mjs report): debt per 📈 rule and its trend, 👁 without a
+ *     reviewer, and the repeated fixes of a rule that has no test.
  *
  * `decide` takes `{ title, summary, decisions: [{ question, context?, yes: [actions], no?: [actions] }] }`
  * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
@@ -43,6 +45,18 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, LABELS, settle, undecided, question, decisionQueuing } from './approve.mjs';
 import { wantsEmail, handled } from './feedback.mjs';
+import { report as rulesReport, formatReport } from './rules.mjs';
+
+/** The rules round's section of `check` (#1249 step 16): the report and what the round does with it. */
+export function rulesSection(rep) {
+  const out = formatReport(rep).split('\n');
+  const moved = rep.debt.filter(d => d.delta !== null && d.delta !== 0);
+  if (moved.length) out.push(`→ Say in your report: ${moved.map(d => `${d.id} ${d.delta < 0 ? 'shrank' : 'grew'} by ${Math.abs(d.delta)}`).join(', ')}.`);
+  if (rep.debt.some(d => d.delta === null || d.delta !== 0)) out.push('→ Record today\'s counts in your PR: node tools/agents/rules.mjs report --record');
+  if (rep.unreviewed.length) out.push('→ Each 👁 rule without reviewer gets one in docs/rules.json (or a one-tap decision).');
+  if (rep.repeated.length) out.push('→ Each candidate: open a PR adding the missing check (rule 5), or a one-tap decision when unsure.');
+  return out;
+}
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORY = join(ROOT, 'docs/processes.json');
@@ -344,6 +358,10 @@ async function check() {
     const { loadRemote, summarize, report } = await import('./failures.mjs');
     for (const line of report(summarize(loadRemote(), m))) console.log(line);
   } catch (e) { console.log(`- could not read the failure log: ${String(e.message).split('\n')[0]}`); }
+
+  heading('Rules round (#1249 step 16)');
+  try { for (const line of rulesSection(rulesReport())) console.log(line); }
+  catch (e) { console.log(`- could not build the rules report: ${String(e.message).split('\n')[0]}`); }
 
   console.log(`\nWhen closing: node tools/agents/processes.mjs record --to ${tip.slice(0, 7)} [--issue <url>] [--pr <url>] [--note "…"]`);
 }

@@ -1,7 +1,7 @@
 // The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS, resolveCommit } from './processes.mjs';
+import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS, resolveCommit, rulesSection } from './processes.mjs';
 import { recordDone } from './approve.mjs';
 
 const now = Date.parse('2026-10-11T12:00:00Z');
@@ -113,3 +113,15 @@ const full = 'a'.repeat(40);
 assert.equal(resolveCommit('aaaa', () => full), full);
 assert.throws(() => resolveCommit('525888f', () => { throw new Error('bad'); }), /not a commit/);
 assert.throws(() => resolveCommit('aaaa', a => { if (a[0] === 'merge-base') throw new Error('no'); return full; }), /not on origin\/main/);
+
+// The rules round (#1249 step 16): the trend is said, and a repeated-fix candidate asks for a PR
+{
+  const rep = { date: '2026-11-07', unreviewed: [], repeated: [{ id: 'C-4', registered: true, count: 2, subjects: ['fix C-4', 'fix C-4 again'] }],
+    debt: [{ id: 'english', debt: 'docs/english-renames.json', count: 200, last: 202, delta: -2 }] };
+  const lines = rulesSection(rep).join('\n');
+  assert.match(lines, /english shrank by 2/);
+  assert.match(lines, /report --record/);
+  assert.match(lines, /open a PR adding the missing check/);
+  const quiet = rulesSection({ ...rep, repeated: [], debt: [{ ...rep.debt[0], count: 202, delta: 0 }] }).join('\n');
+  assert.doesNotMatch(quiet, /→/, 'nothing moved, nothing to do');
+}

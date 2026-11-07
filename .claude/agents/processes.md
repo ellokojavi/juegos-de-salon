@@ -298,6 +298,12 @@ that (after a new game, after a big text change), saying why.
    will fail only when there's something to do. A snitch that yells at everything is ignored by
    everyone (`facts.mjs`).
    When opening the PR: `node tools/agents/processes.mjs mechanism <clave> "qué lo frena" --pr <url>`.
+   **Rules round** (#1249 step 16, docs/RULES.md): `check`'s "Rules round" section is
+   `node tools/agents/rules.mjs report`. Put its summary in the round's report (each 📈 rule's debt and
+   whether it shrank or grew since the last round, any 👁 rule without a reviewer), and when the counts
+   moved, `rules.mjs report --record` in your PR (`rules.test.mjs` fails if a debt grows past its last
+   record). A "repeated fixes without a test" candidate is a heuristic lead: when it is real, it is
+   this round's mechanism, a PR adding the missing check (rule 5); when unsure, a one-tap decision.
 7. **One-tap decisions.** If there's something for the owner, open **one** issue with all of it:
    a JSON file `{ "titulo": "Processes: <date>", "resumen": "…", "decisiones": [ … ] }` and
    `node tools/agents/processes.mjs decide <file.json>`: the bot opens it (`decide.yml`), so that
