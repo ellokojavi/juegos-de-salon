@@ -101,10 +101,11 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
 
   const drawChip = () => { if (chip) chip.textContent = chipText(pendingCount(storage), lang); };
 
-  function toast(text = (COMMON[lang] || COMMON.es).offline.needsSignal, ms = 3200) {
+  function toast(text = (COMMON[lang] || COMMON.es).offline.needsSignal, ms = 3200, kind = 'needs-signal') {
     let t = doc.querySelector('.offline-toast');
     if (!t) { t = doc.createElement('div'); t.className = 'offline-toast'; t.setAttribute('role', 'status'); doc.body.append(t); }
     t.textContent = text;
+    t.dataset.kind = kind;
     t.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { t.hidden = true; }, ms);
@@ -113,7 +114,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
   win.addEventListener('pendientes-subidas', e => {
     drawChip();
     const text = uploadText(e.detail, lang);
-    if (text) toast(text, 5000);
+    if (text) toast(text, 5000, 'uploaded');
   });
 
   // A tap on something that needs signal says why, in the capture phase so the page never sees it
@@ -162,7 +163,9 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     } else {
       observer?.disconnect();
       chip?.remove(); chip = null;
-      doc.querySelector('.offline-toast')?.remove();
+      // Only the "needs signal" line goes with the mode: an upload toast may land before this paint,
+      // which a crossfade runs a frame later (the end-to-end test caught it removing "Se subió 1 partida ✓")
+      doc.querySelector('.offline-toast[data-kind="needs-signal"]')?.remove();
     }
   }
 
