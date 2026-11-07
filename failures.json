@@ -1075,6 +1075,19 @@
       "date": "2026-11-06T20:55:02.251Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42327764150,
+      "check": "tests",
+      "pr": 1253,
+      "branch": "claude/optimistic-einstein-j36c7u",
+      "commit": "97e2d0c9d918ba50656464da95411314bb697902",
+      "test": "tools/agents/document.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "4d927cbbd6",
+      "date": "2026-11-07T02:10:48.103Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
