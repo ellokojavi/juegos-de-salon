@@ -188,18 +188,6 @@
       "reason": "The clinking glasses on the turn handoff (`.handoff .pase .cheers`): smaller than the shell's 5.5 rem because the result and the pass share one screen and with six drinkers the button fell off a small phone (C-9, C-8); a hero's own size."
     },
     {
-      "file": "public/labs/stick/style.css",
-      "rule": "text-size",
-      "what": "font-size: 2.2rem",
-      "reason": "The cover's jumping 🥷 beside the title (`.titulo-ninja .logo`): an emoji drawn to the title's height, a hero's own size above the text steps."
-    },
-    {
-      "file": "public/labs/stick/style.css",
-      "rule": "colour",
-      "what": "*mask-image: #000",
-      "reason": "The night's fade at the canvas' edges (`.lienzo-ninja, .demo-ninja`): black in a mask is opacity, not a colour the player sees."
-    },
-    {
       "file": "public/labs/code/style.css",
       "rule": "text-size",
       "what": "font-size: 4rem",

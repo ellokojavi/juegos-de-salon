@@ -480,7 +480,6 @@ node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
 node public/labs/memory/engine.test.mjs
 node public/labs/stack/engine.test.mjs
-node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs

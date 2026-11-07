@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   The teaser of 🥷 Stick Ninja for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md)
-  with the game's own scene (public/labs/stick/scene.js): under the night's moon the ninja dashes to
+  with the game's own scene (public/cup/games/stick/scene.js): under the night's moon the ninja dashes to
   the edge of its pillar and stops there, looking across the gap at the next one, and stays. No stick
   grows or falls: the play is not given away (TEASERS.md, rule 2).
 -->
@@ -19,8 +19,8 @@
 <div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
 <script type="module">
 import { teaser, W, H } from './_teaser.js';
-import { newGame, current, restX } from '../../../public/labs/stick/engine.js';
-import { escena } from '../../../public/labs/stick/scene.js';
+import { newGame, current, restX } from '../../../public/cup/games/stick/engine.js';
+import { escena } from '../../../public/cup/games/stick/scene.js';
 
 const SEED = 7, RUN_AT = 1.2;   // when the ninja dashes to the edge (seconds)
 

@@ -187,9 +187,13 @@ const bridges = () => [
   // A game sent to La Bodega (D-420) lives in /labs/<folder>/: its old /<folder>/ leads there
   ...pages().filter(p => p.game && !p.standalone && p.route.startsWith('/labs/'))
     .map(p => ({ ...p, old: `public/${p.route.slice('/labs/'.length)}index.html`, to: `..${p.route}` })),
-  // A game that left the lab (`deLabs`, D-332): its old /labs/<slug>/ leads to /<slug>/
+  // A game that left the lab (`deLabs`, D-332): its old /labs/<slug>/ leads to /<slug>/. A game renamed
+  // on the way out names its lab folder instead (`deLabs: 'stick'`: Shinobi was /labs/stick/)
   ...pages().filter(p => p.standalone && SUELTOS.find(m => m.id === p.game)?.deLabs)
-    .map(p => ({ ...p, old: `public/labs/${p.slug}/index.html`, to: `../..${p.route}` })),
+    .map(p => {
+      const dir = SUELTOS.find(m => m.id === p.game).deLabs;
+      return { ...p, old: `public/labs/${typeof dir === 'string' ? dir : p.slug}/index.html`, to: `../..${p.route}` };
+    }),
   // The generic pages (/minijuegos/?reinas, /minigames/?reinas): the template sends each link to its place
   { old: 'public/minijuegos/index.html', to: '../cup/suelto/', title: 'Juegos de Salón 🎲' },
   { old: 'public/minigames/index.html', to: '../cup/suelto/', title: 'Juegos de Salón 🎲' },
