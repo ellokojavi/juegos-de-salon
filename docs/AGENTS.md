@@ -48,6 +48,9 @@ or any other here), launch it and report what it found; do not ask the owner fir
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
   Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | settle <issue> <n> "why" | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
+  **Rules round** (#1249 step 16): `check` includes `node tools/agents/rules.mjs report` (`--json`, `--record`): each 📈
+  rule's debt and its trend against `docs/rules-debt.json`, every 👁 rule without a reviewer, and the rules fixed twice in
+  30 days with no 🤖/📈 form (a heuristic); the round reports it, records the counts and opens the PR for a missing check.
   **CI failures reach it by themselves** (D-518): `.github/workflows/failure-log.yml` records every red `tests` or
   `end-to-end` run of a PR on the `failure-log` branch (one record per failing test: PR, branch, commit, check, test,
   error excerpt, date) and closes the records when the PR goes green, with the fixing commit's diff stat, or as flaky when
