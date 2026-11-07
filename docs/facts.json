@@ -1364,6 +1364,7 @@
     "public/assets/js/month-end.test.mjs",
     "public/assets/js/name-guard.test.mjs",
     "public/assets/js/offline-cut.test.mjs",
+    "public/assets/js/offline-palette.test.mjs",
     "public/assets/js/offline-sheet.test.mjs",
     "public/assets/js/offline-ui.test.mjs",
     "public/assets/js/offline.test.mjs",
