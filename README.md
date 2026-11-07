@@ -846,6 +846,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
 - [Repo weight (D-494, #856)](docs/REPO-WEIGHT.md)
+- [Rules for making rules (D-541)](docs/RULES.md)
 - [Seasonal templates (D-457)](docs/SEASONS.md)
 - [Working in parallel sessions](docs/SESSIONS.md)
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
