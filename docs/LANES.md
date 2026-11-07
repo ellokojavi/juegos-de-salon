@@ -39,6 +39,11 @@ from an agent's round, a job or a session's own initiative still waits for the o
 Storing something new about players is 🔴 too even when no red file changes: the privacy page
 changes in the same PR (CLAUDE.md), which makes it red.
 
+**An outside PR is 🔴 whatever its files** (#1249 step 4): one from a fork, or opened by anyone but
+the owner (`INSIDERS` in `lanes.mjs`; sessions act as the owner), never takes the lane of its files,
+so it never auto-merges. `lanes.test.mjs` simulates both. On a fork the `lane` job's token cannot
+write the status, so `owner-approval` stays missing and the PR cannot merge without the owner either way.
+
 **What the owner reads before deciding.** The owner approves or rejects a 🔴 PR in one tap, so the
 session gives them the decision ready to take, in plain Spanish with no jargon, in the PR
 description (right under the approval block) and in its chat reply:

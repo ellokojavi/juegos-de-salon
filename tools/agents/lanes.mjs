@@ -11,6 +11,8 @@
  * the stage of covers.mjs (D-304: lab only, a game leaving the lab, the site). The rules are in
  * lanes.json: the first glob that matches a file gives its lane, no match is yellow.
  *
+ * A PR from a fork or by anyone but the owner is 🔴 whatever its files (#1249 step 4).
+ *
  * In CI, a 🔴 PR gets the `needs-owner` label, a red `owner-approval` status on its head commit and
  * a one-tap decision at the top of its own description (D-531) whose Yes is `approve-pr` (approve.mjs) for that commit; 🟢/🟡 get a
  * green `owner-approval` at once. A push after the owner's tick asks again.
@@ -47,9 +49,26 @@ export function laneOf(file, rules = RULES) {
   return r ? { lane: r.lane, glob: r.glob, reason: r.reason } : { lane: 'yellow', glob: null, reason: 'no rule: unknown files are yellow' };
 }
 
-/** A PR's lane: the highest of its files, with the files that set it. No files is green. */
-export function laneOfPr(files) {
+/** The authors whose PRs take the lane of their files: the owner (sessions act as the owner). */
+export const INSIDERS = ['ellokojavi'];
+
+/**
+ * Why a PR comes from outside (#1249 step 4), or null: from a fork, or by an author who is not the
+ * owner. An outside PR is always 🔴, whatever its files, so it never auto-merges.
+ */
+export function outsideReason(pr) {
+  if (!pr) return null;
+  const head = pr.head?.repo?.full_name, base = pr.base?.repo?.full_name;
+  if (head !== base) return `from a fork (${head || 'a deleted repository'})`;
+  const author = pr.user?.login;
+  if (!INSIDERS.includes(author)) return `by ${author || 'an unknown author'}, not the owner`;
+  return null;
+}
+
+/** A PR's lane: the highest of its files, with the files that set it. No files is green; an outside PR is red. */
+export function laneOfPr(files, { outside = null } = {}) {
   const each = files.map(f => ({ file: f, ...laneOf(f) }));
+  if (outside) return { lane: 'red', by: [{ file: '(the whole PR)', lane: 'red', glob: null, reason: `an outside PR, ${outside}: never auto-merge, the owner approves` }], files: each };
   const lane = each.reduce((top, x) => (ORDER.indexOf(x.lane) > ORDER.indexOf(top) ? x.lane : top), 'green');
   return { lane, by: each.filter(x => x.lane === lane), files: each };
 }
@@ -107,13 +126,14 @@ async function stageOf(base) {
   return STAGES[stage(files, exits)](exits);
 }
 
+const prOf = n => JSON.parse(gh('api', `repos/{owner}/{repo}/pulls/${n}`));
 const prFiles = n => JSON.parse(gh('api', '--paginate', `repos/{owner}/{repo}/pulls/${n}/files?per_page=100`, '--jq', '[.[].filename]').replace(/\]\s*\[/g, ','));
 
 async function ci() {
   const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
   const repo = process.env.GITHUB_REPOSITORY, pr = event.pull_request;
   const n = pr.number, sha = pr.head.sha;
-  const result = laneOfPr(prFiles(n));
+  const result = laneOfPr(prFiles(n), { outside: outsideReason(pr) });
   console.log(report(result));
   const status = (state, description) => gh('api', '-X', 'POST', `repos/${repo}/statuses/${sha}`, '-f', `state=${state}`, '-f', `context=${STATUS}`, '-f', `description=${description}`);
   if (result.lane !== 'red') {
@@ -154,7 +174,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, ...args] = process.argv.slice(2);
   try {
     if (cmd === 'ci') await ci();
-    else if (cmd === 'check' && args[0] === '--pr') console.log(report(laneOfPr(prFiles(Number(args[1])))));
+    else if (cmd === 'check' && args[0] === '--pr') console.log(report(laneOfPr(prFiles(Number(args[1])), { outside: outsideReason(prOf(Number(args[1]))) })));
     else if (cmd === 'check') {
       const base = args[0] || 'origin/main';
       const files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
