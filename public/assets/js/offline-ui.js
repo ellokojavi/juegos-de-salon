@@ -13,14 +13,14 @@
  * and one click listener in the capture phase stops the taps.
  */
 import { COMMON, getLang } from './i18n.js';
-import { GAMES, SUELTOS, offlineOk } from './games.js';
+import { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES } from './games.js';
 import { loadCss } from './load-css.js';
 
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
 const ROOT = new URL('../../', import.meta.url);
 
-/** The site's paths a phone keeps offline: the home page and each offline-capable game's page. */
-export const KEPT = new Set(['', ...[...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
+/** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
+export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...[...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
 
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
 export function needsSignal(href, { root = ROOT, base = root } = {}) {
@@ -115,6 +115,8 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
       chip ||= doc.querySelector('.offline-chip');
       if (!chip) { chip = doc.createElement('div'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); doc.body.prepend(chip); }
       drawChip();
+      // The first time on this phone, one sheet says what works and what happens to the scores (PR 6)
+      import('./offline-sheet.js').then(m => m.showOfflineSheetOnce({ doc, storage, lang })).catch(() => {});
       // Screens drawn later (a game's modes, the home page's cards) are marked as they appear
       observer ||= new win.MutationObserver(() => mark(doc, { lang }));
       // Once the page has settled: a link drawn before its layout (a card's hidden overlay) loses a tag it has no room for

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GAMES, SUELTOS, offlineOk } from './games.js';
+import { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES } from './games.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const ALL = [...GAMES, ...SUELTOS];
@@ -49,7 +49,7 @@ function remote(entry, seen, chain) {
 }
 
 let pages = 0;
-for (const g of ALL.filter(x => offlineOk(x) && x.path)) {
+for (const g of [...ALL.filter(x => offlineOk(x) && x.path), ...OFFLINE_PAGES.map(path => ({ id: path, path }))]) {
   const html = resolve(ROOT, g.path, 'index.html');
   assert.ok(existsSync(html), `${g.id}: its page exists at ${g.path}`);
   const seen = new Set();

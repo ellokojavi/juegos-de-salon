@@ -108,10 +108,12 @@ PR that changes what is kept on the phone.
 5. ✅ Scores: queue of 200 with ids and exactly-once counting, queued without Firebase, end-screen wording,
    reconnect toast with what was lost and why, `storage.persist()`, Uno al día yesterday within 48 h,
    privacy page (`pending-scores.test.mjs`, `offline-ui.test.mjs`).
-6. The first-time sheet and every text in es, en and pt; on iPhone outside the installed app, one line
-   that pending games are safest with the app on the home screen. The Uno al día page kept offline, and
-   a test that fails when a game in `games.js` has no `offlineOk` decision (so Babel, Shinobi and every
-   later game are classified before launch).
+6. ✅ The first-time sheet (`offline-sheet.js`, once per phone, on the support card's `.hoja`), in es,
+   en and pt, with one more line on an iPhone outside the installed app: scores are safest with the app
+   on the home screen. Uno al día's page (`today/`) kept offline (`OFFLINE_PAGES` in `games.js`, used by
+   the precache and the dimming). New games need no step of their own: every game is offline-capable
+   unless it says `offline: false`, and `offline.test.mjs` fails when an offline-capable page (Babel,
+   Shinobi and later ones included) imports another site as it opens (`offline-sheet.test.mjs`).
 7. End-to-end: each offline-capable game with the network cut, then reconnect and check one upload.
    Also the way back: the flag off forgets the stored files (`sw.js`) and the forced cut, tested.
 8. **An offline palette** (the owner, 2026-11-07): while offline, everything outside the games (home
