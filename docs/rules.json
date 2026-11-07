@@ -35,6 +35,18 @@
    ]
   },
   {
+   "id": "architecture",
+   "title": "A game imports only shared code and its own folder, reaches no external host, and keeps its storage keys under juegos-de-salon:",
+   "doc": "docs/ARCHITECTURE.md",
+   "form": [
+    "ratchet"
+   ],
+   "enforcedBy": [
+    "tools/agents/architecture.test.mjs"
+   ],
+   "debt": "docs/architecture-allowlist.json"
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",

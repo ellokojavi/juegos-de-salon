@@ -1441,6 +1441,7 @@
     "public/sw.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
+    "tools/agents/architecture.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
     "tools/agents/conflict-markers.test.mjs",
     "tools/agents/covers.test.mjs",
@@ -1659,6 +1660,10 @@
     {
       "path": "docs/ALEMAN.md",
       "title": "El alemán"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "title": "The architecture boundary (#1249 step 5)"
     },
     {
       "path": "docs/CANONS.md",
