@@ -1288,6 +1288,19 @@
       "date": "2026-11-07T22:09:28.061Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42421461838,
+      "check": "end-to-end",
+      "pr": 1298,
+      "branch": "claude/sharp-dijkstra-vp00we",
+      "commit": "70d9856a908cc78a786b8301101cc09e678f155e",
+      "test": "visual.mjs:babel",
+      "error": "❌ babel-intro: 7.63 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part babel; the new and the diff images are in /home/runner/work/_temp/e",
+      "signature": "d2724dfcb7",
+      "date": "2026-11-07T22:39:39.874Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
