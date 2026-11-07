@@ -65,6 +65,24 @@
    ]
   },
   {
+   "id": "R-8",
+   "title": "Data before code: a fact about a game lives in its manifest",
+   "doc": "docs/RULES.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "public/assets/js/game-manifest.test.mjs"
+   ],
+   "reviewer": "the session building or changing the game",
+   "why": "whether a new fact belongs in the manifest is a design call; the test keeps the manifests valid and in step with games.js",
+   "applies": [
+    "public/assets/js/games.js",
+    "public/**/game.json"
+   ]
+  },
+  {
    "id": "design-system",
    "title": "Stylesheets use the design system's tokens and components (D-533)",
    "doc": "docs/DESIGN.md",
