@@ -15,7 +15,7 @@
     "docs/CANONES.md": {
       "to": "docs/CANONS.md",
       "phase": 5,
-      "state": "pending"
+      "state": "done"
     },
     "docs/DECISIONES.md": {
       "to": "docs/DECISIONS.md",
@@ -395,223 +395,223 @@
     "marketing/agentes-tarjeta/": {
       "to": "marketing/agents-card/",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/agentes-tarjeta/animada.html": {
       "to": "marketing/agentes-tarjeta/animated.html",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/agentes-tarjeta/construir-video.mjs": {
       "to": "marketing/agentes-tarjeta/build-video.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/agentes-tarjeta/construir.mjs": {
       "to": "marketing/agentes-tarjeta/build.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/agentes-tarjeta/output/agentes-1200x630.jpg": {
       "to": "marketing/agentes-tarjeta/output/agents-1200x630.jpg",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/agentes-tarjeta/output/agentes-6s.gif": {
       "to": "marketing/agentes-tarjeta/output/agents-6s.gif",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/agentes-tarjeta/output/agentes-6s.mp4": {
       "to": "marketing/agentes-tarjeta/output/agents-6s.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/agentes-tarjeta/tarjeta.html": {
       "to": "marketing/agentes-tarjeta/card.html",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/caso-teaser/": {
       "to": "marketing/case-teaser/",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/caso-teaser/capturar.mjs": {
       "to": "marketing/caso-teaser/capture.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/caso-teaser/construir.sh": {
       "to": "marketing/caso-teaser/build.sh",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/caso-teaser/output/el-caso-6s.gif": {
       "to": "marketing/caso-teaser/output/case-6s.gif",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/caso-teaser/output/el-caso-6s.mp4": {
       "to": "marketing/caso-teaser/output/case-6s.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/promo-video/construir.sh": {
       "to": "marketing/promo-video/build.sh",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/promo-video/copa.mjs": {
       "to": "marketing/promo-video/cup.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/promo-video/hoja.py": {
       "to": "marketing/promo-video/sheet.py",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/promo-video/jugar.mjs": {
       "to": "marketing/promo-video/play.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/promo-video/music/cancion.mp3": {
       "to": "marketing/promo-video/music/song.mp3",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/promo-video/navegador.mjs": {
       "to": "marketing/promo-video/browser.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/promo-video/output/miniatura-short.jpg": {
       "to": "marketing/promo-video/output/thumbnail-short.jpg",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/promo-video/output/miniatura-youtube.jpg": {
       "to": "marketing/promo-video/output/thumbnail-youtube.jpg",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/promo-video/preparar.py": {
       "to": "marketing/promo-video/prepare.py",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/proximamente-teaser/": {
       "to": "marketing/coming-soon-teaser/",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/proximamente-teaser/animada.html": {
       "to": "marketing/proximamente-teaser/animated.html",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/proximamente-teaser/construir-video.mjs": {
       "to": "marketing/proximamente-teaser/build-video.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/proximamente-teaser/output/se-vienen-cositas-6s.mp4": {
       "to": "marketing/proximamente-teaser/output/coming-soon-6s.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/registro.json": {
       "to": "marketing/log.json",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/share-tutorial/capturar.mjs": {
       "to": "marketing/share-tutorial/capture.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/share-tutorial/construir.sh": {
       "to": "marketing/share-tutorial/build.sh",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/share-tutorial/output/compartir-16x9.mp4": {
       "to": "marketing/share-tutorial/output/share-16x9.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/share-tutorial/output/compartir-vertical.mp4": {
       "to": "marketing/share-tutorial/output/share-vertical.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/": {
       "to": "marketing/three-new/",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/tres-nuevos/animada.html": {
       "to": "marketing/tres-nuevos/animated.html",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/tres-nuevos/construir-video.mjs": {
       "to": "marketing/tres-nuevos/build-video.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/tres-nuevos/construir.mjs": {
       "to": "marketing/tres-nuevos/build.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "marketing/tres-nuevos/img/loteo.png": {
       "to": "marketing/tres-nuevos/img/plots.png",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/img/pintaminas.png": {
       "to": "marketing/tres-nuevos/img/paint-mines.png",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/img/rutas.png": {
       "to": "marketing/tres-nuevos/img/routes.png",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/output/tres-nuevos-1080.jpg": {
       "to": "marketing/tres-nuevos/output/three-new-1080.jpg",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/output/tres-nuevos-6s.mp4": {
       "to": "marketing/tres-nuevos/output/three-new-6s.mp4",
       "phase": 3,
-      "state": "pending",
+      "state": "done",
       "why": "published asset: check where it is linked before renaming"
     },
     "marketing/tres-nuevos/tarjeta.html": {
       "to": "marketing/tres-nuevos/card.html",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     },
     "public/assets/css/linea.css": {
       "to": "public/assets/css/line.css",

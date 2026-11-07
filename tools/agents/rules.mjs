@@ -5,10 +5,15 @@
  *   node tools/agents/rules.mjs index           (rewrites the index block in docs/RULES.md)
  *   node tools/agents/rules.mjs index --check   (exit 1 if the block is stale)
  *   node tools/agents/rules.mjs problems        (what rules.test.mjs fails on)
+ *   node tools/agents/rules.mjs touched <file...> [--judged] [--markdown]
+ *                                               (the rules a list of changed files touches, by their `applies` globs;
+ *                                                --markdown prints the PR comment, rules-comment.yml)
+ *   node tools/agents/rules.mjs contributing [--check]  (the rule lists in CONTRIBUTING.md and the PR template)
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { globRe } from './lanes.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const REGISTRY = join(ROOT, 'docs', 'rules.json');
@@ -35,6 +40,7 @@ export function problemsOf(r, exists = p => existsSync(join(ROOT, p))) {
   if (form.includes('ratchet') && (!r.debt || !exists(r.debt))) out.push(`${where}: a ratchet names its debt list (debt), and it exists`);
   if (r.exceptions && !exists(r.exceptions)) out.push(`${where}: exceptions ${r.exceptions} does not exist`);
   if (form.includes('judged') && (!r.reviewer || !r.why)) out.push(`${where}: a judged rule names its reviewer and why it cannot be measured`);
+  if (form.includes('judged') && !(Array.isArray(r.applies) && r.applies.length)) out.push(`${where}: a judged rule names the files it applies to (applies), so the PR comment can surface it`);
   return out;
 }
 
@@ -68,6 +74,61 @@ export function withIndex(doc, rules) {
   return doc.slice(0, a) + block + doc.slice(b + END.length);
 }
 
+/** The rules whose `applies` globs match any of the files, each with the files it matched. */
+export function touched(files, rules = readRegistry(), { judgedOnly = false } = {}) {
+  const out = [];
+  for (const r of rules) {
+    if (!r.applies?.length || (judgedOnly && !r.form.includes('judged'))) continue;
+    const res = r.applies.map(globRe);
+    const hit = files.filter(f => res.some(re => re.test(f)));
+    if (hit.length) out.push({ rule: r, files: hit });
+  }
+  return out;
+}
+
+export const MARKER = '<!-- judged-rules -->';
+const REPO = 'https://github.com/ellokojavi/juegos-de-salon/blob/main/';
+
+/** The PR comment for the judged rules a diff touches, or '' when none. */
+export function commentFor(hits) {
+  if (!hits.length) return '';
+  const lines = [MARKER, '### 👁 Judged rules this PR touches', '',
+    'No test can check these; a reviewer reads the diff against them (docs/RULES.md, D-541).', '',
+    '| Rule | Reviewer | Files |', '|---|---|---|'];
+  for (const { rule: r, files } of hits) {
+    const more = files.length > 3 ? ` +${files.length - 3}` : '';
+    lines.push(`| [${cell(r.id)} · ${cell(r.title)}](${REPO}${r.doc}) | ${cell(r.reviewer)} | ${files.slice(0, 3).map(f => `\`${cell(f)}\``).join(', ')}${more} |`);
+  }
+  return lines.join('\n') + '\n';
+}
+
+// The rule lists in CONTRIBUTING.md and the PR template, generated from the registry
+const GEN_BEGIN = '<!-- generated: rules (node tools/agents/rules.mjs contributing) -->';
+const GEN_END = '<!-- /generated: rules -->';
+export const CONTRIB_FILES = { 'CONTRIBUTING.md': 'contributing', '.github/pull_request_template.md': 'template' };
+
+export function renderRules(kind, rules = readRegistry()) {
+  const judged = rules.filter(r => r.form.includes('judged'));
+  const count = f => rules.filter(r => r.form.includes(f)).length;
+  if (kind === 'template') {
+    return [GEN_BEGIN,
+      `- [ ] The ${count('check') + count('ratchet')} 🤖/📈 rules are tests: all \`*.test.mjs\` / \`*.test.py\` pass.`,
+      `- [ ] I read the 👁 rules the bot comment lists for this diff (${judged.length} judged rules, [docs/RULES.md](${REPO}docs/RULES.md)).`,
+      GEN_END].join('\n');
+  }
+  const docs = [...new Set(judged.map(r => r.doc))];
+  return [GEN_BEGIN, '',
+    `${rules.length} rules are registered in \`docs/rules.json\` (index in [docs/RULES.md](docs/RULES.md)): ${count('check')} 🤖 checked and ${count('ratchet')} 📈 ratcheted by tests, ${judged.length} 👁 judged by a reviewer. A bot comment on your PR lists the 👁 rules its files touch. They live in:`, '',
+    ...docs.map(d => `- [${d}](${d}): ${judged.filter(r => r.doc === d).map(r => r.id).join(', ')}`),
+    '', GEN_END].join('\n');
+}
+
+export function withRules(text, kind, rules) {
+  const a = text.indexOf(GEN_BEGIN), b = text.indexOf(GEN_END);
+  if (a < 0 || b < 0) throw new Error(`no ${GEN_BEGIN} … ${GEN_END} block`);
+  return text.slice(0, a) + renderRules(kind, rules) + text.slice(b + GEN_END.length);
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, flag] = process.argv.slice(2);
   if (cmd === 'index') {
@@ -77,5 +138,20 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     else { writeFileSync(DOC, next); console.log('docs/RULES.md index built'); }
   } else if (cmd === 'problems') {
     const p = problems(); console.log(p.length ? p.join('\n') : 'no problems'); process.exit(p.length ? 1 : 0);
-  } else { console.log('Usage: node tools/agents/rules.mjs index [--check] | problems'); }
+  } else if (cmd === 'touched') {
+    const args = process.argv.slice(3);
+    const files = args.filter(a => !a.startsWith('--'));
+    const hits = touched(files, readRegistry(), { judgedOnly: args.includes('--judged') || args.includes('--markdown') });
+    if (args.includes('--markdown')) process.stdout.write(commentFor(hits));
+    else for (const { rule: r, files: f } of hits) console.log(`${r.id} ${mark(r)} ${r.title} · ${r.reviewer || (r.enforcedBy || []).join(', ')} · ${f.join(', ')}`);
+  } else if (cmd === 'contributing') {
+    let stale = false;
+    for (const [file, kind] of Object.entries(CONTRIB_FILES)) {
+      const p = join(ROOT, file), text = readFileSync(p, 'utf8'), next = withRules(text, kind, readRegistry());
+      if (next === text) continue;
+      if (flag === '--check') { console.error(`${file} rules block is stale: node tools/agents/rules.mjs contributing`); stale = true; }
+      else { writeFileSync(p, next); console.log(`${file} rules block built`); }
+    }
+    if (stale) process.exit(1);
+  } else { console.log('Usage: node tools/agents/rules.mjs index [--check] | problems | touched <file...> [--judged|--markdown] | contributing [--check]'); }
 }

@@ -34,6 +34,11 @@ if (base) {
     const m = line.match(/^:\d+ \d+ [0-9a-f]+ ([0-9a-f]+) [AM]\t(.+)$/);
     if (m) blobs.set(m[1], m[2]);
   }
+  // A blob main already has (a file renamed or moved) adds no weight to history
+  for (const line of git('ls-tree', '-r', base).split('\n')) {
+    const m = line.match(/^\d+ blob ([0-9a-f]+)\t/);
+    if (m) blobs.delete(m[1]);
+  }
   if (blobs.size) {
     const sizes = execFileSync('git', ['cat-file', '--batch-check=%(objectname) %(objectsize)'],
       { input: [...blobs.keys()].join('\n') + '\n', encoding: 'utf8', maxBuffer: 1 << 28 });

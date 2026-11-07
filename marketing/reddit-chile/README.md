@@ -3,7 +3,7 @@
 The memory of the image and the post that present Juegos de Salón on Reddit's r/chile, for Chileans
 aged 20 to 35, with the focus the owner chose: games to enjoy alone or with friends. It follows the
 model of [`../promo-video/`](../promo-video/README.md) (D-178, D-356): read it before touching the
-asset, and record each round in [History](#history) and in [`../registro.json`](../registro.json).
+asset, and record each round in [History](#history) and in [`../log.json`](../log.json).
 
 ## Today: version 2 (2026-10-29)
 

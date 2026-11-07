@@ -1,6 +1,6 @@
 # Adding a game
 
-> A game is **its folder plus one entry in `games.js`**. The rules live in the [canons](CANONES.md)
+> A game is **its folder plus one entry in `games.js`**. The rules live in the [canons](CANONS.md)
 > and the [usability rules](USABILIDAD.md); this page is only the order and where each piece goes
 > (D-213). Every step names the test that fails without it.
 
@@ -49,6 +49,16 @@ all read it. `manifest.test.mjs` checks that nothing keeps a copy of its own.
   One a Day's `desde` do not read the flag. The cleanup PR removes `lanza` and the row, and moves
   the card to 🎲 Juegos guardados (D-479): `/labs/` moves only improvement cards on its own when a
   flag is *all* (`launched.js`, D-534), not a game's.
+
+### Or its own `game.json` (pilot, #1249 step 7)
+
+Hangman and Dudo keep their facts in `public/<folder>/game.json` instead of an entry written here:
+the catalogue fields above (`players` as `{ min, max }`) plus `modes`, `ai`, `memory` (the C-6
+session key), `languages`, `firebasePaths` and `canonExceptions` (copied from the game's doc). The
+schema and `validateManifest` are in `public/assets/js/game-manifest.js`. After editing the JSON run
+`node tools/generators/manifests.mjs`, which writes `public/assets/js/manifests/<folder>.js`; games.js
+imports that and builds the entry with `catalogEntry`, so consumers see the same shape.
+`game-manifest.test.mjs` fails on an invalid manifest, a stale generated module, or an entry that differs.
 
 ## 3. What stays elsewhere (code, not data)
 

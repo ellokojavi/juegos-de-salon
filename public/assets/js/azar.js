@@ -19,6 +19,8 @@ import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
 import { LLEGA } from './llegada.js';
 import { markOrigin } from './transport/stats.js';
+import { rng } from './rng.js';
+import { param, tiene } from './parametros.js';
 
 export const TEXTOS = {
   // `corto`: el nombre cuando va en la misma fila que Uno al día (D-230)
@@ -27,7 +29,41 @@ export const TEXTOS = {
   pt: { boton: 'Jogo aleatório', corto: 'Aleatório', tocó: 'Você tirou…', aria: 'Abrir um jogo aleatório' },
 };
 
-const azar = n => Math.floor(Math.random() * n);
+/*
+ * The module's random source (#1249, step 10, docs/REPLAY.md). Without a seed it is Math.random, as
+ * always; with one it is a mulberry32 stream, so a game played with the same seed draws the same
+ * numbers and a bug it hit can be replayed and kept as a test.
+ */
+/** A string or number seed to a 32-bit integer (FNV-1a over the text; a whole number passes as is). */
+export function hashSeed(seed) {
+  if (typeof seed === 'number' && Number.isInteger(seed)) return seed >>> 0;
+  let h = 0x811c9dc5;
+  for (const c of String(seed)) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193); }
+  return h >>> 0;
+}
+/** A seeded generator in [0, 1): the same seed, the same numbers on every device. */
+export const seededRng = seed => rng(hashSeed(seed));
+
+let fuente = null;   // null: Math.random
+/** Seeds the module's source; `null` or no seed goes back to Math.random. Returns the seed in use. */
+export function seedRandom(seed) {
+  fuente = seed == null || seed === '' ? null : seededRng(seed);
+  return fuente ? seed : null;
+}
+/** A number in [0, 1) from the module's source: seeded if `seedRandom` was called, Math.random if not. */
+export const random = () => (fuente ? fuente() : Math.random());
+/** Runs `fn` with the source seeded, and puts the previous source back after (also on a throw). */
+export function withSeed(seed, fn) {
+  const antes = fuente;
+  fuente = seededRng(seed);
+  try { return fn(); } finally { fuente = antes; }
+}
+/** A whole number in [0, n). */
+const azar = n => Math.floor(random() * n);
+
+// The one shared place for `?seed=` (C-18): only in test mode (`?test`), so a player link never fixes the dice
+try { if (tiene('test') && param('seed')) seedRandom(param('seed')); } catch { /* without a location, unseeded */ }
+
 /** The fewest players a game needs, from its `players` ('4–6', '1', '2–10'). */
 export const minimo = g => parseInt(String(g.players ?? '1'), 10) || 1;
 /** Can the dice pick it? Not La Copa, not one unavailable, not one that needs a group (D-374). */
@@ -127,7 +163,7 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   // Rueda: entra desde abajo y rebota tres veces, cada vez más bajo. El giro es uno solo que
   // frena parejo de principio a fin, así no cambia de velocidad de golpe en cada bote.
   // Las vueltas son enteras para terminar exactamente en la cara elegida.
-  const vx = 360 * 2, vy = 360 * (1 + azar(2)) * (Math.random() < 0.5 ? -1 : 1);
+  const vx = 360 * 2, vy = 360 * (1 + azar(2)) * (random() < 0.5 ? -1 : 1);
   const DUR = 2300;
   // Los botes: [momento (0–1), altura en px]. Subir frena (ease-out) y bajar acelera (ease-in)
   const BOTES = [[0.3, -120], [0.52, 0], [0.66, -42], [0.77, 0], [0.84, -12], [0.9, 0]];
