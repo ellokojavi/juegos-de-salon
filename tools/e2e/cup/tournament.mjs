@@ -44,13 +44,14 @@ async function saveImage(name) {
 /** The README shots, with a fixed name so docs/capturas.json finds them. */
 const SHOTS = { numero: '02-number', agentes: '03-agents', reinas: '04-queens', letras: '05-letters', anio: '06-year' };
 
-/** C-8: no horizontal scroll and no buttons under 44 px on the active screen. */
+/** C-8: no horizontal scroll and no buttons under 44 px on the active screen. A `.switch` is drawn 34 px
+ * and its invisible band makes the tap 48 px (DESIGN.md, U-10): it does not count. */
 async function checkScreen(name) {
   await b.still();
   const r = await ev(`(()=>{
     const wide = document.documentElement.scrollWidth > innerWidth + 1;
     const small = [...document.querySelectorAll('.screen.active button, .screen.active a.btn')]
-      .filter(x => { const q = x.getBoundingClientRect(); return q.width && q.height && q.height < 43.5 && !x.closest('.sol-grid'); })
+      .filter(x => { const q = x.getBoundingClientRect(); return q.width && q.height && q.height < 43.5 && !x.closest('.sol-grid') && !x.matches('.switch'); })
       .map(x => x.textContent.trim().slice(0, 20));
     const culprits = wide ? [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > innerWidth + 1).slice(-3).map(x => x.tagName + '.' + x.className) : [];
     return JSON.stringify({ wide, small, culprits });
