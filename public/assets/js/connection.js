@@ -18,6 +18,13 @@ export const PROBE_TIMEOUT = 4000;
 export const STEADY = 10000;
 export const EVERY_ONLINE = 60000;
 export const EVERY_OFFLINE = 15000;
+/**
+ * When the browser says it is back (or the page comes back to the front), the first probe often fails:
+ * the phone has its radio on but no route yet. These quick retries keep the browser's word, so the
+ * screen goes back within seconds instead of waiting for two slow probes (the owner, 2026-11-08: back
+ * from airplane mode, it stayed in Candlelight).
+ */
+export const RETRIES = [2000, 4000, 8000];
 
 export function createConnection({
   nav = globalThis.navigator,
@@ -82,6 +89,19 @@ export function createConnection({
     return ok;
   }
 
+  // The browser says it is back, or the page came back to the front: probe now, trusting a good answer
+  // while the browser says online, and retry quickly while the route comes up
+  async function recheck(left = RETRIES) {
+    if (next !== null) { timer.clear(next); next = null; }
+    lastGood = null;
+    const ok = await probe({ trusted: true });
+    if (!ok && left.length && nav?.onLine !== false) {
+      next = timer.set(() => { next = null; recheck(left.slice(1)); }, left[0]);
+      return;
+    }
+    schedule(detected === 'offline' ? EVERY_OFFLINE : EVERY_ONLINE);
+  }
+
   function schedule(ms) {
     if (next !== null) timer.clear(next);
     next = timer.set(async () => { next = null; await probe(); schedule(detected === 'offline' ? EVERY_OFFLINE : EVERY_ONLINE); }, ms);
@@ -120,7 +140,13 @@ export function createConnection({
       shown = mode();
       if (doc?.documentElement) doc.documentElement.dataset.connection = shown;
       win?.addEventListener?.('offline', () => { lastGood = null; set('offline'); schedule(EVERY_OFFLINE); });
-      win?.addEventListener?.('online', () => { lastGood = null; probe({ trusted: true }).then(ok => schedule(ok ? EVERY_ONLINE : EVERY_OFFLINE)); });
+      win?.addEventListener?.('online', () => recheck());
+      // A phone switched out of airplane mode from its settings: the page was in the background, its
+      // timers asleep, and the `online` event may never reach it. Back in front, it looks again
+      const back = () => { if (detected === 'offline' && doc?.visibilityState !== 'hidden') recheck(); };
+      doc?.addEventListener?.('visibilitychange', back);
+      win?.addEventListener?.('pageshow', back);
+      win?.addEventListener?.('focus', back);
       win?.addEventListener?.('storage', e => { if (e.key === FORCE_KEY) publish(); });
       schedule(detected === 'offline' ? EVERY_OFFLINE : 0);
       return api;
