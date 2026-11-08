@@ -417,6 +417,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   climbed or lost since day 1 (▲2, ▼1, =) and the points, the player's row marked. **🏆 Ver la copa** opens
   the cup, **Cerrar** and ✕ close it. Closing it or following the link marks it seen
   (`copa:resumen-visto`); with several due, one in `OPEN_CUPS` first (D-426), then the most recent. That visit the splash (D-351) waits.
+  Behind the lab flag `news-once` (D-546), a board that shows an ended cup's final podium marks it seen too (`markCupSeen`), so the recap does not tell it again.
   `/?recap=demo` shows it with the podium demo, recording nothing.
   Since D-424 the same window also tells a season of Uno al día that ended (`assets/js/daily-recap.js`,
   docs/UNO-AL-DIA.md); La Copa's goes first when both are due, one per visit.
