@@ -11,16 +11,19 @@ html.offline .needs-signal[data-signal-tag]::after {
   font: 700 var(--fs-75) / 1.2 var(--font-body); white-space: nowrap; pointer-events: none;
 }
 
-/* The chip: a small pill floating at the bottom centre, over the page (the owner, 2026-11-07: going
-   offline or back must not move anything on screen). Only where the offline palette shows (the
-   site's pages and the game covers): while playing it steps aside, never over a game's controls */
+/* The chip: a sticker like the cards' "Nuevo" (index.html), stuck at the end of the page's title (the
+   owner, 2026-11-07). Absolute, placed by offline-ui.js where the title's text ends, so it takes no
+   room: nothing on the page moves when it comes or goes. Raised above the line and a bit tilted */
 .offline-chip {
-  position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-12)); transform: translateX(-50%); z-index: 60;
-  padding: var(--s-4) var(--s-12); border-radius: var(--r-pill);
-  background: var(--well-deep); color: var(--ink); border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  font: 700 var(--fs-85) / 1.2 var(--font-body); white-space: nowrap; pointer-events: none;
+  position: absolute; transform: translate(-100%, -105%) rotate(-6deg); z-index: 2;
+  font: 900 var(--fs-75) / 1.2 var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
+  padding: var(--s-2) var(--s-8); border-radius: var(--r-pill);
+  background: rgb(var(--bg1-rgb) / 0.7); color: var(--yellow); border: 1px solid rgb(var(--yellow-rgb) / 0.45);
+  -webkit-text-fill-color: var(--yellow); filter: drop-shadow(1px 1px 0 rgb(var(--well-rgb) / 0.2)); pointer-events: none;
 }
+/* A page with no title: floating at the bottom centre, over the page */
+.offline-chip--float { position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-12)); transform: translateX(-50%); }
+/* While playing (no offline palette) it steps aside */
 html:not(.offline-shell) .offline-chip { display: none; }
 
 /* The line a tap on something dimmed shows, just above the chip */

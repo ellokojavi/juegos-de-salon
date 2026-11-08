@@ -6,7 +6,10 @@
  *   offline (La Copa, Rankings, /privacy/…; the kept ones are the offline-capable games and the home
  *   page) and every game's two-phone mode (`.mode[data-mode="online"]`). They stay in place; a tap
  *   says in one line why, instead of opening.
- * - **The chip** "📴 Sin conexión · 2 por subir": one small pill floating at the bottom centre (it moves nothing on the page), with how
+ * - **The chip** "📴 Sin conexión · 2 por subir": a sticker like the cards' "Nuevo", stuck on the page's
+ *   title (the home page's "Juegos de Salón", a game cover's name; the owner, 2026-11-07). It is
+ *   positioned absolutely at the end of the title's text, so it moves nothing on the page; a page with
+ *   no title gets it floating at the bottom. With how
  *   many finished games wait to upload (jugador.js's pending queue).
  *
  * The page's own code is not touched: one class on <html> and the CSS in offline.css do the dimming,
@@ -41,6 +44,9 @@ export function isGamePage(pathname = globalThis.location?.pathname || '/', root
  */
 export const COVER = '#screen-intro.active, #screen-setup.active, #screen-jugar.active .intro-hero, body.antesala';
 export const onCover = (doc = globalThis.document) => !!doc.querySelector(COVER);
+
+/** The page's title the "Sin conexión" sticker sticks to: the home page's, a party game's cover, a minigame's cover. */
+export const TITLE = '.hero > h1, #screen-intro.active h1, #screen-setup.active h1, #screen-jugar.active .intro-hero h1, #screen-jugar.active .intro-hero h2';
 
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
 export function needsSignal(href, { root = ROOT, base = root } = {}) {
@@ -100,6 +106,25 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
   let toastTimer = null;
 
   const drawChip = () => { if (chip) chip.textContent = chipText(pendingCount(storage), lang); };
+  // The sticker goes on the title in view (a cover's name changes with the screen); none: floating
+  const stick = () => {
+    if (!chip) return;
+    const title = [...doc.querySelectorAll(TITLE)].find(t => t.getClientRects?.().length);
+    const host = title || doc.body;
+    chip.classList.toggle('offline-chip--float', !title);
+    if (chip.parentElement !== host) host.append(chip);
+    if (!title) return;
+    // At the end of the title's text, whatever the title's layout (a centred line, or a minigame's flex
+    // row with its emoji): measured, since an absolute child of a flex row would sit at its start
+    if (win.getComputedStyle(title).position === 'static') title.style.position = 'relative';
+    const range = doc.createRange();
+    range.selectNodeContents(title);
+    range.setEndBefore(chip);
+    const end = [...range.getClientRects()].filter(r => r.width).pop();
+    const box = title.getBoundingClientRect();
+    if (end) { chip.style.left = `${end.right - box.left}px`; chip.style.top = `${end.top - box.top}px`; }
+  };
+  win.addEventListener('resize', () => stick());
 
   function toast(text = (COMMON[lang] || COMMON.es).offline.needsSignal, ms = 3200, kind = 'needs-signal') {
     let t = doc.querySelector('.offline-toast');
@@ -129,7 +154,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
 
   // The palette: every page that is not a game's, and a game's page while its cover shows
   const shell = () => html.classList.toggle('offline-shell', html.classList.contains('offline') && (!isGamePage(win.location?.pathname) || onCover(doc)));
-  const screens = new win.MutationObserver(shell);
+  const screens = new win.MutationObserver(() => { shell(); if (html.classList.contains('offline')) stick(); });
   // Classes (a screen turning active) and children (a minigame's Start swaps its cover for the board
   // without any class changing)
   screens.observe(doc.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
@@ -149,9 +174,9 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     shell();
     if (off) {
       mark(doc, { lang });
-      // Floating at the bottom (offline.css): it moves nothing on the page when it comes or goes
       chip ||= doc.querySelector('.offline-chip');
-      if (!chip) { chip = doc.createElement('div'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); doc.body.append(chip); }
+      if (!chip) { chip = doc.createElement('span'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); }
+      stick();
       drawChip();
       // The first time on this phone, one sheet says what works and what happens to the scores (PR 6)
       import('./offline-sheet.js').then(m => m.showOfflineSheetOnce({ doc, storage, lang })).catch(() => {});
