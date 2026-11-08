@@ -1424,6 +1424,19 @@
         "stat": "8 file(s) +35 −10: .github/workflows/preview.yml, README.md, changelog/claude-eager-ritchie-5yrsxe.md, docs/DECISIONS.md, docs/PREVIEWS.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42515419158,
+      "check": "tests",
+      "pr": 1313,
+      "branch": "claude/ecstatic-galileo-qos24l",
+      "commit": "ba3ac854f87e5605811819cb28455b3ed6a6c06c",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/games/connections.md\", \"title\": \"🔗 Connection, {\"path\": \"docs/games/queens.md\", \"title\": \"👑 Queens (Reinas), {\"path\": \"docs/games/tango.md\", \"title\": \"☀️ Tango\"}, {\"path\": \"docs/games/untangle.md\", \"title\": \"🧶 Untangle (Des, {\"path\": \"docs/games/where.md\", \"title\": \"📍 Where Is It? (¿D, {\"path\": \"docs/games/word.md\", \"title\": \"🔤 Bulls and Cows: W, {\"path\": \"docs/games/yea",
+      "signature": "31bb598aa3",
+      "date": "2026-11-08T19:35:43.190Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
