@@ -1441,6 +1441,19 @@
         "stat": "2 file(s) +40 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42516795398,
+      "check": "tests",
+      "pr": 1315,
+      "branch": "claude/vigilant-sagan-65621j",
+      "commit": "aed5f80e31fc041362e08263bc4db4c949830e67",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: firebase/splash.test.mjs",
+      "signature": "9a8f5e3da2",
+      "date": "2026-11-08T19:54:15.880Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
