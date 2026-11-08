@@ -78,6 +78,10 @@ else ok('the sheet showed once');
 if (!(await until(`(document.querySelector('.offline-chip')?.textContent || '').includes(${JSON.stringify(T.chip)})`, 4000))) bad('no "Sin conexión" chip on the home page');
 if (!(await until(`document.querySelectorAll('.needs-signal').length > 0`, 4000))) bad('nothing is dimmed on the home page (La Copa, Rankings…)');
 else ok('the chip shows and what needs signal is dimmed');
+// A tap on the chip opens the explaining sheet again, though it was already seen
+await b.evaluate(`document.querySelector('.offline-chip')?.click()`);
+if (!(await until(`!!document.getElementById('hoja-offline')`, 4000))) bad('a tap on the chip does not open the offline sheet');
+else { ok('a tap on the chip opens the offline sheet'); await b.evaluate(`document.getElementById('btn-offline-ok')?.click()`); }
 if (await b.evaluate(`!![...document.querySelectorAll('a.needs-signal')].find(a => /\\/today\\/?$/.test(new URL(a.href).pathname))`)) bad('Uno al día\'s page is dimmed, but it is kept offline');
 
 // A game finished offline is queued on the phone

@@ -45,7 +45,8 @@ No new control on the home page while online. Offline:
 2. **While offline** (`offline-ui.js`, `offline.css`, PR 4): a sticker "📴 Sin conexión · 2 por subir"
    like the cards' "Nuevo", stuck at the end of the page's title (the home page's "Juegos de Salón", a
    game cover's name). It is positioned absolutely, so going offline or back moves nothing on screen;
-   a page with no title gets it floating at the bottom; it steps aside while playing. Every link to a page the phone
+   a page with no title gets it floating at the bottom; it steps aside while playing. A tap on the
+   sticker opens the sheet of point 1 again, as often as wanted. Every link to a page the phone
    does not keep (La Copa, Rankings, /privacy/…) and every game's two-phone mode stay in place, dimmed
    and tagged **"📡 Con señal"** (Needs signal / Com sinal); small icon buttons and things inside a
    dimmed card are dimmed without a tag of their own. A tap shows one line: "Esto necesita conexión.

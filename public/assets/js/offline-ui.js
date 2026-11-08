@@ -10,7 +10,8 @@
  *   title (the home page's "Juegos de Salón", a game cover's name; the owner, 2026-11-07). It is
  *   positioned absolutely at the end of the title's text, so it moves nothing on the page; a page with
  *   no title gets it floating at the bottom. With how
- *   many finished games wait to upload (jugador.js's pending queue).
+ *   many finished games wait to upload (jugador.js's pending queue). A tap on it opens the sheet that
+ *   explains offline mode (offline-sheet.js), as often as the player wants.
  *
  * The page's own code is not touched: one class on <html> and the CSS in offline.css do the dimming,
  * and one click listener in the capture phase stops the taps.
@@ -175,7 +176,17 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     if (off) {
       mark(doc, { lang });
       chip ||= doc.querySelector('.offline-chip');
-      if (!chip) { chip = doc.createElement('span'); chip.className = 'offline-chip'; chip.setAttribute('role', 'status'); }
+      if (!chip) {
+        chip = doc.createElement('span'); chip.className = 'offline-chip';
+        // A tap on the sticker opens the sheet that explains offline mode, as often as wanted
+        Object.entries({ role: 'button', tabindex: '0', 'aria-haspopup': 'dialog', 'aria-live': 'polite' }).forEach(([k, v]) => chip.setAttribute(k, v));
+        const open = e => {
+          e.preventDefault(); e.stopPropagation();
+          import('./offline-sheet.js').then(m => m.openOfflineSheet({ doc, lang })).catch(() => {});
+        };
+        chip.addEventListener('click', open);
+        chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(e); });
+      }
       stick();
       drawChip();
       // The first time on this phone, one sheet says what works and what happens to the scores (PR 6)

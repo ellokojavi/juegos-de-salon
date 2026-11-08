@@ -19,8 +19,11 @@ html.offline .needs-signal[data-signal-tag]::after {
   font: 900 var(--fs-75) / 1.2 var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
   padding: var(--s-2) var(--s-8); border-radius: var(--r-pill);
   background: rgb(var(--bg1-rgb) / 0.7); color: var(--yellow); border: 1px solid rgb(var(--yellow-rgb) / 0.45);
-  -webkit-text-fill-color: var(--yellow); filter: drop-shadow(1px 1px 0 rgb(var(--well-rgb) / 0.2)); pointer-events: none;
+  -webkit-text-fill-color: var(--yellow); filter: drop-shadow(1px 1px 0 rgb(var(--well-rgb) / 0.2));
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
+/* A tap on it opens the sheet that explains offline mode */
+.offline-chip:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 /* A page with no title: floating at the bottom centre, over the page */
 .offline-chip--float { position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-12)); transform: translateX(-50%); }
 /* While playing (no offline palette) it steps aside */

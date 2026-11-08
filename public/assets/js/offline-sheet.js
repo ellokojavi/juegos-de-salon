@@ -6,6 +6,9 @@
  * On an iPhone outside the installed app, one more line: Safari may clear a site's data after some days
  * unvisited, and with it the games still to upload, so the app on the home screen keeps them safest.
  *
+ * The same sheet opens again whenever the player taps the "Sin conexión" chip (offline-ui.js):
+ * `openOfflineSheet` shows it without looking at SEEN_KEY.
+ *
  * Built on the same sheet as the support card (`.hoja`, `.hoja-capa`): pinned page behind, a tap
  * outside, Escape or the button closes it.
  */
@@ -63,6 +66,12 @@ export function sheetLines(lang = getLang(), { steps = pasosDe() } = {}) {
 export function showOfflineSheetOnce({ doc = globalThis.document, storage = globalThis.localStorage, lang = getLang(), steps } = {}) {
   if (seen(storage) || doc.getElementById('hoja-offline')) return null;
   try { storage.setItem(SEEN_KEY, '1'); } catch (_) { /* no storage: seen() already said seen */ }
+  return openOfflineSheet({ doc, lang, steps });
+}
+
+/** Opens the sheet now, seen or not (a tap on the chip); null when it is already open. */
+export function openOfflineSheet({ doc = globalThis.document, lang = getLang(), steps } = {}) {
+  if (doc.getElementById('hoja-offline')) return null;
   const T = TEXTS[lang] || TEXTS.es;
   let layer = null;
   const y = doc.defaultView?.scrollY || 0;
