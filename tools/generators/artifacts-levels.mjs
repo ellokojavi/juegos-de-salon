@@ -123,12 +123,15 @@ function machine(tier) {
   return null;
 }
 
+/** Whether a fixed piece sits on the basket's cells (spikes inside it, a girder through it): never fair. */
+const inBasket = (level, f) => { const b = blockedCells({ start: { x: -50, y: -50 }, goal: OFF, fixed: [f] }), { c, r } = level.goal; return b.has(`${c},${r}`) || b.has(`${c + 1},${r}`); };
+
 /** Step 3: hazards only where the machine still works, and that make the board read as a puzzle. */
 function hazards(level, parts, n) {
   const fixed = [];
   const works = f => { const lv = { ...level, fixed: [...fixed, f] }; const r = run(lv, parts); return r && r.state === 'won'; };
   // the floor: spikes along it, except under the basket
-  if (rand() < 0.7) { const c = int(0, 4), w = int(2, 4); const f = { type: 'spikes', c, r: ROWS - 1, w: Math.min(w, COLS - c) }; if (works(f)) fixed.push(f); }
+  if (rand() < 0.7) { const c = int(0, 4), w = int(2, 4); const f = { type: 'spikes', c, r: ROWS - 1, w: Math.min(w, COLS - c) }; if (!inBasket(level, f) && works(f)) fixed.push(f); }
   for (let tries = 0; tries < 40 && fixed.length < n; tries++) {
     const kind = pickOf(['spikes', 'wall', 'wall', 'plank', 'ramp']);
     let f;
@@ -137,7 +140,7 @@ function hazards(level, parts, n) {
     else f = { type: kind, c: int(0, COLS - 2), r: int(2, ROWS - 2), dir: pickOf([1, -1]) };
     const lv = { ...level, fixed: [...fixed, f] };
     const b = newBoard(lv);
-    if (parts.some(p => !fits(b, p))) continue;
+    if (parts.some(p => !fits(b, p)) || inBasket(level, f)) continue;
     if (works(f)) fixed.push(f);
   }
   return fixed;
@@ -150,7 +153,8 @@ if (process.argv[2] === 'check') {
   const bad = [];
   for (const L of POOL) {
     const k = L.solution.length;
-    if (run(L, L.solution).state !== 'won') bad.push(`${L.id}: its answer no longer wins`);
+    if (L.fixed.some(f => inBasket(L, f))) bad.push(`${L.id}: a fixed piece sits on the basket`);
+    else if (run(L, L.solution).state !== 'won') bad.push(`${L.id}: its answer no longer wins`);
     else if (solvable(L, k - 1)) bad.push(`${L.id}: has an answer with fewer than ${k} parts`);
     process.stdout.write(`\r${POOL.indexOf(L) + 1}/${POOL.length}   `);
   }

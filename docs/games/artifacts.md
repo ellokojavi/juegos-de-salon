@@ -103,7 +103,7 @@ its five with the day's seed, the same for everyone; «Jugar otra vez» draws an
 from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
 chained on its real path, each where the ball passes; the basket goes where that machine brings the
 ball down, and the run must end at rest in it; hazards (spikes, girders, fixed planks and ramps) are
-added only where the machine still works. A level is kept only if an exhaustive search finds no answer
+added only where the machine still works, and never on the basket (no spikes inside it, no girder through it). A level is kept only if an exhaustive search finds no answer
 with fewer parts from its tray: the search is exact while pruned, because a part the ball never comes
 near (and no fan blows on) cannot change the run. `engine.test.mjs` plays every level's answer and
 checks that no board solves itself. To make a new pool: run each tier side by side
