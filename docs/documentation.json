@@ -1,7 +1,8 @@
 {
-  "checkedUpTo": "22b534e84a431b78d8716871e67d9784bc72ad28",
+  "checkedUpTo": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
   "pending": [
-    "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets"
+    "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
+    "Offline mode (flag 'offline', PRs #1265-#1306) is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
   ],
   "known": [],
   "rounds": [
@@ -230,6 +231,16 @@
       "pending": [
         "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
         "D-523 (Babel scoring) cited in docs/processes.json, only on unmerged branch ccr-bedc08fa-e4itbx"
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "from": "22b534e84a431b78d8716871e67d9784bc72ad28",
+      "to": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
+        "Offline mode (flag 'offline', PRs #1265-#1306) is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
       ]
     }
   ],
