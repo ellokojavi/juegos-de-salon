@@ -16,8 +16,8 @@ const ALL = ALL_GAMES;
 for (const g of ALL) {
   assert.ok(!('offline' in g) || g.offline === false, `${g.id}: \`offline\` is only written as false (a game is offline-capable by default)`);
 }
-assert.equal(offlineOk(ALL.find(g => g.id === 'copa')), false, 'La Copa is never offline: its days, deadlines and PIN need the server');
-for (const g of ALL.filter(x => x.torneo)) assert.equal(offlineOk(g), false, `${g.id}: a tournament is never offline`);
+// La Copa opens offline since D-544: a pending day of a cup this phone kept, uploaded before the day closes (cup/outbox.test.mjs)
+assert.equal(offlineOk(ALL.find(g => g.id === 'copa')), true, 'La Copa plays its pending days offline (D-544)');
 assert.ok(ALL.filter(offlineOk).length >= 20, 'the minigames and the party games are offline-capable');
 
 // The static import graph of each offline-capable page reaches no other site
@@ -63,4 +63,4 @@ for (const g of [...ALL.filter(x => offlineOk(x) && x.path), ...OFFLINE_PAGES.ma
 const probe = { code: "import { a } from './x.js';\nimport {\n  b,\n} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';\nconst c = () => import('https://www.gstatic.com/x.js');", file: resolve(ROOT, 'index.html') };
 assert.equal(remote(probe, new Set(), ['probe']).length, 1, 'the check catches a static remote import and lets a dynamic one through');
 
-console.log(`✓ offline: ${pages} offline-capable pages, none imports another site when it opens; La Copa stays online`);
+console.log(`✓ offline: ${pages} offline-capable pages, none imports another site when it opens; La Copa plays its pending days offline`);

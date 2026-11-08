@@ -87,7 +87,6 @@ export default {
     "logic",
     "trivia"
   ],
-  "offline": false,
   "available": true,
   "modes": [
     "copa"

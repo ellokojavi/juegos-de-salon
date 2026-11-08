@@ -44,6 +44,7 @@ export function createCuenta({ prueba = false } = {}) {
       borrar(`${p}avisos:${code}`);
       borrar(`${p}lista:${code}`);
       borrar(`${p}hoy:${code}`);
+      borrar(`${p}copia:${code}`);
       escribir(`${p}mias`, (leer(`${p}mias`) || []).filter(c => c.code !== code));
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
@@ -68,6 +69,14 @@ export function createCuenta({ prueba = false } = {}) {
     lista: {
       leer: code => leer(`${p}lista:${code}`),
       guardar: (code, v) => (v ? escribir(`${p}lista:${code}`, v) : borrar(`${p}lista:${code}`)),
+    },
+    /**
+     * The whole cup as last read online, `{ L, offset, at }` (D-544): offline, its pending days are
+     * played from it. Only cups in course are kept; a finished one is dropped.
+     */
+    copia: {
+      leer: code => leer(`${p}copia:${code}`),
+      guardar: (code, v) => (v ? escribir(`${p}copia:${code}`, v) : borrar(`${p}copia:${code}`)),
     },
     /** The days left to play in each cup (`porJugar`), read by the site's home page (`assets/js/cup-today.js`). */
     porJugar: {

@@ -66,6 +66,8 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
     nav?.storage?.persist?.().catch(() => false);
     Promise.all([import('./connection.js'), import('./offline-ui.js')])
       .then(([c, ui]) => ui.startOfflineUi({ connection: c.connection() })).catch(() => {});
+    // La Copa's days played offline go up when the signal is back, from whatever page is open (D-544)
+    import('./cup-outbox.js').then(m => m.subirCopaAlVolver()).catch(() => {});
   }
   return msg;
 }

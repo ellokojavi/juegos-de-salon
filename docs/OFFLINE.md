@@ -11,7 +11,7 @@ Copa are shown as unavailable, and scores are kept on the phone and uploaded whe
 | Works | Needs signal |
 |---|---|
 | The games built in `cup/games/` (Conexiones, Letras, Año, Reinas, Tango, Zip, Desenredo, Dónde, Rutas, Loteo, Pintaminas, Agentes, Puentes, Shinobi, Babel) | 📡 Two-phone rooms, in every game |
-| The one-phone, vs-the-phone and solo modes of the party games | 🏆 La Copa (`offline: false`) |
+| The one-phone, vs-the-phone and solo modes of the party games | 🏆 La Copa: creating, joining, the wildcard, the admin, and a cup never opened on this phone (a pending day plays offline, D-544) |
 | 📅 Uno al día: the game comes from the date; streak and calendar are on the phone | Rankings, the month's place, invites, chat, the mailbox, push sign-up |
 | Resuming a game (C-6), sounds, settings | Lab games this phone has never seen the flag for |
 
@@ -82,14 +82,20 @@ PR that changes what is kept on the phone.
 - **Signing in.** The queue waits for its player: signed out, nothing goes; the Firebase sign-in renews
   itself with the signal, from the anonymous id the phone keeps (the same storage `persist()` protects).
 - Background Sync is left out: the next open with signal, and the `online` event, are enough.
-- La Copa is never queued.
+- **La Copa** (D-544, amends this plan's "never queued"): a pending day of a cup this phone kept a copy
+  of (`cuenta.copia`, saved on each online read) plays offline from `store-offline.js`; its start and
+  result wait in `assets/js/cup-outbox.js` and upload, start first, from any page when the signal is
+  back. The server's rules refuse both after the day's window closes, so one that arrives late counts
+  as not played; one already on the server (another phone) wins. A result the network refuses
+  mid-game goes to the same outbox. The day's cover, the result screen and the toast say so
+  (`store-offline.test.mjs`).
 
 ## Caching (amends D-221)
 
 - Pages: network-first with a timeout, cache as fallback, so an online player always gets the latest.
 - Assets: cache-first in a cache named after the release version; old caches deleted on `activate`.
 - Precache list generated from the manifest: each offline-capable game's folder and its `reuses`, the
-  shared JS and CSS, fonts and icons. Not La Copa, not the OG cards, not the panel. About 4 MB today; `precache.test.mjs` fails over 8 MB.
+  shared JS and CSS, fonts and icons. La Copa's own files and what they import (not `cup/games/`'s pictures, D-544); not the OG cards, not the panel. About 4 MB today; `precache.test.mjs` fails over 8 MB.
 - **Music is never precached**: it is cached once a song plays online; until then offline is silent.
   Sound effects are precached.
 - The Firebase SDK on gstatic is cached at runtime when used, for when the signal returns.

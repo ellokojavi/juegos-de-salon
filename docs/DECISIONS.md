@@ -49,13 +49,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506, D-519, D-530, D-531, D-540, D-543 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316, D-506 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496, D-506, D-515, D-516, D-518, D-541 |
-| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499, D-517, D-521, D-525 |
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499, D-517, D-521, D-525, D-544 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463, D-472, D-480, D-486, D-497, D-518, D-519, D-520, D-522, D-527, D-531, D-532, D-533, D-540, D-541 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-464, D-465, D-470, D-476, D-478, D-492, D-499, D-500, D-513 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
-| Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538 |
+| Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538, D-544 |
 
-## In force (527)
+## In force (528)
 
 | D | Title | Status |
 |---|---|---|
@@ -580,12 +580,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-535](decisions/D-535.md) | One name inside and out: everything internal is the English version of the game's name | current |
 | [D-536](decisions/D-536.md) | The first visit opens in the browser's language | current |
 | [D-537](decisions/D-537.md) | On a game's cover, the language is a button in the top bar | current |
-| [D-538](decisions/D-538.md) | Offline mode: switches on by itself, plays the local games, uploads scores later | current |
+| [D-538](decisions/D-538.md) | Offline mode: switches on by itself, plays the local games, uploads scores later | amended by D-544 (La Copa plays its pending days offline) |
 | [D-539](decisions/D-539.md) | An online game's room goes through room-state.js | current |
 | [D-540](decisions/D-540.md) | A red PR the owner asked for in a session is approved by that session | current |
 | [D-541](decisions/D-541.md) | No rule without its enforcement: the rules for making rules | current |
 | [D-542](decisions/D-542.md) | Every game is one more game: no subset in the code, the docs or the work | current |
 | [D-543](decisions/D-543.md) | A preview only when there is something to look at | current |
+| [D-544](decisions/D-544.md) | La Copa offline: a pending day plays on the phone and uploads before its day closes | current |
 
 ## No longer in force (12)
 
