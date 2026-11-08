@@ -36,6 +36,8 @@ and a yellow «⚙️ Jugar», in C-5's order.
 - **The parts** (two cells wide, one tall, anchored at the tapped cell): 📐 ramp (↘ or ↙), 🪵 plank,
   🛝 trampoline (throws the ball up about 7 rows, always the same height), 🌀 fan (blows the ball
   sideways over itself and the three cells it faces, in its row and the one above).
+- **The tray:** each part drawn as the object it is (the same drawing as on the board), one per copy left, so two ramps are two ramps; past three, one with its ×n; a kind with none left stays faint.
+- **💡 Pista** lights a slot in cyan where one part of the answer goes (one the board does not have yet), with the part faint over it, until it is placed; a stage with a hint is worth ★★ at most. **🏳️ Rendirse** gives the stage up: a second tap within 3 s confirms, the stage counts as not passed (0 points) and the next one starts.
 - **Placing, by dragging:** press a part in the tray and drag it onto the board; it floats as a ghost
   snapped to the grid, over a green slot where it fits and a red one where it does not, lifted about a
   cell above the finger on a touch screen so the finger never hides it (with a mouse, none). Let go to
@@ -59,7 +61,7 @@ and a yellow «⚙️ Jugar», in C-5's order.
   and only after it plays out (1.1 s) the stage is marked failed, «¡Bum! 💥 Tocó el fondo»; **popped**
   on spikes; or **stuck** (still outside the basket for 1.4 s, or 30 s in all). A failure says which
   and leaves the parts where they were. ■ Parar stops a run.
-- **In the basket:** its floor is rough (`CUP_ROLL`, 7 per second against 1.6 on other flat ground):
+- **In the basket:** its floor is rough (`CUP_ROLL`, 12 per second against 1.6 on other flat ground):
   a ball that lands with speed still rolls and knocks the walls naturally, but only a little (about
   0.7 of a cell in the median), and once it has been at rest for 0.3 s (`SETTLE`) the stage passes:
   0.4 to 1.2 s after it touches the floor across the pool. A run lasts up to 30 s (`MAX_T`;
@@ -121,8 +123,8 @@ Everything is drawn on the canvas, no image files: the app's neon night with a d
 ramps and planks with grain and brass bolts (the level's fixed ones in a cooler wood with steel
 bolts); a trampoline with two coils whose pad squashes on a bounce; a fan whose blades spin, with
 breeze streaks across its reach and a chevron for its direction; violet steel girders with rivets;
-red spikes that glow; a woven basket that glows and pulses; a steel pipe the ball drops from; a ball
-with light, shadow and a stripe that turns as it rolls, and a fading trail. Particles mark a bounce,
+red spikes that glow, each a rhombus pointed up and down; a woven basket that glows and pulses, its weave and rim drawn over the ball so a ball inside reads as inside; a steel pipe the ball drops from; a ball
+with light, shadow and a stripe that turns as it rolls, and a fading trail that plays out once the run ends. The canvas re-measures itself whenever its box changed, so the ball is always round. Particles mark a bounce,
 a pop on the spikes (the ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
 part floats over a green or red slot where it would land.
 The cover shows a small board solving the levels by itself, one after another.
