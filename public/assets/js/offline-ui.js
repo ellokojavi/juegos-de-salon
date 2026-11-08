@@ -19,7 +19,7 @@
 import { COMMON, getLang } from './i18n.js';
 import { offlineOk, OFFLINE_PAGES, ALL_GAMES } from './games.js';
 import { loadCss } from './load-css.js';
-import { pendientesCopa, OUTBOX_KEY } from './cup-outbox.js';
+import { pendingCupDays, OUTBOX_KEY } from './cup-outbox.js';
 
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
 const ROOT = new URL('../../', import.meta.url);
@@ -64,7 +64,7 @@ export function needsSignal(href, { root = ROOT, base = root } = {}) {
 export function pendingCount(storage = globalThis.localStorage) {
   let n = 0;
   try { n = (JSON.parse(storage?.getItem(PENDING_KEY) || '[]') || []).length; } catch (_) { /* none */ }
-  return n + pendientesCopa(storage);
+  return n + pendingCupDays(storage);
 }
 
 export function chipText(n, lang = getLang()) {

@@ -38,7 +38,7 @@ import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles, guardarPendienteLocal } from '../assets/js/jugador.js';
-import { anotarResultado, subirCopa } from '../assets/js/cup-outbox.js';
+import { queueResult, uploadCup } from '../assets/js/cup-outbox.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -173,13 +173,13 @@ async function abrirStore() {
 // Not in the middle of a day: the result screen's upload or the next page does it
 if (!PRUEBA) window.addEventListener('connection', e => {
   if (e.detail?.mode !== 'online' || !offlineStore()) return;
-  subirCopa().finally(() => { if (S.pantalla !== 'jugar') location.reload(); });
+  uploadCup().finally(() => { if (S.pantalla !== 'jugar') location.reload(); });
 });
 
 /** The copy of a cup kept for playing it offline (D-544): only from the server, only while the cup is on. */
 function guardarCopia(code, L, st) {
   if (st?.tipo !== 'firebase' || !flag('offline') || !cuenta.quien(code)) return;
-  cuenta.copia.guardar(code, L?.meta && Date.now() < (L.fin || L.meta.end) ? { L, offset: st.now() - Date.now(), at: Date.now() } : null);
+  cuenta.snapshot.guardar(code, L?.meta && Date.now() < (L.fin || L.meta.end) ? { L, offset: st.now() - Date.now(), at: Date.now() } : null);
 }
 
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
@@ -1414,8 +1414,12 @@ function antesDeJugar(d) {
     err, empezar));
 }
 
-/** When day `d` closes, in the player's own time: "dom 9, 23:59" (D-544). */
-const cierreDe = (meta, d) => { const b = meta.win[d].b - 60000, tz = zonaPropia || meta.tz; return `${fechaCorta(b, tz)}, ${horaEn(b, tz)}`; };
+/** When day `d` closes, in the player's own time: "lunes 23:59", "Monday 23:59" (D-544). */
+const cierreDe = (meta, d) => {
+  const b = meta.win[d].b - 60000, tz = zonaPropia || meta.tz;
+  const dia = new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'long' }).format(new Date(b));
+  return `${dia} ${horaEn(b, tz)}`;
+};
 
 /* ------------------------------------------------------------------ */
 /* Jugar                                                               */
@@ -1657,7 +1661,7 @@ async function mandar(d, fin) {
     // one played offline, and goes up when the signal is back if the day is still open then
     const meta = L()?.meta;
     if (!PRUEBA && flag('offline') && !['ventana', 'permiso'].includes(e?.code) && meta && abierto(meta, d, ahora())) {
-      anotarResultado({ code: S.code, d, pid: S.yo, b: meta.win[d].b, at: ahora(), res });
+      queueResult({ code: S.code, d, pid: S.yo, b: meta.win[d].b, at: ahora(), res });
       S.guardadoLocal = d;
       return;
     }

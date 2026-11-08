@@ -580,7 +580,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-535](decisions/D-535.md) | One name inside and out: everything internal is the English version of the game's name | current |
 | [D-536](decisions/D-536.md) | The first visit opens in the browser's language | current |
 | [D-537](decisions/D-537.md) | On a game's cover, the language is a button in the top bar | current |
-| [D-538](decisions/D-538.md) | Offline mode: switches on by itself, plays the local games, uploads scores later | amended by D-544 (La Copa plays its pending days offline) |
+| [D-538](decisions/D-538.md) | Offline mode: switches on by itself, plays the local games, uploads scores later | amended by D-544 |
 | [D-539](decisions/D-539.md) | An online game's room goes through room-state.js | current |
 | [D-540](decisions/D-540.md) | A red PR the owner asked for in a session is approved by that session | current |
 | [D-541](decisions/D-541.md) | No rule without its enforcement: the rules for making rules | current |

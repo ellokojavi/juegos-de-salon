@@ -2,7 +2,7 @@
 // La Copa offline (D-544): a pending day played with no signal waits on the phone and uploads when the
 // signal is back, only while its day is still open; after that it counts as not played.
 import assert from 'node:assert/strict';
-import { leerCola, anotarInicio, anotarResultado, conCola, subirCola, pendientesCopa, enCola, OUTBOX_KEY } from '../assets/js/cup-outbox.js';
+import { readQueue, queueStart, queueResult, withQueue, uploadQueue, pendingCupDays, isQueued, OUTBOX_KEY } from '../assets/js/cup-outbox.js';
 import { createOfflineStore } from './store-offline.js';
 
 const memoria = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k), m }; };
@@ -15,7 +15,7 @@ const L = { meta, players: { aaaaaa: { name: 'Ana', at: 1 }, bbbbbb: { name: 'Be
 {
   const storage = memoria();
   const copias = { ABCDE: { L, offset: 0, at: T0 } };
-  const cuenta = { copia: { leer: c => copias[c] || null } };
+  const cuenta = { snapshot: { leer: c => copias[c] || null } };
   let now = T0;
   const st = createOfflineStore({ cuenta, storage, clock: () => now });
   assert.equal(st.tipo, 'offline');
@@ -29,8 +29,8 @@ const L = { meta, players: { aaaaaa: { name: 'Ana', at: 1 }, bbbbbb: { name: 'Be
   await st.resultado('ABCDE', 1, 'aaaaaa', { s: 7, ms: 2000, t: 'x', r: '' });
   await assert.rejects(st.resultado('ABCDE', 1, 'aaaaaa', { s: 9, ms: 1, t: '', r: '' }), { code: 'ya-jugado' }, 'one attempt, offline too');
   await assert.rejects(st.resultado('ABCDE', 1, 'bbbbbb', { s: 9, ms: 1, t: '', r: '' }), { code: 'ya-jugado' }, 'a day already on the server');
-  assert.equal(pendientesCopa(storage), 1);
-  assert.ok(enCola('ABCDE', 1, 'aaaaaa', storage));
+  assert.equal(pendingCupDays(storage), 1);
+  assert.ok(isQueued('ABCDE', 1, 'aaaaaa', storage));
   const visto = await st.leer('ABCDE');
   assert.equal(visto.results[1].aaaaaa.s, 7, 'the board shows the day as played');
   assert.equal(visto.results[1].bbbbbb.s, 5);
@@ -53,40 +53,40 @@ const L = { meta, players: { aaaaaa: { name: 'Ana', at: 1 }, bbbbbb: { name: 'Be
       update: async c => { const [ruta, v] = Object.entries(c)[0]; const e = fallar(ruta); if (e) throw err(e); hechas.push([ruta, v.s ?? v['.sv']]); },
       get: async ruta => (hay.has(ruta) ? 1 : null) };
   };
-  anotarResultado({ code: 'ABCDE', d: 1, pid: 'aaaaaa', b: T0 + 12 * H, at: T0, res: { s: 7, ms: 1, t: '', r: '' } }, storage);
-  anotarResultado({ code: 'ABCDE', d: 2, pid: 'aaaaaa', b: T0 + 36 * H, at: T0, res: { s: 3, ms: 1, t: '', r: '' } }, storage);
-  anotarInicio({ code: 'ABCDE', d: 3, pid: 'aaaaaa', b: T0 + 48 * H, at: T0 }, storage);
+  queueResult({ code: 'ABCDE', d: 1, pid: 'aaaaaa', b: T0 + 12 * H, at: T0, res: { s: 7, ms: 1, t: '', r: '' } }, storage);
+  queueResult({ code: 'ABCDE', d: 2, pid: 'aaaaaa', b: T0 + 36 * H, at: T0, res: { s: 3, ms: 1, t: '', r: '' } }, storage);
+  queueStart({ code: 'ABCDE', d: 3, pid: 'aaaaaa', b: T0 + 48 * H, at: T0 }, storage);
 
-  let r = await subirCola(fake({ fallar: ruta => (ruta.includes('/results/') ? 'offline' : null) }), { storage, now: () => T0 + H });
+  let r = await uploadQueue(fake({ fallar: ruta => (ruta.includes('/results/') ? 'offline' : null) }), { storage, now: () => T0 + H });
   assert.deepEqual(r, { cupSent: 0, cupLate: 0, cupDup: 0 });
-  assert.equal(leerCola(storage).length, 3, 'a network error keeps everything');
+  assert.equal(readQueue(storage).length, 3, 'a network error keeps everything');
 
   // The seat refused while the day is open: kept for when the player enters again
-  r = await subirCola(fake({ fallar: () => 'permiso' }), { storage, now: () => T0 + H });
+  r = await uploadQueue(fake({ fallar: () => 'permiso' }), { storage, now: () => T0 + H });
   assert.deepEqual(r, { cupSent: 0, cupLate: 0, cupDup: 0 });
-  assert.equal(pendientesCopa(storage), 2);
+  assert.equal(pendingCupDays(storage), 2);
 
   const ok = fake();
-  r = await subirCola(ok, { storage, now: () => T0 + 20 * H });
+  r = await uploadQueue(ok, { storage, now: () => T0 + 20 * H });
   assert.deepEqual(r, { cupSent: 1, cupLate: 1, cupDup: 0 }, 'day 1 closed at +12 h: not played; day 2 goes');
   assert.deepEqual(ok.hechas, [['torneos/ABCDE/started/2/aaaaaa', 'timestamp'], ['torneos/ABCDE/results/2/aaaaaa', 3]], 'the start goes before the result');
-  assert.equal(leerCola(storage).length, 1, 'a day started and not finished waits');
-  assert.equal(pendientesCopa(storage), 0);
+  assert.equal(readQueue(storage).length, 1, 'a day started and not finished waits');
+  assert.equal(pendingCupDays(storage), 0);
 
-  anotarResultado({ code: 'ABCDE', d: 3, pid: 'aaaaaa', b: T0 + 48 * H, at: T0, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
-  r = await subirCola(fake({ fallar: () => 'permiso', hay: new Set(['torneos/ABCDE/started/3/aaaaaa', 'torneos/ABCDE/results/3/aaaaaa']) }), { storage, now: () => T0 + 30 * H });
+  queueResult({ code: 'ABCDE', d: 3, pid: 'aaaaaa', b: T0 + 48 * H, at: T0, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
+  r = await uploadQueue(fake({ fallar: () => 'permiso', hay: new Set(['torneos/ABCDE/started/3/aaaaaa', 'torneos/ABCDE/results/3/aaaaaa']) }), { storage, now: () => T0 + 30 * H });
   assert.deepEqual(r, { cupSent: 0, cupLate: 0, cupDup: 1 }, 'played on another phone first: that one stays');
   assert.equal(storage.getItem(OUTBOX_KEY), null, 'an empty queue leaves nothing behind');
 
-  anotarResultado({ code: 'ABCDE', d: 3, pid: 'bbbbbb', b: T0 + 48 * H, at: T0, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
-  r = await subirCola(fake({ fallar: () => 'permiso' }), { storage, now: () => T0 + 48 * H + 60000 });
+  queueResult({ code: 'ABCDE', d: 3, pid: 'bbbbbb', b: T0 + 48 * H, at: T0, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
+  r = await uploadQueue(fake({ fallar: () => 'permiso' }), { storage, now: () => T0 + 48 * H + 60000 });
   assert.deepEqual(r, { cupSent: 0, cupLate: 1, cupDup: 0 }, 'refused after the close: not played');
 }
 
-// conCola leaves other cups alone
+// withQueue leaves other cups alone
 {
   const storage = memoria();
-  anotarResultado({ code: 'QQQQQ', d: 1, pid: 'aaaaaa', b: 1, at: 1, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
-  assert.equal(conCola(L, 'ABCDE', storage).results[1].aaaaaa, undefined);
+  queueResult({ code: 'QQQQQ', d: 1, pid: 'aaaaaa', b: 1, at: 1, res: { s: 1, ms: 1, t: '', r: '' } }, storage);
+  assert.equal(withQueue(L, 'ABCDE', storage).results[1].aaaaaa, undefined);
 }
 console.log('✓ store-offline: a pending day of La Copa plays from the kept copy, waits on the phone and uploads only while its day is open (D-544)');

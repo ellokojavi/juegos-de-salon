@@ -1,6 +1,6 @@
 /**
  * La Copa's store with no signal (D-544): the same interface as store-firebase.js, drawn from the
- * copy of each cup this phone kept while online (`cuenta.copia`) and the outbox (`assets/js/cup-outbox.js`).
+ * copy of each cup this phone kept while online (`cuenta.snapshot`) and the outbox (`assets/js/cup-outbox.js`).
  *
  * It plays a pending day and keeps its result; everything else (create, join, the wildcard, the
  * admin) answers `offline`, which the screens already say as "no connection". A day whose window
@@ -8,16 +8,16 @@
  * `ventana`, like the rules would.
  */
 import { abierto, conCierre } from './engine.js';
-import { anotarInicio, anotarResultado, conCola } from '../assets/js/cup-outbox.js';
+import { queueStart, queueResult, withQueue } from '../assets/js/cup-outbox.js';
 
 const falla = code => Object.assign(new Error(code), { code });
 
 export function createOfflineStore({ cuenta, storage = globalThis.localStorage, clock = () => Date.now() } = {}) {
   const oyentes = new Map();   // code → [cb]
-  const copia = code => cuenta.copia.leer(code);
+  const copia = code => cuenta.snapshot.leer(code);
   const offset = code => Number(copia(code)?.offset) || 0;
   let ultimo = null;
-  const ver = code => { const c = copia(code); return c?.L ? conCola(c.L, code, storage) : null; };
+  const ver = code => { const c = copia(code); return c?.L ? withQueue(c.L, code, storage) : null; };
   const avisar = code => { const L = ver(code); for (const cb of oyentes.get(code) || []) cb(L); };
   const ventana = (code, d) => {
     const L = conCierre(copia(code)?.L);
@@ -42,13 +42,13 @@ export function createOfflineStore({ cuenta, storage = globalThis.localStorage, 
     async leer(code) { const L = ver(code); if (!L) throw falla('offline'); return L; },
     async empezar(code, d, pid) {
       const b = ventana(code, d);
-      anotarInicio({ code, d, pid, b, at: clock() + offset(code) }, storage);
+      queueStart({ code, d, pid, b, at: clock() + offset(code) }, storage);
       avisar(code);
     },
     async resultado(code, d, pid, r) {
       const b = ventana(code, d);
       if (copia(code)?.L?.results?.[d]?.[pid]) throw falla('ya-jugado');
-      anotarResultado({ code, d, pid, b, at: clock() + offset(code), res: r }, storage);
+      queueResult({ code, d, pid, b, at: clock() + offset(code), res: r }, storage);
       avisar(code);
     },
     yaEsta: async () => false,
