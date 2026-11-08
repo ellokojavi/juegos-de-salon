@@ -1588,7 +1588,11 @@
       "error": "✗ before-1: buttons 44 px or taller [\"\"]",
       "signature": "ed78694c79",
       "date": "2026-11-08T22:10:25.635Z",
-      "fix": null,
+      "fix": {
+        "commit": "e332dc6b4938c28895f8edafd2db5434109b8c76",
+        "date": "2026-11-08T22:28:00.763Z",
+        "stat": "1 file(s) +3 −2: tools/e2e/cup/tournament.mjs"
+      },
       "flaky": false
     }
   ]
