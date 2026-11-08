@@ -30,7 +30,7 @@ assert.equal(pendingCount({ getItem: () => 'not json' }), 0);
 assert.equal(uploadText({ sent: 1 }, 'es'), 'Se subió 1 partida ✓');
 // La Copa's days played offline (D-544)
 assert.equal(uploadText({ cupSent: 1 }, 'es'), 'Se subió tu día de La Copa ✓');
-assert.equal(uploadText({ cupSent: 2, cupLate: 1 }, 'en'), '2 Cup days uploaded ✓ The Cup: 1 not uploaded because the day had already closed; it counts as not played.');
+assert.equal(uploadText({ cupSent: 2, cupLate: 1 }, 'en'), '2 Cup days uploaded ✓ The Cup, not uploaded: 1 whose day had closed (counts as not played).');
 assert.equal(uploadText({ sent: 3, old: 1 }, 'es'), 'Se subieron 3 partidas ✓ Sin subir: 1 con más de 30 días.');
 assert.equal(uploadText({ sent: 0, full: 2 }, 'en'), 'Not uploaded: 2 that did not fit (200 at most).');
 assert.equal(uploadText({ sent: 0 }, 'pt'), '', 'nothing to say, no toast');
