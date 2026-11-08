@@ -1435,7 +1435,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared documents: {\"path\": \"docs/games/connections.md\", \"title\": \"🔗 Connection, {\"path\": \"docs/games/queens.md\", \"title\": \"👑 Queens (Reinas), {\"path\": \"docs/games/tango.md\", \"title\": \"☀️ Tango\"}, {\"path\": \"docs/games/untangle.md\", \"title\": \"🧶 Untangle (Des, {\"path\": \"docs/games/where.md\", \"title\": \"📍 Where Is It? (¿D, {\"path\": \"docs/games/word.md\", \"title\": \"🔤 Bulls and Cows: W, {\"path\": \"docs/games/yea",
       "signature": "31bb598aa3",
       "date": "2026-11-08T19:35:43.190Z",
-      "fix": null,
+      "fix": {
+        "commit": "1633822c554aa5976a954582172658f4940d3c09",
+        "date": "2026-11-08T19:35:55.318Z",
+        "stat": "2 file(s) +40 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
