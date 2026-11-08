@@ -1418,7 +1418,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/all-games.test.mjs",
       "signature": "362d4e13a7",
       "date": "2026-11-08T19:06:35.580Z",
-      "fix": null,
+      "fix": {
+        "commit": "569aa4512bae554c323f6f87822e4e7f71d68ef4",
+        "date": "2026-11-08T19:17:17.161Z",
+        "stat": "8 file(s) +35 −10: .github/workflows/preview.yml, README.md, changelog/claude-eager-ritchie-5yrsxe.md, docs/DECISIONS.md, docs/PREVIEWS.md, …"
+      },
       "flaky": false
     }
   ]
