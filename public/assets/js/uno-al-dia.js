@@ -17,7 +17,7 @@ import { hash32 } from '../../cup/games/semilla.js';
 import { rng as mulberry } from './rng.js';
 import { semana } from './records.js';
 import { param } from './parametros.js';
-import { GAMES, SUELTOS } from './games.js';
+import { ALL_GAMES } from './games.js';
 
 /** El día n.° 1: el día en que Uno al día salió del laboratorio (D-230). Queda fijo: moverlo cambia el juego de días ya jugados. */
 export const LANZAMIENTO = '2026-10-06';
@@ -53,12 +53,12 @@ export const JUEGOS_DIA = [
   { orden: 0, id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago' } },
   { orden: 1, id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número' } },
   // Every other one is in its entry in games.js, the manifest (#855): `unoAlDia: { orden, desde, hasta?, grupo? }`
-  ...[...GAMES, ...SUELTOS].filter(g => g.unoAlDia).map(g => ({ orden: g.unoAlDia.orden, id: g.id, emoji: g.emoji, desde: g.unoAlDia.desde, ...(g.unoAlDia.hasta ? { hasta: g.unoAlDia.hasta } : {}) })),
+  ...ALL_GAMES.filter(g => g.unoAlDia).map(g => ({ orden: g.unoAlDia.orden, id: g.id, emoji: g.emoji, desde: g.unoAlDia.desde, ...(g.unoAlDia.hasta ? { hasta: g.unoAlDia.hasta } : {}) })),
 ].sort((x, y) => x.orden - y.orden).map(({ orden, ...j }) => j);
 /** Whether a game can come out on a date: it already joined and has not left. */
 export const vigente = (j, fecha) => j.desde <= fecha && !(j.hasta && j.hasta <= fecha);
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
-export const GRUPO = JUEGOS_DIA.filter(j => [...GAMES, ...SUELTOS].find(g => g.id === j.id)?.unoAlDia?.grupo).map(j => j.id);
+export const GRUPO = JUEGOS_DIA.filter(j => ALL_GAMES.find(g => g.id === j.id)?.unoAlDia?.grupo).map(j => j.id);
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
 
 /**

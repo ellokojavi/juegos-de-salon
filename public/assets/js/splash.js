@@ -359,7 +359,7 @@ const node = (tag, cls, text) => {
 /** Each item as the window draws it: a game of games.js, or the campaign's own content. */
 async function resolve(items, lang) {
   const needsGames = items.some(i => i.game);
-  const all = needsGames ? await import('./games.js').then(m => [...m.GAMES, ...m.SUELTOS]) : [];
+  const all = needsGames ? await import('./games.js').then(m => m.ALL_GAMES) : [];
   return items.map(i => {
     const g = i.game ? all.find(x => x.id === i.game) : null;
     return {

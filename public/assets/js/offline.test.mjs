@@ -7,10 +7,10 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES } from './games.js';
+import { offlineOk, OFFLINE_PAGES, ALL_GAMES } from './games.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const ALL = [...GAMES, ...SUELTOS];
+const ALL = ALL_GAMES;
 
 // The manifest: `offline` is only ever written as `false`, to opt a game out
 for (const g of ALL) {

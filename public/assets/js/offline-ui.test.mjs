@@ -2,11 +2,11 @@
 // What offline mode shows (D-538, PR 4): which links need signal, and the chip's words.
 import assert from 'node:assert/strict';
 import { needsSignal, KEPT, chipText, pendingCount, PENDING_KEY, uploadText } from './offline-ui.js';
-import { GAMES, SUELTOS, offlineOk } from './games.js';
+import { offlineOk, ALL_GAMES } from './games.js';
 
 const root = new URL('https://juegosdesalon.cl/');
 const at = new URL('https://juegosdesalon.cl/liars-dice/');
-for (const g of [...GAMES, ...SUELTOS]) {
+for (const g of ALL_GAMES) {
   assert.equal(needsSignal(`https://juegosdesalon.cl/${g.path}`, { root }), !offlineOk(g), `${g.id}: needs signal exactly when it is not offline-capable`);
 }
 assert.equal(needsSignal('./', { root }), false, 'the home page is kept');

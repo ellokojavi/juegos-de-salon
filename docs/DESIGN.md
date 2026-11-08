@@ -7,7 +7,7 @@ with `public/assets/css/ranking.css` for rankings. Nothing visual is decided in 
 that could be decided here (C-1, D-533).
 
 **What it governs:** everything (the owner, 2026-11-05). Every element of design and every
-experience of the site, La Copa and its mini-games included: not only how a button looks, but how
+experience of the site, La Copa and every game included (C-21): not only how a button looks, but how
 a screen starts, passes the phone, confirms, shares and shows a result. Nothing is a game's own
 without an escape in §4 with its reason. La Copa behaves today as a system apart (`cup/style.css`,
 its own controls in `cup/game.js`); that is a defect the plan dissolves (phase 7, #1196), not a

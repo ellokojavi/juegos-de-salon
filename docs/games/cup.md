@@ -538,7 +538,7 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
 
 La Copa's stylesheet is dissolved into the shared one PR by PR, in the order of
 [docs/design/cup-unification.md](../design/cup-unification.md); the owner declined its PRs 6 and 7
-(2026-11-05), so "🏠 Volver al menú" stays on a Cup mini-game's cover and the cup's own colours keep
+(2026-11-05), so "🏠 Volver al menú" stays on the cover of a game played in the Cup and the cup's own colours keep
 their meaning.
 
 - **PR 1, the exact copies:** `cup/style.css` drops its copies of the game shell (`.screen`, the
@@ -576,7 +576,7 @@ their meaning.
 - **PR 4, notices, the snackbar and waiting:** La Copa's notices and toast are `base.css`'s now,
   under English names because two games already use the old ones for something else (Batalla
   Naval's `.toast`, Aletazo's `.aviso`): `.aviso` → `.notice`, `.aviso.bien` / `.aviso.mal` →
-  `.notice--good` / `.notice--bad` (in the cup's screens and 11 of its mini-games' `ui.js`), `.toast` →
+  `.notice--good` / `.notice--bad` (in the cup's screens and 11 of the games' `ui.js` under `cup/games/`), `.toast` →
   `.snackbar`; their two colours without a token are `base.css`'s `--ink-bad` and `--snackbar-bg`.
   `espera()` draws with the shared `showWaiting()` (`assets/js/waiting.js`), whose `.waiting--screen`
   replaces the cup's 30 px copy of `.waiting`. Every colour keeps its value; the one intended

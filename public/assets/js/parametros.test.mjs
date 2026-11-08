@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { param, tiene, nombres, enIngles, normalizarUrl, ALIAS, BANDERAS, VALORES, AVISO_CLAVE } from './parametros.js';
-import { slugDe, idDeSlug, SLUGS_SIN_PAGINA, GAMES, SUELTOS } from './games.js';
+import { slugDe, idDeSlug, SLUGS_SIN_PAGINA, ALL_GAMES } from './games.js';
 
 // Se lee el nombre en inglés…
 assert.equal(param('room', '?room=ABCD'), 'ABCD');
@@ -90,8 +90,8 @@ assert.equal(idDeSlug('timeline-flash'), 'linea');
 assert.equal(idDeSlug('number'), 'numero');
 assert.equal(idDeSlug('battleship'), 'batalla-naval');
 assert.equal(idDeSlug('cualquiera'), 'cualquiera');
-for (const g of [...GAMES, ...SUELTOS]) assert.equal(idDeSlug(slugDe(g.id)), g.id, `ida y vuelta: ${g.id}`);
-for (const s of [...Object.values(SLUGS_SIN_PAGINA), ...[...GAMES, ...SUELTOS].map(g => slugDe(g.id))]) assert.match(s, /^[a-z][a-z-]*$/, s);
+for (const g of ALL_GAMES) assert.equal(idDeSlug(slugDe(g.id)), g.id, `ida y vuelta: ${g.id}`);
+for (const s of [...Object.values(SLUGS_SIN_PAGINA), ...ALL_GAMES.map(g => slugDe(g.id))]) assert.match(s, /^[a-z][a-z-]*$/, s);
 
 // Lo que la app escribe en una dirección no usa los nombres de antes (C-18): se buscan en el código
 // del sitio y de los avisos, fuera de los comentarios, de las pruebas y de las páginas puente

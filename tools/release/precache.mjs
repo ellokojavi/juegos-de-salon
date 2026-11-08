@@ -44,8 +44,8 @@ function files(site, rel) {
 /** The list for a site folder: `{ release, urls }`, sorted and without repeats. */
 export async function precache(site) {
   site = resolve(site);
-  const { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES = [] } = await import(pathToFileURL(join(site, 'assets/js/games.js')).href);
-  const games = [...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path);
+  const { offlineOk, OFFLINE_PAGES = [], ALL_GAMES } = await import(pathToFileURL(join(site, 'assets/js/games.js')).href);
+  const games = ALL_GAMES.filter(g => offlineOk(g) && g.path);
   const roots = [...SHARED, ...OFFLINE_PAGES, ...games.flatMap(g => [g.path, ...(g.reuses || [])])];
   const all = new Set(roots.flatMap(r => files(site, r)).map(f => f.split(sep).join('/')));
   // A game also plays what its modules import from elsewhere (a minigame's engine under cup/games/):

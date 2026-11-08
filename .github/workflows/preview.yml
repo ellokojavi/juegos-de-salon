@@ -1,4 +1,4 @@
-# A preview of each PR on GitHub Pages (D-429), so the owner reviews a change before it merges
+# A preview of each PR with something to see on GitHub Pages (D-429, D-543), so the owner reviews a change before it merges
 # instead of merging a PR per review round. On each push, the PR's site (merged with main, as the
 # tests see it) goes to its branch's folder in the previews repo, which publishes itself with its
 # own Pages workflow, and the PR gets a comment with the link. When the PR closes, its folder goes.
@@ -55,6 +55,19 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
+      # Only when there is something to look at (D-543, the owner: nothing to see, no preview): a PR whose changes under public/
+      # are none, or only tests, gets no preview. Checked against main as the merge commit sees it
+      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+        id: visual
+        run: |
+          changed=$(git diff --name-only HEAD^1 HEAD -- public/ | grep -v '\.test\.mjs$' || true)
+          if [ -z "$changed" ]; then
+            echo "::notice::Nothing under public/ to look at: no preview (D-543)"
+            echo "show=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "show=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - if: steps.key.outputs.ready == 'true' && github.event.action == 'closed'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,7 +76,7 @@ jobs:
       # The site as publish.yml builds it, with the version stamped, plus noindex on every page:
       # a preview must never compete with juegosdesalon.cl in a search. Without the CNAME, which
       # would claim the real domain for the previews repo
-      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+      - if: steps.visual.outputs.show == 'true'
         id: build
         env:
           BRANCH: ${{ github.event.pull_request.head.ref }}
@@ -74,14 +87,14 @@ jobs:
           find "$RUNNER_TEMP/site" -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
           echo "folder=$(printf '%s' "$BRANCH" | tr 'A-Z' 'a-z' | sed 's/[^a-z0-9-]/-/g')" >> "$GITHUB_OUTPUT"
 
-      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+      - if: steps.visual.outputs.show == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           FOLDER: ${{ steps.build.outputs.folder }}
         run: .github/previews/update.sh "$FOLDER" "$RUNNER_TEMP/site"
 
       # One comment per PR, updated on each push
-      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+      - if: steps.visual.outputs.show == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}

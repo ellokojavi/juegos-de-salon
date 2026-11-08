@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { registrar, nombrar, manifestDe } from './instalable.js';
 import { COMMON, IDIOMAS } from './i18n.js';
 import { ICONS } from '../../../tools/release/icons.mjs';
-import { GAMES, SUELTOS } from './games.js';
+import { ALL_GAMES } from './games.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 let n = 0;
@@ -49,7 +49,7 @@ await caso('the service worker caches only in offline mode, pages network-first 
 });
 
 await caso('cada juego del registro tiene su página con manifest (un juego nuevo no queda afuera)', () => {
-  for (const g of [...GAMES, ...SUELTOS]) {
+  for (const g of ALL_GAMES) {
     const html = readFileSync(join(PUBLIC, g.path, 'index.html'), 'utf8');
     assert.match(html, /<link rel="manifest"/, `${g.path}index.html no lleva el manifest`);
   }

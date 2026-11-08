@@ -408,6 +408,14 @@ export const SUELTOS = [
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true, ...(m.lanza ? { oculto: !lanzado(m.lanza) } : {}) }));
 
 /**
+ * Every game the site has, in one list (D-542, the owner: "every game is one more game"). GAMES and
+ * SUELTOS are split only by how a game is built (its engine in its own folder with rules.js, or in
+ * cup/games/), never by what it is: anything that applies to "the games" (a rule, a check, a feature,
+ * a fix) iterates ALL_GAMES. Reach for GAMES or SUELTOS alone only for something about the build.
+ */
+export const ALL_GAMES = [...GAMES, ...SUELTOS];
+
+/**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
  * Cada juego dice los suyos en `tipos`; uno sin tipos solo se ve sin filtro de tipo.
  * La clave es la que va en la URL (`?type=logic`), en inglés como las rutas (D-192, D-214).
@@ -458,7 +466,7 @@ export const esNuevo = (g, hoy = new Date()) => {
  * request: it has no plays yet, so by popularity it would be last); when the label goes, so does that.
  */
 export function ordenPortada(hoy = new Date()) {
-  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs && !g.bodega && !g.oculto).sort((a, b) => puesto(a.id) - puesto(b.id));
+  const ofrecidos = ALL_GAMES.filter(g => !g.labs && !g.bodega && !g.oculto).sort((a, b) => puesto(a.id) - puesto(b.id));
   const arriba = g => (g.torneo ? 0 : esNuevo(g, hoy) ? 1 : 2);
   const disponibles = ofrecidos.filter(g => g.available).sort((a, b) => arriba(a) - arriba(b));
   return [...disponibles, ...ofrecidos.filter(g => !g.available)];
@@ -498,7 +506,7 @@ export function rangoJugadores(players) {
 export const GAME_IDS = GAMES.map(g => g.id);
 
 // Con los de La Copa: el panel también los nombra cuando mandan su señal de uso (C-16)
-const BY_ID = Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g]));
+const BY_ID = Object.fromEntries(ALL_GAMES.map(g => [g.id, g]));
 
 /** El juego con ese id, o `null` si no está registrado. */
 export const gameById = id => BY_ID[id] || null;
@@ -509,7 +517,7 @@ export const gameById = id => BY_ID[id] || null;
  * guardan las salas, el panel y el celular): solo lo que se ve en la dirección.
  */
 export const SLUGS_SIN_PAGINA = { linea: 'timeline-flash', numero: 'number' };
-const SLUG_DE = { ...Object.fromEntries([...GAMES, ...SUELTOS].map(g => [g.id, g.slug || String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
+const SLUG_DE = { ...Object.fromEntries(ALL_GAMES.map(g => [g.id, g.slug || String(g.path || '').replace(/\/$/, '') || g.id])), ...SLUGS_SIN_PAGINA };
 const ID_DE = Object.fromEntries(Object.entries(SLUG_DE).map(([id, slug]) => [slug, id]));
 /** El nombre en la URL de un juego; un id que no está en la lista queda igual. */
 export const slugDe = id => (Object.hasOwn(SLUG_DE, id) ? SLUG_DE[id] : id);

@@ -30,7 +30,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
+import { GAMES, SUELTOS, ALL_GAMES } from '../../public/assets/js/games.js';
 import { COMMON, LANGS } from '../../public/assets/js/i18n.js';
 import { factsLine } from '../../public/assets/js/how-to-play-facts.js';
 
@@ -124,7 +124,7 @@ const inCards = o => (o && typeof o === 'object' ? Object.fromEntries(LANGS.filt
  */
 const cardTexts = lang => Object.fromEntries(['appTitle', 'appSub'].map(k => [k, COMMON[lang][k]]));
 function fingerprint(p) {
-  const game = p.game && [...GAMES, ...SUELTOS].find(g => g.id === p.game);
+  const game = p.game && ALL_GAMES.find(g => g.id === p.game);
   const data = game
     ? { emoji: game.emoji, name: inCards(game.name), tagline: inCards(game.tagline), players: game.players, duration: game.duration, durationUnit: inCards(game.durationUnit) }
     : { lang: p.lang, texts: cardTexts(p.lang), games: available.map(g => [g.id, g.emoji]) };
@@ -235,7 +235,7 @@ const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR' };
 /* ------------------------------------------------------------------ */
 /* What search engines read (#887)                                     */
 /* ------------------------------------------------------------------ */
-const gameOf = p => p.game && [...GAMES, ...SUELTOS].find(g => g.id === p.game);
+const gameOf = p => p.game && ALL_GAMES.find(g => g.id === p.game);
 /**
  * Announced to search engines: the doors and the games on the home page. Not the lab (noindex,
  * D-281), La Bodega or a switched-off game: their pages open for whoever has the link, nothing more.

@@ -10,7 +10,7 @@ Copa are shown as unavailable, and scores are kept on the phone and uploaded whe
 
 | Works | Needs signal |
 |---|---|
-| Every minigame (Conexiones, Letras, Año, Reinas, Tango, Zip, Desenredo, Dónde, Rutas, Loteo, Pintaminas, Agentes, Puentes, Shinobi, Babel) | 📡 Two-phone rooms, in every game |
+| The games built in `cup/games/` (Conexiones, Letras, Año, Reinas, Tango, Zip, Desenredo, Dónde, Rutas, Loteo, Pintaminas, Agentes, Puentes, Shinobi, Babel) | 📡 Two-phone rooms, in every game |
 | The one-phone, vs-the-phone and solo modes of the party games | 🏆 La Copa (`offline: false`) |
 | 📅 Uno al día: the game comes from the date; streak and calendar are on the phone | Rankings, the month's place, invites, chat, the mailbox, push sign-up |
 | Resuming a game (C-6), sounds, settings | Lab games this phone has never seen the flag for |
@@ -123,7 +123,7 @@ PR that changes what is kept on the phone.
    forgets the stored files) is `sw.test.mjs`'s.
 8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `offline.css`, set by
    `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers take it
-   too (the owner, 2026-11-07): `#screen-intro`, `#screen-setup` or the minigames' `body.antesala`
+   too (the owner, 2026-11-07): `#screen-intro`, `#screen-setup` or `body.antesala` (the cover of the games built in `cup/games/`)
    (`COVER` in `offline-ui.js`); the play screens keep their colours. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
    page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
    players feel they are in the offline version of Juegos de Salón. The game screens themselves keep

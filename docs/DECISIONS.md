@@ -23,7 +23,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 
 | Topic | Today's rule | Decisions |
 |---|---|---|
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535 |
+| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535, D-542 |
 | Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533, D-535 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442 |
@@ -46,7 +46,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427, D-482, D-485, D-508 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-503, D-504, D-509, D-528 |
-| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506, D-519, D-530, D-531, D-540 |
+| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506, D-519, D-530, D-531, D-540, D-543 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316, D-506 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496, D-506, D-515, D-516, D-518, D-541 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499, D-517, D-521, D-525 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538 |
 
-## In force (525)
+## In force (527)
 
 | D | Title | Status |
 |---|---|---|
@@ -474,7 +474,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-426](decisions/D-426.md) | The owner opens a cup's recap to all its players while the window is in the lab | current |
 | [D-427](decisions/D-427.md) | La Copa's recap shows the final table as the image the cup shares | current |
 | [D-428](decisions/D-428.md) | Faster releases without testing less: CI is the gate, and the groups fit the real times | current |
-| [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | current |
+| [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | amended by D-543 |
 | [D-430](decisions/D-430.md) | Splash campaigns queue up, and a teaser can be a picture alone in Spanish and English | amended by D-431 |
 | [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | amended by D-449 |
 | [D-432](decisions/D-432.md) | A back swipe mid-game asks before leaving | current |
@@ -584,6 +584,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-539](decisions/D-539.md) | An online game's room goes through room-state.js | current |
 | [D-540](decisions/D-540.md) | A red PR the owner asked for in a session is approved by that session | current |
 | [D-541](decisions/D-541.md) | No rule without its enforcement: the rules for making rules | current |
+| [D-542](decisions/D-542.md) | Every game is one more game: no subset in the code, the docs or the work | current |
+| [D-543](decisions/D-543.md) | A preview only when there is something to look at | current |
 
 ## No longer in force (12)
 

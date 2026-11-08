@@ -63,6 +63,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 
 ## Rules every session follows
 
+- **Every game is one more game** (C-21, D-542): "mini" only means short, never a kind. A change for
+  the games reaches all of them, through `ALL_GAMES` in `games.js`, never only `GAMES` or only La Copa's.
 - **Own worktree, topic branch** (D-135): never work in the main folder. Delete a worktree you know
   will not produce a PR (D-252). Details and cleanup: [docs/SESSIONS.md](docs/SESSIONS.md).
 - **Ask before touching another session's PR branch** (ListAgents / SendMessage).
