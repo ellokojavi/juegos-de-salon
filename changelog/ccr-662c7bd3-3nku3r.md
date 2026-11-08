@@ -1,3 +1,3 @@
 level: patch
 
-- **/labs/: the offline mode card says what it shows today** — the "📴 Sin conexión" sticker, the dimmed links, and that a tap on the sticker opens the sheet that explains it. It still said those were "coming in the next steps".
+- **/labs/ has an index at the top**: one tap per game and improvement still being tried jumps straight to its card, without scrolling past every game. La Bodega is left out, and a card published for everyone drops out of the index on its own.

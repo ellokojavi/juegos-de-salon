@@ -68,6 +68,14 @@
     .bodega-periodo > summary::-webkit-details-marker { display: none; }
     .bodega-periodo > summary .flecha { font: 900 1.5rem/1 var(--font-body); transition: transform 0.2s; }
     .bodega-periodo[open] > summary .flecha { transform: rotate(90deg); }
+    /* The index: a tap jumps to a card; the card lands below the top edge, not glued to it */
+    .indice { display: flex; flex-direction: column; gap: var(--s-12); }
+    .indice-grupo { display: flex; flex-direction: column; gap: var(--s-6); }
+    .indice-titulo { margin: 0; font-weight: 700; }
+    .indice .chip-btn { text-decoration: none; }
+    .seccion { scroll-margin-top: var(--s-16); }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   </style>
 </head>
 <body>
@@ -87,6 +95,9 @@
       <div class="panel aviso-labs">
         <p style="margin:0">Lo que hay en el laboratorio todavía puede cambiar o romperse. Si algo falla o se te ocurre una mejora, usa el botón <b>🐞 Reportar un problema o dejar un comentario</b> que aparece en cada juego.</p>
       </div>
+
+      <!-- The index (the owner, 2026-11-08): one tap per card being tried, drawn by index-nav.js -->
+      <nav class="panel indice" id="indice" aria-label="Índice del laboratorio" hidden></nav>
 
       <!-- Three groups (D-280, D-361): the games being tried, the improvements to the rest of the app
            being tried, and in La Bodega what is no longer worked on (D-372, D-420) -->
@@ -760,6 +771,7 @@
     // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search,
     // and the owner's 🚀 Publicar para todos (D-480) is drawn on each card where it already sits
     const moved = import('./launched.js').then(m => m.move()).catch(() => {});
+    moved.then(() => import('./index-nav.js')).then(m => m.draw()).catch(() => {});
     moved.then(() => import('./bodega.js')).then(m => m.start());
     moved.then(() => import('./publish.js')).then(m => m.start());
     // Offline mode's tester switch (D-538, PR 3): forces the mode on this phone only, and shows what
