@@ -1539,6 +1539,19 @@
       "date": "2026-11-08T20:21:16.661Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42519039936,
+      "check": "tests",
+      "pr": 1320,
+      "branch": "claude/dreamy-shannon-tczgb2",
+      "commit": "64b900d75c11b4e9704f32c13ae474be5dc34db9",
+      "test": "public/assets/js/offline-ui.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "3fbe4124c0",
+      "date": "2026-11-08T20:26:40.842Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
