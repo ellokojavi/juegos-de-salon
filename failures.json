@@ -1452,7 +1452,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: firebase/splash.test.mjs",
       "signature": "9a8f5e3da2",
       "date": "2026-11-08T19:54:15.880Z",
-      "fix": null,
+      "fix": {
+        "commit": "9805613a152afbcc19bc32e6309b85f8ca96edff",
+        "date": "2026-11-08T20:07:30.150Z",
+        "stat": "45 file(s) +1040 −139: .github/pull_request_template.md, CONTRIBUTING.md, README.md, changelog/ccr-662c7bd3-3nku3r.md, changelog/claude-adoring-johnson-r6i53t.md, …"
+      },
       "flaky": false
     },
     {
@@ -1465,7 +1469,11 @@
       "error": "AssertionError [ERR_ASSERTION]: aletazo is a game without a game.json: give it one (node tools/generators/manifests.mjs migrate <folder>) ❌\ncode: 'ERR_ASSERTION',\nexpected: true,",
       "signature": "abf896ffb2",
       "date": "2026-11-08T19:57:47.920Z",
-      "fix": null,
+      "fix": {
+        "commit": "9805613a152afbcc19bc32e6309b85f8ca96edff",
+        "date": "2026-11-08T20:07:30.150Z",
+        "stat": "45 file(s) +1038 −139: .github/pull_request_template.md, CONTRIBUTING.md, README.md, changelog/ccr-662c7bd3-3nku3r.md, changelog/claude-adoring-johnson-r6i53t.md, …"
+      },
       "flaky": false
     },
     {
@@ -1478,7 +1486,11 @@
       "error": "✗ aletazo (cup/games/flap/)\nAssertionError [ERR_ASSERTION]: 1 juego(s) se saltan el canon: aletazo\n+ actual - expected",
       "signature": "1fed369030",
       "date": "2026-11-08T19:57:47.920Z",
-      "fix": null,
+      "fix": {
+        "commit": "9805613a152afbcc19bc32e6309b85f8ca96edff",
+        "date": "2026-11-08T20:07:30.150Z",
+        "stat": "45 file(s) +1038 −139: .github/pull_request_template.md, CONTRIBUTING.md, README.md, changelog/ccr-662c7bd3-3nku3r.md, changelog/claude-adoring-johnson-r6i53t.md, …"
+      },
       "flaky": false
     },
     {
@@ -1491,7 +1503,11 @@
       "error": "AssertionError [ERR_ASSERTION]: games without createSessionStore (C-6: save the game, or a debt entry in docs/memory-debt.json with its reason): aletazo\n+ actual - expected\ncode: 'ERR_ASSERTION',",
       "signature": "0322fa081b",
       "date": "2026-11-08T19:57:47.920Z",
-      "fix": null,
+      "fix": {
+        "commit": "9805613a152afbcc19bc32e6309b85f8ca96edff",
+        "date": "2026-11-08T20:07:30.150Z",
+        "stat": "45 file(s) +1038 −139: .github/pull_request_template.md, CONTRIBUTING.md, README.md, changelog/ccr-662c7bd3-3nku3r.md, changelog/claude-adoring-johnson-r6i53t.md, …"
+      },
       "flaky": false
     }
   ]
