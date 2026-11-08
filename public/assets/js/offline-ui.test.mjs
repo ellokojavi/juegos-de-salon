@@ -13,12 +13,12 @@ assert.equal(needsSignal('./', { root }), false, 'the home page is kept');
 assert.equal(needsSignal('../', { root, base: at }), false, 'the home page from a game');
 assert.equal(needsSignal('../records/', { root, base: at }), true, 'Rankings needs signal');
 assert.equal(needsSignal('privacy/', { root }), true, 'a page not kept');
-assert.equal(needsSignal('cup/?code=ABC', { root }), true, 'La Copa, whatever its link says');
+assert.equal(needsSignal('cup/?code=ABC', { root }), false, 'La Copa opens offline from its kept copy (D-544)');
 assert.equal(needsSignal('zip/?lang=en', { root }), false, 'a kept game with a parameter');
 assert.equal(needsSignal('#rules', { root, base: at }), false, 'an anchor in the page');
 assert.equal(needsSignal('https://buymeacoffee.com/x', { root }), false, 'another site is not ours to dim');
 assert.equal(needsSignal('assets/og/zip.jpg', { root }), false, 'a file, not a page');
-assert.ok(KEPT.has('') && KEPT.has('zip') && !KEPT.has('cup'));
+assert.ok(KEPT.has('') && KEPT.has('zip') && KEPT.has('cup') && !KEPT.has('records'));
 
 assert.equal(chipText(0, 'es'), '📴 Sin conexión');
 assert.equal(chipText(2, 'es'), '📴 Sin conexión · 2 por subir');
@@ -28,6 +28,9 @@ const ls = new Map([[PENDING_KEY, JSON.stringify([{}, {}])]]);
 assert.equal(pendingCount({ getItem: k => ls.get(k) ?? null }), 2);
 assert.equal(pendingCount({ getItem: () => 'not json' }), 0);
 assert.equal(uploadText({ sent: 1 }, 'es'), 'Se subió 1 partida ✓');
+// La Copa's days played offline (D-544)
+assert.equal(uploadText({ cupSent: 1 }, 'es'), 'Se subió tu día de La Copa ✓');
+assert.equal(uploadText({ cupSent: 2, cupLate: 1 }, 'en'), '2 Cup days uploaded ✓ The Cup, not uploaded: 1 whose day had closed (counts as not played).');
 assert.equal(uploadText({ sent: 3, old: 1 }, 'es'), 'Se subieron 3 partidas ✓ Sin subir: 1 con más de 30 días.');
 assert.equal(uploadText({ sent: 0, full: 2 }, 'en'), 'Not uploaded: 2 that did not fit (200 at most).');
 assert.equal(uploadText({ sent: 0 }, 'pt'), '', 'nothing to say, no toast');

@@ -37,7 +37,8 @@ import { desglose } from './desglose.js';
 import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js';
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
-import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
+import { jugador, leerYo, rankingsVisibles, guardarPendienteLocal } from '../assets/js/jugador.js';
+import { queueResult, uploadCup } from '../assets/js/cup-outbox.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -153,12 +154,32 @@ const appPid = new URLSearchParams(location.search).get('app') || '';
 const diaAviso = Number(param('day')) || 0;
 const silenciarAviso = tiene('mute');
 
+/**
+ * With no signal (offline mode on and the phone offline, D-544), the cup is drawn from the copy this
+ * phone kept and a pending day's result waits in the outbox (`store-offline.js`, `outbox.js`).
+ */
+const sinSenal = () => !PRUEBA && flag('offline') && (document.documentElement.dataset.connection === 'offline'
+  || document.documentElement.classList.contains('offline') || navigator.onLine === false);
+const offlineStore = () => store?.tipo === 'offline';
 async function abrirStore() {
   if (store) return store;
   store = PRUEBA
     ? (await import('./store-local.js')).createLocalStore()
-    : (await import('./store-firebase.js')).createFirebaseStore();
+    : sinSenal() ? (await import('./store-offline.js')).createOfflineStore({ cuenta })
+      : (await import('./store-firebase.js')).createFirebaseStore();
   return store;
+}
+// Back online with the copy on screen: what was played goes up, and the page opens the real cup.
+// Not in the middle of a day: the result screen's upload or the next page does it
+if (!PRUEBA) window.addEventListener('connection', e => {
+  if (e.detail?.mode !== 'online' || !offlineStore()) return;
+  uploadCup().finally(() => { if (S.pantalla !== 'jugar') location.reload(); });
+});
+
+/** The copy of a cup kept for playing it offline (D-544): only from the server, only while the cup is on. */
+function guardarCopia(code, L, st) {
+  if (st?.tipo !== 'firebase' || !flag('offline') || !cuenta.quien(code)) return;
+  cuenta.snapshot.guardar(code, L?.meta && Date.now() < (L.fin || L.meta.end) ? { L, offset: st.now() - Date.now(), at: Date.now() } : null);
 }
 
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
@@ -257,7 +278,7 @@ function errorDe(e) {
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
     reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'needSecond', alias: 'errAlias', fin: 'errFin',
-    espera: 'errEspera', 'pin-admin': 'errAdminPin',
+    espera: 'errEspera', 'pin-admin': 'errAdminPin', 'sin-copia': 'errSinCopia',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -381,6 +402,7 @@ function portada() {
     try {
       Lc ||= await st.leer(c.code);
       if (!Lc) return;
+      guardarCopia(c.code, conCierre(Lc), st);
       cuenta.lista.guardar(c.code, copiaLista(Lc, pid, st.now()));
       cuenta.porJugar.guardar(c.code, porJugar(Lc, pid, st.now()));
       ponerEstado(c.code, Lc, pid, st.now());
@@ -399,11 +421,12 @@ function portada() {
   poner(body, 
     // El idioma se elige a mano, como en todos los juegos (C-3)
     el('div', { class: 'center' }, coverLangToggle()),
-    el('button', { class: 'btn btn--yellow', id: 'btn-crear', onClick: () => { SFX.tap(); crearCopa(); } }, T.create),
+    el('button', { class: 'btn btn--yellow', id: 'btn-crear', 'data-signal': '', onClick: () => { SFX.tap(); crearCopa(); } }, T.create),
     mias,
     el('div', { class: 'panel' },
       el('div', { class: 'field' }, el('label', {}, T.haveCode), input),
-      el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', onClick: ir }, T.go),
+      // Entering a cup by its code needs the server; a cup of this phone opens offline from its copy (D-544)
+      el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', 'data-signal': '', onClick: ir }, T.go),
       err),
     el('details', { class: 'panel' },
       el('summary', {}, T.howTitle),
@@ -572,6 +595,7 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
     L = conCierre(L);
     S.L = L;
     // Kept for the "Tus copas" line, so the list shows it straight away on the way back
+    guardarCopia(code, L, st);
     if (cuenta.quien(code) && L?.meta) { cuenta.lista.guardar(code, copiaLista(L, cuenta.quien(code), st.now())); cuenta.porJugar.guardar(code, porJugar(L, cuenta.quien(code), st.now())); }
     if (!L || !L.meta) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
@@ -980,6 +1004,8 @@ function tablero() {
   body.innerHTML = '';
   // Los días que no alcanzaron a abrirse porque el admin terminó la copa antes no van en la tabla
   const dias = Array.from({ length: meta.days }, (_, i) => i + 1).filter(k => !anulado(meta, k));
+  // Offline (D-544): the table is the kept copy's, and says so
+  if (offlineStore()) poner(body, el('p', { class: 'notice', id: 'aviso-tabla-sin-senal' }, T.offlineBoard));
 
   let estadoTxt;
   if (d === 0) estadoTxt = fmt(T.before, { fecha: fechaLarga(meta.win[1].a, meta.tz) });
@@ -1347,6 +1373,7 @@ function antesDeJugar(d) {
   if (esFinal(meta, d)) comodin = el('p', { class: 'muted' }, T.wildFinal);
   else if (w === d) comodin = el('p', { class: 'ok' }, `🃏 ${T.wildOn}`);
   else if (w) comodin = el('p', { class: 'muted' }, fmt(T.wildGone, { d: w }));
+  else if (offlineStore() && puedeComodin(Lc, d, S.yo, now)) comodin = el('p', { class: 'muted', id: 'comodin-sin-senal' }, `📡 ${T.offlineWild}`);
   else if (puedeComodin(Lc, d, S.yo, now)) {
     comodin = el('div', {},
       comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast),
@@ -1383,7 +1410,10 @@ function antesDeJugar(d) {
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     // Empezar right under the title, the rules (folded, U-39) and the wildcard below it (C-5): on a
     // short phone the open rules pushed it a whole screen down
-    el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn), err, empezar,
+    el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn),
+    // Offline (D-544): the result waits on the phone and has to go up before the day closes
+    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(T.offlineDay, { t: cierreDe(meta, d) })) : null,
+    err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
     // The wildcard is decided before Empezar is tapped: right after the buttons, not under the rules
@@ -1393,6 +1423,13 @@ function antesDeJugar(d) {
       CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J)))));
 }
+
+/** When day `d` closes, in the player's own time: "lunes 23:59", "Monday 23:59" (D-544). */
+const cierreDe = (meta, d) => {
+  const b = meta.win[d].b - 60000, tz = zonaPropia || meta.tz;
+  const dia = new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'long' }).format(new Date(b));
+  return `${dia} ${horaEn(b, tz)}`;
+};
 
 /* ------------------------------------------------------------------ */
 /* Jugar                                                               */
@@ -1625,11 +1662,22 @@ async function jugar(d, { nuevo = false } = {}) {
 /** Escribe el resultado en la copa. Que ya estuviera guardado cuenta como enviado. */
 async function mandar(d, fin) {
   const t = String(fin.t || '').slice(0, 300);
+  const res = { s: fin.s, ms: fin.ms, t, r: String(fin.resumen || '').slice(0, 30) };
   try {
-    await store.resultado(S.code, d, S.yo, { s: fin.s, ms: fin.ms, t, r: String(fin.resumen || '').slice(0, 30) });
+    await store.resultado(S.code, d, S.yo, res);
   } catch (e) {
-    if (e?.code !== 'ya-jugado') throw e;
+    if (e?.code === 'ya-jugado') { if (offlineStore()) S.guardadoLocal = d; return; }
+    // The signal went while playing (D-544): with offline mode on, the result waits on the phone like
+    // one played offline, and goes up when the signal is back if the day is still open then
+    const meta = L()?.meta;
+    if (!PRUEBA && flag('offline') && !['ventana', 'permiso'].includes(e?.code) && meta && abierto(meta, d, ahora())) {
+      queueResult({ code: S.code, d, pid: S.yo, b: meta.win[d].b, at: ahora(), res });
+      S.guardadoLocal = d;
+      return;
+    }
+    throw e;
   }
+  if (offlineStore()) S.guardadoLocal = d;
 }
 
 /** La pantalla de resultado: espera el envío (el que ya salió al terminar el tablero, o uno nuevo). */
@@ -1653,7 +1701,11 @@ async function enviar(d, fin, envio = null) {
   cuenta.intento.borrar(S.code, d, S.yo);
   // El puntaje del día cuenta para el ranking de ese juego, pestaña "Copa" (D-212). No se espera.
   // A day of three (D-439) is not one game: it does not go to any game's ranking
-  if (leerYo() && !L().meta.lab && !rondasDelDia(L().meta, d)) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
+  const local = S.guardadoLocal === d;
+  S.guardadoLocal = null;
+  // Played offline (D-544): the ranking's score waits in the rankings' own queue, with no Firebase
+  if (local && leerYo() && !L().meta.lab && !rondasDelDia(L().meta, d)) guardarPendienteLocal({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms });
+  else if (leerYo() && !L().meta.lab && !rondasDelDia(L().meta, d)) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
   SFX.win(); vibrate([30, 50, 30]);
   // La copa llega por el oyente; si todavía no trae el resultado, se dibuja con el propio
   const Lc = L();
@@ -1664,7 +1716,12 @@ async function enviar(d, fin, envio = null) {
   // The home page's card knows at once that this day is played, even if the player leaves before
   // the listener brings the cup back (it said ▶ Jugar hoy for a day already played)
   if (Lc?.meta) { cuenta.lista.guardar(S.code, copiaLista(Lc, S.yo, Date.now())); cuenta.porJugar.guardar(S.code, porJugar(Lc, S.yo, Date.now())); }
-  resultado(d, { recien: true, det: fin.det });
+  const dibujado = resultado(d, { recien: true, det: fin.det });
+  // Saved on the phone, not on the server (D-544): said on top, with the deadline it has to beat
+  if (local) Promise.resolve(dibujado).then(() => {
+    if (S.pantalla !== 'resultado' || document.getElementById('aviso-guardado-local')) return;
+    $('#resultado-body').prepend(el('p', { class: 'notice', id: 'aviso-guardado-local' }, fmt(T.offlineSaved, { t: cierreDe(L().meta, d) })));
+  });
 }
 
 /* ------------------------------------------------------------------ */

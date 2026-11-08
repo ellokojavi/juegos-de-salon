@@ -19,6 +19,7 @@
 import { COMMON, getLang } from './i18n.js';
 import { offlineOk, OFFLINE_PAGES, ALL_GAMES } from './games.js';
 import { loadCss } from './load-css.js';
+import { pendingCupDays, OUTBOX_KEY } from './cup-outbox.js';
 
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
 const ROOT = new URL('../../', import.meta.url);
@@ -59,8 +60,11 @@ export function needsSignal(href, { root = ROOT, base = root } = {}) {
   return !KEPT.has(path);
 }
 
+/** Finished games waiting to upload: the rankings' queue and La Copa's days played offline (D-544). */
 export function pendingCount(storage = globalThis.localStorage) {
-  try { return (JSON.parse(storage?.getItem(PENDING_KEY) || '[]') || []).length; } catch (_) { return 0; }
+  let n = 0;
+  try { n = (JSON.parse(storage?.getItem(PENDING_KEY) || '[]') || []).length; } catch (_) { /* none */ }
+  return n + pendingCupDays(storage);
 }
 
 export function chipText(n, lang = getLang()) {
@@ -76,7 +80,9 @@ export function uploadText(r, lang = getLang()) {
   const T = (COMMON[lang] || COMMON.es).offline;
   const out = [];
   if (r?.sent) out.push(r.sent === 1 ? T.uploaded1 : T.uploaded.replace('{n}', r.sent));
-  for (const [k, t] of [['old', T.lostOld], ['full', T.lostFull], ['refused', T.lostRefused]]) if (r?.[k]) out.push(t.replace('{n}', r[k]));
+  // La Copa's days played offline (D-544, cup/outbox.js): one that reached the server after its day closed counts as not played
+  if (r?.cupSent) out.push(r.cupSent === 1 ? T.cupUploaded1 : T.cupUploaded.replace('{n}', r.cupSent));
+  for (const [k, t] of [['old', T.lostOld], ['full', T.lostFull], ['refused', T.lostRefused], ['cupLate', T.cupLate], ['cupDup', T.cupDup]]) if (r?.[k]) out.push(t.replace('{n}', r[k]));
   return out.join(' ');
 }
 
@@ -86,6 +92,8 @@ export function mark(scope, { lang = getLang(), root = ROOT } = {}) {
   const found = [];
   for (const a of scope.querySelectorAll('a[href]')) if (needsSignal(a.getAttribute('href'), { root, base: a.baseURI || root }) && !a.closest('.offline-chip')) found.push(a);
   for (const b of scope.querySelectorAll('.mode[data-mode="online"]')) found.push(b);
+  // Any control a page marks as needing the server (La Copa's Create, D-544)
+  for (const b of scope.querySelectorAll('[data-signal]')) found.push(b);
   for (const e of found) {
     e.classList.add('needs-signal');
     // The tag only on the outermost dimmed thing, and only where it fits: a round icon button (🏅)
@@ -205,7 +213,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     }
   }
 
-  win.addEventListener('storage', e => { if (e.key === PENDING_KEY) drawChip(); });
+  win.addEventListener('storage', e => { if (e.key === PENDING_KEY || e.key === OUTBOX_KEY) drawChip(); });
   connection.onChange(apply);
   apply(connection.mode());
   return (started = { apply, drawChip });

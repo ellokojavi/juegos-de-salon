@@ -44,7 +44,7 @@ export const GAMES = [
   // No dura minutos sino días. Va en los tres idiomas (D-170): la copa elige el de sus palabras
   // Cómo se juega, para la tabla del README: una copa no tiene modos de un celular o de sala.
   // Un torneo no es una partida: cada día manda su señal con `players: 1` y no pesa en MAX_PLAYERS.
-  // Needs the server for every day, its deadline and its PIN: never playable offline (D-538)
+  // Offline, only a pending day of a cup this phone kept a copy of, uploaded before the day closes (D-544)
   // Tiene de todo: aparece con cualquier tipo que se elija en los filtros de la portada
   // Salió del laboratorio (D-175): se abre desde el menú. /labs/ sigue para probar (la Copa de 3
   // días, la práctica con semilla y las demos).

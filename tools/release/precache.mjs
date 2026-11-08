@@ -46,8 +46,11 @@ export async function precache(site) {
   site = resolve(site);
   const { offlineOk, OFFLINE_PAGES = [], ALL_GAMES } = await import(pathToFileURL(join(site, 'assets/js/games.js')).href);
   const games = ALL_GAMES.filter(g => offlineOk(g) && g.path);
-  const roots = [...SHARED, ...OFFLINE_PAGES, ...games.flatMap(g => [g.path, ...(g.reuses || [])])];
-  const all = new Set(roots.flatMap(r => files(site, r)).map(f => f.split(sep).join('/')));
+  const roots = [...SHARED, ...OFFLINE_PAGES, ...games.filter(g => !g.torneo).flatMap(g => [g.path, ...(g.reuses || [])])];
+  // A tournament's folder holds every game's engine and pictures (cup/games/): only its own files go in,
+  // and what they import is followed below; each game's pictures come with that game (D-544)
+  const own = games.filter(g => g.torneo).flatMap(g => files(site, g.path).filter(f => !f.split(sep).join('/').slice(g.path.length).includes('/')));
+  const all = new Set([...roots.flatMap(r => files(site, r)), ...own].map(f => f.split(sep).join('/')));
   // A game also plays what its modules import from elsewhere (a minigame's engine under cup/games/):
   // follow every relative import, static or import(), from what is already in
   const queue = [...all].filter(f => /\.(js|html)$/.test(f));
