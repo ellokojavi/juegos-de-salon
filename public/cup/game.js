@@ -1006,7 +1006,13 @@ function tablero() {
     if (oferta) poner(body, oferta);
   }
 
-  if (terminada(meta, now)) poner(body, podio());
+  if (terminada(meta, now)) {
+    poner(body, podio());
+    // The ended cup was seen on its own board (the notification's tap lands here): the home page's
+    // recap does not tell it again (D-546, behind its flag; lab: #seccion-news-once)
+    const code = S.code;
+    flag('news-once').then(on => on && import('../assets/js/recap.js').then(m => m.markCupSeen(code))).catch(() => {});
+  }
   else if (podioAnticipado) { const decidido = podioDecidido(Lc, S.yo, now); if (decidido) poner(body, podioAdelantado(decidido)); }
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
 

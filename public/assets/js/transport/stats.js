@@ -753,6 +753,8 @@ export function trackFinish(info) {
     if (prev) prev.finished = true;
     try { const l = globalThis.localStorage; l?.setItem(PARTIDAS_KEY, String((Number(l.getItem(PARTIDAS_KEY)) || 0) + 1)); } catch (_) { /* no storage: nothing counted */ }
     try { noteSplashStep('finish'); } catch (_) { /* best effort */ }
+    // Which games this phone finished, by id (D-546): a splash announcing only those is not news to it
+    try { if (prev?.game) { const l = globalThis.localStorage, k = 'juegos-de-salon:jugados'; let v = []; try { v = JSON.parse(l?.getItem(k) || '[]'); } catch (_) { v = []; } if (Array.isArray(v) && !v.includes(prev.game)) l?.setItem(k, JSON.stringify([...v, prev.game].slice(-200))); } } catch (_) { /* no storage */ }
     if (prev?.game && isLocalMode(prev.mode)) {
       const st = stats();
       quiet(() => st.api.patch(dayPath(st.fp.env, dayOf(Date.now())), finChanges(prev)));

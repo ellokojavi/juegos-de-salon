@@ -151,3 +151,16 @@ assert.ok(rules.includes(`$ev.matches(/^(${SPLASH_EVENTS.join('|')})$/)`), 'fire
 }
 
 console.log('splash ✓');
+
+// Each piece of news is told once (D-546): behind its flag, a campaign of games this phone already played is skipped
+{
+  const { queue: q, alreadyPlayed, playedIds } = await import('./splash.js');
+  const campaigns = { a: { items: [{ game: 'x' }, { game: 'y' }] }, b: { items: [{ video: 'v.mp4' }] }, c: { items: [{ game: 'x' }] } };
+  const active = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+  assert.deepEqual(q({ active, campaigns }), ['a', 'b', 'c'], 'without the flag, nothing changes');
+  assert.deepEqual(q({ active, campaigns, played: ['x'] }), ['a', 'b'], 'all its games played: skipped');
+  assert.deepEqual(q({ active, campaigns, played: ['x', 'y'] }), ['b'], 'a teaser without games always shows');
+  assert.equal(alreadyPlayed(campaigns.b, ['x']), false);
+  assert.deepEqual(playedIds('["x",3]'), ['x']);
+  assert.deepEqual(playedIds('nope'), []);
+}
