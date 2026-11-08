@@ -1454,6 +1454,45 @@
       "date": "2026-11-08T19:54:15.880Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42517011419,
+      "check": "tests",
+      "pr": 1315,
+      "branch": "claude/vigilant-sagan-65621j",
+      "commit": "1070a1bf8a6c0e4a7d8e390e8ea83f29048b8fa1",
+      "test": "public/assets/js/conformance.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: aletazo is a game without a game.json: give it one (node tools/generators/manifests.mjs migrate <folder>) ❌\ncode: 'ERR_ASSERTION',\nexpected: true,",
+      "signature": "abf896ffb2",
+      "date": "2026-11-08T19:57:47.920Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42517011419,
+      "check": "tests",
+      "pr": 1315,
+      "branch": "claude/vigilant-sagan-65621j",
+      "commit": "1070a1bf8a6c0e4a7d8e390e8ea83f29048b8fa1",
+      "test": "public/assets/js/games.test.mjs",
+      "error": "✗ aletazo (cup/games/flap/)\nAssertionError [ERR_ASSERTION]: 1 juego(s) se saltan el canon: aletazo\n+ actual - expected",
+      "signature": "1fed369030",
+      "date": "2026-11-08T19:57:47.920Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42517011419,
+      "check": "tests",
+      "pr": 1315,
+      "branch": "claude/vigilant-sagan-65621j",
+      "commit": "1070a1bf8a6c0e4a7d8e390e8ea83f29048b8fa1",
+      "test": "tools/agents/memory.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: games without createSessionStore (C-6: save the game, or a debt entry in docs/memory-debt.json with its reason): aletazo\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "0322fa081b",
+      "date": "2026-11-08T19:57:47.920Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
