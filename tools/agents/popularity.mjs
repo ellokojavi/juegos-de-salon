@@ -16,8 +16,9 @@
  *     them together as La Copa itself: `resumenCopas`.
  * Finished, not started (D-361): a game people often leave halfway should not be the first thing a
  * new player meets. A game with nothing finished keeps its old place among the others with nothing.
- * The processes round runs `update` once the list is a week old (step 8 of its guide) and opens the
- * PR with auto-merge; a week with the same order leaves no PR.
+ * The Weekly popularity workflow (.github/workflows/popularity.yml, D-547) runs `update` every Monday,
+ * opens the PR, runs its checks and merges it; a week with the same order leaves no PR. The processes
+ * round only runs it by hand when `processes.mjs check` says the list is overdue (the workflow failed).
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

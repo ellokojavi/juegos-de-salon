@@ -8,6 +8,9 @@ name: Tests
 on:
   pull_request:
   workflow_call:
+  # The weekly popularity PR (popularity.yml, D-547) is opened with the workflow token, which wakes
+  # nothing: that workflow runs this one on the PR's branch by hand
+  workflow_dispatch:
 
 jobs:
   tests:
