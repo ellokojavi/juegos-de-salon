@@ -30,6 +30,13 @@ assert.deepEqual(empty, { recap: false, splash: ['one', 'two'], install: false }
 // The splash's seen ids: the list (D-430), and the bare id kept before it
 assert.deepEqual(readPending({ get: store({ [SPLASH_SEEN_KEY]: '["one"]' }), now, active, campaigns }).splash, ['two']);
 assert.deepEqual(readPending({ get: store({ [SPLASH_SEEN_KEY]: 'one' }), now, active, campaigns }).splash, ['two'], 'the legacy bare id');
+// Behind news-once (D-546): a campaign of games this phone already played is not pending
+{
+  const games = { one: { items: [{ game: 'g' }] }, two: {} };
+  const played = store({ 'juegos-de-salon:jugados': '["g"]' });
+  assert.deepEqual(readPending({ get: played, now, active, campaigns: games }).splash, ['one', 'two'], 'without the flag');
+  assert.deepEqual(readPending({ get: played, now, active, campaigns: games, newsOnce: true }).splash, ['two'], 'with it');
+}
 assert.deepEqual(readPending({ get: store({ [SPLASH_SEEN_KEY]: '["one","two"]' }), now, active, campaigns }).splash, []);
 // A campaign that expired before this phone reached it is gone (D-431 accepts it)
 assert.deepEqual(readPending({ get: store({ [SPLASH_SEEN_KEY]: 'one' }), now: Date.parse('2026-10-29T09:00:00'), active, campaigns }).splash, []);

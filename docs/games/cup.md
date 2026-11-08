@@ -418,6 +418,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   climbed or lost since day 1 (▲2, ▼1, =) and the points, the player's row marked. **🏆 Ver la copa** opens
   the cup, **Cerrar** and ✕ close it. Closing it or following the link marks it seen
   (`copa:resumen-visto`); with several due, one in `OPEN_CUPS` first (D-426), then the most recent. That visit the splash (D-351) waits.
+  Behind the lab flag `news-once` (D-546), a board that shows an ended cup's final podium marks it seen too (`markCupSeen`), so the recap does not tell it again.
   `/?recap=demo` shows it with the podium demo, recording nothing.
   Since D-424 the same window also tells a season of Uno al día that ended (`assets/js/daily-recap.js`,
   docs/UNO-AL-DIA.md); La Copa's goes first when both are due, one per visit.
@@ -526,6 +527,9 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   la semilla; la protección contra trampas está en las reglas de Firebase (ventanas con la hora del
   servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
   puntajes sigue pendiente (LIG-30).
+- **A day's cover puts «Empezar» right under the title** (U-39, C-5): the «Se juega una sola vez» warning above it,
+  «Probar primero» under it, then «Cómo se juega» folded and the wildcard. With the rules open first,
+  «Empezar» sat 500–1000 px below the fold of a small phone; `landing-fold.mjs` checks it as `copa day:<scene>`.
 - **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
   the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
   While playing a day and on the day's result it also says «‹ Volver a la copa» and goes to the board:

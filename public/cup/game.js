@@ -1032,7 +1032,13 @@ function tablero() {
     if (oferta) poner(body, oferta);
   }
 
-  if (terminada(meta, now)) poner(body, podio());
+  if (terminada(meta, now)) {
+    poner(body, podio());
+    // The ended cup was seen on its own board (the notification's tap lands here): the home page's
+    // recap does not tell it again (D-546, behind its flag; lab: #seccion-news-once)
+    const code = S.code;
+    flag('news-once').then(on => on && import('../assets/js/recap.js').then(m => m.markCupSeen(code))).catch(() => {});
+  }
   else if (podioAnticipado) { const decidido = podioDecidido(Lc, S.yo, now); if (decidido) poner(body, podioAdelantado(decidido)); }
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
 
@@ -1402,16 +1408,20 @@ function antesDeJugar(d) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
-    el('details', { class: 'panel', open: true }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
-      // The final names its rounds, the games of this week (D-418)
-      CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
-      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
+    // Empezar right under the title, the rules (folded, U-39) and the wildcard below it (C-5): on a
+    // short phone the open rules pushed it a whole screen down
+    el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn),
+    // Offline (D-544): the result waits on the phone and has to go up before the day closes
+    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(T.offlineDay, { t: cierreDe(meta, d) })) : null,
+    err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
-    el('p', { class: 'muted center' }, T.startWarn),
-    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(T.offlineDay, { t: cierreDe(meta, d) })) : null,
-    err, empezar));
+    // The wildcard is decided before Empezar is tapped: right after the buttons, not under the rules
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
+    el('details', { class: 'panel' }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+      // The final names its rounds, the games of this week (D-418)
+      CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J)))));
 }
 
 /** When day `d` closes, in the player's own time: "lunes 23:59", "Monday 23:59" (D-544). */

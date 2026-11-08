@@ -16,7 +16,8 @@
  *
  * The choice is pure (`readPending`, `choose`), so node tests it without a DOM.
  */
-import { queue, seenIds, readProfile, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash, loadActive } from './splash.js';
+import { queue, seenIds, readProfile, playedIds, PLAYED_KEY, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash, loadActive } from './splash.js';
+import { flag } from './flags.js';
 import { dueCup, startRecap, MINE_KEY, SEEN_KEY as CUP_SEEN_KEY } from './recap.js';
 import { dueSeason, DAILY_KEY, SEASON_SEEN_KEY, localDate } from './daily-recap.js';
 import { INSTALAR_NO_KEY, pasosDe, globoInstalar } from './instalar.js';
@@ -32,12 +33,12 @@ const json = (raw, empty) => { try { const v = JSON.parse(raw ?? 'null'); return
  * it has kept: the splash's seen ids as a list or, before D-430, a bare id; the install bubble's "no
  * more" as '1'. `active` and `campaigns` default to splash.js's. `installable` says whether this phone gets the bubble at all (pasosDe).
  */
-export function readPending({ get, now = Date.now(), today = localDate(now), active, campaigns, installable = false, automated = false } = {}) {
+export function readPending({ get, now = Date.now(), today = localDate(now), active, campaigns, installable = false, automated = false, newsOnce = false } = {}) {
   const list = key => { const v = json(get(key), []); return Array.isArray(v) ? v : []; };
   const days = Object.keys(json(get(DAILY_KEY), {})?.dias || {});
   return {
     recap: !!dueCup({ mine: list(MINE_KEY), seen: list(CUP_SEEN_KEY), now }) || !!dueSeason({ today, days, seen: list(SEASON_SEEN_KEY) }),
-    splash: queue({ ...(active ? { active } : {}), ...(campaigns ? { campaigns } : {}), seen: seenIds(get(SPLASH_SEEN_KEY)), today: new Date(now), automated, profile: readProfile(get) }),
+    splash: queue({ ...(active ? { active } : {}), ...(campaigns ? { campaigns } : {}), seen: seenIds(get(SPLASH_SEEN_KEY)), today: new Date(now), automated, profile: readProfile(get), ...(newsOnce ? { played: playedIds(get(PLAYED_KEY)) } : {}) }),
     install: installable && get(INSTALAR_NO_KEY) !== '1',
   };
 }
@@ -80,10 +81,14 @@ export async function startHomeWindows({ lang = 'es', T, url, tap, search = glob
   // Under the end-to-end scripts the splash never opens and the recap checks it itself (startRecap);
   // the install bubble does open, as it always did, so install-prompt.mjs still finds it
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
+  // Each piece of news is told once (D-545, D-546), behind its flag (lab: #seccion-news-once): a visit that comes from a notification
+  // came for that, so the home page opens none of its own windows on it; they wait for the next visit
+  const newsOnce = !automated && await flag('news-once').catch(() => false);
+  if (newsOnce && param('notif', search) !== null) return null;
   const get = k => { try { return globalThis.localStorage?.getItem(k) ?? null; } catch (_) { return null; } };
   // The campaigns on right now are the panel's, in Firebase (D-454); the scripts never ask
   const active = automated ? [] : await loadActive();
-  const pending = readPending({ get, active, installable: !!pasosDe(), automated });
+  const pending = readPending({ get, active, installable: !!pasosDe(), automated, newsOnce });
   for (const w of candidates(pending)) {
     if (w.kind === 'recap' && await recap()) return w;
     // After the home page has drawn its list, so the window lands on a page that is already there
