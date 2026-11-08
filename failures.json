@@ -1537,7 +1537,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.copa.files: public/cup/store-offline.js\nERROR · appeared modules: public/assets/js/cup-outbox.js, public/cup/store-offline.js",
       "signature": "f863365751",
       "date": "2026-11-08T20:21:16.661Z",
-      "fix": null,
+      "fix": {
+        "commit": "80f9ef3ae00ef4babacc72a287f1381a209cef06",
+        "date": "2026-11-08T20:33:01.800Z",
+        "stat": "5 file(s) +15 −9: README.md, docs/facts.json, public/assets/js/i18n.js, public/assets/js/offline-ui.test.mjs, public/privacy/texts.js"
+      },
       "flaky": false
     },
     {
@@ -1550,7 +1554,11 @@
       "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
       "signature": "3fbe4124c0",
       "date": "2026-11-08T20:26:40.842Z",
-      "fix": null,
+      "fix": {
+        "commit": "80f9ef3ae00ef4babacc72a287f1381a209cef06",
+        "date": "2026-11-08T20:33:01.800Z",
+        "stat": "4 file(s) +12 −6: README.md, docs/facts.json, public/assets/js/offline-ui.test.mjs, public/privacy/texts.js"
+      },
       "flaky": false
     },
     {
@@ -1563,7 +1571,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.copa.files: public/cup/store-offline.js\nERROR · appeared modules: public/assets/js/cup-outbox.js, public/cup/store-offline.js",
       "signature": "f863365751",
       "date": "2026-11-08T20:27:17.045Z",
-      "fix": null,
+      "fix": {
+        "commit": "80f9ef3ae00ef4babacc72a287f1381a209cef06",
+        "date": "2026-11-08T20:33:01.800Z",
+        "stat": "2 file(s) +8 −2: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
