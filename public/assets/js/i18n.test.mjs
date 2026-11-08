@@ -4,6 +4,7 @@
 // se ve como "undefined" en pantalla, así que esto se revisa antes de publicar.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang, idiomaDelNavegador, BANDERAS, NOMBRES_IDIOMA } from './i18n.js';
 import { GAMES, SUELTOS, TIPOS, ALL_GAMES } from './games.js';
 import { JUEGOS_COPA, juegosCopa } from '../../cup/rules.js';
@@ -79,10 +80,20 @@ for (const d of AHORCADO) {
 }
 // Un juego que por ahora existe en un solo idioma lo declara en `idiomas` (así fue La Copa, D-98,
 // hasta D-170): su tarjeta del menú sí va en los tres, pero sus textos no se comparan.
-const TRADUCIDOS = GAMES.filter(g => !g.idiomas || IDIOMAS.every(l => g.idiomas.includes(l)));
+// Every game (C-21, D-542): a game of GAMES keeps its texts in its rules.js; one built in cup/games/
+// in its folder's texts.js (`const ES = { … }`, merged into cup/rules.js, D-331), or, without one, in
+// cup/rules.js itself, compared above as La Copa's LOCALES. `file` is the path from public/.
+const { allGames } = await import('../../../tools/agents/game-folders.mjs');
+const TRADUCIDOS = [];
+for (const { game: g, cup, folder } of await allGames()) {
+  if (g.idiomas && !IDIOMAS.every(l => g.idiomas.includes(l))) continue;
+  const file = cup ? `${folder.replace(/^public\//, '')}/texts.js` : `${g.path}rules.js`;
+  if (cup && !existsSync(new URL(`../../${file}`, import.meta.url))) continue;
+  TRADUCIDOS.push({ id: g.id, file });
+}
 for (const g of TRADUCIDOS) {
-  const { LOCALES } = await import(`../../${g.path}rules.js`);
-  same(`LOCALES de ${g.id}`, LOCALES);
+  const mod = await import(`../../${g.file}`);
+  same(`LOCALES de ${g.id}`, mod.LOCALES || mod.default);
 }
 
 /**
@@ -113,21 +124,21 @@ function clavesDirectas(src, lang) {
 }
 
 for (const g of TRADUCIDOS) {
-  const src = await readFile(new URL(`../../${g.path}rules.js`, import.meta.url), 'utf8');
+  const src = await readFile(new URL(`../../${g.file}`, import.meta.url), 'utf8');
   const cuantas = {};
   for (const lang of IDIOMAS) {
     const claves = clavesDirectas(src, lang);
-    assert.ok(claves?.length, `rules.js de ${g.id}: no se encontró el bloque const ${lang.toUpperCase()} = {`);
+    assert.ok(claves?.length, `${g.file} de ${g.id}: no se encontró el bloque const ${lang.toUpperCase()} = {`);
     const vistas = new Set(), repes = new Set();
     for (const k of claves) { if (vistas.has(k)) repes.add(k); vistas.add(k); }
-    assert.deepEqual([...repes], [], `rules.js de ${g.id}, ${lang}: claves repetidas (la segunda pisa a la primera)`);
+    assert.deepEqual([...repes], [], `${g.file} de ${g.id}, ${lang}: claves repetidas (la segunda pisa a la primera)`);
     cuantas[lang] = claves.length;
   }
   // Los tres bloques tienen las mismas claves (eso ya lo comprueba same()), así que si uno se
   // leyó con otra cantidad es que el recorrido de llaves se perdió justo en ese idioma. Vale
   // para un juego con mucho contenido y para uno chico, que es lo que no hacía contar claves.
   assert.equal(new Set(Object.values(cuantas)).size, 1,
-    `rules.js de ${g.id}: los tres idiomas no dieron la misma cantidad de claves (${JSON.stringify(cuantas)})`);
+    `${g.file} de ${g.id}: los tres idiomas no dieron la misma cantidad de claves (${JSON.stringify(cuantas)})`);
 }
 
 
@@ -141,4 +152,4 @@ assert.equal(idiomaDelNavegador(['ja', 'zh']), 'es');
 assert.equal(idiomaDelNavegador([]), 'es');
 assert.equal(idiomaDelNavegador([undefined]), 'es');
 
-console.log(`i18n: los ${IDIOMAS.length} idiomas tienen las mismas claves en menú, frases, mazos y los ${GAMES.length} juegos`);
+console.log(`i18n: los ${IDIOMAS.length} idiomas tienen las mismas claves en menú, frases, mazos y los ${ALL_GAMES.length} juegos`);
