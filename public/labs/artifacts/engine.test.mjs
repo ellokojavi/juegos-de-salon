@@ -1,7 +1,7 @@
 // Artefactos' engine: placing parts, and every level solved by its solution and failed without parts.
 import assert from 'node:assert/strict';
 import { POOL } from './levels.js';
-import { SETTLE, ROWS as FLOOR, LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf } from './engine.js';
+import { SETTLE, ROWS as FLOOR, LEVELS, PARTS, COLS, ROWS, newBoard, place, move, remove, flip, partAt, fits, simulate, newRun, stepRun, starsOf, segmentsOf, blockedCells } from './engine.js';
 
 // Every level: its solution fits its tray and wins; an empty board does not; its parts are known
 LEVELS.forEach((L, i) => {
@@ -20,6 +20,11 @@ LEVELS.forEach((L, i) => {
   for (const L of POOL) {
     assert.ok(!ids.has(L.id), `${L.id} is unique`); ids.add(L.id);
     assert.notEqual(simulate(newBoard(L)).state, 'won', `${L.id} must not solve itself`);
+    // No fixed piece on the basket: spikes inside it or a girder through it read as a bug (the owner's report, t5-6)
+    for (const f of L.fixed) {
+      const cells = blockedCells({ start: { x: -50, y: -50 }, goal: { c: -50, r: -50 }, fixed: [f] });
+      assert.ok(!cells.has(`${L.goal.c},${L.goal.r}`) && !cells.has(`${L.goal.c + 1},${L.goal.r}`), `${L.id}: its ${f.type} sits on the basket`);
+    }
     const b = newBoard(L);
     for (const p of L.solution) assert.ok(place(b, p.type, p.c, p.r, p.dir ?? 1), `${L.id}: the answer's ${p.type} fits its tray`);
     assert.equal(simulate(b).state, 'won', `${L.id}: its answer wins`);
