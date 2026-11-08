@@ -273,6 +273,15 @@ function askFrame(demo) {
 }
 
 /**
+ * A season's recap was seen: the phone remembers it, and tells its One a Day notifications, so the
+ * season's notification is not sent after it (D-545: each piece of news is told once, by the first channel).
+ */
+function seasonSeen(season, month, lang) {
+  season.markSeasonSeen(month);
+  import('./uno-al-dia-avisos.js').then(m => m.refrescar({ lang })).catch(() => {});
+}
+
+/**
  * What the home page calls first, through home-windows.js (D-431): resolves true when it opened a
  * recap (the splash then waits for the next visit). La Copa's goes first; a season of Uno al día, on a visit with no
  * cup to tell. Never under the end-to-end scripts (`?test`, automation) unless `?recap=` asks.
@@ -287,7 +296,7 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
       const month = season.monthBefore(season.localDate().slice(0, 7));
       const found = await season.loadSeasonRecap({ month });
       if (!found) return false;
-      showSeason(found, lang, season, () => season.markSeasonSeen(month));
+      showSeason(found, lang, season, () => seasonSeen(season, month, lang));
       return true;
     }
     // The month-end window's demo: a made-up season, this phone at ?place= (1 by default)
@@ -316,7 +325,7 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
     if (!found) return false;
     // The table's own demo stays the table window; the month-end window has its own demo
     if (mode === 'season-demo') showRecap(seasonView(found, lang), { lang });
-    else showSeason(found, lang, season, () => season.markSeasonSeen(found.month));
+    else showSeason(found, lang, season, () => seasonSeen(season, found.month, lang));
     return true;
   } catch (_) { return false; }
 }
