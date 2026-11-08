@@ -1379,7 +1379,9 @@ function antesDeJugar(d) {
     // A setting of Empezar (the owner, 2026-11-08): a switch beside it, seen before starting, applied
     // when Empezar is tapped; nothing is spent until then (C-8: a setting, chosen before the game)
     const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'btn-comodin', 'aria-checked': 'false', 'aria-label': T.wildUse,
-      onClick: () => { SFX.tap(); usarComodin = !usarComodin; sw.classList.toggle('on', usarComodin); sw.setAttribute('aria-checked', String(usarComodin)); } });
+      onClick: () => { SFX.tap(); usarComodin = !usarComodin; sw.classList.toggle('on', usarComodin); sw.setAttribute('aria-checked', String(usarComodin));
+        // Empezar says what it spends (C-8, U-15): the start is the confirmation
+        empezar.textContent = usarComodin ? `🃏 ${T.startWild}` : `${J.emoji} ${T.start}`; } });
     comodin = el('div', { class: 'toggle-row', id: 'fila-comodin' },
       el('span', { class: 'txt' }, el('b', {}, el('span', { 'aria-hidden': 'true' }, '🃏 '), T.wildTitle), el('small', {}, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast)), sw);
   }
@@ -1393,7 +1395,8 @@ function antesDeJugar(d) {
     SFX.tap();
     empezar.disabled = true;
     try {
-      if (usarComodin) { await store.comodin(S.code, d, S.yo); usarComodin = false; SFX.king(); }
+      // Once spent, the switch can no longer be turned off: a retry starts the day already doubled
+      if (usarComodin) { await store.comodin(S.code, d, S.yo); usarComodin = false; $('#btn-comodin')?.setAttribute('disabled', ''); SFX.king(); }
       await store.empezar(S.code, d, S.yo);
       // Una copa de ?test es de mentira (vive en este navegador): no suma en las estadísticas.
       // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
