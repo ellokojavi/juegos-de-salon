@@ -1509,6 +1509,19 @@
         "stat": "45 file(s) +1038 −139: .github/pull_request_template.md, CONTRIBUTING.md, README.md, changelog/ccr-662c7bd3-3nku3r.md, changelog/claude-adoring-johnson-r6i53t.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42518215535,
+      "check": "tests",
+      "pr": 1318,
+      "branch": "ccr-662c7bd3-3nku3r",
+      "commit": "4314d397e35c38d5fc35bcdedf2521a758ca87fd",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/index-nav.js\nERROR · appeared tests: public/labs/index-nav.test.mjs",
+      "signature": "ccf0a04dba",
+      "date": "2026-11-08T20:14:30.654Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
