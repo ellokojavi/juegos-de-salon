@@ -30,7 +30,7 @@ const PLAY = (until, ms) => `(async () => {
 })()`;
 
 await b.go(`${SITE}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-aletazo #btn-aletazo')?.getAttribute('href')`) === 'flap/', 'the lab offers Aletazo under Active projects');
+ok(await ev(`document.querySelector('#activos #seccion-aletazo #btn-aletazo')?.getAttribute('href')`) === '../flap/' && await ev(`document.querySelector('#seccion-aletazo #btn-aletazo-lab')?.getAttribute('href')`) === 'flap/', 'the lab offers Aletazo under Active projects: the finished page /flap/, and the prototype as a link (D-517)');
 ok(/Flappy Bird/.test(await ev(`document.querySelector('#seccion-aletazo a[href*="Flappy_Bird"]')?.textContent || ''`)), 'and says it is inspired by Flappy Bird, with its link');
 
 await b.go(`${SITE}/labs/flap/?test`, 1200);
