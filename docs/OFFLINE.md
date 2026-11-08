@@ -82,7 +82,7 @@ PR that changes what is kept on the phone.
 - **Signing in.** The queue waits for its player: signed out, nothing goes; the Firebase sign-in renews
   itself with the signal, from the anonymous id the phone keeps (the same storage `persist()` protects).
 - Background Sync is left out: the next open with signal, and the `online` event, are enough.
-- **La Copa** (D-544, amends this plan's "never queued"): a pending day of a cup this phone kept a copy
+- **La Copa** (D-544, amends this plan's "never queued"; its own lab flag `cup-offline`): a pending day of a cup this phone kept a copy
   of (`cuenta.snapshot`, saved on each online read) plays offline from `store-offline.js`; its start and
   result wait in `assets/js/cup-outbox.js` and upload, start first, from any page when the signal is
   back. The server's rules refuse both after the day's window closes, so one that arrives late counts

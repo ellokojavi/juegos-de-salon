@@ -99,7 +99,7 @@ How it works:
 
 - **Everything comes from a seed** (`code:day`), so everyone plays the same content with no server (D-97).
 - **A day stays open until the next midnight** (grace day), except the final. **Late sign-ups** stay open until the final unless closed or full (ten players); missed days score 0 (D-177). Time only breaks ties, and it is *active* time (D-95). **Two days in a row without playing leave a player out**, with a warning the day before; the admin can bring them back (D-347, D-376).
-- **A pending day plays offline** (lab, offline mode): from the copy the phone kept of the cup (`store-offline.js`); the result waits in `assets/js/cup-outbox.js` and uploads when the signal is back, if the day is still open then; later, it counts as not played (D-544).
+- **A pending day plays offline** (lab flag `cup-offline`): from the copy the phone kept of the cup (`store-offline.js`); the result waits in `assets/js/cup-outbox.js` and uploads when the signal is back, if the day is still open then; later, it counts as not played (D-544).
 - **Results stay hidden until you play**, so the table cannot spoil today.
 - **Accounts are a name and a PIN inside one cup**, on Firebase anonymous auth; the PIN hash is unreadable and the rules check it, one PIN attempt every 5 seconds per player (D-96, D-464). Signed in to the leaderboards, **Your cups** follows you to any phone (D-220); finished cups hide behind **Show finished cups** (D-234, D-336).
 - **The admin plays too**: renames, removes or re-PINs players, shares the invite, **today's reminder** with who is missing, the table and the final summary (D-99, D-171, D-176, D-165); can **end the cup early** (D-161) and **export the final table** as an image or CSV. A new cup opens with a short guide (D-110).
