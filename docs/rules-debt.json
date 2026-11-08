@@ -10,11 +10,11 @@
  },
  "2026-11-08": {
   "architecture": 50,
-  "conformance": 16,
+  "conformance": 17,
   "design-system": 82,
   "english": 161,
   "C-2": 0,
-  "C-6": 16,
+  "C-6": 17,
   "C-20": 304,
   "C-21": 42
  }
