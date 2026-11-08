@@ -120,12 +120,13 @@ export function escena(canvas) {
     for (let i = 0; i <= n; i++) bolt(f.x1 + (f.x2 - f.x1) * i / n, f.y1 + (f.y2 - f.y1) * i / n, '#c7b8ff');
   }
   function spikes(f) {
+    // Each spike a rhombus, pointed up and down, around the line the ball pops on
     ctx.save(); glow(C.red, 12 + Math.sin(clock * 4) * 4);
-    const n = f.w * 3, w = 1 / 3;
+    const n = f.w * 3, w = 1 / 3, top = f.r + 0.42, mid = f.r + 0.7, bot = f.r + 0.98;
     for (let i = 0; i < n; i++) {
-      const x = f.c + i * w, g = ctx.createLinearGradient(0, X(f.r + 0.55), 0, X(f.r + 1));
-      g.addColorStop(0, '#ffd1d9'); g.addColorStop(0.35, C.red); g.addColorStop(1, '#6d0f2a');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(X(x + 0.02), X(f.r + 1)); ctx.lineTo(X(x + w / 2), X(f.r + 0.55)); ctx.lineTo(X(x + w - 0.02), X(f.r + 1)); ctx.fill();
+      const x = f.c + i * w, g = ctx.createLinearGradient(0, X(top), 0, X(bot));
+      g.addColorStop(0, '#ffd1d9'); g.addColorStop(0.45, C.red); g.addColorStop(1, '#6d0f2a');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(X(x + w / 2), X(top)); ctx.lineTo(X(x + w - 0.02), X(mid)); ctx.lineTo(X(x + w / 2), X(bot)); ctx.lineTo(X(x + 0.02), X(mid)); ctx.closePath(); ctx.fill();
     }
     ctx.restore();
   }
@@ -136,6 +137,11 @@ export function escena(canvas) {
     const lg = ctx.createRadialGradient(X(c + 1), X(r + 0.6), 0, X(c + 1), X(r + 0.6), X(1.2));
     lg.addColorStop(0, 'rgba(255,214,79,0.28)'); lg.addColorStop(1, 'rgba(255,214,79,0)');
     ctx.fillStyle = lg; ctx.fillRect(X(c - 0.3), X(r - 0.4), X(2.6), X(1.6));
+  }
+  /** The basket's weave and rim, drawn over the ball so a ball inside reads as inside */
+  function basketFront(g, won) {
+    const { c, r } = g, x0 = c + 0.1, x1 = c + 1.9, top = r + 0.05, bot = r + 1;
+    const pulse = won ? 30 : 14 + Math.sin(clock * 3) * 5;
     // the woven body
     ctx.save(); glow(C.yellow, pulse);
     ctx.beginPath(); ctx.moveTo(X(x0), X(top)); ctx.lineTo(X(x0 + 0.1), X(bot)); ctx.lineTo(X(x1 - 0.1), X(bot)); ctx.lineTo(X(x1), X(top));
@@ -175,6 +181,9 @@ export function escena(canvas) {
     if (!s.board || !canvas.width) return;
     const { level } = s.board, building = !s.run;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // the canvas always matches its box, so the ball stays round (a stage can start mid-layout)
+    const w = Math.round(canvas.clientWidth * (devicePixelRatio || 1)), h = Math.round(canvas.clientHeight * (devicePixelRatio || 1));
+    if (w && (w !== canvas.width || h !== canvas.height)) size();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // the board shakes for a moment after an explosion
     if (shake > 0) ctx.translate((Math.random() - 0.5) * X(0.25) * shake, (Math.random() - 0.5) * X(0.25) * shake);
@@ -197,6 +206,13 @@ export function escena(canvas) {
       }
       part(p);
     }
+    if (s.hint && building) {
+      // a hint: where one part of an answer goes, a pulsing cyan slot with the part faint over it
+      const g = s.hint, a = 0.55 + 0.35 * Math.sin(clock * 6);
+      ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = C.cyan; ctx.lineWidth = Math.max(2, X(0.04)); ctx.setLineDash([X(0.1), X(0.07)]); glow(C.cyan, 14);
+      ctx.beginPath(); ctx.roundRect(X(g.c) + 2, X(g.r) + 2, X(2) - 4, X(1) - 4, X(0.15)); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.globalAlpha = 0.4; part(g); ctx.restore();
+    }
     if (s.ghost && building) {
       // where it would land: a lit slot (green fits, red does not), and the part over it
       const g = s.ghost, ok = g.ok;
@@ -208,6 +224,7 @@ export function escena(canvas) {
     s.trail.forEach(([x, y], i) => { ctx.globalAlpha = 0.3 * i / s.trail.length; ctx.fillStyle = C.pink; ctx.beginPath(); ctx.arc(X(x), X(y), X(R) * (0.3 + 0.5 * i / s.trail.length), 0, 7); ctx.fill(); });
     ctx.globalAlpha = 1;
     if (!s.popped) ball(s.run ? s.run.ball : level.start, s.roll || 0);
+    basketFront(level.goal, s.won);
     // particles
     for (const p of sparks) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.colour; ctx.beginPath(); ctx.arc(X(p.x), X(p.y), X(p.size), 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
@@ -254,5 +271,15 @@ export function escena(canvas) {
     }
   }
   function boing(part) { squash.set(part, 0.25); }
-  return { size, draw, tick, burst, boing, busy, explode, get C() { return C; } };
+  /** The tray's picture of a part: this canvas holds one part, two cells by one, nothing else */
+  function piece(type) {
+    const r = canvas.getBoundingClientRect();
+    if (!r.width) return;
+    dpr = devicePixelRatio || 1; colours();
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    px = canvas.width / 2.2;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    part({ type, c: 0.1, r: 0.05, dir: 1 });
+  }
+  return { size, draw, piece, tick, burst, boing, busy, explode, get C() { return C; } };
 }

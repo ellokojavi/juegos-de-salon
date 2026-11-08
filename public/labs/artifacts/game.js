@@ -38,7 +38,7 @@ const LOCALES = {
     piezas: { ramp: 'Rampa', plank: 'Tabla', spring: 'Cama elástica', fan: 'Ventilador' },
     probar: '▶ Probar', parar: '■ Parar', limpiar: '🧹 Limpiar', girar: '↔ Girar', quitar: '🗑 Quitar',
     elige: 'Arrastra una pieza al tablero (o tócala y toca una casilla).', toca: 'Toca el tablero para poner la {p}.', noCabe: 'Ahí no cabe.',
-    movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.',
+    movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.', pista: '💡 Pista', pistaDice: 'Prueba poner una {p} donde brilla. Con pista, la etapa vale como mucho ★★.', sinPista: 'Ya tienes todo lo de la respuesta: prueba.', rendirse: '🏳️ Rendirse', rendirseSeguro: '¿Seguro? Toca otra vez', rendida: 'Etapa saltada.',
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
     gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente etapa ›', otraVez: 'Jugar otra vez', formato: '5 etapas · {n}', mejor: '🏆 Récord: {n}', etapa: 'Etapa {n} de 5', superada: '¡Etapa {n} superada!', enTiempo: 'En {n}.', verResultado: 'Ver el resultado ›', record: '🏆 ¡Nuevo récord!', sinTiempo: '⏱️ ¡Se acabó el tiempo!', finJuego: '¡Listo!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificultad', 'Piezas', 'Tiempo', 'Puntos'], rapidez: '⚡ Rapidez (usaste {n})', total: 'Total', leyenda: 'Cada etapa vale 10, más 5 / 3 / 1 por usar pocas piezas (★★★ / ★★ / ★), más hasta 10 por rapidez.', tuMejor: 'Tu récord: {n}',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', otro: '🎲 Otro', dificultad: ['Aprendiendo', 'Fácil', 'Fácil +', 'Medio', 'Medio +', 'Difícil', 'Experto'],
@@ -59,7 +59,7 @@ const LOCALES = {
     piezas: { ramp: 'Ramp', plank: 'Plank', spring: 'Trampoline', fan: 'Fan' },
     probar: '▶ Try', parar: '■ Stop', limpiar: '🧹 Clear', girar: '↔ Turn', quitar: '🗑 Remove',
     elige: 'Drag a part onto the board (or tap it, then tap a cell).', toca: 'Tap the board to place the {p}.', noCabe: 'It does not fit there.',
-    movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.',
+    movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.', pista: '💡 Hint', pistaDice: 'Try a {p} where it glows. With a hint, the stage is worth ★★ at most.', sinPista: 'You already have everything the answer needs: try it.', rendirse: '🏳️ Give up', rendirseSeguro: 'Sure? Tap again', rendida: 'Stage skipped.',
     fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
     gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next stage ›', otraVez: 'Play again', formato: '5 stages · {n}', mejor: '🏆 Best: {n}', etapa: 'Stage {n} of 5', superada: 'Stage {n} cleared!', enTiempo: 'In {n}.', verResultado: 'See the result ›', record: '🏆 New best!', sinTiempo: '⏱️ Time is up!', finJuego: 'Done!', superadas: '{n} of 5 stages cleared.', columnas: ['Stage', 'Difficulty', 'Parts', 'Time', 'Points'], rapidez: '⚡ Speed (you used {n})', total: 'Total', leyenda: 'Each stage is worth 10, plus 5 / 3 / 1 for using few parts (★★★ / ★★ / ★), plus up to 10 for speed.', tuMejor: 'Your best: {n}',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', otro: '🎲 Another', dificultad: ['Learning', 'Easy', 'Easy +', 'Medium', 'Medium +', 'Hard', 'Expert'],
@@ -80,7 +80,7 @@ const LOCALES = {
     piezas: { ramp: 'Rampa', plank: 'Tábua', spring: 'Cama elástica', fan: 'Ventilador' },
     probar: '▶ Testar', parar: '■ Parar', limpiar: '🧹 Limpar', girar: '↔ Girar', quitar: '🗑 Tirar',
     elige: 'Arraste uma peça para o tabuleiro (ou toque nela e numa casa).', toca: 'Toque o tabuleiro para colocar a {p}.', noCabe: 'Aí não cabe.',
-    movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.',
+    movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.', pista: '💡 Dica', pistaDice: 'Tente uma {p} onde brilha. Com dica, a etapa vale no máximo ★★.', sinPista: 'Você já tem tudo o que a resposta pede: teste.', rendirse: '🏳️ Desistir', rendirseSeguro: 'Certeza? Toque de novo', rendida: 'Etapa pulada.',
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
     gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próxima etapa ›', otraVez: 'Jogar de novo', formato: '5 etapas · {n}', mejor: '🏆 Recorde: {n}', etapa: 'Etapa {n} de 5', superada: 'Etapa {n} superada!', enTiempo: 'Em {n}.', verResultado: 'Ver o resultado ›', record: '🏆 Novo recorde!', sinTiempo: '⏱️ Acabou o tempo!', finJuego: 'Pronto!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificuldade', 'Peças', 'Tempo', 'Pontos'], rapidez: '⚡ Rapidez (você usou {n})', total: 'Total', leyenda: 'Cada etapa vale 10, mais 5 / 3 / 1 por usar poucas peças (★★★ / ★★ / ★), mais até 10 por rapidez.', tuMejor: 'Seu recorde: {n}',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', otro: '🎲 Outro', dificultad: ['Aprendendo', 'Fácil', 'Fácil +', 'Médio', 'Médio +', 'Difícil', 'Expert'],
@@ -183,7 +183,7 @@ function texts() {
   $('pasos').replaceChildren(...L.como.map(([e, t]) => el('li', {}, el('span', { 'aria-hidden': 'true' }, e), el('span', {}, t))));
   $('btn-jugar').textContent = L.jugar;
   $('btn-probar').textContent = L.probar; $('btn-limpiar').textContent = L.limpiar; $('btn-deshacer').textContent = L.deshacer;
-  $('btn-girar').textContent = L.girar; $('btn-quitar').textContent = L.quitar;
+  $('btn-girar').textContent = L.girar; $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse; $('btn-quitar').textContent = L.quitar;
   $('btn-otra').textContent = L.otraVez;
   $('pie').replaceChildren(el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
@@ -206,7 +206,7 @@ let board = null, run = null, picked = null, chosen = null, trail = [], startedA
 
 function startLevel(lv) {
   level = lv;
-  board = newBoard(lv); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null;
+  board = newBoard(lv); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null; hint = null; game.hinted = false; giveUpArmed(false);
   $('resultado').hidden = true; document.body.classList.remove('ganado');
   $('nivel').textContent = fmt(L.etapa, game.at + 1); $('dificultad').textContent = L.dificultad[lv.tier];
   $('etapas').replaceChildren(...STAGE_TIERS.map((_, i) => el('span', { class: i < game.at ? (game.done[i]?.ok ? 'ok' : 'no') : i === game.at ? 'ahora' : '' })));
@@ -227,16 +227,30 @@ function startGame(seed) {
   startLevel(game.stages[0]);
 }
 function say(t) { $('mensaje').textContent = t; }
+/*
+ * The tray: each part is drawn as the object it is, ready to drag onto the board, one per copy left
+ * (two ramps, two ramps); past MAX_COPIES, one with its ×n. A part with none left stays faint.
+ */
+const MAX_COPIES = 3;
 function tray() {
-  $('bandeja').replaceChildren(...Object.keys(board.level.tray).map(t => {
-    const b = el('button', {
-      type: 'button', class: `chip-btn${picked === t ? ' on' : ''}`, 'data-pieza': t, disabled: !!run || !(board.left[t] > 0),
-    }, el('span', { class: 'pieza-ico', 'aria-hidden': 'true' }, ICON[t]), ` ${L.piezas[t]}`, el('b', {}, `×${board.left[t]}`));
-    // A press on a tray part starts a drag; released where it began, it is a tap that picks it (tap to place)
-    b.addEventListener('pointerdown', e => { if (!b.disabled) grab(e, { kind: 'new', type: t }); });
-    b.addEventListener('click', e => { if (e.detail === 0) pick(t); });   // the keyboard's Enter / Space
-    return b;
-  }));
+  const items = [];
+  for (const t of Object.keys(board.level.tray)) {
+    const n = board.left[t] || 0, copies = n > MAX_COPIES ? 1 : Math.max(1, n);
+    for (let i = 0; i < copies; i++) {
+      const cv = el('canvas', { class: 'pieza-dibujo', 'aria-hidden': 'true' });
+      const b = el('button', {
+        type: 'button', class: `pieza${picked === t ? ' on' : ''}${n ? '' : ' agotada'}`, 'data-pieza': t, disabled: !!run || !n,
+        'aria-label': `${L.piezas[t]} ×${n}`, title: L.piezas[t],
+      }, cv, n > MAX_COPIES ? el('b', {}, `×${n}`) : '');
+      // A press on a tray part starts a drag; released where it began, it is a tap that picks it (tap to place)
+      b.addEventListener('pointerdown', e => { if (!b.disabled) grab(e, { kind: 'new', type: t }); });
+      b.addEventListener('click', e => { if (e.detail === 0) pick(t); });   // the keyboard's Enter / Space
+      items.push([b, cv, t]);
+    }
+  }
+  $('bandeja').replaceChildren(...items.map(([b]) => b));
+  // drawn once laid out (the screen may still be hidden on this frame)
+  requestAnimationFrame(() => { for (const [, cv, t] of items) escena(cv).piece(t); });
 }
 function pick(t) {
   picked = picked === t ? null : t; chosen = null;
@@ -250,6 +264,7 @@ function controls() {
   $('btn-probar').disabled = !!run && run.state === 'won';
   $('btn-limpiar').disabled = !!run || !board.placed.length;
   $('btn-deshacer').disabled = !!run || !history.length;
+  $('btn-pista').disabled = !!run; $('btn-rendirse').disabled = !!run && run.state === 'won';
 }
 const flippable = p => p.type === 'ramp' || p.type === 'fan';
 const hintFor = p => flippable(p) ? L.movida : L.movidaFija;
@@ -327,6 +342,7 @@ function drop(e) {
     SOUND.place(); vibrate(15); chosen = p; scene.burst(p.c + 1, p.r + 0.6, [scene.C.yellow, '#ffffff'], 8, 2.5);
     say(hintFor(p));
   } else if (at) { say(L.noCabe); vibrate([10, 30, 10]); }
+  if (hint && board.placed.some(q => same(hint, q))) hint = null;
   tray(); controls(); draw();
 }
 /** One tap on a placed part: a ramp or a fan turns round at once; any part becomes the chosen one. */
@@ -358,6 +374,30 @@ $('btn-girar').addEventListener('click', () => { if (chosen && flippable(chosen)
 $('btn-quitar').addEventListener('click', () => { if (chosen) { remember(); remove(board, chosen); chosen = null; SOUND.lift(); say(L.quitada); tray(); controls(); draw(); } });
 $('btn-limpiar').addEventListener('click', () => { remember(); for (const p of [...board.placed]) remove(board, p); chosen = null; picked = null; say(L.elige); tray(); controls(); draw(); });
 $('btn-deshacer').addEventListener('click', undo);
+/* A hint: where one part of the answer goes, one the board does not have yet. It costs a star (★★ at most). */
+const same = (a, b) => a.type === b.type && a.c === b.c && a.r === b.r && (!flippable(a) || (a.dir ?? 1) === (b.dir ?? 1));
+$('btn-pista').addEventListener('click', () => {
+  if (run || !board) return;
+  const want = level.solution.find(p => !board.placed.some(q => same(p, q)));
+  if (!want) { hint = null; say(L.sinPista); draw(); return; }
+  hint = { dir: 1, ...want }; game.hinted = true; SOUND.flip();
+  say(fmt(L.pistaDice, L.piezas[want.type].toLowerCase())); draw();
+});
+/* Giving up a stage: a second tap confirms it; the stage counts as not passed and the next one starts */
+let armed = null;
+function giveUpArmed(on) {
+  clearTimeout(armed); armed = on ? setTimeout(() => giveUpArmed(false), 3000) : null;
+  $('btn-rendirse').textContent = on ? L.rendirseSeguro : L.rendirse; $('btn-rendirse').classList.toggle('btn--danger', on);
+}
+$('btn-rendirse').addEventListener('click', () => {
+  if (!game || game.over || !$('resultado').hidden) return;
+  if (!armed) return giveUpArmed(true);
+  giveUpArmed(false); run = null; trail = [];
+  game.done.push({ ok: false, pts: 0, stars: 0, ms: game.stageAt - game.left, id: level.id });
+  SOUND.fail(); say(L.rendida);
+  game.at++;
+  if (game.at >= STAGE_TIERS.length) endGame(); else startLevel(game.stages[game.at]);
+});
 // The keyboard: R turns the chosen part, Delete removes it, Ctrl+Z undoes
 addEventListener('keydown', e => {
   if (!board || run || !$('s-juego').classList.contains('active') || e.target.closest?.('input, textarea')) return;
@@ -423,7 +463,7 @@ function finish(state) {
   if (game.over) return;
   if (state === 'won') {
     SOUND.won(); vibrate([30, 40, 30]);
-    const n = board.placed.length, st = starsOf(level, n), ms = game.stageAt - game.left;
+    const n = board.placed.length, st = Math.min(starsOf(level, n), game.hinted ? 2 : 3), ms = game.stageAt - game.left;
     const pts = PUNTOS_ETAPA + PUNTOS_ESTRELLAS[st];
     game.done.push({ ok: true, stars: st, ms, pts, id: level.id });
     game.paused = true;   // the summary stops the clock
@@ -445,10 +485,10 @@ function finish(state) {
 /* Drawing (scene.js) and the loop                                     */
 /* ------------------------------------------------------------------ */
 const scene = escena(canvas);
-let ghost = null, dragging = null, popped = false, won = false, roll = 0;
+let ghost = null, hint = null, dragging = null, popped = false, won = false, roll = 0;
 function size() { if (scene.size()) draw(); }
 new ResizeObserver(size).observe($('tablero'));
-function draw() { scene.draw({ board, run, chosen, ghost, dragging, trail, roll, won, popped }); }
+function draw() { scene.draw({ board, run, chosen, ghost, hint, dragging, trail, roll, won, popped }); }
 // With a mouse, the picked part follows the pointer as a ghost before the click
 function mouseGhost(e) {
   if (e.pointerType !== 'mouse' || run || !board || !picked || drag) return;
@@ -495,6 +535,8 @@ function frame(now) {
       }, s === 'won' ? 650 : s === 'boom' ? 1100 : 450);   // the explosion plays out before the verdict
     }
   }
+  // Once the ball stops (a win, a failure, Parar), its trail plays out instead of hanging there
+  if ((!run || run.state !== 'running') && trail.length) trail.splice(0, 2);
   if (onBoard && board) draw();
   demoFrame(dt);
   requestAnimationFrame(frame);
