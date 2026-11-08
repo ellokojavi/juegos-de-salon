@@ -1,5 +1,5 @@
 // The design system's components page (D-533, phase 3 of #1188) at /labs/design/: the lab offers
-// it under Mejoras en prueba; it reads the tokens from base.css (swatches, the three scales), shows
+// it in La Bodega's Mejoras lanzadas; it reads the tokens from base.css (swatches, the three scales), shows
 // every section (titles, buttons, chips, the game shell, ranking, keyboard, escapes), nothing scrolls sideways at
 // 320 px and every tappable thing measures 44 px or more (U-10). Its own stylesheet is layout only:
 // the design lint reports zero on it. Prints ✗ if anything fails.
@@ -20,7 +20,7 @@ ok(/^0 hits/m.test(lint), 'the page\'s own stylesheet has zero design-lint hits 
 for (const W of [320, 390]) {
   var b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844 });
   await b.go(`${SITE}/labs/`);
-  ok(await ev(`document.querySelector('#mejoras #seccion-design #btn-design')?.getAttribute('href')`) === 'design/', `${W}: the lab offers the design system under Mejoras en prueba`);
+  ok(await ev(`document.querySelector('#bodega-mejoras #seccion-design #btn-design')?.getAttribute('href')`) === 'design/', `${W}: the lab offers the design system in La Bodega (Mejoras lanzadas)`);
   ok(await ev(`document.querySelector('#btn-design').getBoundingClientRect().height <= 64`), `${W}: the lab card's button label sits on one line (U-17)`);
   await b.go(`${SITE}/labs/design/`, 800);
   ok(await waitFor(`(window.__design?.tokens || 0) > 30`), `${W}: the tokens are read from base.css`);
