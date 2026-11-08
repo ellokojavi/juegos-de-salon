@@ -525,6 +525,9 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   la semilla; la protección contra trampas está en las reglas de Firebase (ventanas con la hora del
   servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
   puntajes sigue pendiente (LIG-30).
+- **A day's cover puts «Empezar» right under the title** (U-39, C-5): the «Se juega una sola vez» warning above it,
+  «Probar primero» under it, then «Cómo se juega» folded and the wildcard. With the rules open first,
+  «Empezar» sat 500–1000 px below the fold of a small phone; `landing-fold.mjs` checks it as `copa day:<scene>`.
 - **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
   the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
   While playing a day and on the day's result it also says «‹ Volver a la copa» and goes to the board:
