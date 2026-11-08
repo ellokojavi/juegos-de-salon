@@ -15,7 +15,7 @@ export const TEXTS = {
     title: 'Privacidad',
     lead: 'Juegos de Salón (juegosdesalon.cl) se juega sin cuenta, sin publicidad y sin cookies de seguimiento. Aquí está lo poco que guardamos, para qué, dónde y por cuánto tiempo.',
     sections: [
-      { h: '📱 En tu celular', p: ['Tu navegador guarda en el celular el idioma, el sonido, tus favoritos, la partida en curso, tus puntajes y los nombres que escribiste, para que no tengas que repetirlos. No son cookies y se borran al borrar los datos de este sitio en el navegador. Si juegas sin señal, guarda también una copia de los juegos para jugarlos sin señal, y los puntajes de las partidas que faltan por subir (hasta 200, por 30 días); se borran al subirse.'] },
+      { h: '📱 En tu celular', p: ['Tu navegador guarda en el celular el idioma, el sonido, tus favoritos, la partida en curso, tus puntajes y los nombres que escribiste, para que no tengas que repetirlos. No son cookies y se borran al borrar los datos de este sitio en el navegador. Si juegas sin señal, guarda también una copia de los juegos para jugarlos sin señal, y los puntajes de las partidas que faltan por subir (hasta 200, por 30 días); se borran al subirse.', 'De cada copa que abriste con señal guarda una copia (la tabla y los resultados de ese momento) para jugar sin señal un día pendiente; ese resultado espera en el celular hasta subirse o hasta que cierra su día, y la copia se borra al salir de la copa.'] },
       {
         h: '☁️ En nuestra base de datos',
         p: ['Usamos Firebase, de Google, en Estados Unidos. Guardamos solo esto:'],
@@ -53,7 +53,7 @@ export const TEXTS = {
     title: 'Privacy',
     lead: 'Parlor Games (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
     sections: [
-      { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser. If you play without signal, it also keeps a copy of the games so you can play them offline, and the scores of the games still to upload (up to 200, for 30 days); those scores are deleted once uploaded.'] },
+      { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser. If you play without signal, it also keeps a copy of the games so you can play them offline, and the scores of the games still to upload (up to 200, for 30 days); those scores are deleted once uploaded.', 'For each cup you opened with signal it keeps a copy (the table and the results at that moment) so you can play a pending day offline; that result waits on your phone until it uploads or its day closes, and the copy is deleted when you leave the cup.'] },
       {
         h: '☁️ In our database',
         p: ['We use Google\'s Firebase, in the United States. We keep only this:'],
@@ -91,7 +91,7 @@ export const TEXTS = {
     title: 'Privacidade',
     lead: 'O Jogos de Salão (juegosdesalon.cl) se joga sem conta, sem anúncios e sem cookies de rastreamento. Aqui está o pouco que guardamos, para quê, onde e por quanto tempo.',
     sections: [
-      { h: '📱 No seu celular', p: ['Seu navegador guarda no celular o idioma, o som, seus favoritos, a partida em andamento, suas pontuações e os nomes que você digitou, para você não ter que repetir. Não são cookies, e somem quando você apaga os dados deste site no navegador. Se você joga sem sinal, guarda também uma cópia dos jogos para jogá-los sem sinal, e as pontuações das partidas que faltam enviar (até 200, por 30 dias); somem ao serem enviadas.'] },
+      { h: '📱 No seu celular', p: ['Seu navegador guarda no celular o idioma, o som, seus favoritos, a partida em andamento, suas pontuações e os nomes que você digitou, para você não ter que repetir. Não são cookies, e somem quando você apaga os dados deste site no navegador. Se você joga sem sinal, guarda também uma cópia dos jogos para jogá-los sem sinal, e as pontuações das partidas que faltam enviar (até 200, por 30 dias); somem ao serem enviadas.', 'De cada copa que você abriu com sinal guarda uma cópia (a tabela e os resultados daquele momento) para jogar sem sinal um dia pendente; esse resultado espera no celular até ser enviado ou até o dia fechar, e a cópia some ao sair da copa.'] },
       {
         h: '☁️ No nosso banco de dados',
         p: ['Usamos o Firebase, do Google, nos Estados Unidos. Guardamos só isto:'],
