@@ -314,6 +314,8 @@
       background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
       background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
       animation: shimmer 6s linear infinite;
+      /* The display font slants: without room on the sides the last letter (the N of SALÓN) is cut, as in .rainbow. */
+      padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0;
     }
     @media (prefers-reduced-motion: reduce) { .filtros-barra.pegada .barra-titulo span:last-child { animation: none; } }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
