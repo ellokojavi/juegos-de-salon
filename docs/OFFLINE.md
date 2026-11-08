@@ -81,7 +81,7 @@ PR that changes what is kept on the phone.
   most yesterday. No rule change.
 - **Signing in.** The queue waits for its player: signed out, nothing goes; the Firebase sign-in renews
   itself with the signal, from the anonymous id the phone keeps (the same storage `persist()` protects).
-- Background Sync is left out: the next open with signal, and the `online` event, are enough.
+- Background Sync is left out for the rankings' queue: the next open with signal, and the `online` event, are enough. La Copa's days use it (D-544): their deadline is a day, not 30 days.
 - **La Copa** (D-544, amends this plan's "never queued"; its own lab flag `cup-offline`): a pending day of a cup this phone kept a copy
   of (`cuenta.snapshot`, saved on each online read) plays offline from `store-offline.js`; its start and
   result wait in `assets/js/cup-outbox.js` and upload, start first, from any page when the signal is
@@ -89,6 +89,12 @@ PR that changes what is kept on the phone.
   as not played; one already on the server (another phone) wins. A result the network refuses
   mid-game goes to the same outbox. The day's cover, the result screen and the toast say so
   (`store-offline.test.mjs`).
+  **With the app closed** (Background Sync, Chrome on Android): the queue is mirrored in Cache Storage
+  (`cup-sync`), a finished day asks for a `cup-outbox` sync, and when the signal is back the browser
+  wakes `sw.js`, which uploads over REST as the phone's own anonymous session (the token the Firebase
+  SDK keeps in IndexedDB, refreshed if needed) and leaves `done` for the next page to reconcile. It
+  stands aside while a page of the app is on screen. iPhone has no Background Sync: there the screens
+  say the day goes up the next time the app opens with signal (`sw-sync.test.mjs`).
 
 ## Caching (amends D-221)
 

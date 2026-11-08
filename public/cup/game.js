@@ -38,7 +38,7 @@ import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles, guardarPendienteLocal } from '../assets/js/jugador.js';
-import { queueResult, uploadCup } from '../assets/js/cup-outbox.js';
+import { queueResult, uploadCup, canSyncClosed } from '../assets/js/cup-outbox.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -1421,7 +1421,7 @@ function antesDeJugar(d) {
     // short phone the open rules pushed it a whole screen down
     el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn),
     // Offline (D-544): the result waits on the phone and has to go up before the day closes
-    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(T.offlineDay, { t: cierreDe(meta, d) })) : null,
+    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(canSyncClosed() ? T.offlineDay : T.offlineDayOpen, { t: cierreDe(meta, d) })) : null,
     err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
@@ -1729,7 +1729,7 @@ async function enviar(d, fin, envio = null) {
   // Saved on the phone, not on the server (D-544): said on top, with the deadline it has to beat
   if (local) Promise.resolve(dibujado).then(() => {
     if (S.pantalla !== 'resultado' || document.getElementById('aviso-guardado-local')) return;
-    $('#resultado-body').prepend(el('p', { class: 'notice', id: 'aviso-guardado-local' }, fmt(T.offlineSaved, { t: cierreDe(L().meta, d) })));
+    $('#resultado-body').prepend(el('p', { class: 'notice', id: 'aviso-guardado-local' }, fmt(canSyncClosed() ? T.offlineSaved : T.offlineSavedOpen, { t: cierreDe(L().meta, d) })));
   });
 }
 

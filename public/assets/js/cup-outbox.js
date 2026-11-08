@@ -18,6 +18,14 @@
  *   keeps the entry for the next try. The page is told with `pendientes-subidas` (offline-ui's toast).
  *
  * Nothing here loads Firebase until there is something to upload.
+ *
+ * - **With the app closed** (Background Sync, Android/Chrome only): every write of the queue is also
+ *   mirrored where the service worker can read it (Cache Storage `SYNC_CACHE`, with the database's
+ *   address and the public API key), and a finished day asks the browser for a `cup-outbox` sync. When
+ *   the signal comes back the browser wakes sw.js, which uploads with the phone's own anonymous
+ *   session (the same seat) and writes what it did in `done`. The next page that opens reconciles:
+ *   those days leave this queue and the toast says so (`reconcile`). iPhone has no Background Sync:
+ *   there the day goes up the next time any page opens with signal, and the screens say that instead.
  */
 export const OUTBOX_KEY = 'juegos-de-salon:copa:outbox';
 /** An entry still unsent this long after its day closed is dropped without asking the server. */
@@ -29,6 +37,53 @@ export function readQueue(storage = store()) {
 }
 function escribirCola(cola, storage = store()) {
   try { if (cola.length) storage.setItem(OUTBOX_KEY, JSON.stringify(cola)); else storage.removeItem(OUTBOX_KEY); } catch (_) { /* no storage */ }
+  if (storage === store()) mirror(cola);
+}
+
+/** Where the service worker reads the queue and writes what it uploaded (sw.js, `cup-outbox` sync). */
+export const SYNC_CACHE = 'cup-sync';
+export const SYNC_TAG = 'cup-outbox';
+const json = v => new Response(JSON.stringify(v), { headers: { 'content-type': 'application/json' } });
+/** The queue, for the service worker. Nothing to do where there is no Cache Storage (node, old browsers). */
+export async function mirror(cola, { caches = globalThis.caches } = {}) {
+  if (!caches?.open) return;
+  try {
+    const { firebaseConfig: c } = await import('./firebase-config.js');
+    const cache = await caches.open(SYNC_CACHE);
+    if (cola.length) await cache.put('outbox', json({ queue: cola, apiKey: c.apiKey, databaseURL: c.databaseURL }));
+    else await cache.delete('outbox');
+  } catch (_) { /* the page uploads it, as before */ }
+}
+
+/** Whether this browser can upload with the app closed (Background Sync: Chrome on Android, not iPhone). */
+export const canSyncClosed = (win = globalThis) => !!win.ServiceWorkerRegistration && 'sync' in (win.ServiceWorkerRegistration.prototype || {});
+
+/** Asks the browser to wake the service worker when the signal is back, even with the app closed. */
+export async function askSync({ nav = globalThis.navigator } = {}) {
+  try { const reg = await nav?.serviceWorker?.ready; await reg?.sync?.register(SYNC_TAG); return !!reg?.sync; } catch (_) { return false; }
+}
+
+/**
+ * What the service worker uploaded while the app was closed (`done`: `{ sent, late, dup }`, lists of
+ * ids): those days leave this queue, and the page is told like after its own upload.
+ */
+export async function reconcile({ storage = store(), caches = globalThis.caches, win = globalThis } = {}) {
+  if (!caches?.open) return null;
+  let done = null;
+  try {
+    const cache = await caches.open(SYNC_CACHE);
+    const r = await cache.match('done');
+    if (!r) return null;
+    done = await r.json();
+    await cache.delete('done');
+  } catch (_) { return null; }
+  const ids = new Set([...(done.sent || []), ...(done.late || []), ...(done.dup || [])]);
+  escribirCola(readQueue(storage).filter(x => !ids.has(x.id)), storage);
+  const res = { cupSent: (done.sent || []).length, cupLate: (done.late || []).length, cupDup: (done.dup || []).length };
+  if (res.cupSent || res.cupLate || res.cupDup) {
+    try { win.dispatchEvent?.(new CustomEvent('pendientes-subidas', { detail: res })); } catch (_) { /* not a page */ }
+  }
+  return res;
 }
 const idDe = (code, d, pid) => `${code}:${d}:${pid}`;
 
@@ -52,6 +107,7 @@ export function queueResult({ code, d, pid, b, at, res }, storage = store()) {
   const x = { ...(i >= 0 ? cola[i] : { id, code, d, pid, b, started: at }), res, at };
   if (i >= 0) cola[i] = x; else cola.push(x);
   escribirCola(cola, storage);
+  if (storage === store()) askSync();
 }
 
 /**
@@ -129,7 +185,8 @@ export function uploadCup({ win = globalThis, crear = () => import('./jugador-fi
 
 /** On every page while offline mode is on: now, and each time the signal comes back. */
 export function uploadCupOnReconnect({ win = globalThis } = {}) {
-  const ir = () => { uploadCup({ win }); };
+  // What the service worker already uploaded with the app closed goes first, so it is not sent twice
+  const ir = () => { reconcile({ win }).finally(() => uploadCup({ win })); };
   ir();
   win.addEventListener?.('online', ir);
   win.addEventListener?.('connection', e => { if (e.detail?.mode === 'online') ir(); });

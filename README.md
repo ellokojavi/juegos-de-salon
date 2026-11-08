@@ -594,6 +594,7 @@ node public/panel/rooms-watch.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
+node public/sw-sync.test.mjs
 node public/sw.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/architecture.test.mjs
