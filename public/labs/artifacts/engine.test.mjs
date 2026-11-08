@@ -90,7 +90,8 @@ LEVELS.forEach((L, i) => {
 // A long run that ends in the basket counts: trampolines kept this one in the air 13.5 s, and the
 // old 14 s cap called it stuck while it was settling in the basket (the owner's report, stage 4)
 {
-  const L = POOL.find(l => l.id === 't5-10'), b = newBoard(L);
+  // the level as it was in the pool (t5-10, dropped since as a fluke: twelve bounces), kept here for the rule
+  const L = {"id":"t5-10","tier":5,"start":{"x":7.5,"y":0.6},"goal":{"c":5,"r":7},"fixed":[{"type":"spikes","c":3,"r":10,"w":4},{"type":"plank","c":6,"r":4,"dir":-1},{"type":"wall","x1":2,"y1":7,"x2":2,"y2":9},{"type":"plank","c":6,"r":8,"dir":1}],"tray":{"ramp":1,"spring":2},"solution":[{"type":"ramp","c":6,"r":2,"dir":-1},{"type":"spring","c":3,"r":6,"dir":1},{"type":"spring","c":0,"r":4,"dir":1}]}, b = newBoard(L);
   b.placed = [{ type: 'ramp', c: 6, r: 1, dir: -1 }, { type: 'spring', c: 1, r: 6, dir: 1 }, { type: 'spring', c: 3, r: 6, dir: 1 }];
   const r = simulate(b);
   assert.equal(r.state, 'won', `the ball that lands in the basket late still passes (${r.state} at ${r.t.toFixed(2)} s)`);
