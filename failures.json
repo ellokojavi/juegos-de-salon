@@ -1407,6 +1407,19 @@
         "stat": "1 file(s) +6 −3: public/assets/js/offline-ui.js"
       },
       "flaky": false
+    },
+    {
+      "run": 42513129218,
+      "check": "tests",
+      "pr": 1310,
+      "branch": "claude/eager-ritchie-5yrsxe",
+      "commit": "f8551a714590d4dc6bbad1d3527bcc299d73f33e",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/all-games.test.mjs",
+      "signature": "362d4e13a7",
+      "date": "2026-11-08T19:06:35.580Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
