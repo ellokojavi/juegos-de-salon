@@ -86,7 +86,7 @@ mini like the processes round (D-276). Without the key it prints what needs no k
    viral factor). Seasons, leagues among friends, cross-game progress, a profile: ideas here go
    against the D1/D7 returns, stickiness and the share counts `check` prints.
 2. **Existing games:** the one-player games with the lowest finish rate or most abandons for
-   their starts, the group games whose rooms rarely get a rival or an ending, the cup games with
+   their starts, the group games whose rooms rarely get a rival or an ending, the games played in a cup with
    the most abandons or the lowest average, the cup days most skipped. An idea here names the
    game, the number, and the change (a rule, a help, a variant, a text is the usability agent's).
 3. **New games:** what is popular elsewhere and fits the house: phone first, one hand, 3 to 10

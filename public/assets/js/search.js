@@ -4,14 +4,14 @@
  * types and the keywords below, in the four languages ("lógica", "dice", "Würfel"). Accents and case do not count, and each
  * word typed must start some word of the game ("dad" finds Dudo).
  */
-import { GAMES, SUELTOS, TIPOS } from './games.js';
+import { TIPOS, ALL_GAMES } from './games.js';
 
 /**
  * What a player might type for each game, in every language of the app (es, en, pt, de; D-404): what it is, what it
  * is played with and what it is like, beyond its name and tagline. All are searched whatever the language. Each game's
  * `keywords` live in its entry in games.js, the manifest (#855); every game on the home page must have all four (search.test.mjs).
  */
-export const KEYWORDS = Object.fromEntries([...GAMES, ...SUELTOS].filter(g => g.keywords).map(g => [g.id, g.keywords]));
+export const KEYWORDS = Object.fromEntries(ALL_GAMES.filter(g => g.keywords).map(g => [g.id, g.keywords]));
 
 /** "Lógica" → "logica": what is compared, so accents and capitals never get in the way. */
 export const plain = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').toLowerCase();

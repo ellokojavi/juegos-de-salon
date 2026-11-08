@@ -11,7 +11,7 @@
  * Needs the service account key (see tools/firebase/firebase-admin.mjs).
  */
 import { token, read } from './firebase-admin.mjs';
-import { GAMES } from '../../public/assets/js/games.js';
+import { ALL_GAMES } from '../../public/assets/js/games.js';
 import { IDLE_TTL, ROOM_TTL } from '../../public/assets/js/transport/cleanup.js';
 import { diaActual, juegoDelDia, terminada, inscripcionAbierta } from '../../public/cup/engine.js';
 import { JUEGOS_COPA } from '../../public/cup/rules.js';
@@ -35,7 +35,7 @@ const ago = ms => {
 };
 // The cup's last day in its own zone: `end` is the midnight at which it already finished.
 const lastDay = (end, tz) => new Intl.DateTimeFormat('en-GB', { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(end - 1));
-const gameName = id => GAMES.find(g => g.id === id)?.name.es || id || '(no game)';
+const gameName = id => ALL_GAMES.find(g => g.id === id)?.name.es || id || '(no game)';
 
 // Rooms: alive while the cleanup cannot delete them (same count as cleanup.js and the rules).
 const roomList = Object.entries(rooms || {}).map(([code, r]) => {

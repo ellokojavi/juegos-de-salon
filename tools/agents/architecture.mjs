@@ -7,7 +7,7 @@
  *   node tools/agents/architecture.mjs --gate   (exit 1 on any hit not allowlisted or stale entry, as the test does)
  *
  * It reads every .js/.mjs file git knows inside a game folder (tests excluded). Game folders: every
- * `path` of GAMES and SUELTOS in public/assets/js/games.js, every folder under public/cup/games/ and
+ * `path` of ALL_GAMES in public/assets/js/games.js, every folder under public/cup/games/ and
  * under public/labs/. A file belongs to the deepest game folder that holds it (cup/games/zip/ is its own
  * game, not part of cup/). The shared code under public/assets/ is read too, as one more folder: it may
  * not import a game, and its storage keys and hosts follow the same rules. Rules:
@@ -38,13 +38,13 @@ const git = args => execFileSync('git', ['ls-files', ...args], { cwd: ROOT, enco
 
 /** Every game folder, 'public/<path>/' each. */
 export async function gameFolders() {
-  const { GAMES, SUELTOS } = await import(join(ROOT, 'public/assets/js/games.js'));
+  const { ALL_GAMES } = await import(join(ROOT, 'public/assets/js/games.js'));
   const sub = new Set();
   for (const f of git(['public/cup/games', 'public/labs'])) {
     const m = f.match(/^(public\/(?:cup\/games|labs)\/[^/]+)\//);
     if (m) sub.add(m[1] + '/');
   }
-  return [...new Set([...[...GAMES, ...SUELTOS].filter(g => g.path).map(g => 'public/' + g.path), ...sub])];
+  return [...new Set([...ALL_GAMES.filter(g => g.path).map(g => 'public/' + g.path), ...sub])];
 }
 
 /** The deepest game folder holding a file, or null. */

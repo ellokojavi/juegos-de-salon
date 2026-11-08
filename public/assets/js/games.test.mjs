@@ -1,7 +1,8 @@
 // El guardián de los cánones (D-213): ningún juego de GAMES se salta en silencio la estructura de
 // C-2 (motor y sus tests, C-12), el gancho de pruebas de C-14 ni su especificación con la plantilla
 // común de C-13. Mira los archivos de verdad, no lo que dice el registro.
-// Los juegos de La Copa (SUELTOS) no pasan por aquí: los cubren cup.md y cup/games/juegos.test.mjs.
+// The games built in cup/games/ (SUELTOS) have another file layout, checked by cup/games/juegos.test.mjs;
+// what applies to every game walks ALL_GAMES (C-21).
 // La paridad de LOCALES (es, en, pt) tampoco: la revisa i18n.test.mjs.
 // Uso: node public/assets/js/games.test.mjs
 import assert from 'node:assert/strict';
@@ -103,7 +104,7 @@ console.log(`games: los ${GAMES.length} juegos tienen motor, tests, gancho y esp
   assert.ok(!esNuevo({}, new Date()), 'without a date it is not new');
   // D-335: while new, a game goes right after La Copa; afterwards, back to its place by popularity
   const juego = { id: 'zzz-nuevo', available: true, nuevoDesde: '2030-01-01' };
-  const { GAMES: G } = await import('./games.js');
+  const { ALL_GAMES: G } = await import('./games.js');
   G.push(juego);
   try {
     const dentro = ordenPortada(new Date('2030-01-02T12:00:00')).map(x => x.id);

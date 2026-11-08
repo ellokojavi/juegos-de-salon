@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { LANGS, IDIOMAS, EN_LABS, COMMON, sinLang, idiomaDelNavegador, BANDERAS, NOMBRES_IDIOMA } from './i18n.js';
-import { GAMES, SUELTOS, TIPOS } from './games.js';
+import { GAMES, SUELTOS, TIPOS, ALL_GAMES } from './games.js';
 import { JUEGOS_COPA, juegosCopa } from '../../cup/rules.js';
 import { FRASES } from './frases.js';
 import { DECKS } from '../../timeline/decks/index.js';
@@ -65,7 +65,7 @@ for (const g of SUELTOS) {
   for (const lang of IDIOMAS) assert.equal(g.name[lang], juegosCopa(lang)[g.id].nombre, `SUELTOS.${g.id}: el nombre en ${lang} no es el de La Copa`);
 }
 for (const [id, t] of Object.entries(TIPOS)) leaf(`TIPOS.${id}.name`, t.name);
-for (const g of [...GAMES, ...SUELTOS]) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);
+for (const g of ALL_GAMES) for (const t of g.tipos || []) assert.ok(TIPOS[t], `${g.id}: el tipo ${t} no está en TIPOS`);
 for (const d of DECKS) {
   leaf(`DECKS.${d.id}.name`, d.name); leaf(`DECKS.${d.id}.hint`, d.hint);
   for (const c of d.cards) for (const lang of IDIOMAS) assert.ok(c[lang] && c[lang].trim(), `${d.id}/${c.id}: falta ${lang}`);

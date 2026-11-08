@@ -1,10 +1,10 @@
 // The games manifest (#855): games.js is the one source, and each list moved into it is derived, never kept by hand
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GAMES, SUELTOS } from './games.js';
+import { ALL_GAMES } from './games.js';
 import { KEYWORDS } from './search.js';
 
-const ALL = [...GAMES, ...SUELTOS];
+const ALL = ALL_GAMES;
 const ids = ALL.map(g => g.id);
 assert.equal(new Set(ids).size, ids.length, 'every id in the manifest is unique');
 

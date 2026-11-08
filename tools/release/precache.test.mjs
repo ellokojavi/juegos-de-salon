@@ -9,14 +9,14 @@ import { join } from 'node:path';
 import { precache, NEVER, BIG } from './precache.mjs';
 
 const SITE = fileURLToPath(new URL('../../public/', import.meta.url));
-const { GAMES, SUELTOS, offlineOk } = await import(new URL('../../public/assets/js/games.js', import.meta.url));
+const { ALL_GAMES, offlineOk } = await import(new URL('../../public/assets/js/games.js', import.meta.url));
 const { release, urls } = await precache(SITE);
 const set = new Set(urls);
 
 assert.equal(release, 'dev', 'public/ carries no release meta: it is stamped at publish time');
 assert.equal(set.size, urls.length, 'no repeats');
 assert.ok(set.has('./'), 'the home page');
-for (const g of [...GAMES, ...SUELTOS]) {
+for (const g of ALL_GAMES) {
   assert.equal(set.has(g.path), offlineOk(g), `${g.id}: its page is precached exactly when it is offline-capable`);
 }
 // The minigames' pages load La Copa's engine and each game's module: those come along

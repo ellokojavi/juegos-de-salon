@@ -12,7 +12,7 @@
 // Small pieces other games use too, in modules of their own so a page that needs only them does not
 // load La Copa (D-377): the cup code and a random one, and the active-time clock
 import { cryptoRand } from './code.js';
-import { GAMES, SUELTOS } from '../assets/js/games.js';
+import { ALL_GAMES } from '../assets/js/games.js';
 export { LETRAS, CODIGO, esCodigo, codigoAlAzar } from './code.js';
 export { reloj, pausaDeLectura, mmss } from './clock.js';
 
@@ -33,7 +33,7 @@ export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 // The two Cup-only games first; every other one says its place in its entry in games.js, the manifest (#855)
 export const POZO = [
   { id: 'linea', pozo: 0 }, { id: 'numero', pozo: 1 },
-  ...[...GAMES, ...SUELTOS].filter(g => g.copa).map(g => ({ id: g.id, pozo: g.copa.pozo })),
+  ...ALL_GAMES.filter(g => g.copa).map(g => ({ id: g.id, pozo: g.copa.pozo })),
 ].sort((a, b) => a.pozo - b.pozo).map(x => x.id);
 /**
  * The pool a new cup is offered (D-517): POZO without the games still waiting for their launch flag on
@@ -42,7 +42,7 @@ export const POZO = [
  * must draw alike (a day of three's rounds) cannot depend on one phone's flags; the cleanup PR that
  * removes the flag puts them in.
  */
-const LANZADOS = [...GAMES, ...SUELTOS].filter(g => g.lanza);
+const LANZADOS = ALL_GAMES.filter(g => g.lanza);
 export const POZO_ABIERTO = POZO.filter(id => !LANZADOS.find(g => g.id === id)?.oculto);
 export const POZO_FIJO = POZO.filter(id => !LANZADOS.some(g => g.id === id));
 

@@ -537,6 +537,25 @@
    "debt": "docs/english-identifiers-debt.json"
   },
   {
+   "id": "C-21",
+   "title": "Every game is one more game",
+   "doc": "docs/CANONS.md",
+   "form": [
+    "check",
+    "judged"
+   ],
+   "enforcedBy": [
+    "public/assets/js/all-games.test.mjs",
+    "tools/agents/usability-lint.test.mjs"
+   ],
+   "reviewer": "the session making the change, with the checklist at the end of the canons",
+   "why": "whether a change was meant for every game is a call; a hand-made union of the lists and the word minigame are checked",
+   "applies": [
+    "public/**",
+    "docs/games/**"
+   ]
+  },
+  {
    "id": "U-1",
    "title": "Frases completas y explícitas",
    "doc": "docs/USABILIDAD.md",

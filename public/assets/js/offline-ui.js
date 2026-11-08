@@ -16,17 +16,17 @@
  * and one click listener in the capture phase stops the taps.
  */
 import { COMMON, getLang } from './i18n.js';
-import { GAMES, SUELTOS, offlineOk, OFFLINE_PAGES } from './games.js';
+import { offlineOk, OFFLINE_PAGES, ALL_GAMES } from './games.js';
 import { loadCss } from './load-css.js';
 
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
 const ROOT = new URL('../../', import.meta.url);
 
 /** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
-export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...[...GAMES, ...SUELTOS].filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
+export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...ALL_GAMES.filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
 
 /** The games' own pages: they keep their colours offline; every other page takes the offline palette (PR 8). */
-export const GAME_PATHS = new Set([...GAMES, ...SUELTOS].filter(g => g.path).map(g => g.path.replace(/^\/|\/$/g, '')));
+export const GAME_PATHS = new Set(ALL_GAMES.filter(g => g.path).map(g => g.path.replace(/^\/|\/$/g, '')));
 /** Whether `pathname` is a game's page, under the site's root. */
 export function isGamePage(pathname = globalThis.location?.pathname || '/', root = ROOT) {
   const p = pathname.startsWith(root.pathname) ? pathname.slice(root.pathname.length) : pathname.replace(/^\//, '');

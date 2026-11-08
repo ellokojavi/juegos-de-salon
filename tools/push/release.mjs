@@ -20,7 +20,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
+import { ALL_GAMES } from '../../public/assets/js/games.js';
 import { ACTIVE } from '../../public/assets/js/splash.js';
 import { STEPS, prOf } from '../release/merge-report.mjs';
 
@@ -49,7 +49,7 @@ export function ctaFor(path) {
   if (path.startsWith('/panel/')) return 'Abrir el panel';
   if (/[?&]splash=/.test(path)) return 'Ver el splash';
   if (path.startsWith('/labs/')) return path === '/labs/' ? 'Abrir el lab' : 'Abrir en el lab';
-  const game = [...GAMES, ...(SUELTOS || [])].find(g => g.path && path.startsWith(`/${g.path}`));
+  const game = ALL_GAMES.find(g => g.path && path.startsWith(`/${g.path}`));
   if (game) return `Abrir ${game.name?.es || game.id}`;
   return 'Abrir el sitio';
 }
@@ -67,7 +67,7 @@ export function destination(files, { splashOn = () => false } = {}) {
   if (lab) return `/labs/${lab}/`;
   if (f.includes('public/assets/js/flags.js')) return '/labs/';
   for (const x of f) {
-    const game = [...GAMES, ...(SUELTOS || [])].find(g => g.path && g.path !== './' && x.startsWith(`public/${g.path}`));
+    const game = ALL_GAMES.find(g => g.path && g.path !== './' && x.startsWith(`public/${g.path}`));
     if (game) return `/${game.path}`;
   }
   if (f.some(x => x.startsWith('public/panel/'))) return '/panel/';

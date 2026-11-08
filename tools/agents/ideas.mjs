@@ -227,9 +227,9 @@ async function numbers(weeks) {
   const { partidasDominio, finales, dificultad, embudoSalas, embudoCopas, usuarios, senales } = await import('../../public/panel/dominios.js');
   const { unoAlDiaDelRango } = await import('../../public/panel/aggregate.js');
   const { resumenCopas, pct: pctCopa } = await import('../../public/panel/copas.js');
-  const { POPULARIDAD, POPULARIDAD_FECHA, GAMES, SUELTOS } = await import('../../public/assets/js/games.js');
+  const { POPULARIDAD, POPULARIDAD_FECHA, ALL_GAMES } = await import('../../public/assets/js/games.js');
   const { ventana, terminadas, terminadasLog, nuevoOrden } = await import('./popularity.mjs');
-  const ofrecidos = [...GAMES, ...SUELTOS.filter(m => !m.labs)].map(g => g.id);
+  const ofrecidos = ALL_GAMES.filter(g => !g.labs).map(g => g.id);
   const { token, KEY } = await import('../firebase/firebase-admin.mjs');
   if (!existsSync(KEY)) { console.log(`(no owner's key at ${KEY}: the numbers are skipped; the lab, the requests and the ledger follow)`); return; }
 

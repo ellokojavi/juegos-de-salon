@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE, dwellBand, firstReach, REACH_KEY, SPLASH_EVENTS } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
-import { GAMES, SUELTOS } from './games.js';
+import { ALL_GAMES } from './games.js';
 import { IDIOMAS } from './i18n.js';
 
 const campaigns = { a: { title: { es: 'A' } }, b: { title: { es: 'B' } }, c: { title: { es: 'C' } } };
@@ -78,7 +78,7 @@ assert.ok(Array.isArray(ACTIVE), 'ACTIVE is a list (a queue)');
 for (const a of ACTIVE) assert.ok(CAMPAIGNS[a.id], `ACTIVE names a campaign that does not exist: ${a.id}`);
 
 // Every campaign: its texts in the four languages, and its games exist
-const ids = new Set([...GAMES, ...SUELTOS].map(g => g.id));
+const ids = new Set(ALL_GAMES.map(g => g.id));
 for (const [id, c] of Object.entries(CAMPAIGNS)) {
   // A campaign limited to some languages (`langs`) has those, and English for the rest
   const langs = c.langs ?? IDIOMAS;
