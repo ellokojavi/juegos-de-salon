@@ -72,7 +72,7 @@ and a yellow «⚙️ Jugar», in C-5's order.
 ## The levels
 
 **A game is five stages against the clock, as Tren en Vilo's.** Each stage is drawn from its tier of
-the generated pool (`levels.js`, 72 levels in six tiers of 12), one harder than the one before
+the generated pool (`levels.js`, 72 levels in six tiers of 12, regenerated on 2026-11-08 with the legibility filter), one harder than the one before
 (`STAGE_TIERS` in `game.js`: tiers 1, 2, 3, 5, 6):
 
 | Stage | Label | The answer needs | Tray | Hazards |
@@ -104,13 +104,13 @@ its five with the day's seed, the same for everyone; «Jugar otra vez» draws an
 **How the pool is made** (`tools/generators/artifacts-levels.mjs`): each level is built backwards
 from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
 chained on its real path, each where the ball passes; the basket goes where that machine brings the
-ball down, and the run must end at rest in it; hazards (spikes, girders, fixed planks and ramps) are
+ball down, and the run must end at rest in it; the answer must read as a machine, not a fluke (`legible()`, the owner's report of Experto answers that needed five bounces and luck): it still wins with the ball's start nudged ±0.04 and ±0.08 of a cell and with the physics stepped at 1/90 and 1/240 s (no chaos), with at most 4 + k hard bounces, a run of at most 3 + 1.2·k s, and the ball meeting each part at most twice; hazards (spikes, girders, fixed planks and ramps) are
 added only where the machine still works, and never on the basket (no spikes inside it, no girder through it). A level is kept only if an exhaustive search finds no answer
 with fewer parts from its tray: the search is exact while pruned, because a part the ball never comes
 near (and no fan blows on) cannot change the run. `engine.test.mjs` plays every level's answer and
 checks that no board solves itself. To make a new pool: run each tier side by side
 (`node tools/generators/artifacts-levels.mjs 12 <seed> <tier>`) and join them (`… merge /tmp/artifacts-tiers-*.json`). After a change to the physics, `… check`
-re-verifies the pool (every answer still wins, none has a shorter answer).
+re-verifies the pool (every answer still wins and is legible, none has a shorter answer).
 
 ## For tests
 

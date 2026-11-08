@@ -7,7 +7,11 @@
 //  2. the basket goes where that machine drops the ball, and the run must end at rest in it;
 //  3. hazards (spikes on the floor and in the air, steel girders, fixed planks) are added only where
 //     the machine still works;
-//  4. a level is kept only if an exhaustive search finds no answer with fewer parts than k, from the
+//  4. the answer must read as a machine, not a fluke (legible(), the owner's request, 2026-11-08): it
+//     still wins when the ball starts a hair to either side or the physics steps finer or coarser (no
+//     chaos), with few hard bounces (4 + k), a short run (3 + 1.2·k s), and the ball meeting each part at
+//     most twice;
+//  5. a level is kept only if an exhaustive search finds no answer with fewer parts than k, from the
 //     tray it gives (k parts plus decoys). The search is exact while pruned: a part the ball never
 //     comes near (and no fan blows on) cannot change the run, so only parts near the path are tried.
 //
@@ -16,7 +20,7 @@
 // `node tools/generators/artifacts-levels.mjs merge <parts…>` joins them into levels.js: the slow tiers
 // run side by side.
 import fs from 'node:fs';
-import { COLS, ROWS, R, newBoard, place, simulate, segmentsOf, fits, blockedCells } from '../../public/labs/artifacts/engine.js';
+import { COLS, ROWS, R, newBoard, newRun, stepRun, place, simulate, segmentsOf, fits, blockedCells } from '../../public/labs/artifacts/engine.js';
 
 const MERGE = process.argv[2] === 'merge';
 const PER = Number(process.argv[2] || 10), SEED = Number(process.argv[3] || 1);
@@ -65,6 +69,34 @@ function nearPath(level, parts, path, types) {
     if (near) out.push(p);
   }
   return out;
+}
+
+/** One run of a level with its parts, the start nudged by dx and stepped by dt: its end, bounces and contacts. */
+function probe(level, parts, { dx = 0, dt = 1 / 120 } = {}) {
+  const b = newBoard({ ...level, start: { ...level.start, x: level.start.x + dx } });
+  b.placed = parts.map(p => ({ dir: 1, ...p }));
+  const r = newRun(b, { path: true }); let hits = 0;
+  while (r.state === 'running') { stepRun(r, dt); for (const e of r.events.splice(0)) if (e.type === 'knock' || e.type === 'boing') hits++; }
+  // how many separate times the ball meets each part (a fan's breeze is not a contact)
+  const meets = b.placed.map(p => {
+    if (p.type === 'fan') return 1;
+    const segs = segmentsOf(p); let n = 0, on = false;
+    for (let i = 0; i < r.path.length; i += 2) {
+      const x = r.path[i], y = r.path[i + 1];
+      const t = segs.some(([x1, y1, x2, y2]) => { const ex = x2 - x1, ey = y2 - y1, l = ex * ex + ey * ey, k = Math.max(0, Math.min(1, ((x - x1) * ex + (y - y1) * ey) / l)); return Math.hypot(x - x1 - k * ex, y - y1 - k * ey) < R + 0.05; });
+      if (t && !on) n++; on = t;
+    }
+    return n;
+  });
+  return { state: r.state, t: r.t, hits, meets };
+}
+/** Whether an answer can be worked out rather than stumbled on: no chaos, few bounces, a short run, each part met once or twice. */
+function legible(level, parts) {
+  const k = parts.length, m = probe(level, parts);
+  if (m.state !== 'won' || m.hits > 4 + k || m.t > 3 + 1.2 * k || m.meets.some(n => n > 2)) return false;
+  for (const dx of [-0.08, -0.04, 0.04, 0.08]) if (probe(level, parts, { dx }).state !== 'won') return false;
+  for (const dt of [1 / 90, 1 / 240]) if (probe(level, parts, { dt }).state !== 'won') return false;
+  return true;
 }
 
 /** Whether the level has an answer with at most `depth` parts from its tray (exact, pruned). */
@@ -155,6 +187,7 @@ if (process.argv[2] === 'check') {
     const k = L.solution.length;
     if (L.fixed.some(f => inBasket(L, f))) bad.push(`${L.id}: a fixed piece sits on the basket`);
     else if (run(L, L.solution).state !== 'won') bad.push(`${L.id}: its answer no longer wins`);
+    else if (!legible(L, L.solution)) bad.push(`${L.id}: its answer is a fluke (chaotic, too many bounces or too long)`);
     else if (solvable(L, k - 1)) bad.push(`${L.id}: has an answer with fewer than ${k} parts`);
     process.stdout.write(`\r${POOL.indexOf(L) + 1}/${POOL.length}   `);
   }
@@ -178,7 +211,7 @@ for (let ti = 0; ti < TIERS.length && !MERGE; ti++) {
     for (let d = 0; d < tier.decoys; d++) { const t = pickOf(['ramp', 'plank', 'spring', 'fan']); tray[t] = (tray[t] || 0) + 1; }
     const level = { start: m.level.start, goal: m.level.goal, fixed, tray, solution: m.parts };
     // it must not solve itself, and no answer may use fewer parts than k
-    if (run(level, []).state === 'won' || run(level, m.parts).state !== 'won') continue;
+    if (run(level, []).state === 'won' || run(level, m.parts).state !== 'won' || !legible(level, m.parts)) continue;
     if (tier.k > 1 && solvable(level, tier.k - 1)) continue;
     if (tier.k === 1 && solvable(level, 0)) continue;
     pool.push({ id: `t${ti + 1}-${made + 1}`, tier: ti + 1, ...level });
