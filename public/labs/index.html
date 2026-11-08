@@ -177,10 +177,16 @@
         <!-- Offline mode (D-538, docs/OFFLINE.md): the cards and switches of PRs 3 to 6 land here -->
         <section class="panel seccion" id="seccion-offline">
           <h2>📴 Modo sin conexión</h2>
-          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app se da cuenta sola cuando no hay señal o es muy mala: atenúa lo que necesita señal y pone la etiqueta «📴 Sin conexión» junto al título. Toca la etiqueta para ver la tarjeta que explica qué significa estar sin conexión (o marca «Forzar» aquí abajo y abre la portada).</p>
+          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos las salas de dos celulares; La Copa tiene su propia tarjeta abajo) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app se da cuenta sola cuando no hay señal o es muy mala: atenúa lo que necesita señal y pone la etiqueta «📴 Sin conexión» junto al título. Toca la etiqueta para ver la tarjeta que explica qué significa estar sin conexión (o marca «Forzar» aquí abajo y abre la portada).</p>
           <p class="muted" id="offline-estado" style="margin:0">Conexión: midiendo…</p>
           <label class="offline-forzar" style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" id="offline-forzar"> Forzar modo sin conexión en este celular</label>
           <a class="btn btn--yellow" id="btn-offline" href="../zip/">〰️ Probar con Zip</a>
+        </section>
+        <!-- La Copa offline (D-544): its own flag, on top of offline mode -->
+        <section class="panel seccion" id="seccion-cup-offline">
+          <h2>🏆 La Copa sin conexión</h2>
+          <p class="muted" style="margin:0">Si te queda un día pendiente de una copa y no tienes señal, igual lo juegas. El resultado queda guardado en el celular y se sube solo cuando vuelve la señal; si no alcanza a subir antes de que cierre el día, cuenta como no jugado. Funciona con las copas que abriste con señal en este celular. Para probarlo: abre tu copa con señal, pon el modo avión (o marca «Forzar modo sin conexión» arriba) y vuelve a abrirla.</p>
+          <a class="btn btn--yellow" id="btn-cup-offline" href="../cup/">🏆 Abrir La Copa</a>
         </section>
       </section>
 

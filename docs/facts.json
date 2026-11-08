@@ -1496,6 +1496,7 @@
     "public/panel/rutas.test.mjs",
     "public/panel/timeline.test.mjs",
     "public/privacy/texts.test.mjs",
+    "public/sw-sync.test.mjs",
     "public/sw.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
