@@ -43,7 +43,8 @@ No new control on the home page while online. Offline:
    lines: you can keep playing this phone's games; rooms, La Copa and rankings come back with the
    signal; your scores are saved here and upload by themselves. One button, "Entendido".
 2. **While offline** (`offline-ui.js`, `offline.css`, PR 4): a small pill "📴 Sin conexión · 2 por subir"
-   as the page's first line (in its flow, so it never covers a top bar). Every link to a page the phone
+   floating at the bottom centre, over the page, so going offline or back moves nothing on screen; it
+   shows where the offline palette does (site pages and game covers) and steps aside while playing. Every link to a page the phone
    does not keep (La Copa, Rankings, /privacy/…) and every game's two-phone mode stay in place, dimmed
    and tagged **"📡 Con señal"** (Needs signal / Com sinal); small icon buttons and things inside a
    dimmed card are dimmed without a tag of their own. A tap shows one line: "Esto necesita conexión.

@@ -11,17 +11,21 @@ html.offline .needs-signal[data-signal-tag]::after {
   font: 700 var(--fs-75) / 1.2 var(--font-body); white-space: nowrap; pointer-events: none;
 }
 
-/* The chip: one small pill, first thing in the page, centred; it takes its own line and covers nothing */
+/* The chip: a small pill floating at the bottom centre, over the page (the owner, 2026-11-07: going
+   offline or back must not move anything on screen). Only where the offline palette shows (the
+   site's pages and the game covers): while playing it steps aside, never over a game's controls */
 .offline-chip {
-  display: block; width: fit-content; margin: calc(var(--safe-top) + var(--s-6)) auto 0;
+  position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-12)); transform: translateX(-50%); z-index: 60;
   padding: var(--s-4) var(--s-12); border-radius: var(--r-pill);
   background: var(--well-deep); color: var(--ink); border: 1px solid var(--glass-border);
-  font: 700 var(--fs-85) / 1.2 var(--font-body); white-space: nowrap;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font: 700 var(--fs-85) / 1.2 var(--font-body); white-space: nowrap; pointer-events: none;
 }
+html:not(.offline-shell) .offline-chip { display: none; }
 
-/* The line a tap on something dimmed shows */
+/* The line a tap on something dimmed shows, just above the chip */
 .offline-toast {
-  position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-24)); transform: translateX(-50%); z-index: 61;
+  position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + var(--s-24) + var(--s-32)); transform: translateX(-50%); z-index: 61;
   max-width: calc(100% - var(--s-32)); padding: var(--s-10) var(--s-16); border-radius: var(--r-14);
   background: var(--snackbar-bg); color: var(--ink); text-align: center;
   font: 600 var(--fs-90) / 1.3 var(--font-body);
