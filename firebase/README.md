@@ -223,6 +223,11 @@ The owner (their UID) can write and delete in all these branches, to moderate: a
   streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414), and its `--rebuild` rewrites every month's totals every hour from the history and the markers, with the week's sums and best streaks (the `uad-rebuild` workflow, D-415, D-500; for phones in the lab flag `uad-night-totals` it is their only writer, and the rules tighten when it launches). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 - The owner reads all of `unoAlDia/`, `unoAlDiaInicio/`, `unoAlDiaDias/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
+- **A real player's `unoAlDia/<jid>` is never deleted to test something** (👁): the rules let no one
+  rewrite a day, so the phone uploads its days again with the time of that moment, and every one of
+  them falls outside `onTime` and counts 0 points (D-465). Tests use a test player. Happened to the
+  owner's history on 2026-11-07; repaired by setting each day's `at` back to its start in
+  `unoAlDiaInicio/` (or noon of the day) and running `uad-points-backfill.mjs --month <m> --rebuild --apply`.
 
 ## Phone notifications (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 

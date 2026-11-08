@@ -409,8 +409,8 @@
           const f = `${mes}-${String(d).padStart(2, '0')}`, x = por[f], h = f === e.hoy ? ' hoy' : '';
           // Up to today each day is a button that opens its details; the days to come are only a number
           const ver = { type: 'button', 'data-dia': f, 'aria-expanded': 'false', 'aria-controls': 'uad-dia', onClick: () => { tap(); abierto = abierto === f ? null : f; detalle(); } };
-          if (x?.played) cal.append(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': fmt(P.diaAria, { d, p: x.points }) },
-            el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.game)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.points))));
+          if (x?.played) cal.append(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': x.late ? `${fmt(P.diaAria, { d, p: x.points })}. ${P.tarde}` : fmt(P.diaAria, { d, p: x.points }) },
+            el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.game)?.emoji || '•'), el('small', { class: 'cal-pts' }, x.late ? '⏳' : String(x.points))));
           else if (x?.saved) cal.append(el('button', { ...ver, class: `salvado${h}`, 'aria-label': fmt(P.comodinAria, { d }) }, '🧊'));
           else if (f <= e.hoy) cal.append(el('button', { ...ver, class: h.trim() || null }, String(d)));
           else cal.append(el('span', {}, String(d)));
