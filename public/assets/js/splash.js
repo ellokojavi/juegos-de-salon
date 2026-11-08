@@ -268,7 +268,18 @@ export const campaignLang = (c, lang) => (!c?.langs || c.langs.includes(lang) ? 
  * were turned on. `seen` is the list of ids this phone closed; `profile` is this phone's
  * (`readProfile`), which a campaign for regulars needs.
  */
-export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false, profile = null, launched = () => true } = {}) {
+/** The games this phone already finished, by id (stats.js `trackFinish`; D-546): a splash for them only is not shown. */
+export const PLAYED_KEY = 'juegos-de-salon:jugados';
+export function playedIds(raw = (() => { try { return globalThis.localStorage?.getItem(PLAYED_KEY) ?? null; } catch (_) { return null; } })()) {
+  try { const v = JSON.parse(raw ?? '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string') : []; } catch (_) { return []; }
+}
+/** Whether a campaign only announces games this phone already played: told by the game itself, it is not news (D-546). */
+export const alreadyPlayed = (c, played = []) => {
+  const games = (c?.items || []).map(i => i?.game).filter(Boolean);
+  return games.length > 0 && games.length === (c.items || []).length && games.every(g => played.includes(g));
+};
+
+export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false, profile = null, launched = () => true, played = null } = {}) {
   if (forced) return campaigns[forced] ? [forced] : [];
   if (automated) return [];
   const live = a => {
@@ -277,6 +288,8 @@ export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], force
     if (campaigns[a.id].audience === 'regulars' && !isRegular(profile)) return false;
     // A campaign announcing games launched by a flag waits for them (D-517): `launched(flag)` for this visitor
     if ((campaigns[a.id].requires || []).some(f => !launched(f))) return false;
+    // Behind the `news-once` flag (D-546), `played` is given: a campaign of games this phone already played is skipped
+    if (played && alreadyPlayed(campaigns[a.id], played)) return false;
     const start = a.from ? Date.parse(a.from.includes('T') ? a.from : `${a.from}T00:00:00`) : NaN;
     if (Number.isFinite(start) && today.getTime() < start) return false;
     // A bare day ends at the player's own midnight; a full moment (`2026-11-09T08:00:00Z`) ends there for everyone

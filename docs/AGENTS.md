@@ -109,7 +109,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   its windows (D-430, `public/assets/js/home-windows.js`, D-431). Until the panel's first save, or if
   Firebase does not answer, the `ACTIVE` line of `public/assets/js/splash.js` holds, which
   `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off [<id>]` rewrites through a PR.
-  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR. Each window is counted
+  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR. Behind the lab flag `news-once` (D-546) a campaign made only of games the phone already finished is skipped, so its measured reach counts only players who had not played them. Each window is counted
   (reach, taps, closes, time open) and the section's 📊 How they did reads it by days shown (D-461).
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
   `marketing/splash/capture.mjs`, or a drawn teaser with `marketing/splash/teaser.mjs` by the rules of `marketing/splash/TEASERS.md` (`teaser.mjs new` starts one, D-505). Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
