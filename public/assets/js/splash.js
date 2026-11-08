@@ -179,7 +179,8 @@ export const CAMPAIGNS = {
     ],
   },
   // 🐤 Aletazo leaves the lab (D-517's way) and the bird the teaser `flap-soon` showed now plays: one game,
-  // big, as Tren en Vilo's launch (`hero`), its clip the cover's own demo flying the course by night.
+  // big, as Tren en Vilo's launch (`hero`), its clip a 24 s loop seamless to the pixel through day,
+  // afternoon, night and day again (marketing/splash/teaser/flap-play.html, the owner's request).
   // `requires` keeps it unseen until flags/aletazo is on for this visitor, so the `launch` workflow can
   // switch both on at 00:00 Pacific on 2026-11-09 (D-529) and it appears with the game
   'aletazo-ya': {
@@ -190,7 +191,7 @@ export const CAMPAIGNS = {
     hero: true,
     items: [{
       // Play opens the game's page, ready to start (`?play`)
-      game: 'aletazo', href: 'flap/?play', video: 'assets/splash/flap.mp4', img: 'assets/splash/flap-start.jpg', still: 'assets/splash/flap.jpg', ratio: '360 / 234', smooth: true,
+      game: 'aletazo', href: 'flap/?play', video: 'assets/splash/flap-play-teaser.mp4', img: 'assets/splash/flap-play-teaser-start.png', still: 'assets/splash/flap-play-teaser.png', ratio: '8 / 5', smooth: true,
       text: {
         es: 'Un toque, un aletazo: pasa por los aros y los huecos de los muros sin chocar. ¿Hasta dónde llegas? Ya está en La Copa y llega a Uno al día.',
         en: 'One tap, one flap: fly through the hoops and the gaps in the walls without crashing. How far can you go? Now in The Cup, and coming to One a Day.',
