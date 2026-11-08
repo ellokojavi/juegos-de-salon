@@ -276,7 +276,7 @@ export function mount(raiz, ctx) {
   requestAnimationFrame(paso);
 
   // For the end-to-end script: the game in play, a tap, and the state as the cup gets it
-  globalThis.__aletazo = { S, get g() { return S.g; }, tocar: () => tocar(), pausar, estado };
+  window.__aletazo = { S, get g() { return S.g; }, tocar: () => tocar(), pausar, estado };
 }
 
 /** What goes to the cup and to the result: the points (no cap), its card, and the flying time without pauses. */
