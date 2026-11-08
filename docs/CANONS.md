@@ -280,7 +280,7 @@ With each game or relevant change, update:
 
 - `docs/games/<carpeta>.md`: the spec, with these sections in this order: Resumen,
   Reglas, Modos, Flujo, Protocolo de mensajes, Archivos and Excepciones a los cánones (D-213). Whatever
-  a game needs beyond that goes in a section of its own. Every game gets its own page (C-21); the older ones built in `cup/games/` (Reinas, Tango, Zip…) are still described inside `cup.md` until a PR touching one gives it its page.
+  a game needs beyond that goes in a section of its own. Every game gets its own page (C-21), named after its code folder: `docs/games/queens.md` for the one in `cup/games/queens/`. `games.test.mjs` checks every game's page against the template; what an older one still lacks is debt in `docs/games-debt.json`.
 - `docs/REQUERIMIENTOS.md`: requirements with their own prefix and status.
 - `docs/decisions/D-<n>.md`: one numbered decision (D-n) per non-obvious choice, with its why and its consequences; `docs/DECISIONS.md` is its generated index (D-394).
 - `README.md`: the game's section with screenshots, **in English** (see below).

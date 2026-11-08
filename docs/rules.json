@@ -542,18 +542,25 @@
    "doc": "docs/CANONS.md",
    "form": [
     "check",
+    "ratchet",
     "judged"
    ],
    "enforcedBy": [
     "public/assets/js/all-games.test.mjs",
-    "tools/agents/usability-lint.test.mjs"
+    "tools/agents/usability-lint.test.mjs",
+    "public/assets/js/games.test.mjs",
+    "public/assets/js/conformance.test.mjs",
+    "public/assets/js/i18n.test.mjs",
+    "tools/agents/structure.test.mjs",
+    "tools/agents/memory.test.mjs"
    ],
    "reviewer": "the session making the change, with the checklist at the end of the canons",
-   "why": "whether a change was meant for every game is a call; a hand-made union of the lists and the word minigame are checked",
+   "why": "whether a change was meant for every game is a call; a hand-made union of the lists and the word minigame are checked, and the per-game checks walk every game, what a game built in cup/games/ still lacks frozen in the debt lists",
    "applies": [
     "public/**",
     "docs/games/**"
-   ]
+   ],
+   "debt": "docs/games-debt.json"
   },
   {
    "id": "U-1",

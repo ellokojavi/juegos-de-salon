@@ -1,0 +1,215 @@
+{
+  "_about": "What a game built in cup/games/ (SUELTOS) still lacks of the checks public/assets/js/games.test.mjs runs on every game (C-21, D-542), each { id, check, reason }. A ratchet (docs/RULES.md): frozen when the check reached every game, it only shrinks; an entry whose check now passes fails the test as stale: remove it.",
+  "entries": [
+    {
+      "id": "conexiones",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "conexiones",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "letras",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "letras",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "anio",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "anio",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "reinas",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "reinas",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "tango",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "tango",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "zip",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "zip",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "desenredo",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "desenredo",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "donde",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "donde",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "caso",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "caso",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "rutas",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "loteo",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "loteo",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "pintaminas",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "agentes",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "puentes",
+      "check": "pruebas-del-motor",
+      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
+    },
+    {
+      "id": "puentes",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "stick",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stick",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "especificacion",
+      "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    },
+    {
+      "id": "stack",
+      "check": "gancho",
+      "reason": "The end-to-end scripts drive it through La Copa's screen and its window.__copa hook (public/cup/game.js); its ui.js exposes none of its own"
+    }
+  ]
+}

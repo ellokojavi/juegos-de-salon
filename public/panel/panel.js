@@ -1630,8 +1630,13 @@ function vistaTimeline(now) {
       tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: vs(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
       ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: vs(cuenta[k], cuentaA[k]) }))),
     el('p', { class: 'muted small' }, 'Tap a kind to see only it; tap more to add them; tap the last one again to see them all.'),
+    conCsv(bloque(elegido ? `Key events · ${elegido.label}` : 'Key events', `Newest first. Tap one to open its room, game or cup. From ${periodLabelDia(pr.from)} to ${periodLabelDia(pr.to)}.`,
+      grupos.length ? el('div', { class: 'historia' }, ...grupos.flatMap(g => [el('p', { class: 'dia-grupo' }, fechaLabel(Date.parse(`${g.day}T12:00:00Z`))), ...g.evs.map(filaClave)]))
+        : el('p', { class: 'empty' }, 'No key events in this range.'),
+      enLista.length > TL_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.tlAll = !S.tlAll; render(); } }, S.tlAll ? 'Show fewer' : `Show all ${n(enLista.length)}`) : null),
+    'timeline', csv),
     el('div', { class: 'grid2' },
-      bloque('When', elegido ? `Showing ${elegido.label} below. Tap it again to see the whole range.` : 'Tap a period to see only its events below.',
+      bloque('When', elegido ? `Showing ${elegido.label} above. Tap it again to see the whole range.` : 'Tap a period to see only its events above.',
         filtros(TL_GRAINS, grano, v => { S.tlGrain = v; S.tlPeriod = null; render(); }, 'Group by'),
         lista(per.map(p => {
           const b = bar(p.label, segs(p.byKind), maxP);
@@ -1640,11 +1645,6 @@ function vistaTimeline(now) {
         }), 'Nothing yet.', 'bars')),
       bloque('Time of day', `When the key events happen, by hour, ${ZONA_NOMBRE}.`,
         lista(horas.filter(h => h.total || (h.hour >= 7 && h.hour <= 23)).map(h => bar(`${String(h.hour).padStart(2, '0')}:00`, [seg(C_TOTAL, h.total)], maxH)), 'Nothing yet.', 'bars'))),
-    conCsv(bloque(elegido ? `Key events · ${elegido.label}` : 'Key events', `Newest first. Tap one to open its room, game or cup. From ${periodLabelDia(pr.from)} to ${periodLabelDia(pr.to)}.`,
-      grupos.length ? el('div', { class: 'historia' }, ...grupos.flatMap(g => [el('p', { class: 'dia-grupo' }, fechaLabel(Date.parse(`${g.day}T12:00:00Z`))), ...g.evs.map(filaClave)]))
-        : el('p', { class: 'empty' }, 'No key events in this range.'),
-      enLista.length > TL_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.tlAll = !S.tlAll; render(); } }, S.tlAll ? 'Show fewer' : `Show all ${n(enLista.length)}`) : null),
-    'timeline', csv),
   ];
 }
 /* ------------------------------------------------------------------ */

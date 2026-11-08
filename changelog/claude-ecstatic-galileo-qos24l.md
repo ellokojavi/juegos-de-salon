@@ -1,0 +1,3 @@
+level: patch
+
+- **The per-game checks walk every game** (C-21, D-542): the canon guard (`games.test.mjs`), the file layout (`structure.mjs`), game memory (`memory.mjs`), conformance, the language parity of each game's texts and the share cards now cover the games built in `cup/games/` too (Queens, Tango, Zip, Babel…). What those cannot meet yet is frozen in debt lists that only shrink (`docs/games-debt.json`, and new entries in `docs/memory-debt.json` and `docs/manifest-debt.json`). The home page's share card now lists every game. Eight games got their own page in `docs/games/` (Connections, Word, What Year?, Queens, Tango, Zip, Untangle, Where Is It?).

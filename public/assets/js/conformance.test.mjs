@@ -6,7 +6,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { GAMES } from './games.js';
+import { ALL_GAMES } from './games.js';
 import { manifestFolders, readManifest } from '../../../tools/generators/manifests.mjs';
 import { staticConformance, leafKeys, excuses } from '../../../tools/generators/conformance.mjs';
 import { PARTS } from '../../../tools/e2e/ci.mjs';
@@ -26,17 +26,18 @@ assert.equal(failures, 0, `${failures} game(s) fail conformance; fix them, or re
 // The browser half runs once per manifest (a part per game, named after its folder's last segment)
 assert.deepEqual([...PARTS['conformance.mjs']].sort(), folders.map(f => f.split('/').pop()).sort(), 'tools/e2e/ci.mjs PARTS covers every manifest');
 
-// The debt: a game in GAMES without a game.json is listed, and only these may ever be (the ratchet)
-// Paid off in #1249 step 14: no game may be debt any more
-const FROZEN = [];
+// The debt: a game without a game.json is listed, and only these may ever be (the ratchet). Every game
+// walks it (C-21, D-542): GAMES paid theirs off in #1249 step 14; the games built in cup/games/ came in
+// frozen when the check reached them, since the manifest's schema (a folder with rules.js) does not fit them yet
+const FROZEN = ['conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso', 'rutas', 'loteo', 'pintaminas', 'agentes', 'puentes', 'stick', 'stack'];
 const debt = JSON.parse(readFileSync(new URL('../../../docs/manifest-debt.json', import.meta.url), 'utf8')).games;
-for (const g of GAMES) {
+for (const g of ALL_GAMES) {
   if (byId[g.id]) continue;
-  assert.ok(debt[g.id], `${g.id} is in GAMES without a game.json: give it one (node tools/generators/manifests.mjs migrate <folder>) ❌`);
+  assert.ok(debt[g.id], `${g.id} is a game without a game.json: give it one (node tools/generators/manifests.mjs migrate <folder>) ❌`);
 }
 for (const [id, why] of Object.entries(debt)) {
   assert.ok(FROZEN.includes(id), `docs/manifest-debt.json: ${id} is new debt; the list only shrinks, a new game is born with its game.json`);
-  assert.ok(GAMES.some(g => g.id === id), `docs/manifest-debt.json: ${id} is not in GAMES any more, remove it (stale)`);
+  assert.ok(ALL_GAMES.some(g => g.id === id), `docs/manifest-debt.json: ${id} is not a game any more, remove it (stale)`);
   assert.ok(!byId[id], `docs/manifest-debt.json: ${id} has its game.json now, remove it (stale)`);
   assert.ok(typeof why === 'string' && why.trim(), `docs/manifest-debt.json: ${id} needs its reason`);
 }

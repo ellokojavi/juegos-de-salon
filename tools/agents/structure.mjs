@@ -8,26 +8,34 @@
  *   a game of GAMES (games.js)   public/<path>: index.html, style.css, rules.js and game.js. Its engine.js and
  *                                engine.test.mjs are required by public/assets/js/games.test.mjs already, so
  *                                they are not checked twice here.
- *   a game of La Copa            public/cup/games/<folder>/: engine.js and ui.js.
+ *   a game of La Copa            public/cup/games/<folder>/: engine.js and ui.js (every folder there, the
+ *                                final and the Cup-only rounds too).
+ *   a game built in cup/games/   (SUELTOS, C-21: every game is one more game) also its own page,
+ *                                public/<path>index.html, the one the home page opens.
  *
  * What a folder still lacks goes in docs/structure-debt.json, { folder, file, reason }; an entry whose
  * file now exists, or whose folder is no longer checked, is stale and fails structure.test.mjs.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { allGames } from './game-folders.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const DEBT = join(ROOT, 'docs', 'structure-debt.json');
 /** The files C-2 asks of a game of GAMES (beyond the engine and its tests, which games.test.mjs asks). */
 export const GAME_FILES = ['index.html', 'style.css', 'rules.js', 'game.js'];
+/** The file C-2 asks of the page of a game built in cup/games/. */
+export const PAGE_FILES = ['index.html'];
 /** The files C-2 asks of a game of La Copa. */
 export const CUP_FILES = ['engine.js', 'ui.js'];
 
 /** The folders to check, `public/...` without a trailing slash, each with the files it must have. */
 export async function folders(root = ROOT) {
-  const { GAMES } = await import(pathToFileURL(join(root, 'public/assets/js/games.js')).href);
-  const out = GAMES.map(g => ({ folder: `public/${g.path.replace(/\/$/, '')}`, files: GAME_FILES }));
+  const games = await allGames(root);
+  const out = games.filter(x => !x.cup).map(x => ({ folder: x.folder, files: GAME_FILES }));
+  // A game built in cup/games/ has its page in public/<path> (its engine and screen are checked below)
+  for (const x of games.filter(x => x.cup)) out.push({ folder: `public/${x.game.path.replace(/\/$/, '')}`, files: PAGE_FILES });
   const cup = join(root, 'public/cup/games');
   for (const d of readdirSync(cup).sort()) if (statSync(join(cup, d)).isDirectory()) out.push({ folder: `public/cup/games/${d}`, files: CUP_FILES });
   return out;

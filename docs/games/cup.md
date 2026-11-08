@@ -159,6 +159,8 @@ con la tabla final, el lugar de cada uno después de cada día y el detalle de c
 
 ## Juegos
 
+Each game has its own page (C-21): [connections.md](connections.md), [word.md](word.md), [year.md](year.md), [queens.md](queens.md), [tango.md](tango.md), [zip.md](zip.md), [untangle.md](untangle.md), [where.md](where.md), [case.md](case.md), [routes.md](routes.md), [plots.md](plots.md), [paint-mines.md](paint-mines.md), [agents.md](agents.md), [bridges.md](bridges.md), [stick.md](stick.md) and [stack.md](stack.md). This section keeps what La Copa does with them.
+
 Todo el contenido de un día sale de una semilla `código:día:sal` (D-97): es idéntico para todos
 sin que nada viaje por la red.
 

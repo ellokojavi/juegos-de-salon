@@ -1,9 +1,69 @@
 {
-  "_about": "Available games of GAMES that do not save their game with createSessionStore (C-6; tools/agents/memory.mjs, #1249 step 12), each { id, reason }. An entry whose game now uses it fails memory.test.mjs as stale: remove it.",
+  "_about": "Available games (ALL_GAMES, C-21) that do not save their game with createSessionStore (C-6; tools/agents/memory.mjs, #1249 step 12), each { id, reason }. An entry whose game now uses it fails memory.test.mjs as stale: remove it. The games built in cup/games/ came in frozen when the check was extended to every game (D-542): a ratchet, it only shrinks.",
   "entries": [
     {
       "id": "copa",
       "reason": "La Copa is a tournament of days, not a game in progress: its state lives on the server (the cup, its days and each player's results), so there is nothing on the phone to resume; each day's game is a Cup game with its own rules"
+    },
+    {
+      "id": "conexiones",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "letras",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "anio",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "reinas",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "tango",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "zip",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "desenredo",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "donde",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "rutas",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "loteo",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "pintaminas",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "agentes",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "puentes",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "stick",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "stack",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
     }
   ]
 }

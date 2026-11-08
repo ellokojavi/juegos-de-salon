@@ -41,11 +41,14 @@ const PORT = Number(process.env.PORT || process.env.PUERTO) || 8791;
 const CDP_PORT = Number(process.env.CDP_PORT || process.env.PUERTO_CDP) || 9490;
 const WIDTH = 1200, HEIGHT = 630;
 
-const available = GAMES.filter(g => g.available);
+// Every game (C-21, D-542): the ones a player finds on the home page, whatever they are built with
+const available = ALL_GAMES.filter(g => g.available && !g.bodega && !g.oculto);
 // A lab game does not go on the home page, but its links are shared: it gets its card (D-101).
 // The same for a switched-off game that keeps its page (Julep): whoever has the link keeps sharing
 // it, and without this its card stayed with the drawing and texts from when it was switched off.
-const withCard = GAMES.filter(g => g.available || g.labs || existsSync(join(ROOT, 'public', g.path, 'index.html')));
+// A game built in cup/games/ always has its page (og.mjs cards generates it), so its card too.
+const solo = g => SUELTOS.includes(g);
+const withCard = ALL_GAMES.filter(g => solo(g) || g.available || g.labs || existsSync(join(ROOT, 'public', g.path, 'index.html')));
 
 /**
  * The entrance doors: the home page in Spanish and the ones that leave the language chosen (/pt/,
@@ -59,13 +62,13 @@ const DOORS = [
 /** The tagline's closing. It is the only phrase that does not come from the app: it is said to the robots. */
 const FREE = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
 /**
- * What the list of games does not say: One a Day and the games to play solo (D-271). Without
- * this, the home page's card only told the group games. One a Day's name comes from the app.
+ * What the list of games does not say: One a Day (D-271). The list names every game, the solo ones
+ * built in cup/games/ too (C-21, D-542). One a Day's name comes from the app.
  */
 const ALSO = {
-  es: n => `Además, ${n} y juegos para jugar solo.`,
-  en: n => `Plus ${n} and games to play solo.`,
-  pt: n => `E ainda ${n} e jogos para jogar sozinho.`,
+  es: n => `Además, ${n}.`,
+  en: n => `Plus ${n}.`,
+  pt: n => `E ainda ${n}.`,
 };
 /** "A, B and C" in each language. */
 const list = lang => available.map(g => g.name[lang]).join(', ')
@@ -81,7 +84,18 @@ const door = p => ({
   door: true,
 });
 
-const pages = () => [...DOORS.map(door), ...withCard.map(g => ({
+const pages = () => [...DOORS.map(door), ...withCard.map(g => solo(g) ? {
+  lang: 'es',
+  file: `public/${g.path}index.html`,
+  route: `/${g.path}`,
+  image: g.id,
+  game: g.id,
+  standalone: true,
+  slug: g.slug,
+  title: `${g.name.es} ${g.emoji} · Juegos de Salón`,
+  description: `${g.tagline.es} Un jugador, ${g.duration} min. Gratis, sin instalar y sin cuenta.`,
+  alt: `${g.name.es}: ${g.tagline.es}`,
+} : {
   lang: 'es',
   file: `public/${g.path}index.html`,
   route: `/${g.path}`,
@@ -90,18 +104,7 @@ const pages = () => [...DOORS.map(door), ...withCard.map(g => ({
   title: `${g.name.es} ${g.emoji} · Juegos de Salón`,
   description: `${g.tagline.es} ${g.players} jugadores, ${g.duration} ${g.durationUnit?.es || 'min'}. Gratis, sin instalar y sin cuenta.`,
   alt: `${g.name.es}: ${g.tagline.es}`,
-})), ...SUELTOS.map(m => ({
-  lang: 'es',
-  file: `public/${m.path}index.html`,
-  route: `/${m.path}`,
-  image: m.id,
-  game: m.id,
-  standalone: true,
-  slug: m.slug,
-  title: `${m.name.es} ${m.emoji} · Juegos de Salón`,
-  description: `${m.tagline.es} Un jugador, ${m.duration} min. Gratis, sin instalar y sin cuenta.`,
-  alt: `${m.name.es}: ${m.tagline.es}`,
-}))];
+})];
 
 /**
  * An image's fingerprint (D-181): what draws it (marketing/share-cards/card.html) and what it says (the
