@@ -1,7 +1,9 @@
 # PR previews (D-429)
 
-Each PR from this repo gets its own copy of the site on GitHub Pages, so the owner reviews a change
-before it merges instead of merging a PR for every review round:
+Each PR from this repo that changes something to look at gets its own copy of the site on GitHub
+Pages, so the owner reviews a change before it merges instead of merging a PR for every review round.
+A PR whose changes under `public/` are none, or only `*.test.mjs`, gets no preview (D-543, the owner:
+no time spent building one when there is nothing to see):
 
 ```
 https://ellokojavi.github.io/juegos-de-salon-previews/<branch>/
