@@ -342,8 +342,9 @@ that (after a new game, after a big text change), saying why.
    Nobody renames in batches or translates decisions, CHANGELOG entries or old documents (they are
    history); a PR renames a pending name only when it touches that file anyway
    (`node tools/agents/english.mjs touched`), and the D-354 ratchet stops new Spanish names.
-   And **the home page's order** (D-361, the owner's request): when `check` says it is due (the
-   list is a week old), `node tools/agents/popularity.mjs update` in your worktree. It counts the
+   And **the home page's order** (D-361, D-547): the Weekly popularity workflow refreshes it every
+   Monday on its own. Only when `check` says it is due (the workflow failed or found no key), look at
+   its last run and, after fixing the cause, `node tools/agents/popularity.mjs update` in your worktree. It counts the
    games finished in the last four weeks and rewrites `POPULARIDAD` and `POPULARIDAD_FECHA` in
    `public/assets/js/games.js` only if the order changed; then the change goes in your PR with an
    unnumbered `changelog/processes-<date>.md` entry (it changes `public/`), and `games.test.mjs`
