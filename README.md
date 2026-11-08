@@ -497,6 +497,7 @@ node firebase/labs-publish.test.mjs
 node firebase/owner-push.test.mjs
 node firebase/pin-attempts.test.mjs
 node firebase/room-limits.test.mjs
+node firebase/splash.test.mjs
 node marketing/served.test.mjs
 node marketing/splash/campaigns.test.mjs
 node marketing/splash/teaser.test.mjs

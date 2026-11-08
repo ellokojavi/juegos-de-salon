@@ -1373,6 +1373,7 @@
     "firebase/owner-push.test.mjs",
     "firebase/pin-attempts.test.mjs",
     "firebase/room-limits.test.mjs",
+    "firebase/splash.test.mjs",
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
     "marketing/splash/teaser.test.mjs",
