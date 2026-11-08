@@ -238,7 +238,7 @@ export const PATHS = {
     // The unused wildcard on the final's day (D-444): day 6 in "Tus días" with ×2 auto, and its result screen saying why
     // Day 6 not played, wildcard unused: the notice on the day card and on its cover (D-444)
     'wild-today': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
-    'wild-today-cover': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-empezar')?.scrollIntoView({ block: 'end' })`],
+    'wild-today-cover': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-comodin')?.scrollIntoView({ block: 'end' })`],
     'wild-today-three': [`location.href='/cup/?test&demo=last-day-three'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
     // The podium announced on the last day (lab flag `cup-podium-early`): the board of the `decided` demo
     'podium-early': [`location.href='/cup/?test&lab&demo=decided'`, `1`, `1`, `document.getElementById('podio-anticipado')?.scrollIntoView({ block: 'start' })`],
