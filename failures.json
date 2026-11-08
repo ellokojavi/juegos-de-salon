@@ -1526,6 +1526,19 @@
         "stat": "2 file(s) +4 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42518983288,
+      "check": "tests",
+      "pr": 1320,
+      "branch": "claude/dreamy-shannon-tczgb2",
+      "commit": "300a87b718ac5fea80bb568422c8e852587b0f5f",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.copa.files: public/cup/store-offline.js\nERROR · appeared modules: public/assets/js/cup-outbox.js, public/cup/store-offline.js",
+      "signature": "f863365751",
+      "date": "2026-11-08T20:21:16.661Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
