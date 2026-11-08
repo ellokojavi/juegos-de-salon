@@ -2,7 +2,7 @@
 // Offline mode's detector (D-538, PR 3): on at once when the browser says offline or after two bad
 // probes, off only after two good probes STEADY apart, and testers can force it.
 import assert from 'node:assert/strict';
-import { createConnection, FORCE_KEY, PROBE_TIMEOUT, STEADY, EVERY_ONLINE } from './connection.js';
+import { createConnection, FORCE_KEY, PROBE_TIMEOUT, STEADY, EVERY_ONLINE, RETRIES } from './connection.js';
 
 function rig({ online = true } = {}) {
   const t = { now: 0, jobs: [] };
@@ -28,7 +28,7 @@ function rig({ online = true } = {}) {
   const handlers = {};
   const win = { addEventListener: (k, f) => { handlers[k] = f; }, dispatchEvent() {} };
   const nav = { onLine: online };
-  const doc = { documentElement: { dataset: {} } };
+  const doc = { documentElement: { dataset: {} }, visibilityState: 'visible', addEventListener: (k, f) => { handlers[k] = f; } };
   const ls = new Map();
   const storage = { getItem: k => ls.get(k) ?? null, setItem: (k, v) => ls.set(k, v), removeItem: k => ls.delete(k) };
   const c = createConnection({ nav, win, doc, storage, fetcher, now: () => t.now, timer, probeUrl: 'https://x/precache.json' });
@@ -84,6 +84,31 @@ function rig({ online = true } = {}) {
   r.handlers.online();
   await r.advance(0);
   assert.equal(r.c.mode(), 'offline', 'the browser says online but nothing answers');
+}
+
+// Out of airplane mode: the online event arrives before the route, the first probe fails; a quick retry brings it back
+{
+  const r = rig({ online: false });
+  r.net.mode = 'down';
+  r.c.start();
+  r.nav.onLine = true;
+  r.handlers.online();
+  await r.advance(0);
+  assert.equal(r.c.mode(), 'offline', 'no route yet');
+  r.net.mode = 'up';
+  await r.advance(RETRIES[0]);
+  assert.equal(r.c.mode(), 'online', 'back on the first retry, seconds later');
+}
+
+// Switched back from the phone's settings with the page in the background: back in front, it looks again
+{
+  const r = rig({ online: false });
+  r.net.mode = 'down';
+  r.c.start();
+  r.nav.onLine = true; r.net.mode = 'up';
+  r.handlers.visibilitychange();
+  await r.advance(0);
+  assert.equal(r.c.mode(), 'online', 'the page coming back to the front rechecks at once');
 }
 
 // Without the browser's word (a poor connection that recovers): two good probes STEADY apart
