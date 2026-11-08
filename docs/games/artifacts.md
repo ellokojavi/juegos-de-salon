@@ -37,7 +37,7 @@ and a yellow «⚙️ Jugar», in C-5's order.
   🛝 trampoline (throws the ball up about 7 rows, always the same height), 🌀 fan (blows the ball
   sideways over itself and the three cells it faces, in its row and the one above).
 - **The tray:** each part drawn as the object it is (the same drawing as on the board), one per copy left, so two ramps are two ramps; past three, one with its ×n; a kind with none left stays faint.
-- **💡 Pista** lights a slot in cyan where one part of the answer goes (one the board does not have yet), with the part faint over it, until it is placed; a stage with a hint is worth ★★ at most. **🏳️ Rendirse** gives the stage up: a second tap within 3 s confirms, the stage counts as not passed (0 points) and the next one starts.
+- **💡 Pista** lights a slot in cyan where one part of the answer goes (one the board does not have yet), with the part faint over it, until it is placed; each hint costs one star of the stage, down to none (three hints on a three-part answer leave only the 10 for passing it; the same hint shown again costs nothing more). **🏳️ Rendirse** gives the stage up: a second tap within 3 s confirms, the stage counts as not passed (0 points) and the next one starts.
 - **Placing, by dragging:** press a part in the tray and drag it onto the board; it floats as a ghost
   snapped to the grid, over a green slot where it fits and a red one where it does not, lifted about a
   cell above the finger on a touch screen so the finger never hides it (with a mouse, none). Let go to

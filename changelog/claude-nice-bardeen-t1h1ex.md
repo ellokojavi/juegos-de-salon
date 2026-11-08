@@ -1,3 +1,3 @@
 level: patch
 
-- **Artefactos (lab), a round of the owner's requests:** the spikes are rhombi, pointed up and down; the ball stays round when a stage starts (the canvas re-measures itself if its box changed); once a run ends its trail plays out instead of hanging there; the basket's floor rolls a little rougher (`CUP_ROLL` 7 → 12, the pool re-checked); the basket's weave is drawn over the ball, so a ball inside reads as inside; **🏳️ Rendirse** gives a stage up (a second tap confirms, the stage counts as not passed); **💡 Pista** lights where one part of the answer goes (the stage is then worth ★★ at most); and the tray shows each part drawn as itself, one per copy, to drag straight onto the board (past three, one with its ×n).
+- **Artefactos (lab): each 💡 Pista costs a star** (the owner's report: three hints for the three parts still paid nearly in full). A stage loses one star per hint, down to none; showing the same hint again costs nothing more.
