@@ -753,6 +753,7 @@ for (const g of ['ahorcado', 'batalla-naval', 'toque-y-fama']) {
  */
 export const VISUAL_SKIP = {
   babel: 'its cover depends on the live flags/stack value from Firebase, so the end-to-end job and the Visual references workflow draw it differently (7.63 %)',
+  flap: 'its cover is the live demo flying over a city drawn with Math.random (scene.js skyline) and the autopilot in real time, so no two loads draw the same pixels; tools/e2e/flap/game.mjs checks the cover instead',
   where: 'its intro differed 1.26 % between two runs on the same runner: something on it is not fixed yet (#1249 step 15)',
 };
 
