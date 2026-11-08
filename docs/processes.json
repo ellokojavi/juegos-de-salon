@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+  "checkedUpTo": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -495,6 +495,46 @@
       "signatures": [
         "0faec1e3e5"
       ]
+    },
+    {
+      "key": "decisions-index-stale",
+      "what": "CI tests: tools/agents/document.test.mjs · AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+      "seen": [
+        {
+          "date": "2026-11-07T02:10:48.103Z",
+          "what": "#1253 tests: tools/agents/document.test.mjs",
+          "commit": "97e2d0c9d918ba50656464da95411314bb697902"
+        },
+        {
+          "date": "2026-11-07T19:49:44.743Z",
+          "what": "#1273 tests: tools/agents/document.test.mjs",
+          "commit": "bc1fd0322c07f7bab1a584a6015f36ee6c4e8957"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "4d927cbbd6"
+      ]
+    },
+    {
+      "key": "readme-tests-block-stale",
+      "what": "CI tests: README up to date · ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update",
+      "seen": [
+        {
+          "date": "2026-11-07T20:56:28.362Z",
+          "what": "#1284 tests: README up to date",
+          "commit": "a2ac9c6293295e579035ebaaba6c9887046eac2b"
+        },
+        {
+          "date": "2026-11-07T20:57:00.509Z",
+          "what": "#1286 tests: README up to date",
+          "commit": "8f26677933afe6b7284829aa0c95933a74db9a31"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "13e7a7848e"
+      ]
     }
   ],
   "mechanisms": [
@@ -598,12 +638,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-06",
-      "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec"
+      "date": "2026-11-08",
+      "to": "cc23d3581aba5a215baeb00efa1f3a31ed0706de"
     },
     "usability": {
-      "date": "2026-11-06",
-      "to": "7536e580bdd94a1230a34bf3d7078887ec7e85ec"
+      "date": "2026-11-08",
+      "to": "cc23d3581aba5a215baeb00efa1f3a31ed0706de"
     },
     "ideas": {
       "date": "2026-11-04",
@@ -770,6 +810,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1247",
       "note": "catch-up round 11-05/11-06; 19 changelog entries collected; 3 CI signatures promoted"
+    },
+    {
+      "date": "2026-11-08",
+      "from": "7536e580bdd94a1230a34bf3d7078887ec7e85ec",
+      "to": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+      "issue": null,
+      "pr": null,
+      "note": "catch-up round 11-07/11-08 (11-07 round died uncommitted); 30 changelog entries collected; dispatched documentation (#1308) and usability; 2 CI signatures promoted, no mechanism built"
     }
   ],
   "ownerDecisions": [

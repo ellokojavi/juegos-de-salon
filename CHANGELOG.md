@@ -1,5 +1,114 @@
 # Changelog
 
+## 1.4.30 — 2026-11-07
+- **Uno al día calendar**: a day uploaded too late for points shows ⏳ instead of a 0 that looked like a lost score; tapping it still explains why, and its spoken label says so too.
+- **Firebase**: a rule in `firebase/README.md` — a real player's `unoAlDia/` history is never deleted to test something, and how to repair one that was.
+
+## 1.4.29 — 2026-11-07
+- **Offline mode goes back online on its own** (D-538): out of airplane mode, the first check often failed because the phone had no route yet, and the next one waited 15 seconds and then needed a second one, so the screen stayed in Candlelight. Now `connection.js` retries quickly (2, 4 and 8 seconds) while the browser says it is online, and checks again when the page comes back to the front (switched from the phone's settings, where the `online` event may never reach it).
+
+## 1.4.28 — 2026-11-07
+- **Artefactos (lab): no more spikes inside the basket.** The level generator could drop spikes, a girder or a fixed plank right on the basket (stage 4 showed a basket with spikes in it). It now never puts a hazard on the basket's cells; the 14 levels that had one were removed and 5 new hard ones generated, and `engine.test.mjs` and the generator's `check` fail if it happens again.
+
+## 1.4.27 — 2026-11-07
+- **Labs**: the "✅ Listo para publicar" card goes to La Bodega under 🎲 Juegos guardados as 💤 No prosperó, sent there by the owner from /labs/. No player sees a change.
+
+## 1.4.26 — 2026-11-07
+- **📴 Offline mode (lab)**: «📴 Sin conexión» is now a sticker like the cards' «Nuevo», stuck on the title: «Juegos de Salón» on the home page and the game's name on its cover. It takes no room, so nothing on the page moves when it comes or goes.
+
+## 1.4.25 — 2026-11-07
+- **📴 Offline mode (lab)**: the «📴 Sin conexión» pill now floats at the bottom of the screen instead of taking a line at the top, so going offline or coming back moves nothing on the page. It shows on the site's pages and the game covers, and steps aside while playing.
+
+## 1.4.24 — 2026-11-07
+- **📴 Offline mode (lab)**: a page opened with no signal now shows the Candlelight palette from its first frame, with no flash of the normal colours. Going offline or coming back online with a page open switches on that same screen, right away, with a soft fade instead of a jump.
+
+## 1.4.23 — 2026-11-07
+- **📴 Offline mode (lab)**: the minigames' covers (Shinobi, Zip, Babel, Conexiones…) now take the Candlelight palette offline, as the party games' covers already did; the board keeps its colours once Start is pressed.
+
+## 1.4.22 — 2026-11-07
+- **Offline mode (lab):** without signal, the game covers take the candlelight colours too, and 🎲 Juego al azar only picks games this phone has stored, so it always opens.
+
+## 1.4.21 — 2026-11-07
+- **Offline mode (lab): a candlelight palette.** Without signal, the home page, Uno al día, Rankings and the menus turn a warm, quieter brown and amber, so it is clear you are in the offline version; the games keep their colours.
+
+## 1.4.20 — 2026-11-07
+- **Offline mode (lab):** an end-to-end test plays the whole path (stored, opened without signal, explained once, a game queued and uploaded once on the way back), and the phone no longer tries to upload while it knows it has no signal.
+
+## 1.4.19 — 2026-11-07
+- **Offline mode (lab): the first time without signal**, one sheet says what still works, what comes back with the signal and that scores upload by themselves; on iPhone it adds that the app on the home screen keeps them safest. Uno al día's page now opens without signal too.
+
+## 1.4.18 — 2026-11-07
+- **Offline mode (lab): scores.** Games played without signal are saved on the phone (up to 200, for 30 days) and upload by themselves when the signal is back, each one counted once. The end screen says "📴 Guardado en tu celular", and a message says how many went up and, if any did not, why. Yesterday's Uno al día played without signal still counts for its day if it uploads within 48 hours. The privacy page says what is kept.
+
+## 1.4.17 — 2026-11-07
+- **Your name, not «Jugador 1»**: One a Day in Hangman, Generala, Battleship and Liar's Dice now greets you by the name you already used on this phone (in La Copa, the rankings or another game) instead of «Jugador 1», and the ranking offer at the end no longer suggests «Jugador 1». The feedback box also fills in your name if this phone knows it. For the owner's panel: a seat label like «Jugador 1» or «Player 2» never stands in for a known name in the timeline again.
+
+## 1.4.16 — 2026-11-07
+- **Rules for making rules** (D-541, #1249 step 1): `docs/RULES.md` says every rule is a check, a ratchet or a judgement with a named reviewer, with the ten rules for making rules; `CLAUDE.md` links it.
+- **Rule registry** (D-541, #1249 step 2): `docs/rules.json` lists every rule with its form (🤖 check, 📈 ratchet, 👁 judged): the design system, English and the 33 usability rules; `tools/agents/rules.mjs index` generates the index in `docs/RULES.md`, and `rules.test.mjs` fails on a rule without its form, a check naming a file that does not exist, a judged rule without its reviewer, or a usability mark that disagrees with `docs/USABILIDAD.md`.
+- **Canon inventory** (D-541, #1249 step 3, part 1): the 21 canons (C-1…C-20 and C-8b) are in `docs/rules.json` with their form: 4 checked, 11 checked in part and judged in the rest, 6 judged with their reviewer; `rules.test.mjs` now fails on a canon missing from the registry.
+- **Outside lane** (#1249 step 4): a PR from a fork, or opened by anyone but the owner, is 🔴 whatever its files, so it never auto-merges (`outsideReason` in `tools/agents/lanes.mjs`, `docs/LANES.md`); registered as the `outside-lane` rule.
+- **The canons in English** (#1249 step 3, part 2): `docs/CANONES.md` is translated and renamed `docs/CANONS.md` (every reference follows; the player's quoted texts stay in Spanish). Two canons now follow the decisions that replaced theirs: C-1's country content (D-187, which replaced D-186) and C-17's share sheet with the Shorts in every language (D-410, which replaced D-254).
+- **Workshop in English** (#1249 step 13): the 41 Spanish paths left in phase 3 of D-316, all under `marketing/` (agents-card, case-teaser, coming-soon-teaser, three-new, the promo video and share tutorial scripts, `marketing/log.json`), are renamed with every reference; `english.mjs status` reports phase 3 = 0. `repo-weight.test.mjs` no longer counts a blob main already has (a renamed video) as new weight.
+- **Architecture boundary** (#1249 step 5): `tools/agents/architecture.test.mjs` fails when a game imports another game's folder, calls an external host or writes a storage key outside `juegos-de-salon:`; today's hits (40 imports, the Firebase SDK from its CDN, `uad-pts-cache` and `copa:prueba:uid`) are frozen in `docs/architecture-allowlist.json` with reasons, and Firebase paths are counted for step 7's manifests. `docs/ARCHITECTURE.md` explains it; registered as the `architecture` ratchet.
+- **Seeded randomness, replay and fuzzing** (#1249 steps 10–11): `azar.js` takes a seed (`seedRandom`, `withSeed`, `?test&seed=`), `tools/replay/replay.mjs` replays a recorded game, and Hangman keeps a full recorded game and the D-61 bug as replay tests; `tools/fuzz/fuzz.mjs` plays 2000 random Hangman games against its invariants in `tests` (a pure `step`/`legalActions` adapter in its engine), printing any failure as a replay. `docs/REPLAY.md`.
+- **Game manifests** (#1249 step 7): Hangman and Dudo describe themselves in a `game.json` (players, modes, AI, game memory, languages, Firebase paths, canon exceptions) validated by `public/assets/js/game-manifest.js`; `node tools/generators/manifests.mjs` writes the modules `games.js` imports, so their catalog entries live in one place (unchanged for every consumer).
+- **Judged rules on the PR** (#1249 step 6): every 👁 rule in `docs/rules.json` names the files it `applies` to; `rules.mjs touched` lists the rules a diff touches, and `.github/workflows/rules-comment.yml` (`pull_request_target`, main's code only, or by hand for any PR) keeps one comment on each PR naming the judged rules it touches and their reviewers. `CONTRIBUTING.md` and the new PR template carry a rules section generated from the registry.
+- **Missing measurable rules** (#1249 step 12): C-2 file layout (`structure.test.mjs`, no debt), C-6 game memory (`memory.test.mjs`, La Copa listed: its state lives on the server), the runtime flags registered as the `flags` rule over `listed.test.mjs`, and English exported identifiers (`identifiers.test.mjs`, 304 Spanish names frozen in `docs/english-identifiers-debt.json`, which only shrinks).
+- **Rules round** (#1249 step 16): `node tools/agents/rules.mjs report [--json] [--record]` gives each ratchet's debt and its trend (`docs/rules-debt.json`), any judged rule without a reviewer, and rule ids that fix commits named twice in 30 days without a check; `rules.test.mjs` fails when a ratchet's debt grows past its last count, and the processes round runs it and opens the PR for a missing check.
+- **Visual regression** (#1249 step 15): `tools/e2e/visual.mjs` compares each game's intro screen (25 games, Spanish, 390×812, frozen clock, seeded random, no motion) with a reference PNG in `tools/e2e/visual/ref/` (half size), made on GitHub's runner by the "Visual references" workflow once this is on main — until then the check passes with a note through a plain-node PNG diff (`png.mjs`); a change past the tolerance is ❌ in `end-to-end` for the games a PR reaches, and `--update` (or the manual "Visual references" workflow, on GitHub's runner) approves it in the diff.
+- **Visual references from the runner** (#1249 step 15): the 25 intro-screen references, made on GitHub's runner by the "Visual references" workflow, so the visual check compares each game from now on (Babel and Where left out with their reasons in `VISUAL_SKIP`); the clock is stopped for the screenshot (Date, performance.now and frame timestamps), so a cover animated in JS, like Babel's, draws the same frame every run.
+- **Game factory** (#1249 steps 8, 9, 14): a conformance suite run on every `game.json` (`conformance.test.mjs` in `tests`, `tools/e2e/conformance.mjs` in the browser: load, languages, back, resume, share, result); `node tools/generators/new-game.mjs <id>` makes a lab game that passes every rule as born, and `docs/ADD-GAME.md` starts with it; every game in GAMES, La Copa included, now lives in its `game.json`, moved by `manifests.mjs migrate` with each catalog entry unchanged.
+
+## 1.4.15 — 2026-11-07
+- **Panel timeline: 🤖 next to a robot.** A browser that says it is automated (`navigator.webdriver`) or a crawler or link-preview fetcher by its user agent is marked `r` on its `live/` and `seen/` rows, and the timeline shows 🤖 after its name and flag. The rows are kept, not dropped.
+
+## 1.4.14 — 2026-11-07
+- **Offline mode plan: the offline palette is chosen.** "Candlelight" (dark warm brown, amber and cream) will colour the home page, menus and game covers while offline, with a fade in and out as the signal goes and comes back. Written into step 8 of `docs/OFFLINE.md`; nothing changes for players yet.
+- **Testers: offline mode from the T tab.** While the offline flag is on, the T tab has a «📴 Modo sin conexión» switch that forces offline mode on this phone, on every page, until switched off: no airplane mode needed to try it. It is also the way back while forced, since the Labs link needs signal.
+- **Testers: the offline switch is a real cut now.** Forced offline mode takes the network away from the site, as airplane mode does: pages and files come only from what the phone kept, Firebase and every other site fail, and the browser says it is offline. Switching it on or off reloads the page. Stuck on a page that cannot load, any address with `?connection=online` ends it.
+
+## 1.4.13 — 2026-11-07
+- **📴 Offline mode, step 4 of 9** (D-538), in the lab: with no signal, a small «📴 Sin conexión · 2 por subir» pill opens each page, and what needs a connection (La Copa, Rankings, the two-phone mode of each game) stays in place, dimmed and tagged «📡 Con señal»; tapping it says why in one line instead of failing.
+
+## 1.4.12 — 2026-11-07
+- **📴 Offline mode, step 3 of 8** (D-538), in the lab: the app notices by itself when there is no signal or it is too poor to use, and only goes back once it has been steady for a few seconds. Testers can force the mode from its card in /labs/, which also shows what the app detects. Nothing changes on screen yet.
+
+## 1.4.11 — 2026-11-07
+- **📴 Offline mode (lab)**: after a new version was published, a game opened with no signal could draw blank or fail (seen on Shinobi): the phone kept the page from the old version, which asked for files the new one no longer stored. Pages now belong to the version they came with, and with no signal a missing code file falls back to another stored version of it instead of leaving the page half drawn (the home page without its 🎲 button).
+
+## 1.4.10 — 2026-11-07
+- **📴 Offline mode (lab)**: opening a page the phone had not stored, with no signal, drew the home page without its styles under that page's address (seen on /labs/). It now goes to the home page itself, styled.
+
+## 1.4.9 — 2026-11-07
+- **📴 Offline mode, step 2 of 8** (D-538), in the lab (🧪 `offline`): with the flag on, the phone stores the games that can be played without signal (about 4 MB, generated at each publish into `precache.json`) and opens them in airplane mode. Pages still come from the network first, so nobody gets stuck on an old version; with the flag off nothing is cached, as before.
+
+## 1.4.8 — 2026-11-07
+- **📴 Offline mode, step 1 of 8** (D-538, docs/OFFLINE.md): the plan for playing with no signal is approved and in the repo. The games manifest now says which games are offline-capable (all but La Copa, `offlineOk` in `games.js`), and `offline.test.mjs` fails if one of their pages starts importing something from another site when it opens. Nothing changes for players yet.
+
+## 1.4.7 — 2026-11-06
+- **Every online game's room follows the same rules** (D-539): Battleship, Bulls and Cows and the lab's Julep now apply joining and rematch through `room-state.js`, like Hangman, Timeline, Generala and Liar's Dice. In Julep a second rematch offer from the same player no longer replaces the first, so two phones cannot end up in different rooms. A join can carry more than a name through `onHello` (Julep's key for its sealed hand).
+
+## 1.4.6 — 2026-11-06
+- **Panel, 📣 Campaigns**: the end day can always be changed, also after picking 1 week, 2 weeks or 1 month; a new **Custom** option lights up when the end day matches no preset and opens the calendar. Every change shows on the card at once, before Firebase answers.
+
+## 1.4.5 — 2026-11-06
+- **🐤 Aletazo teaser**: the day → afternoon → night → day loop is now seamless (24 s): the city, the sky and the sparkles at the end lead into the start with no visible cut.
+
+## 1.4.4 — 2026-11-06
+- **In the lab: La Copa and Uno al día also get the language as one flag button in the top bar**, like the game covers (flag `compact-lang`, D-537).
+
+## 1.4.3 — 2026-11-06
+- **🌐 First visit in the browser's language (lab)**: someone who never chose a language sees the app in English or Portuguese when their browser is in one of them, and in Spanish otherwise; the toggle still changes it. Behind the flag `browser-lang`, on its /labs/ card (D-536).
+
+## 1.4.2 — 2026-11-06
+- **⚙️ Artilugio is now called Artefactos** (the owner's choice), and it moved to `/labs/artifacts/`: the lab card points there, and the best score kept on the phone comes along.
+- **Artefactos: a ball that lands late in the basket now passes the stage.** A run that trampolines kept in the air for a long while was cut at 14 s and called stuck while the ball was settling in the basket; a run now lasts up to 30 s, and a ball already in the basket when time runs out counts. The basket's floor is rougher, so the ball still rolls naturally but only a little, and the stage passes after a fraction of a second at rest (0.3 s).
+- **One name inside and out (C-20, D-535):** a game's folder, id, phone keys, test hooks and docs are the English version of the name the player reads, and a rename carries over what was kept. Artefactos is the first: `contraption` and `artilugio` are now `artifacts`.
+
+## 1.4.1 — 2026-11-06
+- La Copa's end-to-end scripts reach a new day from the cup's midnight, so they no longer depend on the hour they run (clock-jumps.test.mjs).
+
 ## 1.4.0 — 2026-11-05
 - **⚙️ Artilugio, a new machine puzzle in the lab's Juegos en prueba** (`/labs/contraption/`), in the genre of The Incredible Machine (Sierra, 1993), credited on the cover; the board, the parts, the levels and the look are our own. Each level drops a ball that must land in the basket 🧺: pick a ramp, plank, trampoline or fan from the tray, tap the board to place it, tap it again to turn, move or remove it, then ▶ Probar to watch the ball run. Six levels that unlock one after another; the fewer parts, the more stars, kept on the phone. In Spanish, English and Portuguese. Drawn in the app's neon: wooden ramps with bolts, a squashing trampoline, a spinning fan with visible breeze, a glowing basket, confetti on a win and a pop on the spikes; the cover shows a little board solving the levels by itself. Parts are dragged from the tray onto the board (snapped to the grid over a green or red slot, lifted above the finger), one tap turns a ramp or fan, a part is dragged to move it or dropped off the board to remove it, and ↶ Deshacer undoes the last change. A stage is passed only once the ball comes to rest in the basket; a ball that touches the bottom of the board blows up (flash, shock wave, smoke, a shake and a bang) before the stage is marked failed. The ball now drops all the way to the basket's floor and may roll from side to side with its momentum before it rests. After three levels that teach the parts, the levels are dealt at random from 72 generated ones in six tiers that grow from one part to three, with decoys and more hazards; 🎲 Otro deals another of the same difficulty.
 
