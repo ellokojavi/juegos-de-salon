@@ -1380,11 +1380,12 @@ function antesDeJugar(d) {
     el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn), err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
+    // The wildcard is decided before Empezar is tapped: right after the buttons, not under the rules
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     el('details', { class: 'panel' }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
       CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
-      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin)));
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J)))));
 }
 
 /* ------------------------------------------------------------------ */
