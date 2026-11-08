@@ -411,9 +411,11 @@ es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son
 ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
 semilla elegida en el link. Todos los intentos se cuentan en `partidas` (D-219).
 
-**Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`, al lado de `push/<subId>`
+**Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at, ts }`, al lado de `push/<subId>`
 (que ya trae idioma y zona horaria), y nadie lo lee. El último día jugado (`u`) y la racha los
 escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugador.
+`ts` is the last season recap the phone saw (`yyyy-mm`): a season already seen on the home page
+is not notified (D-545).
 `tools/push/daily.mjs` decide los avisos dentro de la vuelta de `notify.mjs`, cada 15 minutos
 (detalle en "Lo que el PR 4 hizo").
 
