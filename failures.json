@@ -1552,6 +1552,19 @@
       "date": "2026-11-08T20:26:40.842Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42519065646,
+      "check": "tests",
+      "pr": 1320,
+      "branch": "claude/dreamy-shannon-tczgb2",
+      "commit": "312d9df02e09e266f8cdcebbac4a19d29a25c7e6",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.copa.files: public/cup/store-offline.js\nERROR · appeared modules: public/assets/js/cup-outbox.js, public/cup/store-offline.js",
+      "signature": "f863365751",
+      "date": "2026-11-08T20:27:17.045Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
