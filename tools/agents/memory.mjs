@@ -1,6 +1,7 @@
 /**
- * Game memory as a ratchet (C-6, #1249 step 12): every available game of GAMES saves its game in
- * progress with `createSessionStore(` (public/assets/js/session.js) somewhere in its own JavaScript.
+ * Game memory as a ratchet (C-6, #1249 step 12): every available game (ALL_GAMES, C-21) saves its game in
+ * progress with `createSessionStore(` (public/assets/js/session.js) somewhere in its own JavaScript: its
+ * folder, or for a game built in cup/games/ the folder its code is in (tools/agents/game-folders.mjs).
  *
  *   node tools/agents/memory.mjs          (each game and whether it uses it; exit 0: report mode)
  *   node tools/agents/memory.mjs --gate   (exit 1 on a game without it that the debt list does not name, or a stale entry)
@@ -11,8 +12,9 @@
  * the store, or is no longer an available game, is stale and fails memory.test.mjs.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { allGames } from './game-folders.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const DEBT = join(ROOT, 'docs', 'memory-debt.json');
@@ -27,13 +29,10 @@ export function sourcesOf(folder, root = ROOT) {
   return readdirSync(dir, { recursive: true }).filter(f => /\.(m?js)$/.test(f) && !/\.test\.m?js$/.test(f)).map(f => readFileSync(join(dir, f), 'utf8'));
 }
 
-/** The available games of GAMES, each { id, folder, uses }. */
+/** Every available game, each { id, folder, uses }. */
 export async function games(root = ROOT) {
-  const { GAMES } = await import(pathToFileURL(join(root, 'public/assets/js/games.js')).href);
-  return GAMES.filter(g => g.available).map(g => {
-    const folder = `public/${g.path.replace(/\/$/, '')}`;
-    return { id: g.id, folder, uses: usesStore(sourcesOf(folder, root)) };
-  });
+  return (await allGames(root)).filter(x => x.game.available)
+    .map(({ game, folder }) => ({ id: game.id, folder, uses: usesStore(sourcesOf(folder, root)) }));
 }
 
 /** The debt list: [{ id, reason }]. */
