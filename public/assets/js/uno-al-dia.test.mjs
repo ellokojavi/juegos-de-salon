@@ -34,7 +34,7 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 21, '21 games: 17 solo (Conexiones until DESDE_AGENTES; Shinobi and Babel from 2026-11-03, D-517) and 4 with their own page (D-334, D-405, D-421, D-456)');
+assert.equal(JUEGOS_DIA.length, 22, '22 games: 18 solo (Conexiones until DESDE_AGENTES; Shinobi and Babel from 2026-11-03, D-517; Aletazo from 2026-11-10) and 4 with their own page (D-334, D-405, D-421, D-456)');
 // D-421: from DESDE_AGENTES Conexiones no longer comes out and Agentes joins the next deck; no day before changes
 {
   assert.equal(DESDE_AGENTES, '2026-10-24', 'Agentes takes Conexiones\' place on 2026-10-24 (D-421)');

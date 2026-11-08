@@ -404,6 +404,31 @@ export const SUELTOS = [
     nuevoDesde: '2026-11-02',
     diasNuevo: 10,
   },
+  {
+    // Out of the lab like Shinobi and Babel (D-517): La Copa's screen in cup/games/flap/, its page /flap/,
+    // launched by flags/aletazo at 00:00 Pacific on 2026-11-09 (the `launch` workflow, D-529). Until the
+    // flag is on it carries `oculto`; the lab prototype /labs/flap/ stays until the cleanup PR. The id is
+    // the lab's, which its usage signal and ranking table already use
+    id: 'aletazo',
+    lanza: 'aletazo',
+    copa: { pozo: 16 },
+    // Uno al día: by date, never by flag (the deck must be the same on every phone): from the day after
+    // the launch, joining the next deck
+    unoAlDia: { orden: 21, desde: '2026-11-10' },
+    slug: 'flap',
+    emoji: '🐤',
+    name: { es: 'Aletazo', en: 'Aletazo', pt: 'Aletazo' },
+    tagline: { es: 'Un toque, un aletazo: vuela entre aros y muros.', en: 'One tap, one flap: fly through hoops and walls.', pt: 'Um toque, uma batida de asa: voe entre aros e muros.' },
+    keywords: {
+      es: ['aletazo', 'pájaro', 'pajaro', 'volar', 'aros', 'flappy bird', 'habilidad', 'reflejos', 'pulso', 'toque'],
+      en: ['aletazo', 'bird', 'flap', 'fly', 'hoops', 'flappy bird', 'skill', 'reflexes', 'timing', 'tap'],
+      pt: ['aletazo', 'pássaro', 'voar', 'aros', 'flappy bird', 'habilidade', 'reflexos', 'precisão', 'toque'],
+    },
+    tipos: ['skill'],
+    duration: '1–3',
+    nuevoDesde: '2026-11-09',
+    diasNuevo: 10,
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true, ...(m.lanza ? { oculto: !lanzado(m.lanza) } : {}) }));
 
@@ -443,7 +468,7 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
 export const POPULARIDAD_FECHA = '2026-11-02';
-export const POPULARIDAD = ['copa', 'reinas', 'tango', 'donde', 'loteo', 'rutas', 'stick', 'anio', 'desenredo', 'linea-de-tiempo', 'pintaminas', 'letras', 'puentes', 'conexiones', 'agentes', 'generala', 'toque-y-fama', 'zip', 'stack', 'batalla-naval', 'ahorcado', 'dudo'];
+export const POPULARIDAD = ['copa', 'reinas', 'tango', 'donde', 'loteo', 'rutas', 'stick', 'anio', 'desenredo', 'linea-de-tiempo', 'pintaminas', 'letras', 'puentes', 'conexiones', 'agentes', 'generala', 'toque-y-fama', 'zip', 'stack', 'aletazo', 'batalla-naval', 'ahorcado', 'dudo'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**

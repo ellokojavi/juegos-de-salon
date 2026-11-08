@@ -74,6 +74,7 @@ const CODE = {
   puentes: () => Promise.all([import('./bridges/engine.js'), import('./bridges/ui.js')]),
   stick: () => Promise.all([import('./stick/engine.js'), import('./stick/ui.js')]),
   stack: () => Promise.all([import('./stack/engine.js'), import('./stack/ui.js')]),
+  aletazo: () => Promise.all([import('./flap/engine.js'), import('./flap/ui.js')]),
   final: () => Promise.all([import('./final/engine.js'), import('./final/ui.js')]),
 };
 CODE.trio = CODE.final;
@@ -111,6 +112,11 @@ const BUILD = {
   puentes: ([m, ui]) => delLab('puentes', m, ui),
   stick: ([m, ui]) => delLab('stick', m, ui),
   stack: ([m, ui]) => delLab('stack', m, ui),
+  // 🐤 Aletazo, out of the lab like Babel (D-517), launched by flags/aletazo. Its exports are named in
+  // English (D-316), so La Copa's interface names are mapped here
+  aletazo: ([m, ui]) => delLab('aletazo', {
+    generarDia: m.generateDay, puntajeDia: m.dayScore,
+  }, { portada: ui.cover, titulo: ui.title, montar: ui.mount, resultado: ui.result, desglose: ui.breakdown }),
   final: ([final, uiFinal]) => ({
     ...juego(final, uiFinal),
     // A round with no short version is the game whole, built with its own generator for the final

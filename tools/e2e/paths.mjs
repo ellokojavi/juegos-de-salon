@@ -555,6 +555,7 @@ export const PATHS = {
    */
   stick: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
   stack: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
+  aletazo: { intro: [], game: [START] },
   puentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`],
