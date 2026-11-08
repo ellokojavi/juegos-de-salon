@@ -48,6 +48,8 @@ const PUNTAJE = {
   // Shinobi: its points, up to 100 (D-517)
   stick: k => { const s = Math.min(100, Math.round(60 * k + 40 * k * k)); return { s, r: `🥷 ${s}` }; },
   // Babel: two points a block, up to 100 (D-517)
+  // Aletazo: its points, a gate 1 and a dead center 2 (D-517's way)
+  aletazo: k => { const s = Math.round(8 + 40 * k * k); return { s, r: `🐤 ${s}` }; },
   stack: k => { const s = Math.min(100, 2 * Math.round(50 * k * k)); return { s, r: `🧱 ${s}` }; },
   puentes: k => { const s = Math.min(100, 10 * Math.round(5 * k) + Math.round(30 * k * k)); return { s, r: `${s}/100` }; },
   // La final trae su tarjeta de rondas (⏳75 🔢85 …), que la tabla del día muestra (#259)

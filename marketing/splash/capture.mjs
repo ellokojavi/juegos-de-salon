@@ -3,7 +3,7 @@
 // opens its page with a fixed seed, starts, and plays the solution slowly while it shoots the board
 // about 12 times a second; ffmpeg turns the frames into a small looping MP4 and its poster.
 //
-//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges|shinobi|babel]
+//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges|shinobi|babel|flap]
 //
 // A skill game (`cover`) is not played by the script: its waiting room already plays itself (the cover's
 // demo, drawn by the game's own scene), so the clip is that canvas for `duration` ms, recorded in the page
@@ -100,6 +100,7 @@ const GAMES = {
   // 🥷 Shinobi and 🗼 Babel (D-517): the waiting room's own demo, at its own shape (a cartridge's screen)
   shinobi: { url: '/shinobi/?test', cover: '.sn-demo', native: 360, duration: 9000 },
   babel: { url: '/babel/?test', cover: '.sk-demo', native: 360, duration: 9000 },
+  flap: { url: '/flap/?test', cover: '.fl-demo', native: 360, duration: 9000 },
 };
 
 const only = process.argv[2];

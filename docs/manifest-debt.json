@@ -16,6 +16,7 @@
     "agentes": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games",
     "puentes": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games",
     "stick": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games",
-    "stack": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games"
+    "stack": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games",
+    "aletazo": "Built in cup/games/: the manifest's schema describes a game folder with its own rules.js, LOCALES and modes, and this game's engine, screen and texts live in La Copa (cup/games/, cup/rules.js); it gets its game.json when the schema covers the Cup-built games"
   }
 }

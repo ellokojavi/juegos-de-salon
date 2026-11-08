@@ -29,7 +29,9 @@ assert.deepEqual([...PARTS['conformance.mjs']].sort(), folders.map(f => f.split(
 // The debt: a game without a game.json is listed, and only these may ever be (the ratchet). Every game
 // walks it (C-21, D-542): GAMES paid theirs off in #1249 step 14; the games built in cup/games/ came in
 // frozen when the check reached them, since the manifest's schema (a folder with rules.js) does not fit them yet
-const FROZEN = ['conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso', 'rutas', 'loteo', 'pintaminas', 'agentes', 'puentes', 'stick', 'stack'];
+const FROZEN = ['conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso', 'rutas', 'loteo', 'pintaminas', 'agentes', 'puentes', 'stick', 'stack',
+  // 🐤 Aletazo: built in cup/games/ like Babel; the owner's call (2026-11-08, #1315), until the schema covers the Cup-built games
+  'aletazo'];
 const debt = JSON.parse(readFileSync(new URL('../../../docs/manifest-debt.json', import.meta.url), 'utf8')).games;
 for (const g of ALL_GAMES) {
   if (byId[g.id]) continue;
