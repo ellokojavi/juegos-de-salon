@@ -85,6 +85,9 @@ assert.deepEqual(stale({ a: { 'dia:1': 0, 'dia:2': Date.parse('2026-10-07') } },
   s = run(q, at('2026-11-01', 9), {}, sub('America/Santiago', 'pt'));
   assert.equal(s[0].notification.body, '🏆 A temporada de outubro terminou. Toque para ver o ranking final.');
   assert.match(s[0].notification.url, /&lang=pt$/);
+  // Told once, by the first channel (D-545): a phone that already saw the recap on the home page gets no notification
+  assert.ok(run({ ...q, ts: '2026-10' }, at('2026-11-01', 9)).every(x => x.kind !== 'temporada'), 'not after seeing the recap');
+  assert.equal(run({ ...q, ts: '2026-09' }, at('2026-11-01', 9))[0]?.key, 'temporada:2026-10', 'an older season seen does not count');
 }
 
 console.log('One a Day notifications: ok');
