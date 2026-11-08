@@ -7,7 +7,9 @@
 #
 # PRs and merges made with the workflow token do not wake other workflows, so this one runs the
 # required checks on the PR's branch by hand (tests.yml, e2e.yml) and, after merging, publish.yml,
-# as approve.yml does (D-216, D-302).
+# as approve.yml does (D-216, D-302). The lane job runs only on pull_request, so it never sees this PR:
+# the workflow sets `owner-approval` green itself, and only when the commit holds nothing but the two
+# generated lines of games.js and its changelog entry (D-547: the owner chose this, 2026-11-08).
 #
 # It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
 # and ends green.
@@ -31,6 +33,7 @@ permissions:
   pull-requests: write
   actions: write
   checks: read
+  statuses: write   # owner-approval for its own PR, see below
 
 concurrency:
   group: popularity
@@ -81,6 +84,11 @@ jobs:
             --title "Weekly popularity, $day" \
             --body "The weekly count of games finished (\`tools/agents/popularity.mjs update\`, D-547): it rewrites \`POPULARIDAD\` and \`POPULARIDAD_FECHA\` in \`games.js\`, so the 🔥 Popular label moves to this week's top three and leaves the games that dropped out. Opened, checked and merged by the Weekly popularity workflow.")
           pr=${url##*/}
+          sha=$(git rev-parse HEAD)
+          files=$(git diff --name-only HEAD~1 HEAD | sort | tr '\n' ' ')
+          [ "$files" = "changelog/popularity-$day.md public/assets/js/games.js " ] || { echo "::error::#$pr touches more than the popularity lines: $files"; exit 1; }
+          [ "$(git diff -U0 HEAD~1 HEAD -- public/assets/js/games.js | grep -E '^[-+][^-+]' | grep -vcE '^[-+]export const POPULARIDAD(_FECHA)? = ')" = 0 ] || { echo "::error::#$pr changes games.js beyond POPULARIDAD"; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$sha" -f state=success -f context=owner-approval -f description='weekly popularity: only the generated lines (D-547)' > /dev/null
           gh workflow run tests.yml --ref "$branch"
           gh workflow run e2e.yml --ref "$branch"
           # end-to-end appears only once its scripts end (#1273): wait until both checks exist
