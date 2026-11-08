@@ -93,6 +93,8 @@ The usability agent runs the lint first, never re-reports what it covers, and sp
   cover, title, language, the button, and then «Cómo se juega», always a `<details>` collapsed by default (the owner's rule, 2026-10-28), and the rest; a cover that does not
   fit shrinks on a short screen. `node tools/e2e/landing-fold.mjs` checks it on every PR over the
   `intro` path of each game in `tools/e2e/paths.mjs`: a new game is checked as soon as it has one.
+  The same holds wherever a game is entered: from Uno al día (its `?today` link, every game in
+  `JUEGOS_DIA`) and from inside a cup (the day's cover, before «Empezar»), which the script checks too.
 - 🤖👁 **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
   18 caracteres). Lo que haya que explicar va en el texto de arriba. Si dos botones se parecen,
   se distinguen en la palabra principal y no con una cola ("Jugar de nuevo" / "Repetir esta
