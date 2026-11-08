@@ -1818,6 +1818,10 @@
       "title": "🔐 La clave (prototipo del laboratorio, en La Bodega)"
     },
     {
+      "path": "docs/games/connections.md",
+      "title": "🔗 Connections (Conexiones)"
+    },
+    {
       "path": "docs/games/cup.md",
       "title": "La Copa"
     },
@@ -1870,6 +1874,10 @@
       "title": "📐 Loteo (Plots · Loteamento · Parzellen)"
     },
     {
+      "path": "docs/games/queens.md",
+      "title": "👑 Queens (Reinas)"
+    },
+    {
       "path": "docs/games/routes.md",
       "title": "🚇 Rutas rotas (Broken Routes)"
     },
@@ -1882,8 +1890,32 @@
       "title": "🥷 Shinobi (La Copa game; Stick Ninja in the lab before)"
     },
     {
+      "path": "docs/games/tango.md",
+      "title": "☀️ Tango"
+    },
+    {
       "path": "docs/games/timeline.md",
       "title": "Diseño: Línea de Tiempo"
+    },
+    {
+      "path": "docs/games/untangle.md",
+      "title": "🧶 Untangle (Desenredo)"
+    },
+    {
+      "path": "docs/games/where.md",
+      "title": "📍 Where Is It? (¿Dónde queda?)"
+    },
+    {
+      "path": "docs/games/word.md",
+      "title": "🔤 Bulls and Cows: Word (Toque y Fama: Palabra)"
+    },
+    {
+      "path": "docs/games/year.md",
+      "title": "📅 What Year? (¿En qué año?)"
+    },
+    {
+      "path": "docs/games/zip.md",
+      "title": "〰️ Zip"
     },
     {
       "path": "docs/learning/01-content-pipeline.md",
