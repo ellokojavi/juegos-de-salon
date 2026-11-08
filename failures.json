@@ -1520,7 +1520,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/index-nav.js\nERROR · appeared tests: public/labs/index-nav.test.mjs",
       "signature": "ccf0a04dba",
       "date": "2026-11-08T20:14:30.654Z",
-      "fix": null,
+      "fix": {
+        "commit": "2fb3ae53a144702d5aef1117dbb19b279c5a18f3",
+        "date": "2026-11-08T20:17:34.821Z",
+        "stat": "2 file(s) +4 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
