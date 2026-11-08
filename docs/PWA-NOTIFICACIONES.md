@@ -405,6 +405,8 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   `pushEnviadosDia`. Since D-424 it also reads `uadTemporada/s<m>/t` for this UTC month and the one
   before: the notification that a season ended (`temporada:<yyyy-mm>`, the 1st to the 3rd) waits until
   the nightly points rebuild has closed that month, or its link (`/?recap=season`) would open nothing.
+  Since D-545 it is not sent to a phone that already saw that season's recap on the home page:
+  the phone writes `pushDia/<subId>/ts`, the last season it saw (each piece of news is told once).
 - `tools/push/notify.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta

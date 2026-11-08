@@ -1,3 +1,3 @@
 level: patch
 
-- **Offline mode: tap the "📴 Sin conexión" sticker to see what being offline means.** The sheet that explains it (what still works, what comes back with the signal, what happens to your scores) used to show only once per phone; now the sticker opens it again whenever you want (behind the `offline` flag, D-538).
+- **/labs/ has an index at the top**: one tap per game and improvement still being tried jumps straight to its card, without scrolling past every game. La Bodega is left out, and a card published for everyone drops out of the index on its own.

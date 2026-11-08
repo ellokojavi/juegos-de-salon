@@ -44,4 +44,5 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 | [🚂 `tren-en-vilo-pronto`](campaigns/tren-en-vilo-pronto/) · Algo nuevo se viene… (teaser) | 2026-10-22 → 2026-10-28 | full pass (D-355) |
 | [🥷 `ninja-pronto`](campaigns/ninja-pronto/) · El ninja enfrenta una misión nunca antes vista (teaser of Stick Ninja) | off, made 2026-10-28 | pending (D-355) |
 | [🧱 `stack-pronto`](campaigns/stack-pronto/) · Llegar al cielo es el objetivo (teaser of Stack) | off, made 2026-10-28 | pending (D-355) |
+| [🐤 `aletazo-ya`](campaigns/aletazo-ya/) · ¡A volar con Aletazo! (launch) | 2026-11-09 00:00 Pacific → 2026-11-16 | pending (D-355) |
 | [🥂 `brindis-apoyo`](campaigns/brindis-apoyo/) · ¡Un brindis por ti! (support) | off, until support leaves the lab | pending (D-355) |

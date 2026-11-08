@@ -178,6 +178,26 @@ export const CAMPAIGNS = {
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
   },
+  // 🐤 Aletazo leaves the lab (D-517's way) and the bird the teaser `flap-soon` showed now plays: one game,
+  // big, as Tren en Vilo's launch (`hero`), its clip the cover's own demo flying the course by night.
+  // `requires` keeps it unseen until flags/aletazo is on for this visitor, so the `launch` workflow can
+  // switch both on at 00:00 Pacific on 2026-11-09 (D-529) and it appears with the game
+  'aletazo-ya': {
+    emoji: '🐤',
+    requires: ['aletazo'],
+    kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
+    title: { es: '¡A volar con Aletazo!', en: 'Take flight with Aletazo!', pt: 'Voe com o Aletazo!' },
+    hero: true,
+    items: [{
+      // Play opens the game's page, ready to start (`?play`)
+      game: 'aletazo', href: 'flap/?play', video: 'assets/splash/flap.mp4', img: 'assets/splash/flap-start.jpg', still: 'assets/splash/flap.jpg', ratio: '360 / 234', smooth: true,
+      text: {
+        es: 'Un toque, un aletazo: pasa por los aros y los huecos de los muros sin chocar. ¿Hasta dónde llegas? Ya está en La Copa y llega a Uno al día.',
+        en: 'One tap, one flap: fly through the hoops and the gaps in the walls without crashing. How far can you go? Now in The Cup, and coming to One a Day.',
+        pt: 'Um toque, uma batida de asa: passe pelos aros e pelas brechas dos muros sem bater. Até onde você chega? Já está na Copa e chega ao Um por dia.',
+      },
+    }],
+  },
   // A teaser of 🐤 Aletazo, still in the lab, for a weekend (the owner's request): the bird glides
   // calmly over the city from day into night, drawn with the game's own scene. No hoops, no walls, no
   // link; the line under the clip says where it is coming

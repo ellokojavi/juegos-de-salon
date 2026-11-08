@@ -64,6 +64,10 @@
     {
       "id": "stack",
       "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "aletazo",
+      "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
     }
   ]
 }

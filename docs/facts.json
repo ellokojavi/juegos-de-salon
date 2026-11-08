@@ -106,6 +106,11 @@
         "public/cup/games/deshacer.js",
         "public/cup/games/final/engine.js",
         "public/cup/games/final/ui.js",
+        "public/cup/games/flap/engine.js",
+        "public/cup/games/flap/scene.js",
+        "public/cup/games/flap/style.css",
+        "public/cup/games/flap/texts.js",
+        "public/cup/games/flap/ui.js",
         "public/cup/games/index.js",
         "public/cup/games/mazos.js",
         "public/cup/games/number/engine.js",
@@ -957,6 +962,22 @@
       "labs": false,
       "bodega": false,
       "path": "babel/"
+    },
+    {
+      "id": "aletazo",
+      "emoji": "🐤",
+      "name": {
+        "es": "Aletazo",
+        "en": "Aletazo",
+        "pt": "Aletazo"
+      },
+      "kinds": [
+        "skill"
+      ],
+      "duration": "1–3",
+      "labs": false,
+      "bodega": false,
+      "path": "flap/"
     }
   ],
   "themes": [
@@ -1213,6 +1234,10 @@
     "public/cup/games/deshacer.js",
     "public/cup/games/final/engine.js",
     "public/cup/games/final/ui.js",
+    "public/cup/games/flap/engine.js",
+    "public/cup/games/flap/scene.js",
+    "public/cup/games/flap/texts.js",
+    "public/cup/games/flap/ui.js",
     "public/cup/games/index.js",
     "public/cup/games/mazos.js",
     "public/cup/games/number/engine.js",
@@ -1305,6 +1330,7 @@
     "public/labs/fourth-king/game.js",
     "public/labs/fourth-king/rules.js",
     "public/labs/home/experiments.js",
+    "public/labs/index-nav.js",
     "public/labs/julep/engine.js",
     "public/labs/julep/game.js",
     "public/labs/julep/rules.js",
@@ -1351,6 +1377,7 @@
     "firebase/owner-push.test.mjs",
     "firebase/pin-attempts.test.mjs",
     "firebase/room-limits.test.mjs",
+    "firebase/splash.test.mjs",
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
     "marketing/splash/teaser.test.mjs",
@@ -1423,6 +1450,7 @@
     "public/cup/games/bridges/contrast.test.mjs",
     "public/cup/games/bridges/physics.test.mjs",
     "public/cup/games/deshacer.test.mjs",
+    "public/cup/games/flap/engine.test.mjs",
     "public/cup/games/juegos.test.mjs",
     "public/cup/games/lazy.test.mjs",
     "public/cup/games/paint-mines/engine.test.mjs",
@@ -1451,6 +1479,7 @@
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/flap/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
+    "public/labs/index-nav.test.mjs",
     "public/labs/julep/engine.test.mjs",
     "public/labs/launched.test.mjs",
     "public/labs/listed.test.mjs",
@@ -1599,6 +1628,7 @@
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
     "feedback-prod.mjs",
+    "flap/game.mjs",
     "flap/lab.mjs",
     "fourth-king/game.mjs",
     "fourth-king/lab.mjs",
@@ -1843,7 +1873,7 @@
     },
     {
       "path": "docs/games/flap.md",
-      "title": "🐤 Aletazo (lab prototype, in Juegos en prueba)"
+      "title": "🐤 Aletazo (La Copa game, launched by flag; the lab prototype stays until the cleanup)"
     },
     {
       "path": "docs/games/fourth-king.md",

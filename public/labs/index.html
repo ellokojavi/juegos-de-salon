@@ -68,6 +68,14 @@
     .bodega-periodo > summary::-webkit-details-marker { display: none; }
     .bodega-periodo > summary .flecha { font: 900 1.5rem/1 var(--font-body); transition: transform 0.2s; }
     .bodega-periodo[open] > summary .flecha { transform: rotate(90deg); }
+    /* The index: a tap jumps to a card; the card lands below the top edge, not glued to it */
+    .indice { display: flex; flex-direction: column; gap: var(--s-12); }
+    .indice-grupo { display: flex; flex-direction: column; gap: var(--s-6); }
+    .indice-titulo { margin: 0; font-weight: 700; }
+    .indice .chip-btn { text-decoration: none; }
+    .seccion { scroll-margin-top: var(--s-16); }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   </style>
 </head>
 <body>
@@ -87,6 +95,9 @@
       <div class="panel aviso-labs">
         <p style="margin:0">Lo que hay en el laboratorio todavía puede cambiar o romperse. Si algo falla o se te ocurre una mejora, usa el botón <b>🐞 Reportar un problema o dejar un comentario</b> que aparece en cada juego.</p>
       </div>
+
+      <!-- The index (the owner, 2026-11-08): one tap per card being tried, drawn by index-nav.js -->
+      <nav class="panel indice" id="indice" aria-label="Índice del laboratorio" hidden></nav>
 
       <!-- Three groups (D-280, D-361): the games being tried, the improvements to the rest of the app
            being tried, and in La Bodega what is no longer worked on (D-372, D-420) -->
@@ -125,8 +136,9 @@
         <section class="panel seccion" id="seccion-aletazo">
           <h2>🐤 Aletazo</h2>
           <p class="muted" style="margin:0">Inspirado en <a href="https://es.wikipedia.org/wiki/Flappy_Bird" target="_blank" rel="noopener">Flappy Bird</a>, de Dong Nguyen. Un toque, un aletazo: cada toque hace subir al pájaro y la gravedad lo baja. Pasa por los aros (justo al medio vale doble) y por los huecos de los muros, sin chocar. Cada 5 pasadas sube de nivel: más rápido y más justo. Tienes 3 vidas.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">En los tres idiomas, para uno solo.</p>
-          <a class="btn btn--yellow" id="btn-aletazo" href="flap/">🐤 Jugar Aletazo</a>
+          <p class="muted" style="margin:0;font-size:0.85rem">Listo para lanzar (D-517): en los tres idiomas, con su página <a href="../flap/">/flap/</a>, ranking, La Copa y Uno al día (desde el mazo del 28 de noviembre). Se publica solo el 9 de noviembre a las 00:00 (Pacífico) con su splash; Volver al laboratorio lo vuelve a esconder.</p>
+          <a class="btn btn--yellow" id="btn-aletazo" href="../flap/">🐤 Jugar Aletazo</a>
+          <a class="link-btn" id="btn-aletazo-lab" href="flap/">El prototipo del laboratorio</a>
         </section>
 
         <section class="panel seccion" id="seccion-artifacts">
@@ -166,7 +178,7 @@
         <!-- Offline mode (D-538, docs/OFFLINE.md): the cards and switches of PRs 3 to 6 land here -->
         <section class="panel seccion" id="seccion-offline">
           <h2>📴 Modo sin conexión</h2>
-          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app ya se da cuenta sola cuando no hay señal o es muy mala, pero todavía no lo muestra: el cartel de «Sin conexión» y los juegos atenuados llegan en los próximos pasos.</p>
+          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app se da cuenta sola cuando no hay señal o es muy mala: atenúa lo que necesita señal y pone la etiqueta «📴 Sin conexión» junto al título. Toca la etiqueta para ver la tarjeta que explica qué significa estar sin conexión (o marca «Forzar» aquí abajo y abre la portada).</p>
           <p class="muted" id="offline-estado" style="margin:0">Conexión: midiendo…</p>
           <label class="offline-forzar" style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" id="offline-forzar"> Forzar modo sin conexión en este celular</label>
           <a class="btn btn--yellow" id="btn-offline" href="../zip/">〰️ Probar con Zip</a>
@@ -760,6 +772,7 @@
     // A flag on all moves its card to La Bodega on its own (D-534); then ✨ Mejoras lanzadas folds by week and month, with search,
     // and the owner's 🚀 Publicar para todos (D-480) is drawn on each card where it already sits
     const moved = import('./launched.js').then(m => m.move()).catch(() => {});
+    moved.then(() => import('./index-nav.js')).then(m => m.draw()).catch(() => {});
     moved.then(() => import('./bodega.js')).then(m => m.start());
     moved.then(() => import('./publish.js')).then(m => m.start());
     // Offline mode's tester switch (D-538, PR 3): forces the mode on this phone only, and shows what

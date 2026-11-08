@@ -248,10 +248,11 @@ The owner (their UID) can write and delete in all these branches, to moderate: a
 - `pushEnviados/<código>/<subId>/<clave>` = the time that notification was delivered (`dia:3`,
   `plazo:3`, `final`, `fin`, `insc:<pid>`), so it isn't repeated. Nobody reads or writes it: only
   `tools/push/notify.mjs`, with the service account (D-224), which also cleans it up.
-- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: what that phone asked for from the Uno al día
+- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at, ts }`: what that phone asked for from the Uno al día
   notifications (the hour `h`, 0 to 23, and whether it wants the daily one, the streak one and the week one) and,
   for the text, its last day played `u`, its streak, wildcards (0 to 2) and best streak, and the week of
-  that day with how many days it played (D-230). Nobody reads it; it is written by the phone whose identity
+  that day with how many days it played (D-230), and `ts`, the last season recap it saw (`yyyy-mm`),
+  so `daily.mjs` does not notify a season already seen on the home page (D-545). Nobody reads it; it is written by the phone whose identity
   (`auth.uid`) is the one in `push/<subId>/uid`, which can go in the same write. Any other field
   is rejected.
 - `pushEnviadosDia/<subId>/<clave>` = delivery time (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):

@@ -20,6 +20,7 @@ import {
 import { estado, leer, recorrer, numDia, semanaDe } from './uno-al-dia.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { SHEETS } from './notification-sheets.js';
+import { seenSeasons } from './daily-recap.js';
 
 const KEY = 'juegos-de-salon:uno-al-dia:avisos';
 export const HORAS = [9, 13, 19];
@@ -43,16 +44,18 @@ export function estadoAvisos() {
 
 /**
  * Lo que el aviso necesita saber de este celular: el último día jugado (número), la racha y los
- * comodines de ese día, la mejor racha y cuántos días jugó la semana de ese día.
+ * comodines de ese día, la mejor racha y cuántos días jugó la semana de ese día. Y `ts`, la última
+ * temporada cuyo resumen ya vio en la portada: su aviso ya no se manda (D-545, una noticia se cuenta una vez).
  */
-export function datosAviso() {
+export function datosAviso({ seen = seenSeasons() } = {}) {
   const d = leer();
   const fechas = Object.keys(d.dias).sort();
   const ult = fechas.at(-1);
   if (!ult) return {};
   const r = recorrer(d.dias, ult, { regalos: d.regalos || [] });
   const sp = semanaDe(ult);
-  return { u: numDia(ult), c: r.racha, k: r.comodines, m: r.mejor, sp, sn: fechas.filter(f => semanaDe(f) === sp).length };
+  const ts = seen.filter(m => /^[0-9]{4}-[0-9]{2}$/.test(m)).sort().at(-1);
+  return { u: numDia(ult), c: r.racha, k: r.comodines, m: r.mejor, sp, sn: fechas.filter(f => semanaDe(f) === sp).length, ...(ts ? { ts } : {}) };
 }
 
 async function J() { return (await import('./jugador.js')).jugador(); }

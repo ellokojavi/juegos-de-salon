@@ -1,0 +1,81 @@
+/* 🐤 Aletazo in La Copa (from the lab's style.css, labs/flap/). Loaded by ui.js; every class starts with `fl-`.
+   Written on the design system's tokens (D-533, docs/DESIGN.md); the stage's own colours are the game's
+   tokens below (DESIGN.md §4). The canvas is transparent: it stands on the app's own night (base.css). */
+:root { --aletazo-cielo: rgba(10, 4, 24, 0.35); --aletazo-sombra: rgba(0, 0, 0, 0.6); }
+
+/* The waiting room's name, with the 🐤 that sways, its line and the credit */
+.fl-cabeza { display: grid; justify-items: center; gap: var(--s-4); text-align: center; }
+.fl-titulo { display: flex; align-items: center; justify-content: center; gap: var(--s-10); margin: 0; }
+/* The slanted font goes past the box .rainbow paints in, and clipped the last O: as Shinobi's title */
+.fl-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.fl-logo { font-size: var(--fs-200); animation: fl-mece 1.6s ease-in-out infinite; }
+@keyframes fl-mece { 0%, 100% { transform: translateY(2px) rotate(-6deg); } 50% { transform: translateY(-4px) rotate(8deg); } }
+.fl-lema { margin: 0; color: var(--muted); font-weight: 700; }
+.fl-credito { margin: 0; font-size: var(--fs-85); color: var(--muted); text-wrap: balance; }
+.fl-credito a { color: var(--cyan); white-space: nowrap; }
+
+/* The cover's demo: the bird flying the course by night */
+.fl-portada { display: block; }
+.fl-demo { display: block; width: 100%; height: 230px; border-radius: var(--radius); background: var(--aletazo-cielo); }
+
+/* The game: the stage takes the screen under the cup's heading, and a tap anywhere on it flaps */
+.fl-juego { display: grid; gap: var(--s-12); }
+.fl-escenario {
+  position: relative; height: calc(100svh - 200px); min-height: 340px; overflow: hidden; border-radius: var(--radius);
+  border: 1px solid var(--glass-border); background: var(--aletazo-cielo);
+  box-shadow: inset 0 0 60px rgb(var(--purple-rgb) / 0.18), var(--shadow-panel);
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
+}
+.fl-escenario:focus-visible { box-shadow: 0 0 0 3px var(--cyan); }
+.fl-lienzo { display: block; width: 100%; height: 100%; }
+
+/* What is read over the play */
+.fl-hud { position: absolute; inset: 0; pointer-events: none; }
+.fl-vidas { position: absolute; top: 12px; left: 14px; font-size: var(--fs-140); letter-spacing: 2px; }
+.fl-vidas .off { filter: grayscale(1) brightness(0.5); opacity: 0.5; }
+.fl-nivel { position: absolute; top: 14px; right: 14px; font: 900 var(--fs-90) var(--font-body); color: var(--muted); }
+.fl-marcador {
+  position: absolute; top: 5%; left: 0; right: 0; text-align: center;
+  font: 900 clamp(3rem, 16vw, 4.4rem)/1 var(--font-num); font-variant-numeric: tabular-nums;
+  color: var(--yellow); text-shadow: var(--shadow-text);
+}
+.fl-aviso {
+  position: absolute; top: calc(5% + clamp(3.4rem, 18vw, 4.8rem)); left: 0; right: 0; text-align: center;
+  font: 700 var(--fs-110) var(--font-body); color: rgb(var(--ink-rgb) / 0.88); transition: opacity 0.4s; padding: 0 var(--s-14);
+}
+.fl-aviso.brilla { font: clamp(1.35rem, 7vw, 1.9rem)/1.1 var(--font-display); letter-spacing: 0.06em; text-wrap: balance; animation: fl-brilla 1s ease-out forwards; }
+.fl-aviso.final { font: clamp(1.6rem, 9vw, 2.2rem)/1.1 var(--font-display); letter-spacing: 0.06em; animation: none; }
+@keyframes fl-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+
+/* «Toca para aletear», until the first tap: clear of the bird (at 45 %) and the first gate */
+.fl-pista {
+  position: absolute; left: 0; right: 0; top: 62%; text-align: center; pointer-events: none;
+  font: 900 var(--fs-120) var(--font-body); color: var(--ink); text-shadow: 0 2px 8px var(--aletazo-sombra);
+  animation: fl-pulsa 1.4s ease-in-out infinite; transition: opacity 0.2s;
+}
+.fl-pista.fuera { opacity: 0; animation: none; }
+@keyframes fl-pulsa { 0%, 100% { opacity: 0.65; transform: scale(0.97); } 50% { opacity: 1; transform: scale(1.03); } }
+
+/* Paused (a call, another app): over the play, until a tap */
+.fl-pausa { position: absolute; inset: 0; display: grid; place-content: center; gap: var(--s-6); text-align: center; font-weight: 700; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(var(--bg1-rgb) / 0.85), rgb(var(--bg1-rgb) / 0.4) 70%, transparent); }
+.fl-pausa[hidden] { display: none; }
+
+/* The end, under the stage: the verdict and «Continue» */
+.fl-fin { display: grid; gap: var(--s-10); justify-items: center; text-align: center; }
+.fl-fin:empty { display: none; }
+.fl-fin .btn { width: 100%; }
+.fl-veredicto { margin: 0; font: 900 var(--fs-120)/1.25 var(--font-body); text-wrap: balance; }
+.fl-juego.terminado .fl-escenario { height: calc(100svh - 300px); min-height: 280px; cursor: default; }
+
+/* The end: no rules under the stage, there is no time to read them (as Babel) */
+#screen-jugar:has(.fl-juego.terminado) #jugar-reglas,
+#screen-jugar:has(.fl-juego.terminado) #comentario-pie { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-logo, .fl-aviso.brilla, .fl-pista { animation: none; }
+}
+/* A short phone (320×568): the cover's flight shrinks so Start stays near the fold (U-39) */
+@media (max-height: 620px) {
+  .fl-demo { height: 150px; }
+}

@@ -51,7 +51,7 @@ export function liveStreak(q, todayN) {
 }
 
 /**
- * @param {object} wants  pushDia: { <subId>: { h, d, r, w, u, c, k, m, sp, sn, at } }
+ * @param {object} wants  pushDia: { <subId>: { h, d, r, w, u, c, k, m, sp, sn, ts, at } }
  * @param {object} subs   push: { <subId>: { endpoint, keys, lang, tz, uid, at } }
  * @param {object} sent   pushEnviadosDia: { <subId>: { <key>: at } }
  * @param {string[]} seasonsDone  the months whose places the rebuild already computed to their end
@@ -91,10 +91,11 @@ export function dailyNotifications({ wants = {}, subs = {}, sent = {}, now, seas
       const freezesLeft = (q.k || 0) - Math.max(0, todayN - q.u - 1);
       if (one('racha', `racha:${todayN}`, fmt(freezesLeft > 0 ? T.avRachaCom : T.avRacha, { c, h: left }))) continue;
     }
-    // The month's season ended (D-424): in its first days, from their hour, if they played since it began
+    // The month's season ended (D-424): in its first days, from their hour, if they played since it began,
+    // and not if this phone already saw its recap on the home page (`ts`, the last season it saw, D-545)
     const day = Number(today.slice(8, 10));
     const month = sumarDias(`${today.slice(0, 7)}-01`, -1).slice(0, 7);
-    if (day <= SEASON_DAYS && seasonsDone.includes(month) && hour >= (q.h ?? 9) && Number.isInteger(q.u) && q.u >= numDia(`${month}-01`)) {
+    if (day <= SEASON_DAYS && seasonsDone.includes(month) && hour >= (q.h ?? 9) && Number.isInteger(q.u) && q.u >= numDia(`${month}-01`) && !(typeof q.ts === 'string' && q.ts >= month)) {
       const n = { title: T.avTitulo, body: fmt(SEASON_TEXT[lang], { mes: monthName(month, lang) }), url: `${SITE}?recap=season&notif=dailyseason${lang === 'es' ? '' : `&lang=${lang}`}`, tag: 'uad-temporada' };
       if (!already[`temporada:${month}`]) { out.push({ subId, kind: 'temporada', key: `temporada:${month}`, notification: n }); continue; }
     }

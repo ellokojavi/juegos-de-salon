@@ -41,7 +41,7 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
 **Todos los que se pueden jugar de a uno** (pedido del dueño), cada uno en su modo para uno y con
 el contenido del día:
 
-| Juego | Modo | El desafío común del día | Puntaje del día (0 a 100; Babel y Shinobi, sin tope en su juego, pasan aquí por una curva suave, D-526) |
+| Juego | Modo | El desafío común del día | Puntaje del día (0 a 100; Babel, Shinobi and 🐤 Aletazo (from 2026-11-10), uncapped in their game, go through a smooth curve here, D-526) |
 |---|---|---|---|
 | ⏳ Línea Relámpago, 🔢 Toque y Fama: Número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
@@ -411,9 +411,11 @@ es el mismo juego, con un tablero que nadie conocía. Los intentos repetidos son
 ningún ranking, porque el tablero ya es conocido: es la misma regla de D-212, que deja fuera la
 semilla elegida en el link. Todos los intentos se cuentan en `partidas` (D-219).
 
-**Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`, al lado de `push/<subId>`
+**Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at, ts }`, al lado de `push/<subId>`
 (que ya trae idioma y zona horaria), y nadie lo lee. El último día jugado (`u`) y la racha los
 escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugador.
+`ts` is the last season recap the phone saw (`yyyy-mm`): a season already seen on the home page
+is not notified (D-545).
 `tools/push/daily.mjs` decide los avisos dentro de la vuelta de `notify.mjs`, cada 15 minutos
 (detalle en "Lo que el PR 4 hizo").
 

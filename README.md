@@ -49,6 +49,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🚅 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
 | 🥷 [Shinobi](https://juegosdesalon.cl/shinobi/) | 1 | Play alone | Also in The Cup |
 | 🗼 [Babel](https://juegosdesalon.cl/babel/) | 1 | Play alone | Also in The Cup |
+| 🐤 [Aletazo](https://juegosdesalon.cl/flap/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -158,6 +159,12 @@ Spec and design: [docs/games/bridges.md](docs/games/bridges.md)
 Two one-player reflex games built as La Copa games (D-517), with their pages `/shinobi/` and `/babel/`: **Shinobi**, inspired by Ketchapp's Stick Hero (hold to stretch a stick across the gap), and **Babel**, inspired by Ketchapp's Stack (tap to drop each block on the tower); each cover credits the original with a link. They came out at 00:00 Pacific on 2026-11-02, when the launch workflow switched their flags `stick` and `stack` to everyone (D-529); until a cleanup PR drops the gate (`lanza` in the manifest), switching a flag off hides its game again from the home page, the search, the filters, /records/ and a new cup's pool. Both carry the «Nuevo» label for 10 days. Uno al día may deal them from the deck shuffled on 2026-11-08. Scores have no cap (D-525): the Grand Final caps them at 100 and Uno al día maps them on a soft curve (D-526).
 
 Spec and design: [docs/games/stick.md](docs/games/stick.md), [docs/games/stack.md](docs/games/stack.md)
+
+### 🐤 Aletazo (launches 2026-11-09)
+
+A one-tap flyer inspired by Dong Nguyen's [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), built as a La Copa game the way Shinobi and Babel were (D-517), with its page `/flap/`: every tap gives the bird a flap upwards, and it flies through hoops (dead center counts double) and the gaps in walls, with 3 lives and a new level every 5 gates. The day's course comes from the cup's seed, the same for everyone. It comes out at 00:00 Pacific on 2026-11-09, when the launch workflow switches the flag `aletazo` and its splash `aletazo-ya` on (D-529); it carries the «Nuevo» label for 10 days, and Uno al día may deal it from the deck shuffled on 2026-11-28. The lab prototype stays at `/labs/flap/` until the cleanup PR.
+
+Spec and design: [docs/games/flap.md](docs/games/flap.md)
 
 ### Retired cup games
 
@@ -464,6 +471,7 @@ node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
 node public/cup/engine.test.mjs
 node public/cup/games/agents/engine.test.mjs
+node public/cup/games/flap/engine.test.mjs
 node public/cup/games/paint-mines/engine.test.mjs
 node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
@@ -490,6 +498,7 @@ node firebase/labs-publish.test.mjs
 node firebase/owner-push.test.mjs
 node firebase/pin-attempts.test.mjs
 node firebase/room-limits.test.mjs
+node firebase/splash.test.mjs
 node marketing/served.test.mjs
 node marketing/splash/campaigns.test.mjs
 node marketing/splash/teaser.test.mjs
@@ -572,6 +581,7 @@ node public/hangman/replay.test.mjs
 node public/home-preload.test.mjs
 node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
+node public/labs/index-nav.test.mjs
 node public/labs/launched.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
@@ -740,6 +750,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 | Tren en Vilo | Train on the Edge | Trem no Vão |
 | Shinobi | Shinobi | Shinobi |
 | Babel | Babel | Babel |
+| Aletazo | Aletazo | Aletazo |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
@@ -779,7 +790,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
   agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
-  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534)
+  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534); index-nav.js draws the index of the cards still being tried at the top
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
@@ -841,7 +852,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
-- [🐤 Aletazo (lab prototype, in Juegos en prueba)](docs/games/flap.md)
+- [🐤 Aletazo (La Copa game, launched by flag; the lab prototype stays until the cleanup)](docs/games/flap.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)
 - [Diseño: El Ahorcado](docs/games/hangman.md)
