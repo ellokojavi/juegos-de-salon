@@ -1,6 +1,6 @@
 // The home page's 🔥 Popular label, ✨ Nuevos / 🔥 Populares filters and the name on the floating menu, as
 // players see them since D-369 (tried in the lab as D-361, D-362 and D-364): three labelled cards that are
-// neither La Copa nor "New", in Portuguese too; the chips above the types in every language at 320 px, each one
+// not La Copa (a "New" one can be one too, D-548), in Portuguese too; the chips above the types in every language at 320 px, each one
 // filtering; ⭐ Favoritos beside them, centered when bare; the title only while the filters float, a tap back
 // to the top; the space under the floating filters like the space above the title; and a tap on a floating filter
 // keeps the menu floating, even on a short result, until the player scrolls up (D-371). Prints ✗ if something fails.
@@ -15,10 +15,10 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
 
-// The label: three cards, never La Copa nor a "New" game, translated
+// The label: three cards, never La Copa (a "New" game may carry it too, D-548), translated
 await b.go(`${SITE}/?test&lang=es`);
 ok(await waitFor(`(${labels}).length === 3`), 'three cards carry the 🔥 Popular label');
-ok(await ev(`(${labels}).every(id => { const c = document.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo') && !c.querySelector('.nuevo'); })`), 'neither La Copa nor a "New" game carries it');
+ok(await ev(`(${labels}).every(id => { const c = document.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo'); })`), 'La Copa does not carry it');
 ok(await ev(`document.documentElement.scrollWidth <= 320`), 'no sideways scroll at 320 px');
 await b.go(`${SITE}/?test&lang=pt`);
 ok(await waitFor(`(${labels}).length === 3 && document.querySelector('.popular').textContent.replace(/\\s+/g, ' ').trim() === '🔥 Popular'`), 'in Portuguese: 🔥 Popular');

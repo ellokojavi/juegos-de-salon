@@ -426,8 +426,8 @@ where it comes from. Whatever changes the home page is changed here, in the same
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
   D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
   its place in `POPULARIDAD`.
-- **🔥 "Popular"** (D-361, for everyone since D-369): the first three of the order that are neither
-  La Copa nor "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the
+- **🔥 "Popular"** (D-361, for everyone since D-369): the first three of `POPULARIDAD` that are not
+  La Copa (`populares`), a game still "New" included: it then wears both labels (D-548). They wear the "New" sticker in fire colors, with the 🔥 outside the
   gradient, beside the name when it fits (on its own line only when the name fills it).
 - **✨ Nuevos and 🔥 Populares filters** (D-362, D-369): a row of two chips above the types, each shown
   only when it has games, kept in the link as `?type=new` / `?type=popular`. With a favorite marked,

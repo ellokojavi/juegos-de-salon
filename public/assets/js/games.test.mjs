@@ -143,3 +143,13 @@ console.log(`games: los ${ALL_GAMES.length} juegos tienen motor, tests, gancho y
     assert.ok(!esNuevo(g, new Date('2026-11-12T00:00:00')), `${id}: not on the 11th`);
   }
 }
+
+// A game can be "New" and 🔥 Popular at once (D-548): the popular ones rank by POPULARIDAD, new ones included
+{
+  const { populares, POPULARIDAD, POPULARES, ALL_GAMES, esNuevo } = await import('./games.js');
+  const assert = (await import('node:assert/strict')).default;
+  const dia = new Date('2026-11-09T12:00:00');
+  const esperados = POPULARIDAD.filter(id => { const g = ALL_GAMES.find(x => x.id === id); return g?.available && !g.torneo && !g.labs && !g.bodega && !g.oculto; }).slice(0, POPULARES);
+  assert.deepEqual([...populares(dia)], esperados, 'the first three of POPULARIDAD, La Copa left out');
+  assert.ok(populares(dia).has('stick') && esNuevo(ALL_GAMES.find(g => g.id === 'stick'), dia), 'Shinobi is New and Popular at once');
+}
