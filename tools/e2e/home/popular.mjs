@@ -15,10 +15,10 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
 
-// The label: three cards, never La Copa nor a "New" game, translated
+// The label: three cards, never La Copa (a "New" game may carry it too, D-548), translated
 await b.go(`${SITE}/?test&lang=es`);
 ok(await waitFor(`(${labels}).length === 3`), 'three cards carry the 🔥 Popular label');
-ok(await ev(`(${labels}).every(id => { const c = document.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo') && !c.querySelector('.nuevo'); })`), 'neither La Copa nor a "New" game carries it');
+ok(await ev(`(${labels}).every(id => { const c = document.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo'); })`), 'La Copa does not carry it');
 ok(await ev(`document.documentElement.scrollWidth <= 320`), 'no sideways scroll at 320 px');
 await b.go(`${SITE}/?test&lang=pt`);
 ok(await waitFor(`(${labels}).length === 3 && document.querySelector('.popular').textContent.replace(/\\s+/g, ' ').trim() === '🔥 Popular'`), 'in Portuguese: 🔥 Popular');
