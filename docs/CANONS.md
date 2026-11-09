@@ -82,6 +82,7 @@ public/<carpeta>/
 - **Spanish is the default language.** Whoever opens juegosdesalon.cl without having chosen anything sees the app in Spanish, whatever their browser's language. English and Portuguese are optional: they only turn on when the person taps the toggle, and the choice is saved on the device (D-47). German left (D-514): whoever had it saved, or arrives with `?lang=de` or through `/de/`, gets English (`RETIRADOS` in `i18n.js`).
 - **First visit in the browser's language (D-536, behind the flag `browser-lang` until the owner publishes it):** on a device where no language was ever chosen, the first page saves the first of `navigator.languages` the app speaks (or Spanish) as the choice, once, and reloads in it; from then on the saved choice and the toggle rule, and `?lang=` in a link still wins. Only `idiomaInicial()` in `i18n.js` reads it to decide.
 - **The language can also come in the link:** `?lang=pt` on any page, or the `/pt/` and `/en/` doors. It is applied, saved, and the parameter is removed from the address bar. It is not detection: someone chose it, for themselves or for whoever receives the link. A room invitation carries it via `withLang()` (D-74).
+- **The game's name is translated too (D-549):** a name the same as the Spanish one in another language needs a reason a player would accept (a proper name, a word already the same), listed in `SAME_NAME` in `game-names.test.mjs`; the test also checks La Copa's `texts.js` names match `games.js`. Moving a game to production includes reviewing its name in every language.
 - Every visible text lives in `LOCALES.es`, `LOCALES.en` and `LOCALES.pt` in `rules.js`. No string literals in `game.js`.
 - Fixed HTML texts are marked with `data-i18n="clave"` (or `data-i18n-html`) and applied with `applyStatic(T)`.
 - The language is read with `getLang()` and the `langToggle()` toggle goes in each game's intro, with `coverLangToggle()`: behind the flag `compact-lang` it becomes one flag button in the top bar instead (D-537).
@@ -661,6 +662,7 @@ Reinas, Tango, Babel or Shinobi are games exactly as Ahorcado, Generala or La Co
 
 - [ ] The modes it offers (all three, if it is for two) work and the game can be resumed in **all** of them (C-5, C-6).
 - [ ] The instructions follow U-18: the goal first, at most 3 points, without repeating the example drawing (C-1).
+- [ ] The game's name is translated in `games.js` (and its `texts.js`), or its same name is justified in `SAME_NAME` (C-3, D-549, `game-names.test.mjs`).
 - [ ] All text is in Spanish, English and Portuguese (that of `IDIOMAS`, the lab's too), with the same keys in all, no loose strings in the code (C-3, D-191).
 - [ ] Its screens are in `tools/e2e/paths.mjs` and its `languages.mjs` passes in every language (C-12, D-199).
 - [ ] There is sound and vibration on the key actions, with a mute button (C-4).

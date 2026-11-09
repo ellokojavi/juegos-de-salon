@@ -2,7 +2,8 @@
 
 A one-tap flyer for one player: every tap gives the bird a wing flap ("aletazo") upwards, gravity
 pulls it down, and the course scrolls from right to left. The bird flies through neon hoops and the
-openings of walls, and it gets harder every 5 gates. An original game in a well-known genre: the bird,
+openings of walls, and it gets harder every 5 gates. Its name is Aletazo in Spanish, **Flap** in English
+(its folder's name) and **Bate-Asa** in Portuguese. An original game in a well-known genre: the bird,
 the hoops, the walls and the look are our own, drawn in the app's neon night. **Inspired by
 [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), by Dong Nguyen (.GEARS, 2013)**, and it says
 so on the cover and in the lab (the link goes to Wikipedia in the player's language: the game has no

@@ -968,8 +968,8 @@
       "emoji": "🐤",
       "name": {
         "es": "Aletazo",
-        "en": "Aletazo",
-        "pt": "Aletazo"
+        "en": "Flap",
+        "pt": "Bate-Asa"
       },
       "kinds": [
         "skill"
@@ -1399,6 +1399,7 @@
     "public/assets/js/fin.test.mjs",
     "public/assets/js/flags.test.mjs",
     "public/assets/js/game-manifest.test.mjs",
+    "public/assets/js/game-names.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/hidden-match.test.mjs",
     "public/assets/js/home-windows.test.mjs",

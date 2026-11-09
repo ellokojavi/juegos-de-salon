@@ -1,7 +1,7 @@
 /**
  * 🐤 Aletazo in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
  * `juego` is its entry in `juegos`; `ui`, the keys its screen reads from T, all prefixed `fl`.
- * The name is Aletazo in every language; `flCredit` credits the original (its link is the game's name,
+ * The name is Aletazo in Spanish, Flap in English (its folder) and Bate-Asa in Portuguese; `flCredit` credits the original (its link is the game's name,
  * to Wikipedia in the player's language: the game has no official page since 2014). Plural forms are
  * [none, one, many]. The lines come from the lab's game (labs/flap/game.js).
  */
@@ -39,7 +39,7 @@ const ES = {
 
 const EN = {
   juego: {
-    nombre: 'Aletazo', habilidad: 'reflexes',
+    nombre: 'Flap', habilidad: 'reflexes',
     como: [
       'Tap the screen to make the bird flap and rise a little.',
       'Fly through the hoops and the gaps in the walls. Through a hoop\'s middle counts double.',
@@ -71,7 +71,7 @@ const EN = {
 
 const PT = {
   juego: {
-    nombre: 'Aletazo', habilidad: 'reflexos',
+    nombre: 'Bate-Asa', habilidad: 'reflexos',
     como: [
       'Toque a tela para o pássaro bater as asas e subir um pouco.',
       'Passe pelos aros e pelas brechas dos muros. Pelo meio de um aro vale dobrado.',
