@@ -1611,6 +1611,19 @@
         "stat": "2 file(s) +2 −1: changelog/ccr-65bf4a65-u6k25o.md, public/labs/artifacts/style.css"
       },
       "flaky": false
+    },
+    {
+      "run": 42659489645,
+      "check": "end-to-end",
+      "pr": 1326,
+      "branch": "claude/happy-dijkstra-gx5yvc",
+      "commit": "6d87218f97cb095a9cd354011c6ff7c34260ac1e",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the admin's wrong PIN gives no new PIN, and says so",
+      "signature": "e281078e96",
+      "date": "2026-11-09T17:08:41.486Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
