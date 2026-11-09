@@ -406,7 +406,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-358](decisions/D-358.md) | The usual name and PIN carry a player's history into La Copa | current |
 | [D-359](decisions/D-359.md) | With a player signed in, La Copa asks for no cup PIN | current |
 | [D-360](decisions/D-360.md) | A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions | amended by D-440 |
-| [D-361](decisions/D-361.md) | The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups | amended by D-363, D-369, D-373, D-547 |
+| [D-361](decisions/D-361.md) | The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups | amended by D-363, D-369, D-373, D-547, D-548 |
 | [D-362](decisions/D-362.md) | "✨ Nuevo" and "🔥 Populares" as filters, in the lab | amended by D-369 |
 | [D-363](decisions/D-363.md) | The home page's experiments run on the real home page, without a frame | amended by D-389, D-395 |
 | [D-364](decisions/D-364.md) | The floating menu carries the app's name, and ⭐ Favoritos joins Nuevo and Populares, in the lab | amended by D-369 |
