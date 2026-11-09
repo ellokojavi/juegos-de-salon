@@ -1624,6 +1624,19 @@
       "date": "2026-11-09T17:08:41.486Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42662703903,
+      "check": "tests",
+      "pr": 1340,
+      "branch": "claude/duplicate-tags-popular-new-games-5nr2xa",
+      "commit": "2e1fc4705d207a67aec82ff11102f7e5ffa636cf",
+      "test": "tools/agents/document.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "4d927cbbd6",
+      "date": "2026-11-09T17:16:47.043Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
