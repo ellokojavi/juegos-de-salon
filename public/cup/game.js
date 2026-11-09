@@ -1378,19 +1378,21 @@ function antesDeJugar(d) {
   const err = el('div', { class: 'form-error', role: 'alert' });
   const now = ahora();
   const w = comodinDe(Lc, S.yo);
-  let comodin;
+  let comodin, usarComodin = false;
   if (esFinal(meta, d)) comodin = el('p', { class: 'muted' }, T.wildFinal);
   else if (w === d) comodin = el('p', { class: 'ok' }, `🃏 ${T.wildOn}`);
   else if (w) comodin = el('p', { class: 'muted' }, fmt(T.wildGone, { d: w }));
   else if (offlineStore() && puedeComodin(Lc, d, S.yo, now)) comodin = el('p', { class: 'muted', id: 'comodin-sin-senal' }, `📡 ${T.offlineWild}`);
+  else if (comodinHoy(Lc, d, now)) comodin = el('p', { class: 'aviso-comodin' }, T.wildToday);
   else if (puedeComodin(Lc, d, S.yo, now)) {
-    comodin = el('div', {},
-      comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast),
-      el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-comodin', onClick: async ev => {
-        if (!confirm(fmt(T.wildConfirm, { d }))) return;
-        ev.currentTarget.disabled = true;
-        try { await store.comodin(S.code, d, S.yo); SFX.king(); antesDeJugar(d); } catch (e) { avisoError(err, errorDe(e)); ev.currentTarget.disabled = false; }
-      } }, `🃏 ${T.wildUse}`));
+    // A setting of Empezar (the owner, 2026-11-08): a switch beside it, seen before starting, applied
+    // when Empezar is tapped; nothing is spent until then (C-8: a setting, chosen before the game)
+    const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'btn-comodin', 'aria-checked': 'false', 'aria-label': T.wildUse,
+      onClick: () => { SFX.tap(); usarComodin = !usarComodin; sw.classList.toggle('on', usarComodin); sw.setAttribute('aria-checked', String(usarComodin));
+        // Empezar says what it spends (C-8, U-15): the start is the confirmation
+        empezar.textContent = usarComodin ? `🃏 ${T.startWild}` : `${J.emoji} ${T.start}`; } });
+    comodin = el('div', { class: 'toggle-row', id: 'fila-comodin' },
+      el('span', { class: 'txt' }, el('b', {}, el('span', { 'aria-hidden': 'true' }, '🃏 '), T.wildTitle), el('small', {}, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast)), sw);
   }
   const sinGente = faltaGente(Lc);
   const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
@@ -1402,6 +1404,8 @@ function antesDeJugar(d) {
     SFX.tap();
     empezar.disabled = true;
     try {
+      // Once spent, the switch can no longer be turned off: a retry starts the day already doubled
+      if (usarComodin) { await store.comodin(S.code, d, S.yo); usarComodin = false; $('#btn-comodin')?.setAttribute('disabled', ''); SFX.king(); }
       await store.empezar(S.code, d, S.yo);
       // Una copa de ?test es de mentira (vive en este navegador): no suma en las estadísticas.
       // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
@@ -1417,16 +1421,14 @@ function antesDeJugar(d) {
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
       tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
-    // Empezar right under the title, the rules (folded, U-39) and the wildcard below it (C-5): on a
-    // short phone the open rules pushed it a whole screen down
+    // Empezar right under the title with its setting, the wildcard, beside it; the rules folded below
+    // it (C-5, U-39): on a short phone the open rules pushed it a whole screen down
     el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn),
     // Offline (D-544): the result waits on the phone and has to go up before the day closes
     offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(canSyncClosed() ? T.offlineDay : T.offlineDayOpen, { t: cierreDe(meta, d) })) : null,
-    err, empezar,
+    comodin, err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
-    // The wildcard is decided before Empezar is tapped: right after the buttons, not under the rules
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     el('details', { class: 'panel' }, el('summary', {}, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
       CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,

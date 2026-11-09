@@ -528,8 +528,14 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
   puntajes sigue pendiente (LIG-30).
 - **A day's cover puts «Empezar» right under the title** (U-39, C-5): the «Se juega una sola vez» warning above it,
-  «Probar primero» under it, then «Cómo se juega» folded and the wildcard. With the rules open first,
+  «Probar primero» under it, then «Cómo se juega» folded. With the rules open first,
   «Empezar» sat 500–1000 px below the fold of a small phone; `landing-fold.mjs` checks it as `copa day:<scene>`.
+- **The wildcard is a setting of Empezar** (the owner, 2026-11-08): a `.toggle-row` with its switch
+  (`#btn-comodin`, `role="switch"`) right above «Empezar», off by default, seen before starting. Nothing is
+  spent when it is flipped: tapping «Empezar» with it on applies the wildcard and then starts the day, so the
+  old confirm dialog went: with the switch on the button reads «🃏 Empezar con ×2» (`startWild`), so the start is the confirmation (U-15). On the day it would apply on its own, or once
+  used or not available, the same place shows that line instead of the switch. On a short phone the
+  hero gives up its padding so «Empezar» still fits at 320×568.
 - **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
   the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
   While playing a day and on the day's result it also says «‹ Volver a la copa» and goes to the board:
