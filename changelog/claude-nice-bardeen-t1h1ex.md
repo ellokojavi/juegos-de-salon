@@ -1,3 +1,3 @@
 level: patch
 
-- **Artefactos (lab): answers you can work out, not flukes** (the owner's report: hard stages needed five bounces through a fan and luck). The level generator now keeps a level only if its answer still works with the ball starting a hair to either side and with finer or coarser physics (no chaos), with few hard bounces (4 + parts), a short run, and the ball meeting each part at most twice. The pool is regenerated: 72 levels, 12 per tier; Difícil and Experto now average about 3 s and 5 bounces (they had runs of 10–13 s and 12–14 bounces).
+- **Artefactos (lab): stage 5 (Experto) a little harder** (the owner's request): its tray now brings two decoys instead of one, and the board 5 to 7 hazards instead of 4 to 6. The answer is still three parts and passes the same legibility filter; the 12 Experto levels are regenerated, the other tiers are unchanged.

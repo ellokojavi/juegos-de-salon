@@ -39,7 +39,7 @@ const TIERS = [
   { k: 2, types: ['ramp', 'plank', 'spring'], decoys: 0, hazards: [2, 3] },
   { k: 2, types: ['ramp', 'spring', 'fan', 'plank'], decoys: 1, hazards: [3, 4] },
   { k: 3, types: ['ramp', 'spring', 'fan'], decoys: 0, hazards: [3, 4] },
-  { k: 3, types: ['ramp', 'plank', 'spring', 'fan'], decoys: 1, hazards: [4, 6] },
+  { k: 3, types: ['ramp', 'plank', 'spring', 'fan'], decoys: 2, hazards: [5, 7] },   // Experto: two decoys and more hazards (the owner, 2026-11-09)
 ];
 const FLIP = t => t === 'ramp' || t === 'fan';
 const OFF = { c: -50, r: -50 };   // no basket yet
