@@ -1652,7 +1652,11 @@
       "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"languages\" went stale  →  python3 tools/release/readme.py update",
       "signature": "26ec9c9d16",
       "date": "2026-11-09T18:03:27.652Z",
-      "fix": null,
+      "fix": {
+        "commit": "5903e7f10d1c07eac2df0ca5f059c2bf306fde34",
+        "date": "2026-11-09T18:55:34.974Z",
+        "stat": "3 file(s) +7 −5: README.md, docs/facts.json, public/assets/og/huellas.json"
+      },
       "flaky": false
     }
   ]
