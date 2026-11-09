@@ -807,15 +807,18 @@ body.azar-abierto { overflow: hidden; }
 .footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--yellow-rgb) / 0.3); }
 .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
-   phrase in white, and each option on frosted glass with its color circle above the label */
+   phrase in white. Its options are chips, each tinted with its own color and its color circle on the left (variant C2,
+   the owner, 2026-11-09): the pill of the cards' tags, so the corner reads as part of the app and not as more game cards */
 footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgb(var(--purple-rgb) / 0.28) 45%, rgb(var(--pink-rgb) / 0.32)); }
 footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
 footer.atardecer .footer-links.tiles::before { content: none; }
-footer.atardecer .footer-links.tiles { margin-top: 18px; }
-footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgb(var(--ink-rgb) / 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-footer.atardecer .footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.18); }
+footer.atardecer .footer-links.tiles { display: flex; flex-wrap: wrap; justify-content: center; max-width: none; gap: 8px; margin-top: 18px; }
+footer.atardecer .footer-links.tiles > * { flex-direction: row; gap: 6px; min-height: 44px; padding: var(--s-4) var(--s-14) var(--s-4) var(--s-4); border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--glass); color: var(--ink); font: 800 0.82rem/1.2 var(--font-body); }
+footer.atardecer .footer-links.tiles > :is(#btn-buzon-portada, .op-buzon) { border-color: rgb(var(--cyan-rgb) / 0.5); background: rgb(var(--cyan-rgb) / 0.1); }
+footer.atardecer .footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--orange-rgb) / 0.55); background: rgb(var(--orange-rgb) / 0.12); }
+footer.atardecer .footer-links.tiles > *:active { filter: brightness(1.2); }
 /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
-footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
+footer.atardecer .tiles .ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
 footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
