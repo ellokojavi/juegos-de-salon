@@ -1,5 +1,57 @@
 # Changelog
 
+## 1.6.2 — 2026-11-08
+- **Artefactos (lab): a livelier cover** (the owner's request): the demo board is bigger, and before each ball drops its parts rise from below and glide into their slots one by one, as a player would drag them, so the cover shows that the parts move.
+
+## 1.6.1 — 2026-11-08
+- **🔥 Popular, this week**: the home page's order and its three 🔥 Popular games follow the games finished in the last four weeks.
+
+## 1.6.0 — 2026-11-08
+- **🔥 Popular refreshes itself every Monday**: the three most popular games (games finished in the last four weeks) get the label, and the ones that left the top three lose it, with no one having to remember it.
+
+## 1.5.5 — 2026-11-08
+- **Labs**: the 🎨 Sistema de diseño card moves to La Bodega (✨ Mejoras lanzadas); the page stays behind the lab door.
+
+## 1.5.4 — 2026-11-08
+- **🐤 Aletazo's launch splash** gets a new clip: a 24-second loop that starts over with no cut, as the bird flies through the hoops from day to the afternoon over the sea, into the night and back to day (the owner's request).
+
+## 1.5.3 — 2026-11-08
+- **La Copa sin conexión** (laboratorio, tarjeta propia `cup-offline` en Labs, D-544): si te queda un día pendiente y no tienes señal, igual lo juegas. El resultado queda guardado en tu celular y se sube solo al volver la señal; si no alcanza a subir antes de que cierre el día, cuenta como no jugado. Funciona con las copas que ya abriste con señal en ese celular. Sin la prueba encendida, abrir una copa sin señal dice que no hay conexión.
+- **La Copa sin conexión sube sola con la app cerrada en Android**: cuando vuelve la señal, el día jugado se sube sin abrir la app. En iPhone, que no lo permite, la pantalla dice que se sube la próxima vez que abras la app con señal.
+
+## 1.5.2 — 2026-11-08
+- **La Copa: «Empezar» shows without scrolling on a day's cover.** Inside a cup the day's cover opened with
+  «Cómo se juega» unfolded, the wildcard and «Probar primero» before the button, so on a small phone «Empezar»
+  sat 500–1000 px below the fold. Now the button sits right under the title, as on every game's landing (U-39),
+  with «Probar primero» under it and the rules folded. `landing-fold.mjs` now also checks each game opened from
+  Uno al día (`?today`) and a cup's day cover.
+
+## 1.5.1 — 2026-11-08
+- **🧪 Lab: each piece of news is told once** (D-546, flag `news-once`): a visit that arrives from a notification opens no home window, a splash for games the phone already played is not shown, and a cup's end seen on its own board is not recapped again on the home page.
+
+## 1.5.0 — 2026-11-08
+- **🐤 Aletazo sale del laboratorio** (launches 2026-11-09 at 00:00 Pacific): the one-tap flyer, inspired by Flappy Bird, becomes a La Copa game with its own page `/flap/`, its ranking, La Copa's pool and Uno al día (from the deck of 2026-11-28), in Spanish, English and Portuguese. Every tap flaps the bird up through hoops (dead center counts double) and the gaps in walls, with 3 lives; the day's course is the same for everyone. Hidden until the `launch` workflow switches `flags/aletazo` and the new splash «¡A volar con Aletazo!» on at the hour (D-517, D-529), with the «Nuevo» label for 10 days.
+- **📣 Campaigns in the panel could not be saved** (PERMISSION_DENIED): the `launch` workflow had stored a campaign's end as an exact moment (`2026-11-09T08:00:00Z`), which the Firebase rules refused as a day, and the panel rewrites every campaign at once. The rules now take a day or an exact moment, as splash.js does (`firebase/splash.test.mjs`).
+
+## 1.4.36 — 2026-11-08
+- **The end-of-season notification of Uno al día is no longer sent to a phone that already saw the season's recap on the home page** (D-545): each piece of news is told once, by the first channel that shows it.
+
+## 1.4.35 — 2026-11-08
+- **The per-game checks walk every game** (C-21, D-542): the canon guard (`games.test.mjs`), the file layout (`structure.mjs`), game memory (`memory.mjs`), conformance, the language parity of each game's texts and the share cards now cover the games built in `cup/games/` too (Queens, Tango, Zip, Babel…). What those cannot meet yet is frozen in debt lists that only shrink (`docs/games-debt.json`, and new entries in `docs/memory-debt.json` and `docs/manifest-debt.json`). The home page's share card now lists every game. Eight games got their own page in `docs/games/` (Connections, Word, What Year?, Queens, Tango, Zip, Untangle, Where Is It?).
+
+## 1.4.34 — 2026-11-08
+- **Panel**: in 🕑 Timeline the Key events list now comes right after the summary tiles, with When and Time of day below it.
+
+## 1.4.33 — 2026-11-08
+- **/labs/ has an index at the top**: one tap per game and improvement still being tried jumps straight to its card, without scrolling past every game. La Bodega is left out, and a card published for everyone drops out of the index on its own.
+
+## 1.4.32 — 2026-11-08
+- **Every game is one more game** (C-21, D-542, the owner's request): the code walks a single list of all the games (`ALL_GAMES`), so a change meant for the games reaches every one of them, and a test stops a new hand-made split. The docs no longer speak of "mini-games" as a kind apart. Nothing changes for players.
+- **A PR preview only when there is something to see** (D-543, the owner's request): a PR that changes nothing under `public/` but tests gets no preview build.
+
+## 1.4.31 — 2026-11-08
+- **The floating title no longer cuts its last letter**: scrolling the home page, the name on top of the filters showed the N of SALÓN cut off; it now gets the same side room as the other gradient titles.
+
 ## 1.4.30 — 2026-11-07
 - **Uno al día calendar**: a day uploaded too late for points shows ⏳ instead of a 0 that looked like a lost score; tapping it still explains why, and its spoken label says so too.
 - **Firebase**: a rule in `firebase/README.md` — a real player's `unoAlDia/` history is never deleted to test something, and how to repair one that was.

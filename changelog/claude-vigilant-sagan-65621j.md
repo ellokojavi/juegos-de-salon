@@ -1,4 +1,0 @@
-level: minor
-
-- **🐤 Aletazo sale del laboratorio** (launches 2026-11-09 at 00:00 Pacific): the one-tap flyer, inspired by Flappy Bird, becomes a La Copa game with its own page `/flap/`, its ranking, La Copa's pool and Uno al día (from the deck of 2026-11-28), in Spanish, English and Portuguese. Every tap flaps the bird up through hoops (dead center counts double) and the gaps in walls, with 3 lives; the day's course is the same for everyone. Hidden until the `launch` workflow switches `flags/aletazo` and the new splash «¡A volar con Aletazo!» on at the hour (D-517, D-529), with the «Nuevo» label for 10 days.
-- **📣 Campaigns in the panel could not be saved** (PERMISSION_DENIED): the `launch` workflow had stored a campaign's end as an exact moment (`2026-11-09T08:00:00Z`), which the Firebase rules refused as a day, and the panel rewrites every campaign at once. The rules now take a day or an exact moment, as splash.js does (`firebase/splash.test.mjs`).

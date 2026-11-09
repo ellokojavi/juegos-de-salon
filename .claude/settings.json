@@ -19,6 +19,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -f tools/agents/push-guard.mjs ] && node tools/agents/push-guard.mjs || true",
+            "timeout": 60
+          }
+        ]
+      }
     ]
   }
 }

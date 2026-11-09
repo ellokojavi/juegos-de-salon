@@ -620,6 +620,7 @@ node tools/agents/memory.test.mjs
 node tools/agents/pending.test.mjs
 node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
+node tools/agents/push-guard.test.mjs
 node tools/agents/repo-weight.test.mjs
 node tools/agents/round-watch.test.mjs
 node tools/agents/rules.test.mjs
