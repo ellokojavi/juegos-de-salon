@@ -841,3 +841,11 @@ html.offline-shell {
     radial-gradient(800px 600px at 50% 120%, rgba(150, 90, 40, 0.25), transparent 60%),
     linear-gradient(160deg, #1a120b, #2a1d12 55%, #14100c) !important;
 }
+/* Sheets take the palette too (their purple is hard-coded); the offline sheet always does, even
+   opened over a game screen that keeps its colours */
+html.offline-shell .hoja, .hoja.hoja-offline {
+  --yellow: #f0d39a; --yellow-rgb: 240 211 154; --orange: #d9944a; --orange-rgb: 217 148 74;
+  --pink: #d9944a; --pink-rgb: 217 148 74; --pink-deep: #9a5f26;
+  background: linear-gradient(180deg, rgba(42, 29, 18, 0.985), rgba(20, 16, 12, 0.99));
+  border-color: rgb(217 148 74 / 0.35);
+}
