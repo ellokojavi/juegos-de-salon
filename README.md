@@ -49,7 +49,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🚅 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
 | 🥷 [Shinobi](https://juegosdesalon.cl/shinobi/) | 1 | Play alone | Also in The Cup |
 | 🗼 [Babel](https://juegosdesalon.cl/babel/) | 1 | Play alone | Also in The Cup |
-| 🐤 [Aletazo](https://juegosdesalon.cl/flap/) | 1 | Play alone | Also in The Cup |
+| 🐤 [Flap / Aletazo / Bate-Asa](https://juegosdesalon.cl/flap/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -520,6 +520,7 @@ node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/flags.test.mjs
 node public/assets/js/game-manifest.test.mjs
+node public/assets/js/game-names.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/hidden-match.test.mjs
 node public/assets/js/home-windows.test.mjs
@@ -752,7 +753,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 | Tren en Vilo | Train on the Edge | Trem no Vão |
 | Shinobi | Shinobi | Shinobi |
 | Babel | Babel | Babel |
-| Aletazo | Aletazo | Aletazo |
+| Aletazo | Flap | Bate-Asa |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
