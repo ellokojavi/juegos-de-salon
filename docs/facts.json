@@ -1523,6 +1523,7 @@
     "tools/agents/pending.test.mjs",
     "tools/agents/popularity.test.mjs",
     "tools/agents/processes.test.mjs",
+    "tools/agents/push-guard.test.mjs",
     "tools/agents/repo-weight.test.mjs",
     "tools/agents/round-watch.test.mjs",
     "tools/agents/rules.test.mjs",
