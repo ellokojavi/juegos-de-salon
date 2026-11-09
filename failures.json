@@ -1605,7 +1605,11 @@
       "error": "✗ labs/artifacts 375×667 es: «⚙️ Jugar» ends at 669 px, 2 px below the fold",
       "signature": "0fcdb45fc8",
       "date": "2026-11-09T12:56:42.799Z",
-      "fix": null,
+      "fix": {
+        "commit": "b280572fc33af22d75e28caa2b21675f1db9f560",
+        "date": "2026-11-09T13:12:08.144Z",
+        "stat": "2 file(s) +2 −1: changelog/ccr-65bf4a65-u6k25o.md, public/labs/artifacts/style.css"
+      },
       "flaky": false
     }
   ]
