@@ -462,13 +462,13 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
 /**
  * The home page's order (D-255, D-361): most finished games first, counting the last four weeks of
  * offline games, rooms that ended, La Copa days played and Uno al día. It is still a fixed list,
- * so the page needs no database to draw itself, but it is no longer refreshed by hand: once a week
- * the processes round runs `node tools/agents/popularity.mjs update` and opens a PR with auto-merge
- * when the order changed. The two lines below are written by that tool; a game not in the list
+ * so the page needs no database to draw itself, but it is no longer refreshed by hand: every Monday
+ * the Weekly popularity workflow (.github/workflows/popularity.yml, D-547) runs
+ * `node tools/agents/popularity.mjs update` and merges the change when the order changed. The two lines below are written by that tool; a game not in the list
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
-export const POPULARIDAD_FECHA = '2026-11-02';
-export const POPULARIDAD = ['copa', 'reinas', 'tango', 'donde', 'loteo', 'rutas', 'stick', 'anio', 'desenredo', 'linea-de-tiempo', 'pintaminas', 'letras', 'puentes', 'conexiones', 'agentes', 'generala', 'toque-y-fama', 'zip', 'stack', 'aletazo', 'batalla-naval', 'ahorcado', 'dudo'];
+export const POPULARIDAD_FECHA = '2026-11-08';
+export const POPULARIDAD = ['copa', 'stick', 'reinas', 'generala', 'tango', 'stack', 'loteo', 'rutas', 'pintaminas', 'puentes', 'agentes', 'anio', 'letras', 'donde', 'desenredo', 'linea-de-tiempo', 'conexiones', 'zip', 'batalla-naval', 'toque-y-fama', 'ahorcado', 'dudo', 'aletazo'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**

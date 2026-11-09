@@ -218,3 +218,92 @@ self.addEventListener('notificationclick', e => {
     return self.clients.openWindow(url);
   })());
 });
+
+/*
+ * La Copa offline with the app closed (D-544, Background Sync, Chrome on Android): a day played with
+ * no signal asks for a `cup-outbox` sync, and the browser wakes this worker when the signal is back.
+ * The page mirrors its queue in the cache `cup-sync` (`outbox`: `{ queue, apiKey, databaseURL }`,
+ * assets/js/cup-outbox.js); this uploads it as the page would (the start, then the result) over the
+ * database's REST API, signed in as the phone's own anonymous session, and writes what it did in
+ * `done` for the next page to reconcile. With a window of the app on screen it does nothing: that
+ * page uploads. A network failure rejects, so the browser tries again later.
+ */
+const SYNC_CACHE = 'cup-sync';
+const SYNC_MARGIN = 10 * 60 * 1000;
+const SV = { '.sv': 'timestamp' };
+
+const syncRead = async key => { try { const r = await (await caches.open(SYNC_CACHE)).match(key); return r ? await r.json() : null; } catch (_) { return null; } };
+const syncWrite = async (key, v) => (await caches.open(SYNC_CACHE)).put(key, new Response(JSON.stringify(v), { headers: { 'content-type': 'application/json' } }));
+
+/** The phone's Firebase session, as the Firebase SDK keeps it in IndexedDB: its stsTokenManager, or null. */
+function firebaseSession(apiKey) {
+  return new Promise(resolve => {
+    let open;
+    try { open = indexedDB.open('firebaseLocalStorageDb'); } catch (_) { resolve(null); return; }
+    open.onerror = () => resolve(null);
+    open.onsuccess = () => {
+      const db = open.result;
+      try {
+        const get = db.transaction('firebaseLocalStorage', 'readonly').objectStore('firebaseLocalStorage').get(`firebase:authUser:${apiKey}:[DEFAULT]`);
+        get.onsuccess = () => { resolve(get.result?.value?.stsTokenManager || null); db.close(); };
+        get.onerror = () => { resolve(null); db.close(); };
+      } catch (_) { resolve(null); db.close(); }
+    };
+  });
+}
+
+/** A fresh ID token for the REST API: the kept one while it lasts, else one from the refresh token. */
+async function syncToken(apiKey, now = Date.now()) {
+  const s = await firebaseSession(apiKey);
+  if (!s) return null;
+  if (s.accessToken && s.expirationTime > now + 60000) return s.accessToken;
+  if (!s.refreshToken) return null;
+  const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${encodeURIComponent(apiKey)}`, {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(s.refreshToken)}`,
+  });
+  if (!r.ok) return null;
+  return (await r.json()).id_token || null;
+}
+
+/** Uploads the mirrored queue. Returns `{ sent, late, dup }` (ids); throws on a network failure. */
+async function cupSync({ now = Date.now(), token = syncToken } = {}) {
+  const box = await syncRead('outbox');
+  const done = { sent: [], late: [], dup: [], ...((await syncRead('done')) || {}) };
+  if (!box?.queue?.length) return done;
+  const auth = await token(box.apiKey, now);
+  if (!auth) return done;   // no session on this phone: the page uploads it when it opens
+  const db = box.databaseURL.replace(/\/$/, '');
+  const write = async (path, value) => {
+    const r = await fetch(`${db}/.json?auth=${encodeURIComponent(auth)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ [path]: value }) });
+    if (r.ok) return true;
+    if (r.status === 401 || r.status === 403) return false;
+    throw new Error(`database ${r.status}`);
+  };
+  const there = async path => { const r = await fetch(`${db}/${path}.json`); if (!r.ok) throw new Error(`database ${r.status}`); return (await r.json()) != null; };
+  const left = [];
+  for (const x of box.queue) {
+    if (!x.res) { if (now < x.b + SYNC_MARGIN) left.push(x); continue; }
+    if (now >= x.b + SYNC_MARGIN) { done.late.push(x.id); continue; }
+    const base = `torneos/${x.code}`;
+    const started = `${base}/started/${x.d}/${x.pid}`, result = `${base}/results/${x.d}/${x.pid}`;
+    if (!(await write(started, SV)) && !(await there(started))) { if (now >= x.b) done.late.push(x.id); else left.push(x); continue; }
+    if (await write(result, { ...x.res, at: SV })) { done.sent.push(x.id); continue; }
+    if (await there(result)) { done.dup.push(x.id); continue; }
+    if (now >= x.b) done.late.push(x.id); else left.push(x);
+  }
+  await syncWrite('done', done);
+  if (left.length) await syncWrite('outbox', { ...box, queue: left });
+  else await (await caches.open(SYNC_CACHE)).delete('outbox');
+  return done;
+}
+
+self.addEventListener('sync', e => {
+  if (e.tag !== 'cup-outbox') return;
+  e.waitUntil((async () => {
+    // A page of the app on screen uploads it itself: two at once would count the day as played elsewhere
+    const open = await self.clients.matchAll({ type: 'window' });
+    if (open.some(c => c.visibilityState === 'visible')) return;
+    await cupSync();
+  })());
+});

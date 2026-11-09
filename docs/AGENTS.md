@@ -97,7 +97,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   weighs them against `READY` / `READY_BY` in `flag-list.js` (default ≥5 finished by ≥2 keys over ≥3 days, 0 errors,
   since the flag was last switched) and writes `flagsListas/`; the card then says **✅ Listo para 🚀** with the numbers.
   The processes round tells the owner once (`news`); the owner still presses 🚀.
-- **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
+- **Home page order and lab experiments** (D-361, D-547): `node tools/agents/popularity.mjs check | update`; every Monday the Weekly popularity workflow (`.github/workflows/popularity.yml`) runs `update`, opens the PR, runs its checks and merges it
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
   page before players see it is a URL parameter listed in `public/labs/home/experiments.js`, shown with

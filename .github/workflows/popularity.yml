@@ -1,0 +1,103 @@
+# The 🔥 Popular label, refreshed every week on its own (D-547, amends D-361): every Monday it counts
+# the games finished in the last four weeks (tools/agents/popularity.mjs update) and, if the order
+# changed, opens a PR with the two rewritten lines of games.js, waits for its checks and merges it.
+# The label is not stored per game: `populares()` in games.js gives it to the first three of that
+# order (not La Copa, not a game still "New"), so a game that drops out of the three loses it with
+# the same merge. A week with the same order opens nothing.
+#
+# PRs and merges made with the workflow token do not wake other workflows, so this one runs the
+# required checks on the PR's branch by hand (tests.yml, e2e.yml) and, after merging, publish.yml,
+# as approve.yml does (D-216, D-302). The lane job runs only on pull_request, so it never sees this PR:
+# the workflow sets `owner-approval` green itself, and only when the commit holds nothing but the two
+# generated lines of games.js and its changelog entry (D-547: the owner chose this, 2026-11-08).
+#
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
+# and ends green.
+
+name: Weekly popularity
+
+on:
+  schedule:
+    # Mondays 12:17 UTC (9:17 in Chile): the count closes on Sunday, a whole week of days
+    - cron: '17 12 * * 1'
+  # To refresh now (Actions → Weekly popularity → Run workflow), or only see the count
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only show the count, change nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+  checks: read
+  statuses: write   # owner-approval for its own PR, see below
+
+concurrency:
+  group: popularity
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Count and rewrite the order
+        id: count
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          COMMAND: ${{ inputs.dry_run && 'check' || 'update' }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: the popularity is not refreshed"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          node tools/agents/popularity.mjs "$COMMAND"
+          if git diff --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Check the games' tests still pass
+        if: steps.count.outputs.changed == 'true'
+        run: node --test public/assets/js/games.test.mjs tools/agents/popularity.test.mjs
+      - name: Open the PR, run its checks and merge it
+        if: steps.count.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          day=$(TZ=America/Santiago date +%Y-%m-%d)
+          branch="auto/popularity-$day"
+          printf 'level: patch\n\n- **🔥 Popular, this week**: the home page'"'"'s order and its three 🔥 Popular games follow the games finished in the last four weeks.\n' > "changelog/popularity-$day.md"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add public/assets/js/games.js "changelog/popularity-$day.md"
+          git commit -m "Weekly popularity: the home page's order and 🔥 Popular for $day (D-547)"
+          git push -u origin "$branch"
+          url=$(gh pr create --base main --head "$branch" \
+            --title "Weekly popularity, $day" \
+            --body "The weekly count of games finished (\`tools/agents/popularity.mjs update\`, D-547): it rewrites \`POPULARIDAD\` and \`POPULARIDAD_FECHA\` in \`games.js\`, so the 🔥 Popular label moves to this week's top three and leaves the games that dropped out. Opened, checked and merged by the Weekly popularity workflow.")
+          pr=${url##*/}
+          sha=$(git rev-parse HEAD)
+          files=$(git diff --name-only HEAD~1 HEAD | sort | tr '\n' ' ')
+          [ "$files" = "changelog/popularity-$day.md public/assets/js/games.js " ] || { echo "::error::#$pr touches more than the popularity lines: $files"; exit 1; }
+          [ "$(git diff -U0 HEAD~1 HEAD -- public/assets/js/games.js | grep -E '^[-+][^-+]' | grep -vcE '^[-+]export const POPULARIDAD(_FECHA)? = ')" = 0 ] || { echo "::error::#$pr changes games.js beyond POPULARIDAD"; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$sha" -f state=success -f context=owner-approval -f description='weekly popularity: only the generated lines (D-547)' > /dev/null
+          gh workflow run tests.yml --ref "$branch"
+          gh workflow run e2e.yml --ref "$branch"
+          # end-to-end appears only once its scripts end (#1273): wait until both checks exist
+          for i in $(seq 1 120); do
+            names=$(gh pr checks "$pr" --json name --jq '.[].name' || true)
+            echo "$names" | grep -qx tests && echo "$names" | grep -qx end-to-end && break
+            sleep 30
+          done
+          gh pr checks "$pr" --required --watch --fail-fast --interval 30 || { echo "::error::the checks of #$pr did not pass: it stays open"; exit 1; }
+          if [ "$(gh pr view "$pr" --json mergeable --jq .mergeable)" = CONFLICTING ]; then echo "::error::#$pr conflicts with main"; exit 1; fi
+          gh pr merge "$pr" --merge
+          gh workflow run publish.yml --ref main

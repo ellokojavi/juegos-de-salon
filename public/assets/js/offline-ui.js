@@ -22,6 +22,10 @@ import { loadCss } from './load-css.js';
 import { pendingCupDays, OUTBOX_KEY } from './cup-outbox.js';
 
 export const PENDING_KEY = 'juegos-de-salon:jugador:pendientes';
+// The offline sheet, told whether La Copa plays offline here (its own flag, D-544, lab: #seccion-cup-offline): then it says so
+const withCup = open => Promise.all([import('./offline-sheet.js'), import('./flags.js').then(f => f.flag('cup-offline')).catch(() => false)])
+  .then(([m, cup]) => open({ ...m, cup: !!cup })).catch(() => {});
+
 const ROOT = new URL('../../', import.meta.url);
 
 /** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
@@ -190,7 +194,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
         Object.entries({ role: 'button', tabindex: '0', 'aria-haspopup': 'dialog', 'aria-live': 'polite' }).forEach(([k, v]) => chip.setAttribute(k, v));
         const open = e => {
           e.preventDefault(); e.stopPropagation();
-          import('./offline-sheet.js').then(m => m.openOfflineSheet({ doc, lang })).catch(() => {});
+          withCup(m => m.openOfflineSheet({ doc, lang, cup: m.cup }));
         };
         chip.addEventListener('click', open);
         chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(e); });
@@ -198,7 +202,7 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
       stick();
       drawChip();
       // The first time on this phone, one sheet says what works and what happens to the scores (PR 6)
-      import('./offline-sheet.js').then(m => m.showOfflineSheetOnce({ doc, storage, lang })).catch(() => {});
+      withCup(m => m.showOfflineSheetOnce({ doc, storage, lang, cup: m.cup }));
       // Screens drawn later (a game's modes, the home page's cards) are marked as they appear
       observer ||= new win.MutationObserver(() => mark(doc, { lang }));
       // Once the page has settled: a link drawn before its layout (a card's hidden overlay) loses a tag it has no room for

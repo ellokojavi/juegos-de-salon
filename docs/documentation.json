@@ -1,8 +1,8 @@
 {
-  "checkedUpTo": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+  "checkedUpTo": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
   "pending": [
     "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
-    "Offline mode (flag 'offline', PRs #1265-#1306) is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
+    "Offline mode (flags 'offline' and 'cup-offline') is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
   ],
   "known": [],
   "rounds": [
@@ -241,6 +241,16 @@
       "pending": [
         "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
         "Offline mode (flag 'offline', PRs #1265-#1306) is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "from": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+      "to": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review on contact sheets",
+        "Offline mode (flags 'offline' and 'cup-offline') is in the lab: when the owner publishes it, add it to LO_PRINCIPAL/shareApp.lines (D-271)"
       ]
     }
   ],

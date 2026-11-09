@@ -174,19 +174,19 @@
           <p class="muted" style="margin:0">Al terminar una partida de Babel, sobre «Continuar» el puntaje se arma frente a ti: como una boleta: primero los pisos, luego cada bono entra de golpe mientras el total sube contando, y al final el total brilla, con confeti si hubo bonos. Por ejemplo: 🧱 Pisos 9, 🔥 Bono de racha +3, 📏 Largo de rachas +15 y 🏆 Puntos 27.</p>
           <a class="btn btn--yellow" id="btn-babel-tally" href="../babel/">🗼 Jugar Babel</a>
         </section>
-        <!-- The design system's components page (D-533, phase 3 of #1188): the owner's and the agents' reference, behind the lab's door; its page names this card (bodega.test.mjs) -->
-        <section class="panel seccion" id="seccion-design">
-          <h2>🎨 Sistema de diseño</h2>
-          <p class="muted" style="margin:0">Cada color, distancia, esquina, título y botón de la app, en vivo y desde las hojas compartidas: la referencia para diseñar una pantalla o un juego nuevo, y lo que el agente de usabilidad compara con los juegos (D-533).</p>
-          <a class="btn btn--yellow" id="btn-design" href="design/">🎨 Ver el sistema</a>
-        </section>
         <!-- Offline mode (D-538, docs/OFFLINE.md): the cards and switches of PRs 3 to 6 land here -->
         <section class="panel seccion" id="seccion-offline">
           <h2>📴 Modo sin conexión</h2>
-          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos La Copa y las salas de dos celulares) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app se da cuenta sola cuando no hay señal o es muy mala: atenúa lo que necesita señal y pone la etiqueta «📴 Sin conexión» junto al título. Toca la etiqueta para ver la tarjeta que explica qué significa estar sin conexión (o marca «Forzar» aquí abajo y abre la portada).</p>
+          <p class="muted" style="margin:0">El celular guarda los juegos que se pueden jugar sin señal (todos menos las salas de dos celulares; La Copa tiene su propia tarjeta abajo) y los abre aunque no haya internet. Para probarlo: abre la portada y un par de juegos con señal, espera unos segundos, pon el modo avión y vuelve a abrirlos. La app se da cuenta sola cuando no hay señal o es muy mala: atenúa lo que necesita señal y pone la etiqueta «📴 Sin conexión» junto al título. Toca la etiqueta para ver la tarjeta que explica qué significa estar sin conexión (o marca «Forzar» aquí abajo y abre la portada).</p>
           <p class="muted" id="offline-estado" style="margin:0">Conexión: midiendo…</p>
           <label class="offline-forzar" style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" id="offline-forzar"> Forzar modo sin conexión en este celular</label>
           <a class="btn btn--yellow" id="btn-offline" href="../zip/">〰️ Probar con Zip</a>
+        </section>
+        <!-- La Copa offline (D-544): its own flag, on top of offline mode -->
+        <section class="panel seccion" id="seccion-cup-offline">
+          <h2>🏆 La Copa sin conexión</h2>
+          <p class="muted" style="margin:0">Si te queda un día pendiente de una copa y no tienes señal, igual lo juegas. El resultado queda guardado en el celular y se sube solo cuando vuelve la señal; si no alcanza a subir antes de que cierre el día, cuenta como no jugado. Funciona con las copas que abriste con señal en este celular. Para probarlo: abre tu copa con señal, pon el modo avión (o marca «Forzar modo sin conexión» arriba) y vuelve a abrirla.</p>
+          <a class="btn btn--yellow" id="btn-cup-offline" href="../cup/">🏆 Abrir La Copa</a>
         </section>
       </section>
 
@@ -277,6 +277,16 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <!-- The design system's components page (D-533, phase 3 of #1188): the owner's and the agents' reference; the page lives in the lab, behind its door, and names this card -->
+          <section class="panel seccion plegada" id="seccion-design" data-launched="2026-11-08">
+            <details>
+              <summary><h2>🎨 Sistema de diseño</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cada color, distancia, esquina, título y botón de la app, en vivo y desde las hojas compartidas: la referencia para diseñar una pantalla o un juego nuevo, y lo que el agente de usabilidad compara con los juegos (D-533).</p>
+                <a class="btn btn--yellow" id="btn-design" href="design/">🎨 Ver el sistema</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-cup-podium-early" data-launched="2026-11-04">
             <details>
               <summary><h2>🏆 La Copa: el podio se anuncia el último día</h2><span class="flecha" aria-hidden="true">›</span></summary>

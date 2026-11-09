@@ -38,7 +38,7 @@ import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles, guardarPendienteLocal } from '../assets/js/jugador.js';
-import { queueResult, uploadCup } from '../assets/js/cup-outbox.js';
+import { queueResult, uploadCup, canSyncClosed } from '../assets/js/cup-outbox.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -158,11 +158,18 @@ const silenciarAviso = tiene('mute');
  * With no signal (offline mode on and the phone offline, D-544), the cup is drawn from the copy this
  * phone kept and a pending day's result waits in the outbox (`store-offline.js`, `outbox.js`).
  */
-const sinSenal = () => !PRUEBA && flag('offline') && (document.documentElement.dataset.connection === 'offline'
+const sinRed = () => !PRUEBA && (document.documentElement.dataset.connection === 'offline'
+  || document.documentElement.classList.contains('offline') || navigator.onLine === false);
+const sinSenal = () => !PRUEBA && copaSinSenal && (document.documentElement.dataset.connection === 'offline'
   || document.documentElement.classList.contains('offline') || navigator.onLine === false);
 const offlineStore = () => store?.tipo === 'offline';
+// La Copa offline (D-544), its own lab flag (lab: #seccion-cup-offline). `flag()` is a promise: read once here
+let copaSinSenal = false;
+const flagCopaSinSenal = PRUEBA ? Promise.resolve(false) : flag('cup-offline').then(v => { copaSinSenal = !!v; }, () => {});
 async function abrirStore() {
   if (store) return store;
+  // The flag is asked before the store is chosen: offline it answers from this phone's cached flags
+  await flagCopaSinSenal;
   store = PRUEBA
     ? (await import('./store-local.js')).createLocalStore()
     : sinSenal() ? (await import('./store-offline.js')).createOfflineStore({ cuenta })
@@ -178,7 +185,7 @@ if (!PRUEBA) window.addEventListener('connection', e => {
 
 /** The copy of a cup kept for playing it offline (D-544): only from the server, only while the cup is on. */
 function guardarCopia(code, L, st) {
-  if (st?.tipo !== 'firebase' || !flag('offline') || !cuenta.quien(code)) return;
+  if (st?.tipo !== 'firebase' || !copaSinSenal || !cuenta.quien(code)) return;
   cuenta.snapshot.guardar(code, L?.meta && Date.now() < (L.fin || L.meta.end) ? { L, offset: st.now() - Date.now(), at: Date.now() } : null);
 }
 
@@ -587,6 +594,8 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
   espera('…');
   let st;
   try { st = await abrirStore(); await st.listo(); } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); return; }
+  // No signal and La Copa offline not on for this phone: say so, not "no cup with that code"
+  if (st.tipo === 'firebase' && sinRed()) { espera(errorDe({ code: 'offline' }), { error: true, reintentar: () => location.reload() }); return; }
   if (S.off) S.off();
   let primera = true;
   S.off = st.escuchar(code, L => {
@@ -1416,7 +1425,7 @@ function antesDeJugar(d) {
     // it (C-5, U-39): on a short phone the open rules pushed it a whole screen down
     el('p', { class: 'muted center', style: 'margin:0' }, T.startWarn),
     // Offline (D-544): the result waits on the phone and has to go up before the day closes
-    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(T.offlineDay, { t: cierreDe(meta, d) })) : null,
+    offlineStore() ? el('p', { class: 'notice', id: 'aviso-sin-senal' }, fmt(canSyncClosed() ? T.offlineDay : T.offlineDayOpen, { t: cierreDe(meta, d) })) : null,
     comodin, err, empezar,
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
@@ -1672,7 +1681,7 @@ async function mandar(d, fin) {
     // The signal went while playing (D-544): with offline mode on, the result waits on the phone like
     // one played offline, and goes up when the signal is back if the day is still open then
     const meta = L()?.meta;
-    if (!PRUEBA && flag('offline') && !['ventana', 'permiso'].includes(e?.code) && meta && abierto(meta, d, ahora())) {
+    if (!PRUEBA && copaSinSenal && !['ventana', 'permiso'].includes(e?.code) && meta && abierto(meta, d, ahora())) {
       queueResult({ code: S.code, d, pid: S.yo, b: meta.win[d].b, at: ahora(), res });
       S.guardadoLocal = d;
       return;
@@ -1722,7 +1731,7 @@ async function enviar(d, fin, envio = null) {
   // Saved on the phone, not on the server (D-544): said on top, with the deadline it has to beat
   if (local) Promise.resolve(dibujado).then(() => {
     if (S.pantalla !== 'resultado' || document.getElementById('aviso-guardado-local')) return;
-    $('#resultado-body').prepend(el('p', { class: 'notice', id: 'aviso-guardado-local' }, fmt(T.offlineSaved, { t: cierreDe(L().meta, d) })));
+    $('#resultado-body').prepend(el('p', { class: 'notice', id: 'aviso-guardado-local' }, fmt(canSyncClosed() ? T.offlineSaved : T.offlineSavedOpen, { t: cierreDe(L().meta, d) })));
   });
 }
 

@@ -36,6 +36,8 @@ and a yellow «⚙️ Jugar», in C-5's order.
 - **The parts** (two cells wide, one tall, anchored at the tapped cell): 📐 ramp (↘ or ↙), 🪵 plank,
   🛝 trampoline (throws the ball up about 7 rows, always the same height), 🌀 fan (blows the ball
   sideways over itself and the three cells it faces, in its row and the one above).
+- **The tray:** each part drawn as the object it is (the same drawing as on the board), one per copy left, so two ramps are two ramps; past three, one with its ×n; a kind with none left stays faint.
+- **💡 Pista** lights a slot in cyan where one part of the answer goes (one the board does not have yet), with the part faint over it, until it is placed; each hint costs one star of the stage, down to none (three hints on a three-part answer leave only the 10 for passing it; the same hint shown again costs nothing more). **🏳️ Rendirse** gives the stage up: a second tap within 3 s confirms, the stage counts as not passed (0 points) and the next one starts.
 - **Placing, by dragging:** press a part in the tray and drag it onto the board; it floats as a ghost
   snapped to the grid, over a green slot where it fits and a red one where it does not, lifted about a
   cell above the finger on a touch screen so the finger never hides it (with a mouse, none). Let go to
@@ -59,7 +61,7 @@ and a yellow «⚙️ Jugar», in C-5's order.
   and only after it plays out (1.1 s) the stage is marked failed, «¡Bum! 💥 Tocó el fondo»; **popped**
   on spikes; or **stuck** (still outside the basket for 1.4 s, or 30 s in all). A failure says which
   and leaves the parts where they were. ■ Parar stops a run.
-- **In the basket:** its floor is rough (`CUP_ROLL`, 7 per second against 1.6 on other flat ground):
+- **In the basket:** its floor is rough (`CUP_ROLL`, 12 per second against 1.6 on other flat ground):
   a ball that lands with speed still rolls and knocks the walls naturally, but only a little (about
   0.7 of a cell in the median), and once it has been at rest for 0.3 s (`SETTLE`) the stage passes:
   0.4 to 1.2 s after it touches the floor across the pool. A run lasts up to 30 s (`MAX_T`;
@@ -70,7 +72,7 @@ and a yellow «⚙️ Jugar», in C-5's order.
 ## The levels
 
 **A game is five stages against the clock, as Tren en Vilo's.** Each stage is drawn from its tier of
-the generated pool (`levels.js`, 72 levels in six tiers of 12), one harder than the one before
+the generated pool (`levels.js`, 72 levels in six tiers of 12, regenerated on 2026-11-08 with the legibility filter), one harder than the one before
 (`STAGE_TIERS` in `game.js`: tiers 1, 2, 3, 5, 6):
 
 | Stage | Label | The answer needs | Tray | Hazards |
@@ -79,7 +81,7 @@ the generated pool (`levels.js`, 72 levels in six tiers of 12), one harder than 
 | 2 | Fácil + | 1 part of any kind | one decoy | 2–3 |
 | 3 | Medio | 2 parts | exact | 2–3 |
 | 4 | Difícil | 3 parts | exact | 3–4 |
-| 5 | Experto | 3 parts | one decoy | 4–6 |
+| 5 | Experto | 3 parts | two decoys | 5–7 |
 
 (Tier 4, «Medio +», 2 parts among decoys, stays in the pool unused.) The first game of the day draws
 its five with the day's seed, the same for everyone; «Jugar otra vez» draws another five at random.
@@ -102,13 +104,13 @@ its five with the day's seed, the same for everyone; «Jugar otra vez» draws an
 **How the pool is made** (`tools/generators/artifacts-levels.mjs`): each level is built backwards
 from a working machine, so every one has an answer. The ball drops from a random pipe; k parts are
 chained on its real path, each where the ball passes; the basket goes where that machine brings the
-ball down, and the run must end at rest in it; hazards (spikes, girders, fixed planks and ramps) are
+ball down, and the run must end at rest in it; the answer must read as a machine, not a fluke (`legible()`, the owner's report of Experto answers that needed five bounces and luck): it still wins with the ball's start nudged ±0.04 and ±0.08 of a cell and with the physics stepped at 1/90 and 1/240 s (no chaos), with at most 4 + k hard bounces, a run of at most 3 + 1.2·k s, and the ball meeting each part at most twice; hazards (spikes, girders, fixed planks and ramps) are
 added only where the machine still works, and never on the basket (no spikes inside it, no girder through it). A level is kept only if an exhaustive search finds no answer
 with fewer parts from its tray: the search is exact while pruned, because a part the ball never comes
 near (and no fan blows on) cannot change the run. `engine.test.mjs` plays every level's answer and
 checks that no board solves itself. To make a new pool: run each tier side by side
 (`node tools/generators/artifacts-levels.mjs 12 <seed> <tier>`) and join them (`… merge /tmp/artifacts-tiers-*.json`). After a change to the physics, `… check`
-re-verifies the pool (every answer still wins, none has a shorter answer).
+re-verifies the pool (every answer still wins and is legible, none has a shorter answer).
 
 ## For tests
 
@@ -121,11 +123,11 @@ Everything is drawn on the canvas, no image files: the app's neon night with a d
 ramps and planks with grain and brass bolts (the level's fixed ones in a cooler wood with steel
 bolts); a trampoline with two coils whose pad squashes on a bounce; a fan whose blades spin, with
 breeze streaks across its reach and a chevron for its direction; violet steel girders with rivets;
-red spikes that glow; a woven basket that glows and pulses; a steel pipe the ball drops from; a ball
-with light, shadow and a stripe that turns as it rolls, and a fading trail. Particles mark a bounce,
+red spikes that glow, each a rhombus pointed up and down; a woven basket that glows and pulses, its weave and rim drawn over the ball so a ball inside reads as inside; a steel pipe the ball drops from; a ball
+with light, shadow and a stripe that turns as it rolls, and a fading trail that plays out once the run ends. The canvas re-measures itself whenever its box changed, so the ball is always round. Particles mark a bounce,
 a pop on the spikes (the ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
 part floats over a green or red slot where it would land.
-The cover shows a small board solving the levels by itself, one after another.
+The cover shows a board (up to 240 px wide, smaller on short screens, none under 640 px tall) building and solving the levels by itself, one after another: each part of the answer rises from below the board and glides along an arc into its slot, lit in cyan, as a player would drag it; then the ball drops and the machine works.
 
 ## Exceptions to the canons
 

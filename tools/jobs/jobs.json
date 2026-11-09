@@ -118,6 +118,17 @@
       ]
     },
     {
+      "id": "weekly-popularity",
+      "where": "github",
+      "workflow": "popularity.yml",
+      "cron": "17 12 * * 1",
+      "what": "Every Monday recounts the games finished in the last four weeks and, if the order changed, merges a PR with the new home page order, so the 🔥 Popular label moves to this week's top three.",
+      "decisions": [
+        "D-361",
+        "D-547"
+      ]
+    },
+    {
       "id": "room-sweep",
       "where": "github",
       "workflow": "room-sweep.yml",

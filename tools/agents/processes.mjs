@@ -340,7 +340,7 @@ async function check() {
   const { POPULARIDAD_FECHA } = await import('../../public/assets/js/games.js');
   const { vence } = await import('./popularity.mjs');
   const o = vence(POPULARIDAD_FECHA);
-  console.log(o.toca ? `- Due: the list is from ${POPULARIDAD_FECHA} (${o.dias} days). In your worktree: node tools/agents/popularity.mjs update, and if it rewrote games.js, it goes in your PR.` : `- Up to date: the list is from ${POPULARIDAD_FECHA} (${o.dias} day(s)).`);
+  console.log(o.toca ? `- Due: the list is from ${POPULARIDAD_FECHA} (${o.dias} days). The Weekly popularity workflow (D-547) should have refreshed it: look at its last run; if it failed, in your worktree: node tools/agents/popularity.mjs update, and if it rewrote games.js, it goes in your PR.` : `- Up to date: the list is from ${POPULARIDAD_FECHA} (${o.dias} day(s)).`);
 
   heading('Approved and queued');
   const decisionIssues = gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '30', '--json', 'number,body');
