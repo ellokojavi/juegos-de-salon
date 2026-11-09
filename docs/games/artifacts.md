@@ -81,7 +81,7 @@ the generated pool (`levels.js`, 72 levels in six tiers of 12, regenerated on 20
 | 2 | Fácil + | 1 part of any kind | one decoy | 2–3 |
 | 3 | Medio | 2 parts | exact | 2–3 |
 | 4 | Difícil | 3 parts | exact | 3–4 |
-| 5 | Experto | 3 parts | one decoy | 4–6 |
+| 5 | Experto | 3 parts | two decoys | 5–7 |
 
 (Tier 4, «Medio +», 2 parts among decoys, stays in the pool unused.) The first game of the day draws
 its five with the day's seed, the same for everyone; «Jugar otra vez» draws another five at random.
