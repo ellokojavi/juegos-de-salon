@@ -10,7 +10,7 @@
   border: 1px solid var(--glass-border); background: var(--artifacts-floor); overflow: hidden; box-shadow: var(--shadow-panel);
 }
 .demo canvas { display: block; width: 100%; height: 100%; }
-@media (max-height: 760px) { .demo { width: min(46%, 170px); } }
+@media (max-height: 760px) { .demo { width: min(45%, 170px); } }
 /* A short phone keeps Jugar in the first screen (U-39): the demo steps aside */
 @media (max-height: 640px) { .demo { display: none; } }
 .credito { margin: 0; font-size: var(--fs-85); text-wrap: balance; }
