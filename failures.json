@@ -1635,7 +1635,11 @@
       "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\ncode: 'ERR_ASSERTION',",
       "signature": "4d927cbbd6",
       "date": "2026-11-09T17:16:47.043Z",
-      "fix": null,
+      "fix": {
+        "commit": "f35f6f8bf24cba37bef9aa6d41b8100267ffedab",
+        "date": "2026-11-09T17:19:29.308Z",
+        "stat": "2 file(s) +2 −2: docs/DECISIONS.md, docs/decisions/D-361.md"
+      },
       "flaky": false
     }
   ]
