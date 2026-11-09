@@ -127,7 +127,7 @@ red spikes that glow, each a rhombus pointed up and down; a woven basket that gl
 with light, shadow and a stripe that turns as it rolls, and a fading trail that plays out once the run ends. The canvas re-measures itself whenever its box changed, so the ball is always round. Particles mark a bounce,
 a pop on the spikes (the ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
 part floats over a green or red slot where it would land.
-The cover shows a small board solving the levels by itself, one after another.
+The cover shows a board (up to 240 px wide, smaller on short screens, none under 640 px tall) building and solving the levels by itself, one after another: each part of the answer rises from below the board and glides along an arc into its slot, lit in cyan, as a player would drag it; then the ball drops and the machine works.
 
 ## Exceptions to the canons
 

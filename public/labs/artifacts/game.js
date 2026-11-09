@@ -543,19 +543,39 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-/* The cover's demo: a level playing its own solution over and over, behind the title */
-const demo = { scene: escena($('demo')), board: null, run: null, trail: [], wait: 0, n: 0, roll: 0, won: false };
+/*
+ * The cover's demo: a level building itself and then playing, over and over, behind the title. Each part
+ * of the answer rises from below the board and glides into its slot (lit in cyan), one after another, as a
+ * player would drag it; then the ball drops and the machine works.
+ */
+const demo = { scene: escena($('demo')), board: null, run: null, trail: [], wait: 0, roll: 0, won: false, parts: [], k: 0, t: 0 };
+const GLIDE = 0.75, PAUSE = 0.25;   // seconds a part takes to glide in, and the pause after it lands
+const ease = x => 1 - (1 - x) ** 3;
 function demoNext() {
   const lv = POOL[Math.floor(Math.random() * POOL.length)];
-  demo.board = newBoard(lv); demo.board.placed = lv.solution.map(p => ({ dir: 1, ...p }));
-  demo.run = newRun(demo.board); demo.trail = []; demo.wait = 0; demo.won = false;
+  demo.board = newBoard(lv); demo.board.placed = [];
+  demo.parts = lv.solution.map(p => ({ dir: 1, ...p }));
+  demo.k = 0; demo.t = 0; demo.run = null; demo.trail = []; demo.wait = 0; demo.won = false;
 }
 new ResizeObserver(() => demo.scene.size()).observe($('demo'));
 function demoFrame(dt) {
   if (!$('s-portada').classList.contains('active')) return;
   if (!demo.board) demoNext();
   demo.scene.tick(dt);
-  if (demo.run.state === 'running') {
+  let moving = null, target = null;
+  if (!demo.run) {
+    // Building: the part in hand glides from below the board, along a soft arc, to its slot
+    const goal = demo.parts[demo.k];
+    demo.t += dt;
+    const k = Math.min(1, demo.t / GLIDE), e = ease(k), fromC = goal.c + (demo.k % 2 ? -2 : 2), fromR = ROWS + 0.5;
+    moving = { ...goal, c: fromC + (goal.c - fromC) * e, r: fromR + (goal.r - fromR) * e - Math.sin(k * Math.PI) * 1.2 };
+    target = k < 1 ? goal : null;
+    if (k >= 1 && demo.t >= GLIDE) {
+      if (!demo.board.placed.includes(goal)) { demo.board.placed.push(goal); demo.scene.burst(goal.c + 1, goal.r + 0.6, [demo.scene.C.yellow, '#ffffff'], 8, 2.5); }
+      moving = null;
+      if (demo.t >= GLIDE + PAUSE) { demo.k++; demo.t = 0; if (demo.k >= demo.parts.length) demo.run = newRun(demo.board); }
+    }
+  } else if (demo.run.state === 'running') {
     for (let t = 0; t < dt && demo.run.state === 'running'; t += STEP) {
       demo.roll += demo.run.ball.vx * STEP / R; stepRun(demo.run, STEP);
       for (const e of demo.run.events.splice(0)) {
@@ -564,8 +584,11 @@ function demoFrame(dt) {
       }
     }
     demo.trail.push([demo.run.ball.x, demo.run.ball.y]); if (demo.trail.length > 18) demo.trail.shift();
-  } else if ((demo.wait += dt) > 1.6) demoNext();
-  demo.scene.draw({ board: demo.board, run: demo.run, chosen: null, ghost: null, trail: demo.trail, roll: demo.roll, won: demo.won, popped: false });
+  } else {
+    if (demo.trail.length) demo.trail.splice(0, 2);
+    if ((demo.wait += dt) > 1.6) demoNext();
+  }
+  demo.scene.draw({ board: demo.board, run: demo.run, chosen: null, ghost: moving && { ...moving, ok: true }, hint: target, trail: demo.trail, roll: demo.roll, won: demo.won, popped: false });
 }
 
 $('sound-slot').append(soundToggle());
