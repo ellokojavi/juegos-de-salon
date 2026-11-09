@@ -187,7 +187,7 @@ export const CAMPAIGNS = {
     emoji: '🐤',
     requires: ['aletazo'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
-    title: { es: '¡A volar con Aletazo!', en: 'Take flight with Aletazo!', pt: 'Voe com o Aletazo!' },
+    title: { es: '¡A volar con Aletazo!', en: 'Take flight with Flap!', pt: 'Voe com o Bate-Asa!' },
     hero: true,
     items: [{
       // Play opens the game's page, ready to start (`?play`)
