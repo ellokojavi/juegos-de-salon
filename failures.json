@@ -1641,6 +1641,19 @@
         "stat": "2 file(s) +2 −2: docs/DECISIONS.md, docs/decisions/D-361.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42670254202,
+      "check": "tests",
+      "pr": 1343,
+      "branch": "claude/aletazo-en-pt-translation-gmkfg8",
+      "commit": "e63caa0c82570deb5c7b0dbfa23a722fda262b7f",
+      "test": "README up to date",
+      "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"languages\" went stale  →  python3 tools/release/readme.py update",
+      "signature": "26ec9c9d16",
+      "date": "2026-11-09T18:03:27.652Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
