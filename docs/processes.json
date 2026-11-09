@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+  "checkedUpTo": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -511,7 +511,11 @@
           "commit": "bc1fd0322c07f7bab1a584a6015f36ee6c4e8957"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-09",
+        "what": "push-guard.mjs hook stops git push while a generated file is stale",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334"
+      },
       "signatures": [
         "4d927cbbd6"
       ]
@@ -531,7 +535,11 @@
           "commit": "8f26677933afe6b7284829aa0c95933a74db9a31"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-09",
+        "what": "push-guard.mjs hook stops git push while a generated file is stale",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334"
+      },
       "signatures": [
         "13e7a7848e"
       ]
@@ -627,6 +635,18 @@
       "key": "e2e-clock-assumption",
       "what": "clock-jumps.test.mjs: the first adelantar() in each e2e script must be anchored with medianoche(start, tz); variants.mjs anchored",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1247"
+    },
+    {
+      "date": "2026-11-09",
+      "key": "decisions-index-stale",
+      "what": "push-guard.mjs hook stops git push while a generated file is stale",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334"
+    },
+    {
+      "date": "2026-11-09",
+      "key": "readme-tests-block-stale",
+      "what": "push-guard.mjs hook stops git push while a generated file is stale",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334"
     }
   ],
   "queueDone": [
@@ -818,6 +838,14 @@
       "issue": null,
       "pr": null,
       "note": "catch-up round 11-07/11-08 (11-07 round died uncommitted); 30 changelog entries collected; dispatched documentation (#1308) and usability; 2 CI signatures promoted, no mechanism built"
+    },
+    {
+      "date": "2026-11-09",
+      "from": "cc23d3581aba5a215baeb00efa1f3a31ed0706de",
+      "to": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334",
+      "note": "dispatched documentation (#1333) and usability; 15 changelog entries collected; mechanism push-guard for 2 of 4 ready CI signatures"
     }
   ],
   "ownerDecisions": [
