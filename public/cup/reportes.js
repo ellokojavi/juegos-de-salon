@@ -101,8 +101,16 @@ export async function enviarReporte(r, doFetch = globalThis.fetch, almacen = glo
   throw Object.assign(new Error('reporte'), { code: 'reporte', guardado });
 }
 
-/** Reintenta los reportes que quedaron guardados. Devuelve cuántos se enviaron. */
-export async function reenviarPendientes(doFetch = globalThis.fetch, almacen = globalThis.localStorage) {
+/**
+ * Reintenta los reportes que quedaron guardados. Devuelve cuántos se enviaron. One run at a time per
+ * page (instalable.js, La Copa and the lab all call it), so a message never goes up twice.
+ */
+let enCurso = null;
+export function reenviarPendientes(doFetch = globalThis.fetch, almacen = globalThis.localStorage) {
+  if (!enCurso) enCurso = reenviar(doFetch, almacen).finally(() => { enCurso = null; });
+  return enCurso;
+}
+async function reenviar(doFetch, almacen) {
   if (!almacen) return 0;
   const lista = leer(almacen);
   const quedan = [];

@@ -72,9 +72,18 @@ export async function avisarOffline({ nav = globalThis.navigator, doc = globalTh
   return msg;
 }
 
+/** Sends the inbox messages left on the phone without signal; quiet, and again on the next try. */
+function reenviarBuzon() {
+  if (globalThis.navigator?.onLine === false || /[?&]test\b/.test(globalThis.location?.search || '')) return;
+  import('./buzon-form.js').then(m => m.reenviarPendientes()).catch(() => {});
+}
+
 if (globalThis.window?.addEventListener) {
   try { nombrar(); } catch (_) { /* el nombre queda el del español */ }
-  const empezar = () => registrar().then(() => avisarOffline()).catch(() => {});
+  const empezar = () => { registrar().then(() => avisarOffline()).catch(() => {}); reenviarBuzon(); };
+  // A 💬 message sent without signal waits on the phone (buzon-form.js): it goes up on any page's
+  // load and as soon as the signal is back, never lost and never waiting for La Copa to be opened
+  window.addEventListener('online', () => reenviarBuzon());
   if (document.readyState === 'complete') empezar();
   else window.addEventListener('load', empezar, { once: true });
 }
