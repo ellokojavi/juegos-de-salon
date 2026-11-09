@@ -954,8 +954,9 @@ export function coverLangToggle(onChange) {
   const slot = el('div', { class: 'cover-lang' }, langToggle(onChange));
   const compact = () => {
     const tools = document.querySelector('.topbar .tools');
-    if (!tools || tools.querySelector('.lang-btn')) return;
-    tools.insertBefore(langButton(onChange), tools.querySelector('#sound-slot'));
+    if (!tools) return;
+    // A re-rendered cover finds the button already there: it still drops its own toggle (one selector only)
+    if (!tools.querySelector('.lang-btn')) tools.insertBefore(langButton(onChange), tools.querySelector('#sound-slot'));
     slot.replaceChildren();
     slot.hidden = true;
   };
