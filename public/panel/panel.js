@@ -622,7 +622,7 @@ function vistaAhora(now) {
   const cargando = !S.daysLoaded || !S.torneosLoaded;
   const vacio = cargando ? 'Loading…' : { todo: 'Nothing is in play right now.', torneo: 'No cups in progress.', sala: 'No rooms alive right now.', sinred: 'Nobody is playing offline right now.' }[S.filtroAhora];
 
-  const enJuego = bloque('In play', 'From the most recent signal to the quietest. In cups, ✓ is who already played today\'s game and the green dot who is playing it. In rooms, the green dot is who is connected; a room shows for up to half an hour without activity.',
+  const enJuego = bloque('In play', 'Most recent first. Green dot: playing now. ✓ in cups: played today. Idle rooms show for 30 min.',
     filtros([['todo', `All · ${items.length}`], ['torneo', `Cups · ${cuantos('torneo')}`], ['sala', `Rooms · ${cuantos('sala')}`], ['sinred', `Offline · ${cuantos('sinred')}`]], S.filtroAhora, v => { S.filtroAhora = v; render(); }, 'What to show'),
     lista(visibles.map(x => x.fila), vacio));
   // Nunca esconder en silencio: una sala puede quedar fuera por ser de otro entorno, pero
@@ -635,7 +635,7 @@ function vistaAhora(now) {
   }
 
   return [
-    ...titulo('Now', 'What is being played right now. It does not depend on the range and updates itself.'),
+    ...titulo('Now', 'Live; ignores the range.'),
     tiles, enJuego,
     porEmpezar.length ? bloque('Not started', 'Cups that have not started yet.', lista(porEmpezar.map(c => filaCopa(c, now)))) : null,
   ];
@@ -671,7 +671,7 @@ function vistaCopa(now) {
   const maxDia = Math.max(0, ...ec.porDia.map(d => d.esperado));
 
   return [
-    ...titulo(`${torneoLabel} · ${tituloRango()}`, 'The cups that were open in the range, test ones included: they are not split by environment.'),
+    ...titulo(`${torneoLabel} · ${tituloRango()}`, 'Cups open in the range, test ones included.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
       tile(rc.copas, 'active cups', { onClick: verTodas, cambio: vs(rc.copas, rca.copas) }),
@@ -686,16 +686,16 @@ function vistaCopa(now) {
       conCsv(bloque('Cups, step by step', `Of the cups created in the range. Median size: ${ec.tamano ?? '—'} players. Left out for missing 2 days in a row: ${n(ec.fuera)}; brought back by the admin: ${n(ec.devueltos)} (D-347).`,
         lista(pasos.map(([l, v]) => bar(l, [seg(C_TORNEO, v)], ec.creadas, { detail: ec.creadas ? `${pctTxt(pctDe(v, ec.creadas))} of those created` : '' })), 'No cups created in this range.', 'bars')),
         'torneo-embudo', pasos.map(([paso, copas]) => ({ paso, copas }))),
-      conCsv(bloque('Participation by cup day', 'On closed days: how many played (pink) out of those who could. Where it drops is where people fall off.',
+      conCsv(bloque('Participation by cup day', 'Pink: played out of those who could, on closed days.',
         lista(ec.porDia.map(d => bar(`Day ${d.dia}`, [seg(C_TORNEO, d.jugado), seg('rgba(255,255,255,0.25)', d.esperado - d.jugado)], maxDia, { cifra: d.jugado, detail: pctTxt(pctDe(d.jugado, d.esperado)) })), 'No closed days yet.', 'bars')),
         'torneo-participacion', ec.porDia),
     ),
     bloqueAvisos(rango, now),
     porIdioma('Cups by language', 'The language chosen by whoever created the cup: everyone plays it in that language.', todas.reduce((m, c) => ({ ...m, [c.lang]: (m[c.lang] || 0) + 1 }), {})),
-    bloque('Cups', 'Newest to oldest. Tap one to see its standings, each day and its history.',
+    bloque('Cups', 'Tap one for its standings.',
       filtros(ESTADOS.map(([v, l]) => [v, `${l} · ${todas.filter(c => es(c, v)).length}`]), S.filtroCopas, v => { S.filtroCopas = v; render(); }, 'Which cups to show'),
       lista(todas.filter(c => es(c, S.filtroCopas)).map(filaCopaLog), cargando || 'No such cups in this range.', 'log')),
-    bloque('By game', 'Games finished in the range and, in grey, those someone started and left unfinished. The typical time is the median: someone leaving the phone on for half an hour does not move it.',
+    bloque('By game', 'Finished; grey = abandoned. Time is the median.',
       lista(rc.porJuego.map(m => bar(miniLabel(m.id), [seg(C_TORNEO, m.jugadas), seg('rgba(255,255,255,0.25)', m.abandonos)], maxM, {
         cifra: m.jugadas,
         detail: [
@@ -837,7 +837,7 @@ function vistaFichaCopa(code, now) {
         el('small', {}, x.estado === 'futuro' ? fechaLabel(x.a) : x.estado === 'anulado' ? 'voided' : `${x.jugaron}/${x.de}`))),
       el('th', { scope: 'col' }, 'Total'));
     const filas = f.grilla.map(j => el('tr', {}, el('th', { scope: 'row' }, quien(j.name, j.co)), ...j.casillas.map(casillaCelda), el('td', { class: 'c-total' }, n(j.total))));
-    cuerpo = bloque('Day by day', 'Score from 0 to 100, time and the points it gave in the standings. Above each day, how many played out of those due. Hover over a cell for the detail.',
+    cuerpo = bloque('Day by day', 'Score, time and points. Hover for detail.',
       f.grilla.length ? el('div', { class: 'grilla' }, el('table', {}, el('thead', {}, cab), el('tbody', {}, ...filas))) : el('p', { class: 'empty' }, 'Nobody signed up yet.'),
       el('p', { class: 'muted small leyenda' }, '● playing now · unfinished: started and left no result · … the day is open · ✗ the day closed without them playing · — signed up later · ×2 counts double: the final or their wildcard 🃏'));
   } else if (S.fichaTab === 'historia') {
@@ -1074,7 +1074,7 @@ function bloqueCompartidos(rango) {
   const que = Object.entries(sg.comparte).sort((a, b) => b[1] - a[1]);
   const max = Math.max(0, ...que.map(([, v]) => v));
   const llegan = t.via.link || 0;
-  return conCsv(bloque('What gets shared', `Each time someone tapped Share and did not cancel (since D-348). Each share brought ${sg.compartidos ? (llegan / sg.compartidos).toLocaleString(LOCALE, { maximumFractionDigits: 2 }) : '—'} visits with the link\'s mark: the viral factor.`,
+  return conCsv(bloque('What gets shared', `Shares completed. Each one brought ${sg.compartidos ? (llegan / sg.compartidos).toLocaleString(LOCALE, { maximumFractionDigits: 2 }) : '—'} visits with the link\'s mark: the viral factor.`,
     lista(que.map(([k, v]) => bar(k, [seg(C_TORNEO, v)], max)), 'Nothing shared in this range.', 'bars')), 'compartidos', que.map(([k, v]) => ({ que: k, veces: v })));
 }
 
@@ -1119,13 +1119,13 @@ function vistaTrafico(now) {
       `In green, those that went on to play.${rango.grano === 'semana' ? ' The date is the Monday of each week.' : ''}`,
       lista(periodos.map(d => bar(d.label, [seg(C_JUEGAN, d.juegan), seg(C_TOTAL, Math.max(0, d.visitas - d.juegan))], maxD, { cifra: d.visitas })), 'Nothing yet.', 'bars')),
     el('div', { class: 'grid2' },
-      bloque('Where they come from', 'The site where they tapped the link. WhatsApp and almost every chat app do not say: those visits fall under "Direct or no data", along with whoever typed the address or had it saved.',
+      bloque('Where they come from', 'Chat apps hide the source: they fall under "Direct or no data".',
         lista(origenes.map(([k, v]) => bar(k, [seg(C_TOTAL, v)], maxO, { sub: dominiosDe(k) })), 'Nothing yet.', 'bars')),
-      bloque('Through which link', 'What the app shares carries its mark (?from=link): that tells how many visits came from an invitation even if the chat does not say. In green, those that went on to play (since 2026-10-29). It also counts utm_source or ?from= if you add them to a link by hand.',
+      bloque('Through which link', 'Visits from shared links (?from=). Green: went on to play.',
         lista(canales.map(([k, v]) => { const j = Math.min(v, t.viaJuegan?.[k] || 0); return bar(canalLabel(k), [seg(C_JUEGAN, j), seg(C_TORNEO, v - j)], maxC, { cifra: v, detail: `${porcentaje(j, v)} went on to play` }); }), 'No marked visits in this range.', 'bars'),
         t.visitas ? el('p', { class: 'muted small', style: 'margin-top:8px' }, `Unmarked: ${n(Math.max(0, t.visitas - canales.reduce((k, [, v]) => k + v, 0)))} visits.`) : null),
     ),
-    bloque('Pages', 'Views of each page and, beside them, how many visits started there and how many of those went on to play.',
+    bloque('Pages', 'Views, visits that started there, and those that went on to play.',
       lista(paginas.map(([k, p]) => bar(paginaLabel(k), [seg(C_TOTAL, p.vistas)], maxP, {
         detail: p.entradas ? `${n(p.entradas)} visit${p.entradas === 1 ? '' : 's'} started here · ${porcentaje(p.juegan, p.entradas)} went on to play` : 'no visit started here',
       })), 'Nothing yet.', 'bars')),
@@ -1169,7 +1169,7 @@ function vistaAudiencia(now) {
   const maxH = Math.max(1, ...todo.hour);
 
   return [
-    ...titulo(`🌎 Audience · ${tituloRango()}`, 'How much and from where people play. UTC days: in Pacific time the day changes at 17:00 (16:00 in winter).'),
+    ...titulo(`🌎 Audience · ${tituloRango()}`, 'UTC days (the day changes at 16:00/17:00 Pacific).'),
     el('div', { class: 'tiles' },
       tile(s.partidas, 'games started', { href: ir('grupo') }),
       tile(rc.jugadas, `${torneoNombre} games`, { href: ir('torneo') }),
@@ -1187,7 +1187,7 @@ function vistaAudiencia(now) {
     el('div', { class: 'grid2' },
       bloque('From where', 'The phone\'s time zone. It counts each time a phone started or joined a game: the same phone adds once per game, so these are not distinct people.',
         lista(origin.map(([k, v]) => { const { city, region } = tzLabel(k); return bar(city, [seg(C_TOTAL, v)], maxO, { sub: region }); }), 'Nothing yet.', 'bars')),
-      bloque('Country of room players', 'Once per player in each room with an opponent. From the phone\'s time zone (D-79).',
+      bloque('Country of room players', 'Once per player per room, from the phone\'s time zone.',
         lista(paises.map(([k, v]) => bar(`${flagOf(k)} ${nombreDePais(k)}`.trim(), [seg(C_TORNEO, v)], maxPa)), 'Nothing yet.', 'bars')),
     ),
     el('div', { class: 'grid2' },
@@ -1196,7 +1196,7 @@ function vistaAudiencia(now) {
     ),
     bloque('What time people play', 'Local time of each phone.',
       el('div', { class: 'hours' }, ...todo.hour.map((v, h) => el('div', { class: 'h', style: `height:${Math.max(2, (v / maxH) * 100)}%`, title: `${h}:00 · ${n(v)}`, 'data-h': h % 6 === 0 ? h : null })))),
-    bloque('Firebase quota', 'Firebase usage cannot be read from the browser. On Blaze (D-512) the free download is ~10 GB/month and beyond it is billed; the phones connected in Now approximate simultaneous connections. The detail is in the console:',
+    bloque('Firebase quota', 'Real usage is in the Firebase console. Free up to ~10 GB/month:',
       el('a', { class: 'btn btn--ghost btn--sm', href: 'https://console.firebase.google.com/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/usage', target: '_blank', rel: 'noopener' }, 'Usage in Firebase ↗')),
   ];
 }
@@ -1289,7 +1289,7 @@ function vistaSalud(now) {
       bloque('What failed', 'Loads that had each thing. A load can have more than one.',
         lista(tiposTotal.map(([k, v]) => bar(`${TIPO_FALLA[k][0]} ${TIPO_FALLA[k][1]}`, [seg(k === 'arranque' ? C_TORNEO : 'var(--yellow)', v)], maxTipo, { detail: TIPO_FALLA[k][2] })), 'Nothing yet.', 'bars')),
     ),
-    bloque('Errors', `Grouped by which error they are: the same one on another line or with another number counts once. The figure is how many loads saw it. In grey, those the newest version in the range (v${s.versionActual}) no longer had.`,
+    bloque('Errors', `Each error once; the number is loads that hit it. Grey: fixed in v${s.versionActual}.`,
       lista(errores.map(filaError), 'No errors in this range.', 'errs'),
       s.errores.length > VISIBLES ? el('button', { class: 'btn btn--ghost btn--sm', style: 'margin-top:10px', onClick: () => { S.erroresTodos = !S.erroresTodos; render(); } },
         S.erroresTodos ? 'Show fewer' : `Show all ${n(s.errores.length)}`) : null),
@@ -1298,10 +1298,10 @@ function vistaSalud(now) {
         lista(paginas.map(([k, p]) => bar(paginaLabel(k), [seg(C_TORNEO, p.arranque), seg('var(--yellow)', Math.max(0, p.alguna - p.arranque))], Math.max(1, p.cargas), {
           cifra: p.alguna, note: pctFino(p.alguna, p.cargas), detail: `of ${n(p.cargas)} loads${p.arranque ? ` · ${n(p.arranque)} did not start` : ''}`,
         })), 'No pages with failures in this range.', 'bars')),
-      bloque('Browser of the errors', 'Family and major version, never the full browser. On iPhone and iPad they are all Safari inside: it shows the iOS version.',
+      bloque('Browser of the errors', 'Browser and major version (iOS version on iPhone/iPad).',
         lista(navs.map(([k, v]) => bar(navegadorLabel(k), [seg('var(--yellow)', v)], maxN)), 'No errors in this range.', 'bars')),
     ),
-    bloque('How long until they can play', `From requesting the page until its modules ran, in loads visible the whole time. Green to purple: ${TRAMOS.map(([, l]) => l).join(' · ')}.`,
+    bloque('How long until they can play', `Time until the page is usable. Green to purple: ${TRAMOS.map(([, l]) => l).join(' · ')}.`,
       lista(lentas.map(([k, p]) => bar(paginaLabel(k), TRAMOS.map(([tr, l]) => ({ ...seg(C_TRAMO[tr], p.listo[tr] || 0), title: l })), p.medidas, {
         note: porcentaje(p.lentas, p.medidas), detail: `${n(p.lentas)} of ${n(p.medidas)} measured loads took 6 s or more`,
       })), 'Nothing yet.', 'bars')),
@@ -1348,7 +1348,7 @@ function vistaResumen(now) {
   };
   const porDia = pd.grupo.byDay.map((d, i) => ({ day: d.day, grupo: d.total, individual: pd.individual.byDay[i].total, torneo: rc.porDia[i]?.total || 0 }));
   return [
-    ...titulo(`📊 Summary · ${tituloRango()}`, 'The analyst\'s front page (D-348): the main metric, one card per domain against the previous period of the same length, and what is being played now. Each domain has three bands: pulse, diagnosis and trend. UTC days.'),
+    ...titulo(`📊 Summary · ${tituloRango()}`, 'Each card vs. the previous period of the same length. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
       tile(norte, '⭐ games finished', { cambio: vs(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and The Cup games' }),
@@ -1392,7 +1392,7 @@ function vistaGrupo(now) {
   const players = Object.entries(s.byPlayers).filter(([k]) => k !== '1').sort((x, y) => Number(x[0]) - Number(y[0]));
   const maxP = Math.max(0, ...players.map(([, v]) => v));
   return [
-    ...titulo(`👥 Group · ${tituloRango()}`, 'Games for several people: on two phones (rooms), on one phone and vs. the phone. A game counts when it starts; a room, only if an opponent joined. UTC days.'),
+    ...titulo(`👥 Group · ${tituloRango()}`, 'Rooms, one phone and vs. the phone. A room counts once someone joins. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
       tile(pd.total, 'group games', { cambio: vs(pd.total, pda.total) }),
@@ -1405,11 +1405,11 @@ function vistaGrupo(now) {
     conCsv(bloque('Games by game', `Tap a game to see its card. Its modes: ${MODE_IDS.filter(m => !MODES[m].torneo && !MODES[m].individual).map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}.`,
       lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TOTAL, v)], maxJ, { href: ir('juego', [id]) })), 'Nothing yet.', 'bars')), 'grupo-juegos', juegos.map(([id, v]) => ({ juego: id, partidas: v }))),
     el('div', { class: 'grid2' },
-      conCsv(bloque('Rooms, step by step', 'Created → an opponent joined (cyan) → reached the end (green). The length is the median of those that finished.',
+      conCsv(bloque('Rooms, step by step', 'Created → joined (cyan) → finished (green). Length: median.',
         lista(salas.map(([id, g]) => bar(gameLabel(id), [seg('var(--lime)', g.terminadas), seg(C_TOTAL, g.conRival - g.terminadas), seg('rgba(255,255,255,0.25)', g.creadas - g.conRival)], maxS, {
           cifra: g.creadas, detail: `${pctTxt(pctDe(g.conRival, g.creadas))} with opponent · ${pctTxt(pctDe(g.terminadas, g.conRival))} to the end${g.medianaMs ? ` · lasts ${minutos(g.medianaMs)}` : ''}`,
         })), 'No rooms in this range.', 'bars')), 'grupo-salas', salas.map(([id, g]) => ({ juego: id, ...g }))),
-      conCsv(bloque('Finished on one phone', 'Offline group games that reached the end, against those started (D-348: counted since this version).',
+      conCsv(bloque('Finished on one phone', 'Finished out of started.',
         lista(terminan.map(([id, g]) => bar(gameLabel(id), [seg(C_SIN_RED, g.finGrupo)], maxT, { cifra: g.finGrupo, detail: `${pctTxt(pctDe(g.finGrupo, g.grupo))} of ${n(g.grupo)} started` })), 'Nothing yet.', 'bars')),
         'grupo-terminadas', terminan.map(([id, g]) => ({ juego: id, ...g }))),
     ),
@@ -1447,7 +1447,7 @@ function vistaIndividuales(now) {
       tile(f.otras, '"again"', { info: 'all offline games: not split by domain' }),
     ),
     franja('diag'),
-    conCsv(bloque('Real difficulty', 'Of finished games: the score (0 to 100) and the time in quartiles, the low, middle and high one. A game with a very high middle is easy; one with many abandoned halfway, frustrating. A variant counts separately.',
+    conCsv(bloque('Real difficulty', 'Score and time, in quartiles. High middle = easy.',
       lista(dif.map(g => bar(g.variante ? `${gameLabel(g.game)} · ${g.variante}` : gameLabel(g.game), [seg(C_SIN_RED, g.terminadas), seg('rgba(255,255,255,0.25)', g.empezadas - g.terminadas)], maxD, {
         cifra: g.empezadas, detail: `score ${q(g.puntaje)} · time ${qT(g.tiempo)} · ${pctTxt(pctDe(g.abandonos, g.empezadas))} abandoned`,
       })), 'Nothing yet.', 'bars')),
@@ -1498,7 +1498,7 @@ function vistaUsuarios(now) {
   const audiencia = vistaAudiencia(now).slice(3);
   const desde = u.desde === null ? 'No browsers counted yet: they are counted since D-349.' : u.desde > r.from ? `Counted since ${dayLabel(u.desde)} (D-349).` : '';
   return [
-    ...titulo(`🌎 Users · ${tituloRango()}`, 'A user is a browser: a random number that lives in it and says nothing about the person, no name, no IP and never matched with anything (D-349). Whoever clears their data or uses private mode counts as new. UTC days.'),
+    ...titulo(`🌎 Users · ${tituloRango()}`, 'A user = a browser, anonymous. Clearing data counts as new. UTC days.'),
     desde ? el('p', { class: 'muted small' }, desde) : null,
     franja('pulso'),
     el('div', { class: 'tiles' },
@@ -1510,15 +1510,15 @@ function vistaUsuarios(now) {
     ),
     franja('diag'),
     el('div', { class: 'grid2' },
-      conCsv(bloque('When they last came', 'Per visit: how many days since the previous one. The browser works it out and sends only the bracket.',
+      conCsv(bloque('When they last came', 'Days between visits.',
         lista(vuelta.map(([k, v]) => bar(VUELTA_LABEL[k] || k, [seg(C_IDIOMA, v)], maxV)), 'Nothing yet.', 'bars')), 'usuarios-vuelta', vuelta.map(([k, v]) => ({ tramo: k, visitas: v }))),
-      conCsv(bloque('Frequency', 'Once per browser and day: how many of the last 28 days it came. A lot at the top is a habit.',
+      conCsv(bloque('Frequency', 'Days active out of the last 28.',
         lista(frec.map(([k, v]) => bar(FREC_LABEL[k] || k, [seg(C_TORNEO, v)], maxF)), 'Nothing yet.', 'bars')), 'usuarios-frecuencia', frec.map(([k, v]) => ({ tramo: k, navegadores_dia: v }))),
     ),
     serie('Active per day', 'Cyan, active ones who had come before; green, new (seen for the first time in what was downloaded).',
       u.porDia.map(d => ({ day: d.day, vuelven: d.activos - d.nuevos, nuevos: d.nuevos })), r, [['vuelven', C_TOTAL], ['nuevos', C_IDIOMA]], 'usuarios-activos'),
     franja('tend'),
-    conCsv(bloque('Cohorts by week', 'Those who arrived each week (seen for the first time in what was downloaded) and what share came back exactly 1, 7 and 30 days later. "—" means it cannot be known yet. For long cohorts, pick 90 days or more.',
+    conCsv(bloque('Cohorts by week', 'Share back after 1, 7 and 30 days. "—": not known yet.',
       co.length ? el('table', { class: 'cohortes' },
         el('thead', {}, el('tr', {}, ...['Week', 'Arrived', 'Day 1', 'Day 7', 'Day 30'].map(x => el('th', {}, x)))),
         el('tbody', {}, ...co.map(c => el('tr', {}, el('td', {}, periodLabel(c.semana, 'semana')), el('td', {}, n(c.tamano)), ...[c.d1, c.d7, c.d30].map(p => el('td', { style: p === null ? null : `background:rgba(46,230,214,${Math.min(0.6, p / 100)})` }, pctTxt(p))))))) : el('p', { class: 'empty' }, 'Nothing yet.')),
@@ -1625,12 +1625,12 @@ function vistaTimeline(now) {
     game: e.game || '', cup: e.cup?.name || '', campaign: e.campaign || '', detail: frase(e)[1] || '' }));
 
   return [
-    ...titulo(`🕑 Timeline · ${tituloRango()}`, `The moments of truth, one by one: every game that reached its end, every cup created, joined or finished, every feedback message, and every campaign seen (a splash, or the donation card opened; skins are always on and are not here). Opening a page, starting a game or leaving it halfway is not here. Rooms and offline games follow the environment above; cups and feedback have none. ${ZONA_NOMBRE}, Pacific dates.`),
+    ...titulo(`🕑 Timeline · ${tituloRango()}`, `Finished games, cups, feedback and campaigns seen. ${ZONA_NOMBRE}.`),
     el('div', { class: 'tiles' },
       tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: vs(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
       ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: vs(cuenta[k], cuentaA[k]) }))),
     el('p', { class: 'muted small' }, 'Tap a kind to see only it; tap more to add them; tap the last one again to see them all.'),
-    conCsv(bloque(elegido ? `Key events · ${elegido.label}` : 'Key events', `Newest first. Tap one to open its room, game or cup. From ${periodLabelDia(pr.from)} to ${periodLabelDia(pr.to)}.`,
+    conCsv(bloque(elegido ? `Key events · ${elegido.label}` : 'Key events', `Tap one to open it. From ${periodLabelDia(pr.from)} to ${periodLabelDia(pr.to)}.`,
       grupos.length ? el('div', { class: 'historia' }, ...grupos.flatMap(g => [el('p', { class: 'dia-grupo' }, fechaLabel(Date.parse(`${g.day}T12:00:00Z`))), ...g.evs.map(filaClave)]))
         : el('p', { class: 'empty' }, 'No key events in this range.'),
       enLista.length > TL_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.tlAll = !S.tlAll; render(); } }, S.tlAll ? 'Show fewer' : `Show all ${n(enLista.length)}`) : null),
@@ -1692,7 +1692,7 @@ function vistaFeedback() {
   const csv = () => filas.map(f => ({ date: fechaLabel(f.at), time: horaLabel(f.at), channel: f.channel, who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
     issue: f.issue || '', prs: f.prs.map(p => `#${p.n} ${p.state}`).join(' '), replied: f.replied ? 'yes' : '', text: f.text }));
   return [
-    ...titulo('💬 Feedback', `Every message, in full and from the start: from the app (🐞 and the end-of-game inbox) and by email to hola@ (the support agent files each one). Its stage follows its GitHub issue and PRs. Times in ${ZONA_NOMBRE}.`),
+    ...titulo('💬 Feedback', `Every message, from the app and hola@. Status follows its GitHub issue. ${ZONA_NOMBRE}.`),
     el('div', { class: 'tiles' }, ...STAGES.map(s => tile(cuenta[s], `${FB_STAGE[s][0]} ${FB_STAGE[s][1]}`, { info: FB_STAGE[s][2] }))),
     filtros(FB_FILTROS, S.fbFiltro, v => { S.fbFiltro = v; render(); }, 'Show'),
     filtros(FB_CANALES, S.fbCanal, v => { S.fbCanal = v; render(); }, 'From'),
