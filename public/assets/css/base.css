@@ -822,6 +822,8 @@ footer.atardecer .tiles .ic { display: grid; place-items: center; flex: none; wi
 footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
 footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
+/* Offline, no coffee (the owner, 2026-11-09): paying needs Stripe, so its footer chip and the end-of-game invitation step aside until the signal is back */
+html.offline :is(#btn-apoyo-portada, .op-apoyo, #apoyo-pie) { display: none; }
 
 /* The offline palette, "Candlelight" (the owner, 2026-11-07; D-538, PR 8): while offline, every page
    that is not a game's (home, Uno al día, /labs/, Rankings…) takes a quieter warm palette, so the
