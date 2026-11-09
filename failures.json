@@ -1594,6 +1594,19 @@
         "stat": "1 file(s) +3 −2: tools/e2e/cup/tournament.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 42618063855,
+      "check": "end-to-end",
+      "pr": 1335,
+      "branch": "ccr-65bf4a65-u6k25o",
+      "commit": "54594676df25cd65eb069cefdb8dfcb4e856795a",
+      "test": "landing-fold.mjs",
+      "error": "✗ labs/artifacts 375×667 es: «⚙️ Jugar» ends at 669 px, 2 px below the fold",
+      "signature": "0fcdb45fc8",
+      "date": "2026-11-09T12:56:42.799Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
