@@ -28,16 +28,19 @@ import { cachedControls, currentControls, featureOn } from './controls.js';
 /**
  * A friendly clip on the card: Keanu Reeves saying thank you (GIPHY's, from Sky TV), served from
  * GIPHY and not copied into the site, for its rights. Under the title, square and centered, its size following the screen's height (on the smallest phones it gives way), so the card still fits a
- * 320×568 phone without scrolling (D-449); with reduced motion, its still.
+ * 320×568 phone without scrolling (D-449); with reduced motion, its still. Offline, or if GIPHY does
+ * not answer, there is no clip (it cannot be precached, being GIPHY's): the card goes on without an empty frame.
  */
 export const CLIP = { video: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/giphy.mp4', still: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/480w_s.jpg' };
 
 function clip(doc) {
+  if (doc.defaultView?.navigator?.onLine === false) return null;
   const still = doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const v = doc.createElement('video');
   Object.assign(v, { src: CLIP.video, poster: CLIP.still, muted: true, loop: true, autoplay: !still, playsInline: true, preload: still ? 'none' : 'auto' });
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
   v.className = 'hoja-apoyo-clip';
+  v.addEventListener('error', () => v.remove());
   v.style.cssText = 'display:block;height:clamp(0px, calc(100svh - 560px), 200px);aspect-ratio:1;object-fit:cover;border-radius:14px;margin:0 auto';
   return v;
 }
