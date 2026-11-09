@@ -499,13 +499,15 @@ export function ordenPortada(hoy = new Date()) {
 export const PORTADA = ordenPortada();
 
 /**
- * The 🔥 "Popular" label (D-361, the owner's request): the first POPULARES games of the home page's
- * order, leaving out La Copa (it has its own card on top) and the games still carrying "New"
- * (that label says more, and they have no plays to rank yet). Only available games count.
+ * The 🔥 "Popular" label (D-361, the owner's request): the first POPULARES games of the weekly
+ * `POPULARIDAD` order, leaving out La Copa (it has its own card on top). A game still carrying "New"
+ * counts too and then wears both labels (the owner's request, 2026-11-09): Shinobi was among the most
+ * played in its first week. It ranks by `POPULARIDAD`, not by the home page's order, where the new
+ * games sit on top whatever their plays. Only available games on the home page count.
  */
 export const POPULARES = 3;
 export function populares(hoy = new Date(), orden = ordenPortada(hoy)) {
-  return new Set(orden.filter(g => g.available && !g.torneo && !esNuevo(g, hoy) && POPULARIDAD.includes(g.id)).slice(0, POPULARES).map(g => g.id));
+  return new Set(orden.filter(g => g.available && !g.torneo && POPULARIDAD.includes(g.id)).sort((a, b) => puesto(a.id) - puesto(b.id)).slice(0, POPULARES).map(g => g.id));
 }
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
