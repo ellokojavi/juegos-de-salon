@@ -200,7 +200,7 @@ mode the game plans to have.
 - The confirm button **says what it acts on** ("Colocar aquí · 🔍 Se funda Google"), not just the action.
 - Nothing important below the fold on an 812 px phone: the end screen's buttons must show without scrolling.
 - If a list can grow without limit, the confirm button floats (`position: sticky; bottom: 0`) with a gradient behind it, never at the end of the content.
-- Long blocks (game review, rules) are collapsed by default.
+- Long blocks (game review, rules) are collapsed by default. **On every cover the instructions start folded** (D-550): "Cómo se juega" is a closed `<details class="panel">`, so the cover shows what matters.
 - No horizontal scroll. Grids and tables adapt to the width.
 - **Room between the board and its buttons** (D-309): the game board, and whatever sums up the game on the result, carries `data-tablero`; `base.css` gives it 28 px (`--aire-tablero`) to what is below, minus the container gap (`--gap-contenedor`) and the button bar's padding (`--aire-ya`, which the game declares). It is not separated with loose margins. Each script screenshot measures it and marks ✗ under 24 px; `look.mjs` reports it.
 - A grid's labels (letters, numbers) go **inside** the same CSS grid, as one more row and column; never in a separate container aligned "by eye", because each browser stretches it differently (it happened in Safari with Batalla Naval).
@@ -663,7 +663,7 @@ Reinas, Tango, Babel or Shinobi are games exactly as Ahorcado, Generala or La Co
 ## Checklist before calling a game done
 
 - [ ] The modes it offers (all three, if it is for two) work and the game can be resumed in **all** of them (C-5, C-6).
-- [ ] The instructions follow U-18: the goal first, at most 3 points, without repeating the example drawing (C-1).
+- [ ] The instructions follow U-18: the goal first, at most 3 points, without repeating the example drawing (C-1), and start folded on the cover (C-8, D-550).
 - [ ] The game's name is translated in `games.js` (and its `texts.js`), or its same name is justified in `SAME_NAME` (C-3, D-549, `game-names.test.mjs`).
 - [ ] All text is in Spanish, English and Portuguese (that of `IDIOMAS`, the lab's too), with the same keys in all, no loose strings in the code (C-3, D-191).
 - [ ] Its screens are in `tools/e2e/paths.mjs` and its `languages.mjs` passes in every language (C-12, D-199).
