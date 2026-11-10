@@ -51,6 +51,25 @@ Solo (`solo`). The level is picked with **the same lever as Pintaminas' hard mod
 one way to choose easy or hard across the games): down with a green knob is easy, up with a red knob is hard;
 ¡A jugar! opens a new board of the level it shows. It starts on easy, and after a game it shows the last level.
 
+## The cover
+
+Like every cover going to production (the owner's request, 2026-11-10): the title, a **demo** that explains the
+game by itself, the level lever, ¡A jugar!, **your best** on that level, how to play, and the level's **ranking**
+with signing in.
+
+- **Demo:** a small solved board with six holes, each the only one in its row, column and box. In turn each hole
+  lights its row, then its column, then its box, with a line that says the rule, and then its digit pops in
+  ("¡Solo cabe el 7!"). It sleeps off screen (`onScreen`) and stands solved with reduced motion.
+- **The electric lever** (Pintaminas' switch, D-291): every flip sends a ring of electricity out of the plate
+  (green to easy, red and yellow to hard) and jolts it. Up to hard there is a flash over the view, sparks, a glow
+  that flickers like a bad contact, and the whole page turns over: `body.sd-hard`, a red-violet background, a red
+  title, a red demo and board, and the browser's bar colour. The board and the result keep the game's level colour.
+- **Your best:** per level on this phone (`juegos-de-salon:sudoku:best`), the highest score and, tied, the
+  fastest time.
+- **Ranking:** one table per level, `sudoku_easy` and `sudoku_hard` (score, then time), Week · All time · Friends,
+  with signing in below; on the result, the notice that saves the game first (D-212, D-274), never with `?seed=`.
+  While the rankings are in the lab it shows only where they are switched on.
+
 ## Flujo
 
 Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines) → play (level, clock and score, the board,

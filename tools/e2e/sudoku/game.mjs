@@ -13,11 +13,16 @@ const S = '__sudoku';
 
 await b.go(SITE + '/labs/sudoku/?seed=e2e'); await b.evaluate('localStorage.clear(); 1'); await b.go(SITE + '/labs/sudoku/?seed=e2e');
 ok(await b.evaluate("document.getElementById('btn-level').getAttribute('aria-checked')") === 'false', 'the lever starts down, on easy');
+ok(await b.evaluate("document.querySelectorAll('#demo .sd-dcell').length") === 81, 'the cover shows the demo board');
+await sleep(1200);
+ok(await b.evaluate("!!document.getElementById('demo-caption').textContent"), 'the demo says why a digit goes');
+ok(await b.evaluate("!!document.getElementById('best-line').textContent"), 'the cover shows the best score line');
 
 for (const level of ['easy', 'hard']) {
   if (level === 'hard') {
     await b.evaluate("document.getElementById('btn-level').click(); 1"); await sleep(400);
     ok(await b.evaluate("document.getElementById('btn-level').classList.contains('on')"), 'the lever goes up to hard (red)');
+    ok(await b.evaluate("document.body.classList.contains('sd-hard')"), 'hard turns the cover over');
     await b.shot('cover-hard');
   }
   await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
@@ -53,6 +58,7 @@ for (const level of ['easy', 'hard']) {
   const sc = await b.evaluate("document.getElementById('result-score').textContent");
   ok(new RegExp(level === 'easy' ? '90' : '100').test(sc), `${level}: the result shows the score (${sc})`);
   if (level === 'easy') await b.shot('result');
+  ok(await b.evaluate("!!document.getElementById('result-ranking')"), `${level}: the result has the ranking slot`);
   await b.evaluate("document.getElementById('btn-levels').click(); 1"); await sleep(400);
 }
 // Giving up asks twice (U-15): the first tap arms it, the second ends with 0 and the solution

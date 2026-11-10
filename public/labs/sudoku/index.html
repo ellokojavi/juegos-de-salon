@@ -41,6 +41,7 @@
   <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/ranking.css">
   <link rel="stylesheet" href="style.css">
   <link rel="apple-touch-icon" href="../../assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -68,18 +69,26 @@
           <g class="sd-logo-digits"><text x="17.78" y="20.08">5</text><text x="48" y="20.08">3</text><text x="78.22" y="20.08">9</text><text x="32.89" y="27.63">7</text><text x="63.11" y="27.63">1</text><text x="25.33" y="35.19">6</text><text x="17.78" y="42.74">8</text><text x="55.56" y="42.74">2</text><text x="48" y="50.3">5</text><text x="70.67" y="50.3">4</text><text x="40.44" y="57.86">1</text><text x="32.89" y="65.41">2</text><text x="78.22" y="65.41">6</text><text x="63.11" y="72.97">8</text><text x="17.78" y="80.52">3</text><text x="48" y="80.52">9</text><text x="70.67" y="80.52">7</text></g>
           <text class="sd-logo-pen" x="32.89" y="80.52">4</text>
         </svg>
-        <h1 class="display display--xl rainbow" data-i18n="title">Sudoku</h1>
+        <h1 class="display display--xl rainbow sd-title" data-i18n="title">Sudoku</h1>
         <p class="lead" data-i18n="lead"></p>
+        <!-- The cover's demo: a board that solves itself, one cell at a time, saying why (row, column, box) -->
+        <figure class="sd-demo-wrap">
+          <div class="sd-demo" id="demo" aria-hidden="true"></div>
+          <figcaption class="sd-demo-caption" id="demo-caption"></figcaption>
+        </figure>
         <div id="lang-slot"></div>
       </div>
       <div class="stack">
         <div id="resume-slot"></div>
         <div class="modes" id="modes"></div>
+        <p class="sd-best" id="best-line"></p>
         <!-- The rules go after the main action (U-39): the goal first and three points (U-18) -->
         <div class="panel">
           <p class="lead" data-i18n="howTitle"></p>
           <ol class="how" id="how"></ol>
         </div>
+        <!-- The level's ranking and signing in, below the fold, like every game played alone (D-212, D-249) -->
+        <section class="stack" id="ranking"></section>
       </div>
     </section>
 
@@ -106,6 +115,7 @@
         <p class="muted" id="result-detail"></p>
       </div>
       <div class="stack" id="result-actions"></div>
+      <section class="stack" id="result-ranking"></section>
       <div id="result-exits"></div>
       <!-- After giving up, the solution: long detail, below the actions and the exits (C-19) -->
       <p class="muted center" id="solution-title" hidden></p>
