@@ -2007,6 +2007,19 @@
       "date": "2026-11-10T18:43:01.593Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42881150605,
+      "check": "tests",
+      "pr": 1359,
+      "branch": "lab-al-tiro",
+      "commit": "bedd63cf220e60cfd4b1996af9d4aba7b127e9fe",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/microgames/game.js\nERROR · appeared e2e: microgames/lab.mjs",
+      "signature": "2465065a46",
+      "date": "2026-11-10T19:04:18.713Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
