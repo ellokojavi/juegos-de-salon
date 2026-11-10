@@ -12,6 +12,7 @@ import { POOL } from './levels.js';
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
 import { getLang, coverLangToggle } from '../../assets/js/i18n.js';
+import { footerInto } from '../../assets/js/site-footer.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -173,7 +174,10 @@ const totalOf = () => game.done.reduce((a, d) => a + d.pts, 0) + speedPoints();
 /* ------------------------------------------------------------------ */
 /* The cover                                                           */
 /* ------------------------------------------------------------------ */
-function show(id) { document.body.classList.toggle('jugando', id === 's-juego'); document.body.classList.remove('ganado'); for (const s of document.querySelectorAll('.screen')) s.classList.toggle('active', s.id === id); scrollTo(0, 0); }
+function show(id) { document.body.classList.toggle('jugando', id === 's-juego'); document.body.classList.remove('ganado'); for (const s of document.querySelectorAll('.screen')) s.classList.toggle('active', s.id === id); scrollTo(0, 0); foot(); }
+// The cover ends with the site's footer, the game's own comment as its option; other screens keep the comment alone (U-38)
+let comment = null;
+const foot = () => { if (!comment) return; if ($('s-portada').classList.contains('active')) footerInto($('pie'), { screen: 'artifacts-cover', inbox: false, options: [comment()], lang }); else $('pie').replaceChildren(comment()); };
 function texts() {
   document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang;
   $('btn-volver').textContent = L.laboratorio;
@@ -185,10 +189,11 @@ function texts() {
   $('btn-probar').textContent = L.probar; $('btn-limpiar').textContent = L.limpiar; $('btn-deshacer').textContent = L.deshacer;
   $('btn-girar').textContent = L.girar; $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse; $('btn-quitar').textContent = L.quitar;
   $('btn-otra').textContent = L.otraVez;
-  $('pie').replaceChildren(el('button', {
+  comment = () => el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
     onClick: () => abrirComentario({ T: L.comentario, contexto: { juego: GAME_ID, etapa: game ? game.at + 1 : null, nivelId: level?.id, pantalla: $('s-juego').classList.contains('active') ? 'juego' : 'portada', url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } }),
-  }, L.comentarAbrir));
+  }, L.comentarAbrir);
+  foot();
   levelChips();
 }
 function levelChips() {

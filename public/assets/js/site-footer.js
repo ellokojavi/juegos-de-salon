@@ -72,3 +72,13 @@ export async function mountFooter(parent, opts = {}) {
     return f;
   } catch (_) { return null; }
 }
+
+/**
+ * The footer into `slot` (a lab game's `#pie` on its cover), once it is built; a screen that changes
+ * `slot` meanwhile (the game starts) wins, and the footer is dropped.
+ */
+export function footerInto(slot, opts) {
+  const mark = el('span', { hidden: true });
+  slot.replaceChildren(mark);
+  siteFooter(opts).then(f => { if (mark.isConnected) mark.replaceWith(f); }).catch(() => {});
+}

@@ -9,6 +9,7 @@
 import { el, vibrate } from '../../assets/js/ui.js';
 import { initSound, soundToggle, isMuted } from '../../assets/js/sound.js';
 import { getLang, coverLangToggle, COMMON } from '../../assets/js/i18n.js';
+import { footerInto } from '../../assets/js/site-footer.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -162,10 +163,11 @@ function texts() {
   $('mejor-portada').replaceChildren(...(best ? [fmt(L.mejor, ''), el('b', {}, String(best))] : []));
   $('pausa-titulo').textContent = L.pausa; $('pausa-seguir').textContent = L.seguir;
   $('btn-otra').textContent = L.otraVez;
-  $('pie').replaceChildren(el('button', {
+  // The page ends with the site's footer, the game's own comment as its option (U-38)
+  footerInto($('pie'), { screen: 'flap-cover', inbox: false, options: [el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
     onClick: () => abrirComentario({ T: L.comentario, contexto: contexto() }),
-  }, L.comentarAbrir));
+  }, L.comentarAbrir)], lang });
 }
 const contexto = () => ({
   juego: GAME_ID, pantalla: g?.mode === 'play' ? 'juego' : result.hidden ? 'portada' : 'resultado',

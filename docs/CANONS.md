@@ -530,6 +530,7 @@ where it comes from. Whatever changes the home page is changed here, in the same
   Rankings and Uno al día end with the same violet-sunset footer (`site-footer.js`, U-38); only Rankings
   and Uno al día carry the funny phrase. A screen's own links (La Copa's board: report, leave the cup) are
   `options` of that footer, shown as its tiles, never loose links under the page (`site-footer.test.mjs`).
+  Lab games too, from the day they enter `/labs/`: their own 💬 comment is the footer's option on the cover (`footerInto`).
   Never during a game or on a result screen. **Every game is a game** (the owner, 2026-10-27; C-21): no player text or doc calls one a "minigame"; only La Copa's Gran Final plays shortened versions.
 - **It is tested whole in Chrome:** `tools/e2e/favorites.mjs` (filters, favorites and 320 px in the
   three languages), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` and
