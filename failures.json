@@ -1703,7 +1703,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed documents: {\"path\": \"docs/games/sudoku.md\", \"title\": \"🔢 Sudoku (lab, in → {\"path\": \"docs/games/sudoku.md\", \"title\": \"🧮 Sudoku (lab, in",
       "signature": "281a5589ab",
       "date": "2026-11-10T04:22:22.821Z",
-      "fix": null,
+      "fix": {
+        "commit": "4a207147dc2ec96cdea1385dfb3831e43f7a3037",
+        "date": "2026-11-10T04:25:00.677Z",
+        "stat": "2 file(s) +2 −2: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
