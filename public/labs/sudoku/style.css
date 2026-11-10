@@ -67,7 +67,11 @@
 .sd-lever { display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
   padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
   box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
-.sd-lever.on { border-color: rgb(var(--red-rgb) / 0.85); background: rgb(var(--red-rgb) / 0.12); box-shadow: 0 0 18px rgb(var(--red-rgb) / 0.45); }
+.sd-lever { position: relative; }
+/* On, the whole rectangle glows and flickers at random like a bad contact: game.js moves --glow (0 to 1) */
+.sd-lever.on { --glow: 0.7; border-color: rgb(var(--red-rgb) / calc(0.4 + 0.6 * var(--glow))); background: rgb(var(--red-rgb) / calc(0.06 + 0.1 * var(--glow)));
+  box-shadow: 0 0 calc(4px + 26px * var(--glow)) rgb(var(--red-rgb) / calc(0.2 + 0.6 * var(--glow))), 0 0 calc(2px + 6px * var(--glow)) rgb(var(--yellow-rgb) / calc(0.4 * var(--glow))) inset;
+  transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
 .sd-label { display: grid; gap: var(--s-2); min-width: 0; }
 .sd-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
 .sd-lever.on .sd-label b { color: var(--sd-knob-hard); }
@@ -88,4 +92,65 @@
 .sd-lever.on .sd-arm { transform: rotate(38deg); }
 .sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
 .sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .sd-arm, .sd-lever { transition: none; } }
+
+
+/* The sparks on the plate, while hard is on */
+.sd-bolt { position: absolute; font-size: var(--fs-100); opacity: 0; pointer-events: none; z-index: 1; }
+.sd-bolt.b1 { top: -10px; left: -8px; } .sd-bolt.b2 { top: 6px; right: -12px; } .sd-bolt.b3 { bottom: -8px; left: 6px; }
+.sd-lever.on .sd-bolt { animation: sd-spark 1.6s ease-out infinite; }
+.sd-lever.on .b2 { animation-delay: 0.45s; } .sd-lever.on .b3 { animation-delay: 0.9s; }
+.sd-lever.on .sd-plate { border-color: var(--sd-knob-hard); }
+@keyframes sd-spark { 0% { opacity: 0; transform: scale(0.4) rotate(-20deg); } 10% { opacity: 1; transform: scale(1.2) rotate(10deg); } 25%, 100% { opacity: 0; transform: scale(0.8); } }
+
+/* The electric wave: a ring that leaves the plate on every flip (green to easy, red and yellow to hard), and the plate jolts */
+.sd-wave { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; pointer-events: none;
+  border: 3px solid var(--sd-knob-easy); box-shadow: 0 0 16px var(--sd-knob-easy), inset 0 0 12px var(--sd-knob-easy); animation: sd-wave 0.85s ease-out forwards; }
+.sd-wave.hard { border-color: var(--sd-knob-hard); box-shadow: 0 0 18px var(--sd-knob-hard), 0 0 6px var(--yellow), inset 0 0 14px var(--yellow); }
+@keyframes sd-wave { 0% { opacity: 1; transform: scale(0.6); } 100% { opacity: 0; transform: scale(5.5); } }
+.sd-lever.zap .sd-plate { animation: sd-jolt 0.5s ease-out; }
+@keyframes sd-jolt { 0% { transform: translateX(-2px); } 20% { transform: translateX(3px); } 40% { transform: translateX(-2px); } 100% { transform: none; } }
+
+/* The flash over the whole view when switching to hard */
+.sd-flash { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: sd-flash 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgb(var(--ink-rgb) / 0.95), rgb(var(--red-rgb) / 0.7) 45%, rgb(var(--yellow-rgb) / 0.3)); }
+@keyframes sd-flash { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Hard turns the whole page over: a charged red-violet panel with a yellow spark, like switching on a light */
+body.sd-hard {
+  --bg1: #1c020a; --bg1-rgb: 28 2 10; --bg2: #3a0618; --bg2-rgb: 58 6 24; --bg3: #200836; --bg3-rgb: 32 8 54;
+  --fondo:
+    radial-gradient(1100px 600px at 10% -10%, rgba(255, 70, 100, 0.34), transparent 60%),
+    radial-gradient(900px 500px at 110% 15%, rgba(255, 210, 63, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(160, 60, 255, 0.32), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+body.sd-hard .sd-title { background: linear-gradient(90deg, var(--sd-knob-hard), var(--yellow), var(--sd-knob-hard)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+body.sd-hard .board { box-shadow: 0 0 0 2px rgb(var(--red-rgb) / 0.6), 0 0 18px rgb(var(--red-rgb) / 0.35); }
+
+/* ---------- The cover's demo: a small board solving itself ---------- */
+.sd-demo-wrap { margin: var(--s-10) auto var(--s-6); display: grid; gap: var(--s-8); justify-items: center; }
+.sd-demo { --dside: min(78vw, 250px); width: var(--dside); aspect-ratio: 1; display: grid; grid-template-columns: repeat(9, 1fr);
+  background: var(--well-deep); border: 2px solid var(--ink); border-radius: var(--r-8); overflow: hidden;
+  box-shadow: 0 0 22px rgb(var(--cyan-rgb) / 0.3); transition: box-shadow 0.4s; }
+.sd-dcell { display: grid; place-items: center; font-family: var(--font-num); font-weight: 800; font-size: calc(var(--dside) / 17); color: rgb(var(--ink-rgb) / 0.75);
+  border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); transition: background 0.25s; }
+.sd-dcell[data-c="8"] { border-right: 0; } .sd-dcell[data-r="8"] { border-bottom: 0; }
+.sd-dcell[data-c="2"], .sd-dcell[data-c="5"] { border-right: 2px solid var(--ink); }
+.sd-dcell[data-r="2"], .sd-dcell[data-r="5"] { border-bottom: 2px solid var(--ink); }
+.sd-dcell.lit { background: rgb(var(--cyan-rgb) / 0.22); color: var(--ink); }
+.sd-dcell.target { background: rgb(var(--yellow-rgb) / 0.4); box-shadow: inset 0 0 0 2px var(--yellow); }
+.sd-dcell.filled { color: var(--lime); }
+.sd-dcell.pop { animation: pop 0.45s ease-out; }
+.sd-demo.done { box-shadow: 0 0 30px rgb(var(--lime-rgb) / 0.55); }
+.sd-demo-caption { margin: 0; min-height: 1.5em; font-weight: 700; color: var(--ink); }
+body.sd-hard .sd-demo { box-shadow: 0 0 24px rgb(var(--red-rgb) / 0.45); }
+body.sd-hard .sd-dcell.lit { background: rgb(var(--red-rgb) / 0.24); }
+body.sd-hard .sd-dcell.filled { color: var(--sd-knob-hard); }
+
+.sd-best { margin: 0; text-align: center; color: var(--muted); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-arm, .sd-lever { transition: none; }
+  .sd-lever.on .sd-bolt { animation: none; opacity: 1; }
+  .sd-dcell.pop, .sd-lever.zap .sd-plate { animation: none; }
+}

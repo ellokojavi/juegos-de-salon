@@ -12,6 +12,10 @@ import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/s
 import { salidasFin } from '../../assets/js/fin.js';
 import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
 import { mmss } from '../../assets/js/time-format.js';
+import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
+import { rankingsVisibles } from '../../assets/js/jugador.js';
+import { tablaId } from '../../assets/js/records.js';
+import { onScreen } from '../../assets/js/on-screen.js';
 import { GAME_ID, LEVELS, LEVEL_EMOJI, LOCALES } from './rules.js';
 import * as E from './engine.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
@@ -49,6 +53,7 @@ function showScreen(id) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (id === 'screen-play') startClock(); else stopClock();
+  setTheme();
 }
 
 /* ---------------- The clock: it runs only while the board is showing ---------------- */
@@ -85,17 +90,131 @@ function renderResumeSlot() {
     el('p', { class: 'lead' }, T.resumeTitle),
     el('p', { class: 'muted' }, fmt(T.levelLine, { level: `${LEVEL_EMOJI[saved.state.level]} ${levelName(saved.state.level)}`, time: mmss(saved.state.elapsed) })),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { SFX.tap(); state = saved.state; selected = -1; renderPlay(); } }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { SFX.tap(); state = saved.state; chosen = state.level; selected = -1; renderPlay(); } }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderResumeSlot(); } }, T.delete),
     ),
   ));
 }
 
+/* ---------------- The cover's demo: a board that solves itself ---------------- */
 /**
- * The level is a lever, the same one as Pintaminas' hard mode (the owner's request): down and green is
- * easy, up and red is hard. ¡A jugar! starts a board of the level it shows.
+ * A real solved board with six holes, each the only one in its row, column and box. In turn, each hole
+ * lights its row, its column and its box, saying the rule, and then the digit that fits pops in. When the
+ * six are in, a pause and it starts again. It sleeps off screen (onScreen, #883) and stands still, solved,
+ * with reduced motion.
+ */
+const DEMO_SOLUTION = '534678912672195348198342567859761423426853791713924856961537284287419635345286179'.split('').map(Number);
+const DEMO_HOLES = [0, 16, 31, 42, 64, 62]; // rows 0 1 3 4 7 6, columns 0 7 4 6 1 8, six different boxes
+const QUIET = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const STEP_MS = 950;
+const PHASES = ['row', 'col', 'box', 'fill'];
+let demoStarted = false;
+function startDemo() {
+  if (demoStarted) return;
+  demoStarted = true;
+  const box = $('#demo'), caption = $('#demo-caption');
+  const cells = DEMO_SOLUTION.map((d, i) => el('span', { class: 'sd-dcell', 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, DEMO_HOLES.includes(i) ? '' : String(d)));
+  box.replaceChildren(...cells);
+  if (QUIET()) {
+    DEMO_HOLES.forEach(i => { cells[i].textContent = String(DEMO_SOLUTION[i]); cells[i].classList.add('filled'); });
+    caption.textContent = T.demo.row;
+    return;
+  }
+  let t0 = 0;
+  const total = (DEMO_HOLES.length * PHASES.length + 3) * STEP_MS;
+  let last = -1;
+  const frame = now => {
+    if (!box.isConnected) return;
+    if (!t0) t0 = now;
+    const step = Math.floor(((now - t0) % total) / STEP_MS);
+    if (step !== last) { last = step; paint(step); }
+    next();
+  };
+  const next = onScreen(box, frame);
+  function paint(step) {
+    const k = Math.floor(step / PHASES.length), phase = PHASES[step % PHASES.length];
+    cells.forEach(c => c.classList.remove('lit', 'target'));
+    if (step === 0) DEMO_HOLES.forEach(i => { cells[i].textContent = ''; cells[i].classList.remove('filled', 'pop'); });
+    if (k >= DEMO_HOLES.length) { caption.textContent = '🎉 ' + T.solved; box.classList.add('done'); return; }
+    box.classList.remove('done');
+    const i = DEMO_HOLES[k], r = Math.floor(i / 9), c = i % 9;
+    const inUnit = j => {
+      const jr = Math.floor(j / 9), jc = j % 9;
+      if (phase === 'row') return jr === r;
+      if (phase === 'col') return jc === c;
+      if (phase === 'box') return Math.floor(jr / 3) === Math.floor(r / 3) && Math.floor(jc / 3) === Math.floor(c / 3);
+      return false;
+    };
+    cells.forEach((cell, j) => cell.classList.toggle('lit', inUnit(j)));
+    cells[i].classList.add('target');
+    if (phase === 'fill') {
+      cells[i].textContent = String(DEMO_SOLUTION[i]);
+      cells[i].classList.add('filled', 'pop');
+      caption.textContent = fmt(T.demo.fill, { d: DEMO_SOLUTION[i] });
+    } else caption.textContent = T.demo[phase];
+  }
+  next();
+}
+
+/* ---------------- The best score per level, on this phone ---------------- */
+const BEST_KEY = 'juegos-de-salon:sudoku:best';
+function readBest() { try { return JSON.parse(localStorage.getItem(BEST_KEY)) || {}; } catch (_) { return {}; } }
+function saveBest(level, s, ms) {
+  const all = readBest(), old = all[level];
+  if (old && (old.s > s || (old.s === s && old.ms <= ms))) return false;
+  all[level] = { s, ms };
+  try { localStorage.setItem(BEST_KEY, JSON.stringify(all)); } catch (_) { /* no storage */ }
+  return true;
+}
+function drawBest() {
+  const b = readBest()[chosen], level = `${LEVEL_EMOJI[chosen]} ${levelName(chosen).toLowerCase()}`;
+  $('#best-line').textContent = b ? fmt(T.best, { level, score: b.s, time: mmss(b.ms) }) : fmt(T.noBest, { level });
+}
+
+/* ---------------- The ranking: one table per level (sudoku_easy, sudoku_hard) ---------------- */
+const table = level => tablaId(GAME_ID, level);
+const rankingTitle = level => fmt(T.rankingOf, { level: `${LEVEL_EMOJI[level]} ${levelName(level).toLowerCase()}` });
+function drawRanking() { $('#ranking').replaceChildren(bloqueTabla({ tabla: table(chosen), titulo: rankingTitle(chosen), alTocar: () => SFX.tap() })); }
+
+/* ---------------- The level lever: Pintaminas' electric switch ---------------- */
+/**
+ * Down with a green knob is easy, up with a red knob is hard (the owner's request, the same lever as
+ * Pintaminas' hard mode). Flipping it sends an electric wave around the plate and turns the whole cover
+ * over: easy is the usual night, hard is a charged red-violet panel, with a flash over the view, sparks
+ * and a glow that flickers like a bad contact. ¡A jugar! starts a board of the level it shows.
  */
 let chosen = 'easy';
+let flicker = 0;
+function setTheme() {
+  // The cover follows the lever; the board and the result follow the game's level
+  const hard = $('#screen-intro').classList.contains('active') ? chosen === 'hard' : state?.level === 'hard';
+  document.body.classList.toggle('sd-hard', hard);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', hard ? '#2a0612' : '#150726');
+}
+function lightning() {
+  if (QUIET()) return;
+  const x = el('div', { class: 'sd-flash', 'aria-hidden': 'true' });
+  document.body.append(x);
+  setTimeout(() => x.remove(), 600);
+}
+function wave(lever, hard) {
+  const w = el('span', { class: 'sd-wave' + (hard ? ' hard' : ''), 'aria-hidden': 'true' });
+  lever.querySelector('.sd-plate').append(w);
+  setTimeout(() => w.remove(), 900);
+  lever.classList.remove('zap'); void lever.offsetWidth; lever.classList.add('zap');
+}
+function startFlicker(lever) {
+  const n = ++flicker;
+  if (QUIET()) return;
+  const step = () => {
+    if (n !== flicker || !lever.isConnected || chosen !== 'hard') { lever.style.removeProperty('--glow'); return; }
+    const r = Math.random();
+    const glow = r < 0.12 ? 0.05 + Math.random() * 0.2 : r < 0.3 ? 1 : 0.45 + Math.random() * 0.45;
+    lever.style.setProperty('--glow', glow.toFixed(2));
+    setTimeout(step, r < 0.3 ? 40 + Math.random() * 90 : 120 + Math.random() * 900);
+  };
+  step();
+}
 function renderModes() {
   const hard = chosen === 'hard';
   const title = el('b', {}, T.switch[+hard].title), sub = el('span', { class: 'muted' }, T.switch[+hard].sub);
@@ -105,19 +224,27 @@ function renderModes() {
     onClick: () => {
       chosen = chosen === 'hard' ? 'easy' : 'hard';
       const on = chosen === 'hard';
-      SFX.tap(); vibrate(on ? [15, 30, 15] : 10);
+      if (on) { lightning(); SFX.error(); vibrate([15, 30, 15, 30, 40]); } else { SFX.tap(); vibrate(10); }
       lever.classList.toggle('on', on);
       lever.setAttribute('aria-checked', String(on));
       title.textContent = T.switch[+on].title; sub.textContent = T.switch[+on].sub;
+      if (!QUIET()) wave(lever, on);
+      if (on) startFlicker(lever); else flicker++;
+      setTheme(); drawBest(); drawRanking();
     },
   },
   el('span', { class: 'sd-plate', 'aria-hidden': 'true' },
     el('span', { class: 'sd-track', html: '<svg viewBox="0 0 70 60"><path class="sd-groove" d="M10.99 16.52 A39 39 0 0 1 59.01 16.52" /></svg>' }),
+    el('span', { class: 'sd-bolt b1' }, '⚡'), el('span', { class: 'sd-bolt b2' }, '⚡'), el('span', { class: 'sd-bolt b3' }, '⚡'),
     el('span', { class: 'sd-arm' }, el('span', { class: 'sd-knob' })), el('span', { class: 'sd-axle' })),
   el('span', { class: 'sd-label' }, title, sub));
   $('#modes').replaceChildren(lever,
     el('button', { class: 'btn btn--yellow', id: 'btn-play', 'data-mode': 'solo', onClick: () => { SFX.tap(); start(chosen); } }, T.play));
   $('#how').replaceChildren(...L.como.map(step => el('li', {}, step)));
+  if (hard) startFlicker(lever);
+  drawBest();
+  drawRanking();
+  startDemo();
 }
 
 function start(level) {
@@ -214,7 +341,8 @@ function afterMove() {
     stopClock();
     save();
     trackFinish({ nivel: state.level, segundos: Math.round(state.elapsed / 1000), puntaje: E.score(state), errores: state.mistakes || 0 });
-    return renderResult();
+    saveBest(state.level, E.score(state), state.elapsed);
+    return renderResult({ fresh: true });
   }
   save();
   drawBoard();
@@ -231,7 +359,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ---------------- Result (C-19) ---------------- */
-function renderResult() {
+function renderResult({ fresh = false } = {}) {
   const time = mmss(state.elapsed);
   const level = levelName(state.level);
   $('#result-title').textContent = T.solved;
@@ -250,6 +378,11 @@ function renderResult() {
       }),
     }),
     el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderModes(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));
+  // The level's table; a game just finished is saved first (D-212, D-274), a resumed result only shows it
+  const tableEnd = bloqueTabla({ tabla: table(state.level), titulo: rankingTitle(state.level), entrar: false });
+  const notice = fresh && rankingsVisibles() && !SEED
+    ? [avisoPartida({ juego: GAME_ID, variante: state.level, s: points, ms: state.elapsed, alAnotar: () => tableEnd.recargar(), alTocar: () => SFX.tap() })] : [];
+  $('#result-ranking').replaceChildren(...notice, tableEnd);
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   confetti();
   showScreen('screen-result');
