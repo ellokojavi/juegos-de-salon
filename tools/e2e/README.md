@@ -269,6 +269,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `sudoku/game.mjs` | Sudoku (lab): each level, a repeated digit (red, costs 10 points), a note and an undo, the board filled through the hook and its score checked; the conformance checks run it in every language |
 | `tango/give-up.mjs` | ☀️ Tango at `/tango/`: 🏳️ Give up next to 🧹 Clear all asks to confirm, shows the solution and scores 0 points, as in Queens (D-110) |
 | `home/cup-today.mjs` | La Copa's card on the home page (lab flag `copa-hoy`): with a day of this phone's cup left to play, ▶ Jugar hoy and a link to that day, read from `juegos-de-salon:copa:hoy:<code>` without loading the cup's files (D-378); once played, the card as always |
 | `home/dice.mjs` | 🎲 Juego al azar with the 🎲 Dados filter on: it still lands on games of every kind, and never on Cuarto Rey (in La Bodega since D-420) nor La Copa (D-188, D-374); back on the home page before the game loaded, no dice is left over it and 🎲 rolls at once (D-375) |
