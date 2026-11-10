@@ -1975,7 +1975,11 @@
       "error": "❌ fourth-king-intro: 6.69 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part fourth-king; the new and the diff images are in /home/runner/",
       "signature": "bcd7aaf635",
       "date": "2026-11-10T18:09:29.284Z",
-      "fix": null,
+      "fix": {
+        "commit": "50d2cdfd8940d40e3087064e07fdd901de91891d",
+        "date": "2026-11-10T18:18:14.535Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/fourth-king-intro.png"
+      },
       "flaky": false
     }
   ]
