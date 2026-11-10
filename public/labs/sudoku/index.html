@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Sudoku 🔢 · Juegos de Salón</title>
+  <!-- A lab game (D-395): behind the lab's door (D-281) and not indexed -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <!-- No language flash (D-194): the page waits for the chosen language's texts, 1.5 s at most -->
+  <script>
+    (function () {
+      try {
+        var u = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        var l = u || localStorage.getItem('juegos-de-salon:lang') || 'es';
+        if (l === 'es') return;
+        var h = document.documentElement, listo = function () { h.classList.remove('i18n-pendiente'); };
+        h.classList.add('i18n-pendiente');
+        document.addEventListener('DOMContentLoaded', listo);
+        setTimeout(listo, 1500);
+      } catch (_) { /* no storage: it paints as always */ }
+    })();
+  </script>
+  <meta name="description" content="Sudoku en tres dificultades: fácil, mediano y difícil. Un tablero nuevo en cada partida.">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <script>
+    // The chosen language's manifest, before the browser reads it (D-222)
+    (function () {
+      try {
+        var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
+        var m = document.querySelector('link[rel="manifest"]');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+      } catch (_) { /* the Spanish one stays */ }
+    })();
+  </script>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="../../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
+  <script type="module">import '../../assets/js/instalable.js';</script>
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu" data-i18n="menu">‹ Laboratorio</a>
+      <div class="tools"><span class="chip" data-i18n="gameChip">🔢 Sudoku</span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- ============ INTRO ============ -->
+    <section class="screen stack active" id="screen-intro">
+      <div class="intro-hero">
+        <span class="icon">🔢</span>
+        <h1 class="display display--xl rainbow" data-i18n="title">Sudoku</h1>
+        <p class="lead" data-i18n="lead"></p>
+        <div id="lang-slot"></div>
+      </div>
+      <div class="stack">
+        <div id="resume-slot"></div>
+        <div class="modes" id="modes"></div>
+        <!-- The rules go after the main action (U-39): the goal first and three points (U-18) -->
+        <div class="panel">
+          <p class="lead" data-i18n="howTitle"></p>
+          <ol class="how" id="how"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PLAY ============ -->
+    <section class="screen stack" id="screen-play">
+      <p class="lead center" id="level-line"></p>
+      <div class="board" id="board" data-tablero="sudoku" role="grid"></div>
+      <div class="pad" id="pad"></div>
+      <div class="tools-row">
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-notes" aria-pressed="false" data-i18n="notes"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-erase" data-i18n="erase"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-undo" data-i18n="undo"></button>
+      </div>
+      <p class="muted center" id="hint"></p>
+    </section>
+
+    <!-- ============ RESULT (C-19) ============ -->
+    <section class="screen stack" id="screen-result">
+      <div class="result-hero">
+        <span class="trophy">🧠</span>
+        <div class="display display--md" id="result-title">—</div>
+        <p class="lead" id="result-line"></p>
+      </div>
+      <div class="stack" id="result-actions"></div>
+      <div id="result-exits"></div>
+    </section>
+  </main>
+
+  <div class="handoff" id="handoff" hidden></div>
+
+  <script type="module">import './game.js';</script>
+</body>
+</html>

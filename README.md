@@ -489,6 +489,7 @@ node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
 node public/labs/memory/engine.test.mjs
 node public/labs/stack/engine.test.mjs
+node public/labs/sudoku/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs
@@ -869,6 +870,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🗼 Babel (La Copa game, launched by flag; Stack in the lab)](docs/games/stack.md)
 - [🥷 Shinobi (La Copa game; Stick Ninja in the lab before)](docs/games/stick.md)
+- [🔢 Sudoku (lab, in Juegos en prueba)](docs/games/sudoku.md)
 - [☀️ Tango](docs/games/tango.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [🧶 Untangle (Desenredo)](docs/games/untangle.md)

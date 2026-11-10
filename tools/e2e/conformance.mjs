@@ -42,6 +42,8 @@ const START = {
     `document.getElementById('btn-start').click()`,
     `document.getElementById('card').click()`,
   ],
+  // A level is the whole setup: tapping it opens the board, which is already saved
+  'labs/sudoku': [`document.getElementById('btn-level-easy').click()`],
 };
 
 const b = await launch({ port: 0, dir: `${OUT}/p`, out: OUT });
