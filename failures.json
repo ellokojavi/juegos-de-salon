@@ -1658,6 +1658,19 @@
         "stat": "3 file(s) +7 −5: README.md, docs/facts.json, public/assets/og/huellas.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42731143600,
+      "check": "tests",
+      "pr": 1346,
+      "branch": "claude/cup-footer-links",
+      "commit": "8f88513e3ab2a28e00999309c75e5578a2d38b35",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/site-footer.test.mjs\nERROR · appeared e2e: cup/footer.mjs",
+      "signature": "213a14009c",
+      "date": "2026-11-10T00:50:56.618Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
