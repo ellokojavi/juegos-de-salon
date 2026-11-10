@@ -54,7 +54,7 @@ one way to choose easy or hard across the games): down with a green knob is easy
 ## The cover
 
 Like every cover going to production (the owner's request, 2026-11-10): the title, a **demo** that explains the
-game by itself, the level lever, ¡A jugar!, **your best** on that level, how to play, and the level's **ranking**
+game by itself, the level lever, ¡A jugar!, **your best** on that level, how to play (folded, D-550), and the level's **ranking**
 with signing in.
 
 - **Demo:** a small solved board with six holes, each the only one in its row, column and box. In turn each hole
@@ -72,7 +72,7 @@ with signing in.
 
 ## Flujo
 
-Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines) → play (level, clock and score, the board,
+Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines, folded: D-550) → play (level, clock and score, the board,
 the 1–9 pad with how many of each are left, ✏️ Notas, ↩️ Deshacer and 🏳️ Rendirse on the right) → result (the score and how it was made, level and time,
 Another sudoku of that level, Share through `compartir.js`, Change difficulty, and the exit to the lab from
 `fin.js`, C-19).

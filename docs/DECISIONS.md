@@ -23,7 +23,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 
 | Topic | Today's rule | Decisions |
 |---|---|---|
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535, D-542 |
+| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535, D-542, D-550 |
 | Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533, D-535 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538, D-544, D-545, D-546 |
 
-## In force (533)
+## In force (534)
 
 | D | Title | Status |
 |---|---|---|
@@ -592,6 +592,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-547](decisions/D-547.md) | 🔥 Popular is recomputed every Monday by a scheduled workflow, not by the processes round | current |
 | [D-548](decisions/D-548.md) | A game can be "New" and 🔥 Popular at once | current |
 | [D-549](decisions/D-549.md) | Every game's name is translated, and a test checks it | current |
+| [D-550](decisions/D-550.md) | Every cover starts with its rules folded | current |
 
 ## No longer in force (12)
 

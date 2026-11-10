@@ -1911,8 +1911,9 @@ function practica(id, varianteElegida = null) {
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
-    // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39)
-    el('details', { class: 'panel', open: true }, el('summary', { id: 'como-titulo' }, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
+    // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39),
+    // and starts folded, as on every cover (C-8): the cover shows what matters
+    el('details', { class: 'panel' }, el('summary', { id: 'como-titulo' }, `🧠 ${T.howToPlay}`), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
