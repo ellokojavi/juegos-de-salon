@@ -1675,6 +1675,19 @@
         "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42731469641,
+      "check": "end-to-end",
+      "pr": 1346,
+      "branch": "claude/cup-footer-links",
+      "commit": "57d6fccc83d7661d54df78c225a501c411ac0911",
+      "test": "artifacts/lab.mjs",
+      "error": "✗ dragging a part from the tray places it where it is let go",
+      "signature": "0f51af220c",
+      "date": "2026-11-10T01:10:10.148Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
