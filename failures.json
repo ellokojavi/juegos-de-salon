@@ -1981,6 +1981,32 @@
         "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/fourth-king-intro.png"
       },
       "flaky": false
+    },
+    {
+      "run": 42877606798,
+      "check": "tests",
+      "pr": 1359,
+      "branch": "lab-al-tiro",
+      "commit": "004b446229d2783c5a3aa7699fe65cf997d67c50",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
+      "signature": "bb52322cc2",
+      "date": "2026-11-10T18:43:01.593Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42877606798,
+      "check": "tests",
+      "pr": 1359,
+      "branch": "lab-al-tiro",
+      "commit": "004b446229d2783c5a3aa7699fe65cf997d67c50",
+      "test": "tools/agents/tokens-rgb.test.mjs",
+      "error": "+   'pu✗ every --x-rgb equals the channels of the --x in the same rule, and every --x with a companion declares it\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected",
+      "signature": "004fe8d4ed",
+      "date": "2026-11-10T18:43:01.593Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
