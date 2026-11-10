@@ -1,7 +1,7 @@
 // The splash (D-351): what the home page shows and in what order, the campaigns' texts, and the switch.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE, dwellBand, firstReach, REACH_KEY, SPLASH_EVENTS } from './splash.js';
+import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE, dwellBand, firstReach, REACH_KEY, pageState, whenVisible, SPLASH_EVENTS } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
 import { ALL_GAMES } from './games.js';
 import { IDIOMAS } from './i18n.js';
@@ -163,4 +163,25 @@ console.log('splash ✓');
   assert.equal(alreadyPlayed(campaigns.b, ['x']), false);
   assert.deepEqual(playedIds('["x",3]'), ['x']);
   assert.deepEqual(playedIds('nope'), []);
+}
+
+// A window nobody is looking at counts only when the page comes to the front
+{
+  assert.equal(pageState({ visibilityState: 'visible' }), 'visible');
+  assert.equal(pageState({ visibilityState: 'hidden' }), 'hidden');
+  assert.equal(pageState({ prerendering: true, visibilityState: 'hidden' }), 'prerender');
+  assert.equal(pageState(undefined), 'visible');
+  const listeners = {};
+  const doc = { visibilityState: 'hidden', addEventListener: (t, f) => { listeners[t] = f; }, removeEventListener: t => { delete listeners[t]; } };
+  let ran = 0;
+  whenVisible(() => ran++, doc);
+  assert.equal(ran, 0, 'a hidden page does not count yet');
+  listeners.visibilitychange();
+  assert.equal(ran, 0, 'still hidden');
+  doc.visibilityState = 'visible';
+  listeners.visibilitychange();
+  assert.equal(ran, 1, 'counted once it is in front');
+  assert.equal(Object.keys(listeners).length, 0, 'and it stops listening');
+  whenVisible(() => ran++, { visibilityState: 'visible' });
+  assert.equal(ran, 2, 'a visible page counts at once');
 }

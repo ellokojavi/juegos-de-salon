@@ -12,7 +12,7 @@
  * - cups: `torneos/`, read through the cup engine (`historiaCopa`), which has no environment: a lab
  *   cup carries its tag;
  * - feedback: `feedback/`, also with no environment;
- * - campaigns seen: `stats/<env>/days/<day>/seen/` (D-503), one row per view of a splash campaign
+ * - campaigns seen: `stats/<env>/days/<day>/seen/` (D-503), one row per phone and splash campaign (its first reach, once the page is visible)
  *   or of the donation card (`c: 'support'`), with the name the phone knew; skins are not campaigns.
  *
  * Days are Pacific days (the panel's clock, the one La Copa splits its days with): "the last 7 days"
