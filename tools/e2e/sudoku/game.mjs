@@ -55,6 +55,16 @@ for (const level of ['easy', 'hard']) {
   if (level === 'easy') await b.shot('result');
   await b.evaluate("document.getElementById('btn-levels').click(); 1"); await sleep(400);
 }
+// Giving up asks twice (U-15): the first tap arms it, the second ends with 0 and the solution
+await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
+ok(!(await b.evaluate("!!document.getElementById('btn-erase')")), 'there is no erase button');
+await b.evaluate("document.getElementById('btn-give-up').click(); 1"); await sleep(200);
+ok(await b.active() === 'screen-play' && await b.evaluate("document.getElementById('btn-give-up').classList.contains('armado')"), 'the first tap on Give up only arms it');
+await b.evaluate("document.getElementById('btn-give-up').click(); 1"); await sleep(400);
+ok(await b.active() === 'screen-result', 'the second tap gives up');
+ok(/\b0\b/.test(await b.evaluate("document.getElementById('result-score').textContent")), 'giving up scores 0');
+ok(await b.evaluate("!document.getElementById('result-board').hidden && document.querySelectorAll('#result-board .cell').length === 81"), 'the result shows the solution');
+await b.shot('gave-up');
 ok(!b.errors.length, 'no console errors' + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
 b.close();
 process.exit(failures ? 1 : 0);

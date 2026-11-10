@@ -79,8 +79,8 @@
       <div class="pad" id="pad"></div>
       <div class="tools-row">
         <button type="button" class="btn btn--ghost btn--sm" id="btn-notes" aria-pressed="false" data-i18n="notes"></button>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-erase" data-i18n="erase"></button>
         <button type="button" class="btn btn--ghost btn--sm" id="btn-undo" data-i18n="undo"></button>
+        <button type="button" class="btn btn--ghost btn--sm" id="btn-give-up" data-i18n="giveUp"></button>
       </div>
       <p class="muted center" id="hint"></p>
     </section>
@@ -93,6 +93,7 @@
         <p class="display display--md score" id="result-score"></p>
         <p class="lead" id="result-line"></p>
         <p class="muted" id="result-detail"></p>
+        <div class="board board--mini" id="result-board" hidden aria-hidden="true"></div>
       </div>
       <div class="stack" id="result-actions"></div>
       <div id="result-exits"></div>

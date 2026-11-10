@@ -21,7 +21,7 @@ board is full and valid.
 
 **100 for the finished board, minus 10 for every digit written that is not the solution's**, never below 0
 (`score` in `engine.js`). Each wrong digit turns red at once and the line under the board says "−10";
-undo does not give the 10 back, notes never count. The score shows next to the clock and on the result,
+undo does not give the 10 back, notes never count. **Giving up scores 0** (as in La Copa's puzzles). The score shows next to the clock and on the result,
 and goes to the panel in `trackFinish` (`puntaje`, `errores`). It is the score La Copa will use if the
 sudoku goes there. A digit that repeats in its row, column or box is red too.
 
@@ -48,11 +48,15 @@ one way to choose easy or hard across the games): down with a green knob is easy
 ## Flujo
 
 Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines) → play (level, clock and score, the board,
-the 1–9 pad with how many of each are left, ✏️ Notas, 🧽 Borrar, ↩️ Deshacer) → result (the score and how it was made, level and time,
+the 1–9 pad with how many of each are left, ✏️ Notas, ↩️ Deshacer and 🏳️ Rendirse on the right) → result (the score and how it was made, level and time,
 Another sudoku of that level, Share through `compartir.js`, Change difficulty, and the exit to the lab from
 `fin.js`, C-19).
 
-- Writing a digit clears the notes of that digit in its row, column and box.
+- Writing a digit clears the notes of that digit in its row, column and box. The same digit again empties
+  the cell: there is no erase button (the owner swapped it for 🏳️ Rendirse; on a computer Backspace erases).
+- 🏳️ Rendirse asks twice (U-15), as in Pintaminas and Dominorama: the first tap turns it into 🏳️ ¿Seguro?
+  in yellow for 3 s, the second ends the game with 0 points and shows the solution on the result (givens in
+  white, the rest in cyan), without Share.
 - The clock runs only while the board is showing (it stops when the tab is hidden) and is saved with the game.
 - On a computer: digits, arrows, Backspace, and N for notes.
 

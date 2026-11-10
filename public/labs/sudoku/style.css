@@ -58,6 +58,11 @@
 .tools-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
 .tools-row .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
 #btn-notes.on { border-color: var(--yellow); color: var(--yellow); }
+/* Give up, armed: the second tap gives up (the same yellow as La Copa's armed buttons) */
+#btn-give-up.armado { border-color: var(--yellow); color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.12); }
+/* The solution after giving up: the same board, smaller and still */
+.board--mini { --side: min(100%, 280px); margin-top: var(--s-6); }
+.board--mini .cell { cursor: default; font-size: var(--fs-100); }
 #hint { margin: 0; min-height: 1.4em; }
 .play-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); width: min(100%, 460px); margin: 0 auto; }
 .play-head p { margin: 0; }
@@ -66,7 +71,7 @@
 /* ---------- The level: a lever on a metal plate (Pintaminas' hard-mode switch). Down and green is easy, up and red is hard ---------- */
 .sd-lever { display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
   padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
-  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; -webkit-tap-highlight-color: transparent; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
 .sd-lever.on { border-color: rgb(var(--red-rgb) / 0.85); background: rgb(var(--red-rgb) / 0.12); box-shadow: 0 0 18px rgb(var(--red-rgb) / 0.45); }
 .sd-label { display: grid; gap: var(--s-2); min-width: 0; }
 .sd-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
@@ -87,5 +92,6 @@
   background: radial-gradient(circle at 35% 35%, var(--sd-knob-easy), var(--sd-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
 .sd-lever.on .sd-arm { transform: rotate(38deg); }
 .sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
+.sd-lever:active { transform: scale(0.98); }
 .sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .sd-arm, .sd-lever { transition: none; } }
