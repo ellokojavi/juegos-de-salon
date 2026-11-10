@@ -1302,9 +1302,11 @@
       }
     },
     "labsLlaves": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$huella": {
         ".read": "$huella.matches(/^[0-9a-f]{64}$/)",
-        ".validate": "newData.isString() && newData.val().length <= 24"
+        ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2' && $huella.matches(/^[0-9a-f]{64}$/)",
+        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24"
       }
     },
     "buzon": {

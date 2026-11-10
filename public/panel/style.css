@@ -425,3 +425,13 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-archivada .campana-titulo { flex: 1; min-width: 0; font-size: var(--fs-90); }
 .campana-desarchivar { background: var(--glass); color: var(--ink); border-color: var(--cyan); cursor: pointer; font-family: inherit; }
 .campana-desarchivar:hover, .campana-desarchivar:focus-visible { background: var(--glass-border); }
+
+/* 🔑 Lab keys */
+.llaves-crear, .llaves-acciones { display: flex; flex-wrap: wrap; gap: var(--s-8); align-items: center; }
+.llaves-crear input { flex: 1 1 12rem; min-height: 44px; }
+.llaves-crear .btn, .llaves-acciones .btn { width: auto; }
+.llaves-nueva { margin-top: var(--s-12); display: flex; flex-direction: column; gap: var(--s-8); }
+.llaves-nueva input { width: 100%; min-height: 44px; font-family: monospace; }
+table.llaves { width: 100%; border-collapse: collapse; }
+table.llaves th, table.llaves td { text-align: left; padding: var(--s-6); }
+table.llaves .btn { width: auto; min-height: 44px; }
