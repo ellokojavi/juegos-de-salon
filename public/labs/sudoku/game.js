@@ -16,6 +16,7 @@ import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
 import { rankingsVisibles } from '../../assets/js/jugador.js';
 import { tablaId } from '../../assets/js/records.js';
 import { onScreen } from '../../assets/js/on-screen.js';
+import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { GAME_ID, LEVELS, LEVEL_EMOJI, LOCALES } from './rules.js';
 import * as E from './engine.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
@@ -38,13 +39,14 @@ let selected = -1;      // the cell the pad writes to
 let notesMode = false;
 let since = 0;          // when the clock last started (ms), 0 while stopped
 let ticker = 0;
-let flash = 0;
+let flash = 0;          // a notice in the hint line, for a moment
+let counting = false;   // the 3, 2, 1 is on: the clock waits for it
 let giveUpArmed = false, giveUpTimer = 0;
 function disarmGiveUp() {
   giveUpArmed = false; clearTimeout(giveUpTimer);
   const b = $('#btn-give-up');
   b.classList.remove('armado'); b.textContent = T.giveUp;
-}          // a notice in the hint line, for a moment
+}
 
 function say(text) {
   clearTimeout(flash);
@@ -64,7 +66,7 @@ function showScreen(id) {
 
 /* ---------------- The clock: it runs only while the board is showing ---------------- */
 function startClock() {
-  if (!state || E.isOver(state) || since) return;
+  if (!state || E.isOver(state) || since || counting) return;
   since = Date.now();
   clearInterval(ticker);
   ticker = setInterval(drawClock, 1000);
@@ -259,7 +261,11 @@ function start(level) {
   selected = -1; notesMode = false;
   save();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1, nivel: level }); // usage signal (C-7, D-210)
+  // The classic 3, 2, 1, ¡A jugar! (D-105): the board is built underneath, the clock starts when it says go
+  counting = true;
   renderPlay();
+  cuentaRegresiva({ titulo: `🔢 ${T.title} · ${LEVEL_EMOJI[level]} ${levelName(level)}`, ya: T.play })
+    .then(() => { counting = false; if ($('#screen-play').classList.contains('active')) startClock(); });
 }
 
 /* ---------------- Play ---------------- */

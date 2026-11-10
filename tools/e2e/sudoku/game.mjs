@@ -26,6 +26,9 @@ for (const level of ['easy', 'hard']) {
     await b.shot('cover-hard');
   }
   await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
+  ok(await b.evaluate("!!document.getElementById('cuenta')"), `${level}: the 3, 2, 1 shows before playing`);
+  await sleep(4000);
+  ok(!await b.evaluate("!!document.getElementById('cuenta')"), `${level}: the countdown goes away`);
   ok(await b.active() === 'screen-play', `${level}: the board opens`);
   ok(await b.evaluate(`window.${S}.state().level`) === level, `${level}: at that level`);
   ok(await b.evaluate("document.querySelectorAll('#board .cell').length") === 81, `${level}: 81 cells`);
