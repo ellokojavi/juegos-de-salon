@@ -2049,6 +2049,19 @@
         "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42888199168,
+      "check": "tests",
+      "pr": 1360,
+      "branch": "lab-keys-panel",
+      "commit": "38bdf7141e08f1faea88b5747818a1b44fd9d1e7",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/panel/lab-keys.js\nERROR · appeared tests: public/panel/lab-keys.test.mjs",
+      "signature": "eceff6793f",
+      "date": "2026-11-10T19:46:36.587Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
