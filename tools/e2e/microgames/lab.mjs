@@ -21,6 +21,7 @@ ok(/WarioWare/.test(await ev(`document.querySelector('#seccion-microgames a[href
 
 await b.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Jugar');
+ok(await ev(`document.getElementById('bolt')?.textContent === '⚡' && /h-/.test(document.getElementById('hv').className)`), 'the ⚡ on top, with a microgame playing beside it');
 ok(/WarioWare/.test(await ev(`document.getElementById('link-warioware')?.textContent || ''`)), 'the cover credits WarioWare');
 ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends with the site footer and its comment');
 ok(await ev(`__microgames.ids.length`) === 28, 'twenty-eight microgames');
