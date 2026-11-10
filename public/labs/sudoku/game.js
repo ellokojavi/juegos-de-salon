@@ -41,6 +41,12 @@ let since = 0;          // when the clock last started (ms), 0 while stopped
 let ticker = 0;
 let flash = 0;          // a notice in the hint line, for a moment
 let counting = false;   // the 3, 2, 1 is on: the clock waits for it
+let giveUpArmed = false, giveUpTimer = 0;
+function disarmGiveUp() {
+  giveUpArmed = false; clearTimeout(giveUpTimer);
+  const b = $('#btn-give-up');
+  b.classList.remove('armado'); b.textContent = T.giveUp;
+}
 
 function say(text) {
   clearTimeout(flash);
@@ -343,18 +349,21 @@ function undoMove() {
 }
 
 function afterMove() {
+  if (giveUpArmed) disarmGiveUp();
   if (E.isOver(state)) {
     stopClock();
     save();
-    trackFinish({ nivel: state.level, segundos: Math.round(state.elapsed / 1000), puntaje: E.score(state), errores: state.mistakes || 0 });
-    saveBest(state.level, E.score(state), state.elapsed);
-    return renderResult({ fresh: true });
+    trackFinish({ nivel: state.level, segundos: Math.round(state.elapsed / 1000), puntaje: E.score(state), errores: state.mistakes || 0, rendido: !!state.gaveUp });
+    // Giving up scores 0: it is no record and does not enter the ranking
+    if (!state.gaveUp) saveBest(state.level, E.score(state), state.elapsed);
+    return renderResult({ fresh: !state.gaveUp });
   }
   save();
   drawBoard();
 }
 
-// A keyboard on a computer: digits, arrows, Backspace; N toggles the notes
+// A keyboard on a computer: digits, arrows, Backspace erases; N toggles the notes. On a phone, the
+// same digit again empties a cell (there is no erase button: the owner swapped it for Give up)
 document.addEventListener('keydown', e => {
   if (!state || !$('#screen-play').classList.contains('active') || e.metaKey || e.ctrlKey || e.altKey) return;
   const move = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 }[e.key];
@@ -368,21 +377,32 @@ document.addEventListener('keydown', e => {
 function renderResult({ fresh = false } = {}) {
   const time = mmss(state.elapsed);
   const level = levelName(state.level);
-  $('#result-title').textContent = T.solved;
+  const gaveUp = !!state.gaveUp;
+  $('#result-title').textContent = gaveUp ? T.gaveUp : T.solved;
+  $('.result-hero .trophy').textContent = gaveUp ? '🏳️' : '🧠';
   const points = E.score(state), n = state.mistakes || 0;
   $('#result-score').textContent = fmt(T.scoreResult, { score: points });
   $('#result-line').textContent = fmt(T.solvedLine, { level: `${LEVEL_EMOJI[state.level]} ${level}`, time });
-  $('#result-detail').textContent = n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
+  // Giving up: the title and the 0 already say it (U-8), so no detail line under them
+  $('#result-detail').textContent = gaveUp ? '' : n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
+  $('#result-detail').hidden = gaveUp;
+  // On giving up, the solution, under the exits (C-19): the givens in white, the rest in cyan
+  const solution = $('#result-board');
+  solution.hidden = !gaveUp;
+  $('#solution-title').hidden = !gaveUp;
+  $('#solution-title').textContent = gaveUp ? T.solutionTitle : '';
+  solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + (E.isGiven(state, i) ? ' given' : ''), 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, String(d))) : []));
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(state.level); } }, fmt(T.again, { level: level.toLowerCase() })),
-    botonCompartir({
+    // Sharing tells a solved board: giving up has nothing to share
+    ...(gaveUp ? [] : [botonCompartir({
       rotulo: T.shareRotulo, id: 'btn-share', alTocar: () => SFX.tap(),
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
       armar: async () => ({
         titulo: T.title, url: location.origin + location.pathname,
         texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.shareText, { level: level.toLowerCase(), time, score: points })].join('\n\n'),
       }),
-    }),
+    })]),
     el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderModes(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));
   // The level's table; a game just finished is saved first (D-212, D-274), a resumed result only shows it
   const tableEnd = bloqueTabla({ tabla: table(state.level), titulo: rankingTitle(state.level), entrar: false });
@@ -390,7 +410,7 @@ function renderResult({ fresh = false } = {}) {
     ? [avisoPartida({ juego: GAME_ID, variante: state.level, s: points, ms: state.elapsed, alAnotar: () => tableEnd.recargar(), alTocar: () => SFX.tap() })] : [];
   $('#result-ranking').replaceChildren(...notice, tableEnd);
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
-  confetti();
+  if (!gaveUp) confetti();
   showScreen('screen-result');
 }
 
@@ -403,7 +423,20 @@ function init() {
   $('#sound-slot').append(soundToggle());
   initSound();
   $('#btn-notes').addEventListener('click', () => { SFX.tap(); notesMode = !notesMode; drawBoard(); });
-  $('#btn-erase').addEventListener('click', eraseCell);
+  // Giving up asks twice (U-15): the first tap arms it for 3 s, as in Pintaminas and Dominorama
+  const giveUpBtn = $('#btn-give-up');
+  giveUpBtn.addEventListener('click', () => {
+    if (!state || E.isOver(state)) return;
+    if (!giveUpArmed) {
+      giveUpArmed = true; SFX.tap(); vibrate(15);
+      giveUpBtn.textContent = T.giveUpSure; giveUpBtn.classList.add('armado');
+      giveUpTimer = setTimeout(disarmGiveUp, 3000);
+      return;
+    }
+    disarmGiveUp();
+    state = E.giveUp(state);
+    afterMove();
+  });
   $('#btn-undo').addEventListener('click', undoMove);
   renderModes();
   renderResumeSlot();

@@ -2,7 +2,7 @@
 export default {
   "id": "sudoku",
   "path": "labs/sudoku/",
-  "emoji": "🔢",
+  "emoji": "🧮",
   "name": {
     "es": "Sudoku",
     "en": "Sudoku",

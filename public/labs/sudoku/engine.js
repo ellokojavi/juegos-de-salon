@@ -9,7 +9,7 @@
  * many givens and singles; hard needs the grade-1 techniques (the owner kept only these two, 2026-11-10).
  *
  * The score (for La Copa, when it goes there): 100 for the finished board, minus 10 for every digit
- * written that is not the solution's, never below 0. Notes never count.
+ * written that is not the solution's, never below 0. Notes never count. Giving up scores 0.
  */
 
 export const LEVELS = ['easy', 'hard'];
@@ -228,7 +228,13 @@ export function wrong(state) {
 }
 
 /** The score so far: 100 minus 10 per wrong digit written, never below 0. */
-export const score = state => Math.max(0, SCORE_FULL - SCORE_MISTAKE * (state.mistakes || 0));
+export const score = state => (state.gaveUp ? 0 : Math.max(0, SCORE_FULL - SCORE_MISTAKE * (state.mistakes || 0)));
+
+/** Giving up ends the game with 0 points (as in La Copa's puzzles: rendirse da 0). */
+export function giveUp(state) {
+  if (state.done) return state;
+  return { ...state, done: true, gaveUp: true };
+}
 
 /** How many of each digit 1..9 are on the board (index 0 unused). */
 export function counts(state) {

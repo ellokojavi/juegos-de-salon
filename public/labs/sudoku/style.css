@@ -38,6 +38,8 @@
 .cell.sel { background: rgb(var(--yellow-rgb) / 0.35); }
 .cell.bad { color: var(--red); background: rgb(var(--red-rgb) / 0.18); }
 .cell.given.bad { color: var(--ink); }
+/* A wrong digit keeps showing it is the selected cell */
+.cell.bad.sel { box-shadow: inset 0 0 0 2px var(--yellow); }
 
 /* A cell's notes: a 3×3 of small digits */
 .notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
@@ -58,6 +60,12 @@
 .tools-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
 .tools-row .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
 #btn-notes.on { border-color: var(--yellow); color: var(--yellow); }
+/* Give up, armed: the second tap gives up (the same yellow as La Copa's armed buttons) */
+#btn-give-up.armado { border-color: var(--yellow); color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.12); }
+/* The solution after giving up: the same board, smaller and still */
+.board--mini { --side: min(100%, 280px); margin-top: var(--s-6); }
+.board--mini .cell { cursor: default; font-size: var(--fs-100); }
+#solution-title { margin: var(--s-6) 0 0; }
 #hint { margin: 0; min-height: 1.4em; }
 .play-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); width: min(100%, 460px); margin: 0 auto; }
 .play-head p { margin: 0; }
@@ -66,7 +74,7 @@
 /* ---------- The level: a lever on a metal plate (Pintaminas' hard-mode switch). Down and green is easy, up and red is hard ---------- */
 .sd-lever { display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
   padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
-  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; -webkit-tap-highlight-color: transparent; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
 .sd-lever { position: relative; }
 /* On, the whole rectangle glows and flickers at random like a bad contact: game.js moves --glow (0 to 1) */
 .sd-lever.on { --glow: 0.7; border-color: rgb(var(--red-rgb) / calc(0.4 + 0.6 * var(--glow))); background: rgb(var(--red-rgb) / calc(0.06 + 0.1 * var(--glow)));
@@ -91,6 +99,7 @@
   background: radial-gradient(circle at 35% 35%, var(--sd-knob-easy), var(--sd-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
 .sd-lever.on .sd-arm { transform: rotate(38deg); }
 .sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
+.sd-lever:active { transform: scale(0.98); }
 .sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 
 
@@ -154,3 +163,16 @@ body.sd-hard .sd-dcell.filled { color: var(--sd-knob-hard); }
   .sd-lever.on .sd-bolt { animation: none; opacity: 1; }
   .sd-dcell.pop, .sd-lever.zap .sd-plate { animation: none; }
 }
+
+/* ---------- The cover's icon, drawn: a sudoku on ruled notebook paper (🔢 is Toque y Fama's) ---------- */
+.intro-hero .sd-logo { width: 6rem; height: 6rem; margin: 0 auto; transform: rotate(-6deg);
+  filter: drop-shadow(0 0 18px rgb(var(--cyan-rgb) / 0.45)); }
+.sd-logo-paper { fill: var(--card); }
+.sd-logo-ruled { stroke: rgb(var(--cyan-rgb) / 0.55); stroke-width: 0.8; fill: none; }
+.sd-logo-cells { fill: var(--card); }
+.sd-logo-thin { stroke: rgb(var(--card-ink-rgb) / 0.3); stroke-width: 0.6; fill: none; }
+.sd-logo-thick { stroke: var(--card-ink); stroke-width: 1.4; fill: none; }
+.sd-logo-frame { stroke: var(--card-ink); stroke-width: 2; fill: none; }
+.sd-logo text { font: 800 6.4px var(--font-num); text-anchor: middle; }
+.sd-logo-digits { fill: var(--card-ink); }
+.sd-logo-pen { fill: var(--pink); }

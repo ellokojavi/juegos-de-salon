@@ -1,6 +1,6 @@
 // Sudoku's engine: the generator gives one solution and the level's grade; the moves keep the rules.
 import assert from 'node:assert/strict';
-import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, PEERS, UNITS, LEVELS } from './engine.js';
+import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, giveUp, PEERS, UNITS, LEVELS } from './engine.js';
 
 assert.deepEqual(LEVELS, ['easy', 'hard'], 'two levels: easy and hard (the owner, 2026-11-10)');
 
@@ -76,5 +76,11 @@ for (let k = 0; k < 12; k++) q = setDigit(setDigit(q, holes[1], q.solution[holes
 assert.equal(score(q), 0, 'never below 0');
 for (const i of holes) if (!q.cells[i]) q = setDigit(q, i, q.solution[i]);
 assert.ok(isOver(q) && wrong(q).size === 0);
+
+// Giving up ends the game with 0 points, whatever the board had
+let g = setDigit(newGame('easy', 'give-up'), 0, 1);
+g = giveUp(newGame('easy', 'give-up'));
+assert.ok(isOver(g) && g.gaveUp && score(g) === 0, 'giving up ends it with 0');
+assert.equal(giveUp(g), g, 'a finished game cannot give up again');
 
 console.log('sudoku engine: ok');

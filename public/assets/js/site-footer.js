@@ -66,6 +66,8 @@ export async function mountFooter(parent, opts = {}) {
     if (!parent) return null;
     parent.querySelector(':scope > .pie-sitio')?.remove();
     const f = await siteFooter(opts);
+    // Two mounts in a row (a screen redrawn while the first was building) leave one footer, not two
+    parent.querySelector(':scope > .pie-sitio')?.remove();
     parent.append(f);
     return f;
   } catch (_) { return null; }

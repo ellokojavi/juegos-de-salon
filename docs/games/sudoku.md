@@ -1,4 +1,4 @@
-# 🔢 Sudoku (lab, in Juegos en prueba)
+# 🧮 Sudoku (lab, in Juegos en prueba)
 
 The classic numbers puzzle, played solo, in two levels (easy and hard), with a score. Born from `node tools/generators/new-game.mjs sudoku`
 (#1249 step 9); the owner asked for it on 2026-11-10 ("un sudoku con tres dificultades: fácil, mediano y difícil",
@@ -21,7 +21,7 @@ board is full and valid.
 
 **100 for the finished board, minus 10 for every digit written that is not the solution's**, never below 0
 (`score` in `engine.js`). Each wrong digit turns red at once and the line under the board says "−10";
-undo does not give the 10 back, notes never count. The score shows next to the clock and on the result,
+undo does not give the 10 back, notes never count. **Giving up scores 0** (as in La Copa's puzzles). The score shows next to the clock and on the result,
 and goes to the panel in `trackFinish` (`puntaje`, `errores`). It is the score La Copa will use if the
 sudoku goes there. A digit that repeats in its row, column or box is red too.
 
@@ -38,6 +38,12 @@ solved grid and empties cells in mirrored pairs while the solution stays unique 
 
 A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixes the board of each level
 (the tests use it).
+
+## Look
+
+The game's emoji is 🧮 (🔢 is Toque y Fama's). The cover's hero is a drawn icon instead of the emoji (the
+owner's request): a sudoku on ruled notebook paper (no margin line, the owner asked), its digits in ink and one in pink,
+as an inline SVG coloured from the tokens (`.sd-logo` in `style.css`).
 
 ## Modos
 
@@ -67,11 +73,18 @@ with signing in.
 ## Flujo
 
 Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines) → play (level, clock and score, the board,
-the 1–9 pad with how many of each are left, ✏️ Notas, 🧽 Borrar, ↩️ Deshacer) → result (the score and how it was made, level and time,
+the 1–9 pad with how many of each are left, ✏️ Notas, ↩️ Deshacer and 🏳️ Rendirse on the right) → result (the score and how it was made, level and time,
 Another sudoku of that level, Share through `compartir.js`, Change difficulty, and the exit to the lab from
 `fin.js`, C-19).
 
-- Writing a digit clears the notes of that digit in its row, column and box.
+- Writing a digit clears the notes of that digit in its row, column and box. The same digit again empties
+  the cell: there is no erase button (the owner swapped it for 🏳️ Rendirse; on a computer Backspace erases).
+- 🏳️ Rendirse asks twice (U-15), as in Pintaminas and Dominorama: the first tap turns it into 🏳️ ¿Seguro?
+  in yellow for 3 s, the second ends the game with 0 points and shows the solution on the result (givens in
+  white, the rest in cyan), under the actions and the exits so they show without scrolling at 320 px (C-19),
+  without Share.
+- The result's detail line says how the score was made: "Sin errores: 100." or "Números mal puestos: n
+  (−10 cada uno)."; after giving up there is none (the title and the 0 already say it, U-8).
 - The clock runs only while the board is showing (it stops when the tab is hidden) and is saved with the game.
 - On a computer: digits, arrows, Backspace, and N for notes.
 
