@@ -39,7 +39,7 @@ const LOCALES = {
     record: '🏆 ¡Nuevo récord!', fin: '¡Se acabó!', tuMejor: 'Tu mejor: {n}', mejor: 'Récord: {n}',
     veredictos: ['Recién saliendo del nido 🐣', 'Ya le estás agarrando el vuelo', '¡Vuelas bonito! ✨', '¡Pájaro de altura! 🦅', '¡Dueño del cielo! 👑'],
     otraVez: 'Jugar otra vez', pausa: 'En pausa', seguir: 'Toca para seguir', laboratorio: '‹ Laboratorio',
-    comentarAbrir: '💬 Dejar un comentario',
+    comentarAbrir: '💬 Sugerencias y comentarios',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si el salto se sentía bien, si se ponía difícil muy rápido y qué le cambiarías.', ph: 'Por ejemplo: los muros llegan muy pronto.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
   en: {
@@ -56,7 +56,7 @@ const LOCALES = {
     record: '🏆 New best!', fin: 'Game over!', tuMejor: 'Your best: {n}', mejor: 'Best: {n}',
     veredictos: ['Fresh out of the nest 🐣', 'Getting the hang of it', 'Flying pretty! ✨', 'High flyer! 🦅', 'King of the sky! 👑'],
     otraVez: 'Play again', pausa: 'Paused', seguir: 'Tap to continue', laboratorio: '‹ Lab',
-    comentarAbrir: '💬 Leave a comment',
+    comentarAbrir: '💬 Suggestions and comments',
     comentario: { titulo: 'What did you think?', lead: 'Tell us if the flap felt right, if it got hard too fast and what you would change.', ph: 'For example: the walls come too soon.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
   },
   pt: {
@@ -73,7 +73,7 @@ const LOCALES = {
     record: '🏆 Novo recorde!', fin: 'Acabou!', tuMejor: 'Seu melhor: {n}', mejor: 'Recorde: {n}',
     veredictos: ['Acabou de sair do ninho 🐣', 'Pegando o jeito', 'Voando bonito! ✨', 'Voo de altura! 🦅', 'Dono do céu! 👑'],
     otraVez: 'Jogar de novo', pausa: 'Pausado', seguir: 'Toque para continuar', laboratorio: '‹ Laboratório',
-    comentarAbrir: '💬 Deixar um comentário',
+    comentarAbrir: '💬 Sugestões e comentários',
     comentario: { titulo: 'O que achou?', lead: 'Conte se o salto parecia certo, se ficava difícil rápido demais e o que você mudaria.', ph: 'Por exemplo: os muros chegam cedo demais.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
   },
 };

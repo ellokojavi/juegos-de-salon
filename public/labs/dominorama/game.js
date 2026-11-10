@@ -54,7 +54,7 @@ const T = {
   },
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otros tableros', deHoy: '📅 Los de hoy', laboratorio: '‹ Volver al laboratorio',
-  comentarAbrir: '💬 Dejar un comentario',
+  comentarAbrir: '💬 Sugerencias y comentarios',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendían las reglas de las zonas, si costaba poner o girar las fichas y qué le cambiarías.', ph: 'Por ejemplo: no sabía que podía girar la ficha.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
