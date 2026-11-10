@@ -39,7 +39,12 @@ ok(await ev(`!!(document.getElementById('lang-slot').compareDocumentPosition(doc
 ok(await ev(`(() => { const r = document.getElementById('btn-jugar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Jugar in the first screen');
 await b.shot('01-cover');
 
-await ev(`document.getElementById('btn-jugar').click(); 1`);
+// The first game of the day draws the day's five stages; the drags below are placed for those of
+// 2026-11-09, so the click reads that day (and only the click: the clock keeps the real time)
+await ev(`(() => { const P = Date.prototype, k = ['getFullYear', 'getMonth', 'getDate'], o = k.map(n => P[n]);
+  P.getFullYear = () => 2026; P.getMonth = () => 10; P.getDate = () => 9;
+  try { document.getElementById('btn-jugar').click(); } finally { k.forEach((n, i) => { P[n] = o[i]; }); }
+  return 1; })()`);
 ok(await waitFor(`document.getElementById('s-juego').classList.contains('active')`), 'Jugar opens the board');
 ok(await ev(`document.getElementById('nivel').textContent`) === 'Etapa 1 de 5' && await ev(`document.getElementById('dificultad').textContent`) === 'Fácil', '«Etapa 1 de 5», Fácil');
 ok(await ev(`document.querySelectorAll('#etapas span').length`) === 5 && await ev(`document.querySelectorAll('#etapas .ahora').length`) === 1, 'the five stages as dots, the first one lit');
