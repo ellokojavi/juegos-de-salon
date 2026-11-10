@@ -9,6 +9,7 @@ import { salidasFin } from '../../assets/js/fin.js';
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { getLang, langToggle, COMMON, SITIO, withLang } from '../../assets/js/i18n.js';
+import { footerInto } from '../../assets/js/site-footer.js';
 import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -108,11 +109,14 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const P = { clave: null, n: 4, g: [], puestas: [], elegida: null, errores: 0, desde: 0, giros: 0, vueltas: 0 };
 
+// The cover ends with the site's footer, the game's own comment as its option (C-17, U-38)
 function pieComentario(pantalla) {
-  pie.replaceChildren(el('button', {
+  const comment = el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
     onClick: () => { SFX.tap(); abrirComentario({ T: T.comentario, contexto: contexto(pantalla) }); },
-  }, T.comentarAbrir));
+  }, T.comentarAbrir);
+  if (pantalla === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [comment], lang: lang });
+  else pie.replaceChildren(comment);
 }
 const contexto = pantalla => ({
   juego: GAME_ID, pantalla, cartas: P.n, codigo: P.clave?.codigo, errores: P.errores, giros: P.giros, vueltas: P.vueltas,

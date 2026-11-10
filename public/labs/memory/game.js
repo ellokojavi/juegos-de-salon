@@ -8,6 +8,7 @@
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { getLang, langToggle, COMMON, SITIO } from '../../assets/js/i18n.js';
+import { footerInto } from '../../assets/js/site-footer.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
@@ -68,11 +69,14 @@ const title = (small = false) => el('h1', { class: `title-ee${small ? ' small' :
   el('span', { class: 'logo', 'aria-hidden': 'true' }, '👀'), el('span', { class: `display ${small ? '' : 'display--lg '}rainbow` }, T.name));
 const picture = (name, cls = 'pic-icon') => el('span', { class: cls, html: spriteSvg(name), 'aria-hidden': 'true' });
 
+// The cover ends with the site's footer, the game's own comment as its option (C-17, U-38)
 function commentFoot(screen) {
-  foot.replaceChildren(el('button', {
+  const comment = el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
     onClick: () => { SFX.tap(); abrirComentario({ T: T.comment, contexto: context(screen) }); },
-  }, T.commentOpen));
+  }, T.commentOpen);
+  if (screen === 'portada') footerInto(foot, { screen: `${GAME_ID}-cover`, inbox: false, options: [comment], lang: lang });
+  else foot.replaceChildren(comment);
 }
 const context = screen => ({
   juego: GAME_ID, pantalla: screen, semilla: S.g?.seed, nivel: S.g?.level, vidas: S.g?.lives,
