@@ -3,7 +3,19 @@
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
+import { SFX, initSound, soundToggle } from '../../assets/js/sound.js';
+import { confetti } from '../../assets/js/ui.js';
+import { salidasFin } from '../../assets/js/fin.js';
+import { param, tiene } from '../../assets/js/parametros.js';
+import { semillaDel } from '../../assets/js/uno-al-dia.js';
+import { shareLink } from '../../assets/js/compartir.js';
+import { getLang, coverLangToggle } from '../../assets/js/i18n.js';
+import { TR } from './rules.js';
+import { RUN, newCode, speedAt, score, score100, stream, runOrder } from './engine.js';
 const GAME_ID = 'microgames';
+// The texts are written in Spanish where they are used; t() gives the player's language from rules.js (C-3)
+const LANG = getLang();
+const t = (es, v = {}) => (TR[LANG]?.[es] ?? es).replace(/\{(\w+)\}/g, (_, k) => v[k] ?? '');
 trackVisit();   // the site's traffic (D-208)
 (() => {
   const demo = document.getElementById('demo'), screen = document.getElementById('screen');
@@ -11,7 +23,8 @@ trackVisit();   // the site's traffic (D-208)
   const hudN = document.getElementById('hud-n'), hudS = document.getElementById('hud-s');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let total = 0, idx = 0, raf = 0, loop = 0, active = false, cleanup = null, sp = 1, order = [], tOuts = [], lastStars = 0;
-  const rnd = n => Math.floor(Math.random() * n);
+  let rand = Math.random;   // the game's random stream: seeded in a shared run (Uno al día, a cup), so every phone gets the same game
+  const rnd = n => Math.floor(rand() * n);
   const pick = a => a[rnd(a.length)];
   const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const later = (fn, ms) => { const t = setTimeout(fn, ms); tOuts.push(t); return t; };
@@ -53,11 +66,12 @@ trackVisit();   // the site's traffic (D-208)
   function finish(n, note, hold = 800) {
     if (!active) return; active = false;
     freeze();
-    total += n; lastStars = n; hudS.textContent = `${total} ★`;
+    total += n; lastStars = n; scored = true; hudS.textContent = `${score([...marks, n]).points} ${t('pts')}`;
+    if (n) SFX.reveal(); else SFX.error();
     const tag = document.createElement('div'); tag.className = `verdict-tag ${n ? 'good' : 'bad'}`; tag.textContent = n ? '✓' : '✗'; demo.append(tag);
     later(() => {
       stopAll();
-      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', '¡Por poco!', '¡Bien!', '¡Al toque!'][n] : '¡Fallaste!')}</div>`);
+      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>`);
       later(next, 900);
     }, reduce ? 400 : hold);
   }
@@ -66,9 +80,9 @@ trackVisit();   // the site's traffic (D-208)
   // How each game is played, by what the finger does. The intro card shows that gesture, animated, so the player
   // knows at a glance what's coming; the review list is grouped the same way
   const KINDS = {
-    toca:     ['TOCA', '👆', '#2ee6d6', 'Tocar: la respuesta, el momento justo o muchas veces seguidas'],
-    arrastra: ['ARRASTRA', '✊', '#ff9a1f', 'Tomar algo con el dedo y moverlo: a su lugar o de lado a lado'],
-    desliza:  ['DESLIZA', '💨', '#c45cff', 'Mover el dedo sobre la pantalla: cortar, lanzar, recorrer o frotar'],
+    toca:     [t('TOCA'), '👆', '#2ee6d6', 'Tocar: la respuesta, el momento justo o muchas veces seguidas'],
+    arrastra: [t('ARRASTRA'), '✊', '#ff9a1f', 'Tomar algo con el dedo y moverlo: a su lugar o de lado a lado'],
+    desliza:  [t('DESLIZA'), '💨', '#c45cff', 'Mover el dedo sobre la pantalla: cortar, lanzar, recorrer o frotar'],
   };
   const KIND = { quecolor: 'toca', cuenta: 'toca', calcula: 'toca', completa: 'toca', quehora: 'toca', sombra: 'toca', mas: 'toca', diferente: 'toca', cualfalta: 'toca', dondequedo: 'toca', repite: 'toca',
     espera: 'toca', para: 'toca', toca: 'toca', aplasta: 'toca', revienta: 'toca', notoques: 'toca',
@@ -143,8 +157,8 @@ trackVisit();   // the site's traffic (D-208)
     // ¡CRUZA!: a smooth, curvy bridge of even width. Chevrons along it point the way and the crossed part lights up.
     // The bridge has a visible edge: touch it and the bird falls
     cruza() {
-      command('¡RUEDA!', () => {
-        const { lay, W, H } = lay0('<svg id="sv" class="fullsvg"></svg><span class="obj startring" id="st0"></span><span class="hint-here" id="here">👆<em>empieza aquí</em></span><span class="obj ball2" id="wk"><i></i></span><div class="pct" id="pct">0 %</div><div class="rstars" id="rs">★★★</div><div class="rclock" id="rc"></div>');
+      command(t('¡RUEDA!'), () => {
+        const { lay, W, H } = lay0(`<svg id="sv" class="fullsvg"></svg><span class="obj startring" id="st0"></span><span class="hint-here" id="here">👆<em>${t('empieza aquí')}</em></span><span class="obj ball2" id="wk"><i></i></span><div class="pct" id="pct">0 %</div><div class="rstars" id="rs">★★★</div><div class="rclock" id="rc"></div>`);
         const sv = $id('sv'), wk = $id('wk'), here = $id('here'), pct = $id('pct'), wkIn = wk.firstChild;
         sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
         // The bridge takes a different shape each time, and not always in the middle of the stage
@@ -153,22 +167,22 @@ trackVisit();   // the site's traffic (D-208)
         let dense = [];
         const along = (n, f) => { for (let k = 0; k <= n; k++) dense.push(f(k / n)); };
         if (shape === 'curva') {          // an S that swings left and right down the stage
-          const side = Math.random() < 0.5 ? 1 : -1;
+          const side = rand() < 0.5 ? 1 : -1;
           const P = [0, 1, 2, 3].map(k => [side * (k % 2 ? 1 : -1) * W * 0.26 * (k === 0 || k === 3 ? 0.6 : 1), H * (-0.38 + 0.76 * k / 3)]);
           const cr = (p0, p1, p2, p3, t) => { const t2 = t * t, t3 = t2 * t; return [0, 1].map(i => 0.5 * (2 * p1[i] + (-p0[i] + p2[i]) * t + (2 * p0[i] - 5 * p1[i] + 4 * p2[i] - p3[i]) * t2 + (-p0[i] + 3 * p1[i] - 3 * p2[i] + p3[i]) * t3)); };
           for (let i = 0; i < 3; i++) for (let k = 0; k < 40; k++) dense.push(cr(P[Math.max(0, i - 1)], P[i], P[i + 1], P[Math.min(3, i + 2)], k / 40));
           dense.push(P[3]);
         } else if (shape === 'espiral') { // from the outside in, about a turn and a half
-          const r0 = Math.min(W, H) * 0.4, r1 = Math.min(W, H) * 0.1, turns = 1.55, a0 = Math.random() * Math.PI * 2, dir = Math.random() < 0.5 ? 1 : -1;
+          const r0 = Math.min(W, H) * 0.4, r1 = Math.min(W, H) * 0.1, turns = 1.55, a0 = rand() * Math.PI * 2, dir = rand() < 0.5 ? 1 : -1;
           along(220, t => { const r = r0 - (r0 - r1) * t, a = a0 + dir * t * turns * 2 * Math.PI; return [r * Math.cos(a), r * Math.sin(a)]; });
         } else if (shape === 'circulo') { // almost a full ring, start and finish side by side
-          const r = Math.min(W, H) * 0.34, a0 = Math.random() * Math.PI * 2, dir = Math.random() < 0.5 ? 1 : -1;
+          const r = Math.min(W, H) * 0.34, a0 = rand() * Math.PI * 2, dir = rand() < 0.5 ? 1 : -1;
           along(160, t => { const a = a0 + dir * (0.32 + t * (2 * Math.PI - 0.64)); return [r * Math.cos(a), r * 1.1 * Math.sin(a)]; });
         } else if (shape === 'ola') {     // a wave going down, two full swings
-          const amp = W * 0.27, ph = Math.random() < 0.5 ? 0 : Math.PI;
+          const amp = W * 0.27, ph = rand() < 0.5 ? 0 : Math.PI;
           along(160, t => [amp * Math.sin(ph + t * 4 * Math.PI), H * (-0.38 + 0.76 * t)]);
         } else {                          // a hook: down one side, round the bottom, back up the other
-          const w = W * 0.26, top = -H * 0.36, bot = H * 0.18, side = Math.random() < 0.5 ? 1 : -1;
+          const w = W * 0.26, top = -H * 0.36, bot = H * 0.18, side = rand() < 0.5 ? 1 : -1;
           along(40, t => [-side * w, top + (bot - top) * t]);
           along(60, t => [-side * w * Math.cos(t * Math.PI), bot + w * Math.sin(t * Math.PI)]);
           along(30, t => [side * w, bot - (bot - top * 0.4) * t]);
@@ -176,7 +190,7 @@ trackVisit();   // the site's traffic (D-208)
         // Somewhere on the stage that fits it, with a margin from every edge
         const xs = dense.map(p => p[0]), ys = dense.map(p => p[1]), m = HALF + 18;
         const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-        const ox = m - minX + Math.random() * Math.max(0, (W - 2 * m) - (maxX - minX)), oy = m + 10 - minY + Math.random() * Math.max(0, (H - 2 * m - 20) - (maxY - minY));
+        const ox = m - minX + rand() * Math.max(0, (W - 2 * m) - (maxX - minX)), oy = m + 10 - minY + rand() * Math.max(0, (H - 2 * m - 20) - (maxY - minY));
         dense = dense.map(([x, y]) => [x + ox, y + oy]);
         // Resample every 4 px of length, so progress and width are even all along
         const S = [dense[0]]; let acc = 0;
@@ -199,11 +213,13 @@ trackVisit();   // the site's traffic (D-208)
         const trail = [], marks = sv.querySelector('#marks');
         const fall = msg => { wk.classList.add('falling'); lay.classList.add('fail'); try { navigator.vibrate?.(60); } catch (_) { /* none */ } finish(0, msg); };
         listen({
-          down: e => { if (on) return; const p = ptIn(lay, e); if (near(p, S[0], HALF + 18)) { on = true; t0 = performance.now(); here.hidden = true; st0.hidden = true; wk.classList.add('go'); lastB = S[0]; trail.push(S[0]); } },
+          // Lifting the finger only pauses the ball (the clock keeps going): put it back on the ball to go on
+          down: e => { if (on) return; const p = ptIn(lay, e); if (!near(p, t0 ? lastB : S[0], HALF + 18)) return; on = true; here.hidden = true;
+            if (!t0) { t0 = performance.now(); st0.hidden = true; wk.classList.add('go'); lastB = S[0]; trail.push(S[0]); } },
           move: e => { if (!on) return; const p = ptIn(lay, e);
             let best = -1, bd = 1e9;
             for (let i = Math.max(0, cur - 10); i <= Math.min(S.length - 1, cur + 18); i++) { const dd = Math.hypot(p[0] - S[i][0], p[1] - S[i][1]); if (dd < bd) { bd = dd; best = i; } }
-            if (bd > HALF + 26) { fall('¡Te saliste del camino!'); return; }
+            if (bd > HALF + 26) { fall(t('¡Te saliste del camino!')); return; }
             // The ball goes exactly where your finger is, kept on the road
             let b = p; if (bd > HALF - 2) { const c = S[best], k = (HALF - 2) / bd; b = [c[0] + (p[0] - c[0]) * k, c[1] + (p[1] - c[1]) * k]; }
             rolled += Math.hypot(b[0] - lastB[0], b[1] - lastB[1]); lastB = b;
@@ -215,36 +231,36 @@ trackVisit();   // the site's traffic (D-208)
               marks.insertAdjacentHTML('beforeend', `<circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="7" fill="#ff4d5e" stroke="#fff" stroke-width="2"/>`);
               $id('rs').innerHTML = '★'.repeat(Math.max(0, 3 - touches)) + `<s>${'★'.repeat(Math.min(3, touches))}</s>`;
               pop(lay, '−★', b[0], b[1] - 16, 'bad'); try { navigator.vibrate?.(30); } catch (_) { /* none */ }
-              if (touches >= 3) { fall('¡Tocaste el borde 3 veces!'); return; } }
+              if (touches >= 3) { fall(t('¡Tocaste el borde 3 veces!')); return; } }
             else if (bd < HALF - 12) touching = false;
             wk.classList.toggle('wobble', bd > HALF * 0.7); lay.classList.toggle('warn', bd > HALF * 0.7);
             if (best > cur) { cur = best; pct.textContent = `${Math.round(cur / (S.length - 1) * 100)} %`; }
             // Reaching the finish in time: three stars, minus one for each touch of the edge
             if (cur >= S.length - GOAL + 3) { lay.classList.add('goal');
-              finish(3 - touches, touches ? `¡Llegaste! · tocaste el borde ${touches} ${touches === 1 ? 'vez' : 'veces'}` : '¡Llegaste sin tocar el borde! 🏁'); } },
-          up: () => { if (on) fall('¡Soltaste el dedo!'); },
+              finish(3 - touches, touches ? (touches === 1 ? t('¡Llegaste! · tocaste el borde 1 vez') : t('¡Llegaste! · tocaste el borde {n} veces', { n: touches })) : t('¡Llegaste sin tocar el borde! 🏁')); } },
+          up: () => { if (!on) return; on = false; place(here, ...lastB); here.querySelector('em').textContent = t('sigue desde aquí'); here.hidden = false; },
         });
         // A time limit for the whole road, shown as the bar and as seconds counting down
         const LIMIT = T(Math.max(6000, LEN / 120 * 1000)), tStart = performance.now(), rc = $id('rc');
         animate(() => { rc.textContent = `⏱ ${Math.max(0, (LIMIT - (performance.now() - tStart)) / 1000).toFixed(1)}`; });
-        active = true; runTimer(LIMIT, () => finish(0, '¡Se acabó el tiempo!'));
-      }, '<span class="example"><i class="ballicon"></i> → <i class="chkicon"></i></span>', 'llega a tiempo · cada toque al borde: −★ · 3 toques y pierdes');
+        active = true; runTimer(LIMIT, () => finish(0, t('¡Se acabó el tiempo!')));
+      }, '<span class="example"><i class="ballicon"></i> → <i class="chkicon"></i></span>', t('llega a tiempo · cada toque al borde: −★ · 3 toques y pierdes'));
     },
     // ¡ESPERA… YA!: red, then green; tap on green, never before
     espera() {
-      command('¡ESPERA… YA!', () => {
-        demo.classList.add('red'); set('<div class="cmd white">Espera…</div>');
+      command(t('¡ESPERA… YA!'), () => {
+        demo.classList.add('red'); set(`<div class="cmd white">${t('Espera…')}</div>`);
         active = true; let green = false, tg = 0;
         later(() => {
           green = true; demo.classList.replace('red', 'green');
-          set('<div class="cmd white huge">¡YA!</div>'); tg = performance.now();
-          runTimer(900, () => finish(0, '¡Muy lento!'));
-        }, 1000 + Math.random() * 2000);
+          set(`<div class="cmd white huge">${t('¡YA!')}</div>`); tg = performance.now();
+          runTimer(900, () => finish(0, t('¡Muy lento!')));
+        }, 1000 + rand() * 2000);
         const h = e => {
           e.preventDefault(); if (!active) return;
           // The color you tapped lights up and stays: brighter red if too soon, greener if on time
           demo.classList.add('hot');
-          if (!green) { finish(0, '¡Muy pronto!'); return; }
+          if (!green) { finish(0, t('¡Muy pronto!')); return; }
           const ms = performance.now() - tg;
           finish(ms < 300 ? 3 : ms < 450 ? 2 : ms < 650 ? 1 : 0, `${Math.round(ms)} ms`);
         };
@@ -260,7 +276,7 @@ trackVisit();   // the site's traffic (D-208)
         <path d="M50 4 C80 4 96 28 94 50 C92 76 68 94 53 99 L47 99 C32 94 8 76 6 50 C4 28 20 4 50 4 Z" fill="url(#balg)"/>
         <ellipse cx="32" cy="30" rx="9" ry="15" fill="#fff" opacity=".45" transform="rotate(-25 32 30)"/>
         <path d="M45 106 L55 106 L52 99 L48 99 Z" fill="#08746f"/></svg>`;
-      command('¡TOCA RÁPIDO!', () => {
+      command(t('¡TOCA RÁPIDO!'), () => {
         // A hand pump (press it), tied to the balloon by a string that hangs and swings like a real one
         const PUMP = `<svg viewBox="0 0 80 140" aria-hidden="true"><defs>
             <linearGradient id="pmBar" x1="0" x2="1"><stop offset="0" stop-color="#a30e55"/><stop offset=".35" stop-color="#ff5fa8"/><stop offset=".6" stop-color="#ff2e88"/><stop offset="1" stop-color="#8a0c48"/></linearGradient>
@@ -269,13 +285,14 @@ trackVisit();   // the site's traffic (D-208)
           <rect x="22" y="44" width="36" height="82" rx="8" fill="url(#pmBar)" stroke="#6e0838" stroke-width="2"/><rect x="20" y="42" width="40" height="8" rx="3" fill="#ffd23f" stroke="#b98a1e" stroke-width="1.5"/>
           <rect x="27" y="56" width="5" height="60" rx="2.5" fill="#fff" opacity=".3"/>
           <rect x="12" y="64" width="12" height="8" rx="3" fill="#5b6576"/><circle cx="13" cy="68" r="3" fill="#3a414d"/><rect x="4" y="124" width="72" height="12" rx="6" fill="#3a2f4d" stroke="#1b1426" stroke-width="2"/></svg>`;
-        full(`<div class="layer pump" id="lay"><svg class="bstring" id="bs"><path fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.2" stroke-linecap="round"/></svg><div class="balloon2" id="bl">${BAL}</div>
-          <div class="tapcount" id="cnt">0</div><button type="button" class="pumpbtn2" id="pb" aria-label="Inflar">${PUMP}</button>
-          <div class="presshint" id="ph"><b>¡APRIETA!</b><span>👇</span></div></div>`);
-        const bl = $id('bl'), cnt = $id('cnt'), lay = $id('lay'), pb = $id('pb'), bs = $id('bs'), str = bs.firstElementChild, ph = $id('ph');
+        full(`<div class="layer pump" id="lay"><svg class="bstring" id="bs"><path class="hose-out"/><path class="hose-in"/><path class="hose-rib"/><circle class="hose-cuff" r="5"/></svg><div class="balloon2" id="bl">${BAL}</div>
+          <div class="tapcount" id="cnt">0</div><button type="button" class="pumpbtn2" id="pb" aria-label="${t('Inflar')}">${PUMP}</button>
+          <div class="presshint" id="ph"><b>${t('¡APRIETA!')}</b><span>👇</span></div></div>`);
+        const bl = $id('bl'), cnt = $id('cnt'), lay = $id('lay'), pb = $id('pb'), bs = $id('bs'), hose = [...bs.querySelectorAll('path')], cuff = bs.querySelector('circle'), ph = $id('ph');
         const W = lay.clientWidth, H = lay.clientHeight; bs.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        // Where the string is tied: the balloon's knot (it follows the balloon as it grows) and the pump's nozzle
-        const bx = W * 0.44, oy = H * 0.48 - 70 + 110.5, knot = () => [bx, oy + (106 - 110.5) * sc(taps)];
+        // Where the hose is tied: the balloon's knot, read from where the balloon really sits (it grows from 85 % of
+        // its height, the knot is at 106 of its 130), and the pump's nozzle
+        const knot = () => [bl.offsetLeft + bl.offsetWidth / 2, bl.offsetTop + bl.offsetHeight * (0.85 + (106 / 130 - 0.85) * sc(taps))];
         const nozzle = () => [pb.offsetLeft + pb.offsetWidth * 12 / 80, pb.offsetTop + pb.offsetHeight * 68 / 140];
         // The string: a chain of points with gravity, both ends tied, a bit longer than the gap so it sags
         const NP = 16, k0 = knot(), n0 = nozzle(), LEN = Math.hypot(n0[0] - k0[0], n0[1] - k0[1]) * 1.07, SEG = LEN / (NP - 1);
@@ -293,11 +310,12 @@ trackVisit();   // the site's traffic (D-208)
             P.forEach(q => { if (q.y > H - 4) q.y = H - 4; }); }
           let d = `M${P[0].x.toFixed(1)} ${P[0].y.toFixed(1)}`;
           for (let i = 1; i < NP - 1; i++) { const mx = (P[i].x + P[i + 1].x) / 2, my = (P[i].y + P[i + 1].y) / 2; d += ` Q${P[i].x.toFixed(1)} ${P[i].y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`; }
-          d += ` L${P[NP - 1].x.toFixed(1)} ${P[NP - 1].y.toFixed(1)}`; str.setAttribute('d', d);
+          d += ` L${P[NP - 1].x.toFixed(1)} ${P[NP - 1].y.toFixed(1)}`; hose.forEach(h => h.setAttribute('d', d));
+          cuff.setAttribute('cx', P[0].x.toFixed(1)); cuff.setAttribute('cy', P[0].y.toFixed(1)); cuff.style.display = tied ? '' : 'none';
           requestAnimationFrame(rope); };
         requestAnimationFrame(rope);
         // Each press jolts the string a little, so it swings
-        const jolt = () => P.forEach((q, i) => { const f = Math.sin(i / (NP - 1) * Math.PI); q.px -= (Math.random() - 0.4) * 2.5 * f; q.py += 1.2 * f; });
+        const jolt = () => P.forEach((q, i) => { const f = Math.sin(i / (NP - 1) * Math.PI); q.px -= (rand() - 0.4) * 2.5 * f; q.py += 1.2 * f; });
         const draw = () => { bl.style.setProperty('--s', sc(taps)); bl.classList.toggle('tense', taps >= 15); bl.classList.toggle('tense2', taps >= 20); };
         draw();
         const grade = () => taps >= 20 ? 3 : taps >= 14 ? 2 : taps >= 8 ? 1 : 0;
@@ -306,12 +324,12 @@ trackVisit();   // the site's traffic (D-208)
           bl.remove(); tied = false; P.forEach(q => { q.py += 6; });
           mk(lay, 'div', 'animeflash'); mk(lay, 'div', 'speedlines'); lay.classList.add('shake');
           const ring = mk(lay, 'span', 'obj boomring'); place(ring, cx, cy);
-          for (let i = 0; i < 16; i++) { const sh = mk(lay, 'span', 'obj shard'); sh.style.background = '#16c9c0'; place(sh, cx, cy); const an = i / 16 * Math.PI * 2 + Math.random() * 0.4, d = 110 + Math.random() * 90;
-            sh.style.setProperty('--dx', `${Math.cos(an) * d}px`); sh.style.setProperty('--dy', `${Math.sin(an) * d}px`); sh.style.setProperty('--r', `${Math.round(Math.random() * 720 - 360)}deg`); }
-          for (let i = 0; i < 30; i++) { const c = mk(lay, 'span', 'obj confetti'); place(c, cx, cy); const an = Math.random() * Math.PI * 2, d = 60 + Math.random() * 150;
+          for (let i = 0; i < 16; i++) { const sh = mk(lay, 'span', 'obj shard'); sh.style.background = '#16c9c0'; place(sh, cx, cy); const an = i / 16 * Math.PI * 2 + rand() * 0.4, d = 110 + rand() * 90;
+            sh.style.setProperty('--dx', `${Math.cos(an) * d}px`); sh.style.setProperty('--dy', `${Math.sin(an) * d}px`); sh.style.setProperty('--r', `${Math.round(rand() * 720 - 360)}deg`); }
+          for (let i = 0; i < 30; i++) { const c = mk(lay, 'span', 'obj confetti'); place(c, cx, cy); const an = rand() * Math.PI * 2, d = 60 + rand() * 150;
             c.style.background = pick(['#ffd23f', '#2ee6d6', '#ff2e88', '#9dff3a', '#8a5cff', '#fff']);
-            c.style.setProperty('--dx', `${Math.cos(an) * d}px`); c.style.setProperty('--dy', `${Math.sin(an) * d + 60}px`); c.style.setProperty('--r', `${Math.round(Math.random() * 900)}deg`); }
-          const cb = mk(lay, 'div', 'comic', '<div class="burst"></div><b>¡PUM!</b>'); place(cb, cx, Math.max(70, cy)); cb.style.setProperty('--tilt', '-8deg');
+            c.style.setProperty('--dx', `${Math.cos(an) * d}px`); c.style.setProperty('--dy', `${Math.sin(an) * d + 60}px`); c.style.setProperty('--r', `${Math.round(rand() * 900)}deg`); }
+          const cb = mk(lay, 'div', 'comic', `<div class="burst"></div><b>${t('¡PUM!')}</b>`); place(cb, cx, Math.max(70, cy)); cb.style.setProperty('--tilt', '-8deg');
           try { navigator.vibrate?.([30, 40, 60]); } catch (_) { /* none */ }
         };
         tap(pb, () => {
@@ -319,24 +337,24 @@ trackVisit();   // the site's traffic (D-208)
           bl.classList.remove('puff'); void bl.offsetWidth; bl.classList.add('puff');
           pb.classList.remove('press'); void pb.offsetWidth; pb.classList.add('press'); jolt();
           if (ph.isConnected) ph.remove();
-          if (taps >= BURST) { boom(); finish(3, '¡Reventó!', 1300); }
+          if (taps >= BURST) { boom(); finish(3, t('¡Reventó!'), 1300); }
         });
         active = true;
-        runTimer(5000, () => finish(grade(), `${taps} infladas`));
-      }, '🎈💥', 'aprieta el bombín para inflar el globo');
+        runTimer(5000, () => finish(grade(), t('{n} infladas', { n: taps })));
+      }, '🎈💥', t('aprieta el bombín para inflar el globo'));
     },
     // ¡QUÉ COLOR!: the command says what to look at (the letters' color or the color the word says), then the word and four colors
     quecolor() {
-      const C = [['ROJO', '#ff4d5e', '🔴'], ['AZUL', '#4d8bff', '🔵'], ['VERDE', '#3ddc84', '🟢'], ['AMARILLO', '#ffd23f', '🟡']];
+      const C = [[t('ROJO'), '#ff4d5e', '🔴'], [t('AZUL'), '#4d8bff', '🔵'], [t('VERDE'), '#3ddc84', '🟢'], [t('AMARILLO'), '#ffd23f', '🟡']];
       const w = rnd(4); let ink = rnd(4); if (ink === w) ink = (ink + 1 + rnd(3)) % 4;
       // Two ways to ask, at random: the color of the letters, or the color the word says
-      const byInk = Math.random() < 0.5, goal = byInk ? ink : w;
-      const ask = byInk ? '¿De qué color son las <u>letras</u>?' : '¿Qué color <u>dice</u> la palabra?';
+      const byInk = rand() < 0.5, goal = byInk ? ink : w;
+      const ask = byInk ? t('¿De qué color son las <u>letras</u>?') : t('¿Qué color <u>dice</u> la palabra?');
       // The intro: the title and, right under it, what to look at this time; nothing else
-      dress('quecolor'); set(`${gesture('quecolor')}<div class="cmd">¡QUÉ COLOR!</div><div class="mode-say big">${byInk ? 'el color de las <u>letras</u>' : 'el color que <u>dice</u> la palabra'}</div>`);
+      dress('quecolor'); set(`${gesture('quecolor')}<div class="cmd">¡QUÉ COLOR!</div><div class="mode-say big">${byInk ? t('el color de las <u>letras</u>') : t('el color que <u>dice</u> la palabra')}</div>`);
       later(() => { undress();
         set(`<div class="sub ask">${ask}</div><div class="stroop" style="color:${C[ink][1]}">${C[w][0]}</div><div class="swatches">${shuffle([0, 1, 2, 3]).map(i => `<button type="button" data-i="${i}" style="background:${C[i][1]}" aria-label="${C[i][0]}"></button>`).join('')}</div>`);
-        const why = byInk ? `Las letras eran ${C[ink][2]}, no importa lo que dice` : `La palabra decía ${C[w][0]} ${C[w][2]}, no importa su color`;
+        const why = byInk ? t('Las letras eran {c}, no importa lo que dice', { c: C[ink][2] }) : t('La palabra decía {w} {c}, no importa su color', { w: C[w][0], c: C[w][2] });
         active = true; const t0 = runTimer(T(4200), () => finish(0, why));
         screen.querySelectorAll('.swatches button').forEach(b => tap(b, () => {
           const s = (performance.now() - t0) / 1000 * sp;
@@ -348,30 +366,30 @@ trackVisit();   // the site's traffic (D-208)
     cuenta() {
       // What to count changes every time, always among lookalikes of its own color
       const THEMES = [
-        ['🍎', 'las manzanas', ['🍅', '🍒', '🍓', '🌶️']],       // red
-        ['🍋', 'los limones', ['🍌', '🧀', '🌽', '⭐']],          // yellow
-        ['🥒', 'los pepinos', ['🥦', '🥬', '🫑', '🍏']],          // green
-        ['🍊', 'las naranjas', ['🥕', '🎃', '🍑', '🏀']],         // orange
-        ['🍇', 'las uvas', ['🍆', '🔮', '☂️', '🟣']],            // purple
-        ['🐟', 'los peces', ['🐬', '🐳', '🐋', '💧']],            // blue
+        ['🍎', t('cuenta solo las manzanas'), ['🍅', '🍒', '🍓', '🌶️']],       // red
+        ['🍋', t('cuenta solo los limones'), ['🍌', '🧀', '🌽', '⭐']],          // yellow
+        ['🥒', t('cuenta solo los pepinos'), ['🥦', '🥬', '🫑', '🍏']],          // green
+        ['🍊', t('cuenta solo las naranjas'), ['🥕', '🎃', '🍑', '🏀']],         // orange
+        ['🍇', t('cuenta solo las uvas'), ['🍆', '🔮', '☂️', '🟣']],            // purple
+        ['🐟', t('cuenta solo los peces'), ['🐬', '🐳', '🐋', '💧']],            // blue
       ];
       const [goal, goalName, lookalikes] = pick(THEMES);
       const k = 5 + rnd(6), extra = 7 + rnd(4);
       const items = shuffle([...Array(k).fill(goal), ...Array.from({ length: extra }, () => pick(lookalikes))]);
       const cols = 5, rows = 5, slots = shuffle([...Array(cols * rows).keys()]).slice(0, items.length);
       const opts = shuffle([k, ...shuffle([k - 2, k - 1, k + 1, k + 2].filter(v => v > 0)).slice(0, 3)]);
-      command('¡CUENTA!', () => {
+      command(t('¡CUENTA!'), () => {
         const fs = Math.max(22, Math.min((demo.clientWidth - 24) / cols, (demo.clientHeight * 0.66 - 40) / rows) * 0.7);
         full(`<div class="countbox"><div class="field2">${items.map((it, i) => { const c = slots[i] % cols, r = Math.floor(slots[i] / cols);
-          return `<span style="left:${(c + 0.5) * 100 / cols + (Math.random() - 0.5) * 8}%;top:${(r + 0.5) * 100 / rows + (Math.random() - 0.5) * 8}%;font-size:${fs}px;--dx:${Math.round((Math.random() - 0.5) * 26)}px;--dy:${Math.round((Math.random() - 0.5) * 26)}px;animation-duration:${(0.9 + Math.random() * 1.1).toFixed(2)}s;animation-delay:-${(Math.random() * 2).toFixed(2)}s">${it}</span>`; }).join('')}</div>
+          return `<span style="left:${(c + 0.5) * 100 / cols + (rand() - 0.5) * 8}%;top:${(r + 0.5) * 100 / rows + (rand() - 0.5) * 8}%;font-size:${fs}px;--dx:${Math.round((rand() - 0.5) * 12)}px;--dy:${Math.round((rand() - 0.5) * 12)}px;animation-duration:${(0.9 + rand() * 1.1).toFixed(2)}s;animation-delay:-${(rand() * 2).toFixed(2)}s">${it}</span>`; }).join('')}</div>
           <div class="opts4">${opts.map(v => `<button type="button" data-v="${v}">${v}</button>`).join('')}</div></div>`);
-        active = true; const t0 = runTimer(T(5000), () => finish(0, `Eran ${k}`));
-        numPick(screen.querySelector('.opts4'), k, t0, s => s < 2.5 ? 3 : s < 4 ? 2 : 1, `Eran ${k}`);
-      }, goal, `cuenta solo ${goalName}`);
+        active = true; const t0 = runTimer(T(5000), () => finish(0, t('Eran {n}', { n: k })));
+        numPick(screen.querySelector('.opts4'), k, t0, s => s < 2.5 ? 3 : s < 4 ? 2 : 1, t('Eran {n}', { n: k }));
+      }, goal, goalName);
     },
     // ¡ATRAPA!: drag the basket, catch the 🪙, dodge the 💣; each one falls a little faster than the last
     atrapa() {
-      command('¡ATRAPA!', () => {
+      command(t('¡ATRAPA!'), () => {
         full('<div class="layer" id="lay"><span class="basket" id="bk">🧺</span></div>');
         const lay = document.getElementById('lay'), bk = document.getElementById('bk');
         demo.style.touchAction = 'none';
@@ -411,8 +429,8 @@ trackVisit();   // the site's traffic (D-208)
             <g class="thumb"><rect x="114" y="82" width="20" height="18" rx="7" fill="#f2c6a0" stroke="#d39f78" stroke-width="2"/>
               <path d="M118 84 C116 74 118 66 124 64 C128 64 128 70 126 76 L126 84" fill="#f2c6a0" stroke="#d39f78" stroke-width="2" stroke-linejoin="round"/>
               <path d="M116 89 h16 M116 94 h16" stroke="#d39f78" stroke-width="1.5"/></g>
-            <path d="M136 52 l3 6 6 1 -4 4 1 6 -6 -3 -6 3 1 -6 -4 -4 6 -1z" fill="#fff6a8"/></svg><b>¡BIEN AHÍ!</b>`);
-          for (let i = 0; i < 10; i++) { const bl = mk(demo, 'span', 'cashrain', '💵'); bl.style.left = `${5 + Math.random() * 90}%`; bl.style.animationDelay = `${Math.random() * 0.7}s`; setTimeout(() => bl.remove(), 1900); }
+            <path d="M136 52 l3 6 6 1 -4 4 1 6 -6 -3 -6 3 1 -6 -4 -4 6 -1z" fill="#fff6a8"/></svg><b>${t('¡BIEN AHÍ!')}</b>`);
+          for (let i = 0; i < 10; i++) { const bl = mk(demo, 'span', 'cashrain', '💵'); bl.style.left = `${5 + rand() * 90}%`; bl.style.animationDelay = `${rand() * 0.7}s`; setTimeout(() => bl.remove(), 1900); }
           setTimeout(() => m.remove(), 1750); };
         active = true; runTimer(dur, () => { const n = got === cookies && !socks ? 3 : got >= 4 && socks <= 1 ? 2 : got ? 1 : 0;
           if (got === cookies) tycoon(); finish(n, `${got}/${cookies} 🪙 · ${socks} 💣`, got === cookies ? 1800 : 800); });
@@ -435,11 +453,11 @@ trackVisit();   // the site's traffic (D-208)
     corta() {
       // Different food each time, cut in any direction: across, top to bottom, or either diagonal (a little tilted)
       const FOOD = pick(['🥪', '🍉', '🍕', '🍰', '🥖', '🧀', '🍞', '🎂']);
-      command('¡CORTA!', () => {
+      command(t('¡CORTA!'), () => {
         full(`<div class="layer" id="lay"><span class="sandwich">${FOOD}</span><svg id="sv" aria-hidden="true"></svg></div>`);
         const lay = document.getElementById('lay'), sv = document.getElementById('sv');
         const W = lay.clientWidth, H = lay.clientHeight; sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        const ang = (pick([0, 90, 45, -45]) + Math.random() * 24 - 12) * Math.PI / 180, cx = W / 2, cy = H / 2, half = Math.min(W, H) * 0.42;
+        const ang = (pick([0, 90, 45, -45]) + rand() * 24 - 12) * Math.PI / 180, cx = W / 2, cy = H / 2, half = Math.min(W, H) * 0.42;
         const ux = Math.cos(ang), uy = Math.sin(ang), a = [cx - ux * half, cy - uy * half], b = [cx + ux * half, cy + uy * half];
         sv.innerHTML = `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#fff" stroke-width="3" stroke-dasharray="10 8"/><polyline id="trail" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points=""/>`;
         const trail = sv.querySelector('#trail');
@@ -454,7 +472,7 @@ trackVisit();   // the site's traffic (D-208)
             h.style.setProperty('--mx', `${(sg * nx * 30).toFixed(1)}px`); h.style.setProperty('--my', `${(sg * ny * 30 + 14).toFixed(1)}px`); h.style.setProperty('--rot', `${sg * 8}deg`); });
           sv.insertAdjacentHTML('beforeend', `<line class="slashline" x1="${c[0] - ux * W}" y1="${c[1] - uy * W}" x2="${c[0] + ux * W}" y2="${c[1] + uy * W}"/>`);
           mk(lay, 'div', 'speedlines'); mk(lay, 'div', 'animeflash'); lay.classList.add('shake');
-          pop(lay, '¡ZAS!', cx, cy - Math.min(W, H) * 0.32);
+          pop(lay, t('¡ZAS!'), cx, cy - Math.min(W, H) * 0.32);
         };
         demo.style.touchAction = 'none';
         let pts = null;
@@ -467,22 +485,22 @@ trackVisit();   // the site's traffic (D-208)
           const cover = (Math.max(...ts) - Math.min(...ts)) / (2 * half), avg = ds.reduce((s, v) => s + v, 0) / ds.length;
           const off = pts.reduce((s0, [x, y]) => s0 - (x - cx) * uy + (y - cy) * ux, 0) / pts.length;   // where your cut really went, across the line
           pts = null;
-          if (cover < 0.6) { trail.setAttribute('points', ''); return; }   // too short: try again
+          if (cover < 0.6) { trail.setAttribute('points', ''); pop(lay, t('¡De lado a lado!'), cx, cy - 40, 'bad'); return; }   // too short: try again
           const n = avg < 10 ? 3 : avg < 20 ? 2 : avg < 35 ? 1 : 0;
           if (n) slash(off);
           finish(n, `${Math.round(avg)} px del corte`);
         };
         demo.addEventListener('pointerdown', down); demo.addEventListener('pointermove', move); addEventListener('pointerup', up);
         cleanup = () => { demo.removeEventListener('pointerdown', down); demo.removeEventListener('pointermove', move); removeEventListener('pointerup', up); };
-        active = true; runTimer(T(4000), () => finish(0));
-      }, `✂️ ${FOOD}`, 'corta por la línea');
+        active = true; runTimer(T(4000), () => finish(0, t('¡Se acabó el tiempo!')));
+      }, `✂️ ${FOOD}`, t('corta por la línea'));
     },
     // ¡ORDENA!: four in a column, made for a phone held upright. The spots shrink from top to bottom (the top one
     // twice the bottom one), and whatever sits in a spot takes its size: drag them up and down until the biggest is on top
     ordena() {
       const SIZES = ['🐜', '🐭', '🐱', '🐕', '🐴', '🐘', '🐋'];
       // Numbers that are a little tricky to sort at a glance, one kind at random
-      const numSet = () => { const s = new Set(), big = Math.random() < 0.35, span = big ? 900 : 90, lo = big ? 100 : 10, any = () => lo + rnd(span);
+      const numSet = () => { const s = new Set(), big = rand() < 0.35, span = big ? 900 : 90, lo = big ? 100 : 10, any = () => lo + rnd(span);
         const kind = rnd(5), d = rnd(10), base = lo + rnd(span - 14);
         for (let tries = 0; s.size < 4 && tries < 200; tries++) {
           if (kind === 0) s.add(any() & ~1);                                   // all even
@@ -493,15 +511,15 @@ trackVisit();   // the site's traffic (D-208)
         }
         return s.size === 4 ? [...s].slice(0, 4) : numSet(); };
       let vals, show, emo;
-      if (Math.random() < 0.6) { vals = numSet(); show = v => v; emo = false; }
+      if (rand() < 0.6) { vals = numSet(); show = v => v; emo = false; }
       else { vals = shuffle([...Array(SIZES.length).keys()]).slice(0, 4); show = v => SIZES[v]; emo = true; }
       const goal = [...vals].sort((x, y) => y - x);   // top to bottom: big to small
       let cur; do { cur = shuffle([...vals]); } while (cur.join() === goal.join());
-      command('¡ORDENA!', () => {
+      command(t('¡ORDENA!'), () => {
         const SZ = [92, 76, 60, 46], GAP = 12, BOX = 120, N = 4, ys = []; let y = 0; SZ.forEach(sz => { ys.push(y); y += sz + GAP; });
         const HT = y - GAP;
         set(`<div class="sortcol" id="sc" style="width:${BOX}px;height:${HT}px">${SZ.map((sz, i) => `<i class="sortslot" style="left:${(BOX - sz) / 2}px;top:${ys[i]}px;width:${sz}px;height:${sz}px"></i>`).join('')}
-          <div class="sortaxis2"><span>grande<b>▲</b></span><i></i><span>chico<b>▼</b></span></div>
+          <div class="sortaxis2"><span>${t('grande')}<b>▲</b></span><i></i><span>${t('chico')}<b>▼</b></span></div>
           ${cur.map(v => `<div class="chipv${emo ? ' emo' : ''}" data-v="${v}">${show(v)}</div>`).join('')}</div>`);
         const sc = $id('sc'); let els = [...sc.querySelectorAll('.chipv')];
         const fit = (el, i) => { const sz = SZ[i]; Object.assign(el.style, { width: sz + 'px', height: sz + 'px', left: (BOX - sz) / 2 + 'px', fontSize: (emo ? sz * 0.62 : sz * 0.46) + 'px', borderRadius: sz * 0.22 + 'px' }); };
@@ -521,11 +539,11 @@ trackVisit();   // the site's traffic (D-208)
           const drop = () => { if (drag !== el) return; drag = null; el.classList.remove('lift'); layout(); land(el);
             if (els.map(c => +c.dataset.v).join() === goal.join()) { active = false; cancelAnimationFrame(raf);
               els.forEach((c, i) => setTimeout(() => c.classList.add('ok'), 120 + i * 110)); active = true;
-              const s = (performance.now() - t0) / 1000 * sp; later(() => finish(s < 2.6 ? 3 : s < 4 ? 2 : 1, '¡En orden!', 900), 560); } };
+              const s = (performance.now() - t0) / 1000 * sp; later(() => finish(s < 2.6 ? 3 : s < 4 ? 2 : 1, t('¡En orden!'), 900), 560); } };
           el.addEventListener('pointerup', drop); el.addEventListener('pointercancel', drop);
         });
-        active = true; const t0 = runTimer(T(5600), () => finish(0));
-      }, null, 'arrastra: el más grande arriba');
+        active = true; const t0 = runTimer(T(5600), () => finish(0, t('¡Se acabó el tiempo!')));
+      }, null, t('arrastra: el más grande arriba'));
     },
     // ¡CALCULA!: one quick operation, three answers right under it
     calcula() {
@@ -536,10 +554,10 @@ trackVisit();   // the site's traffic (D-208)
       else { a = 2 + rnd(8); b = 2 + rnd(8); op = '×'; r = a * b; }
       const wrong = shuffle([r - 1, r + 1, r - 2, r + 2, r + 10, r - 10].filter(v => v >= 0 && v !== r)).slice(0, 2);
       const opts = shuffle([r, ...wrong]);
-      command('¡CALCULA!', () => {
+      command(t('¡CALCULA!'), () => {
         set(`<div class="op">${a} ${op} ${b}</div><div class="opts3 low">${opts.map(v => `<button type="button" data-v="${v}">${v}</button>`).join('')}</div>`);
-        active = true; const t0 = runTimer(T(4000), () => finish(0, `Era ${r}`));
-        numPick(screen.querySelector('.opts3'), r, t0, s => s < 1.5 ? 3 : s < 3 ? 2 : 1, `Era ${r}`);
+        active = true; const t0 = runTimer(T(4000), () => finish(0, t('Era {n}', { n: r })));
+        numPick(screen.querySelector('.opts3'), r, t0, s => s < 1.5 ? 3 : s < 3 ? 2 : 1, t('Era {n}', { n: r }));
       }, '➕ ➖ ✖️');
     },
     // ¡CONECTA!: a 7×6 board where you have three in a line; tap the column that drops the fourth
@@ -570,7 +588,7 @@ trackVisit();   // the site's traffic (D-208)
           if (c === mc && need[c] > mr) { ok = false; break; }
           for (let r = 0; r < h; r++) {
             const k = cells.findIndex(([rr, cc]) => rr === r && cc === c);
-            g[r][c] = k >= 0 && k !== miss ? ME : (Math.random() < 0.6 ? THEM : ME);
+            g[r][c] = k >= 0 && k !== miss ? ME : (rand() < 0.6 ? THEM : ME);
           }
         }
         if (!ok || wins(g, ME) || wins(g, THEM)) continue;
@@ -580,20 +598,20 @@ trackVisit();   // the site's traffic (D-208)
         if (g.flat().filter(Boolean).length < 9) continue;
         grid = g; goalCol = mc; break;
       }
-      command('¡CONECTA!', () => {
+      command(t('¡CONECTA!'), () => {
         const cell = Math.floor(Math.min((demo.clientWidth - 24 - 12 - 6 * 4 - 8) / C, (demo.clientHeight - 175) / (R + 1)));
         const disc = p => p === ME ? 'me' : 'them';
-        full(`<div class="c4wrap"><span class="c4note top">arrastra y suelta ⬇️</span>
+        full(`<div class="c4wrap"><span class="c4note top">${t('toca la columna o arrastra')} ⬇️</span>
           <div class="c4lane" id="lane" style="--cell:${cell}px"><i class="dot me c4hand" id="hand"></i></div>
           <div class="c4" id="c4" style="--cell:${cell}px">${[...Array(C).keys()].map(c => `<div class="c4col" data-c="${c}">${[...Array(R).keys()].reverse().map(r => `<span class="c4cell">${grid[r][c] ? `<i class="dot ${disc(grid[r][c])}"></i>` : ''}</span>`).join('')}</div>`).join('')}</div>
-          <span class="you me">Tú eres <i class="dot me"></i></span></div>`);
+          <span class="you me">${t('Tú eres')} <i class="dot me"></i></span></div>`);
         const lane = $id('lane'), hand = $id('hand'), cols = [...screen.querySelectorAll('.c4col')];
         // Where each column's middle is, inside the lane
         const centers = () => { const L = lane.getBoundingClientRect(); return cols.map(c => { const r = c.getBoundingClientRect(); return r.left + r.width / 2 - L.left; }); };
         let mid = centers(), aim = 3, x = mid[aim], dragging = false, moved = false, onLane = false, sx = 0;
         const show = () => { hand.style.left = x + 'px'; cols.forEach((c, i) => c.classList.toggle('aim', i === aim)); };
         show();
-        active = true; const t0 = runTimer(T(5500), () => finish(0));
+        active = true; const t0 = runTimer(T(5500), () => finish(0, t('¡Se acabó el tiempo!')));
         const drop = () => {
           const c = aim, h = heightOf(grid, c); if (h >= R) { x = mid[aim]; show(); return; }
           const s = (performance.now() - t0) / 1000 * sp, good = c === goalCol, col = cols[c];
@@ -603,7 +621,7 @@ trackVisit();   // the site's traffic (D-208)
           d.className = 'dot me falling'; d.style.setProperty('--from', `${-(R - h + 1) * (cell + 4)}px`);
           slot.append(d); grid[h][c] = ME;
           active = false; cancelAnimationFrame(raf); timer.hidden = true;
-          setTimeout(() => { active = true; if (good) col.classList.add('win'); finish(good ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, good ? '¡Cuatro en línea!' : '¡Esa no conecta!'); }, reduce ? 50 : 450);
+          setTimeout(() => { active = true; if (good) col.classList.add('win'); finish(good ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, good ? t('¡Cuatro en línea!') : t('¡Esa no conecta!')); }, reduce ? 50 : 450);
         };
         listen({
           down: e => { mid = centers(); dragging = true; moved = false; sx = e.clientX; const L = lane.getBoundingClientRect(); onLane = e.clientY >= L.top - 30 && e.clientY <= L.bottom + 20; hand.classList.add('held'); },
@@ -611,9 +629,13 @@ trackVisit();   // the site's traffic (D-208)
             x = Math.max(mid[0], Math.min(mid[C - 1], fx));
             aim = mid.reduce((b, m, i) => Math.abs(m - x) < Math.abs(mid[b] - x) ? i : b, 0); show(); },
           // A tap that didn't drag (and wasn't on your disc) drops nothing
-          up: () => { if (!dragging) return; dragging = false; hand.classList.remove('held'); x = mid[aim]; show(); if (moved || onLane) drop(); },
+          // A tap on a column drops the disc there, like a drag that ends on it
+          up: () => { if (!dragging) return; dragging = false; hand.classList.remove('held');
+            if (!moved && !onLane) { const L = lane.getBoundingClientRect(), fx = sx - L.left; if (fx < mid[0] - cell || fx > mid[C - 1] + cell) { x = mid[aim]; show(); return; }
+              aim = mid.reduce((b, m, i) => Math.abs(m - fx) < Math.abs(mid[b] - fx) ? i : b, 0); }
+            x = mid[aim]; show(); drop(); },
         });
-      }, '<span class="example">🟡🟡🟡 ⬇️</span>', 'arrastra tu ficha y suéltala donde hace cuatro en línea');
+      }, '<span class="example">🟡🟡🟡 ⬇️</span>', t('toca la columna (o arrastra tu ficha) donde hace cuatro en línea'));
     },
     // ¡LIMPIA!: a dirty floor tile in the middle (far from the phone's side edges, where swipes go "back");
     // wipe it with your finger until every piece is clean. The floor is an 8×8 grid: a piece the finger
@@ -621,13 +643,13 @@ trackVisit();   // the site's traffic (D-208)
     limpia() {
       // What's under the dirt, and the kind of dirt on it
       const SURF = pick([
-        { k: 'mesa', icon: '🪵', what: 'la mesa', base: '#5c4630', blots: ['#3f2a18', '#7d5a36', '#4f3520', '#8a6a44', '#2e1f12'] },
-        { k: 'cocina', icon: '🍳', what: 'la cocina', base: '#8a7a3a', blots: ['#6d5e24', '#a8933f', '#5a4a1a', '#b5a24a', '#4a3c12'] },
-        { k: 'ventana', icon: '🪟', what: 'la ventana', base: '#77736c', blots: ['#5f5c57', '#9a958d', '#6b675f', '#a8a39a', '#4d4a45'] },
-        { k: 'plato', icon: '🍽️', what: 'el plato', base: '#9c4a2a', blots: ['#b5532c', '#7a2f18', '#c96a3a', '#5e2410', '#d98a4a'] },
+        { k: 'mesa', icon: '🪵', what: t('limpia la mesa hasta que brille'), hint: t('pasa el dedo por la mesa sucia'), base: '#5c4630', blots: ['#3f2a18', '#7d5a36', '#4f3520', '#8a6a44', '#2e1f12'] },
+        { k: 'cocina', icon: '🍳', what: t('limpia la cocina hasta que brille'), hint: t('pasa el dedo por la cocina sucia'), base: '#8a7a3a', blots: ['#6d5e24', '#a8933f', '#5a4a1a', '#b5a24a', '#4a3c12'] },
+        { k: 'ventana', icon: '🪟', what: t('limpia la ventana hasta que brille'), hint: t('pasa el dedo por la ventana sucia'), base: '#77736c', blots: ['#5f5c57', '#9a958d', '#6b675f', '#a8a39a', '#4d4a45'] },
+        { k: 'plato', icon: '🍽️', what: t('limpia el plato hasta que brille'), hint: t('pasa el dedo por el plato sucio'), base: '#9c4a2a', blots: ['#b5532c', '#7a2f18', '#c96a3a', '#5e2410', '#d98a4a'] },
       ]);
-      command('¡LIMPIA!', () => {
-        full(`<div class="layer" id="lay"><div class="floor surf-${SURF.k}" id="fl"><canvas id="dirt"></canvas></div><div class="pct" id="pct">0 %</div><span class="c4note wipe-note">limpia ${SURF.what} hasta que brille</span></div>`);
+      command(t('¡LIMPIA!'), () => {
+        full(`<div class="layer" id="lay"><div class="floor surf-${SURF.k}" id="fl"><canvas id="dirt"></canvas></div><div class="pct" id="pct">0 %</div><span class="c4note wipe-note">${SURF.what}</span></div>`);
         const lay = document.getElementById('lay'), fl = document.getElementById('fl'), cv = document.getElementById('dirt'), pct = document.getElementById('pct');
         const side = Math.floor(Math.min(lay.clientWidth * 0.78, lay.clientHeight - 64)), N = 8, cs = side / N;
         fl.style.width = fl.style.height = side + 'px';
@@ -638,8 +660,8 @@ trackVisit();   // the site's traffic (D-208)
         ctx.fillStyle = SURF.base; ctx.fillRect(0, 0, side, side);
         for (let k = 0; k < 70; k++) {
           ctx.fillStyle = pick(SURF.blots);
-          ctx.globalAlpha = 0.5 + Math.random() * 0.5;
-          ctx.beginPath(); ctx.ellipse(Math.random() * side, Math.random() * side, 6 + Math.random() * side * 0.12, 4 + Math.random() * side * 0.08, Math.random() * 3, 0, 7); ctx.fill();
+          ctx.globalAlpha = 0.5 + rand() * 0.5;
+          ctx.beginPath(); ctx.ellipse(rand() * side, rand() * side, 6 + rand() * side * 0.12, 4 + rand() * side * 0.08, rand() * 3, 0, 7); ctx.fill();
         }
         ctx.globalAlpha = 1;
         const clean = Array(N * N).fill(false); let left = N * N, on = false, last = null, t0 = performance.now();
@@ -649,7 +671,7 @@ trackVisit();   // the site's traffic (D-208)
           clean[k] = true; left--;
           ctx.clearRect(i * cs - 0.5, j * cs - 0.5, cs + 1, cs + 1);
           pct.textContent = `${Math.round((1 - left / (N * N)) * 100)} %`;
-          if (!left) { fl.classList.add('shine'); const s = (performance.now() - t0) / 1000 * sp; mascot(); finish(s < 3 ? 3 : s < 4.5 ? 2 : 1, '¡Brillante! ✨', 1500); }
+          if (!left) { fl.classList.add('shine'); const s = (performance.now() - t0) / 1000 * sp; mascot(); finish(s < 3 ? 3 : s < 4.5 ? 2 : 1, t('¡Brillante! ✨'), 1500); }
         };
         // Spotless: a muscly sponge peeks in from the bottom-right corner, flexes, says it, and ducks out
         const mascot = () => { const m = mk(demo, 'div', 'mascot', `<svg viewBox="0 0 120 140" aria-hidden="true">
@@ -659,7 +681,7 @@ trackVisit();   // the site's traffic (D-208)
             <circle cx="40" cy="58" r="3" fill="#e0b000"/><circle cx="78" cy="52" r="2.5" fill="#e0b000"/><circle cx="72" cy="86" r="3" fill="#e0b000"/><circle cx="38" cy="84" r="2" fill="#e0b000"/>
             <ellipse cx="48" cy="66" rx="6" ry="7" fill="#fff"/><ellipse cx="72" cy="66" rx="6" ry="7" fill="#fff"/><circle cx="49" cy="67" r="3.4" fill="#1b0f08"/><circle cx="71" cy="67" r="3.4" fill="#1b0f08"/>
             <path d="M44 56 L54 59 M76 56 L66 59" stroke="#1b0f08" stroke-width="3" stroke-linecap="round"/><path d="M48 78 Q60 90 72 78" fill="#fff" stroke="#1b0f08" stroke-width="3" stroke-linejoin="round"/>
-            <path d="M100 8 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#fff"/></svg><b>¡IMPECABLE!</b>`);
+            <path d="M100 8 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#fff"/></svg><b>${t('¡IMPECABLE!')}</b>`);
           setTimeout(() => m.remove(), 1450); };
         // The finger is a sponge about one and a half pieces wide
         const R = cs * 0.75;
@@ -682,12 +704,12 @@ trackVisit();   // the site's traffic (D-208)
         demo.addEventListener('pointerdown', down); demo.addEventListener('pointermove', move); addEventListener('pointerup', up);
         cleanup = () => { demo.removeEventListener('pointerdown', down); demo.removeEventListener('pointermove', move); removeEventListener('pointerup', up); };
         active = true; t0 = performance.now();
-        runTimer(T(6000), () => finish(0, `Quedó ${Math.round((1 - left / (N * N)) * 100)} % limpio`));
-      }, `🧽 ${SURF.icon}`, `pasa el dedo por ${SURF.what} sucia`.replace('el plato sucia', 'el plato sucio'));
+        runTimer(T(6000), () => finish(0, t('Quedó {n} % limpio', { n: Math.round((1 - left / (N * N)) * 100) })));
+      }, `🧽 ${SURF.icon}`, SURF.hint);
     },
     // 2 ¡PARA!: a radar beam sweeps round lighting up colored lights; tap to stop it inside the green slice
     para() {
-      command('¡PARA!', () => {
+      command(t('¡PARA!'), () => {
         const { lay, W, H } = lay0('<svg id="sv" class="fullsvg"></svg>');
         const sv = $id('sv'); sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
         const cx = W / 2, cy = H * 0.44, r = Math.min(W, H) * 0.43, mid = rnd(360), half = 20;
@@ -726,9 +748,9 @@ trackVisit();   // the site's traffic (D-208)
           sv.insertAdjacentHTML('beforeend', `<circle class="ping" cx="${x}" cy="${y}" r="10" fill="none" stroke="${col}" stroke-width="4"/><circle class="ping p2" cx="${x}" cy="${y}" r="10" fill="none" stroke="${col}" stroke-width="3"/>`);
           leds.forEach(l => { l.setAttribute('fill', col); l.setAttribute('opacity', '1'); l.classList.add('ledblink'); });
           if (n) zones[n - 1].classList.add('zhit'); else lay.classList.add('shake');
-          finish(n, n ? null : '¡Fuera de la franja!', 1100); } });
-        active = true; runTimer(T(4000), () => finish(0));
-      }, '📡', 'frena el radar: mientras más al centro, más estrellas');
+          finish(n, n ? null : t('¡Fuera de la franja!'), 1100); } });
+        active = true; runTimer(T(4000), () => finish(0, t('¡Se acabó el tiempo!')));
+      }, '📡', t('frena el radar: mientras más al centro, más estrellas'));
     },
     // 3 ¡APLASTA!: five flies buzz around; tap and a fly swatter comes down from behind onto that spot and squashes what's there
     aplasta() {
@@ -743,74 +765,77 @@ trackVisit();   // the site's traffic (D-208)
         <rect x="45" y="92" width="10" height="138" rx="5" fill="#ff7a1a"/><rect x="45" y="92" width="4" height="138" rx="2" fill="#ffb066"/>
         <rect x="6" y="4" width="88" height="92" rx="18" fill="#2ee6d6"/><rect x="12" y="10" width="76" height="80" rx="13" fill="url(#mesh)"/>
         <rect x="6" y="4" width="88" height="92" rx="18" fill="none" stroke="#14b3a5" stroke-width="5"/></svg>`;
-      command('¡APLASTA!', () => {
+      command(t('¡APLASTA!'), () => {
         const { lay, W, H } = lay0('<div class="flycount" id="fc">🪰 0 / 9</div>');
         const fc = $id('fc'), N = 9;
         const flies = [...Array(N).keys()].map(() => { const el = mk(lay, 'div', 'obj fly', FLY);
-          const f = { el, x: W * (0.2 + Math.random() * 0.6), y: H * (0.2 + Math.random() * 0.6), vx: (Math.random() - 0.5) * 240 * sp, vy: (Math.random() - 0.5) * 240 * sp, dead: false }; return f; });
+          const f = { el, x: W * (0.2 + rand() * 0.6), y: H * (0.2 + rand() * 0.6), vx: (rand() - 0.5) * 240 * sp, vy: (rand() - 0.5) * 240 * sp, dead: false }; return f; });
         let n = 0, last = performance.now(); const t0 = last;
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now;
-          flies.forEach(f => { if (f.dead) return;
-            if (Math.random() < 0.05) { f.vx += (Math.random() - 0.5) * 320; f.vy += (Math.random() - 0.5) * 320; }
+          flies.forEach(f => { if (f.dead || f.held) return;
+            if (rand() < 0.05) { f.vx += (rand() - 0.5) * 320; f.vy += (rand() - 0.5) * 320; }
             const v = Math.hypot(f.vx, f.vy), mx = 190 * sp, mn = 60 * sp; if (v > mx) { f.vx *= mx / v; f.vy *= mx / v; } else if (v < mn && v > 0) { f.vx *= mn / v; f.vy *= mn / v; }
             f.x += f.vx * dt; f.y += f.vy * dt;
             if (f.x < W * 0.12 || f.x > W * 0.88) f.vx *= -1; if (f.y < H * 0.1 || f.y > H * 0.9) f.vy *= -1;
             f.x = Math.max(W * 0.12, Math.min(W * 0.88, f.x)); f.y = Math.max(H * 0.1, Math.min(H * 0.9, f.y));
             f.el.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(f.vy, f.vx) + Math.PI / 2}rad)`; place(f.el, f.x, f.y); }); });
         // The swatter: comes in big and tilted (from behind you) and lands flat on the spot; whatever is under its head gets squashed
+        // What counts is where the flies were at the tap, not 110 ms later: the ones under the head stop there
+        // (caught) while the swatter comes down, so a fly you clearly hit never slips out of it
         listen({ down: e => { const [x, y] = ptIn(lay, e);
           const sw = mk(lay, 'div', 'swatter', SWATTER); place(sw, x, y);
+          const caught = flies.filter(f => !f.dead && !f.held && near([f.x, f.y], [x, y], 50)); caught.forEach(f => { f.held = true; });
           later(() => { if (!active) return;
-            pop(lay, '¡PAF!', x, y - 50);
+            pop(lay, t('¡PAF!'), x, y - 50); SFX.hit();
             let hit = 0;
-            flies.forEach(f => { if (!f.dead && near([f.x, f.y], [x, y], 46)) { f.dead = true; n++; hit++; f.el.classList.add('splat'); f.el.style.transform = 'translate(-50%, -50%)'; } });
+            caught.forEach(f => { f.dead = true; n++; hit++; f.el.classList.add('splat'); f.el.style.transform = 'translate(-50%, -50%)'; });
             // Two or more in one swat: a comic-book COMBO!
-            if (hit >= 2) { const cb = mk(lay, 'div', 'comic', `<div class="burst"></div><b>¡COMBO${hit > 2 ? ` x${hit}` : ''}!</b>`);
-              place(cb, Math.max(W * 0.3, Math.min(W * 0.7, x)), Math.max(H * 0.2, y - 70)); cb.style.setProperty('--tilt', `${(Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 6)}deg`);
+            if (hit >= 2) { const cb = mk(lay, 'div', 'comic', `<div class="burst"></div><b>${t('¡COMBO!')}${hit > 2 ? ` x${hit}` : ''}</b>`);
+              place(cb, Math.max(W * 0.3, Math.min(W * 0.7, x)), Math.max(H * 0.2, y - 70)); cb.style.setProperty('--tilt', `${(rand() < 0.5 ? -1 : 1) * (6 + rand() * 6)}deg`);
               lay.classList.remove('shake'); void lay.offsetWidth; lay.classList.add('shake'); later(() => cb.remove(), 560); }
             fc.textContent = `🪰 ${n} / ${N}`;
-            if (n === N) { later(() => finish(timeStars(t0, 5, 7), '¡Las nueve!'), 150); }
+            if (n === N) { later(() => finish(timeStars(t0, 5, 7), t('¡Las nueve!')), 150); }
           }, 110);
           later(() => sw.remove(), 450); } });
-        active = true; runTimer(T(9000), () => finish(n >= N - 2 ? 1 : 0, `${n} de ${N} moscas`));
-      }, '🪰 × 9', 'toca donde está la mosca para aplastarla');
+        active = true; runTimer(T(9000), () => finish(n >= N - 2 ? 1 : 0, t('{n} de {N} moscas', { n, N })));
+      }, '🪰 × 9', t('toca donde está la mosca para aplastarla'));
     },
     // 5 ¡REVIENTA!: lots of quick bubbles in close blues; pop only the true blue ones
     revienta() {
-      command('¡REVIENTA!', () => {
+      command(t('¡REVIENTA!'), () => {
         const { lay, W, H } = lay0('');
         const BLUE = '#2f6bff', OTHERS = ['#5ec8ff', '#8a5cff', '#2ec4b6'];
         const plan = shuffle([...Array(9).fill(BLUE), ...Array(9).keys()].map(c => typeof c === 'number' ? OTHERS[c % 3] : c))
-          .map((c, i) => ({ c, at: 80 + i * T(230), x: W * (0.18 + Math.random() * 0.64), dur: T(1900) * (0.85 + Math.random() * 0.3), size: 36 + Math.round(Math.random() * 44) }));
+          .map((c, i) => ({ c, at: 80 + i * T(230), x: W * (0.18 + rand() * 0.64), dur: T(1900) * (0.85 + rand() * 0.3), size: 36 + Math.round(rand() * 44) }));
         // Popping: a ring and a few droplets fly out of the bubble
         const burst = b => { const r = mk(lay, 'span', 'obj bring'); place(r, b.x, b.y); r.style.width = r.style.height = b.size + 'px'; r.style.borderColor = b.c; later(() => r.remove(), 400);
-          for (let i = 0; i < 7; i++) { const d = mk(lay, 'span', 'obj bdrop'); place(d, b.x, b.y); const an = i / 7 * Math.PI * 2 + Math.random() * 0.5, dist = b.size * (0.6 + Math.random() * 0.5);
+          for (let i = 0; i < 7; i++) { const d = mk(lay, 'span', 'obj bdrop'); place(d, b.x, b.y); const an = i / 7 * Math.PI * 2 + rand() * 0.5, dist = b.size * (0.6 + rand() * 0.5);
             d.style.background = b.c; d.style.setProperty('--dx', `${Math.cos(an) * dist}px`); d.style.setProperty('--dy', `${Math.sin(an) * dist}px`); later(() => d.remove(), 420); } };
         let blue = 0, wrong = 0;
         animate(t => { plan.forEach(b => {
           if (!b.el && t >= b.at) { b.el = mk(lay, 'button', 'obj bub'); b.el.style.background = `radial-gradient(circle at 35% 30%, #fff8, ${b.c} 55%)`;
             b.el.style.width = b.el.style.height = b.size + 'px';
             tap(b.el, () => { if (b.done) return; b.done = true; b.el.classList.add('popped'); later(() => b.el.remove(), 180); burst(b);
-              if (b.c === BLUE) { blue++; if (blue === 9) finish(wrong === 0 ? 3 : wrong === 1 ? 2 : 1, '¡Todas las azules!'); }
+              if (b.c === BLUE) { blue++; if (blue === 9) finish(wrong === 0 ? 3 : wrong === 1 ? 2 : 1, t('¡Todas las azules!')); }
               else { wrong++; pop(lay, '✗', b.x, b.y, 'bad'); } }); }
           if (b.el && !b.done) { const k = (t - b.at) / b.dur; b.y = H * (1.05 - 1.15 * k); place(b.el, b.x + Math.sin(k * 8 + b.x) * 12, b.y); if (k > 1) { b.done = true; b.el.remove(); } } }); });
-        active = true; runTimer(T(6200), () => finish(blue >= 6 && wrong <= 1 ? 2 : blue >= 3 ? 1 : 0, `${blue}/9 azules · ${wrong} malas`));
-      }, '<span class="bubgoal"></span>', 'revienta solo las de este azul');
+        active = true; runTimer(T(6200), () => finish(blue >= 6 && wrong <= 1 ? 2 : blue >= 3 ? 1 : 0, t('{b}/9 azules · {w} malas', { b: blue, w: wrong })));
+      }, '<span class="bubgoal"></span>', t('revienta solo las de este azul'));
     },
     // 8 ¡ALIMENTA!: three animals, three foods; drag each food to its animal
     alimenta() {
       const ps = shuffle([['🐵', '🍌'], ['🐶', '🦴'], ['🐰', '🥕'], ['🐱', '🐟'], ['🐼', '🎋'], ['🐝', '🌸'], ['🐿️', '🌰']]).slice(0, 3);
-      command('¡ALIMENTA!', () => {
+      command(t('¡ALIMENTA!'), () => {
         const { lay, W, H } = lay0('');
         const animals = ps.map(([a], i) => { const d = mk(lay, 'div', 'obj animal', a); place(d, W * (0.2 + 0.3 * i), H * 0.22); d.dataset.a = a; return d; });
         let fed = 0, errs = 0; const t0 = performance.now();
         shuffle([0, 1, 2]).forEach((pi, k) => { const f = mk(lay, 'div', 'obj food', ps[pi][1]), home = [W * (0.2 + 0.3 * k), H * 0.76]; place(f, ...home);
           draggable(f, lay, (x, y) => { const hit = animals.find(d => near(posOf(d), [x, y], 52));
             if (hit && hit.dataset.a === ps[pi][0]) { f.remove(); hit.classList.add('fed'); fed++; pop(lay, '😋', ...posOf(hit));
-              if (fed === 3) finish(errs === 0 ? timeStars(t0, 3, 4.5) : errs === 1 ? 2 : 1, '¡Todos comieron!'); }
+              if (fed === 3) finish(errs === 0 ? timeStars(t0, 3, 4.5) : errs === 1 ? 2 : 1, t('¡Todos comieron!')); }
             else { if (hit) { errs++; pop(lay, '✗', x, y, 'bad'); } back(f, home); } }); });
-        active = true; runTimer(T(6500), () => finish(0, `${fed} de 3`));
-      }, '🐵 ← 🍌', 'lleva cada comida a su animal');
+        active = true; runTimer(T(6500), () => finish(0, t('{n} de 3', { n: fed })));
+      }, '🐵 ← 🍌', t('lleva cada comida a su animal'));
     },
     // ¡REBOTA!: a Pong paddle at the bottom; the ball bounces on its own. Hit the three pixel aliens at the top; don't let it fall
     rebota() {
@@ -827,13 +852,13 @@ trackVisit();   // the site's traffic (D-208)
         return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" style="width:${w * 5.2}px;height:${h * 5.2}px" data-c="${c}">${r}</svg>`; };
       // When hit: it bursts into square pixels of its color
       const blast = (lay, x, y, c) => { for (let i = 0; i < 12; i++) { const q = mk(lay, 'span', 'obj pix'); q.style.background = c; place(q, x, y);
-        const an = i / 12 * Math.PI * 2, d = 30 + Math.random() * 40; q.style.setProperty('--dx', `${Math.round(Math.cos(an) * d / 6) * 6}px`); q.style.setProperty('--dy', `${Math.round(Math.sin(an) * d / 6) * 6}px`); later(() => q.remove(), 500); } };
-      command('¡REBOTA!', () => {
+        const an = i / 12 * Math.PI * 2, d = 30 + rand() * 40; q.style.setProperty('--dx', `${Math.round(Math.cos(an) * d / 6) * 6}px`); q.style.setProperty('--dy', `${Math.round(Math.sin(an) * d / 6) * 6}px`); later(() => q.remove(), 500); } };
+      command(t('¡REBOTA!'), () => {
         const { lay, W, H } = lay0('<div class="paddle" id="pd"></div><span class="obj pball" id="pb"></span>');
         const pd = $id('pd'), pb = $id('pb'), PW = W * 0.3, py = H * 0.9, R = 11;
         pd.style.width = PW + 'px'; let px = W / 2;
-        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); const x = W * (0.22 + 0.28 * i) + (Math.random() - 0.5) * W * 0.08, y = H * (0.14 + Math.random() * 0.12); place(el, x, y); return { el, x, y, hit: false }; });
-        let bx = W / 2, by = H * 0.6, an = (-60 - Math.random() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
+        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); const x = W * (0.22 + 0.28 * i) + (rand() - 0.5) * W * 0.08, y = H * (0.14 + rand() * 0.12); place(el, x, y); return { el, x, y, hit: false }; });
+        let bx = W / 2, by = H * 0.6, an = (-60 - rand() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
         const mv = e => { px = Math.max(PW / 2 + W * 0.04, Math.min(W - PW / 2 - W * 0.04, ptIn(lay, e)[0])); };
         listen({ down: mv, move: mv });
         animate((t, now) => { const dt = Math.min(0.03, (now - last) / 1000); last = now;
@@ -844,11 +869,11 @@ trackVisit();   // the site's traffic (D-208)
           if (vy > 0 && by + R >= py && by + R <= py + 18 && Math.abs(bx - px) <= PW / 2 + R) {
             const off = (bx - px) / (PW / 2), a = (-90 + off * 60) * Math.PI / 180, s = Math.hypot(vx, vy) * 1.04; vx = s * Math.cos(a); vy = s * Math.sin(a); by = py - R; pd.classList.remove('hit'); void pd.offsetWidth; pd.classList.add('hit'); }
           for (const g of targets) if (!g.hit && near([bx, by], [g.x, g.y], 30)) { g.hit = true; broken++; g.el.remove(); blast(lay, g.x, g.y, g.el.firstElementChild.dataset.c); vy = Math.abs(vy); pop(lay, '+1', g.x, g.y);
-            if (broken === 3) { finish(3, '¡Le diste a los tres!'); return false; } }
+            if (broken === 3) { finish(3, t('¡Le diste a los tres!')); return false; } }
           place(pb, bx, by);
-          if (by > H + R) { finish(broken, broken ? `Le diste a ${broken} de 3` : '¡Se te cayó!'); return false; } });
-        active = true; runTimer(T(9000), () => finish(broken, `Le diste a ${broken} de 3`));
-      }, '🏓 → 👾👾👾', 'mueve la paleta y dale a los tres marcianos');
+          if (by > H + R) { finish(broken, broken ? t('Le diste a {n} de 3', { n: broken }) : t('¡Se te cayó!')); return false; } });
+        active = true; runTimer(T(9000), () => finish(broken, t('Le diste a {n} de 3', { n: broken })));
+      }, '🏓 → 👾👾👾', t('mueve la paleta y dale a los tres marcianos'));
     },
     // 11 ¡EQUILIBRA!: a plate on a stick leans and falls; move your finger left and right under it to keep it up
     equilibra() {
@@ -858,10 +883,10 @@ trackVisit();   // the site's traffic (D-208)
       const KINDS = [[70, 22, '#ff4d5e'], [56, 26, '#4d8bff'], [44, 30, '#3ddc84'], [34, 34, '#ffd23f'], [62, 18, '#8a5cff'], [40, 24, '#ff9a1f']];
       const LOAD = shuffle(KINDS.slice()).slice(0, 3);
       const chip = ([w, h, c], z = 3) => `<i style="display:inline-block;width:${w / z}px;height:${h / z}px;background:${c};border-radius:2px;margin-right:4px;vertical-align:bottom"></i>`;
-      command('¡EQUILIBRA!', () => {
-        const { lay, W, H } = lay0(`<svg id="sv" class="fullsvg"></svg><div class="loadhud" id="lh"></div><span class="c4note wipe-note">mueve el dedo de lado a lado</span>`);
+      command(t('¡EQUILIBRA!'), () => {
+        const { lay, W, H } = lay0(`<svg id="sv" class="fullsvg"></svg><div class="loadhud" id="lh"></div><span class="c4note wipe-note">${t('mueve el dedo de lado a lado')}</span>`);
         const sv = $id('sv'), lh = $id('lh'); sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        const L = H * 0.4, by = H * 0.86; let x = W / 2, tx = W / 2, v = 0, a = (Math.random() < 0.5 ? -1 : 1) * 0.08, w = 0, last = performance.now();
+        const L = H * 0.4, by = H * 0.86; let x = W / 2, tx = W / 2, v = 0, a = (rand() < 0.5 ? -1 : 1) * 0.08, w = 0, last = performance.now();
         let gust = 0, pvx = null, pvy = null, ax = 0, ay = 0, ptx = null, pty = null;
         sv.innerHTML = `<line id="st" stroke="#e8c48a" stroke-width="8" stroke-linecap="round"/>
           <g id="top"><ellipse cx="0" cy="-5" rx="54" ry="9" fill="#f4f1ea" stroke="#c9c2b4" stroke-width="2"/><ellipse cx="0" cy="-7" rx="36" ry="5" fill="#e6e0d4"/>
@@ -883,13 +908,13 @@ trackVisit();   // the site's traffic (D-208)
           const wx = topx + it.u * Math.cos(a) - yo * Math.sin(a), wy = topy + it.u * Math.sin(a) + yo * Math.cos(a);
           it.el.remove(); items.splice(k, 1); hud();
           const d = mk(lay, 'span', 'obj dropitem'); Object.assign(d.style, { width: bw + 'px', height: bh + 'px', background: c, borderRadius: '4px', border: '2px solid rgba(0,0,0,.35)' });
-          place(d, wx, wy); d.style.setProperty('--dx', `${Math.sign(it.vu || it.u || a) * (60 + Math.random() * 40)}px`); d.style.setProperty('--dy', `${H}px`);
+          place(d, wx, wy); d.style.setProperty('--dx', `${Math.sign(it.vu || it.u || a) * (60 + rand() * 40)}px`); d.style.setProperty('--dy', `${H}px`);
           pop(lay, '−★', wx, wy - 20, 'bad'); try { navigator.vibrate?.(40); } catch (_) { /* none */ }
-          if (!items.length) { finish(0, '¡Se cayó todo!'); return true; } return false; };
+          if (!items.length) { finish(0, t('¡Se cayó todo!')); return true; } return false; };
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (dt <= 0) return;
           const nx = x + (tx - x) * Math.min(1, dt * 10); v = (nx - x) / dt; x = nx;
           // A little push now and then, so it never just stands still
-          gust -= dt; if (gust <= 0) { gust = 0.9 + Math.random() * 0.9; w += (Math.random() < 0.5 ? -1 : 1) * 0.35 * (0.5 + Math.random() * 0.6) * sp; }
+          gust -= dt; if (gust <= 0) { gust = 0.9 + rand() * 0.9; w += (rand() < 0.5 ? -1 : 1) * 0.35 * (0.5 + rand() * 0.6) * sp; }
           // It leans more the more it leans; moving the base toward the lean pushes it back (tuned so a finger kept under the plate saves it)
           w += (2.2 * sp * Math.sin(a) - 4 * v / L) * dt; w *= 0.97; a += w * dt;
           if (Math.abs(a) > LIMIT) { a = Math.sign(a) * LIMIT; w *= -0.3; }       // the stick leans but never falls over
@@ -920,13 +945,13 @@ trackVisit();   // the site's traffic (D-208)
           top.setAttribute('transform', `translate(${topx} ${topy}) rotate(${a * 180 / Math.PI})`);
           hb.setAttribute('x', x - 42); hb.setAttribute('y', by);
           lay.classList.toggle('warn', items.some((it, k) => Math.abs(it.u - (k ? items[k - 1].u : 0)) > lim(k) * 0.6));
-          if (t >= dur) { finish(items.length, items.length === 3 ? '¡No se cayó nada!' : `Se cayeron ${3 - items.length}`); return false; } });
+          if (t >= dur) { finish(items.length, items.length === 3 ? t('¡No se cayó nada!') : t('Se cayeron {n}', { n: 3 - items.length })); return false; } });
         active = true; runTimer(dur, () => {});
-      }, `<span style="display:inline-flex;flex-direction:column-reverse;align-items:center">${LOAD.map(k => chip(k, 1.1).replace('margin-right:4px', 'margin:0')).join('')}</span>`, 'que no se caiga nada del plato');
+      }, `<span style="display:inline-flex;flex-direction:column-reverse;align-items:center">${LOAD.map(k => chip(k, 1.1).replace('margin-right:4px', 'margin:0')).join('')}</span>`, t('que no se caiga nada del plato'));
     },
     // 14 ¡DIBUJA!: trace the dotted shape without leaving it
     dibuja() {
-      command('¡DIBUJA!', () => {
+      command(t('¡DIBUJA!'), () => {
         const { lay, W, H } = lay0('<svg id="sv" class="fullsvg"></svg><div class="pct" id="pct">0 %</div>');
         const sv = $id('sv'), pct = $id('pct'); sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
         const cx = W / 2, cy = H * 0.5, R = Math.min(W * 0.32, H * 0.32), kind = pick(['circle', 'square', 'triangle', 'star']);
@@ -944,7 +969,7 @@ trackVisit();   // the site's traffic (D-208)
         // Closed: the line snaps shut, the shape lights up, and a sparkle bursts where the ends met
         const shine = (x, y) => { pg.setAttribute('stroke', '#ffd23f'); pg.removeAttribute('stroke-dasharray'); pg.setAttribute('fill', 'rgba(255,210,63,.14)');
           ink.classList.add('closed'); const ring = mk(lay, 'span', 'obj joinring'); place(ring, x, y);
-          for (let i = 0; i < 10; i++) { const sp2 = mk(lay, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y); const an = i / 10 * Math.PI * 2, d = 34 + Math.random() * 30;
+          for (let i = 0; i < 10; i++) { const sp2 = mk(lay, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y); const an = i / 10 * Math.PI * 2, d = 34 + rand() * 30;
             sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); } };
         // Fast strokes skip ground between pointer events: walk the gap in small steps so the whole stroke counts
         let prev = null;
@@ -952,18 +977,18 @@ trackVisit();   // the site's traffic (D-208)
           const n = prev ? Math.max(1, Math.ceil(Math.hypot(p[0] - prev[0], p[1] - prev[1]) / 4)) : 1;
           for (let i = 1; i <= n; i++) { const f = i / n; bd = Math.max(bd, mark(prev ? [prev[0] + (p[0] - prev[0]) * f, prev[1] + (p[1] - prev[1]) * f] : p)); }
           if (prev) travel += Math.hypot(p[0] - prev[0], p[1] - prev[1]);
-          prev = p; if (bd > 44) { finish(0, '¡Te saliste!'); return; } line.push(p); tr.setAttribute('points', line.map(q => q.join(',')).join(' '));
+          prev = p; if (bd > 44) { finish(0, t('¡Te saliste!')); return; } line.push(p); tr.setAttribute('points', line.map(q => q.join(',')).join(' '));
           const k = seen.size / S.length; pct.textContent = `${Math.min(99, Math.round(k * 100))} %`;   // 100 % only once it closes
           // Done only when it really closes: nearly all of it traced AND the pen back on a loose end (not just near the finish)
           const meet = k >= 0.95 && travel > 60 && ends.find(q => Math.hypot(p[0] - q[0], p[1] - q[1]) < 16);
-          if (meet) { line.push(meet); tr.setAttribute('points', line.map(q => q.join(',')).join(' ')); pct.textContent = '100 %'; shine(...meet); finish(timeStars(t0, 3, 4.5), '¡Completa!', 1300); } };
+          if (meet) { line.push(meet); tr.setAttribute('points', line.map(q => q.join(',')).join(' ')); pct.textContent = '100 %'; shine(...meet); finish(timeStars(t0, 3, 4.5), t('¡Completa!'), 1300); } };
         // Not finished: fewer stars by how much of the shape got traced
-        const partial = why => { const k = seen.size / S.length; finish(k >= 0.85 ? 2 : k >= 0.6 ? 1 : 0, `${why}: ${Math.min(99, Math.round(k * 100))} % trazado`); };
+        const partial = why => { const k = seen.size / S.length; finish(k >= 0.85 ? 2 : k >= 0.6 ? 1 : 0, t('{why}: {n} % trazado', { why, n: Math.min(99, Math.round(k * 100)) })); };
         listen({ down: e => { on = true; prev = null; travel = 0; line = []; tr = ink.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')); go(e); if (active) ends.push(line[0]); },
           move: e => { if (on) go(e); },
-          up: () => { on = false; prev = null; if (line.length) ends.push(line[line.length - 1]); if (active && seen.size / S.length >= 0.6) partial('Te faltó cerrarla'); } });
-        active = true; runTimer(T(6500), () => partial('Se acabó el tiempo'));
-      }, '✏️ ⭐', 'repasa la figura sin salirte');
+          up: () => { on = false; prev = null; if (line.length) ends.push(line[line.length - 1]); if (active && seen.size / S.length >= 0.6) partial(t('Te faltó cerrarla')); } });
+        active = true; runTimer(T(6500), () => partial(t('Se acabó el tiempo')));
+      }, '✏️ ⭐', t('repasa la figura sin salirte'));
     },
     // 19 ¡SIGUE!: a drawn little rat scurries around, turning now and then; keep your finger on it
     sigue() {
@@ -985,10 +1010,10 @@ trackVisit();   // the site's traffic (D-208)
         <circle cx="-8" cy="-16" r="4.2" fill="#111"/><circle cx="8" cy="-16" r="4.2" fill="#111"/><circle cx="-6.6" cy="-17.6" r="1.4" fill="#fff"/><circle cx="9.4" cy="-17.6" r="1.4" fill="#fff"/>
         <circle cx="0" cy="-6" r="3.6" fill="#ff6b8a"/><path d="M-6 -1 Q0 5 6 -1" stroke="#5a5566" stroke-width="1.8" fill="none" stroke-linecap="round"/>
         <path d="M-5 -5 L-22 -9 M-5 -3 L-22 -2 M5 -5 L22 -9 M5 -3 L22 -2" stroke="#ddd" stroke-width="1"/></svg>`;
-      command('¡SIGUE!', () => {
-        const { lay, W, H } = lay0(`<div class="ringf" id="rg"></div><div class="obj rat" id="mo">${RAT}</div><span class="hint-here" id="here">👆<em>pon el dedo en la ratita</em></span><div class="pct" id="pct">0 %</div>`);
+      command(t('¡SIGUE!'), () => {
+        const { lay, W, H } = lay0(`<div class="ringf" id="rg"></div><div class="obj rat" id="mo">${RAT}</div><span class="hint-here" id="here">👆<em>${t('pon el dedo en la ratita')}</em></span><div class="pct" id="pct">0 %</div>`);
         const mo = $id('mo'), rg = $id('rg'), here = $id('here'), pct = $id('pct');
-        let x = W / 2, y = H / 2, head = Math.random() * Math.PI * 2, want = head, spd = 0, wantSpd = 0, nextTurn = 0, pause = 0;
+        let x = W / 2, y = H / 2, head = rand() * Math.PI * 2, want = head, spd = 0, wantSpd = 0, nextTurn = 0, pause = 0;
         let started = 0, on = false, finger = null, inT = 0, last = performance.now(); const DUR = T(4500) / 1000;
         // It faces left or right (never upside down) and tilts a little toward where it's going
         const draw = () => { place(mo, x, y); place(rg, x, y); const c = Math.cos(head), sn = Math.sin(head), flip = c < 0 ? -1 : 1;
@@ -1000,8 +1025,8 @@ trackVisit();   // the site's traffic (D-208)
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (!started) return;
           const tt = (now - started) / 1000;
           // Every so often: a new heading (a sharp turn), a new speed, sometimes a short freeze
-          if (tt >= nextTurn) { nextTurn = tt + (0.32 + Math.random() * 0.55) / sp; want = head + (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 1.6);
-            wantSpd = (Math.random() < 0.12 ? 0 : (150 + Math.random() * 170)) * sp; if (!wantSpd) pause = 0.15; }
+          if (tt >= nextTurn) { nextTurn = tt + (0.32 + rand() * 0.55) / sp; want = head + (rand() < 0.5 ? -1 : 1) * (0.7 + rand() * 1.6);
+            wantSpd = (rand() < 0.12 ? 0 : (150 + rand() * 170)) * sp; if (!wantSpd) pause = 0.15; }
           head += (want - head) * Math.min(1, dt * 9); spd += (wantSpd - spd) * Math.min(1, dt * 7);
           if (pause > 0) { pause -= dt; spd *= 0.6; }
           x += Math.cos(head) * spd * dt; y += Math.sin(head) * spd * dt;
@@ -1016,26 +1041,26 @@ trackVisit();   // the site's traffic (D-208)
             if (n >= 2) { rg.remove(); mo.className = 'obj rat front'; mo.style.transform = 'translate(-50%, -50%)'; mo.innerHTML = RATF;
               place(mo, Math.max(W * 0.25, Math.min(W * 0.75, x)), Math.max(H * 0.3, Math.min(H * 0.75, y)));
               for (let i = 0; i < 4; i++) { const nt = mk(lay, 'span', 'obj note', pick(['♪', '♫'])); place(nt, parseFloat(mo.style.left) + (i - 1.5) * 30, parseFloat(mo.style.top) - 50); nt.style.animationDelay = `${i * 0.25}s`; } }
-            finish(n, `La seguiste el ${Math.round(k * 100)} %`, n >= 2 ? 1900 : 800); return false; } });
-        active = true; runTimer(T(8000), () => finish(0, started ? null : 'No pusiste el dedo'));
-      }, '👆 🐀', 'pon el dedo en la ratita y no la sueltes');
+            finish(n, t('La seguiste el {n} %', { n: Math.round(k * 100) }), n >= 2 ? 1900 : 800); return false; } });
+        active = true; runTimer(T(8000), () => finish(0, started ? null : t('No pusiste el dedo')));
+      }, '👆 🐀', t('pon el dedo en la ratita y no la sueltes'));
     },
     // 21 ¡REPITE!: the pads light up in order; repeat it
     repite() {
       const n = sp >= 1.2 ? 6 : 5, seq = []; while (seq.length < n) { const c = rnd(4); if (c !== seq[seq.length - 1]) seq.push(c); }
-      command('¡REPITE!', () => {
-        set(`<div class="sub ask" id="ask">Mira…</div><div class="pads">${['#ff4d5e', '#4d8bff', '#3ddc84', '#ffd23f'].map((c, i) => `<button type="button" data-i="${i}" style="--c:${c}" aria-label="Botón ${i + 1}"></button>`).join('')}</div>`);
+      command(t('¡REPITE!'), () => {
+        set(`<div class="sub ask" id="ask">${t('Mira…')}</div><div class="pads">${['#ff4d5e', '#4d8bff', '#3ddc84', '#ffd23f'].map((c, i) => `<button type="button" data-i="${i}" style="--c:${c}" aria-label="${t('Botón {n}', { n: i + 1 })}"></button>`).join('')}</div>`);
         const pads = [...screen.querySelectorAll('.pads button')], ask = $id('ask');
         const flash = i => { pads[i].classList.add('lit'); later(() => pads[i].classList.remove('lit'), T(380)); };
         seq.forEach((i, k) => later(() => flash(i), 300 + k * T(560)));
-        later(() => { ask.textContent = '¡Ahora tú!'; let k = 0; active = true; const t0 = runTimer(T(6000), () => finish(0, `Eran ${n}`));
-          pads.forEach((b, i) => tap(b, () => { flash(i); if (i !== seq[k]) { finish(0, '¡Ese no era!'); return; } k++;
-            if (k === n) { const s = (performance.now() - t0) / 1000 * sp; finish(s < 3 ? 3 : s < 4.4 ? 2 : 1, '¡Igualito!'); } })); }, 300 + n * T(560));
-      }, '🟥🟦🟩', 'mira el orden y repítelo');
+        later(() => { ask.textContent = t('¡Ahora tú!'); let k = 0; active = true; const t0 = runTimer(T(6000), () => finish(0, t('Eran {n}', { n })));
+          pads.forEach((b, i) => tap(b, () => { flash(i); if (i !== seq[k]) { finish(0, t('¡Ese no era!')); return; } k++;
+            if (k === n) { const s = (performance.now() - t0) / 1000 * sp; finish(s < 3 ? 3 : s < 4.4 ? 2 : 1, t('¡Igualito!')); } })); }, 300 + n * T(560));
+      }, '🟥🟦🟩', t('mira el orden y repítelo'));
     },
     // 22 ¡DÓNDE QUEDÓ!: the ball goes under a cup, the cups swap; tap the right one
     dondequedo() {
-      command('¡DÓNDE QUEDÓ!', () => {
+      command(t('¡DÓNDE QUEDÓ!'), () => {
         const { lay, W, H } = lay0('<span class="obj pearl" id="pe">⚪</span>');
         const pe = $id('pe'), xs = [W * 0.22, W * 0.5, W * 0.78], cy = H * 0.5;
         const cups = [0, 1, 2].map(i => { const c = mk(lay, 'button', 'obj cup'); c.pos = i; place(c, xs[i], cy - 50); return c; });
@@ -1048,48 +1073,48 @@ trackVisit();   // the site's traffic (D-208)
           [ca, cb].forEach(c => { c.style.transition = `left ${T(320)}ms ease-in-out`; place(c, xs[c.pos], cy); });
           if (++k < swaps) later(swap, T(380)); else later(ask, T(380)); };
         later(() => { pe.hidden = true; swap(); }, 1100);
-        const ask = () => { place(pe, xs[ball], cy + 18); active = true; const t0 = runTimer(T(3000), () => finish(0));
+        const ask = () => { place(pe, xs[ball], cy + 18); active = true; const t0 = runTimer(T(3000), () => finish(0, t('¡Se acabó el tiempo!')));
           cups.forEach(c => tap(c, () => { cups.forEach(o => place(o, xs[o.pos], cy - 50)); pe.hidden = false;
-            const s = (performance.now() - t0) / 1000 * sp; finish(c.pos === ball ? (s < 1.2 ? 3 : s < 2.2 ? 2 : 1) : 0, c.pos === ball ? '¡Ahí estaba!' : '¡Estaba en otro!'); })); };
-      }, '⚪ 🥤🥤🥤', 'sigue la bolita');
+            const s = (performance.now() - t0) / 1000 * sp; finish(c.pos === ball ? (s < 1.2 ? 3 : s < 2.2 ? 2 : 1) : 0, c.pos === ball ? t('¡Ahí estaba!') : t('¡Estaba en otro!')); })); };
+      }, '⚪ 🥤🥤🥤', t('sigue la bolita'));
     },
     // 23 ¡DIFERENTE!: two boards almost the same; tap the one thing that changed
     diferente() {
       const PAIRS = [['🍎', '🍏'], ['🐶', '🐕'], ['⭐', '🌟'], ['🍋', '🍊'], ['🌷', '🌹'], ['😀', '😃'], ['🚗', '🚙'], ['🐱', '🐈'], ['🍇', '🫐'], ['🌙', '🌛']];
       const pool = shuffle([...PAIRS]).slice(0, 6), cells = Array.from({ length: 12 }, () => pick(pool)[0]), at = rnd(12);
       const changed = PAIRS.find(p => p[0] === cells[at])[1], b = [...cells]; b[at] = changed;
-      command('¡DIFERENTE!', () => {
+      command(t('¡DIFERENTE!'), () => {
         // Two boards with a line between them, so it's clear which is which; tapping the change on either one counts
         const board = g => `<div class="diff">${g.map((e, i) => `<button type="button" data-i="${i}">${e}</button>`).join('')}</div>`;
         set(`<div class="diffwrap">${board(cells)}<div class="diffsep"></div>${board(b)}</div>`);
         const pair = () => [...screen.querySelectorAll(`.diff button[data-i="${at}"]`)];
         // Missed (or out of time): the two that differ start blinking so you see where it was
         const show = () => pair().forEach(x => x.classList.add('found', 'blink'));
-        active = true; const t0 = runTimer(T(6000), () => { show(); finish(0, 'Era esta', 1500); });
+        active = true; const t0 = runTimer(T(6000), () => { show(); finish(0, t('Era esta'), 1500); });
         screen.querySelectorAll('.diff button').forEach(btn => tap(btn, () => { const ok = +btn.dataset.i === at;
           const s = (performance.now() - t0) / 1000 * sp;
-          if (!ok) { btn.classList.add('nope'); show(); finish(0, '¡Era otra!', 1500); return; }
+          if (!ok) { btn.classList.add('nope'); show(); finish(0, t('¡Era otra!'), 1500); return; }
           // Found: the two light up, a beam joins them across the line, and they sparkle
           const D = demo.getBoundingClientRect(), c = pair().map(x => { x.classList.add('found', 'hit'); const r = x.getBoundingClientRect(); return [r.left - D.left + r.width / 2, r.top - D.top + r.height / 2]; });
           const beam = mk(demo, 'div', 'diffbeam'); Object.assign(beam.style, { left: c[0][0] - 3 + 'px', top: c[0][1] + 'px', height: c[1][1] - c[0][1] + 'px' });
           c.forEach(([x, y]) => { for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y);
-            const an = i / 8 * Math.PI * 2 + 0.3, d = 30 + Math.random() * 22; sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); } });
+            const an = i / 8 * Math.PI * 2 + 0.3, d = 30 + rand() * 22; sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); } });
           setTimeout(() => beam.remove(), 1300);
-          finish(s < 2.2 ? 3 : s < 3.8 ? 2 : 1, '¡La encontraste!', 1200); }));
-      }, '🔍', 'toca lo único que cambió');
+          finish(s < 2.2 ? 3 : s < 3.8 ? 2 : 1, t('¡La encontraste!'), 1200); }));
+      }, '🔍', t('toca lo único que cambió'));
     },
     // 24 ¡CUÁL FALTA!: four things, then only three come back; which one left?
     cualfalta() {
       const set4 = shuffle(['🐸', '🦊', '🐧', '🐙', '🦄', '🐢', '🦉', '🐞', '🦀', '🐝']), shown = set4.slice(0, 4), gone = pick(shown), extra = set4.slice(4, 6);
-      command('¡CUÁL FALTA!', () => {
+      command(t('¡CUÁL FALTA!'), () => {
         set(`<div class="row4">${shown.map(e => `<span>${e}</span>`).join('')}</div>`);
         later(() => {
           // The other three stay right where they were; a ? marks the empty spot
-          set(`<div class="row4 dim">${shown.map(e => e === gone ? '<span class="q" id="hole">?</span>' : `<span>${e}</span>`).join('')}</div><div class="sub ask">¿Cuál se fue?</div><div class="opts3 emo" id="o3">${shuffle([gone, ...extra]).map(e => `<button type="button" data-e="${e}">${e}</button>`).join('')}</div>`);
+          set(`<div class="row4 dim">${shown.map(e => e === gone ? '<span class="q" id="hole">?</span>' : `<span>${e}</span>`).join('')}</div><div class="sub ask">${t('¿Cuál se fue?')}</div><div class="opts3 emo" id="o3">${shuffle([gone, ...extra]).map(e => `<button type="button" data-e="${e}">${e}</button>`).join('')}</div>`);
           const hole = $id('hole'), o3 = $id('o3');
           // Fill the spot: right one fits and sparkles; wrong one bounces off and the real one shows up blinking
           const fill = (e, ok) => { hole.textContent = e; hole.className = ok ? 'fit' : 'fit wrongfit'; };
-          active = true; const t0 = runTimer(T(3500), () => { fill(gone, false); hole.classList.add('blinkfit'); finish(0, `Se fue ${gone}`, 1300); });
+          active = true; const t0 = runTimer(T(3500), () => { fill(gone, false); hole.classList.add('blinkfit'); finish(0, t('Se fue {e}', { e: gone }), 1300); });
           let locked = false;
           o3.querySelectorAll('button').forEach(b => tap(b, () => { if (locked) return; locked = true; cancelAnimationFrame(raf);
             const ok = b.dataset.e === gone, n = ok ? timeStars(t0, 1.4, 2.5) : 0;
@@ -1100,34 +1125,34 @@ trackVisit();   // the site's traffic (D-208)
               b.style.visibility = 'hidden'; requestAnimationFrame(() => requestAnimationFrame(() => place(fly, r2.left - D.left + r2.width / 2, r2.top - D.top + r2.height / 2)));
               later(() => { const cx = r2.left - D.left + r2.width / 2, cy = r2.top - D.top + r2.height / 2;
                 if (ok) { fly.remove(); fill(gone, true);
-                  for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, cx, cy); const an = i / 8 * Math.PI * 2, d = 34 + Math.random() * 20;
+                  for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, cx, cy); const an = i / 8 * Math.PI * 2, d = 34 + rand() * 20;
                     sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); }
-                  finish(n, '¡Bien! Ese era', 1100); }
-                else { fly.classList.add('bounce'); later(() => { fly.remove(); fill(gone, false); hole.classList.add('blinkfit'); finish(0, `¡Mal! Se fue ${gone}`, 1300); }, 420); }
+                  finish(n, t('¡Bien! Ese era'), 1100); }
+                else { fly.classList.add('bounce'); later(() => { fly.remove(); fill(gone, false); hole.classList.add('blinkfit'); finish(0, t('¡Mal! Se fue {e}', { e: gone }), 1300); }, 420); }
               }, 480); }, reduce ? 100 : 380); }));
         }, T(1400));
-      }, '👀', 'mira bien: uno se va a ir');
+      }, '👀', t('mira bien: uno se va a ir'));
     },
     // 25 ¡MÁS!: three rounds in a row, each a bit closer than the last; tap the tray with more. One star per right answer.
     // Sometimes both trays hold the same thing; sometimes each holds something different (and a different size), to fool the eye
     mas() {
       const EMO = ['⭐', '🍬', '🪙', '🫐', '🍓', '🌸', '🐞', '🍪'];
       const GAP = [0.45, 0.28, 0.14];   // how much bigger the bigger pile is, round by round
-      const rounds = GAP.map(g => { const a = 9 + rnd(9), b = a + Math.max(1, Math.round(a * g * (0.8 + Math.random() * 0.4))), left = Math.random() < 0.5;
-        const same = Math.random() < 0.5, e1 = pick(EMO), e2 = same ? e1 : pick(EMO.filter(e => e !== e1));
+      const rounds = GAP.map(g => { const a = 9 + rnd(9), b = a + Math.max(1, Math.round(a * g * (0.8 + rand() * 0.4))), left = rand() < 0.5;
+        const same = rand() < 0.5, e1 = pick(EMO), e2 = same ? e1 : pick(EMO.filter(e => e !== e1));
         // When they differ, the tray with more usually gets the smaller things, so it looks like less
-        const big = 1.55, small = 1.05, fsMore = same ? 1.25 : (Math.random() < 0.7 ? small : big), fsLess = same ? 1.25 : (fsMore === small ? big : small);
+        const big = 1.55, small = 1.05, fsMore = same ? 1.25 : (rand() < 0.7 ? small : big), fsLess = same ? 1.25 : (fsMore === small ? big : small);
         return left ? { L: b, R: a, eL: e1, eR: e2, fL: fsMore, fR: fsLess } : { L: a, R: b, eL: e1, eR: e2, fL: fsLess, fR: fsMore }; });
-      command('¡MÁS!', () => {
+      command(t('¡MÁS!'), () => {
         // Spread evenly but loosely inside a round tray, never touching each other or the rim
         const pile = (n, emo, fs) => { const pts = []; let minD = 0.95 * Math.sqrt(Math.PI * 0.74 * 0.74 / n);
           for (let tries = 0; pts.length < n; tries++) { if (tries > 400) { minD *= 0.93; tries = 0; }
-            const a = Math.random() * Math.PI * 2, r = 0.74 * Math.sqrt(Math.random()), q = [r * Math.cos(a), r * Math.sin(a)];
+            const a = rand() * Math.PI * 2, r = 0.74 * Math.sqrt(rand()), q = [r * Math.cos(a), r * Math.sin(a)];
             if (pts.every(o => Math.hypot(o[0] - q[0], o[1] - q[1]) >= minD)) pts.push(q); }
-          return pts.map(([x, y]) => `<span style="left:${50 + x * 50}%;top:${50 + y * 50}%;font-size:${fs}rem;rotate:${Math.round((Math.random() - 0.5) * 40)}deg">${emo}</span>`).join(''); };
+          return pts.map(([x, y]) => `<span style="left:${50 + x * 50}%;top:${50 + y * 50}%;font-size:${fs}rem;rotate:${Math.round((rand() - 0.5) * 40)}deg">${emo}</span>`).join(''); };
         let i = 0, right = 0; const marks = [];
         const play = () => { const r = rounds[i];
-          set(`<div class="masdots">${GAP.map((_, j) => `<i class="${marks[j] === undefined ? (j === i ? 'cur' : '') : marks[j] ? 'ok' : 'no'}"></i>`).join('')}</div><div class="sub ask">¿Dónde hay más?</div>
+          set(`<div class="masdots">${GAP.map((_, j) => `<i class="${marks[j] === undefined ? (j === i ? 'cur' : '') : marks[j] ? 'ok' : 'no'}"></i>`).join('')}</div><div class="sub ask">${t('¿Dónde hay más?')}</div>
             <div class="piles"><button type="button" data-s="L">${pile(r.L, r.eL, r.fL)}</button><button type="button" data-s="R">${pile(r.R, r.eR, r.fR)}</button></div>`);
           let done = false;
           const end = btn => { if (done) return; done = true; cancelAnimationFrame(raf);
@@ -1136,11 +1161,11 @@ trackVisit();   // the site's traffic (D-208)
               mk(b, 'b', 'pilecount', b.dataset.s === 'L' ? r.L : r.R); });
             if (btn) btn.classList.add(ok ? 'gotit' : 'missed');
             screen.querySelector('.masdots').children[i].className = ok ? 'ok' : 'no';
-            later(() => { i++; if (i < rounds.length) play(); else finish(right, right === 3 ? '¡Las tres!' : `${right} de 3`); }, 950); };
+            later(() => { i++; if (i < rounds.length) play(); else finish(right, right === 3 ? t('¡Las tres!') : t('{n} de 3', { n: right })); }, 950); };
           runTimer(T(3000), () => end(null));
           screen.querySelectorAll('.piles button').forEach(btn => tap(btn, () => end(btn))); };
         active = true; play();
-      }, '⚖️ ×3', 'tres veces: toca el lado con más');
+      }, '⚖️ ×3', t('tres veces: toca el lado con más'));
     },
     // 26 ¡QUÉ HORA ES!: an analog clock and three times
     quehora() {
@@ -1149,28 +1174,28 @@ trackVisit();   // the site's traffic (D-208)
       const swapped = m % 5 === 0 && m / 5 !== h && m / 5 > 0 ? fmt(m / 5, (h % 12) * 5) : fmt(h % 12 + 1, m);
       const opts = shuffle([...new Set([right, swapped, fmt(h === 1 ? 12 : h - 1, m), fmt(h % 12 + 1, m)])].slice(0, 3).concat([]));
       if (!opts.includes(right)) opts[0] = right;
-      command('¡QUÉ HORA ES!', () => {
+      command(t('¡QUÉ HORA ES!'), () => {
         const ha = ((h % 12) + m / 60) * 30, ma = m * 6;
         const hand = (an, len, w, col) => `<line x1="50" y1="50" x2="${50 + len * Math.sin(an * Math.PI / 180)}" y2="${50 - len * Math.cos(an * Math.PI / 180)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
         const ticks = [...Array(12).keys()].map(k => { const an = k * 30 * Math.PI / 180; return `<line x1="${50 + 40 * Math.sin(an)}" y1="${50 - 40 * Math.cos(an)}" x2="${50 + 45 * Math.sin(an)}" y2="${50 - 45 * Math.cos(an)}" stroke="#fff" stroke-width="${k % 3 ? 1.5 : 3}"/>`; }).join('');
         const nums = [12, 3, 6, 9].map((nn, k) => `<text x="${50 + 33 * Math.sin(k * Math.PI / 2)}" y="${50 - 33 * Math.cos(k * Math.PI / 2) + 4}" font-size="10" fill="#fff" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900">${nn}</text>`).join('');
         set(`<svg class="clock" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#1f0c38" stroke="#ffd23f" stroke-width="3"/>${ticks}${nums}${hand(ha, 22, 5, '#ffd23f')}${hand(ma, 36, 3, '#2ee6d6')}<circle cx="50" cy="50" r="3.5" fill="#fff"/></svg><div class="opts3 wide">${opts.map(o => `<button type="button" data-v="${o}">${o}</button>`).join('')}</div>`);
-        active = true; const t0 = runTimer(T(4500), () => finish(0, `Eran las ${right}`));
+        active = true; const t0 = runTimer(T(4500), () => finish(0, t('Eran las {h}', { h: right })));
         screen.querySelectorAll('.opts3 button').forEach(b => tap(b, () => { const ok = b.dataset.v === right; const s = (performance.now() - t0) / 1000 * sp;
-          finish(ok ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, ok ? null : `Eran las ${right}`); }));
-      }, '🕐', 'aguja corta: hora · aguja larga: minutos');
+          finish(ok ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, ok ? null : t('Eran las {h}', { h: right })); }));
+      }, '🕐', t('aguja corta: hora · aguja larga: minutos'));
     },
     // 27 ¡SU SOMBRA!: one thing and three silhouettes: its own, its mirror image, and a different one
     sombra() {
       const POOL = ['🦒', '🐘', '🦖', '🐓', '🦜', '🚲', '🎸', '🦕', '🐿️', '🦘', '🐊', '🛵', '🐕', '🦩'];
       const [goal, other] = shuffle([...POOL]);
-      command('¡SU SOMBRA!', () => {
+      command(t('¡SU SOMBRA!'), () => {
         const opts = shuffle([['ok', ''], ['mirror', 'transform:scaleX(-1)'], ['other', '']]);
-        set(`<div class="shadowgoal">${goal}</div><div class="sub ask">¿Cuál es su sombra?</div><div class="shadows">${opts.map(([k, st]) => `<button type="button" data-k="${k}"><span style="${st}">${k === 'other' ? other : goal}</span></button>`).join('')}</div>`);
-        active = true; const t0 = runTimer(T(4000), () => finish(0));
+        set(`<div class="shadowgoal">${goal}</div><div class="sub ask">${t('¿Cuál es su sombra?')}</div><div class="shadows">${opts.map(([k, st]) => `<button type="button" data-k="${k}"><span style="${st}">${k === 'other' ? other : goal}</span></button>`).join('')}</div>`);
+        active = true; const t0 = runTimer(T(4000), () => finish(0, t('¡Se acabó el tiempo!')));
         screen.querySelectorAll('.shadows button').forEach(b => tap(b, () => { const k = b.dataset.k; b.classList.add('show'); const s = (performance.now() - t0) / 1000 * sp;
-          finish(k === 'ok' ? (s < 1.4 ? 3 : s < 2.6 ? 2 : 1) : 0, k === 'ok' ? null : k === 'mirror' ? '¡Esa estaba al revés!' : '¡Esa era de otro!'); }));
-      }, '🌑', 'toca la silueta que le corresponde');
+          finish(k === 'ok' ? (s < 1.4 ? 3 : s < 2.6 ? 2 : 1) : 0, k === 'ok' ? null : k === 'mirror' ? t('¡Esa estaba al revés!') : t('¡Esa era de otro!')); }));
+      }, '🌑', t('toca la silueta que le corresponde'));
     },
     // 28 ¡COMPLETA!: a number series and three answers
     completa() {
@@ -1180,11 +1205,11 @@ trackVisit();   // the site's traffic (D-208)
       else if (kind === 2) { const k = 2 + rnd(6), a = 4 * k + 5 + rnd(20); s = [a, a - k, a - 2 * k, a - 3 * k]; r = a - 4 * k; }
       else { const a = 1 + rnd(9), p = 1 + rnd(4), q = 3 + rnd(5); s = [a, a + p, a + p + q, a + 2 * p + q]; r = a + 2 * p + 2 * q; }
       const opts = shuffle([r, ...shuffle([r + 1, r - 1, r + 2, r - 2, r + 10].filter(v => v >= 0 && v !== r)).slice(0, 2)]);
-      command('¡COMPLETA!', () => {
+      command(t('¡COMPLETA!'), () => {
         set(`<div class="series">${s.join(', ')}, <b>?</b></div><div class="opts3 low">${opts.map(v => `<button type="button" data-v="${v}">${v}</button>`).join('')}</div>`);
-        active = true; const t0 = runTimer(T(4500), () => finish(0, `Era ${r}`));
-        numPick(screen.querySelector('.opts3'), r, t0, sec => sec < 2 ? 3 : sec < 3.4 ? 2 : 1, `Era ${r}`);
-      }, '🔢', 'qué número sigue');
+        active = true; const t0 = runTimer(T(4500), () => finish(0, t('Era {n}', { n: r })));
+        numPick(screen.querySelector('.opts3'), r, t0, sec => sec < 2 ? 3 : sec < 3.4 ? 2 : 1, t('Era {n}', { n: r }));
+      }, '🔢', t('qué número sigue'));
     },
     // 30 ¡NO TOQUES!: whack-a-mole, arcade style. Moles pop out of the holes, and now and then a bomb. Bonk every mole, never the bomb
     notoques() {
@@ -1221,7 +1246,7 @@ trackVisit();   // the site's traffic (D-208)
         <circle cx="51" cy="68" r="40" fill="url(#bBody)"/>
         <ellipse cx="36" cy="50" rx="11" ry="7" transform="rotate(-35 36 50)" fill="#fff" opacity=".35"/><circle cx="31" cy="58" r="3" fill="#fff" opacity=".25"/>
         <path d="M18 84 A40 40 0 0 0 84 84" stroke="#000" stroke-width="5" fill="none" opacity=".25"/></svg>`;
-      command('¡NO TOQUES!', () => {
+      command(t('¡NO TOQUES!'), () => {
         const { lay, W, H } = lay0('<div class="arcade"></div><div class="whackhud" id="wh">🔨 0 / 9</div>');
         // Three rows, smaller toward the back, for a bit of depth
         const ROWS = [[0.34, 0.72], [0.57, 0.86], [0.82, 1]], holes = [];
@@ -1235,8 +1260,8 @@ trackVisit();   // the site's traffic (D-208)
         const wh = $id('wh'), plan = shuffle([...Array(9).fill('mole'), 'bomb', 'bomb', 'bomb']);
         // A little burst of dirt from the hole's mouth
         const puff = h => { const bx = parseFloat(h.box.style.left), bw = h.box.offsetWidth, by = parseFloat(h.box.style.top) + h.box.offsetHeight;
-          for (let i = 0; i < 6; i++) { const d = mk(lay, 'span', 'dirt'); const dx = (Math.random() - 0.5) * bw * 0.9;
-            Object.assign(d.style, { left: bx + bw / 2 + dx * 0.4 + 'px', top: by - 4 + 'px', '--dx': dx + 'px', '--dy': -(14 + Math.random() * 22) + 'px', zIndex: 40 });
+          for (let i = 0; i < 6; i++) { const d = mk(lay, 'span', 'dirt'); const dx = (rand() - 0.5) * bw * 0.9;
+            Object.assign(d.style, { left: bx + bw / 2 + dx * 0.4 + 'px', top: by - 4 + 'px', '--dx': dx + 'px', '--dy': -(14 + rand() * 22) + 'px', zIndex: 40 });
             later(() => d.remove(), 520); } };
         let good = 0, k = 0;
         // All nine bonked: the nine moles pop up together and dance a little
@@ -1244,12 +1269,12 @@ trackVisit();   // the site's traffic (D-208)
           // plain timeouts: finish() clears the game's own timers, and this runs right after it
           setTimeout(() => { h.c.classList.add('up'); setTimeout(() => h.c.classList.add('dance'), 280); }, i * 40);
           const n = mk(lay, 'span', 'obj note', pick(['♪', '♫'])); const r = h.box.getBoundingClientRect(), L = lay.getBoundingClientRect();
-          place(n, r.left - L.left + r.width * (0.2 + Math.random() * 0.6), r.top - L.top + 6); n.style.animationDelay = `${0.3 + Math.random() * 0.8}s`; });
+          place(n, r.left - L.left + r.width * (0.2 + rand() * 0.6), r.top - L.top + 6); n.style.animationDelay = `${0.3 + rand() * 0.8}s`; });
         const show = () => { if (!active) return;
-          if (k >= plan.length) { later(() => { if (good === 9) { party(); finish(3, '¡Los 9! A bailar', 2300); } else finish(good >= 7 ? 2 : good >= 4 ? 1 : 0, `${good} de 9 topos`); }, T(700)); return; }
+          if (k >= plan.length) { later(() => { if (good === 9) { party(); finish(3, t('¡Los 9! A bailar'), 2300); } else finish(good >= 7 ? 2 : good >= 4 ? 1 : 0, t('{n} de 9 topos', { n: good })); }, T(700)); return; }
           const free = holes.filter(h => !h.busy); if (!free.length) { later(show, 120); return; }
           const h = pick(free), what = plan[k++]; h.busy = true; h.what = what; h.hit = false;
-          h.c.className = `critter ${what}`; h.c.innerHTML = what === 'mole' ? MOLE : BOMB; h.c.setAttribute('aria-label', what === 'mole' ? 'Topo' : 'Bomba');
+          h.c.className = `critter ${what}`; h.c.innerHTML = what === 'mole' ? MOLE : BOMB; h.c.setAttribute('aria-label', what === 'mole' ? t('Topo') : t('Bomba'));
           requestAnimationFrame(() => h.c.classList.add('up'));
           puff(h);
           later(() => { h.c.classList.remove('up'); later(() => { h.busy = false; }, 160); }, T(900));
@@ -1257,121 +1282,151 @@ trackVisit();   // the site's traffic (D-208)
         holes.forEach(h => tap(h.c, () => { if (!h.busy || h.hit || !h.c.classList.contains('up')) return; h.hit = true;
           if (h.what === 'bomb') { h.c.classList.add('boom'); const r = h.box.getBoundingClientRect(), L = lay.getBoundingClientRect();
             const fx = mk(lay, 'div', 'boomfx'); place(fx, r.left - L.left + r.width / 2, r.top - L.top + r.height * 0.55); h.c.innerHTML = '';
-            lay.classList.add('fail', 'shake'); finish(0, '¡Tocaste la bomba!'); return; }
+            lay.classList.add('fail', 'shake'); finish(0, t('¡Tocaste la bomba!')); return; }
           good++; wh.textContent = `🔨 ${good} / 9`; h.c.classList.add('bonk'); pop(lay, '+1', parseFloat(h.box.style.left) + h.box.offsetWidth / 2, parseFloat(h.box.style.top));
           later(() => h.c.classList.remove('up'), 220); }));
         active = true; show();
-      }, '🔨 ✓  💣 ✗', 'golpea los topos, nunca la bomba');
+      }, '🔨 ✓  💣 ✗', t('golpea los topos, nunca la bomba'));
     },
   };
   const META = [
-    ['cruza', '¡RUEDA!', '⚪', 'Un puente que cambia de forma (curva, espiral, círculo, ola o gancho) y de lugar: lleva la bola desde el círculo amarillo hasta la meta a cuadros. Hay que llegar a tiempo; llegar da ★★★, cada toque al borde rojo resta una y al tercer toque pierdes. Tu recorrido queda marcado.'],
-    ['espera', '¡ESPERA… YA!', '🟢', 'Rojo… y cuando pase a verde, toca. Antes de tiempo pierdes.'],
-    ['toca', '¡TOCA RÁPIDO!', '🎈', 'Aprieta el botón lo más rápido que puedas para inflar el globo; si lo revientas, ★★★.'],
-    ['quecolor', '¡QUÉ COLOR!', '🔴', 'Una palabra de color escrita en otra tinta. A veces pide el color de las letras, a veces el color que dice la palabra.'],
-    ['cuenta', '¡CUENTA!', '🍎', 'Una cosa entre parecidas de su mismo color (manzanas, limones, pepinos, naranjas, uvas o peces), todas moviéndose: cuántas hay.'],
-    ['atrapa', '¡ATRAPA!', '🪙', 'Arrastra la canasta: atrapa las monedas y esquiva las bombas, cada vez más rápido.'],
-    ['corta', '¡CORTA!', '🥪', 'Desliza por la línea punteada para cortar la comida (sándwich, sandía, pizza, torta…). El corte va en cualquier dirección: de lado, de arriba abajo o en diagonal.'],
-    ['ordena', '¡ORDENA!', '🐘', 'Cuatro números o animales en columna. Los puestos van de grande (arriba) a chico (abajo) y cada uno toma el tamaño de su puesto: arrástralos hasta que el más grande quede arriba.'],
-    ['calcula', '¡CALCULA!', '➕', 'Una operación rápida y tres respuestas.'],
-    ['conecta', '¡CONECTA!', '🟡', 'Cuatro en línea: arrastra tu ficha de arriba y suéltala sobre la columna que gana; cae sola a su lugar.'],
-    ['limpia', '¡LIMPIA!', '🧽', 'Una mesa, una cocina, una ventana o un plato sucios: pasa el dedo hasta que se vea todo limpio.'],
-    ['para', '¡PARA!', '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
-    ['aplasta', '¡APLASTA!', '🪰', 'Nueve moscas revoloteando: toca donde están y el matamoscas baja a aplastarlas. Dos de un golpe es ¡COMBO!'],
-    ['revienta', '¡REVIENTA!', '🫧', 'Suben burbujas de distintos tamaños y colores parecidos: revienta solo las del azul que te muestran.'],
-    ['alimenta', '¡ALIMENTA!', '🐵', 'Lleva cada comida a su animal.'],
-    ['rebota', '¡REBOTA!', '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
-    ['equilibra', '¡EQUILIBRA!', '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
-    ['dibuja', '¡DIBUJA!', '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
-    ['sigue', '¡SIGUE!', '🐀', 'Una ratita corre rápido y cambia de dirección sin aviso: mantén el dedo encima. Si la sigues bien, al final te mira y baila.'],
-    ['repite', '¡REPITE!', '🟦', 'Los botones se encienden en una secuencia de 5: repítela.'],
-    ['dondequedo', '¡DÓNDE QUEDÓ!', '⚪', 'La bolita bajo un vaso, los vasos se mezclan: toca el correcto.'],
-    ['diferente', '¡DIFERENTE!', '🔍', 'Dos tableros casi iguales, separados por una línea: toca lo único que cambió, en cualquiera de los dos.'],
-    ['cualfalta', '¡CUÁL FALTA!', '👀', 'Cuatro cosas; una se va y queda su hueco. Eliges cuál era y vuela de vuelta a su lugar: calza si acertaste.'],
-    ['mas', '¡MÁS!', '⚖️', 'Tres rondas seguidas, cada una más pareja: toca la bandeja con más. A veces las dos tienen lo mismo y a veces cosas distintas de otro tamaño, para engañar al ojo. Una ★ por acierto.'],
-    ['quehora', '¡QUÉ HORA ES!', '🕐', 'Un reloj de agujas y tres horas.'],
-    ['sombra', '¡SU SOMBRA!', '🌑', 'Una figura y tres siluetas: su sombra, su reflejo y la de otro.'],
-    ['completa', '¡COMPLETA!', '🔢', 'Una serie de números: cuál sigue.'],
-    ['notoques', '¡NO TOQUES!', '🔨', 'Como golpear topos de arcade: salen topos de los hoyos y a veces una bomba. Golpea los topos, nunca la bomba.'],
+    ['cruza', t('¡RUEDA!'), '⚪', 'Un puente que cambia de forma (curva, espiral, círculo, ola o gancho) y de lugar: lleva la bola desde el círculo amarillo hasta la meta a cuadros. Hay que llegar a tiempo; llegar da ★★★, cada toque al borde rojo resta una y al tercer toque pierdes. Si levantas el dedo, la bola espera: vuelve a ponerlo encima.'],
+    ['espera', t('¡ESPERA… YA!'), '🟢', 'Rojo… y cuando pase a verde, toca. Antes de tiempo pierdes.'],
+    ['toca', t('¡TOCA RÁPIDO!'), '🎈', 'Aprieta el botón lo más rápido que puedas para inflar el globo; si lo revientas, ★★★.'],
+    ['quecolor', t('¡QUÉ COLOR!'), '🔴', 'Una palabra de color escrita en otra tinta. A veces pide el color de las letras, a veces el color que dice la palabra.'],
+    ['cuenta', t('¡CUENTA!'), '🍎', 'Una cosa entre parecidas de su mismo color (manzanas, limones, pepinos, naranjas, uvas o peces), todas moviéndose: cuántas hay.'],
+    ['atrapa', t('¡ATRAPA!'), '🪙', 'Arrastra la canasta: atrapa las monedas y esquiva las bombas, cada vez más rápido.'],
+    ['corta', t('¡CORTA!'), '🥪', 'Desliza por la línea punteada para cortar la comida (sándwich, sandía, pizza, torta…). El corte va en cualquier dirección: de lado, de arriba abajo o en diagonal.'],
+    ['ordena', t('¡ORDENA!'), '🐘', 'Cuatro números o animales en columna. Los puestos van de grande (arriba) a chico (abajo) y cada uno toma el tamaño de su puesto: arrástralos hasta que el más grande quede arriba.'],
+    ['calcula', t('¡CALCULA!'), '➕', 'Una operación rápida y tres respuestas.'],
+    ['conecta', t('¡CONECTA!'), '🟡', 'Cuatro en línea: toca la columna que gana (o arrastra tu ficha hasta ella); cae sola a su lugar.'],
+    ['limpia', t('¡LIMPIA!'), '🧽', 'Una mesa, una cocina, una ventana o un plato sucios: pasa el dedo hasta que se vea todo limpio.'],
+    ['para', t('¡PARA!'), '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
+    ['aplasta', t('¡APLASTA!'), '🪰', 'Nueve moscas revoloteando: toca donde están y el matamoscas baja a aplastarlas. Dos de un golpe es ¡COMBO!'],
+    ['revienta', t('¡REVIENTA!'), '🫧', 'Suben burbujas de distintos tamaños y colores parecidos: revienta solo las del azul que te muestran.'],
+    ['alimenta', t('¡ALIMENTA!'), '🐵', 'Lleva cada comida a su animal.'],
+    ['rebota', t('¡REBOTA!'), '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
+    ['equilibra', t('¡EQUILIBRA!'), '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
+    ['dibuja', t('¡DIBUJA!'), '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
+    ['sigue', t('¡SIGUE!'), '🐀', 'Una ratita corre rápido y cambia de dirección sin aviso: mantén el dedo encima. Si la sigues bien, al final te mira y baila.'],
+    ['repite', t('¡REPITE!'), '🟦', 'Los botones se encienden en una secuencia de 5: repítela.'],
+    ['dondequedo', t('¡DÓNDE QUEDÓ!'), '⚪', 'La bolita bajo un vaso, los vasos se mezclan: toca el correcto.'],
+    ['diferente', t('¡DIFERENTE!'), '🔍', 'Dos tableros casi iguales, separados por una línea: toca lo único que cambió, en cualquiera de los dos.'],
+    ['cualfalta', t('¡CUÁL FALTA!'), '👀', 'Cuatro cosas; una se va y queda su hueco. Eliges cuál era y vuela de vuelta a su lugar: calza si acertaste.'],
+    ['mas', t('¡MÁS!'), '⚖️', 'Tres rondas seguidas, cada una más pareja: toca la bandeja con más. A veces las dos tienen lo mismo y a veces cosas distintas de otro tamaño, para engañar al ojo. Una ★ por acierto.'],
+    ['quehora', t('¡QUÉ HORA ES!'), '🕐', 'Un reloj de agujas y tres horas.'],
+    ['sombra', t('¡SU SOMBRA!'), '🌑', 'Una figura y tres siluetas: su sombra, su reflejo y la de otro.'],
+    ['completa', t('¡COMPLETA!'), '🔢', 'Una serie de números: cuál sigue.'],
+    ['notoques', t('¡NO TOQUES!'), '🔨', 'Como golpear topos de arcade: salen topos de los hoyos y a veces una bomba. Golpea los topos, nunca la bomba.'],
   ].map(([id, n, i, d]) => ({ id, n, i, d }));
   const NAMES = Object.fromEntries(META.map(m => [m.id, m.n]));
   if (META.some(m => !GAMES[m.id]) || Object.keys(GAMES).some(k => !NAMES[k])) console.warn('META and GAMES differ');
 
-  // ---- The lab page: a cover, the three ways to play, then runs of 10 different games in a row ----
-  const RUN = 10, MAX = RUN * 3, BEST = 'microgames:best';
-  let best = 0; try { best = +localStorage.getItem(BEST) || 0; } catch (_) { best = 0; }
-  const $btn = (id, fn) => $id(id)?.addEventListener('click', e => { e.stopPropagation(); fn(); });
+  // ---- The lab page: a cover with the rules folded in it, then runs of 10 different games in a row ----
+  // A shared run (?seed=K7Q2X, or ?today for Uno al día's seed of the day) is the same on every phone: the
+  // same ten games in the same order, and each one dealt the same (its own stream, engine.js `stream`).
+  // Without a seed every run is a new draw.
+  const TODAY = tiene('today'), DATE = new Date().toLocaleDateString('sv');
+  const SEED = (TODAY ? semillaDel(DATE) : param('seed') || '').toUpperCase();
+  const TODAY_KEY = 'microgames:today';
+  let code = '', scored = false;
+  const today = () => { try { const t = JSON.parse(localStorage.getItem(TODAY_KEY) || 'null'); return t?.d === DATE ? t : null; } catch (_) { return null; } };
+  const MAX = RUN * 3, BEST = 'microgames:best', BEST_PTS = 'microgames:best-points';
+  const keep = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (_) { /* not kept */ } };
+  const kept = k => { try { return +localStorage.getItem(k) || 0; } catch (_) { return 0; } };
+  let best = kept(BEST), bestPts = kept(BEST_PTS);
+  const $btn = (id, fn) => $id(id)?.addEventListener('click', e => { e.stopPropagation(); initSound(); SFX.tap(); fn(); });
+  $id('sound-slot')?.append(soundToggle());
+  document.title = `${t('¡Al toque!')} ⚡ · ${t('Laboratorio')}`; $id('btn-volver').textContent = `‹ ${t('Laboratorio')}`; demo.setAttribute('aria-label', t('¡Al toque!'));
   // The run's progress in the corner: one mark per game, filled with how it went
   const rb = $id('runbar'), runbar = () => { rb.hidden = false; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
   let marks = [], startedAt = 0;
   // Under the stage: the site footer on the cover, with the game's 💬 comment as its option (C-17, U-38); just the comment elsewhere
-  const pie = $id('pie'), COMMENT = { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué microjuegos te gustaron, cuáles no se entendían y qué le cambiarías.', ph: 'Por ejemplo: en ¡Corta! no me daba el tiempo.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' };
-  const footer = screenName => { const b = document.createElement('button'); b.type = 'button'; b.className = 'link-btn'; b.id = 'btn-comentario'; b.textContent = '💬 Sugerencias y comentarios';
-    b.addEventListener('click', () => abrirComentario({ T: COMMENT, contexto: { juego: GAME_ID, pantalla: screenName, microjuego: curGame, corrida: order.join(' ') } }));
-    if (screenName === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [b], lang: 'es' }); else pie.replaceChildren(b); };
+  const pie = $id('pie'), COMMENT = Object.fromEntries(Object.entries({ titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué microjuegos te gustaron, cuáles no se entendían y qué le cambiarías.', ph: 'Por ejemplo: en ¡Corta! no me daba el tiempo.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' }).map(([k, v]) => [k, t(v)]));
+  const footer = screenName => { const b = document.createElement('button'); b.type = 'button'; b.className = 'link-btn'; b.id = 'btn-comentario'; b.textContent = t('💬 Sugerencias y comentarios');
+    b.addEventListener('click', () => abrirComentario({ T: COMMENT, contexto: { juego: GAME_ID, pantalla: screenName, microjuego: curGame, corrida: order.join(' '), semilla: code } }));
+    if (screenName === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [b], lang: LANG }); else pie.replaceChildren(b); };
+  // The three ways to play, for the cover's folded rules (C-8, D-550): each with its gesture, moving
+  const HOW = { toca: t('la respuesta, en el momento justo o muchas veces seguidas.'), arrastra: t('algo con el dedo hasta su lugar, o de lado a lado.'), desliza: t('el dedo por la pantalla: corta, recorre o frota.') };
+  const rules = () => `<details class="panel howto-rules" id="reglas"><summary>${t('Cómo se juega')}</summary>
+    <p>${t('Haz lo que dice la orden antes de que se acabe la barra: 10 microjuegos seguidos, cada vez más rápido.')}</p>
+    <ul class="howkinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<li style="--kc:${col}"><span class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</span><span><b>${label[0]}${label.slice(1).toLowerCase()}</b> ${HOW[k]}</span></li>`).join('')}</ul>
+    <p>${t('Cada microjuego da hasta ★★★; los puntos son 10 por estrella, por la velocidad, y +5 por cada racha de ★★ o más.')}</p></details>`;
   function cover() {
-    stopAll(); active = false; hud.hidden = true; rb.hidden = true; undress();
-    set(`<div class="big" aria-hidden="true">⚡</div><div class="cmd">¡Al toque!</div>
-      <div class="sub">${RUN} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!</div>
-      <div class="sub credit">Inspirado en <a href="https://es.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>, de Nintendo.</div>
-      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ Jugar</button></div>
-      ${best ? `<div class="sub best">Tu mejor corrida: ${best} / ${MAX} ★</div>` : ''}`);
-    $btn('btn-jugar', howTo);
+    stopAll(); active = false; paused = false; hud.hidden = true; rb.hidden = true; undress();
+    const td = TODAY ? today() : null;
+    set(`<div class="big" aria-hidden="true">⚡</div><div class="cmd">${t('¡Al toque!')}</div>
+      <div class="sub">${TODAY ? t('La corrida de hoy: la misma para todos, y cuenta la primera.') : t('{n} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!', { n: RUN })}</div>
+      ${SEED && !TODAY ? `<div class="sub best">${t('Corrida compartida · {c}: la misma para todos', { c: `<b class="num">${SEED}</b>` })}</div>` : ''}
+      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ ${TODAY ? (td ? t('Jugarla de nuevo') : t('Jugar la de hoy')) : t('Jugar')}</button>
+        ${TODAY ? '' : `<a class="btn btn--cyan btn--sm" id="btn-hoy" href="?today">📅 ${t('La corrida de hoy')}</a>`}</div>
+      ${td ? `<div class="sub best">${t('Hoy hiciste {n} pts', { n: `<span class="num">${td.p}</span>` })}</div>` : bestPts ? `<div class="sub best">${t('Tu mejor corrida: {n} pts', { n: `<span class="num">${bestPts}</span>` })}</div>` : ''}
+      <div class="sub credit">${t('Inspirado en {w}, de Nintendo.', { w: `<a href="https://${LANG}.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>` })}</div>`);
+    $id('rules-slot').innerHTML = rules(); $id('screen').prepend(coverLangToggle(() => location.reload()));
+    $btn('btn-jugar', () => start(newRun()));
     footer('portada');
+  }
+  function end() {
+    hud.hidden = true; rb.hidden = true;
+    const sc = score(marks), k = total / (order.length * 3), isBest = sc.points > bestPts;
+    if (isBest) { bestPts = sc.points; keep(BEST_PTS, bestPts); }
+    if (total > best) { best = total; keep(BEST, best); }
+    // Uno al día's way (lab only): the day's first run is the one that counts
+    const first = TODAY && order.length === RUN && !today();
+    if (first) keep(TODAY_KEY, JSON.stringify({ d: DATE, p: sc.points, s: score100(marks), m: marks }));
+    const td = TODAY ? today() : null;
+    trackFinish({ detalle: `${sc.points} pts · ${score100(marks)}/100 · ${total}/${MAX} stars · ${order.map((id, i) => `${id}:${marks[i]}`).join(' ')} · ${Math.round((Date.now() - startedAt) / 1000)}s · ${TODAY ? 'today' : SEED ? 'seed' : 'code'} ${code}` });
+    if (k >= 0.45) { SFX.win(); if (!reduce) confetti(); }
+    // C-19: the result, the main action and Share, the exits, then the detail game by game
+    set(`<div class="cmd">${k >= 0.75 ? t('¡Al toque!') : k >= 0.45 ? t('¡Bien!') : t('¡Otra!')}</div>
+      <div class="stars" style="color:var(--yellow)"><span class="num">${sc.points}</span> ${t('pts')}</div>
+      <div class="sub best">${total} / ${order.length * 3} ★ · ${td && !first ? t('la de hoy que cuenta: {n} pts', { n: td.p }) : TODAY ? t('¡Esta es la que cuenta hoy!') : isBest ? t('¡Tu mejor corrida!') : t('tu mejor: {n} pts', { n: bestPts })}</div>
+      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 ${SEED ? t('Jugarla de nuevo') : t('Otra corrida')}</button>
+        <button class="btn btn--cyan btn--sm" type="button" id="btn-retar">📤 ${t('Reta a alguien con esta corrida')}</button><div id="exits"></div></div>
+      <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i><em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>`);
+    $id('exits').replaceWith(salidasFin('lab', { lang: LANG, raiz: '../../' }));
+    $btn('btn-otra', () => start(newRun()));
+    // The same run for whoever opens the link: its code (or today's), never the stars
+    $btn('btn-retar', () => shareLink({ title: t('¡Al toque!'), text: t('Hice {n} pts en ¡Al toque! ⚡ ¿Me ganas con la misma corrida?', { n: sc.points }),
+      url: `${location.origin}${location.pathname}?${TODAY ? 'today' : `seed=${code}`}` }));
   }
   function next() {
     screen.classList.remove('full');
     if (idx > 0) marks[idx - 1] = lastStars;
-    if (idx >= order.length) {
-      hud.hidden = true; rb.hidden = true;
-      const k = total / MAX, isBest = total > best;
-      if (isBest) { best = total; try { localStorage.setItem(BEST, String(best)); } catch (_) { /* not kept */ } }
-      trackFinish({ detalle: `${total}/${MAX} stars · ${order.map((id, i) => `${id}:${marks[i]}`).join(' ')} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
-      set(`<div class="cmd">${k >= 0.75 ? '¡Al toque!' : k >= 0.45 ? '¡Bien!' : '¡Otra!'}</div>
-        <div class="stars" style="color:var(--yellow)">${total} / ${MAX} ★</div>
-        <div class="runsum">${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i></span>`).join('')}</div>
-        <div class="sub best">${isBest ? '¡Tu mejor corrida!' : `Tu mejor: ${best} / ${MAX} ★`}</div>
-        <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 Otra corrida</button><button class="btn btn--ghost" type="button" id="btn-portada">Inicio</button></div>`);
-      $btn('btn-otra', () => start(runList()));
-      $btn('btn-portada', cover);
-      return;
-    }
-    if (idx > 0 && idx % 3 === 0) sp = +(sp + 0.1).toFixed(2);
+    if (idx >= order.length) { end(); return; }
+    play();
+  }
+  // Play the game at idx: its speed and its own random stream come from where it sits in the run, so a game
+  // started again after a pause is dealt the same and runs at the same speed
+  function play() {
+    sp = speedAt(idx); scored = false;
     hudN.textContent = `${idx + 1} / ${order.length}${sp > 1 ? ` · ×${sp.toFixed(1)}` : ''}`;
-    curGame = order[idx++]; if (order.length > 1) runbar(); GAMES[curGame]();
+    curGame = order[idx]; rand = stream(code, `${idx}:${curGame}`); idx++;
+    if (order.length > 1) runbar(); GAMES[curGame]();
   }
   function start(list) {
-    stopAll(); active = false; undress();
+    stopAll(); active = false; paused = false; undress();
     total = 0; idx = 0; sp = 1; order = list; marks = []; lastStars = 0; startedAt = Date.now();
-    hud.hidden = false; hudS.textContent = '0 ★';
+    hud.hidden = false; hudS.textContent = `0 ${t('pts')}`; $id('rules-slot').replaceChildren();
     trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
     footer('juego');
     next();
   }
-  // Ten different games, a new draw each run
-  const runList = () => shuffle(META.map(m => m.id)).slice(0, RUN);
-  // Before a run: the three ways to play, one at a time, each with its gesture, then the button to start
-  function howTo() {
-    stopAll(); active = false; hud.hidden = true; rb.hidden = true;
-    const ks = Object.keys(KINDS), TXT = { toca: 'Toca la respuesta, en el momento justo o muchas veces seguidas',
-      arrastra: 'Toma algo con el dedo y llévalo a su lugar, o muévelo de lado a lado', desliza: 'Pasa el dedo por la pantalla: corta, lanza, recorre o frota' };
-    set(`<div class="howto"><div class="sub">En ¡Al toque! se juega de 3 formas</div><div class="howcard" id="hc"></div>
-      <div class="howdots" id="hd">${ks.map((k, i) => `<button type="button" data-k="${i}" aria-label="${KINDS[k][0]}"></button>`).join('')}</div>
-      <button class="btn btn--yellow" type="button" id="hgo">▶ ¡A jugar!</button></div>`);
-    const hc = $id('hc'), dots = [...$id('hd').children]; let i = 0, seen = 0;
-    const show = k => { i = k; const [label, , col] = KINDS[ks[k]];
-      hc.style.setProperty('--kc', col); hc.innerHTML = `<div class="hownum">${k + 1} de 3</div><div class="gstage g-${ks[k]}">${GSTAGE[ks[k]]}</div><b>${label}</b><p>${TXT[ks[k]]}</p>`;
-      hc.classList.remove('in'); void hc.offsetWidth; hc.classList.add('in');
-      dots.forEach((d, j) => { d.classList.toggle('on', j === k); d.style.setProperty('--kc', KINDS[ks[j]][2]); });
-      seen = Math.max(seen, k); if (seen === 2) $id('hgo').classList.add('ready'); };
-    const loop = () => { later(() => { show((i + 1) % 3); loop(); }, 2600); };
-    show(0); loop();
-    dots.forEach(d => d.addEventListener('click', e => { e.stopPropagation(); show(+d.dataset.k); }));
-    $btn('hgo', () => start(runList()));
-  }
+  // The phone locked, or another app came up: the timers would keep running, so the game stops and
+  // waits. One not finished yet starts again (dealt the same) when the player taps Seguir
+  let paused = false;
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden || hud.hidden || !idx || paused) return;
+    paused = true; stopAll(); active = false; undress();
+    if (!scored) idx--;
+    set(`<div class="big" aria-hidden="true">⏸</div><div class="cmd">${t('Pausa')}</div><div class="sub">${scored ? t('Sigue con el próximo microjuego.') : t('Este microjuego parte de nuevo cuando sigas.')}</div>
+      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-seguir">▶ ${t('Seguir')}</button></div>`);
+    $btn('btn-seguir', () => { paused = false; if (scored) next(); else play(); });
+  });
+  // Every run has a code: the link's seed, today's, or a new one, so it can be shared and played the same
+  const newRun = () => { code = SEED || newCode(); return runOrder(META.map(m => m.id), code); };
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
-  window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id),
-    only: id => start([id]) };
+  window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id), seed: SEED,
+    get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); } };
   cover();
 })();
-
