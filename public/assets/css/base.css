@@ -821,6 +821,9 @@ footer.atardecer .footer-links.tiles > *:active { filter: brightness(1.2); }
 footer.atardecer .tiles .ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
+/* A screen's own options (La Copa's report and leave): violet, apart from the inbox and the coffee */
+footer.atardecer .footer-links.tiles > .op-propia { border-color: rgb(var(--purple-rgb) / 0.5); background: rgb(var(--purple-rgb) / 0.1); }
+footer.atardecer .tiles .op-propia .ic { background: rgb(var(--purple-rgb) / 0.4); }
 footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
 /* Offline, no coffee (the owner, 2026-11-09): paying needs Stripe, so its footer chip and the end-of-game invitation step aside until the signal is back */
 html.offline :is(#btn-apoyo-portada, .op-apoyo, #apoyo-pie) { display: none; }

@@ -55,6 +55,9 @@ flag('uad-share-grids').then(v => { gridsNuevos = v; });
 // not to the menu (#1040). lab: #seccion-cup-back-board
 let pillCopa = false;
 flag('cup-back-board').then(v => { pillCopa = v; rotuloMenu(); });
+// The board's report and leave links as tiles of the site footer (U-38), lab: #seccion-cup-footer
+let pieCopa = false;
+flag('cup-footer').then(v => { pieCopa = v; if (v && S.pantalla === 'tablero') tablero(); });
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -1091,12 +1094,17 @@ function tablero() {
 
   // The finished Cup's inbox link, at the very end (D-345); kept for the page: the board redraws every minute
   if (terminada(meta, now) && buzonPodio === undefined) buzonPodio = enlaceBuzon({ juego: 'copa', contexto: { copa: S.code, pantalla: 'podio' } });
-  poner(body, botonReporte(), el('button', {
-    class: 'link-btn', onClick: () => {
+  const salir = texto => el('button', {
+    class: 'link-btn', id: 'btn-salir-copa', onClick: () => {
       if (!confirm(T.leaveConfirm)) return;
       cuenta.olvidar(S.code); S.yo = null; entrar();
     },
-  }, T.leave));
+  }, texto);
+  if (pieCopa) {
+    const reporte = botonReporte();
+    reporte.textContent = T.reportTile;
+    import('../assets/js/site-footer.js').then(m => m.mountFooter(body, { screen: 'copa-tablero', inbox: false, options: [reporte, salir(T.leaveTile)] }));
+  } else poner(body, botonReporte(), salir(T.leave));
 
   if (terminada(meta, now) && buzonPodio) { poner(body, buzonPodio); sinDoble(body); }
 

@@ -528,7 +528,9 @@ where it comes from. Whatever changes the home page is changed here, in the same
   in the same PR, in the three languages (`texts.test.mjs` checks their shape).
 - **The footer outside the home page:** game covers (the one-player games' too, on their own page, not in La Copa or Uno al día), La Copa's entrance,
   Rankings and Uno al día end with the same violet-sunset footer (`site-footer.js`, U-38); only Rankings
-  and Uno al día carry the funny phrase. Never during a game or on a result screen. **Every game is a game** (the owner, 2026-10-27; C-21): no player text or doc calls one a "minigame"; only La Copa's Gran Final plays shortened versions.
+  and Uno al día carry the funny phrase. A screen's own links (La Copa's board: report, leave the cup) are
+  `options` of that footer, shown as its tiles, never loose links under the page (`site-footer.test.mjs`).
+  Never during a game or on a result screen. **Every game is a game** (the owner, 2026-10-27; C-21): no player text or doc calls one a "minigame"; only La Copa's Gran Final plays shortened versions.
 - **It is tested whole in Chrome:** `tools/e2e/favorites.mjs` (filters, favorites and 320 px in the
   three languages), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` and
   `lang-from-url.mjs`. `window.__portada` reports the filter, the visible cards and the
