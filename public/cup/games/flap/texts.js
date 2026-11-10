@@ -14,6 +14,7 @@ const ES = {
       'Tienes 3 vidas: si chocas o te saltas un aro, pierdes una. Cada 5 aros o huecos sube el nivel.',
     ],
     puntaje: 'Cada aro o hueco vale 1 punto; por el medio de un aro, 2.',
+    puntajeFinal: 'En la final cuentan tus puntos tal cual, hasta un máximo de 100.',
     desempate: 'Si empatas, gana quien voló menos tiempo.',
   },
   ui: {
@@ -46,6 +47,7 @@ const EN = {
       'You have 3 lives: crash or skip a hoop and you lose one. Every 5 hoops or gaps the level goes up.',
     ],
     puntaje: 'Each hoop or gap is 1 point; through a hoop\'s middle, 2.',
+    puntajeFinal: 'In the final your points count as they are, up to 100.',
     desempate: 'If you tie, whoever flew for less time wins.',
   },
   ui: {
@@ -78,6 +80,7 @@ const PT = {
       'Você tem 3 vidas: se bater ou pular um aro, perde uma. A cada 5 aros ou brechas o nível sobe.',
     ],
     puntaje: 'Cada aro ou brecha vale 1 ponto; pelo meio de um aro, 2.',
+    puntajeFinal: 'Na final seus pontos contam como estão, até no máximo 100.',
     desempate: 'Se empatar, ganha quem voou por menos tempo.',
   },
   ui: {

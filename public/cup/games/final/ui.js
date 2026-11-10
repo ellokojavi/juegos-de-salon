@@ -72,7 +72,7 @@ export function montar(raiz, ctx) {
       el('details', { class: 'panel', open: true }, el('summary', {}, `🧠 ${T.howToPlay}`),
         RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x))),
         // A game played whole says how it scores, as each short round's text does (U-18)
-        RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),
+        RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje), M.puntajeFinal && !p?.enteras ? el('p', { class: 'muted', id: 'puntaje-final' }, M.puntajeFinal) : null]),
       J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(R.finalSoFar, { pts: lleva })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => {
         SFX.tap(); J.jugando = true; if (!esCorta(p, r) && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();

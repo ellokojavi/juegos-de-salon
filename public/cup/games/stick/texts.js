@@ -12,6 +12,7 @@ const ES = {
       'Tienes 3 vidas, y más adelante hay pilares que se mueven.',
     ],
     puntaje: 'Cada pilar que cruzas vale 1 punto y cada bandera seguida suma 1, 2, 3… hasta 5 más.',
+    puntajeFinal: 'En la final cuentan tus puntos tal cual, hasta un máximo de 100.',
     desempate: 'Si empatas, gana quien tardó menos.',
   },
   ui: {
@@ -56,6 +57,7 @@ const EN = {
       'You have 3 lives, and later on some pillars move.',
     ],
     puntaje: 'Each pillar you cross is worth 1 point, and each flag in a row adds 1, 2, 3… up to 5 more.',
+    puntajeFinal: 'In the final your points count as they are, up to 100.',
     desempate: 'On a tie, the faster player wins.',
   },
   ui: {
@@ -100,6 +102,7 @@ const PT = {
       'Você tem 3 vidas, e mais adiante há pilares que se mexem.',
     ],
     puntaje: 'Cada pilar que você atravessa vale 1 ponto, e cada bandeira seguida soma 1, 2, 3… até 5 a mais.',
+    puntajeFinal: 'Na final seus pontos contam como estão, até no máximo 100.',
     desempate: 'Em caso de empate, ganha quem demorou menos.',
   },
   ui: {

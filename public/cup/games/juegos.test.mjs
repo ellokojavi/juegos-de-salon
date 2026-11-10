@@ -12,6 +12,7 @@ import * as letras from './word/engine.js';
 import { PALABRAS, PALABRAS_EN, PALABRAS_PT } from './word/palabras.js';
 import * as conexiones from './connections/engine.js';
 import * as final from './final/engine.js';
+import { juegosCopa } from '../rules.js';
 import * as donde from './where/engine.js';
 import * as caso from './case/engine.js';
 import { LOCALES as LOCALES_COPA } from '../rules.js';
@@ -985,6 +986,15 @@ test('tango: giving up shows the solution and scores 0', () => {
   assert.deepEqual(e.g, p.sol);
   assert.equal(tango.puntaje(e), 0);
   assert.equal(tango.tarjeta(e), '☀️🌙 🏳️');
+});
+
+test('the final says how uncapped games count: up to 100, in every language (the owner, 2026-11-10)', () => {
+  for (const lang of ['es', 'en', 'pt']) {
+    const J = juegosCopa(lang);
+    for (const id of ['stack', 'stick', 'aletazo']) assert.match(J[id].puntajeFinal || '', /100/, `${lang} ${id}: puntajeFinal`);
+    // A game already on 0 to 100 has nothing to add
+    assert.equal(J.tango.puntajeFinal, undefined);
+  }
 });
 
 console.log(`copa/juegos: ${n} tests OK`);
