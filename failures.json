@@ -1692,6 +1692,19 @@
         "stat": "2 file(s) +7 −1: changelog/claude-cup-footer-links.md, tools/e2e/artifacts/lab.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 42755008379,
+      "check": "tests",
+      "pr": 1348,
+      "branch": "claude/sudoku-salon-generator-ddzciw",
+      "commit": "a457ae47ef9fa695ea051f5bf155b95956a7e91b",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed documents: {\"path\": \"docs/games/sudoku.md\", \"title\": \"🔢 Sudoku (lab, in → {\"path\": \"docs/games/sudoku.md\", \"title\": \"🧮 Sudoku (lab, in",
+      "signature": "281a5589ab",
+      "date": "2026-11-10T04:22:22.821Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
