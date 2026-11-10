@@ -27,6 +27,7 @@ born (`tools/generators/new-game.test.mjs` proves it on a fresh one, untouched):
 The game inside is a placeholder (a race to ten). Replace it, keeping what surrounds it:
 
 - **Styles** from the tokens and classes of `base.css` (C-1, D-533, [DESIGN.md](DESIGN.md)): no distance, corner or colour written by hand; thematic colours declared once at the top of `style.css`. The game shell (screens, the cover's hero, modes, fields, the segmented control, player and toggle rows, the room, the result's hero) lives once in `base.css` (DESIGN.md §2): `style.css` holds only what is the game's own, and `node tools/agents/design-lint.mjs public/labs/<id>/style.css` must report zero (a gate: `design-lint.test.mjs`). An exception is an allowlist entry with its reason (§4).
+- **The cover ends with the site footer** (`footerInto` from `site-footer.js`, C-17): the game's own 💬 comment is its option, shown as a tile on the cover and alone while playing. `site-footer.test.mjs` fails a lab game without it.
 - **Texts** in `LOCALES` in `rules.js` (C-3, parity test); instructions per U-18; `node tools/agents/usability-lint.mjs` must stay green.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`; list them in `game.json` (`modes`, `ai`, `firebasePaths`).
