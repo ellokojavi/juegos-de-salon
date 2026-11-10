@@ -356,10 +356,6 @@ export function firstReach(id, store = storage()) {
 }
 
 /**
- * Counts campaign events (D-461). The stats module is loaded when the window opens, so the tap on Play
- * sends its count before the page leaves (the request goes with keepalive). Never throws.
- */
-/**
  * How the page was when the window opened: `prerender` (loaded ahead by the browser), `hidden` (a
  * background tab or a preview) or `visible`. Kept on the timeline row for now, to learn where the
  * bursts of identical rows came from (four within a second, no bot mark). Never throws.
@@ -375,6 +371,10 @@ export function whenVisible(fn, doc = globalThis.document) {
   doc.addEventListener('prerenderingchange', on);
 }
 
+/**
+ * Counts campaign events (D-461). The stats module is loaded when the window opens, so the tap on Play
+ * sends its count before the page leaves (the request goes with keepalive). Never throws.
+ */
 function splashTracker(id) {
   let mod = null;
   const ready = Promise.all([import('./transport/stats.js'), import('./transport/cleanup.js')])
