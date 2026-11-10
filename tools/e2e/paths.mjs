@@ -654,6 +654,11 @@ export const PATHS = {
     intro: [],
     game: [`document.getElementById('btn-jugar').click(); 1`, `1`, `1`, `1`],
   },
+  // ¡Al tiro!: the cover, then Jugar shows the three ways to play, and ¡A jugar! starts a run of 10 (the first one's intro)
+  'labs/al-tiro': {
+    intro: [],
+    game: [`document.getElementById('btn-jugar').click(); 1`, `1`, `document.getElementById('hgo').click(); 1`, `1`],
+  },
   // Aletazo: the cover over its demo, then Jugar, the 3, 2, 1… (six waits) and the first flap (the bird in the air, the HUD up)
   'labs/flap': {
     intro: [],
