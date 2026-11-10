@@ -2099,7 +2099,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/microgames/engine.js, public/labs/microgames/rules.js\nERROR · appeared tests: public/labs/microgames/engine.test.mjs, public/labs/microgames/rules.test.mjs",
       "signature": "d8d128d323",
       "date": "2026-11-10T20:26:56.357Z",
-      "fix": null,
+      "fix": {
+        "commit": "724a6180ede4381ebc9d4603f4d6f803bd57ab09",
+        "date": "2026-11-10T20:31:07.985Z",
+        "stat": "2 file(s) +6 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
