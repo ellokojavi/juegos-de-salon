@@ -2088,6 +2088,19 @@
       "date": "2026-11-10T20:10:25.434Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42894975487,
+      "check": "tests",
+      "pr": 1362,
+      "branch": "microgames-polish",
+      "commit": "b10674e03a9530ca11181463ad0cd6362fee9c45",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/microgames/engine.js, public/labs/microgames/rules.js\nERROR · appeared tests: public/labs/microgames/engine.test.mjs, public/labs/microgames/rules.test.mjs",
+      "signature": "d8d128d323",
+      "date": "2026-11-10T20:26:56.357Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
