@@ -370,7 +370,7 @@ that says it is only to tell the player we replied: `feedback/<id>` gets only it
 and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`); one nobody answered is deleted
 after 90 days (`feedback.mjs expire`, D-463). The field's note links the privacy page, `/privacy/` (D-463).
 
-A game's own page (`SUELTO`, `/queens/`, `/zip/`…) has one **"Cómo se juega"** (D-488): in the lab
+A game's own page (`SUELTO`, `/queens/`, `/zip/`…) has one **"Cómo se juega"** (D-488), folded like every cover's (D-550): in the lab
 (flag `cover-facts`, card `#seccion-cover-facts`) it opens with the facts line of
 `how-to-play-facts.js` (one player, the minutes of `games.js`, free), and `tools/release/og.mjs`
 writes its `como` steps from `rules.js` as the page's one-question FAQPage JSON-LD (#883).
