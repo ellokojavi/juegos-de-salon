@@ -2062,6 +2062,32 @@
       "date": "2026-11-10T19:46:36.587Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42892269702,
+      "check": "tests",
+      "pr": 1361,
+      "branch": "al-toque-polish",
+      "commit": "f2a551a5d040bd0de5a41fc37eeb0054b272e5ba",
+      "test": "tools/agents/architecture.test.mjs",
+      "error": "✗ the gate: every hit is allowlisted with its reason, no entry is stale\nAssertionError [ERR_ASSERTION]: a new hit: fix it, or add an entry with its why to docs/architecture-allowlist.json (docs/ARCHITECTURE.md)\n+ actual - expected",
+      "signature": "3e646d9976",
+      "date": "2026-11-10T20:10:25.434Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 42892269702,
+      "check": "tests",
+      "pr": 1361,
+      "branch": "al-toque-polish",
+      "commit": "f2a551a5d040bd0de5a41fc37eeb0054b272e5ba",
+      "test": "tools/agents/english.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: Spanish names not in docs/english-renames.json: name them in English, or add them with their English name (D-316): changelog/al-toque-polish.md\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "12a08b4486",
+      "date": "2026-11-10T20:10:25.434Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
