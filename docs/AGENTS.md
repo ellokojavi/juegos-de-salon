@@ -75,6 +75,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
 - **Lab keys** (D-281, D-284, D-345): each person who enters `/labs/` has their own link.
   `node tools/agents/labs-key.mjs new <label> | remove <label> | list` writes the key's fingerprint to
   Firebase (`labsLlaves/`) as administrator; the link is shown only once and the key is not stored.
+  The owner does the same in the panel, 🔑 Lab keys (`#/lab-keys`), which also says which keys are in use.
   The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
   key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
 - **Everything in development sits behind the lab** (D-395, the owner's rule): lab games under `/labs/`, and

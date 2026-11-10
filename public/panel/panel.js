@@ -43,6 +43,7 @@ import { stateOf as flagState } from '../assets/js/flags.js';
 import { FLAGS } from '../assets/js/flag-list.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import { wireReleasePush } from './release-push.js';
+import { labelProblem, newKey, linkOf, fingerprint, keyRows, ACTIVE_DAYS } from './lab-keys.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
   senales, ordenTramos, embudoCopas, aCsv,
@@ -168,6 +169,7 @@ function stopListening() {
   if (S.unsubSplash) { S.unsubSplash(); S.unsubSplash = null; }
   if (S.unsubControls) { S.unsubControls(); S.unsubControls = null; }
   if (S.unsubFlags) { S.unsubFlags(); S.unsubFlags = null; }
+  if (S.unsubKeys) { S.unsubKeys(); S.unsubKeys = null; }
   for (const f of S.unsubUad) f();
   S.unsubUad = [];
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
@@ -2042,7 +2044,72 @@ const SECCION = {
   salud: ['🩺', 'Health'],
   feedback: ['💬', 'Feedback'],
   campanas: ['📣', 'Campaigns'],
+  llaves: ['🔑', 'Lab keys'],
 };
+
+/* 🔑 Lab keys (D-345): `labsLlaves/<fingerprint>` = label, the same the terminal's labs-key.mjs writes */
+function escucharLlaves() {
+  if (S.unsubKeys) return;
+  S.unsubKeys = onValue(ref(db, 'labsLlaves'), snap => { S.llaves = snap.val() || {}; render(); }, () => { S.llaves = {}; S.llavesMsg = 'This account cannot read the keys.'; render(); });
+  get(ref(db, 'labsUso')).then(snap => { S.labsUso = snap.val() || {}; render(); }, () => { S.labsUso = {}; });
+}
+
+async function crearLlave(label) {
+  const problema = labelProblem(label, Object.values(S.llaves || {}));
+  if (problema) { S.llavesMsg = problema; render(); return; }
+  const key = newKey(label);
+  S.llavesMsg = 'Saving…'; render();
+  try {
+    await set(ref(db, `labsLlaves/${await fingerprint(key)}`), label);
+    S.llaveNueva = { label, link: linkOf(key) };
+    S.llavesMsg = '';
+  } catch (e) { S.llavesMsg = `Not saved (${e?.code || e?.message || 'error'}).`; }
+  render();
+}
+
+async function quitarLlave(r) {
+  if (!confirm(`Remove ${r.label}'s key? Their link stops opening the lab right away.`)) return;
+  try { await set(ref(db, `labsLlaves/${r.fingerprint}`), null); S.llavesMsg = `${r.label}'s key removed ✓`; }
+  catch (e) { S.llavesMsg = `Not removed (${e?.code || e?.message || 'error'}).`; }
+  if (S.llaveNueva?.label === r.label) S.llaveNueva = null;
+  render();
+}
+
+const LLAVE_ESTADO = { active: ['🟢', 'Active'], quiet: ['🟡', 'Quiet'], never: ['⚪', 'Never used'] };
+
+function vistaLlaves(now) {
+  escucharLlaves();
+  const filas = S.llaves ? keyRows(S.llaves, S.labsUso || {}, now) : null;
+  const nueva = S.llaveNueva;
+  const input = el('input', { type: 'text', maxlength: '24', placeholder: 'Name or nickname', 'aria-label': 'Who the key is for', autocomplete: 'off' });
+  const crear = el('form', { class: 'llaves-crear', onSubmit: e => { e.preventDefault(); input.blur(); crearLlave(input.value.trim()); } },
+    input, el('button', { class: 'btn', type: 'submit' }, '➕ New key'));
+  const copiar = async () => { try { await navigator.clipboard.writeText(nueva.link); S.llavesMsg = 'Link copied ✓'; } catch (_) { S.llavesMsg = 'Copy it by hand.'; } render(); };
+  const compartir = () => navigator.share?.({ title: 'Juegos de Salón · Labs', url: nueva.link }).catch(() => {});
+  return [
+    ...titulo('🔑 Lab keys', `Each person who tries the lab has their own link. Only a fingerprint is kept: a new link is shown once, here. A key works the moment it is created and stops the moment it is removed. Use is the last day the key turned on a lab feature (${ACTIVE_DAYS} days or less: active).`),
+    bloque('Give a key', 'The name is visible in the panel only: initials or a nickname.',
+      crear,
+      nueva ? el('div', { class: 'llaves-nueva', role: 'status' },
+        el('p', {}, `Link for ${nueva.label}. Copy it now: it will not be shown again.`),
+        el('input', { type: 'text', readonly: true, value: nueva.link, 'aria-label': 'The new link', onFocus: e => e.target.select() }),
+        el('div', { class: 'llaves-acciones' },
+          el('button', { class: 'btn', type: 'button', onClick: copiar }, '📋 Copy'),
+          navigator.share ? el('button', { class: 'btn', type: 'button', onClick: compartir }, '📤 Share') : null,
+          el('button', { class: 'btn', type: 'button', onClick: () => { S.llaveNueva = null; render(); } }, 'Done'))) : null,
+      S.llavesMsg ? el('p', { class: 'campanas-msg', role: 'status' }, S.llavesMsg) : null),
+    bloque(`Keys · ${filas ? n(filas.length) : '…'}`, 'Most recently used first. A lost link cannot be recovered: remove it and give a new one.',
+      !filas ? el('p', { class: 'empty' }, 'Loading…')
+        : !filas.length ? el('p', { class: 'empty' }, 'No keys yet.')
+          : el('table', { class: 'llaves' },
+            el('thead', {}, el('tr', {}, el('th', {}, 'Who'), el('th', {}, 'Status'), el('th', {}, 'Last use'), el('th', {}, ''))),
+            el('tbody', {}, ...filas.map(r => el('tr', {},
+              el('td', {}, r.label),
+              el('td', {}, `${LLAVE_ESTADO[r.status][0]} ${LLAVE_ESTADO[r.status][1]}`),
+              el('td', { title: r.flags ? `${r.flags} lab feature(s) tried` : '' }, r.lastDay === null ? '—' : fechaLabel(r.lastDay * DAY_MS)),
+              el('td', {}, el('button', { class: 'btn', type: 'button', 'aria-label': `Remove ${r.label}'s key`, onClick: () => quitarLlave(r) }, '🗑 Remove'))))))),
+  ];
+}
 
 function renderNav(now) {
   const actual = seccionDe(S.ruta);
@@ -2093,7 +2160,7 @@ function render() {
   // "Today" is the UTC day: say how much of it has gone by, in the owner's time
   $('#range-note').textContent = S.range === 'today' ? hoyUtcLabel(now) : '';
   // A date being picked is not redrawn under the finger: it saves on change, and that redraws
-  if (S.ruta.sec === 'campanas' && document.activeElement?.closest?.('#vista input')) return;
+  if ((S.ruta.sec === 'campanas' || S.ruta.sec === 'llaves') && document.activeElement?.closest?.('#vista input')) return;
   MARCAS = versiones(S.days);
   const { sec, args } = S.ruta;
   let nodos;
@@ -2111,6 +2178,7 @@ function render() {
   else if (sec === 'timeline') nodos = vistaTimeline(now);
   else if (sec === 'feedback') nodos = vistaFeedback(now);
   else if (sec === 'campanas') nodos = vistaCampanas(now);
+  else if (sec === 'llaves') nodos = vistaLlaves(now);
   else nodos = vistaResumen(now);
   pintarVista(nodos.flat().filter(Boolean));
   renderNav(now);

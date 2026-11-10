@@ -18,6 +18,7 @@
  *   (#/games and #/audience, from before D-348, open Group and Users)
  *   #/campaigns                  the splash campaigns: on or off, their days and order (D-454)
  *   #/campaigns/splash/<id>      that tab, with that campaign open and in view (the release notifications, D-504)
+ *   #/lab-keys                   who has a lab key, whether they use it; give or remove one (D-345)
  *   #/health                     lo que le falla a quien juega: no arrancó, errores, lentitud (D-251)
  *
  * En la URL van en inglés (C-18, D-266); por dentro las secciones siguen con su nombre de siempre
@@ -28,7 +29,7 @@
 import { slugDe, idDeSlug } from '../assets/js/games.js';
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud', 'feedback', 'campanas'];
+export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud', 'feedback', 'campanas', 'llaves'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'grupo', sala: 'grupo' };
@@ -39,7 +40,7 @@ const SUELTAS = { ahora: 'resumen' };
 /** Cómo se escribe cada sección en la URL (D-266). */
 const EN_URL = {
   resumen: 'summary', timeline: 'timeline', ahora: 'now', grupo: 'group', individuales: 'individual', torneo: 'cup', unoaldia: 'daily',
-  usuarios: 'users', trafico: 'traffic', salud: 'health', feedback: 'feedback', campanas: 'campaigns', juego: 'game', sala: 'room',
+  usuarios: 'users', trafico: 'traffic', salud: 'health', feedback: 'feedback', campanas: 'campaigns', llaves: 'lab-keys', juego: 'game', sala: 'room',
 };
 /** The sections before D-348 open the one that took their place. */
 const DE_URL = { ...Object.fromEntries(Object.entries(EN_URL).map(([es, en]) => [en, es])), games: 'grupo', juegos: 'grupo', audience: 'usuarios', audiencia: 'usuarios' };
