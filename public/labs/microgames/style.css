@@ -55,7 +55,9 @@
   --mg-5a0f24: #5a0f24;
   --mg-5a3416: #5a3416;
   --mg-5a536b: #5a536b;
+  --mg-3a2f4d: #3a2f4d;
   --mg-5b6576: #5b6576;
+  --mg-b98a1e: #b98a1e;
   --mg-6b4220: #6b4220;
   --mg-6e0838: #6e0838;
   --mg-6e0838-rgb: 110 8 56;
@@ -378,30 +380,30 @@
 .demo .howdots button.on { background: var(--kc); scale: 1.3; box-shadow: 0 0 10px var(--kc); }
 .demo #hgo.ready { animation: hintpulse 0.6s ease-in-out infinite alternate; }
 .demo .gest b { font: 800 var(--fs-75) var(--body); letter-spacing: 0.1em; padding: 2px 10px; border-radius: 999px; background: var(--kc); color: var(--mg-1b0b33); }
-.demo .gstage { position: relative; width: 150px; height: 76px; border-radius: 14px; background: rgb(var(--ink-rgb) / 0.05); border: 1px solid var(--line); overflow: hidden; }
-.demo .gstage .hand { position: absolute; font-size: 30px; line-height: 1; translate: -50% -6%; filter: drop-shadow(0 3px 3px rgb(var(--mg-000000-rgb) / 0.50)); z-index: 3; }
-.demo .gstage .rip { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--kc); translate: -50% -50%; opacity: 0; z-index: 2; }
-.demo .gstage i { display: block; font-style: normal; }
+:is(.demo, .howto-rules) .gstage { position: relative; width: 150px; height: 76px; border-radius: 14px; background: rgb(var(--ink-rgb) / 0.05); border: 1px solid var(--line); overflow: hidden; }
+:is(.demo, .howto-rules) .gstage .hand { position: absolute; font-size: 30px; line-height: 1; translate: -50% -6%; filter: drop-shadow(0 3px 3px rgb(var(--mg-000000-rgb) / 0.50)); z-index: 3; }
+:is(.demo, .howto-rules) .gstage .rip { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--kc); translate: -50% -50%; opacity: 0; z-index: 2; }
+:is(.demo, .howto-rules) .gstage i { display: block; font-style: normal; }
 /* toca: three answers, the finger comes up and taps the middle one */
-.demo .g-toca .gbox { position: absolute; top: 12px; width: 34px; height: 26px; border-radius: 8px; background: rgb(var(--ink-rgb) / 0.14); }
-.demo .g-toca .gbox:nth-child(1) { left: 16px; } .demo .g-toca .gbox:nth-child(2) { left: 58px; } .demo .g-toca .gbox:nth-child(3) { left: 100px; }
-.demo .g-toca .gbox.mid { animation: ge-box 1.4s infinite; }
-.demo .g-toca .rip { left: 75px; top: 25px; animation: g-rip 1.4s infinite; animation-delay: 0.7s; }
-.demo .g-toca .hand { left: 75px; animation: ge-hand 1.4s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-toca .gbox { position: absolute; top: 12px; width: 34px; height: 26px; border-radius: 8px; background: rgb(var(--ink-rgb) / 0.14); }
+:is(.demo, .howto-rules) .g-toca .gbox:nth-child(1) { left: 16px; } :is(.demo, .howto-rules) .g-toca .gbox:nth-child(2) { left: 58px; } :is(.demo, .howto-rules) .g-toca .gbox:nth-child(3) { left: 100px; }
+:is(.demo, .howto-rules) .g-toca .gbox.mid { animation: ge-box 1.4s infinite; }
+:is(.demo, .howto-rules) .g-toca .rip { left: 75px; top: 25px; animation: g-rip 1.4s infinite; animation-delay: 0.7s; }
+:is(.demo, .howto-rules) .g-toca .hand { left: 75px; animation: ge-hand 1.4s ease-in-out infinite; }
 @keyframes ge-hand { 0% { top: 70px; opacity: 0; } 15% { opacity: 1; } 45% { top: 26px; scale: 1; } 52% { top: 29px; scale: 0.88; } 62% { top: 26px; scale: 1; } 90% { top: 26px; opacity: 1; } 100% { top: 26px; opacity: 0; } }
 @keyframes ge-box { 0%, 50% { background: rgba(255,255,255,0.14); } 54%, 100% { background: var(--kc); box-shadow: 0 0 10px var(--kc); } }
 @keyframes g-rip { 0% { opacity: 1; scale: 0.6; } 100% { opacity: 0; scale: 2.6; } }
 /* arrastra: take the piece and drop it in the slot */
-.demo .g-arrastra .gslot { position: absolute; left: 100px; top: 14px; width: 32px; height: 32px; border-radius: 8px; border: 2px dashed var(--kc); }
-.demo .g-arrastra .gpiece { position: absolute; top: 16px; width: 28px; height: 28px; border-radius: 8px; background: var(--kc); animation: ga-piece 1.8s ease-in-out infinite; }
-.demo .g-arrastra .hand { animation: ga-hand 1.8s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-arrastra .gslot { position: absolute; left: 100px; top: 14px; width: 32px; height: 32px; border-radius: 8px; border: 2px dashed var(--kc); }
+:is(.demo, .howto-rules) .g-arrastra .gpiece { position: absolute; top: 16px; width: 28px; height: 28px; border-radius: 8px; background: var(--kc); animation: ga-piece 1.8s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-arrastra .hand { animation: ga-hand 1.8s ease-in-out infinite; }
 @keyframes ga-piece { 0%, 15% { left: 20px; scale: 1; } 22% { left: 20px; scale: 1.15; } 65% { left: 102px; scale: 1.15; } 72%, 100% { left: 102px; scale: 1; } }
 @keyframes ga-hand { 0% { left: 34px; top: 52px; opacity: 0; } 12% { left: 34px; top: 34px; opacity: 1; } 22% { left: 34px; top: 30px; } 65% { left: 116px; top: 30px; } 75% { left: 120px; top: 44px; opacity: 1; } 100% { left: 120px; top: 50px; opacity: 0; } }
 /* desliza: the finger moves along the screen without lifting */
-.demo .g-desliza svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.demo .g-desliza .gpath { fill: none; stroke: rgb(var(--ink-rgb) / 0.25); stroke-width: 3; stroke-dasharray: 5 6; }
-.demo .g-desliza .gink { fill: none; stroke: var(--kc); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; animation: gt-ink 2s ease-in-out infinite; }
-.demo .g-desliza .hand { left: 0; top: 0; translate: none; offset-path: path('M14 56 C36 8 62 70 86 30 S128 14 138 52'); offset-rotate: 0deg; offset-anchor: 50% 6%; animation: gt-hand 2s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-desliza svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+:is(.demo, .howto-rules) .g-desliza .gpath { fill: none; stroke: rgb(var(--ink-rgb) / 0.25); stroke-width: 3; stroke-dasharray: 5 6; }
+:is(.demo, .howto-rules) .g-desliza .gink { fill: none; stroke: var(--kc); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; animation: gt-ink 2s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-desliza .hand { left: 0; top: 0; translate: none; offset-path: path('M14 56 C36 8 62 70 86 30 S128 14 138 52'); offset-rotate: 0deg; offset-anchor: 50% 6%; animation: gt-hand 2s ease-in-out infinite; }
 @keyframes gt-ink { 0% { stroke-dashoffset: 200; } 80%, 100% { stroke-dashoffset: 0; } }
 @keyframes gt-hand { 0% { offset-distance: 0%; } 80%, 100% { offset-distance: 100%; } }
 
@@ -492,7 +494,7 @@
 .demo .fly.splat .wings { animation: none; opacity: 0.4; }
 @keyframes squash { to { transform: scale(1.25, 0.55); } }
 .demo .fly.splat::after { content: ''; position: absolute; inset: 8%; z-index: -1; border-radius: 45% 55% 50% 50%; background: radial-gradient(circle, rgb(var(--mg-788c28-rgb) / 0.55), rgb(var(--mg-465014-rgb) / 0.25) 60%, transparent 70%); }
-.demo .swatter { position: absolute; width: 96px; height: 220px; margin-left: -calc(var(--s-32) + 16px); margin-top: -calc(var(--s-32) + 16px); transform-origin: 50% 20%; pointer-events: none; z-index: 20; animation: swat 0.45s ease-in forwards; }
+.demo .swatter { position: absolute; width: 96px; height: 220px; margin-left: calc(-1 * (var(--s-32) + 16px)); margin-top: calc(-1 * (var(--s-32) + 16px)); transform-origin: 50% 20%; pointer-events: none; z-index: 20; animation: swat 0.45s ease-in forwards; }
 .demo .swatter svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 8px 6px rgb(var(--mg-000000-rgb) / 0.45)); }
 @keyframes swat { 0% { transform: perspective(500px) rotateX(-55deg) scale(1.9); opacity: 0; } 22% { opacity: 1; } 26% { transform: perspective(500px) rotateX(0) scale(1); opacity: 1; } 34% { transform: scale(0.96, 1.02); } 75% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
 .demo .flycount { position: absolute; bottom: 8px; left: 50%; translate: -50% 0; font: 400 var(--fs-140) var(--display); color: var(--ink); padding: 2px 14px; border-radius: 999px; background: rgb(var(--mg-000000-rgb) / 0.35); z-index: 25; }
@@ -538,9 +540,14 @@
 @keyframes cashrain { to { translate: 20px 520px; rotate: 200deg; } }
 @keyframes mascot { 0% { transform: translate(110%, 110%) rotate(-25deg); } 22% { transform: translate(0, 0) rotate(-12deg); } 32% { transform: translate(0, 0) rotate(-6deg) scale(1.06); } 42% { transform: translate(0, 0) rotate(-12deg) scale(1); } 78% { transform: translate(0, 0) rotate(-12deg); } 100% { transform: translate(110%, 110%) rotate(-25deg); } }
 .demo .pump .ring { top: 40%; }
-.demo .balloon2 { position: absolute; left: 50%; top: 40%; width: 100px; height: 130px; margin: -calc(var(--s-32) + 32px) 0 0 -calc(var(--s-32) + 18px); transform: scale(var(--s)); transform-origin: 50% 85%; transition: transform 0.08s ease-out; z-index: 2; pointer-events: none; }
+.demo .balloon2 { position: absolute; left: 50%; top: 40%; width: 100px; height: 130px; margin: calc(-1 * (var(--s-32) + 32px)) 0 0 calc(-1 * (var(--s-32) + 18px)); transform: scale(var(--s)); transform-origin: 50% 85%; z-index: 2; pointer-events: none; }
 .demo .pump .balloon2 { left: 44%; top: 48%; }
-.demo .bstring path { transition: d 0.08s ease-out; }
+/* The pump's hose: a rubber tube (dark edge, lit middle, ribs), drawn every frame with no transition so it never lags the balloon */
+.demo .bstring path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.demo .bstring .hose-out { stroke: var(--mg-3a2f4d); stroke-width: 9; }
+.demo .bstring .hose-in { stroke: var(--mg-5b6576); stroke-width: 5; }
+.demo .bstring .hose-rib { stroke: var(--mg-fff3b0); stroke-opacity: 0.3; stroke-width: 5; stroke-dasharray: 1.5 5; }
+.demo .bstring .hose-cuff { fill: var(--yellow); stroke: var(--mg-b98a1e); stroke-width: 1.5; }
 .demo .bstring path.slack { transition: none; animation: slack 0.6s ease-in forwards; } @keyframes slack { to { opacity: 0; translate: 0 40px; } }
 .demo .balloon2.tense:not(.puff) svg { animation: hjit 0.18s ease-in-out infinite; }
 .demo .balloon2.tense2:not(.puff) svg { animation: hjit2 0.1s ease-in-out infinite; }
@@ -585,7 +592,7 @@
 .demo .starmeter span { font: 400 var(--fs-120) var(--display); color: rgb(var(--ink-rgb) / 0.25); padding: 2px 8px; border-radius: 999px; border: 2px dashed rgb(var(--ink-rgb) / 0.20); text-align: center; }
 .demo .starmeter span.done { color: var(--ink-on-yellow); background: var(--yellow); border: 2px solid var(--yellow); animation: bubin 0.25s cubic-bezier(0.3, 1.7, 0.5, 1); }
 .demo .starmeter { grid-auto-flow: row; } .demo .starmeter span:nth-child(1) { order: 3; } .demo .starmeter span:nth-child(3) { order: 1; }
-.demo .clownhead { position: absolute; left: 44%; bottom: 6%; width: 120px; height: 126px; margin-left: -calc(var(--s-32) + 28px); transform: scale(var(--s)); transform-origin: 50% 100%; transition: transform 0.09s ease-out; z-index: 2; pointer-events: none; }
+.demo .clownhead { position: absolute; left: 44%; bottom: 6%; width: 120px; height: 126px; margin-left: calc(-1 * (var(--s-32) + 28px)); transform: scale(var(--s)); transform-origin: 50% 100%; transition: transform 0.09s ease-out; z-index: 2; pointer-events: none; }
 .demo .clownhead .squish { width: 100%; height: 100%; transform-origin: 50% 100%; }
 .demo .clownhead svg { position: static; width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(0 8px 10px rgb(var(--mg-000000-rgb) / 0.40)); }
 .demo .clownhead .ex { display: none; }
@@ -738,3 +745,11 @@
 .demo .runbar i.s0 { background: var(--red); } .demo .runbar i.s1 { background: var(--mg-ff9a1f); } .demo .runbar i.s2 { background: var(--cyan); } .demo .runbar i.s3 { background: var(--yellow); }
 .demo .runsum { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 10px; }
 .demo .runsum span { display: grid; justify-items: center; gap: 0px; } .demo .runsum b { font-size: var(--fs-140); line-height: 1; } .demo .runsum i { font-style: normal; font-size: var(--fs-75); color: var(--yellow); letter-spacing: 1px; }
+/* The cover's folded rules (C-8, D-550): one line each for the three ways to play, with its moving gesture */
+.howto-rules { width: 100%; max-width: 480px; margin: var(--s-12) auto 0; text-align: left; }
+.howto-rules p { margin: var(--s-8) 0; font-size: var(--fs-90); line-height: 1.35; }
+.howto-rules .howkinds { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); }
+.howto-rules .howkinds li { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-10); font-size: var(--fs-90); line-height: 1.3; }
+.howto-rules .howkinds .gstage { zoom: 0.5; border-color: var(--kc); }
+.howto-rules .howkinds b { color: var(--kc); }
+.demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }

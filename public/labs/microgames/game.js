@@ -3,6 +3,12 @@
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
+import { SFX, initSound, soundToggle } from '../../assets/js/sound.js';
+import { confetti } from '../../assets/js/ui.js';
+import { salidasFin } from '../../assets/js/fin.js';
+import { param, tiene } from '../../assets/js/parametros.js';
+import { semillaDel } from '../../assets/js/uno-al-dia.js';
+import { RUN, score, score100, stream, runOrder } from './engine.js';
 const GAME_ID = 'microgames';
 trackVisit();   // the site's traffic (D-208)
 (() => {
@@ -11,7 +17,8 @@ trackVisit();   // the site's traffic (D-208)
   const hudN = document.getElementById('hud-n'), hudS = document.getElementById('hud-s');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let total = 0, idx = 0, raf = 0, loop = 0, active = false, cleanup = null, sp = 1, order = [], tOuts = [], lastStars = 0;
-  const rnd = n => Math.floor(Math.random() * n);
+  let R = Math.random;   // the game's random stream: seeded in a shared run (Uno al día, a cup), so every phone gets the same game
+  const rnd = n => Math.floor(R() * n);
   const pick = a => a[rnd(a.length)];
   const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const later = (fn, ms) => { const t = setTimeout(fn, ms); tOuts.push(t); return t; };
@@ -53,7 +60,8 @@ trackVisit();   // the site's traffic (D-208)
   function finish(n, note, hold = 800) {
     if (!active) return; active = false;
     freeze();
-    total += n; lastStars = n; hudS.textContent = `${total} ★`;
+    total += n; lastStars = n; hudS.textContent = `${score([...marks, n]).points} pts`;
+    if (n) SFX.reveal(); else SFX.error();
     const tag = document.createElement('div'); tag.className = `verdict-tag ${n ? 'good' : 'bad'}`; tag.textContent = n ? '✓' : '✗'; demo.append(tag);
     later(() => {
       stopAll();
@@ -153,22 +161,22 @@ trackVisit();   // the site's traffic (D-208)
         let dense = [];
         const along = (n, f) => { for (let k = 0; k <= n; k++) dense.push(f(k / n)); };
         if (shape === 'curva') {          // an S that swings left and right down the stage
-          const side = Math.random() < 0.5 ? 1 : -1;
+          const side = R() < 0.5 ? 1 : -1;
           const P = [0, 1, 2, 3].map(k => [side * (k % 2 ? 1 : -1) * W * 0.26 * (k === 0 || k === 3 ? 0.6 : 1), H * (-0.38 + 0.76 * k / 3)]);
           const cr = (p0, p1, p2, p3, t) => { const t2 = t * t, t3 = t2 * t; return [0, 1].map(i => 0.5 * (2 * p1[i] + (-p0[i] + p2[i]) * t + (2 * p0[i] - 5 * p1[i] + 4 * p2[i] - p3[i]) * t2 + (-p0[i] + 3 * p1[i] - 3 * p2[i] + p3[i]) * t3)); };
           for (let i = 0; i < 3; i++) for (let k = 0; k < 40; k++) dense.push(cr(P[Math.max(0, i - 1)], P[i], P[i + 1], P[Math.min(3, i + 2)], k / 40));
           dense.push(P[3]);
         } else if (shape === 'espiral') { // from the outside in, about a turn and a half
-          const r0 = Math.min(W, H) * 0.4, r1 = Math.min(W, H) * 0.1, turns = 1.55, a0 = Math.random() * Math.PI * 2, dir = Math.random() < 0.5 ? 1 : -1;
+          const r0 = Math.min(W, H) * 0.4, r1 = Math.min(W, H) * 0.1, turns = 1.55, a0 = R() * Math.PI * 2, dir = R() < 0.5 ? 1 : -1;
           along(220, t => { const r = r0 - (r0 - r1) * t, a = a0 + dir * t * turns * 2 * Math.PI; return [r * Math.cos(a), r * Math.sin(a)]; });
         } else if (shape === 'circulo') { // almost a full ring, start and finish side by side
-          const r = Math.min(W, H) * 0.34, a0 = Math.random() * Math.PI * 2, dir = Math.random() < 0.5 ? 1 : -1;
+          const r = Math.min(W, H) * 0.34, a0 = R() * Math.PI * 2, dir = R() < 0.5 ? 1 : -1;
           along(160, t => { const a = a0 + dir * (0.32 + t * (2 * Math.PI - 0.64)); return [r * Math.cos(a), r * 1.1 * Math.sin(a)]; });
         } else if (shape === 'ola') {     // a wave going down, two full swings
-          const amp = W * 0.27, ph = Math.random() < 0.5 ? 0 : Math.PI;
+          const amp = W * 0.27, ph = R() < 0.5 ? 0 : Math.PI;
           along(160, t => [amp * Math.sin(ph + t * 4 * Math.PI), H * (-0.38 + 0.76 * t)]);
         } else {                          // a hook: down one side, round the bottom, back up the other
-          const w = W * 0.26, top = -H * 0.36, bot = H * 0.18, side = Math.random() < 0.5 ? 1 : -1;
+          const w = W * 0.26, top = -H * 0.36, bot = H * 0.18, side = R() < 0.5 ? 1 : -1;
           along(40, t => [-side * w, top + (bot - top) * t]);
           along(60, t => [-side * w * Math.cos(t * Math.PI), bot + w * Math.sin(t * Math.PI)]);
           along(30, t => [side * w, bot - (bot - top * 0.4) * t]);
@@ -176,7 +184,7 @@ trackVisit();   // the site's traffic (D-208)
         // Somewhere on the stage that fits it, with a margin from every edge
         const xs = dense.map(p => p[0]), ys = dense.map(p => p[1]), m = HALF + 18;
         const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-        const ox = m - minX + Math.random() * Math.max(0, (W - 2 * m) - (maxX - minX)), oy = m + 10 - minY + Math.random() * Math.max(0, (H - 2 * m - 20) - (maxY - minY));
+        const ox = m - minX + R() * Math.max(0, (W - 2 * m) - (maxX - minX)), oy = m + 10 - minY + R() * Math.max(0, (H - 2 * m - 20) - (maxY - minY));
         dense = dense.map(([x, y]) => [x + ox, y + oy]);
         // Resample every 4 px of length, so progress and width are even all along
         const S = [dense[0]]; let acc = 0;
@@ -239,7 +247,7 @@ trackVisit();   // the site's traffic (D-208)
           green = true; demo.classList.replace('red', 'green');
           set('<div class="cmd white huge">¡YA!</div>'); tg = performance.now();
           runTimer(900, () => finish(0, '¡Muy lento!'));
-        }, 1000 + Math.random() * 2000);
+        }, 1000 + R() * 2000);
         const h = e => {
           e.preventDefault(); if (!active) return;
           // The color you tapped lights up and stays: brighter red if too soon, greener if on time
@@ -269,13 +277,14 @@ trackVisit();   // the site's traffic (D-208)
           <rect x="22" y="44" width="36" height="82" rx="8" fill="url(#pmBar)" stroke="#6e0838" stroke-width="2"/><rect x="20" y="42" width="40" height="8" rx="3" fill="#ffd23f" stroke="#b98a1e" stroke-width="1.5"/>
           <rect x="27" y="56" width="5" height="60" rx="2.5" fill="#fff" opacity=".3"/>
           <rect x="12" y="64" width="12" height="8" rx="3" fill="#5b6576"/><circle cx="13" cy="68" r="3" fill="#3a414d"/><rect x="4" y="124" width="72" height="12" rx="6" fill="#3a2f4d" stroke="#1b1426" stroke-width="2"/></svg>`;
-        full(`<div class="layer pump" id="lay"><svg class="bstring" id="bs"><path fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.2" stroke-linecap="round"/></svg><div class="balloon2" id="bl">${BAL}</div>
+        full(`<div class="layer pump" id="lay"><svg class="bstring" id="bs"><path class="hose-out"/><path class="hose-in"/><path class="hose-rib"/><circle class="hose-cuff" r="5"/></svg><div class="balloon2" id="bl">${BAL}</div>
           <div class="tapcount" id="cnt">0</div><button type="button" class="pumpbtn2" id="pb" aria-label="Inflar">${PUMP}</button>
           <div class="presshint" id="ph"><b>¡APRIETA!</b><span>👇</span></div></div>`);
-        const bl = $id('bl'), cnt = $id('cnt'), lay = $id('lay'), pb = $id('pb'), bs = $id('bs'), str = bs.firstElementChild, ph = $id('ph');
+        const bl = $id('bl'), cnt = $id('cnt'), lay = $id('lay'), pb = $id('pb'), bs = $id('bs'), hose = [...bs.querySelectorAll('path')], cuff = bs.querySelector('circle'), ph = $id('ph');
         const W = lay.clientWidth, H = lay.clientHeight; bs.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        // Where the string is tied: the balloon's knot (it follows the balloon as it grows) and the pump's nozzle
-        const bx = W * 0.44, oy = H * 0.48 - 70 + 110.5, knot = () => [bx, oy + (106 - 110.5) * sc(taps)];
+        // Where the hose is tied: the balloon's knot, read from where the balloon really sits (it grows from 85 % of
+        // its height, the knot is at 106 of its 130), and the pump's nozzle
+        const knot = () => [bl.offsetLeft + bl.offsetWidth / 2, bl.offsetTop + bl.offsetHeight * (0.85 + (106 / 130 - 0.85) * sc(taps))];
         const nozzle = () => [pb.offsetLeft + pb.offsetWidth * 12 / 80, pb.offsetTop + pb.offsetHeight * 68 / 140];
         // The string: a chain of points with gravity, both ends tied, a bit longer than the gap so it sags
         const NP = 16, k0 = knot(), n0 = nozzle(), LEN = Math.hypot(n0[0] - k0[0], n0[1] - k0[1]) * 1.07, SEG = LEN / (NP - 1);
@@ -293,11 +302,12 @@ trackVisit();   // the site's traffic (D-208)
             P.forEach(q => { if (q.y > H - 4) q.y = H - 4; }); }
           let d = `M${P[0].x.toFixed(1)} ${P[0].y.toFixed(1)}`;
           for (let i = 1; i < NP - 1; i++) { const mx = (P[i].x + P[i + 1].x) / 2, my = (P[i].y + P[i + 1].y) / 2; d += ` Q${P[i].x.toFixed(1)} ${P[i].y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`; }
-          d += ` L${P[NP - 1].x.toFixed(1)} ${P[NP - 1].y.toFixed(1)}`; str.setAttribute('d', d);
+          d += ` L${P[NP - 1].x.toFixed(1)} ${P[NP - 1].y.toFixed(1)}`; hose.forEach(h => h.setAttribute('d', d));
+          cuff.setAttribute('cx', P[0].x.toFixed(1)); cuff.setAttribute('cy', P[0].y.toFixed(1)); cuff.style.display = tied ? '' : 'none';
           requestAnimationFrame(rope); };
         requestAnimationFrame(rope);
         // Each press jolts the string a little, so it swings
-        const jolt = () => P.forEach((q, i) => { const f = Math.sin(i / (NP - 1) * Math.PI); q.px -= (Math.random() - 0.4) * 2.5 * f; q.py += 1.2 * f; });
+        const jolt = () => P.forEach((q, i) => { const f = Math.sin(i / (NP - 1) * Math.PI); q.px -= (R() - 0.4) * 2.5 * f; q.py += 1.2 * f; });
         const draw = () => { bl.style.setProperty('--s', sc(taps)); bl.classList.toggle('tense', taps >= 15); bl.classList.toggle('tense2', taps >= 20); };
         draw();
         const grade = () => taps >= 20 ? 3 : taps >= 14 ? 2 : taps >= 8 ? 1 : 0;
@@ -306,11 +316,11 @@ trackVisit();   // the site's traffic (D-208)
           bl.remove(); tied = false; P.forEach(q => { q.py += 6; });
           mk(lay, 'div', 'animeflash'); mk(lay, 'div', 'speedlines'); lay.classList.add('shake');
           const ring = mk(lay, 'span', 'obj boomring'); place(ring, cx, cy);
-          for (let i = 0; i < 16; i++) { const sh = mk(lay, 'span', 'obj shard'); sh.style.background = '#16c9c0'; place(sh, cx, cy); const an = i / 16 * Math.PI * 2 + Math.random() * 0.4, d = 110 + Math.random() * 90;
-            sh.style.setProperty('--dx', `${Math.cos(an) * d}px`); sh.style.setProperty('--dy', `${Math.sin(an) * d}px`); sh.style.setProperty('--r', `${Math.round(Math.random() * 720 - 360)}deg`); }
-          for (let i = 0; i < 30; i++) { const c = mk(lay, 'span', 'obj confetti'); place(c, cx, cy); const an = Math.random() * Math.PI * 2, d = 60 + Math.random() * 150;
+          for (let i = 0; i < 16; i++) { const sh = mk(lay, 'span', 'obj shard'); sh.style.background = '#16c9c0'; place(sh, cx, cy); const an = i / 16 * Math.PI * 2 + R() * 0.4, d = 110 + R() * 90;
+            sh.style.setProperty('--dx', `${Math.cos(an) * d}px`); sh.style.setProperty('--dy', `${Math.sin(an) * d}px`); sh.style.setProperty('--r', `${Math.round(R() * 720 - 360)}deg`); }
+          for (let i = 0; i < 30; i++) { const c = mk(lay, 'span', 'obj confetti'); place(c, cx, cy); const an = R() * Math.PI * 2, d = 60 + R() * 150;
             c.style.background = pick(['#ffd23f', '#2ee6d6', '#ff2e88', '#9dff3a', '#8a5cff', '#fff']);
-            c.style.setProperty('--dx', `${Math.cos(an) * d}px`); c.style.setProperty('--dy', `${Math.sin(an) * d + 60}px`); c.style.setProperty('--r', `${Math.round(Math.random() * 900)}deg`); }
+            c.style.setProperty('--dx', `${Math.cos(an) * d}px`); c.style.setProperty('--dy', `${Math.sin(an) * d + 60}px`); c.style.setProperty('--r', `${Math.round(R() * 900)}deg`); }
           const cb = mk(lay, 'div', 'comic', '<div class="burst"></div><b>¡PUM!</b>'); place(cb, cx, Math.max(70, cy)); cb.style.setProperty('--tilt', '-8deg');
           try { navigator.vibrate?.([30, 40, 60]); } catch (_) { /* none */ }
         };
@@ -330,7 +340,7 @@ trackVisit();   // the site's traffic (D-208)
       const C = [['ROJO', '#ff4d5e', '🔴'], ['AZUL', '#4d8bff', '🔵'], ['VERDE', '#3ddc84', '🟢'], ['AMARILLO', '#ffd23f', '🟡']];
       const w = rnd(4); let ink = rnd(4); if (ink === w) ink = (ink + 1 + rnd(3)) % 4;
       // Two ways to ask, at random: the color of the letters, or the color the word says
-      const byInk = Math.random() < 0.5, goal = byInk ? ink : w;
+      const byInk = R() < 0.5, goal = byInk ? ink : w;
       const ask = byInk ? '¿De qué color son las <u>letras</u>?' : '¿Qué color <u>dice</u> la palabra?';
       // The intro: the title and, right under it, what to look at this time; nothing else
       dress('quecolor'); set(`${gesture('quecolor')}<div class="cmd">¡QUÉ COLOR!</div><div class="mode-say big">${byInk ? 'el color de las <u>letras</u>' : 'el color que <u>dice</u> la palabra'}</div>`);
@@ -363,7 +373,7 @@ trackVisit();   // the site's traffic (D-208)
       command('¡CUENTA!', () => {
         const fs = Math.max(22, Math.min((demo.clientWidth - 24) / cols, (demo.clientHeight * 0.66 - 40) / rows) * 0.7);
         full(`<div class="countbox"><div class="field2">${items.map((it, i) => { const c = slots[i] % cols, r = Math.floor(slots[i] / cols);
-          return `<span style="left:${(c + 0.5) * 100 / cols + (Math.random() - 0.5) * 8}%;top:${(r + 0.5) * 100 / rows + (Math.random() - 0.5) * 8}%;font-size:${fs}px;--dx:${Math.round((Math.random() - 0.5) * 26)}px;--dy:${Math.round((Math.random() - 0.5) * 26)}px;animation-duration:${(0.9 + Math.random() * 1.1).toFixed(2)}s;animation-delay:-${(Math.random() * 2).toFixed(2)}s">${it}</span>`; }).join('')}</div>
+          return `<span style="left:${(c + 0.5) * 100 / cols + (R() - 0.5) * 8}%;top:${(r + 0.5) * 100 / rows + (R() - 0.5) * 8}%;font-size:${fs}px;--dx:${Math.round((R() - 0.5) * 26)}px;--dy:${Math.round((R() - 0.5) * 26)}px;animation-duration:${(0.9 + R() * 1.1).toFixed(2)}s;animation-delay:-${(R() * 2).toFixed(2)}s">${it}</span>`; }).join('')}</div>
           <div class="opts4">${opts.map(v => `<button type="button" data-v="${v}">${v}</button>`).join('')}</div></div>`);
         active = true; const t0 = runTimer(T(5000), () => finish(0, `Eran ${k}`));
         numPick(screen.querySelector('.opts4'), k, t0, s => s < 2.5 ? 3 : s < 4 ? 2 : 1, `Eran ${k}`);
@@ -412,7 +422,7 @@ trackVisit();   // the site's traffic (D-208)
               <path d="M118 84 C116 74 118 66 124 64 C128 64 128 70 126 76 L126 84" fill="#f2c6a0" stroke="#d39f78" stroke-width="2" stroke-linejoin="round"/>
               <path d="M116 89 h16 M116 94 h16" stroke="#d39f78" stroke-width="1.5"/></g>
             <path d="M136 52 l3 6 6 1 -4 4 1 6 -6 -3 -6 3 1 -6 -4 -4 6 -1z" fill="#fff6a8"/></svg><b>¡BIEN AHÍ!</b>`);
-          for (let i = 0; i < 10; i++) { const bl = mk(demo, 'span', 'cashrain', '💵'); bl.style.left = `${5 + Math.random() * 90}%`; bl.style.animationDelay = `${Math.random() * 0.7}s`; setTimeout(() => bl.remove(), 1900); }
+          for (let i = 0; i < 10; i++) { const bl = mk(demo, 'span', 'cashrain', '💵'); bl.style.left = `${5 + R() * 90}%`; bl.style.animationDelay = `${R() * 0.7}s`; setTimeout(() => bl.remove(), 1900); }
           setTimeout(() => m.remove(), 1750); };
         active = true; runTimer(dur, () => { const n = got === cookies && !socks ? 3 : got >= 4 && socks <= 1 ? 2 : got ? 1 : 0;
           if (got === cookies) tycoon(); finish(n, `${got}/${cookies} 🪙 · ${socks} 💣`, got === cookies ? 1800 : 800); });
@@ -439,7 +449,7 @@ trackVisit();   // the site's traffic (D-208)
         full(`<div class="layer" id="lay"><span class="sandwich">${FOOD}</span><svg id="sv" aria-hidden="true"></svg></div>`);
         const lay = document.getElementById('lay'), sv = document.getElementById('sv');
         const W = lay.clientWidth, H = lay.clientHeight; sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        const ang = (pick([0, 90, 45, -45]) + Math.random() * 24 - 12) * Math.PI / 180, cx = W / 2, cy = H / 2, half = Math.min(W, H) * 0.42;
+        const ang = (pick([0, 90, 45, -45]) + R() * 24 - 12) * Math.PI / 180, cx = W / 2, cy = H / 2, half = Math.min(W, H) * 0.42;
         const ux = Math.cos(ang), uy = Math.sin(ang), a = [cx - ux * half, cy - uy * half], b = [cx + ux * half, cy + uy * half];
         sv.innerHTML = `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#fff" stroke-width="3" stroke-dasharray="10 8"/><polyline id="trail" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points=""/>`;
         const trail = sv.querySelector('#trail');
@@ -482,7 +492,7 @@ trackVisit();   // the site's traffic (D-208)
     ordena() {
       const SIZES = ['🐜', '🐭', '🐱', '🐕', '🐴', '🐘', '🐋'];
       // Numbers that are a little tricky to sort at a glance, one kind at random
-      const numSet = () => { const s = new Set(), big = Math.random() < 0.35, span = big ? 900 : 90, lo = big ? 100 : 10, any = () => lo + rnd(span);
+      const numSet = () => { const s = new Set(), big = R() < 0.35, span = big ? 900 : 90, lo = big ? 100 : 10, any = () => lo + rnd(span);
         const kind = rnd(5), d = rnd(10), base = lo + rnd(span - 14);
         for (let tries = 0; s.size < 4 && tries < 200; tries++) {
           if (kind === 0) s.add(any() & ~1);                                   // all even
@@ -493,7 +503,7 @@ trackVisit();   // the site's traffic (D-208)
         }
         return s.size === 4 ? [...s].slice(0, 4) : numSet(); };
       let vals, show, emo;
-      if (Math.random() < 0.6) { vals = numSet(); show = v => v; emo = false; }
+      if (R() < 0.6) { vals = numSet(); show = v => v; emo = false; }
       else { vals = shuffle([...Array(SIZES.length).keys()]).slice(0, 4); show = v => SIZES[v]; emo = true; }
       const goal = [...vals].sort((x, y) => y - x);   // top to bottom: big to small
       let cur; do { cur = shuffle([...vals]); } while (cur.join() === goal.join());
@@ -570,7 +580,7 @@ trackVisit();   // the site's traffic (D-208)
           if (c === mc && need[c] > mr) { ok = false; break; }
           for (let r = 0; r < h; r++) {
             const k = cells.findIndex(([rr, cc]) => rr === r && cc === c);
-            g[r][c] = k >= 0 && k !== miss ? ME : (Math.random() < 0.6 ? THEM : ME);
+            g[r][c] = k >= 0 && k !== miss ? ME : (R() < 0.6 ? THEM : ME);
           }
         }
         if (!ok || wins(g, ME) || wins(g, THEM)) continue;
@@ -638,8 +648,8 @@ trackVisit();   // the site's traffic (D-208)
         ctx.fillStyle = SURF.base; ctx.fillRect(0, 0, side, side);
         for (let k = 0; k < 70; k++) {
           ctx.fillStyle = pick(SURF.blots);
-          ctx.globalAlpha = 0.5 + Math.random() * 0.5;
-          ctx.beginPath(); ctx.ellipse(Math.random() * side, Math.random() * side, 6 + Math.random() * side * 0.12, 4 + Math.random() * side * 0.08, Math.random() * 3, 0, 7); ctx.fill();
+          ctx.globalAlpha = 0.5 + R() * 0.5;
+          ctx.beginPath(); ctx.ellipse(R() * side, R() * side, 6 + R() * side * 0.12, 4 + R() * side * 0.08, R() * 3, 0, 7); ctx.fill();
         }
         ctx.globalAlpha = 1;
         const clean = Array(N * N).fill(false); let left = N * N, on = false, last = null, t0 = performance.now();
@@ -747,26 +757,29 @@ trackVisit();   // the site's traffic (D-208)
         const { lay, W, H } = lay0('<div class="flycount" id="fc">🪰 0 / 9</div>');
         const fc = $id('fc'), N = 9;
         const flies = [...Array(N).keys()].map(() => { const el = mk(lay, 'div', 'obj fly', FLY);
-          const f = { el, x: W * (0.2 + Math.random() * 0.6), y: H * (0.2 + Math.random() * 0.6), vx: (Math.random() - 0.5) * 240 * sp, vy: (Math.random() - 0.5) * 240 * sp, dead: false }; return f; });
+          const f = { el, x: W * (0.2 + R() * 0.6), y: H * (0.2 + R() * 0.6), vx: (R() - 0.5) * 240 * sp, vy: (R() - 0.5) * 240 * sp, dead: false }; return f; });
         let n = 0, last = performance.now(); const t0 = last;
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now;
-          flies.forEach(f => { if (f.dead) return;
-            if (Math.random() < 0.05) { f.vx += (Math.random() - 0.5) * 320; f.vy += (Math.random() - 0.5) * 320; }
+          flies.forEach(f => { if (f.dead || f.held) return;
+            if (R() < 0.05) { f.vx += (R() - 0.5) * 320; f.vy += (R() - 0.5) * 320; }
             const v = Math.hypot(f.vx, f.vy), mx = 190 * sp, mn = 60 * sp; if (v > mx) { f.vx *= mx / v; f.vy *= mx / v; } else if (v < mn && v > 0) { f.vx *= mn / v; f.vy *= mn / v; }
             f.x += f.vx * dt; f.y += f.vy * dt;
             if (f.x < W * 0.12 || f.x > W * 0.88) f.vx *= -1; if (f.y < H * 0.1 || f.y > H * 0.9) f.vy *= -1;
             f.x = Math.max(W * 0.12, Math.min(W * 0.88, f.x)); f.y = Math.max(H * 0.1, Math.min(H * 0.9, f.y));
             f.el.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(f.vy, f.vx) + Math.PI / 2}rad)`; place(f.el, f.x, f.y); }); });
         // The swatter: comes in big and tilted (from behind you) and lands flat on the spot; whatever is under its head gets squashed
+        // What counts is where the flies were at the tap, not 110 ms later: the ones under the head stop there
+        // (caught) while the swatter comes down, so a fly you clearly hit never slips out of it
         listen({ down: e => { const [x, y] = ptIn(lay, e);
           const sw = mk(lay, 'div', 'swatter', SWATTER); place(sw, x, y);
+          const caught = flies.filter(f => !f.dead && !f.held && near([f.x, f.y], [x, y], 50)); caught.forEach(f => { f.held = true; });
           later(() => { if (!active) return;
-            pop(lay, '¡PAF!', x, y - 50);
+            pop(lay, '¡PAF!', x, y - 50); SFX.hit();
             let hit = 0;
-            flies.forEach(f => { if (!f.dead && near([f.x, f.y], [x, y], 46)) { f.dead = true; n++; hit++; f.el.classList.add('splat'); f.el.style.transform = 'translate(-50%, -50%)'; } });
+            caught.forEach(f => { f.dead = true; n++; hit++; f.el.classList.add('splat'); f.el.style.transform = 'translate(-50%, -50%)'; });
             // Two or more in one swat: a comic-book COMBO!
             if (hit >= 2) { const cb = mk(lay, 'div', 'comic', `<div class="burst"></div><b>¡COMBO${hit > 2 ? ` x${hit}` : ''}!</b>`);
-              place(cb, Math.max(W * 0.3, Math.min(W * 0.7, x)), Math.max(H * 0.2, y - 70)); cb.style.setProperty('--tilt', `${(Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 6)}deg`);
+              place(cb, Math.max(W * 0.3, Math.min(W * 0.7, x)), Math.max(H * 0.2, y - 70)); cb.style.setProperty('--tilt', `${(R() < 0.5 ? -1 : 1) * (6 + R() * 6)}deg`);
               lay.classList.remove('shake'); void lay.offsetWidth; lay.classList.add('shake'); later(() => cb.remove(), 560); }
             fc.textContent = `🪰 ${n} / ${N}`;
             if (n === N) { later(() => finish(timeStars(t0, 5, 7), '¡Las nueve!'), 150); }
@@ -781,10 +794,10 @@ trackVisit();   // the site's traffic (D-208)
         const { lay, W, H } = lay0('');
         const BLUE = '#2f6bff', OTHERS = ['#5ec8ff', '#8a5cff', '#2ec4b6'];
         const plan = shuffle([...Array(9).fill(BLUE), ...Array(9).keys()].map(c => typeof c === 'number' ? OTHERS[c % 3] : c))
-          .map((c, i) => ({ c, at: 80 + i * T(230), x: W * (0.18 + Math.random() * 0.64), dur: T(1900) * (0.85 + Math.random() * 0.3), size: 36 + Math.round(Math.random() * 44) }));
+          .map((c, i) => ({ c, at: 80 + i * T(230), x: W * (0.18 + R() * 0.64), dur: T(1900) * (0.85 + R() * 0.3), size: 36 + Math.round(R() * 44) }));
         // Popping: a ring and a few droplets fly out of the bubble
         const burst = b => { const r = mk(lay, 'span', 'obj bring'); place(r, b.x, b.y); r.style.width = r.style.height = b.size + 'px'; r.style.borderColor = b.c; later(() => r.remove(), 400);
-          for (let i = 0; i < 7; i++) { const d = mk(lay, 'span', 'obj bdrop'); place(d, b.x, b.y); const an = i / 7 * Math.PI * 2 + Math.random() * 0.5, dist = b.size * (0.6 + Math.random() * 0.5);
+          for (let i = 0; i < 7; i++) { const d = mk(lay, 'span', 'obj bdrop'); place(d, b.x, b.y); const an = i / 7 * Math.PI * 2 + R() * 0.5, dist = b.size * (0.6 + R() * 0.5);
             d.style.background = b.c; d.style.setProperty('--dx', `${Math.cos(an) * dist}px`); d.style.setProperty('--dy', `${Math.sin(an) * dist}px`); later(() => d.remove(), 420); } };
         let blue = 0, wrong = 0;
         animate(t => { plan.forEach(b => {
@@ -827,13 +840,13 @@ trackVisit();   // the site's traffic (D-208)
         return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" style="width:${w * 5.2}px;height:${h * 5.2}px" data-c="${c}">${r}</svg>`; };
       // When hit: it bursts into square pixels of its color
       const blast = (lay, x, y, c) => { for (let i = 0; i < 12; i++) { const q = mk(lay, 'span', 'obj pix'); q.style.background = c; place(q, x, y);
-        const an = i / 12 * Math.PI * 2, d = 30 + Math.random() * 40; q.style.setProperty('--dx', `${Math.round(Math.cos(an) * d / 6) * 6}px`); q.style.setProperty('--dy', `${Math.round(Math.sin(an) * d / 6) * 6}px`); later(() => q.remove(), 500); } };
+        const an = i / 12 * Math.PI * 2, d = 30 + R() * 40; q.style.setProperty('--dx', `${Math.round(Math.cos(an) * d / 6) * 6}px`); q.style.setProperty('--dy', `${Math.round(Math.sin(an) * d / 6) * 6}px`); later(() => q.remove(), 500); } };
       command('¡REBOTA!', () => {
         const { lay, W, H } = lay0('<div class="paddle" id="pd"></div><span class="obj pball" id="pb"></span>');
         const pd = $id('pd'), pb = $id('pb'), PW = W * 0.3, py = H * 0.9, R = 11;
         pd.style.width = PW + 'px'; let px = W / 2;
-        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); const x = W * (0.22 + 0.28 * i) + (Math.random() - 0.5) * W * 0.08, y = H * (0.14 + Math.random() * 0.12); place(el, x, y); return { el, x, y, hit: false }; });
-        let bx = W / 2, by = H * 0.6, an = (-60 - Math.random() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
+        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); const x = W * (0.22 + 0.28 * i) + (R() - 0.5) * W * 0.08, y = H * (0.14 + R() * 0.12); place(el, x, y); return { el, x, y, hit: false }; });
+        let bx = W / 2, by = H * 0.6, an = (-60 - R() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
         const mv = e => { px = Math.max(PW / 2 + W * 0.04, Math.min(W - PW / 2 - W * 0.04, ptIn(lay, e)[0])); };
         listen({ down: mv, move: mv });
         animate((t, now) => { const dt = Math.min(0.03, (now - last) / 1000); last = now;
@@ -861,7 +874,7 @@ trackVisit();   // the site's traffic (D-208)
       command('¡EQUILIBRA!', () => {
         const { lay, W, H } = lay0(`<svg id="sv" class="fullsvg"></svg><div class="loadhud" id="lh"></div><span class="c4note wipe-note">mueve el dedo de lado a lado</span>`);
         const sv = $id('sv'), lh = $id('lh'); sv.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        const L = H * 0.4, by = H * 0.86; let x = W / 2, tx = W / 2, v = 0, a = (Math.random() < 0.5 ? -1 : 1) * 0.08, w = 0, last = performance.now();
+        const L = H * 0.4, by = H * 0.86; let x = W / 2, tx = W / 2, v = 0, a = (R() < 0.5 ? -1 : 1) * 0.08, w = 0, last = performance.now();
         let gust = 0, pvx = null, pvy = null, ax = 0, ay = 0, ptx = null, pty = null;
         sv.innerHTML = `<line id="st" stroke="#e8c48a" stroke-width="8" stroke-linecap="round"/>
           <g id="top"><ellipse cx="0" cy="-5" rx="54" ry="9" fill="#f4f1ea" stroke="#c9c2b4" stroke-width="2"/><ellipse cx="0" cy="-7" rx="36" ry="5" fill="#e6e0d4"/>
@@ -883,13 +896,13 @@ trackVisit();   // the site's traffic (D-208)
           const wx = topx + it.u * Math.cos(a) - yo * Math.sin(a), wy = topy + it.u * Math.sin(a) + yo * Math.cos(a);
           it.el.remove(); items.splice(k, 1); hud();
           const d = mk(lay, 'span', 'obj dropitem'); Object.assign(d.style, { width: bw + 'px', height: bh + 'px', background: c, borderRadius: '4px', border: '2px solid rgba(0,0,0,.35)' });
-          place(d, wx, wy); d.style.setProperty('--dx', `${Math.sign(it.vu || it.u || a) * (60 + Math.random() * 40)}px`); d.style.setProperty('--dy', `${H}px`);
+          place(d, wx, wy); d.style.setProperty('--dx', `${Math.sign(it.vu || it.u || a) * (60 + R() * 40)}px`); d.style.setProperty('--dy', `${H}px`);
           pop(lay, '−★', wx, wy - 20, 'bad'); try { navigator.vibrate?.(40); } catch (_) { /* none */ }
           if (!items.length) { finish(0, '¡Se cayó todo!'); return true; } return false; };
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (dt <= 0) return;
           const nx = x + (tx - x) * Math.min(1, dt * 10); v = (nx - x) / dt; x = nx;
           // A little push now and then, so it never just stands still
-          gust -= dt; if (gust <= 0) { gust = 0.9 + Math.random() * 0.9; w += (Math.random() < 0.5 ? -1 : 1) * 0.35 * (0.5 + Math.random() * 0.6) * sp; }
+          gust -= dt; if (gust <= 0) { gust = 0.9 + R() * 0.9; w += (R() < 0.5 ? -1 : 1) * 0.35 * (0.5 + R() * 0.6) * sp; }
           // It leans more the more it leans; moving the base toward the lean pushes it back (tuned so a finger kept under the plate saves it)
           w += (2.2 * sp * Math.sin(a) - 4 * v / L) * dt; w *= 0.97; a += w * dt;
           if (Math.abs(a) > LIMIT) { a = Math.sign(a) * LIMIT; w *= -0.3; }       // the stick leans but never falls over
@@ -944,7 +957,7 @@ trackVisit();   // the site's traffic (D-208)
         // Closed: the line snaps shut, the shape lights up, and a sparkle bursts where the ends met
         const shine = (x, y) => { pg.setAttribute('stroke', '#ffd23f'); pg.removeAttribute('stroke-dasharray'); pg.setAttribute('fill', 'rgba(255,210,63,.14)');
           ink.classList.add('closed'); const ring = mk(lay, 'span', 'obj joinring'); place(ring, x, y);
-          for (let i = 0; i < 10; i++) { const sp2 = mk(lay, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y); const an = i / 10 * Math.PI * 2, d = 34 + Math.random() * 30;
+          for (let i = 0; i < 10; i++) { const sp2 = mk(lay, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y); const an = i / 10 * Math.PI * 2, d = 34 + R() * 30;
             sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); } };
         // Fast strokes skip ground between pointer events: walk the gap in small steps so the whole stroke counts
         let prev = null;
@@ -988,7 +1001,7 @@ trackVisit();   // the site's traffic (D-208)
       command('¡SIGUE!', () => {
         const { lay, W, H } = lay0(`<div class="ringf" id="rg"></div><div class="obj rat" id="mo">${RAT}</div><span class="hint-here" id="here">👆<em>pon el dedo en la ratita</em></span><div class="pct" id="pct">0 %</div>`);
         const mo = $id('mo'), rg = $id('rg'), here = $id('here'), pct = $id('pct');
-        let x = W / 2, y = H / 2, head = Math.random() * Math.PI * 2, want = head, spd = 0, wantSpd = 0, nextTurn = 0, pause = 0;
+        let x = W / 2, y = H / 2, head = R() * Math.PI * 2, want = head, spd = 0, wantSpd = 0, nextTurn = 0, pause = 0;
         let started = 0, on = false, finger = null, inT = 0, last = performance.now(); const DUR = T(4500) / 1000;
         // It faces left or right (never upside down) and tilts a little toward where it's going
         const draw = () => { place(mo, x, y); place(rg, x, y); const c = Math.cos(head), sn = Math.sin(head), flip = c < 0 ? -1 : 1;
@@ -1000,8 +1013,8 @@ trackVisit();   // the site's traffic (D-208)
         animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (!started) return;
           const tt = (now - started) / 1000;
           // Every so often: a new heading (a sharp turn), a new speed, sometimes a short freeze
-          if (tt >= nextTurn) { nextTurn = tt + (0.32 + Math.random() * 0.55) / sp; want = head + (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 1.6);
-            wantSpd = (Math.random() < 0.12 ? 0 : (150 + Math.random() * 170)) * sp; if (!wantSpd) pause = 0.15; }
+          if (tt >= nextTurn) { nextTurn = tt + (0.32 + R() * 0.55) / sp; want = head + (R() < 0.5 ? -1 : 1) * (0.7 + R() * 1.6);
+            wantSpd = (R() < 0.12 ? 0 : (150 + R() * 170)) * sp; if (!wantSpd) pause = 0.15; }
           head += (want - head) * Math.min(1, dt * 9); spd += (wantSpd - spd) * Math.min(1, dt * 7);
           if (pause > 0) { pause -= dt; spd *= 0.6; }
           x += Math.cos(head) * spd * dt; y += Math.sin(head) * spd * dt;
@@ -1073,7 +1086,7 @@ trackVisit();   // the site's traffic (D-208)
           const D = demo.getBoundingClientRect(), c = pair().map(x => { x.classList.add('found', 'hit'); const r = x.getBoundingClientRect(); return [r.left - D.left + r.width / 2, r.top - D.top + r.height / 2]; });
           const beam = mk(demo, 'div', 'diffbeam'); Object.assign(beam.style, { left: c[0][0] - 3 + 'px', top: c[0][1] + 'px', height: c[1][1] - c[0][1] + 'px' });
           c.forEach(([x, y]) => { for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, x, y);
-            const an = i / 8 * Math.PI * 2 + 0.3, d = 30 + Math.random() * 22; sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); } });
+            const an = i / 8 * Math.PI * 2 + 0.3, d = 30 + R() * 22; sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); } });
           setTimeout(() => beam.remove(), 1300);
           finish(s < 2.2 ? 3 : s < 3.8 ? 2 : 1, '¡La encontraste!', 1200); }));
       }, '🔍', 'toca lo único que cambió');
@@ -1100,7 +1113,7 @@ trackVisit();   // the site's traffic (D-208)
               b.style.visibility = 'hidden'; requestAnimationFrame(() => requestAnimationFrame(() => place(fly, r2.left - D.left + r2.width / 2, r2.top - D.top + r2.height / 2)));
               later(() => { const cx = r2.left - D.left + r2.width / 2, cy = r2.top - D.top + r2.height / 2;
                 if (ok) { fly.remove(); fill(gone, true);
-                  for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, cx, cy); const an = i / 8 * Math.PI * 2, d = 34 + Math.random() * 20;
+                  for (let i = 0; i < 8; i++) { const sp2 = mk(demo, 'span', 'obj sparkle', i % 2 ? '✦' : '✧'); place(sp2, cx, cy); const an = i / 8 * Math.PI * 2, d = 34 + R() * 20;
                     sp2.style.setProperty('--dx', `${Math.cos(an) * d}px`); sp2.style.setProperty('--dy', `${Math.sin(an) * d}px`); setTimeout(() => sp2.remove(), 900); }
                   finish(n, '¡Bien! Ese era', 1100); }
                 else { fly.classList.add('bounce'); later(() => { fly.remove(); fill(gone, false); hole.classList.add('blinkfit'); finish(0, `¡Mal! Se fue ${gone}`, 1300); }, 420); }
@@ -1113,18 +1126,18 @@ trackVisit();   // the site's traffic (D-208)
     mas() {
       const EMO = ['⭐', '🍬', '🪙', '🫐', '🍓', '🌸', '🐞', '🍪'];
       const GAP = [0.45, 0.28, 0.14];   // how much bigger the bigger pile is, round by round
-      const rounds = GAP.map(g => { const a = 9 + rnd(9), b = a + Math.max(1, Math.round(a * g * (0.8 + Math.random() * 0.4))), left = Math.random() < 0.5;
-        const same = Math.random() < 0.5, e1 = pick(EMO), e2 = same ? e1 : pick(EMO.filter(e => e !== e1));
+      const rounds = GAP.map(g => { const a = 9 + rnd(9), b = a + Math.max(1, Math.round(a * g * (0.8 + R() * 0.4))), left = R() < 0.5;
+        const same = R() < 0.5, e1 = pick(EMO), e2 = same ? e1 : pick(EMO.filter(e => e !== e1));
         // When they differ, the tray with more usually gets the smaller things, so it looks like less
-        const big = 1.55, small = 1.05, fsMore = same ? 1.25 : (Math.random() < 0.7 ? small : big), fsLess = same ? 1.25 : (fsMore === small ? big : small);
+        const big = 1.55, small = 1.05, fsMore = same ? 1.25 : (R() < 0.7 ? small : big), fsLess = same ? 1.25 : (fsMore === small ? big : small);
         return left ? { L: b, R: a, eL: e1, eR: e2, fL: fsMore, fR: fsLess } : { L: a, R: b, eL: e1, eR: e2, fL: fsLess, fR: fsMore }; });
       command('¡MÁS!', () => {
         // Spread evenly but loosely inside a round tray, never touching each other or the rim
         const pile = (n, emo, fs) => { const pts = []; let minD = 0.95 * Math.sqrt(Math.PI * 0.74 * 0.74 / n);
           for (let tries = 0; pts.length < n; tries++) { if (tries > 400) { minD *= 0.93; tries = 0; }
-            const a = Math.random() * Math.PI * 2, r = 0.74 * Math.sqrt(Math.random()), q = [r * Math.cos(a), r * Math.sin(a)];
+            const a = R() * Math.PI * 2, r = 0.74 * Math.sqrt(R()), q = [r * Math.cos(a), r * Math.sin(a)];
             if (pts.every(o => Math.hypot(o[0] - q[0], o[1] - q[1]) >= minD)) pts.push(q); }
-          return pts.map(([x, y]) => `<span style="left:${50 + x * 50}%;top:${50 + y * 50}%;font-size:${fs}rem;rotate:${Math.round((Math.random() - 0.5) * 40)}deg">${emo}</span>`).join(''); };
+          return pts.map(([x, y]) => `<span style="left:${50 + x * 50}%;top:${50 + y * 50}%;font-size:${fs}rem;rotate:${Math.round((R() - 0.5) * 40)}deg">${emo}</span>`).join(''); };
         let i = 0, right = 0; const marks = [];
         const play = () => { const r = rounds[i];
           set(`<div class="masdots">${GAP.map((_, j) => `<i class="${marks[j] === undefined ? (j === i ? 'cur' : '') : marks[j] ? 'ok' : 'no'}"></i>`).join('')}</div><div class="sub ask">¿Dónde hay más?</div>
@@ -1235,8 +1248,8 @@ trackVisit();   // the site's traffic (D-208)
         const wh = $id('wh'), plan = shuffle([...Array(9).fill('mole'), 'bomb', 'bomb', 'bomb']);
         // A little burst of dirt from the hole's mouth
         const puff = h => { const bx = parseFloat(h.box.style.left), bw = h.box.offsetWidth, by = parseFloat(h.box.style.top) + h.box.offsetHeight;
-          for (let i = 0; i < 6; i++) { const d = mk(lay, 'span', 'dirt'); const dx = (Math.random() - 0.5) * bw * 0.9;
-            Object.assign(d.style, { left: bx + bw / 2 + dx * 0.4 + 'px', top: by - 4 + 'px', '--dx': dx + 'px', '--dy': -(14 + Math.random() * 22) + 'px', zIndex: 40 });
+          for (let i = 0; i < 6; i++) { const d = mk(lay, 'span', 'dirt'); const dx = (R() - 0.5) * bw * 0.9;
+            Object.assign(d.style, { left: bx + bw / 2 + dx * 0.4 + 'px', top: by - 4 + 'px', '--dx': dx + 'px', '--dy': -(14 + R() * 22) + 'px', zIndex: 40 });
             later(() => d.remove(), 520); } };
         let good = 0, k = 0;
         // All nine bonked: the nine moles pop up together and dance a little
@@ -1244,7 +1257,7 @@ trackVisit();   // the site's traffic (D-208)
           // plain timeouts: finish() clears the game's own timers, and this runs right after it
           setTimeout(() => { h.c.classList.add('up'); setTimeout(() => h.c.classList.add('dance'), 280); }, i * 40);
           const n = mk(lay, 'span', 'obj note', pick(['♪', '♫'])); const r = h.box.getBoundingClientRect(), L = lay.getBoundingClientRect();
-          place(n, r.left - L.left + r.width * (0.2 + Math.random() * 0.6), r.top - L.top + 6); n.style.animationDelay = `${0.3 + Math.random() * 0.8}s`; });
+          place(n, r.left - L.left + r.width * (0.2 + R() * 0.6), r.top - L.top + 6); n.style.animationDelay = `${0.3 + R() * 0.8}s`; });
         const show = () => { if (!active) return;
           if (k >= plan.length) { later(() => { if (good === 9) { party(); finish(3, '¡Los 9! A bailar', 2300); } else finish(good >= 7 ? 2 : good >= 4 ? 1 : 0, `${good} de 9 topos`); }, T(700)); return; }
           const free = holes.filter(h => !h.busy); if (!free.length) { later(show, 120); return; }
@@ -1297,26 +1310,41 @@ trackVisit();   // the site's traffic (D-208)
   const NAMES = Object.fromEntries(META.map(m => [m.id, m.n]));
   if (META.some(m => !GAMES[m.id]) || Object.keys(GAMES).some(k => !NAMES[k])) console.warn('META and GAMES differ');
 
-  // ---- The lab page: a cover, the three ways to play, then runs of 10 different games in a row ----
-  const RUN = 10, MAX = RUN * 3, BEST = 'microgames:best';
-  let best = 0; try { best = +localStorage.getItem(BEST) || 0; } catch (_) { best = 0; }
-  const $btn = (id, fn) => $id(id)?.addEventListener('click', e => { e.stopPropagation(); fn(); });
+  // ---- The lab page: a cover with the rules folded in it, then runs of 10 different games in a row ----
+  // A shared run (?seed=K7Q2X, or ?today for Uno al día's seed of the day) is the same on every phone: the
+  // same ten games in the same order, and each one dealt the same (its own stream, engine.js `stream`).
+  // Without a seed every run is a new draw.
+  const SEED = (param('seed') || (tiene('today') ? semillaDel(new Date().toLocaleDateString('sv')) : '')).toUpperCase();
+  const MAX = RUN * 3, BEST = 'microgames:best', BEST_PTS = 'microgames:best-points';
+  const keep = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (_) { /* not kept */ } };
+  const kept = k => { try { return +localStorage.getItem(k) || 0; } catch (_) { return 0; } };
+  let best = kept(BEST), bestPts = kept(BEST_PTS);
+  const $btn = (id, fn) => $id(id)?.addEventListener('click', e => { e.stopPropagation(); initSound(); SFX.tap(); fn(); });
+  $id('sound-slot')?.append(soundToggle());
   // The run's progress in the corner: one mark per game, filled with how it went
   const rb = $id('runbar'), runbar = () => { rb.hidden = false; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
   let marks = [], startedAt = 0;
   // Under the stage: the site footer on the cover, with the game's 💬 comment as its option (C-17, U-38); just the comment elsewhere
   const pie = $id('pie'), COMMENT = { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué microjuegos te gustaron, cuáles no se entendían y qué le cambiarías.', ph: 'Por ejemplo: en ¡Corta! no me daba el tiempo.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' };
   const footer = screenName => { const b = document.createElement('button'); b.type = 'button'; b.className = 'link-btn'; b.id = 'btn-comentario'; b.textContent = '💬 Sugerencias y comentarios';
-    b.addEventListener('click', () => abrirComentario({ T: COMMENT, contexto: { juego: GAME_ID, pantalla: screenName, microjuego: curGame, corrida: order.join(' ') } }));
+    b.addEventListener('click', () => abrirComentario({ T: COMMENT, contexto: { juego: GAME_ID, pantalla: screenName, microjuego: curGame, corrida: order.join(' '), semilla: SEED } }));
     if (screenName === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [b], lang: 'es' }); else pie.replaceChildren(b); };
+  // The three ways to play, for the cover's folded rules (C-8, D-550): each with its gesture, moving
+  const HOW = { toca: 'la respuesta, en el momento justo o muchas veces seguidas.', arrastra: 'algo con el dedo hasta su lugar, o de lado a lado.', desliza: 'el dedo por la pantalla: corta, recorre o frota.' };
+  const rules = () => `<details class="panel howto-rules" id="reglas"><summary>Cómo se juega</summary>
+    <p>Haz lo que dice la orden antes de que se acabe la barra: 10 microjuegos seguidos, cada vez más rápido.</p>
+    <ul class="howkinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<li style="--kc:${col}"><span class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</span><span><b>${label[0]}${label.slice(1).toLowerCase()}</b> ${HOW[k]}</span></li>`).join('')}</ul>
+    <p>Cada microjuego da hasta ★★★; los puntos son 10 por estrella, por la velocidad, y +5 por cada racha de ★★ o más.</p></details>`;
   function cover() {
     stopAll(); active = false; hud.hidden = true; rb.hidden = true; undress();
     set(`<div class="big" aria-hidden="true">⚡</div><div class="cmd">¡Al toque!</div>
       <div class="sub">${RUN} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!</div>
-      <div class="sub credit">Inspirado en <a href="https://es.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>, de Nintendo.</div>
+      ${SEED ? `<div class="sub best">Corrida compartida · <b class="num">${SEED}</b>: la misma para todos</div>` : ''}
       <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ Jugar</button></div>
-      ${best ? `<div class="sub best">Tu mejor corrida: ${best} / ${MAX} ★</div>` : ''}`);
-    $btn('btn-jugar', howTo);
+      ${bestPts ? `<div class="sub best">Tu mejor corrida: <span class="num">${bestPts}</span> pts</div>` : ''}
+      <div class="sub credit">Inspirado en <a href="https://es.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>, de Nintendo.</div>`);
+    $id('rules-slot').innerHTML = rules();
+    $btn('btn-jugar', () => start(runList()));
     footer('portada');
   }
   function next() {
@@ -1324,54 +1352,39 @@ trackVisit();   // the site's traffic (D-208)
     if (idx > 0) marks[idx - 1] = lastStars;
     if (idx >= order.length) {
       hud.hidden = true; rb.hidden = true;
-      const k = total / MAX, isBest = total > best;
-      if (isBest) { best = total; try { localStorage.setItem(BEST, String(best)); } catch (_) { /* not kept */ } }
-      trackFinish({ detalle: `${total}/${MAX} stars · ${order.map((id, i) => `${id}:${marks[i]}`).join(' ')} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
+      const sc = score(marks), k = total / (order.length * 3), isBest = sc.points > bestPts;
+      if (isBest) { bestPts = sc.points; keep(BEST_PTS, bestPts); }
+      if (total > best) { best = total; keep(BEST, best); }
+      trackFinish({ detalle: `${sc.points} pts · ${score100(marks)}/100 · ${total}/${MAX} stars · ${order.map((id, i) => `${id}:${marks[i]}`).join(' ')} · ${Math.round((Date.now() - startedAt) / 1000)}s${SEED ? ` · seed ${SEED}` : ''}` });
+      if (k >= 0.45) { SFX.win(); if (!reduce) confetti(); }
+      // C-19: the result, the main action, the exits, then the detail game by game
       set(`<div class="cmd">${k >= 0.75 ? '¡Al toque!' : k >= 0.45 ? '¡Bien!' : '¡Otra!'}</div>
-        <div class="stars" style="color:var(--yellow)">${total} / ${MAX} ★</div>
-        <div class="runsum">${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i></span>`).join('')}</div>
-        <div class="sub best">${isBest ? '¡Tu mejor corrida!' : `Tu mejor: ${best} / ${MAX} ★`}</div>
-        <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 Otra corrida</button><button class="btn btn--ghost" type="button" id="btn-portada">Inicio</button></div>`);
+        <div class="stars" style="color:var(--yellow)"><span class="num">${sc.points}</span> pts</div>
+        <div class="sub best">${total} / ${order.length * 3} ★ · ${isBest ? '¡Tu mejor corrida!' : `tu mejor: ${bestPts} pts`}</div>
+        <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 ${SEED ? 'Jugarla de nuevo' : 'Otra corrida'}</button><div id="exits"></div></div>
+        <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i><em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>`);
+      $id('exits').replaceWith(salidasFin('lab', { raiz: '../../' }));
       $btn('btn-otra', () => start(runList()));
-      $btn('btn-portada', cover);
       return;
     }
     if (idx > 0 && idx % 3 === 0) sp = +(sp + 0.1).toFixed(2);
     hudN.textContent = `${idx + 1} / ${order.length}${sp > 1 ? ` · ×${sp.toFixed(1)}` : ''}`;
-    curGame = order[idx++]; if (order.length > 1) runbar(); GAMES[curGame]();
+    curGame = order[idx]; R = stream(SEED, `${idx}:${curGame}`); idx++;
+    if (order.length > 1) runbar(); GAMES[curGame]();
   }
   function start(list) {
     stopAll(); active = false; undress();
     total = 0; idx = 0; sp = 1; order = list; marks = []; lastStars = 0; startedAt = Date.now();
-    hud.hidden = false; hudS.textContent = '0 ★';
+    hud.hidden = false; hudS.textContent = '0 pts'; $id('rules-slot').replaceChildren();
     trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
     footer('juego');
     next();
   }
-  // Ten different games, a new draw each run
-  const runList = () => shuffle(META.map(m => m.id)).slice(0, RUN);
-  // Before a run: the three ways to play, one at a time, each with its gesture, then the button to start
-  function howTo() {
-    stopAll(); active = false; hud.hidden = true; rb.hidden = true;
-    const ks = Object.keys(KINDS), TXT = { toca: 'Toca la respuesta, en el momento justo o muchas veces seguidas',
-      arrastra: 'Toma algo con el dedo y llévalo a su lugar, o muévelo de lado a lado', desliza: 'Pasa el dedo por la pantalla: corta, lanza, recorre o frota' };
-    set(`<div class="howto"><div class="sub">En ¡Al toque! se juega de 3 formas</div><div class="howcard" id="hc"></div>
-      <div class="howdots" id="hd">${ks.map((k, i) => `<button type="button" data-k="${i}" aria-label="${KINDS[k][0]}"></button>`).join('')}</div>
-      <button class="btn btn--yellow" type="button" id="hgo">▶ ¡A jugar!</button></div>`);
-    const hc = $id('hc'), dots = [...$id('hd').children]; let i = 0, seen = 0;
-    const show = k => { i = k; const [label, , col] = KINDS[ks[k]];
-      hc.style.setProperty('--kc', col); hc.innerHTML = `<div class="hownum">${k + 1} de 3</div><div class="gstage g-${ks[k]}">${GSTAGE[ks[k]]}</div><b>${label}</b><p>${TXT[ks[k]]}</p>`;
-      hc.classList.remove('in'); void hc.offsetWidth; hc.classList.add('in');
-      dots.forEach((d, j) => { d.classList.toggle('on', j === k); d.style.setProperty('--kc', KINDS[ks[j]][2]); });
-      seen = Math.max(seen, k); if (seen === 2) $id('hgo').classList.add('ready'); };
-    const loop = () => { later(() => { show((i + 1) % 3); loop(); }, 2600); };
-    show(0); loop();
-    dots.forEach(d => d.addEventListener('click', e => { e.stopPropagation(); show(+d.dataset.k); }));
-    $btn('hgo', () => start(runList()));
-  }
+  // Ten different games: a new draw each run, or the shared run's when there is a seed
+  const runList = () => runOrder(META.map(m => m.id), SEED);
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
-  window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id),
-    only: id => start([id]) };
+  window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id), seed: SEED,
+    get marks() { return marks.slice(); }, only: id => start([id]) };
   cover();
 })();
 

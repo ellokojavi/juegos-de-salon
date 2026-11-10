@@ -1,9 +1,9 @@
 // ¡Al toque! in the lab end to end, at /labs/microgames/: the lab offers it under Games being tried, crediting
-// WarioWare; the cover has Jugar, the credit and the site footer; Jugar shows the three ways to play (Toca,
-// Arrastra, Desliza) one at a time with their gesture, three dots and ¡A jugar!; ¡A jugar! starts a run of 10
+// WarioWare; the cover has Jugar, the credit, its rules folded (the three ways to play, each with its gesture),
+// the sound button and the site footer; Jugar starts a run of 10
 // different microgames, with the HUD, a mark per game and the first intro wearing its type's gesture; a single
-// game (¡Calcula!, answered right) ends on the run's summary with stars, Otra corrida and Inicio, and the best
-// is kept; at 320 px no sideways scroll. Prints ✗ if anything fails.
+// game (¡Calcula!, answered right) ends on the run's summary with points, stars, Otra corrida and the way back to
+// the lab, and the best is kept; a seed gives the same run twice; at 320 px no sideways scroll. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/microgames-lab');
@@ -25,17 +25,11 @@ ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends
 ok(await ev(`__microgames.ids.length`) === 28, 'twenty-eight microgames');
 await b.shot('01-cover');
 
+ok(await ev(`document.querySelector('#rules-slot details.panel')?.open === false`), 'the rules are on the cover, folded (D-550)');
+ok(await ev(`document.querySelectorAll('#rules-slot .howkinds li').length`) === 3 && await ev(`!!document.querySelector('#rules-slot .gstage .hand')`), 'with the three ways to play, each with its finger');
+ok(await ev(`!!document.querySelector('#sound-slot .sound-toggle')`), 'a sound button in the top bar (C-4)');
 await ev(`document.getElementById('btn-jugar').click(); 1`);
-ok(await waitFor(`/TOCA/.test(document.getElementById('hc')?.textContent || '')`, 2000), 'Jugar shows the first way to play: Toca, with its gesture');
-ok(await ev(`document.querySelectorAll('#hd button').length`) === 3 && await ev(`!!document.querySelector('#hc .gstage .hand')`), 'three dots, and the finger on the card');
-await ev(`document.querySelectorAll('#hd button')[1].click(); 1`);
-ok(/ARRASTRA/.test(await ev(`document.getElementById('hc').textContent`)), 'a dot jumps to Arrastra');
-await ev(`document.querySelectorAll('#hd button')[2].click(); 1`);
-ok(/DESLIZA/.test(await ev(`document.getElementById('hc').textContent`)), 'and to Desliza');
-await b.shot('02-how');
-
-await ev(`document.getElementById('hgo').click(); 1`);
-ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game`, 2000), '¡A jugar! starts the run, with the HUD');
+ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.querySelector('#rules-slot details')`, 2000), 'Jugar starts the run, with the HUD, and the rules go away');
 const order = await ev(`__microgames.order`);
 ok(order.length === 10 && new Set(order).size === 10, `ten different microgames (${order.join(', ')})`);
 ok(await ev(`document.querySelectorAll('#runbar i').length`) === 10, 'a mark per game in the run');
@@ -49,16 +43,22 @@ ok(await ev(`!document.getElementById('demo').dataset.kind`), 'the frame comes o
 await ev(`(() => { const op = document.querySelector('.op').textContent.replace('−', '-').replace('×', '*'); const r = Function('return ' + op)(); document.querySelector('.opts3.low button[data-v="' + r + '"]').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); })(); 1`);
 ok(await waitFor(`!!document.getElementById('btn-otra')`, 6000), 'the run ends on its summary');
 ok(/★/.test(await ev(`document.querySelector('.runsum')?.textContent || ''`)) && await ev(`__microgames.total`) >= 1, 'with the stars it got');
-ok(!!(await ev(`document.getElementById('btn-portada')`)), 'Otra corrida and Inicio');
-ok(+(await ev(`localStorage.getItem('microgames:best')`)) >= 1, 'the best is kept');
+ok(await ev(`document.querySelector('#btn-fin-lab')?.getAttribute('href')`) === '../../labs/', 'Otra corrida and the way back to the lab, from fin.js (C-19)');
+ok(/pts/.test(await ev(`document.getElementById('screen').textContent`)), 'and the run\'s points');
+ok(+(await ev(`localStorage.getItem('microgames:best-points')`)) >= 1, 'the best is kept');
+
+// A shared run: the same seed, the same ten games on every phone
+const runOf = async () => { await b.go(`${SITE}/labs/microgames/?test&seed=K7Q2X`, 800); await ev(`document.getElementById('btn-jugar').click(); 1`); return (await ev(`__microgames.order`)).join(); };
+const r1 = await runOf(), r2 = await runOf();
+ok(r1 === r2, `a seed gives the same run twice (${r1})`);
 await b.shot('04-end');
 
 b.close();
 const s = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 640 });
 await s.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'at 320 px, no sideways scroll on the cover');
-await s.evaluate(`document.getElementById('btn-jugar').click(); 1`); await sleep(400);
-ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'nor on the three ways to play');
+await s.evaluate(`document.getElementById('reglas').open = true; 1`); await sleep(200);
+ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'nor with the rules open');
 s.close();
 if (failures) { console.log(`✗ ${failures} failed`); process.exit(1); }
 console.log('✓ ¡Al toque! in the lab');
