@@ -1737,7 +1737,11 @@
       "error": "❌ word-intro: 5.34 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part word; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "3d4567513b",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1750,7 +1754,11 @@
       "error": "❌ year-intro: 5.56 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part year; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "cf4cb5ae6e",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1763,7 +1771,11 @@
       "error": "❌ zip-intro: 8.30 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part zip; the new and the diff images are in /home/runner/work/_temp/e2e/v",
       "signature": "e36fba81f7",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1776,7 +1788,11 @@
       "error": "❌ agents-intro: 10.61 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part agents; the new and the diff images are in /home/runner/work/_tem",
       "signature": "69db21378e",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1789,7 +1805,11 @@
       "error": "❌ queens-intro: 9.50 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part queens; the new and the diff images are in /home/runner/work/_temp",
       "signature": "ee29dfb49c",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1802,7 +1822,11 @@
       "error": "❌ connections-intro: 5.21 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part connections; the new and the diff images are in /home/runner/",
       "signature": "3f3fc060ce",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1815,7 +1839,11 @@
       "error": "❌ plots-intro: 0.50 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part plots; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "5459ad0914",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1828,7 +1856,11 @@
       "error": "❌ routes-intro: 7.39 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part routes; the new and the diff images are in /home/runner/work/_temp",
       "signature": "abba835f9a",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1841,7 +1873,11 @@
       "error": "❌ case-intro: 3.30 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part case; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "224e84c5e8",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1854,7 +1890,11 @@
       "error": "❌ tango-intro: 9.91 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part tango; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "12ca98372a",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1867,7 +1907,11 @@
       "error": "❌ shinobi-intro: 3.61 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part shinobi; the new and the diff images are in /home/runner/work/_te",
       "signature": "e17caeb5e6",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1880,7 +1924,11 @@
       "error": "❌ untangle-intro: 4.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part untangle; the new and the diff images are in /home/runner/work/_",
       "signature": "0d7c0a4ad8",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1893,7 +1941,11 @@
       "error": "❌ paint-mines-intro: 0.43 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part paint-mines; the new and the diff images are in /home/runner/",
       "signature": "a073e84589",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -1906,7 +1958,11 @@
       "error": "❌ bridges-intro: 4.15 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges; the new and the diff images are in /home/runner/work/_te",
       "signature": "0ef19b3454",
       "date": "2026-11-10T06:06:49.556Z",
-      "fix": null,
+      "fix": {
+        "commit": "8075c8fb6347b997ff5fe8e30a5d39e48312ea97",
+        "date": "2026-11-10T06:42:06.757Z",
+        "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
+      },
       "flaky": false
     }
   ]
