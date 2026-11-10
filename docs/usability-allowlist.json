@@ -19,7 +19,6 @@
     { "file": "public/assets/js/search.js", "path": "TEXTS.*.one", "lang": "*", "reason": "A full-width row at the end of the search list (.buscar-todos), not a centered button: it may wrap with a long query." },
     { "file": "public/cup/rules.js", "path": "LOCALES.*.reportButton", "lang": "*", "reason": "A small text link (link-btn) at the bottom, the secondary kind U-17 allows to be longer." },
     { "file": "public/cup/rules.js", "path": "LOCALES.*.casoAyudaSure", "lang": "*", "reason": "The armed hint (the owner's choice in #351): it says what the second tap does, and it wraps centered." },
-    { "file": "public/cup/rules.js", "path": "LOCALES.*.leave", "lang": "*", "reason": "Leaving a cup on this phone needs both parts to be unmistakable; a wide secondary button that wraps centered." },
     { "file": "public/generala/rules.js", "path": "LOCALES.*.ui.allKept", "lang": "*", "reason": "The disabled roll button's state message, not an action label: it explains why it cannot roll." }
   ]
 }

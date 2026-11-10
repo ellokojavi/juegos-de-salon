@@ -137,6 +137,9 @@ The usability agent runs the lint first, never re-reports what it covers, and sp
   outside a game, from one component (`public/assets/js/site-footer.js`, its CSS in `base.css`, shared with
   the home page): Rankings and Uno al día with the funny phrase, each game's cover (the one-player games' too, on their own page) and La Copa's entrance
   without it. Never while playing and never on a result screen, which keeps its one quiet link (the owner's call).
+  A screen's own links become tiles of that footer (`options`): in the lab (flag `cup-footer`) La Copa's
+  board ends with it, its report and leave-the-cup links as tiles and no general inbox (`inbox: false`),
+  since the board brings its own report.
   While the inbox overlay is open the page behind it stays put, as under the share and support sheets: only the card scrolls, and
   closing it returns to the same place (`fijarFondo` in `buzon-form.js`).
 

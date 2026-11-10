@@ -502,6 +502,7 @@ const ES = {
   adminTab: '⚙️ Administrar',
   you: 'tú',
   leave: 'Salir de esta copa en este celular',
+  leaveTile: '🚪 Salir de esta copa',
   leaveConfirm: '¿Salir de la copa en este celular? Para volver vas a necesitar tu PIN.',
 
   // Antes de jugar
@@ -869,6 +870,7 @@ const ES = {
 
   // Reportes (LIG-42)
   reportButton: '🐞 Reportar un problema o dejar un comentario',
+  reportTile: '🐞 Reportar un problema',
   reportTitle: 'Cuéntanos qué pasó',
   reportLead: 'Describe el problema o el comentario con tus palabras: qué hiciste, qué esperabas y qué pasó. Lo lee quien mantiene juegosdesalon.cl.',
   reportPlaceholder: 'Por ejemplo: toqué Confirmar en Conexiones y no pasó nada.',
@@ -1393,6 +1395,7 @@ const EN = {
   adminTab: '⚙️ Manage',
   you: 'you',
   leave: 'Leave this cup on this phone',
+  leaveTile: '🚪 Leave this cup',
   leaveConfirm: 'Leave the cup on this phone? To come back you\'ll need your PIN.',
 
   // Antes de jugar
@@ -1750,6 +1753,7 @@ const EN = {
 
   // Reportes
   reportButton: '🐞 Report a problem or leave a comment',
+  reportTile: '🐞 Report a problem',
   reportTitle: 'Tell us what happened',
   reportLead: 'Describe the problem or comment in your own words: what you did, what you expected and what happened. Whoever runs juegosdesalon.cl reads it.',
   reportPlaceholder: 'For example: I tapped Confirm in Connections and nothing happened.',
@@ -2273,6 +2277,7 @@ const PT = {
   adminTab: '⚙️ Administrar',
   you: 'você',
   leave: 'Sair desta copa neste celular',
+  leaveTile: '🚪 Sair desta copa',
   leaveConfirm: 'Sair da copa neste celular? Para voltar você vai precisar do seu PIN.',
 
   // Antes de jugar
@@ -2630,6 +2635,7 @@ const PT = {
 
   // Reportes
   reportButton: '🐞 Relatar um problema ou deixar um comentário',
+  reportTile: '🐞 Relatar um problema',
   reportTitle: 'Conta pra gente o que aconteceu',
   reportLead: 'Descreva o problema ou o comentário com suas palavras: o que você fez, o que esperava e o que aconteceu. Quem mantém o juegosdesalon.cl lê.',
   reportPlaceholder: 'Por exemplo: toquei em Confirmar em Conexões e nada aconteceu.',

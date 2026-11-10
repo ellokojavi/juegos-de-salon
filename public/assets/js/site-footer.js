@@ -3,6 +3,8 @@
  * Rankings, Uno al día, La Copa's entrance and each game's cover. Never while playing and never on a
  * result screen, which keeps its one quiet link (U-38). With `phrase`, the rotating funny line on
  * top (Rankings and Uno al día); without it (the covers), only the options and the version.
+ * `options` are the screen's own buttons (an emoji, a space, the label), shown as tiles with the
+ * others; `inbox: false` leaves the general inbox out when a screen brings its own report (La Copa).
  *
  * The home page keeps its own footer markup; both share the classes in base.css.
  */
@@ -21,16 +23,22 @@ const circle = (b, kind) => {
 };
 
 /** The footer element; `screen` names where the inbox was opened from, for its reports. */
-export async function siteFooter({ phrase = false, screen = 'pagina', lang = getLang(), doc = document } = {}) {
+export async function siteFooter({ phrase = false, screen = 'pagina', options = [], inbox: withInbox = true, lang = getLang(), doc = document } = {}) {
   const T = COMMON[lang] || COMMON.es;
   const inbox = el('button', { type: 'button', class: 'buzon-link footer-buzon', onClick: () => import('./buzon.js').then(m => m.abrirBuzon({ pantalla: screen })) }, T.buzon.abrir);
-  const links = el('div', { class: 'footer-links' }, inbox);
+  const links = el('div', { class: 'footer-links' }, withInbox ? inbox : null, ...options);
+  let coffee = null;
   try {
     const { supportFooterLink } = await import('./support.js');
-    const coffee = await supportFooterLink(lang);
-    if (coffee) { coffee.removeAttribute('id'); links.append(coffee); links.classList.add('tiles'); }
+    coffee = await supportFooterLink(lang);
+    if (coffee) { coffee.removeAttribute('id'); links.append(coffee); }
   } catch (_) { /* the inbox alone */ }
-  if (links.classList.contains('tiles')) { circle(inbox, 'op-buzon'); circle(links.lastChild, 'op-apoyo'); }
+  if (links.childElementCount > 1) {
+    links.classList.add('tiles');
+    if (withInbox) circle(inbox, 'op-buzon');
+    options.forEach(o => circle(o, 'op-propia'));
+    if (coffee) circle(coffee, 'op-apoyo');
+  }
   const v = versionOf(releaseOf(doc));
   const version = el('p', { class: 'muted' }, v === '0' ? '' : `v${v} · `, el('a', { href: SOURCE, style: 'color:inherit' }, T.code || 'GitHub'), ' · ', el('a', { href: new URL('../../privacy/', import.meta.url).href, style: 'color:inherit' }, T.privacy || 'Privacy'));
   let msg = null;
