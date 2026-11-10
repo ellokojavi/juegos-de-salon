@@ -2043,7 +2043,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/panel/lab-keys.js\nERROR · appeared tests: public/panel/lab-keys.test.mjs",
       "signature": "65e3441828",
       "date": "2026-11-10T19:43:13.333Z",
-      "fix": null,
+      "fix": {
+        "commit": "010c7a7578a9d93a4fd6628881a10c7571f636b5",
+        "date": "2026-11-10T19:46:22.819Z",
+        "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
