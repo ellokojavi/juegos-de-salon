@@ -46,7 +46,7 @@ const T = {
     racha: '🔥 Longest perfect streak: {n}.',
   },
   otraVez: '🔁 Play again', laboratorio: '‹ Back to the lab',
-  comentarAbrir: '💬 Leave a comment',
+  comentarAbrir: '💬 Suggestions and comments',
   comentario: { titulo: 'What did you think?', lead: 'Tell us if it felt fair, if the taps landed when you meant them to, and what you would change.', ph: 'For example: the blocks got too fast too soon.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));

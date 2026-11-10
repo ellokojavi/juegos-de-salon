@@ -42,7 +42,7 @@ const ES = {
   reached: '📈 Llegaste a la ronda {n}.',
   time: '⏱️ Tiempo: {t}.',
   again: '🔁 Jugar de nuevo',
-  commentOpen: '💬 Dejar un comentario',
+  commentOpen: '💬 Sugerencias y comentarios',
   comment: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si alcanzabas a ver los dibujos, si te daba el tiempo para encontrarlos y qué le cambiarías.', ph: 'Por ejemplo: los dibujos se tapan muy rápido.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
 
@@ -82,7 +82,7 @@ const EN = {
   reached: '📈 You reached round {n}.',
   time: '⏱️ Time: {t}.',
   again: '🔁 Play again',
-  commentOpen: '💬 Leave a comment',
+  commentOpen: '💬 Suggestions and comments',
   comment: { titulo: 'What did you think?', lead: 'Tell us if you had time to see the pictures and to find them, and what you would change.', ph: 'For example: the pictures get covered too fast.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
 };
 
@@ -122,7 +122,7 @@ const PT = {
   reached: '📈 Você chegou à rodada {n}.',
   time: '⏱️ Tempo: {t}.',
   again: '🔁 Jogar de novo',
-  commentOpen: '💬 Deixar um comentário',
+  commentOpen: '💬 Sugestões e comentários',
   comment: { titulo: 'O que você achou?', lead: 'Conte se dava tempo de ver os desenhos e de encontrá-los, e o que você mudaria.', ph: 'Por exemplo: os desenhos são cobertos rápido demais.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
 };
 

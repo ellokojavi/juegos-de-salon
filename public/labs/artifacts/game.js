@@ -43,7 +43,7 @@ const LOCALES = {
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
     gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente etapa ›', otraVez: 'Jugar otra vez', formato: '5 etapas · {n}', mejor: '🏆 Récord: {n}', etapa: 'Etapa {n} de 5', superada: '¡Etapa {n} superada!', enTiempo: 'En {n}.', verResultado: 'Ver el resultado ›', record: '🏆 ¡Nuevo récord!', sinTiempo: '⏱️ ¡Se acabó el tiempo!', finJuego: '¡Listo!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificultad', 'Piezas', 'Tiempo', 'Puntos'], rapidez: '⚡ Rapidez (usaste {n})', total: 'Total', leyenda: 'Cada etapa vale 10, más 5 / 3 / 1 por usar pocas piezas (★★★ / ★★ / ★), más hasta 10 por rapidez.', tuMejor: 'Tu récord: {n}',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', otro: '🎲 Otro', dificultad: ['Aprendiendo', 'Fácil', 'Fácil +', 'Medio', 'Medio +', 'Difícil', 'Experto'],
-    comentarAbrir: '💬 Dejar un comentario',
+    comentarAbrir: '💬 Sugerencias y comentarios',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué nivel te costó, si las piezas se ponían fácil y qué pieza te gustaría.', ph: 'Por ejemplo: el nivel 3 me costó mucho.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
   en: {
@@ -64,7 +64,7 @@ const LOCALES = {
     fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
     gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next stage ›', otraVez: 'Play again', formato: '5 stages · {n}', mejor: '🏆 Best: {n}', etapa: 'Stage {n} of 5', superada: 'Stage {n} cleared!', enTiempo: 'In {n}.', verResultado: 'See the result ›', record: '🏆 New best!', sinTiempo: '⏱️ Time is up!', finJuego: 'Done!', superadas: '{n} of 5 stages cleared.', columnas: ['Stage', 'Difficulty', 'Parts', 'Time', 'Points'], rapidez: '⚡ Speed (you used {n})', total: 'Total', leyenda: 'Each stage is worth 10, plus 5 / 3 / 1 for using few parts (★★★ / ★★ / ★), plus up to 10 for speed.', tuMejor: 'Your best: {n}',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', otro: '🎲 Another', dificultad: ['Learning', 'Easy', 'Easy +', 'Medium', 'Medium +', 'Hard', 'Expert'],
-    comentarAbrir: '💬 Leave a comment',
+    comentarAbrir: '💬 Suggestions and comments',
     comentario: { titulo: 'What did you think?', lead: 'Tell us which level was hard, if placing parts was easy and what part you would like.', ph: 'For example: level 3 was very hard.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
   },
   pt: {
@@ -85,7 +85,7 @@ const LOCALES = {
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
     gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próxima etapa ›', otraVez: 'Jogar de novo', formato: '5 etapas · {n}', mejor: '🏆 Recorde: {n}', etapa: 'Etapa {n} de 5', superada: 'Etapa {n} superada!', enTiempo: 'Em {n}.', verResultado: 'Ver o resultado ›', record: '🏆 Novo recorde!', sinTiempo: '⏱️ Acabou o tempo!', finJuego: 'Pronto!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificuldade', 'Peças', 'Tempo', 'Pontos'], rapidez: '⚡ Rapidez (você usou {n})', total: 'Total', leyenda: 'Cada etapa vale 10, mais 5 / 3 / 1 por usar poucas peças (★★★ / ★★ / ★), mais até 10 por rapidez.', tuMejor: 'Seu recorde: {n}',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', otro: '🎲 Outro', dificultad: ['Aprendendo', 'Fácil', 'Fácil +', 'Médio', 'Médio +', 'Difícil', 'Expert'],
-    comentarAbrir: '💬 Deixar um comentário',
+    comentarAbrir: '💬 Sugestões e comentários',
     comentario: { titulo: 'O que achou?', lead: 'Conte qual nível foi difícil, se era fácil colocar as peças e que peça você gostaria.', ph: 'Por exemplo: o nível 3 foi muito difícil.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
   },
 };
