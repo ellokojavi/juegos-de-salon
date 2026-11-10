@@ -23,7 +23,7 @@ or month, with 🚀 marking the versions that first showed up in each period). E
 | Section | Address | What it answers |
 |---|---|---|
 | 📊 Summary | `#/summary` | The main metric (**games finished**: rooms with an ending, offline games finished and La Copa games), one card per domain with its change, and what is being played now (`#/now` keeps the full list). |
-| 🕑 Timeline | `#/timeline` | The key events one by one (D-408): games that reached an ending (rooms, offline, One a Day, La Copa days; an offline game says whether it was opened from its home card, the 🎲 Random game dice or One a Day), cups created, joined or finished, feedback, and every campaign seen (a splash shown or the donation card opened, D-503; skins are not campaigns), with who and when (🤖 after the name when the browser said it was a robot); filter by kind, count by day, week or month and by hour, tap a period to list only it. |
+| 🕑 Timeline | `#/timeline` | The key events one by one (D-408): games that reached an ending (rooms, offline, One a Day, La Copa days; an offline game says whether it was opened from its home card, the 🎲 Random game dice or One a Day), cups created, joined or finished, feedback, and every campaign seen (a splash the first time it reached a phone, once the page was visible, or the donation card opened, D-503; skins are not campaigns), with who and when (🤖 after the name when the browser said it was a robot); filter by kind, count by day, week or month and by hour, tap a period to list only it. |
 | 👥 Group | `#/group` | Rooms step by step (created → a rival came in → ended) with their median length, offline group games finished and replayed, by mode and players per game, the timeline, the group offline log and the room log. |
 | 🧍 Individual | `#/individual` | Solo and Uno al día games: finished, left halfway, "otra vez", the **real difficulty** of each game (score and time quartiles from its endings; a variant counts apart), and the solo offline log. |
 | 🏆 La Copa | `#/cup` | As before, plus the period before, the Cups step by step (created → 2 or more → started → finished), participation by day of the Cup, and who was left out (D-347) or brought back. |
@@ -303,7 +303,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   rates, one bar per day and a CSV (`supportStats` in `public/panel/campaigns.js`).
 - **Since D-461:** `splash/<campaign>/<event>`, what each splash window did: `shown`, `reach` (the first
   time on this phone, remembered in `juegos-de-salon:splash-alcance`), `play` (its link tapped), `close`,
-  and how long it stayed open before either (`t0` under 3 s, `t1` 3–10 s, `t2` 10 s or more). A preview
+  and how long it stayed open before either (`t0` under 3 s, `t1` 3–10 s, `t2` 10 s or more). `shown` and
+  `reach` wait until the page is visible (a prerender or background tab counts when it comes to the front). A preview
   never counts. Shown in 📣 Campaigns. Since D-466 also `start` and `finish`: after a Play tap, the first
   game started and the first finished in that tab within 2 hours (sessionStorage `juegos-de-salon:splash-via`).
 
