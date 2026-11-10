@@ -1992,7 +1992,11 @@
       "error": "✗ the gate (phase 6): no stylesheet has a hit that is not allowlisted\nAssertionError [ERR_ASSERTION]: use the token, or allowlist the hit with its reason (docs/DESIGN.md §4): node tools/agents/design-lint.mjs --gate\n+ actual - expected",
       "signature": "bb52322cc2",
       "date": "2026-11-10T18:43:01.593Z",
-      "fix": null,
+      "fix": {
+        "commit": "42c3be31a6f6ec10d4eee2bc0993b2bb2b434d03",
+        "date": "2026-11-10T19:07:06.915Z",
+        "stat": "11 file(s) +472 −411: README.md, changelog/lab-al-tiro.md, docs/facts.json, docs/games/microgames.md, public/labs/index.html, …"
+      },
       "flaky": false
     },
     {
@@ -2005,7 +2009,11 @@
       "error": "+   'pu✗ every --x-rgb equals the channels of the --x in the same rule, and every --x with a companion declares it\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected",
       "signature": "004fe8d4ed",
       "date": "2026-11-10T18:43:01.593Z",
-      "fix": null,
+      "fix": {
+        "commit": "42c3be31a6f6ec10d4eee2bc0993b2bb2b434d03",
+        "date": "2026-11-10T19:07:06.915Z",
+        "stat": "11 file(s) +472 −411: README.md, changelog/lab-al-tiro.md, docs/facts.json, docs/games/microgames.md, public/labs/index.html, …"
+      },
       "flaky": false
     },
     {
@@ -2018,7 +2026,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/labs/microgames/game.js\nERROR · appeared e2e: microgames/lab.mjs",
       "signature": "2465065a46",
       "date": "2026-11-10T19:04:18.713Z",
-      "fix": null,
+      "fix": {
+        "commit": "42c3be31a6f6ec10d4eee2bc0993b2bb2b434d03",
+        "date": "2026-11-10T19:07:06.915Z",
+        "stat": "2 file(s) +7 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
