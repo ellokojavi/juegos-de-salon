@@ -1,0 +1,91 @@
+/* ==========================================================
+   Sudoku: the game's own styles (lab, born from tools/generators/new-game.mjs).
+   The shell (screens, the cover's hero, modes, the result's hero) lives once in base.css
+   (DESIGN.md §2); this file keeps only the board and its pad, on the tokens (DESIGN.md §1).
+   ========================================================== */
+
+/* Its thematic colours (DESIGN.md §4): the level lever's metal, the same as Pintaminas' hard-mode lever */
+:root {
+  --sd-plate-light: #4a4f5c; --sd-plate-dark: #23262e; --sd-plate-edge: #6b7180;
+  --sd-axle-light: #d9dde5; --sd-axle-dark: #7b8190;
+  --sd-arm-1: #aeb4c0; --sd-arm-2: #e6e9ef; --sd-arm-3: #9aa0ad;
+  --sd-knob-easy: #c8ff8a; --sd-knob-hard: #ff8a8a; --sd-knob-shade-easy: #3f8f12; --sd-knob-shade-hard: #c4142b;
+}
+
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
+
+/* ---------- The board: 9×9 cells, a thicker line between the 3×3 boxes ---------- */
+.board {
+  --side: min(100%, 460px, calc(100svh - 300px));
+  width: var(--side); aspect-ratio: 1; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
+  background: var(--well-deep); border: 2px solid var(--ink); border-radius: var(--r-8); overflow: hidden;
+}
+.cell {
+  display: grid; place-items: center; padding: 0; margin: 0; min-width: 0; min-height: 0;
+  border: 0; border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);
+  background: transparent; color: var(--cyan); cursor: pointer;
+  font-family: var(--font-num); font-weight: 800; font-size: clamp(1rem, calc(var(--side) / 16), 1.6rem);
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
+}
+.cell[data-c="8"] { border-right: 0; }
+.cell[data-r="8"] { border-bottom: 0; }
+.cell[data-c="2"], .cell[data-c="5"] { border-right: 2px solid var(--ink); }
+.cell[data-r="2"], .cell[data-r="5"] { border-bottom: 2px solid var(--ink); }
+.cell.given { color: var(--ink); }
+.cell.peer { background: var(--glass); }
+.cell.same { background: rgb(var(--cyan-rgb) / 0.22); }
+.cell.sel { background: rgb(var(--yellow-rgb) / 0.35); }
+.cell.bad { color: var(--red); background: rgb(var(--red-rgb) / 0.18); }
+.cell.given.bad { color: var(--ink); }
+
+/* A cell's notes: a 3×3 of small digits */
+.notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
+.notes i { display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: clamp(0.5rem, calc(var(--side) / 48), 0.75rem); color: var(--muted); line-height: 1; }
+
+/* ---------- The pad: 1 to 9, with how many are left of each ---------- */
+.pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: var(--s-4); width: min(100%, 460px); margin: 0 auto; }
+.key {
+  display: grid; justify-items: center; gap: 0; padding: var(--s-6) 0; border: 1px solid var(--glass-border); border-radius: var(--r-8);
+  background: var(--glass); color: var(--ink); cursor: pointer; font-family: var(--font-num);
+  -webkit-tap-highlight-color: transparent;
+}
+.key b { font-size: var(--fs-140); line-height: 1.1; }
+.key small { font-size: var(--fs-75); color: var(--muted); }
+.key:active { transform: scale(0.94); }
+.key.full { opacity: 0.4; }
+
+.tools-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
+.tools-row .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
+#btn-notes.on { border-color: var(--yellow); color: var(--yellow); }
+#hint { margin: 0; min-height: 1.4em; }
+.play-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); width: min(100%, 460px); margin: 0 auto; }
+.play-head p { margin: 0; }
+.score { color: var(--yellow); font-variant-numeric: tabular-nums; }
+
+/* ---------- The level: a lever on a metal plate (Pintaminas' hard-mode switch). Down and green is easy, up and red is hard ---------- */
+.sd-lever { display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+.sd-lever.on { border-color: rgb(var(--red-rgb) / 0.85); background: rgb(var(--red-rgb) / 0.12); box-shadow: 0 0 18px rgb(var(--red-rgb) / 0.45); }
+.sd-label { display: grid; gap: var(--s-2); min-width: 0; }
+.sd-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
+.sd-lever.on .sd-label b { color: var(--sd-knob-hard); }
+.sd-label .muted { font-size: var(--fs-85); }
+.sd-plate { position: relative; width: 74px; height: 64px; border-radius: var(--r-12); background: linear-gradient(160deg, var(--sd-plate-light), var(--sd-plate-dark));
+  border: 2px solid var(--sd-plate-edge); box-shadow: inset 0 2px 4px rgb(var(--ink-rgb) / 0.15), inset 0 -3px 6px rgb(var(--well-rgb) / 0.5); }
+/* The groove is an arc around the lever's base with the ball's radius (39 px), as in Pintaminas */
+.sd-track { position: absolute; inset: 0; pointer-events: none; }
+.sd-track svg { width: 100%; height: 100%; display: block; }
+.sd-groove { fill: none; stroke: rgb(var(--well-rgb) / 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgb(var(--ink-rgb) / 0.18)); }
+.sd-axle { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-axle-light), var(--sd-axle-dark)); box-shadow: 0 1px 2px rgb(var(--well-rgb) / 0.6); }
+.sd-arm { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--sd-arm-1), var(--sd-arm-2), var(--sd-arm-3)); transform-origin: 50% 100%; transform: rotate(-38deg);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.sd-knob { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-knob-easy), var(--sd-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
+.sd-lever.on .sd-arm { transform: rotate(38deg); }
+.sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
+.sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .sd-arm, .sd-lever { transition: none; } }
