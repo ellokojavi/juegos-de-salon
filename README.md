@@ -488,6 +488,7 @@ node public/labs/flap/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
 node public/labs/memory/engine.test.mjs
+node public/labs/microgames/engine.test.mjs
 node public/labs/stack/engine.test.mjs
 node public/labs/sudoku/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -587,6 +588,7 @@ node public/labs/code/engine-palabra.test.mjs
 node public/labs/index-nav.test.mjs
 node public/labs/launched.test.mjs
 node public/labs/listed.test.mjs
+node public/labs/microgames/rules.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/campaigns.test.mjs
