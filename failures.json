@@ -1669,7 +1669,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/site-footer.test.mjs\nERROR · appeared e2e: cup/footer.mjs",
       "signature": "213a14009c",
       "date": "2026-11-10T00:50:56.618Z",
-      "fix": null,
+      "fix": {
+        "commit": "57d6fccc83d7661d54df78c225a501c411ac0911",
+        "date": "2026-11-10T00:53:23.504Z",
+        "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
