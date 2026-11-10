@@ -4,6 +4,8 @@
 // It checks the worktree the push runs from:
 //   - docs/DECISIONS.md against docs/decisions/  → node tools/agents/decision.mjs index
 //   - README.md generated blocks (ERROR lines)   → python3 tools/release/readme.py update
+//   - stylesheets against the design-lint gate    → node tools/agents/design-lint.mjs --gate
+//     (signature design-lint-gate: red `tests` on #1244 and #1245)
 // Exit 2 blocks the push and tells the session what to run; anything unexpected lets it through.
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -23,6 +25,10 @@ export function problems(cwd, run = (cmd, args) => spawnSync(cmd, args, { cwd, e
     const r = run('python3', ['tools/release/readme.py', 'check']);
     const errors = `${r.stdout || ''}${r.stderr || ''}`.split('\n').filter(l => /^\s*ERROR\b/.test(l) && /went stale/.test(l));
     if (errors.length) out.push(`README.md has stale generated blocks: python3 tools/release/readme.py update, then commit it\n  ${errors.join('\n  ')}`);
+  }
+  if (existsSync(join(cwd, 'tools/agents/design-lint.mjs'))) {
+    const r = run('node', ['tools/agents/design-lint.mjs', '--gate']);
+    if (r.status === 1) out.push('a stylesheet breaks the design-lint gate: node tools/agents/design-lint.mjs --gate, then use the token or allowlist the hit with its reason (docs/DESIGN.md §4)');
   }
   return out;
 }

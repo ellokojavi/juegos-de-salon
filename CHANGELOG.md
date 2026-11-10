@@ -1,5 +1,54 @@
 # Changelog
 
+## 1.6.14 — 2026-11-09
+- **Las reglas empiezan plegadas en todas las portadas**: en Reinas, Zip, Tango y los demás juegos sueltos, y en Sudoku y El Camaleón del lab, el "Cómo se juega" se abre con un toque y la portada muestra lo que importa (D-550).
+
+## 1.6.13 — 2026-11-09
+- **🔢 Sudoku's cover, ready for production** (lab): a small board that solves itself and says why (row, column, box), the level lever now electric like Pintaminas' (a wave on every flip; hard flashes, sparks and turns the whole cover red-violet), your best score per level, and a ranking per level (`sudoku_easy`, `sudoku_hard`) with signing in, also on the result.
+
+## 1.6.12 — 2026-11-10
+- **🔢 Sudoku enters the lab** (Juegos en prueba): the numbers classic, solo, in two levels picked with Pintaminas' lever (green fácil, red difícil), with a score: 100 for the finished board, 10 less for each wrong number (it turns red). Every board is new and has a single solution; the hard one needs more than singles but never guessing. With notes, erase, undo, a clock and a pad that counts what is left of each digit; a repeated digit turns red too. In es, en and pt.
+- **🔢 Sudoku (lab): 🏳️ Rendirse instead of Borrar.** On the right of the row, it asks "¿Seguro?" first, as in Pintaminas and Dominorama; giving up scores 0 and shows the solution. The same number again still empties a cell.
+- **🧮 Sudoku (lab): its own icon.** 🔢 was Toque y Fama's: the game is 🧮 now, and its cover shows a sudoku drawn on ruled notebook paper.
+- **La Copa: one footer on the board.** When the board was drawn twice in a row, its new footer (lab `cup-footer`) could appear twice; now the second replaces the first.
+
+## 1.6.11 — 2026-11-09
+- **La Copa's board ends with the site footer** (lab, flag `cup-footer`): «Report a problem» and «Leave this cup» become tiles of the violet-sunset footer instead of two loose links (U-38). `site-footer.js` takes a screen's own `options`; `site-footer.test.mjs` fails on any new loose link outside a game.
+- **Artefactos' lab test** pins the day it plays, so it no longer fails on dates whose five stages the drags were not placed for.
+
+## 1.6.10 — 2026-11-09
+- **🐤 Aletazo now has its own name in English and Portuguese**: *Flap* in English and *Bate-Asa* in Portuguese, on the home page, the search, La Copa and its launch splash (Spanish keeps Aletazo).
+- **No game name left untranslated again** (D-549): `game-names.test.mjs` fails a game whose English or Portuguese name copies the Spanish one without a listed reason, or whose La Copa texts disagree with `games.js`.
+
+## 1.6.9 — 2026-11-09
+- **Owner panel: shorter section descriptions.** The notes under each title and section now say only what is needed to read the numbers; decision numbers and how the data is collected moved out of the screen (they live in the docs).
+
+## 1.6.8 — 2026-11-09
+- **A new game can also be 🔥 Popular** (D-548): the label goes to the three most played games of the week, new ones included, so a game like Shinobi wears both "New" and 🔥 Popular.
+
+## 1.6.7 — 2026-11-09
+- **La Copa: the wildcard ×2 is a switch beside «Empezar».** On a day's cover the wildcard sat below the
+  buttons, so it could be missed before starting, and once a day starts it can no longer be used. Now it is
+  a switch right above «Empezar», seen without scrolling; on, the button reads «🃏 Empezar con ×2» and applies the wildcard
+  and starts the day.
+
+## 1.6.6 — 2026-11-09
+- **The footer buttons now look like the rest of the app**: "Sugerencias y comentarios" and "Invítame a un café" are pills tinted with their own color (cyan and orange), with the icon on the left, like the tags on the game cards, instead of two frosted squares.
+- **No empty frame on the coffee card offline**: the thank-you clip comes from GIPHY and cannot work without signal; offline, or when GIPHY does not answer, the card now opens without it.
+- **No coffee button offline**: without signal the "Invítame a un café" button (footer and end of game) steps aside, since paying needs Stripe; it comes back with the signal.
+- **Messages sent without signal always arrive**: a 💬 message written offline waited on the phone but only went up when La Copa or the lab was opened; now it goes up from any page, and as soon as the signal is back.
+
+## 1.6.5 — 2026-11-09
+- **Offline sheet in candlelight**: the sheet that explains offline mode (and any sheet opened offline) takes the Candlelight palette instead of its hard-coded purple, also when it opens over a game screen.
+- **The sheet says La Copa plays offline**: with the `cup-offline` flag on, it no longer says La Copa needs the signal; it says a pending day of a cup opened with signal on this phone plays offline and uploads when the signal is back, if the day is still open (D-544). es, en, pt.
+
+## 1.6.4 — 2026-11-09
+- **One language selector on the cover**: picking a variant (Loteo's Números / Servicios, and any game with variants) redrew the cover with the full flag toggle under the title, next to the round flag button in the top bar. Now only the top-bar button stays.
+- **Artefactos (lab)**: on a 375×667 phone the cover demo is a touch smaller, so Jugar is back inside the first screen.
+
+## 1.6.3 — 2026-11-09
+- **Workshop:** a Claude Code hook (`tools/agents/push-guard.mjs`) stops a `git push` while `docs/DECISIONS.md` or a generated README block is stale, so the `tests` check no longer goes red for it (D-518).
+
 ## 1.6.2 — 2026-11-08
 - **Artefactos (lab): a livelier cover** (the owner's request): the demo board is bigger, and before each ball drops its parts rise from below and glide into their slots one by one, as a player would drag them, so the cover shows that the parts move.
 

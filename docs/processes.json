@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
+  "checkedUpTo": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -466,7 +466,11 @@
           "commit": null
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-10",
+        "what": "push-guard.mjs hook runs design-lint.mjs --gate and stops git push on a hit not allowlisted (push-guard.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352"
+      },
       "signatures": [
         "bb52322cc2"
       ]
@@ -647,6 +651,12 @@
       "key": "readme-tests-block-stale",
       "what": "push-guard.mjs hook stops git push while a generated file is stale",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334"
+    },
+    {
+      "date": "2026-11-10",
+      "key": "design-lint-gate",
+      "what": "push-guard.mjs hook runs design-lint.mjs --gate and stops git push on a hit not allowlisted (push-guard.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352"
     }
   ],
   "queueDone": [
@@ -658,12 +668,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-09",
-      "to": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad"
+      "date": "2026-11-10",
+      "to": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5"
     },
     "usability": {
-      "date": "2026-11-09",
-      "to": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad"
+      "date": "2026-11-10",
+      "to": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5"
     },
     "ideas": {
       "date": "2026-11-04",
@@ -846,6 +856,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1334",
       "note": "dispatched documentation (#1333) and usability; 15 changelog entries collected; mechanism push-guard for 2 of 4 ready CI signatures"
+    },
+    {
+      "date": "2026-11-10",
+      "from": "ea1dea02461f92708f1971ba2c9fa9dccd5f06ad",
+      "to": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352",
+      "note": "dispatched documentation and usability; 12 changelog entries collected; mechanism push-guard design-lint gate for design-lint-gate; e2e-stale-assertion left for tomorrow"
     }
   ],
   "ownerDecisions": [
