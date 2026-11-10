@@ -1539,7 +1539,9 @@ const rondasDeLaFinal = (d = S.juego?.d) => (S.juego?.practica || !S.code ? fina
 const listaRondas = ({ detalle = false, d } = {}) => el('ul', { class: 'como', id: 'rondas-final' }, rondasDeLaFinal(d).map(x => {
   const { id: r, variante: v } = diaDeCal(x), R = conVariante(JUEGOS_COPA[r], v);
   const corta = detalle && !rondasDelDia(L()?.meta || {}, d ?? S.juego?.d) && RONDAS_FINAL[r];
-  return el('li', {}, corta ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r]}` : `${R.emoji} ${R.nombre}`);
+  // A game played whole says how it scores too, and how its points count in the final when they have no ceiling
+  const entera = detalle && !corta && R.puntaje ? [R.puntaje, R.puntajeFinal].filter(Boolean).join(' ') : '';
+  return el('li', {}, corta ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r]}` : entera ? `${R.emoji} ${R.nombre}: ${entera}` : `${R.emoji} ${R.nombre}`);
 }));
 /** One line, above the detailed list, for the rounds played whole (instead of repeating it per round). */
 const notaRondasEnteras = () => (rondasDeLaFinal().some(x => !RONDAS_FINAL[diaDeCal(x).id]) ? el('p', { class: 'muted', id: 'nota-enteras' }, T.finalWholeNote) : null);

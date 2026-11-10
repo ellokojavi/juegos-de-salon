@@ -12,6 +12,7 @@ const ES = {
       'Si lo sueltas justo encima del de abajo, no se corta nada. Desde la cuarta vez seguida, el bloque vuelve a crecer.',
     ],
     puntaje: 'Cada piso vale 1 punto; 3 perfectos seguidos dan +3, y cada perfecto más en la racha suma +1, +2… hasta +5.',
+    puntajeFinal: 'En la final cuentan tus puntos tal cual, hasta un máximo de 100.',
     desempate: 'Si empatas, gana quien armó su torre en menos tiempo.',
   },
   ui: {
@@ -48,6 +49,7 @@ const EN = {
       'Drop it exactly on the one below and nothing is cut. From the fourth time in a row, the block grows back.',
     ],
     puntaje: 'Each floor is 1 point; 3 perfects in a row give +3, and each further perfect in the streak adds +1, +2… up to +5.',
+    puntajeFinal: 'In the final your points count as they are, up to 100.',
     desempate: 'If you tie, whoever built their tower faster wins.',
   },
   ui: {
@@ -84,6 +86,7 @@ const PT = {
       'Se você soltar bem em cima do de baixo, nada é cortado. A partir da quarta vez seguida, o bloco volta a crescer.',
     ],
     puntaje: 'Cada andar vale 1 ponto; 3 perfeitos seguidos dão +3, e cada perfeito a mais na sequência soma +1, +2… até +5.',
+    puntajeFinal: 'Na final seus pontos contam como estão, até no máximo 100.',
     desempate: 'Se empatar, ganha quem montou a torre em menos tempo.',
   },
   ui: {
