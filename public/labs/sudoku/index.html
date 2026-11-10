@@ -57,7 +57,7 @@
     <section class="screen stack active" id="screen-intro">
       <div class="intro-hero">
         <!-- The cover's icon, drawn (the owner's request: 🔢 is Toque y Fama's): a sudoku on ruled notebook paper,
-             a few digits in ink and one being written in yellow -->
+             a few digits in ink and one being written in pink -->
         <svg class="icon sd-logo" viewBox="0 0 96 96" role="img" aria-label="Sudoku">
           <rect class="sd-logo-paper" x="4" y="4" width="88" height="88" rx="12" />
           <path class="sd-logo-ruled" d="M8 12H88M8 18H88M8 24H88M8 30H88M8 36H88M8 42H88M8 48H88M8 54H88M8 60H88M8 66H88M8 72H88M8 78H88M8 84H88" />
@@ -104,10 +104,12 @@
         <p class="display display--md score" id="result-score"></p>
         <p class="lead" id="result-line"></p>
         <p class="muted" id="result-detail"></p>
-        <div class="board board--mini" id="result-board" hidden aria-hidden="true"></div>
       </div>
       <div class="stack" id="result-actions"></div>
       <div id="result-exits"></div>
+      <!-- After giving up, the solution: long detail, below the actions and the exits (C-19) -->
+      <p class="muted center" id="solution-title" hidden></p>
+      <div class="board board--mini" id="result-board" hidden aria-hidden="true"></div>
     </section>
   </main>
 

@@ -62,7 +62,10 @@ Another sudoku of that level, Share through `compartir.js`, Change difficulty, a
   the cell: there is no erase button (the owner swapped it for 🏳️ Rendirse; on a computer Backspace erases).
 - 🏳️ Rendirse asks twice (U-15), as in Pintaminas and Dominorama: the first tap turns it into 🏳️ ¿Seguro?
   in yellow for 3 s, the second ends the game with 0 points and shows the solution on the result (givens in
-  white, the rest in cyan), without Share.
+  white, the rest in cyan), under the actions and the exits so they show without scrolling at 320 px (C-19),
+  without Share.
+- The result's detail line says how the score was made: "Sin errores: 100." or "Números mal puestos: n
+  (−10 cada uno)."; after giving up there is none (the title and the 0 already say it, U-8).
 - The clock runs only while the board is showing (it stops when the tab is hidden) and is saved with the game.
 - On a computer: digits, arrows, Backspace, and N for notes.
 

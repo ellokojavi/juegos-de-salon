@@ -248,10 +248,14 @@ function renderResult() {
   const points = E.score(state), n = state.mistakes || 0;
   $('#result-score').textContent = fmt(T.scoreResult, { score: points });
   $('#result-line').textContent = fmt(T.solvedLine, { level: `${LEVEL_EMOJI[state.level]} ${level}`, time });
-  $('#result-detail').textContent = gaveUp ? T.gaveUpDetail : n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
-  // On giving up, the solution: the givens in white, the rest in cyan
+  // Giving up: the title and the 0 already say it (U-8), so no detail line under them
+  $('#result-detail').textContent = gaveUp ? '' : n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
+  $('#result-detail').hidden = gaveUp;
+  // On giving up, the solution, under the exits (C-19): the givens in white, the rest in cyan
   const solution = $('#result-board');
   solution.hidden = !gaveUp;
+  $('#solution-title').hidden = !gaveUp;
+  $('#solution-title').textContent = gaveUp ? T.solutionTitle : '';
   solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + (E.isGiven(state, i) ? ' given' : ''), 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, String(d))) : []));
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(state.level); } }, fmt(T.again, { level: level.toLowerCase() })),
