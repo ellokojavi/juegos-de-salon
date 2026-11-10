@@ -654,8 +654,8 @@ export const PATHS = {
     intro: [],
     game: [`document.getElementById('btn-jugar').click(); 1`, `1`, `1`, `1`],
   },
-  // ¡Al tiro!: the cover, then Jugar shows the three ways to play, and ¡A jugar! starts a run of 10 (the first one's intro)
-  'labs/al-tiro': {
+  // ¡Al toque!: the cover, then Jugar shows the three ways to play, and ¡A jugar! starts a run of 10 (the first one's intro)
+  'labs/microgames': {
     intro: [],
     game: [`document.getElementById('btn-jugar').click(); 1`, `1`, `document.getElementById('hgo').click(); 1`, `1`],
   },

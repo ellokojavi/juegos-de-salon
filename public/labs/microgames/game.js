@@ -1,9 +1,9 @@
-// ¡Al tiro!, the lab's microgames (WarioWare-style): 30 games of 3 to 5 seconds, played in runs of 10
-// different ones in a row. Moved from the owner's review prototype; docs/games/al-tiro.md.
+// ¡Al toque!, the lab's microgames (WarioWare-style): 30 games of 3 to 5 seconds, played in runs of 10
+// different ones in a row. Moved from the owner's review prototype; docs/games/microgames.md.
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
-const GAME_ID = 'al-tiro';
+const GAME_ID = 'microgames';
 trackVisit();   // the site's traffic (D-208)
 (() => {
   const demo = document.getElementById('demo'), screen = document.getElementById('screen');
@@ -57,7 +57,7 @@ trackVisit();   // the site's traffic (D-208)
     const tag = document.createElement('div'); tag.className = `verdict-tag ${n ? 'good' : 'bad'}`; tag.textContent = n ? '✓' : '✗'; demo.append(tag);
     later(() => {
       stopAll();
-      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', '¡Por poco!', '¡Bien!', '¡Al tiro!'][n] : '¡Fallaste!')}</div>`);
+      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', '¡Por poco!', '¡Bien!', '¡Al toque!'][n] : '¡Fallaste!')}</div>`);
       later(next, 900);
     }, reduce ? 400 : hold);
   }
@@ -1340,7 +1340,7 @@ trackVisit();   // the site's traffic (D-208)
   if (META.some(m => !GAMES[m.id]) || Object.keys(GAMES).some(k => !NAMES[k])) console.warn('META and GAMES differ');
 
   // ---- The lab page: a cover, the three ways to play, then runs of 10 different games in a row ----
-  const RUN = 10, MAX = RUN * 3, BEST = 'al-tiro:best';
+  const RUN = 10, MAX = RUN * 3, BEST = 'microgames:best';
   let best = 0; try { best = +localStorage.getItem(BEST) || 0; } catch (_) { best = 0; }
   const $btn = (id, fn) => $id(id)?.addEventListener('click', e => { e.stopPropagation(); fn(); });
   // The run's progress in the corner: one mark per game, filled with how it went
@@ -1353,10 +1353,10 @@ trackVisit();   // the site's traffic (D-208)
     if (screenName === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [b], lang: 'es' }); else pie.replaceChildren(b); };
   function cover() {
     stopAll(); active = false; hud.hidden = true; rb.hidden = true; undress();
-    set(`<div class="big" aria-hidden="true">⚡</div><div class="cmd">¡Al tiro!</div>
-      <div class="sub">${RUN} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al tiro!</div>
+    set(`<div class="big" aria-hidden="true">⚡</div><div class="cmd">¡Al toque!</div>
+      <div class="sub">${RUN} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!</div>
       <div class="sub credit">Inspirado en <a href="https://es.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>, de Nintendo.</div>
-      <div class="menu"><button class="btn" type="button" id="btn-jugar">▶ Jugar</button></div>
+      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ Jugar</button></div>
       ${best ? `<div class="sub best">Tu mejor corrida: ${best} / ${MAX} ★</div>` : ''}`);
     $btn('btn-jugar', howTo);
     footer('portada');
@@ -1369,11 +1369,11 @@ trackVisit();   // the site's traffic (D-208)
       const k = total / MAX, isBest = total > best;
       if (isBest) { best = total; try { localStorage.setItem(BEST, String(best)); } catch (_) { /* not kept */ } }
       trackFinish({ detalle: `${total}/${MAX} stars · ${order.map((id, i) => `${id}:${marks[i]}`).join(' ')} · ${Math.round((Date.now() - startedAt) / 1000)}s` });
-      set(`<div class="cmd">${k >= 0.75 ? '¡Al tiro!' : k >= 0.45 ? '¡Bien!' : '¡Otra!'}</div>
+      set(`<div class="cmd">${k >= 0.75 ? '¡Al toque!' : k >= 0.45 ? '¡Bien!' : '¡Otra!'}</div>
         <div class="stars" style="color:var(--yellow)">${total} / ${MAX} ★</div>
         <div class="runsum">${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i></span>`).join('')}</div>
         <div class="sub best">${isBest ? '¡Tu mejor corrida!' : `Tu mejor: ${best} / ${MAX} ★`}</div>
-        <div class="menu"><button class="btn" type="button" id="btn-otra">🔁 Otra corrida</button><button class="btn ghost" type="button" id="btn-portada">Inicio</button></div>`);
+        <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 Otra corrida</button><button class="btn btn--ghost" type="button" id="btn-portada">Inicio</button></div>`);
       $btn('btn-otra', () => start(runList()));
       $btn('btn-portada', cover);
       return;
@@ -1397,9 +1397,9 @@ trackVisit();   // the site's traffic (D-208)
     stopAll(); active = false; hud.hidden = true; rb.hidden = true;
     const ks = Object.keys(KINDS), TXT = { toca: 'Toca la respuesta, en el momento justo o muchas veces seguidas',
       arrastra: 'Toma algo con el dedo y llévalo a su lugar, o muévelo de lado a lado', desliza: 'Pasa el dedo por la pantalla: corta, lanza, recorre o frota' };
-    set(`<div class="howto"><div class="sub">En ¡Al tiro! se juega de 3 formas</div><div class="howcard" id="hc"></div>
+    set(`<div class="howto"><div class="sub">En ¡Al toque! se juega de 3 formas</div><div class="howcard" id="hc"></div>
       <div class="howdots" id="hd">${ks.map((k, i) => `<button type="button" data-k="${i}" aria-label="${KINDS[k][0]}"></button>`).join('')}</div>
-      <button class="btn" type="button" id="hgo">▶ ¡A jugar!</button></div>`);
+      <button class="btn btn--yellow" type="button" id="hgo">▶ ¡A jugar!</button></div>`);
     const hc = $id('hc'), dots = [...$id('hd').children]; let i = 0, seen = 0;
     const show = k => { i = k; const [label, , col] = KINDS[ks[k]];
       hc.style.setProperty('--kc', col); hc.innerHTML = `<div class="hownum">${k + 1} de 3</div><div class="gstage g-${ks[k]}">${GSTAGE[ks[k]]}</div><b>${label}</b><p>${TXT[ks[k]]}</p>`;
@@ -1412,7 +1412,7 @@ trackVisit();   // the site's traffic (D-208)
     $btn('hgo', () => start(runList()));
   }
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
-  window.__alTiro = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id),
+  window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id),
     only: id => start([id]) };
   cover();
 })();
