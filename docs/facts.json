@@ -1340,6 +1340,7 @@
     "public/labs/memory/game.js",
     "public/labs/memory/rules.js",
     "public/labs/memory/sprites.js",
+    "public/labs/microgames/game.js",
     "public/labs/publish.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
@@ -1681,6 +1682,7 @@
     "liars-dice/shake-clock.mjs",
     "look.mjs",
     "memory/lab.mjs",
+    "microgames/lab.mjs",
     "narrow.mjs",
     "narrow.test.mjs",
     "offline.mjs",
@@ -1909,6 +1911,10 @@
     {
       "path": "docs/games/memory.md",
       "title": "👀 Memorice (lab prototype, in Games being tried)"
+    },
+    {
+      "path": "docs/games/microgames.md",
+      "title": "⚡ ¡Al toque! (lab prototype, in Games being tried)"
     },
     {
       "path": "docs/games/paint-mines.md",

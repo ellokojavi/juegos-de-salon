@@ -864,6 +864,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
 - [👀 Memorice (lab prototype, in Games being tried)](docs/games/memory.md)
+- [⚡ ¡Al toque! (lab prototype, in Games being tried)](docs/games/microgames.md)
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [👑 Queens (Reinas)](docs/games/queens.md)
