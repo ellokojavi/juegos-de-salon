@@ -640,11 +640,6 @@
 .demo .sock { font-size: var(--mg-fs-260); cursor: grab; }
 .demo .chick { font-size: var(--mg-fs-260); } .demo .chick.hurt { filter: drop-shadow(0 0 10px var(--red)); animation: wobble 0.2s 2; }
 .demo .rock { font-size: var(--fs-160); }
-.demo .hoop { height: 16px; border: 6px solid var(--orange); border-top: 0; border-radius: 0 0 14px 14px; box-shadow: 0 6px 0 rgb(var(--ink-rgb) / 0.15); }
-.demo .ball { font-size: var(--mg-fs-260); }
-.demo .goal { position: absolute; border: 5px solid var(--ink); border-bottom: 0; background: repeating-linear-gradient(45deg, rgb(var(--ink-rgb) / 0.12) 0 2px, transparent 2px 12px), repeating-linear-gradient(-45deg, rgb(var(--ink-rgb) / 0.12) 0 2px, transparent 2px 12px); }
-.demo .goal.net { box-shadow: 0 0 30px var(--yellow); }
-.demo .keeper { font-size: var(--mg-fs-260); text-align: center; } .demo .keeper.save { scale: 1.3; }
 .demo .jacket { position: absolute; left: 22%; right: 22%; top: 6%; bottom: 6%; background: linear-gradient(90deg, var(--mg-3b5bdb), var(--mg-4c6ef5) 50%, var(--mg-3b5bdb)); border-radius: 22px 22px 12px 12px; }
 .demo .zip { position: absolute; left: 50%; top: 10%; bottom: 10%; width: 14px; transform: translateX(-50%); background: repeating-linear-gradient(var(--mg-dddddd) 0 4px, var(--mg-888888) 4px 8px); }
 .demo .zipgap { position: absolute; left: 50%; width: 34px; transform: translateX(-50%); background: linear-gradient(90deg, var(--mg-cccccc) 0 4px, var(--mg-fff3d6) 4px calc(100% - 4px), var(--mg-cccccc) calc(100% - 4px)); border-radius: 50% 50% 0 0 / 16px 16px 0 0; }

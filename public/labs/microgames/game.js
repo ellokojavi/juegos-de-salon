@@ -1,4 +1,4 @@
-// ¡Al toque!, the lab's microgames (WarioWare-style): 30 games of 3 to 5 seconds, played in runs of 10
+// ¡Al toque!, the lab's microgames (WarioWare-style): 28 games of 3 to 5 seconds, played in runs of 10
 // different ones in a row. Moved from the owner's review prototype; docs/games/microgames.md.
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { footerInto } from '../../assets/js/site-footer.js';
@@ -73,7 +73,7 @@ trackVisit();   // the site's traffic (D-208)
   const KIND = { quecolor: 'toca', cuenta: 'toca', calcula: 'toca', completa: 'toca', quehora: 'toca', sombra: 'toca', mas: 'toca', diferente: 'toca', cualfalta: 'toca', dondequedo: 'toca', repite: 'toca',
     espera: 'toca', para: 'toca', toca: 'toca', aplasta: 'toca', revienta: 'toca', notoques: 'toca',
     ordena: 'arrastra', alimenta: 'arrastra', conecta: 'arrastra', atrapa: 'arrastra', rebota: 'arrastra', equilibra: 'arrastra',
-    corta: 'desliza', encesta: 'desliza', patea: 'desliza', cruza: 'desliza', dibuja: 'desliza', sigue: 'desliza', limpia: 'desliza' };
+    corta: 'desliza', cruza: 'desliza', dibuja: 'desliza', sigue: 'desliza', limpia: 'desliza' };
   let curGame = null;
   const GSTAGE = {
     toca: '<i class="gbox"></i><i class="gbox mid"></i><i class="gbox"></i><i class="rip"></i><span class="hand">👆</span>',
@@ -924,46 +924,6 @@ trackVisit();   // the site's traffic (D-208)
         active = true; runTimer(dur, () => {});
       }, `<span style="display:inline-flex;flex-direction:column-reverse;align-items:center">${LOAD.map(k => chip(k, 1.1).replace('margin-right:4px', 'margin:0')).join('')}</span>`, 'que no se caiga nada del plato');
     },
-    // 12 ¡ENCESTA!: the hoop slides side to side; swipe up to throw. Two tries
-    encesta() {
-      command('¡ENCESTA!', () => {
-        const { lay, W, H } = lay0('<div class="obj hoop" id="hp"></div><span class="obj ball" id="bl">🏀</span>');
-        const hp = $id('hp'), bl = $id('bl'), hy = H * 0.2, hw = W * 0.28, home = [W / 2, H * 0.84];
-        hp.style.width = hw + 'px'; place(bl, ...home);
-        let hx = W / 2, dir = Math.random() < 0.5 ? 1 : -1, shot = null, shots = 0, start = null, last = performance.now();
-        animate((t, now) => { const dt = (now - last) / 1000; last = now; hx += dir * W * 0.38 * sp * dt; if (hx > W * 0.76 || hx < W * 0.24) dir *= -1; place(hp, hx, hy);
-          if (shot) { shot.x += shot.vx * dt; shot.y += shot.vy * dt; place(bl, shot.x, shot.y);
-            if (shot.y <= hy) { const off = Math.abs(shot.x - hx) / (hw / 2); shot = null;
-              if (off < 1) { finish(shots === 1 ? (off < 0.45 ? 3 : 2) : 1, '¡Adentro!'); return false; }
-              pop(lay, '¡Afuera!', hx, hy + 34, 'bad');
-              if (shots >= 2) { finish(0, '¡Fallaste los dos!'); return false; }
-              later(() => place(bl, ...home), 200); } } });
-        listen({ down: e => { if (!shot) start = ptIn(lay, e); },
-          up: e => { if (!start) return; const p = ptIn(lay, e), dx = p[0] - start[0], dy = p[1] - start[1]; start = null; if (dy > -30 || shot) return;
-            const n = Math.hypot(dx, dy), V = H * 2.2; shots++; shot = { x: home[0], y: home[1], vx: dx / n * V, vy: dy / n * V }; } });
-        active = true; runTimer(T(5000), () => finish(0));
-      }, '🏀 ⬆️', 'desliza hacia arriba para lanzar');
-    },
-    // 13 ¡PATEA!: a penalty. Swipe toward the goal where the keeper isn't
-    patea() {
-      command('¡PATEA!', () => {
-        const { lay, W, H } = lay0('<div class="goal" id="gl"></div><span class="obj keeper" id="kp">🧤</span><span class="obj ball" id="bl">⚽</span>');
-        const gl = $id('gl'), kp = $id('kp'), bl = $id('bl'), gx0 = W * 0.14, gx1 = W * 0.86, gy = H * 0.3, kw = (gx1 - gx0) * 0.3, home = [W / 2, H * 0.84];
-        Object.assign(gl.style, { left: gx0 + 'px', width: (gx1 - gx0) + 'px', top: H * 0.1 + 'px', height: (gy - H * 0.1) + 'px' }); place(bl, ...home);
-        let kx = W / 2, kdir = Math.random() < 0.5 ? 1 : -1, shot = null, start = null, last = performance.now(); const t0 = last;
-        animate((t, now) => { const dt = (now - last) / 1000; last = now;
-          kx += kdir * W * 0.3 * sp * dt; if (kx > gx1 - kw / 2 || kx < gx0 + kw / 2) kdir *= -1; place(kp, kx, gy - 22); kp.style.width = kw + 'px';
-          if (shot) { shot.x += shot.vx * dt; shot.y += shot.vy * dt; place(bl, shot.x, shot.y);
-            if (shot.y <= gy) { const x = shot.x; shot = null;
-              if (x < gx0 + 8 || x > gx1 - 8) { finish(0, '¡Afuera!'); return false; }
-              if (Math.abs(x - kx) < kw / 2 + 10) { kp.classList.add('save'); finish(0, '¡Atajó!'); return false; }
-              gl.classList.add('net'); finish(timeStars(t0, 1.6, 2.8), '¡GOOOL!'); return false; } } });
-        listen({ down: e => { if (!shot) start = ptIn(lay, e); },
-          up: e => { if (!start || shot) return; const p = ptIn(lay, e), dx = p[0] - start[0], dy = p[1] - start[1]; start = null; if (dy > -30) return;
-            const n = Math.hypot(dx, dy), V = H * 2.3; shot = { x: home[0], y: home[1], vx: dx / n * V, vy: dy / n * V }; } });
-        active = true; runTimer(T(4500), () => finish(0));
-      }, '⚽ 🥅', 'desliza hacia donde no está el arquero');
-    },
     // 14 ¡DIBUJA!: trace the dotted shape without leaving it
     dibuja() {
       command('¡DIBUJA!', () => {
@@ -1322,8 +1282,6 @@ trackVisit();   // the site's traffic (D-208)
     ['alimenta', '¡ALIMENTA!', '🐵', 'Lleva cada comida a su animal.'],
     ['rebota', '¡REBOTA!', '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
     ['equilibra', '¡EQUILIBRA!', '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
-    ['encesta', '¡ENCESTA!', '🏀', 'El aro se mueve: desliza hacia arriba para lanzar. Dos intentos.'],
-    ['patea', '¡PATEA!', '⚽', 'Un penal: desliza hacia donde no está el arquero.'],
     ['dibuja', '¡DIBUJA!', '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
     ['sigue', '¡SIGUE!', '🐀', 'Una ratita corre rápido y cambia de dirección sin aviso: mantén el dedo encima. Si la sigues bien, al final te mira y baila.'],
     ['repite', '¡REPITE!', '🟦', 'Los botones se encienden en una secuencia de 5: repítela.'],
