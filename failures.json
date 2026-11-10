@@ -1686,7 +1686,11 @@
       "error": "✗ dragging a part from the tray places it where it is let go",
       "signature": "0f51af220c",
       "date": "2026-11-10T01:10:10.148Z",
-      "fix": null,
+      "fix": {
+        "commit": "903bf2a893a49e9ecf64a024e9ceb7ef9dd84cbe",
+        "date": "2026-11-10T01:39:25.850Z",
+        "stat": "2 file(s) +7 −1: changelog/claude-cup-footer-links.md, tools/e2e/artifacts/lab.mjs"
+      },
       "flaky": false
     }
   ]
