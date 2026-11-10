@@ -1964,6 +1964,19 @@
         "stat": "14 file(s) +0 −0: tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/case-intro.png, tools/e2e/visual/ref/connections-intro.png, tools/e2e/visual/ref/paint-mines-intro.png, …"
       },
       "flaky": false
+    },
+    {
+      "run": 42871100883,
+      "check": "end-to-end",
+      "pr": 1357,
+      "branch": "lab-cover-footer",
+      "commit": "59d4f700845770f3d1fbf67c394bb4ce4ca400e0",
+      "test": "visual.mjs:fourth-king",
+      "error": "❌ fourth-king-intro: 6.69 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part fourth-king; the new and the diff images are in /home/runner/",
+      "signature": "bcd7aaf635",
+      "date": "2026-11-10T18:09:29.284Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
