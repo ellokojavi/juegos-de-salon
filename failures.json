@@ -2032,6 +2032,19 @@
         "stat": "2 file(s) +7 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42887670042,
+      "check": "tests",
+      "pr": 1360,
+      "branch": "lab-keys-panel",
+      "commit": "300f4a92f618afeb147f68bd3c92758248b4b3d7",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/panel/lab-keys.js\nERROR · appeared tests: public/panel/lab-keys.test.mjs",
+      "signature": "65e3441828",
+      "date": "2026-11-10T19:43:13.333Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
