@@ -567,4 +567,8 @@ console.log('stats.test.mjs: todo en verde');
   assert.equal(lr({ v: '1', bot: true }, { game: 'ahorcado', mode: 'solo', players: 1 }).r, true);
   assert.equal('r' in lr({ v: '1' }, { game: 'ahorcado', mode: 'solo', players: 1 }), false);
   assert.equal(sr({ bot: true }, { c: 'support' }).r, true);
+  // How the page was when the window opened: only kept when it was not in front
+  assert.equal(sr({}, { c: 'x', vis: 'prerender' }).vis, 'prerender');
+  assert.equal('vis' in sr({}, { c: 'x', vis: 'visible' }), false);
+  assert.equal('vis' in sr({}, { c: 'x' }), false);
 }

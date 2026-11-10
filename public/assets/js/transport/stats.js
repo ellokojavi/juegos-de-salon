@@ -434,18 +434,20 @@ export function startLive(api, fp, { game, mode, players, name = '', origin = ''
 /**
  * A campaign seen, for the panel's timeline: who saw which one and when. `c` is the splash
  * campaign's id, or `support` for the donation card (the Keanu one) when it opens. The name is the
- * one this phone already knows (`nombreDelCelular`); none is asked for. One row per view, in
+ * one this phone already knows (`nombreDelCelular`); none is asked for. One row per phone and campaign, in
  * `seen/<id>` of the day, deleted with the other names at 24 months (stats-retention.mjs).
  */
-export function seenRecord(fp, { c, name = '' }) {
+export function seenRecord(fp, { c, name = '', vis = '' }) {
   const r = { c: String(c).slice(0, 40), at: STAMP };
+  // How the page was when the window opened, while the bursts of identical rows are studied
+  if (vis && vis !== 'visible') r.vis = String(vis).slice(0, 10);
   if (fp.co) r.co = fp.co;
   if (fp.bot) r.r = true;
   if (name) r.name = String(name).slice(0, NOMBRE_MAX);
   return r;
 }
-export function noteSeen(c, { api, fp } = stats(), { id = liveId(), now = Date.now(), name = nombreDelCelular('') } = {}) {
-  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`seen/${id}`]: seenRecord(fp, { c, name }) }));
+export function noteSeen(c, { api, fp } = stats(), { id = liveId(), now = Date.now(), name = nombreDelCelular(''), vis = '' } = {}) {
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`seen/${id}`]: seenRecord(fp, { c, name, vis }) }));
 }
 
 /**

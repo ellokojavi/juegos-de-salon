@@ -356,6 +356,22 @@ export function firstReach(id, store = storage()) {
 }
 
 /**
+ * How the page was when the window opened: `prerender` (loaded ahead by the browser), `hidden` (a
+ * background tab or a preview) or `visible`. Kept on the timeline row for now, to learn where the
+ * bursts of identical rows came from (four within a second, no bot mark). Never throws.
+ */
+export function pageState(doc = globalThis.document) {
+  try { return doc?.prerendering ? 'prerender' : doc?.visibilityState === 'hidden' ? 'hidden' : 'visible'; } catch (_) { return 'visible'; }
+}
+/** Runs `fn` once the page is visible to someone: now, or when it comes to the front. */
+export function whenVisible(fn, doc = globalThis.document) {
+  if (pageState(doc) === 'visible' || !doc?.addEventListener) { fn(); return; }
+  const on = () => { if (pageState(doc) !== 'visible') return; doc.removeEventListener('visibilitychange', on); doc.removeEventListener('prerenderingchange', on); fn(); };
+  doc.addEventListener('visibilitychange', on);
+  doc.addEventListener('prerenderingchange', on);
+}
+
+/**
  * Counts campaign events (D-461). The stats module is loaded when the window opens, so the tap on Play
  * sends its count before the page leaves (the request goes with keepalive). Never throws.
  */
@@ -369,8 +385,9 @@ function splashTracker(id) {
       s.api.patch(mod.dayPath(s.fp.env, mod.dayOf(Date.now())), Object.fromEntries(events.map(e => [`splash/${id}/${e}`, { '.sv': { increment: 1 } }]))).catch(() => {});
     } catch (_) { /* best effort */ }
   };
-  return events => {
-    const go = () => { send(events); if (events.includes('shown')) mod.noteSeen(id); };
+  // The timeline row (D-503) is one per phone and campaign: only on its first reach
+  return (events, vis) => {
+    const go = () => { send(events); if (events.includes('reach')) mod.noteSeen(id, undefined, { vis }); };
     if (mod) go(); else ready.then(() => mod && go());
   };
 }
@@ -525,8 +542,10 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   card.focus({ preventScroll: true });
 
   // The panel's counts (D-461): a preview never counts
+  // A window nobody is looking at (a prerender, a background tab) is counted when it comes to the front
   const track = record ? splashTracker(id) : () => {};
-  track(firstReach(id) ? ['shown', 'reach'] : ['shown']);
+  const vis = pageState();
+  whenVisible(() => track(firstReach(id) ? ['shown', 'reach'] : ['shown'], vis));
   const opened = Date.now();
   let answered = false;
   const answer = ev => { if (answered) return; answered = true; track([ev, dwellBand(Date.now() - opened)]); };
