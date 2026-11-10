@@ -1,7 +1,7 @@
 /**
  * Sudoku: state machine and drawing (C-2), the only file that touches the DOM. The rules and the
- * generator are in engine.js, the texts in rules.js. Screens: intro (the three levels) → play (the
- * board, the pad and the clock) → result. The game is saved after every move to resume it (C-6),
+ * generator are in engine.js, the texts in rules.js. Screens: intro (the two levels) → play (the
+ * board, the pad, the clock and the score) → result. The game is saved after every move to resume it (C-6),
  * with the time played. Lab only (D-395). `?seed=` fixes the puzzle (tests, a shared board).
  */
 import { $, $$, el, vibrate, confetti } from '../../assets/js/ui.js';
@@ -34,6 +34,13 @@ let selected = -1;      // the cell the pad writes to
 let notesMode = false;
 let since = 0;          // when the clock last started (ms), 0 while stopped
 let ticker = 0;
+let flash = 0;          // a notice in the hint line, for a moment
+
+function say(text) {
+  clearTimeout(flash);
+  $('#hint').textContent = text;
+  flash = setTimeout(() => { flash = 0; if (state && !E.isOver(state)) drawBoard(); }, 1800);
+}
 
 const elapsed = () => (state ? state.elapsed + (since ? Date.now() - since : 0) : 0);
 const save = () => store.save({ mode: 'solo', state: { ...state, elapsed: elapsed() }, done: !!state && E.isOver(state) });
@@ -58,7 +65,9 @@ function stopClock() {
   clearInterval(ticker);
 }
 function drawClock() {
-  if (state) $('#level-line').textContent = fmt(T.levelLine, { level: `${LEVEL_EMOJI[state.level]} ${levelName(state.level)}`, time: mmss(elapsed()) });
+  if (!state) return;
+  $('#level-line').textContent = fmt(T.levelLine, { level: `${LEVEL_EMOJI[state.level]} ${levelName(state.level)}`, time: mmss(elapsed()) });
+  $('#score-line').textContent = fmt(T.scoreLine, { score: E.score(state) });
 }
 document.addEventListener('visibilitychange', () => {
   if (!state || !$('#screen-play').classList.contains('active')) return;
@@ -111,7 +120,7 @@ function buildBoard() {
 }
 
 function drawBoard() {
-  const bad = E.conflicts(state);
+  const bad = new Set([...E.conflicts(state), ...E.wrong(state)]);
   const sel = selected >= 0 ? selected : -1;
   const selDigit = sel >= 0 ? state.cells[sel] : 0;
   const n = E.counts(state);
@@ -136,7 +145,8 @@ function drawBoard() {
   notesBtn.classList.toggle('on', notesMode);
   notesBtn.setAttribute('aria-pressed', String(notesMode));
   $('#btn-undo').disabled = !state.history.length;
-  $('#hint').textContent = sel < 0 ? T.pickCell : '';
+  if (!flash) $('#hint').textContent = sel < 0 ? T.pickCell : '';
+  drawClock();
 }
 
 function renderPlay() {
@@ -159,7 +169,8 @@ function press(d) {
   state = notesMode && !state.cells[selected] ? E.toggleNote(state, selected, d) : E.setDigit(state, selected, d);
   if (state === before) return;
   SFX.tap();
-  if (E.conflicts(state).has(selected)) vibrate(60);
+  const missed = state.mistakes > (before.mistakes || 0);
+  if (missed) { vibrate(80); say(T.mistake); }
   afterMove();
 }
 
@@ -180,7 +191,7 @@ function afterMove() {
   if (E.isOver(state)) {
     stopClock();
     save();
-    trackFinish({ nivel: state.level, segundos: Math.round(state.elapsed / 1000) });
+    trackFinish({ nivel: state.level, segundos: Math.round(state.elapsed / 1000), puntaje: E.score(state), errores: state.mistakes || 0 });
     return renderResult();
   }
   save();
@@ -202,7 +213,10 @@ function renderResult() {
   const time = mmss(state.elapsed);
   const level = levelName(state.level);
   $('#result-title').textContent = T.solved;
+  const points = E.score(state), n = state.mistakes || 0;
+  $('#result-score').textContent = fmt(T.scoreResult, { score: points });
   $('#result-line').textContent = fmt(T.solvedLine, { level: `${LEVEL_EMOJI[state.level]} ${level}`, time });
+  $('#result-detail').textContent = n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(state.level); } }, fmt(T.again, { level: level.toLowerCase() })),
     botonCompartir({
@@ -210,7 +224,7 @@ function renderResult() {
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
       armar: async () => ({
         titulo: T.title, url: location.origin + location.pathname,
-        texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.shareText, { level: level.toLowerCase(), time })].join('\n\n'),
+        texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.shareText, { level: level.toLowerCase(), time, score: points })].join('\n\n'),
       }),
     }),
     el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));

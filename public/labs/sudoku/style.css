@@ -51,3 +51,6 @@
 .tools-row .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
 #btn-notes.on { border-color: var(--yellow); color: var(--yellow); }
 #hint { margin: 0; min-height: 1.4em; }
+.play-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); width: min(100%, 460px); margin: 0 auto; }
+.play-head p { margin: 0; }
+.score { color: var(--yellow); font-variant-numeric: tabular-nums; }

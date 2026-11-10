@@ -9,9 +9,9 @@ export default {
     "pt": "Sudoku"
   },
   "tagline": {
-    "es": "El clásico de los números: llena el tablero sin repetir, en fácil, mediano o difícil.",
-    "en": "The numbers classic: fill the board without repeating, easy, medium or hard.",
-    "pt": "O clássico dos números: preencha o tabuleiro sem repetir, fácil, médio ou difícil."
+    "es": "El clásico de los números: llena el tablero sin repetir, en fácil o difícil.",
+    "en": "The numbers classic: fill the board without repeating, easy or hard.",
+    "pt": "O clássico dos números: preencha o tabuleiro sem repetir, fácil ou difícil."
   },
   "keywords": {
     "es": [

@@ -1,5 +1,5 @@
-// Sudoku (lab): picks each level, plays a wrong digit (it turns red), a note and an undo, fills the
-// board through the hook and checks the result; then the conformance checks run it in every language
+// Sudoku (lab): picks each level, plays a digit that repeats (it turns red and costs 10 points), a note
+// and an undo, fills the board through the hook and checks the result and its score; then the conformance checks run it in every language
 // (tools/e2e/conformance.mjs).
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -12,9 +12,9 @@ const ok = (cond, msg) => { console.log((cond ? '✓ ' : '✗ ') + msg); if (!co
 const S = '__sudoku';
 
 await b.go(SITE + '/labs/sudoku/?seed=e2e'); await b.evaluate('localStorage.clear(); 1'); await b.go(SITE + '/labs/sudoku/?seed=e2e');
-ok(await b.evaluate("document.querySelectorAll('.mode[data-level]').length") === 3, 'the cover offers three levels');
+ok(await b.evaluate("document.querySelectorAll('.mode[data-level]').length") === 2, 'the cover offers two levels: easy and hard');
 
-for (const level of ['easy', 'medium', 'hard']) {
+for (const level of ['easy', 'hard']) {
   await b.evaluate(`document.getElementById('btn-level-${level}').click(); 1`); await sleep(400);
   ok(await b.active() === 'screen-play', `${level}: the board opens`);
   ok(await b.evaluate(`window.${S}.state().level`) === level, `${level}: at that level`);
@@ -29,12 +29,14 @@ for (const level of ['easy', 'medium', 'hard']) {
       const red = document.querySelector('#board .cell[data-i="' + i + '"]').classList.contains('bad');
       document.getElementById('btn-undo').click();
       const back = window.${S}.state().cells[i] === 0;
+      const score = document.getElementById('score-line').textContent;
       document.getElementById('btn-notes').click(); document.getElementById('key-5').click(); document.getElementById('btn-notes').click();
       const note = !!document.querySelector('#board .cell[data-i="' + i + '"] .notes');
-      return JSON.stringify({ red, back, note }); })()`));
+      return JSON.stringify({ red, back, note, score }); })()`));
     ok(r.red, 'a repeated digit turns red');
     ok(r.back, 'undo takes it back');
     ok(r.note, 'a note is written in the cell');
+    ok(/90/.test(r.score), `the wrong digit cost 10 points (${r.score})`);
     await b.shot('play-easy');
   }
   await b.evaluate(`window.${S}.solveAllBut(1); 1`); await sleep(200);
@@ -43,7 +45,9 @@ for (const level of ['easy', 'medium', 'hard']) {
   await sleep(400);
   ok(await b.active() === 'screen-result', `${level}: the last digit reaches the result`);
   ok(await b.evaluate("!!document.querySelector('#fin-salidas a[href$=\"labs/\"]')"), `${level}: the result goes back to the lab (C-19)`);
-  if (level === 'hard') await b.shot('result');
+  const sc = await b.evaluate("document.getElementById('result-score').textContent");
+  ok(new RegExp(level === 'easy' ? '90' : '100').test(sc), `${level}: the result shows the score (${sc})`);
+  if (level === 'easy') await b.shot('result');
   await b.evaluate("document.getElementById('btn-levels').click(); 1"); await sleep(400);
 }
 ok(!b.errors.length, 'no console errors' + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));

@@ -24,7 +24,7 @@
       } catch (_) { /* no storage: it paints as always */ }
     })();
   </script>
-  <meta name="description" content="Sudoku en tres dificultades: fácil, mediano y difícil. Un tablero nuevo en cada partida.">
+  <meta name="description" content="Sudoku en dos dificultades: fácil y difícil. Un tablero nuevo en cada partida.">
   <link rel="manifest" href="../../manifest.webmanifest">
   <script>
     // The chosen language's manifest, before the browser reads it (D-222)
@@ -74,7 +74,7 @@
 
     <!-- ============ PLAY ============ -->
     <section class="screen stack" id="screen-play">
-      <p class="lead center" id="level-line"></p>
+      <div class="play-head"><p class="lead" id="level-line"></p><p class="lead score" id="score-line"></p></div>
       <div class="board" id="board" data-tablero="sudoku" role="grid"></div>
       <div class="pad" id="pad"></div>
       <div class="tools-row">
@@ -90,7 +90,9 @@
       <div class="result-hero">
         <span class="trophy">🧠</span>
         <div class="display display--md" id="result-title">—</div>
+        <p class="display display--md score" id="result-score"></p>
         <p class="lead" id="result-line"></p>
+        <p class="muted" id="result-detail"></p>
       </div>
       <div class="stack" id="result-actions"></div>
       <div id="result-exits"></div>

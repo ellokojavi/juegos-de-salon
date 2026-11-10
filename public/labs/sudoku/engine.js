@@ -6,14 +6,18 @@
  * grade no harder than the level asks. The grade is what a person needs to solve it by logic alone
  * (`grade`): 0 = singles only (a cell with one candidate, a digit with one place in a row, column or
  * box); 1 = also locked candidates and naked or hidden pairs; Infinity = beyond those. Easy keeps
- * many givens and singles; medium few givens and singles; hard needs the grade-1 techniques.
+ * many givens and singles; hard needs the grade-1 techniques (the owner kept only these two, 2026-11-10).
+ *
+ * The score (for La Copa, when it goes there): 100 for the finished board, minus 10 for every digit
+ * written that is not the solution's, never below 0. Notes never count.
  */
 
-export const LEVELS = ['easy', 'medium', 'hard'];
+export const LEVELS = ['easy', 'hard'];
+export const SCORE_FULL = 100;
+export const SCORE_MISTAKE = 10;
 /** Per level: the most techniques it may need, the fewest givens it keeps, and the grade it must need. */
 const LEVEL = {
   easy: { maxGrade: 0, minGivens: 38, needGrade: 0 },
-  medium: { maxGrade: 0, minGivens: 28, maxGivens: 32, needGrade: 0 },
   hard: { maxGrade: 1, minGivens: 22, needGrade: 1 },
 };
 
@@ -196,7 +200,7 @@ export function newGame(level = 'easy', seed = Date.now()) {
   const p = generate(level, seed);
   return {
     level: p.level, seed: p.seed, givens: p.givens, solution: p.solution,
-    cells: [...p.givens], notes: Array(81).fill(0), history: [], elapsed: 0, moves: 0, done: false,
+    cells: [...p.givens], notes: Array(81).fill(0), history: [], elapsed: 0, moves: 0, mistakes: 0, done: false,
   };
 }
 
@@ -215,6 +219,16 @@ export function conflicts(state) {
   }
   return bad;
 }
+
+/** The cells holding a digit that is not the solution's (shown in red: each one cost 10 points). */
+export function wrong(state) {
+  const bad = new Set();
+  state.cells.forEach((d, i) => { if (d && d !== state.solution[i]) bad.add(i); });
+  return bad;
+}
+
+/** The score so far: 100 minus 10 per wrong digit written, never below 0. */
+export const score = state => Math.max(0, SCORE_FULL - SCORE_MISTAKE * (state.mistakes || 0));
 
 /** How many of each digit 1..9 are on the board (index 0 unused). */
 export function counts(state) {
@@ -235,7 +249,8 @@ export function setDigit(state, i, d) {
   notes[i] = 0;
   if (cells[i]) for (const p of PEERS[i]) notes[p] &= ~bit(d);
   const done = solvedNow(cells);
-  return { ...state, cells, notes, history, moves: state.moves + 1, done };
+  const mistakes = (state.mistakes || 0) + (cells[i] && cells[i] !== state.solution[i] ? 1 : 0);
+  return { ...state, cells, notes, history, moves: state.moves + 1, mistakes, done };
 }
 
 /** Toggles note `d` in an empty cell `i`. */
