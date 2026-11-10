@@ -551,6 +551,7 @@ node public/assets/js/room-state.test.mjs
 node public/assets/js/search.test.mjs
 node public/assets/js/season.test.mjs
 node public/assets/js/share-grid.test.mjs
+node public/assets/js/site-footer.test.mjs
 node public/assets/js/splash.test.mjs
 node public/assets/js/support.test.mjs
 node public/assets/js/transport/best-effort.test.mjs
