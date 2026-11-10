@@ -1,4 +1,4 @@
-# 🔢 Sudoku (lab, in Juegos en prueba)
+# 🧮 Sudoku (lab, in Juegos en prueba)
 
 The classic numbers puzzle, played solo, in two levels (easy and hard), with a score. Born from `node tools/generators/new-game.mjs sudoku`
 (#1249 step 9); the owner asked for it on 2026-11-10 ("un sudoku con tres dificultades: fácil, mediano y difícil",
@@ -38,6 +38,12 @@ solved grid and empties cells in mirrored pairs while the solution stays unique 
 
 A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixes the board of each level
 (the tests use it).
+
+## Look
+
+The game's emoji is 🧮 (🔢 is Toque y Fama's). The cover's hero is a drawn icon instead of the emoji (the
+owner's request): a sudoku on ruled notebook paper (no margin line, the owner asked), its digits in ink and one in pink,
+as an inline SVG coloured from the tokens (`.sd-logo` in `style.css`).
 
 ## Modos
 

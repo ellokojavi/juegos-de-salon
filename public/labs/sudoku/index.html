@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#150726">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Sudoku 🔢 · Juegos de Salón</title>
+  <title>Sudoku 🧮 · Juegos de Salón</title>
   <!-- A lab game (D-395): behind the lab's door (D-281) and not indexed -->
   <script src="../../assets/js/labs-puerta.js"></script>
   <meta name="robots" content="noindex, nofollow">
@@ -50,13 +50,24 @@
   <main class="app" id="app">
     <div class="topbar">
       <a class="back" href="../" id="btn-menu" data-i18n="menu">‹ Laboratorio</a>
-      <div class="tools"><span class="chip" data-i18n="gameChip">🔢 Sudoku</span><span id="sound-slot"></span></div>
+      <div class="tools"><span class="chip" data-i18n="gameChip">🧮 Sudoku</span><span id="sound-slot"></span></div>
     </div>
 
     <!-- ============ INTRO ============ -->
     <section class="screen stack active" id="screen-intro">
       <div class="intro-hero">
-        <span class="icon">🔢</span>
+        <!-- The cover's icon, drawn (the owner's request: 🔢 is Toque y Fama's): a sudoku on ruled notebook paper,
+             a few digits in ink and one being written in yellow -->
+        <svg class="icon sd-logo" viewBox="0 0 96 96" role="img" aria-label="Sudoku">
+          <rect class="sd-logo-paper" x="4" y="4" width="88" height="88" rx="12" />
+          <path class="sd-logo-ruled" d="M8 12H88M8 18H88M8 24H88M8 30H88M8 36H88M8 42H88M8 48H88M8 54H88M8 60H88M8 66H88M8 72H88M8 78H88M8 84H88" />
+          <rect class="sd-logo-cells" x="14" y="14" width="68" height="68" />
+          <path class="sd-logo-thin" d="M21.56 14V82M14 21.56H82M29.11 14V82M14 29.11H82M44.22 14V82M14 44.22H82M51.78 14V82M14 51.78H82M66.89 14V82M14 66.89H82M74.44 14V82M14 74.44H82" />
+          <path class="sd-logo-thick" d="M36.67 14V82M14 36.67H82M59.33 14V82M14 59.33H82" />
+          <rect class="sd-logo-frame" x="14" y="14" width="68" height="68" rx="2" />
+          <g class="sd-logo-digits"><text x="17.78" y="20.08">5</text><text x="48" y="20.08">3</text><text x="78.22" y="20.08">9</text><text x="32.89" y="27.63">7</text><text x="63.11" y="27.63">1</text><text x="25.33" y="35.19">6</text><text x="17.78" y="42.74">8</text><text x="55.56" y="42.74">2</text><text x="48" y="50.3">5</text><text x="70.67" y="50.3">4</text><text x="40.44" y="57.86">1</text><text x="32.89" y="65.41">2</text><text x="78.22" y="65.41">6</text><text x="63.11" y="72.97">8</text><text x="17.78" y="80.52">3</text><text x="48" y="80.52">9</text><text x="70.67" y="80.52">7</text></g>
+          <text class="sd-logo-pen" x="32.89" y="80.52">4</text>
+        </svg>
         <h1 class="display display--xl rainbow" data-i18n="title">Sudoku</h1>
         <p class="lead" data-i18n="lead"></p>
         <div id="lang-slot"></div>

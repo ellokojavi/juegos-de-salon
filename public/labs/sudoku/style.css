@@ -95,3 +95,16 @@
 .sd-lever:active { transform: scale(0.98); }
 .sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .sd-arm, .sd-lever { transition: none; } }
+
+/* ---------- The cover's icon, drawn: a sudoku on ruled notebook paper (🔢 is Toque y Fama's) ---------- */
+.intro-hero .sd-logo { width: 6rem; height: 6rem; margin: 0 auto; transform: rotate(-6deg);
+  filter: drop-shadow(0 0 18px rgb(var(--cyan-rgb) / 0.45)); }
+.sd-logo-paper { fill: var(--card); }
+.sd-logo-ruled { stroke: rgb(var(--cyan-rgb) / 0.55); stroke-width: 0.8; fill: none; }
+.sd-logo-cells { fill: var(--card); }
+.sd-logo-thin { stroke: rgb(var(--card-ink-rgb) / 0.3); stroke-width: 0.6; fill: none; }
+.sd-logo-thick { stroke: var(--card-ink); stroke-width: 1.4; fill: none; }
+.sd-logo-frame { stroke: var(--card-ink); stroke-width: 2; fill: none; }
+.sd-logo text { font: 800 6.4px var(--font-num); text-anchor: middle; }
+.sd-logo-digits { fill: var(--card-ink); }
+.sd-logo-pen { fill: var(--pink); }
