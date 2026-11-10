@@ -12,10 +12,15 @@ const ok = (cond, msg) => { console.log((cond ? '✓ ' : '✗ ') + msg); if (!co
 const S = '__sudoku';
 
 await b.go(SITE + '/labs/sudoku/?seed=e2e'); await b.evaluate('localStorage.clear(); 1'); await b.go(SITE + '/labs/sudoku/?seed=e2e');
-ok(await b.evaluate("document.querySelectorAll('.mode[data-level]').length") === 2, 'the cover offers two levels: easy and hard');
+ok(await b.evaluate("document.getElementById('btn-level').getAttribute('aria-checked')") === 'false', 'the lever starts down, on easy');
 
 for (const level of ['easy', 'hard']) {
-  await b.evaluate(`document.getElementById('btn-level-${level}').click(); 1`); await sleep(400);
+  if (level === 'hard') {
+    await b.evaluate("document.getElementById('btn-level').click(); 1"); await sleep(400);
+    ok(await b.evaluate("document.getElementById('btn-level').classList.contains('on')"), 'the lever goes up to hard (red)');
+    await b.shot('cover-hard');
+  }
+  await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
   ok(await b.active() === 'screen-play', `${level}: the board opens`);
   ok(await b.evaluate(`window.${S}.state().level`) === level, `${level}: at that level`);
   ok(await b.evaluate("document.querySelectorAll('#board .cell').length") === 81, `${level}: 81 cells`);

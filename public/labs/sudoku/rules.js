@@ -13,7 +13,8 @@ const ES = {
     title: 'Sudoku', lead: 'Llena el tablero con los números del 1 al 9, sin repetir.',
     howTitle: '🔢 Cómo se juega',
     levels: { easy: 'Fácil', hard: 'Difícil' },
-    levelHints: { easy: 'Muchas pistas, para entrar en calor', hard: 'Pocas pistas y hay que pensar con notas' },
+    switch: [{ title: 'Modo fácil', sub: 'Muchas pistas, para entrar en calor' }, { title: 'Modo difícil', sub: 'Pocas pistas: hay que pensar con notas' }],
+    play: '¡A jugar!',
     levelLine: '{level} · {time}', scoreLine: '⭐ {score}', mistake: '❌ Ese número no va ahí: −10',
     notes: '✏️ Notas', erase: '🧽 Borrar', undo: '↩️ Deshacer',
     pickCell: 'Toca una casilla vacía y luego un número.',
@@ -23,9 +24,9 @@ const ES = {
     shareRotulo: '📤 Compartir', shareContext: 'Solo', shareText: 'Resolví un sudoku {level} en {time}: {score} puntos. ¿Te atreves?',
   },
   como: [
-    '🎯 Completa el tablero: cada fila, cada columna y cada cuadro de 3×3 lleva los números del 1 al 9 una sola vez.',
-    '👆 Toca una casilla y después el número: 100 puntos al terminar, 10 menos por cada número mal puesto.',
-    '✏️ Con Notas anotas los números posibles de una casilla, para no perderte.',
+    '🎯 Cada fila, columna y cuadro lleva del 1 al 9, sin repetir.',
+    '👆 Toca una casilla y luego el número.',
+    '⭐ 100 puntos; cada número mal puesto resta 10.',
   ],
 };
 
@@ -35,7 +36,8 @@ const EN = {
     title: 'Sudoku', lead: 'Fill the board with the numbers 1 to 9, without repeating.',
     howTitle: '🔢 How to play',
     levels: { easy: 'Easy', hard: 'Hard' },
-    levelHints: { easy: 'Lots of clues, to warm up', hard: 'Few clues, think with notes' },
+    switch: [{ title: 'Easy mode', sub: 'Lots of clues, to warm up' }, { title: 'Hard mode', sub: 'Few clues: think with notes' }],
+    play: 'Let\'s play!',
     levelLine: '{level} · {time}', scoreLine: '⭐ {score}', mistake: '❌ That number does not go there: −10',
     notes: '✏️ Notes', erase: '🧽 Erase', undo: '↩️ Undo',
     pickCell: 'Tap an empty cell, then a number.',
@@ -45,9 +47,9 @@ const EN = {
     shareRotulo: '📤 Share', shareContext: 'Solo', shareText: 'I solved a {level} sudoku in {time}: {score} points. Dare to try?',
   },
   como: [
-    '🎯 Complete the board: every row, every column and every 3×3 box holds the numbers 1 to 9 once.',
-    '👆 Tap a cell, then the number: 100 points when you finish, 10 less for each wrong number.',
-    '✏️ With Notes you jot down a cell\'s possible numbers, so you do not get lost.',
+    '🎯 Every row, column and box holds 1 to 9, no repeats.',
+    '👆 Tap a cell, then the number.',
+    '⭐ 100 points; each wrong number takes off 10.',
   ],
 };
 
@@ -57,7 +59,8 @@ const PT = {
     title: 'Sudoku', lead: 'Preencha o tabuleiro com os números de 1 a 9, sem repetir.',
     howTitle: '🔢 Como se joga',
     levels: { easy: 'Fácil', hard: 'Difícil' },
-    levelHints: { easy: 'Muitas pistas, para aquecer', hard: 'Poucas pistas, pense com notas' },
+    switch: [{ title: 'Modo fácil', sub: 'Muitas pistas, para aquecer' }, { title: 'Modo difícil', sub: 'Poucas pistas: pense com notas' }],
+    play: 'Vamos jogar!',
     levelLine: '{level} · {time}', scoreLine: '⭐ {score}', mistake: '❌ Esse número não vai aí: −10',
     notes: '✏️ Notas', erase: '🧽 Apagar', undo: '↩️ Desfazer',
     pickCell: 'Toque numa casa vazia e depois num número.',
@@ -67,9 +70,9 @@ const PT = {
     shareRotulo: '📤 Compartilhar', shareContext: 'Solo', shareText: 'Resolvi um sudoku {level} em {time}: {score} pontos. Encara?',
   },
   como: [
-    '🎯 Complete o tabuleiro: cada linha, cada coluna e cada quadrado 3×3 tem os números de 1 a 9 uma só vez.',
-    '👆 Toque numa casa e depois no número: 100 pontos ao terminar, 10 a menos por número errado.',
-    '✏️ Com Notas você anota os números possíveis de uma casa, para não se perder.',
+    '🎯 Cada linha, coluna e quadrado tem de 1 a 9, sem repetir.',
+    '👆 Toque numa casa e depois no número.',
+    '⭐ 100 pontos; cada número errado tira 10.',
   ],
 };
 

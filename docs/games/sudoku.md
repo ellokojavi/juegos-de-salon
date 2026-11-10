@@ -41,11 +41,13 @@ A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixe
 
 ## Modos
 
-Solo (`solo`): the cover lists the two levels as modes; tapping one opens a new board.
+Solo (`solo`). The level is picked with **the same lever as Pintaminas' hard mode** (the owner's request, for
+one way to choose easy or hard across the games): down with a green knob is easy, up with a red knob is hard;
+¡A jugar! opens a new board of the level it shows. It starts on easy, and after a game it shows the last level.
 
 ## Flujo
 
-Intro (resume panel with level and time, the two levels, how to play) → play (level, clock and score, the board,
+Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines) → play (level, clock and score, the board,
 the 1–9 pad with how many of each are left, ✏️ Notas, 🧽 Borrar, ↩️ Deshacer) → result (the score and how it was made, level and time,
 Another sudoku of that level, Share through `compartir.js`, Change difficulty, and the exit to the lab from
 `fin.js`, C-19).

@@ -4,6 +4,14 @@
    (DESIGN.md §2); this file keeps only the board and its pad, on the tokens (DESIGN.md §1).
    ========================================================== */
 
+/* Its thematic colours (DESIGN.md §4): the level lever's metal, the same as Pintaminas' hard-mode lever */
+:root {
+  --sd-plate-light: #4a4f5c; --sd-plate-dark: #23262e; --sd-plate-edge: #6b7180;
+  --sd-axle-light: #d9dde5; --sd-axle-dark: #7b8190;
+  --sd-arm-1: #aeb4c0; --sd-arm-2: #e6e9ef; --sd-arm-3: #9aa0ad;
+  --sd-knob-easy: #c8ff8a; --sd-knob-hard: #ff8a8a; --sd-knob-shade-easy: #3f8f12; --sd-knob-shade-hard: #c4142b;
+}
+
 .how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
 
 /* ---------- The board: 9×9 cells, a thicker line between the 3×3 boxes ---------- */
@@ -54,3 +62,30 @@
 .play-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); width: min(100%, 460px); margin: 0 auto; }
 .play-head p { margin: 0; }
 .score { color: var(--yellow); font-variant-numeric: tabular-nums; }
+
+/* ---------- The level: a lever on a metal plate (Pintaminas' hard-mode switch). Down and green is easy, up and red is hard ---------- */
+.sd-lever { display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+.sd-lever.on { border-color: rgb(var(--red-rgb) / 0.85); background: rgb(var(--red-rgb) / 0.12); box-shadow: 0 0 18px rgb(var(--red-rgb) / 0.45); }
+.sd-label { display: grid; gap: var(--s-2); min-width: 0; }
+.sd-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
+.sd-lever.on .sd-label b { color: var(--sd-knob-hard); }
+.sd-label .muted { font-size: var(--fs-85); }
+.sd-plate { position: relative; width: 74px; height: 64px; border-radius: var(--r-12); background: linear-gradient(160deg, var(--sd-plate-light), var(--sd-plate-dark));
+  border: 2px solid var(--sd-plate-edge); box-shadow: inset 0 2px 4px rgb(var(--ink-rgb) / 0.15), inset 0 -3px 6px rgb(var(--well-rgb) / 0.5); }
+/* The groove is an arc around the lever's base with the ball's radius (39 px), as in Pintaminas */
+.sd-track { position: absolute; inset: 0; pointer-events: none; }
+.sd-track svg { width: 100%; height: 100%; display: block; }
+.sd-groove { fill: none; stroke: rgb(var(--well-rgb) / 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgb(var(--ink-rgb) / 0.18)); }
+.sd-axle { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-axle-light), var(--sd-axle-dark)); box-shadow: 0 1px 2px rgb(var(--well-rgb) / 0.6); }
+.sd-arm { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--sd-arm-1), var(--sd-arm-2), var(--sd-arm-3)); transform-origin: 50% 100%; transform: rotate(-38deg);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.sd-knob { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-knob-easy), var(--sd-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
+.sd-lever.on .sd-arm { transform: rotate(38deg); }
+.sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
+.sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .sd-arm, .sd-lever { transition: none; } }

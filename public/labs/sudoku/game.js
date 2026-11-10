@@ -91,15 +91,37 @@ function renderResumeSlot() {
   ));
 }
 
+/**
+ * The level is a lever, the same one as Pintaminas' hard mode (the owner's request): down and green is
+ * easy, up and red is hard. ¡A jugar! starts a board of the level it shows.
+ */
+let chosen = 'easy';
 function renderModes() {
-  $('#modes').replaceChildren(...LEVELS.map(level => el('button', {
-    class: 'mode', 'data-mode': 'solo', 'data-level': level, id: `btn-level-${level}`,
-    onClick: () => { SFX.tap(); start(level); },
-  }, el('span', {}, el('b', {}, `${LEVEL_EMOJI[level]} ${levelName(level)}`), el('small', {}, T.levelHints[level])), el('span', { class: 'go' }, '›'))));
+  const hard = chosen === 'hard';
+  const title = el('b', {}, T.switch[+hard].title), sub = el('span', { class: 'muted' }, T.switch[+hard].sub);
+  const lever = el('button', {
+    type: 'button', class: 'sd-lever' + (hard ? ' on' : ''), id: 'btn-level', role: 'switch',
+    'aria-checked': String(hard), 'aria-label': T.switch[1].title,
+    onClick: () => {
+      chosen = chosen === 'hard' ? 'easy' : 'hard';
+      const on = chosen === 'hard';
+      SFX.tap(); vibrate(on ? [15, 30, 15] : 10);
+      lever.classList.toggle('on', on);
+      lever.setAttribute('aria-checked', String(on));
+      title.textContent = T.switch[+on].title; sub.textContent = T.switch[+on].sub;
+    },
+  },
+  el('span', { class: 'sd-plate', 'aria-hidden': 'true' },
+    el('span', { class: 'sd-track', html: '<svg viewBox="0 0 70 60"><path class="sd-groove" d="M10.99 16.52 A39 39 0 0 1 59.01 16.52" /></svg>' }),
+    el('span', { class: 'sd-arm' }, el('span', { class: 'sd-knob' })), el('span', { class: 'sd-axle' })),
+  el('span', { class: 'sd-label' }, title, sub));
+  $('#modes').replaceChildren(lever,
+    el('button', { class: 'btn btn--yellow', id: 'btn-play', 'data-mode': 'solo', onClick: () => { SFX.tap(); start(chosen); } }, T.play));
   $('#how').replaceChildren(...L.como.map(step => el('li', {}, step)));
 }
 
 function start(level) {
+  chosen = level;
   state = E.newGame(level, SEED ? `${SEED}:${level}` : Date.now());
   selected = -1; notesMode = false;
   save();
@@ -227,7 +249,7 @@ function renderResult() {
         texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.shareText, { level: level.toLowerCase(), time, score: points })].join('\n\n'),
       }),
     }),
-    el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));
+    el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderModes(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   confetti();
   showScreen('screen-result');
