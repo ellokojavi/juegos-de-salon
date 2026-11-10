@@ -1709,6 +1709,19 @@
         "stat": "2 file(s) +2 −2: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42755393152,
+      "check": "end-to-end",
+      "pr": 1348,
+      "branch": "claude/sudoku-salon-generator-ddzciw",
+      "commit": "4a207147dc2ec96cdea1385dfb3831e43f7a3037",
+      "test": "cup/footer.mjs",
+      "error": "✗ es: the footer is last, no general inbox, no loose links",
+      "signature": "f343e2b610",
+      "date": "2026-11-10T04:33:44.323Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
