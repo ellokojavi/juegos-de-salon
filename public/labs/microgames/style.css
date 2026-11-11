@@ -178,7 +178,23 @@
 .demo .cmd { font: 400 clamp(var(--mg-fs-240), 9vw, var(--mg-fs-340))/1 var(--display); letter-spacing: 0.05em; color: var(--yellow); transform: rotate(-4deg); }
 .demo .sub { font-weight: 700; color: var(--muted); }
 .demo .big { font-size: clamp(var(--mg-fs-350), 14vw, var(--mg-fs-500)); line-height: 1; }
-.demo .stars { font-size: var(--fs-200); letter-spacing: 4px; }
+.demo .stars { font-size: var(--fs-200); letter-spacing: 4px; color: var(--yellow); }
+.demo .stars.total { font-size: var(--mg-fs-240); }
+/* Stars that fill up one by one: a dim outline, then each pops in golden with a glow and a passing glint */
+.demo .shiny { display: inline-flex; gap: 0.12em; }
+.demo .shiny .st { position: relative; display: inline-block; font-size: var(--mg-fs-340); line-height: 1; color: rgb(var(--ink-rgb) / 0.16); }
+.demo .shiny .st.on { color: var(--yellow); background: linear-gradient(115deg, var(--mg-fff3b0) 0%, var(--yellow) 35%, var(--mg-ff9a1f) 70%, var(--yellow) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgb(var(--yellow-rgb) / 0.7)); animation: starpop 0.5s cubic-bezier(0.3, 1.9, 0.5, 1) var(--d) both, starglint 1.8s ease-in-out calc(var(--d) + 0.5s) infinite; background-size: 220% 100%; }
+@keyframes starpop { 0% { scale: 0; rotate: -60deg; opacity: 0; } 60% { scale: 1.35; rotate: 10deg; opacity: 1; } 100% { scale: 1; rotate: 0deg; } }
+@keyframes starglint { 0%, 60% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+.demo .stars.none .shiny .st { color: rgb(var(--red-rgb) / 0.45); }
+.demo .shiny.sm .st { font-size: var(--fs-90); filter: drop-shadow(0 0 3px rgb(var(--yellow-rgb) / 0.6)); }
+.demo .gain { font-size: var(--fs-90); font-weight: 800; color: var(--cyan); }
+/* A streak: an orange pill that burns */
+.demo .streak { font: 400 var(--fs-140)/1 var(--display); letter-spacing: 0.04em; color: var(--ink); padding: var(--s-6) var(--s-14); border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--mg-ff9a1f), var(--mg-ff4d1e)); box-shadow: 0 0 18px rgb(var(--mg-ff4d1e-rgb) / 0.7); animation: streakin 0.45s cubic-bezier(0.3, 1.8, 0.5, 1) 0.3s both, streakburn 0.6s ease-in-out 0.8s infinite alternate; }
+@keyframes streakin { from { scale: 0.3; opacity: 0; } }
+@keyframes streakburn { to { box-shadow: 0 0 30px 4px rgb(var(--mg-ff4d1e-rgb) / 0.9); } }
 .demo.red { background: var(--mg-5a0f24); }
 .demo.green { background: var(--mg-0f4a2a); }
 .demo .center.full { position: absolute; inset: 0; padding: calc(var(--s-32) + 8px) 12px 18px; }
@@ -752,6 +768,7 @@
 .demo .runbar i.cur { background: var(--ink); box-shadow: 0 0 6px var(--ink); }
 /* How each game went: red if it gave no star, green otherwise, deeper and brighter the more stars (★ pale, ★★ green, ★★★ glowing) */
 .demo .runbar i.s0 { background: var(--red); }
+.demo .runbar i.fire { outline: 2px solid var(--mg-ff9a1f); outline-offset: 1px; box-shadow: 0 0 8px rgb(var(--mg-ff4d1e-rgb) / 0.9); }
 .demo .runbar i.s1 { background: var(--mg-8fc79c); }
 .demo .runbar i.s2 { background: var(--mg-3ddc84); }
 .demo .runbar i.s3 { background: var(--mg-19f26a); box-shadow: 0 0 7px rgb(var(--mg-19f26a-rgb) / 0.8); }
@@ -789,3 +806,4 @@
 .demo .setclock { width: min(240px, 62vw); height: min(240px, 62vw); cursor: grab; }
 .demo .setclock line.held { filter: drop-shadow(0 0 3px var(--ink)); }
 .demo .setclock + .btn { margin-top: var(--s-12); }
+.demo .runsum span.shiny { display: inline-flex; gap: 1px; }

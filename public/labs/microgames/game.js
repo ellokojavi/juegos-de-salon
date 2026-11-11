@@ -11,7 +11,7 @@ import { semillaDel } from '../../assets/js/uno-al-dia.js';
 import { shareLink } from '../../assets/js/compartir.js';
 import { getLang, coverLangToggle } from '../../assets/js/i18n.js';
 import { TR } from './rules.js';
-import { RUN, newCode, speedAt, score, score100, stream, runOrder, STREAK } from './engine.js';
+import { RUN, newCode, speedAt, score, score100, stream, runOrder, STREAK, gamePoints } from './engine.js';
 const GAME_ID = 'microgames';
 // The texts are written in Spanish where they are used; t() gives the player's language from rules.js (C-3)
 const LANG = getLang();
@@ -31,6 +31,9 @@ trackVisit();   // the site's traffic (D-208)
   const set = html => { screen.innerHTML = html; };
   const full = html => { screen.classList.add('full'); set(html); };
   const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+  // Stars that fill up one after another, golden and shining; `d` delays the first (for a row of them)
+  const shiny = (n, d = 0, cls = '') => `<span class="shiny ${cls}">${[0, 1, 2].map(k => `<b class="st${k < n ? ' on' : ''}" style="--d:${(d + k * 0.14).toFixed(2)}s">★</b>`).join('')}</span>`;
+  const multTxt = x => x.toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
   const T = ms => ms / sp;          // durations shrink as the run speeds up
   const tap = (el, fn) => el.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); if (active) fn(e); });
   const sizeFor = (cols, rows) => {
@@ -71,7 +74,10 @@ trackVisit();   // the site's traffic (D-208)
     const tag = document.createElement('div'); tag.className = `verdict-tag ${n ? 'good' : 'bad'}`; tag.textContent = n ? '✓' : '✗'; demo.append(tag);
     later(() => {
       stopAll();
-      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>`);
+      const sc = score([...marks, n]), g = sc.games[sc.games.length - 1], run = (() => { let k = 0; for (let i = sc.games.length - 1; i >= 0 && sc.games[i].stars >= 2; i--) k++; return k; })();
+      set(`<div class="stars${n ? '' : ' none'}">${shiny(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>
+        ${n && order.length > 1 ? `<div class="gain num">${t('+{n} pts · velocidad ×{x}', { n: gamePoints(n, idx - 1), x: multTxt(speedAt(idx - 1)) })}</div>` : ''}
+        ${g.streak ? `<div class="streak">${t('🔥 Racha de {n} · +{p}', { n: run, p: STREAK })}</div>` : ''}`);
       later(next, 900);
     }, reduce ? 400 : hold);
   }
@@ -1374,7 +1380,7 @@ trackVisit();   // the site's traffic (D-208)
   $id('sound-slot')?.append(soundToggle());
   document.title = `${t('¡Al toque!')} ⚡ · ${t('Laboratorio')}`; $id('btn-volver').textContent = `‹ ${t('Laboratorio')}`; demo.setAttribute('aria-label', t('¡Al toque!'));
   // The run's progress in the corner: one mark per game, filled with how it went
-  const rb = $id('runbar'), runbar = () => { rb.hidden = false; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
+  const rb = $id('runbar'), runbar = () => { rb.hidden = false; const sg = score(marks).games; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}${sg[i].streak || sg[i + 1]?.streak ? ' fire' : ''}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
   let marks = [], startedAt = 0;
   // Under the stage: the site footer on the cover, with the game's 💬 comment as its option (C-17, U-38); just the comment elsewhere
   const pie = $id('pie'), COMMENT = Object.fromEntries(Object.entries({ titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué microjuegos te gustaron, cuáles no se entendían y qué le cambiarías.', ph: 'Por ejemplo: en ¡Corta! no me daba el tiempo.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' }).map(([k, v]) => [k, t(v)]));
@@ -1408,7 +1414,7 @@ trackVisit();   // the site's traffic (D-208)
       speed = sc.points - base - streaks * STREAK, top = speedAt(order.length - 1).toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
     return `<div class="breakdown" aria-label="${t('Cómo se calcularon tus puntos')}">
       <div><span>${t('{n} ★ × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
-      <div><span>${t('Velocidad (de ×1 a ×{x})', { x: top })}</span><b class="num">+${speed}</b></div>
+      <div><span>${t('Velocidad: sube cada 3 juegos, hasta ×{x}', { x: top })}</span><b class="num">+${speed}</b></div>
       <div><span>${t('🔥 Rachas de ★★ o más: {n} × {p}', { n: streaks, p: STREAK })}</span><b class="num">+${streaks * STREAK}</b></div>
       <div class="tot"><span>${t('Total')}</span><b class="num">${sc.points} ${t('pts')}</b></div></div>`; };
   function end() {
@@ -1424,13 +1430,17 @@ trackVisit();   // the site's traffic (D-208)
     if (k >= 0.45) { SFX.win(); if (!reduce) confetti(); }
     // C-19: the result, the main action and Share, the exits, then the detail game by game
     set(`<div class="cmd">${k >= 0.75 ? t('¡Al toque!') : k >= 0.45 ? t('¡Bien!') : t('¡Otra!')}</div>
-      <div class="stars" style="color:var(--yellow)"><span class="num">${sc.points}</span> ${t('pts')}</div>
+      <div class="stars total"><span class="num" id="ptsup">0</span> ${t('pts')}</div>
       <div class="sub best">${total} / ${order.length * 3} ★ · ${td && !first ? t('la de hoy que cuenta: {n} pts', { n: td.p }) : TODAY ? t('¡Esta es la que cuenta hoy!') : isBest ? t('¡Tu mejor corrida!') : t('tu mejor: {n} pts', { n: bestPts })}</div>
-      <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i><em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>
+      <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b>${shiny(marks[i], 0.35 + i * 0.12, 'sm')}<em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>
       ${breakdown(sc)}
       <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 ${SEED ? t('Jugarla de nuevo') : t('Otra corrida')}</button>
         <button class="btn btn--cyan btn--sm" type="button" id="btn-retar">📤 ${t('Reta a alguien con esta corrida')}</button><div id="exits"></div></div>`);
     $id('exits').replaceWith(salidasFin('lab', { lang: LANG, raiz: '../../' }));
+    // The total counts up while the stars fill in
+    { const el = $id('ptsup'), t0 = performance.now(), D = reduce ? 0 : 1400;
+      const up = now => { if (!el.isConnected) return; const k = D ? Math.min(1, (now - t0) / D) : 1; el.textContent = Math.round(sc.points * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(up); };
+      requestAnimationFrame(up); }
     $btn('btn-otra', () => start(newRun()));
     // The same run for whoever opens the link: its code (or today's), never the stars
     $btn('btn-retar', () => shareLink({ title: t('¡Al toque!'), text: t('Hice {n} pts en ¡Al toque! ⚡ ¿Me ganas con la misma corrida?', { n: sc.points }),
@@ -1473,6 +1483,6 @@ trackVisit();   // the site's traffic (D-208)
   const newRun = () => { code = SEED || newCode(); return runOrder(META.map(m => m.id), code, RUN, [['quehora', 'hands']]); };
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
   window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id), seed: SEED,
-    get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); } };
+    get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); }, run: ids => { code = SEED || newCode(); start(ids); } };
   cover();
 })();
