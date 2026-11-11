@@ -208,7 +208,13 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
    a ranking that is its own section under the stage takes it from `ranking.css`. No game sets
    that space itself. The end-to-end `spacing` check (`tools/e2e/cover-gaps.mjs`, run by
    `conformance.mjs` for every game with a `game.json` and by ¡Al toque!'s script) measures it.
-7. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
+7. **A picture or clip inside a card has even margins** (the owner, 2026-11-11). It is flush with the
+   card on all three sides, or, when it is narrower than the card (a short screen, a square clip), it
+   keeps the same gap above it as on each side, and gets rounded corners. Never flush on one side
+   with gutters on the others. The splash's big window does it in `splash.css` (`--hero-w`,
+   `--hero-gap`); the end-to-end check `tools/e2e/splash/margins.mjs` measures every `hero` campaign
+   on a phone, a short phone, a laptop and a big screen.
+8. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
    lint cannot: whether a colour means what it should, whether a title took the right step,
    whether a new control should be a component.
 

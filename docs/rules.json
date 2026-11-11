@@ -140,6 +140,21 @@
    "debt": "docs/design-allowlist.json"
   },
   {
+   "id": "media-margins",
+   "title": "A picture or clip inside a card sits with even margins: as far from the top as from the sides, or flush on all of them",
+   "doc": "docs/DESIGN.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/splash/margins.mjs"
+   ],
+   "applies": [
+    "public/assets/css/splash.css",
+    "public/assets/js/splash.js"
+   ]
+  },
+  {
    "id": "english",
    "title": "Every name in the repo is English; the Spanish ones left only shrink (D-316, D-354)",
    "doc": "CLAUDE.md",
