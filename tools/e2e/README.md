@@ -154,6 +154,7 @@ horizontal scroll, buttons or a folding panel's `<summary>` under 44 px (an invi
 Also, **every `b.shot()` of any script measures that space** (`spacing-common.mjs`) and prints ✗ if a
 button is less than 24 px from a `data-tablero`: the script goes red (with `SPACING_REPORT=1`
 it prints the space of every screenshot, even when it passes). It also prints ✗ if two buttons of the screen sit on top of each other (U-12, `spacing-common.mjs`; a deliberate stack is marked `data-overlap-ok`, D-520). `--lang de` (or `en`, `pt`) opens it in that language;
+The **space between a cover's blocks** (DESIGN.md §3 rule 6) is measured by `cover-gaps.mjs`: the panels, stage and ranking of a game's first screen sit 12 px from the next. `conformance.mjs` runs it as each game's `spacing` check, and ¡Al toque!'s `microgames/lab.mjs` too.
 `--height`, `--notches` (a phone with a notch), `--chat` (mounts the room chat's 💬 bubble and names any button it covers, C-15) and `--out <folder>` are the other options. The
 panel is viewed with seeded data: `look.mjs panel <shot>`, with `data`, `now`, `tournament`, `games`,
 `audience`, `traffic`, `health` (D-251), `cup-card`, `cup-days`, `cup-history`, `game-card` or `room-card` (D-207); `tournament` also brings a week of seeded notifications (D-233). The
