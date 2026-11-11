@@ -16,6 +16,9 @@
  *   from the cache if there, else the network, and kept. Firebase's own traffic is never touched.
  * - The release's list (`precache.json`, tools/release/precache.mjs) is stored when the page
  *   reports a release this worker has not stored yet; then older releases' caches go.
+ * - **Readiness** (the home page's ☁️ button, offline-ready.js): while storing, the list and how many
+ *   of its files are kept go in the config cache (`progress`) and to every open page as an
+ *   `offline-progress` message; `{ type: 'offline-retry' }` stores the release again (a cut download).
  * - **Cut** (`forced`, the testers' switch, connection.js): the network is gone for this site, as in
  *   airplane mode. Every request this worker sees, of any site and method, is answered from the
  *   cache or fails; nothing reaches the network. The page cuts what a worker cannot see (sockets).
@@ -35,18 +38,38 @@ async function setConfig(c) {
   await (await caches.open(CONFIG)).put('config', new Response(JSON.stringify(c), { headers: { 'content-type': 'application/json' } }));
 }
 
-/** Stores a release's list; a URL that fails is skipped, not the whole release. */
-async function store(rel) {
-  const res = await fetch('precache.json', { cache: 'no-store' });
-  if (!res.ok) return false;
+/** How far the storing of a release went, for the home page's ☁️ button: kept in the config cache and told to open pages. */
+async function progress(p) {
+  try { await (await caches.open(CONFIG)).put('progress', new Response(JSON.stringify({ ...p, at: Date.now() }), { headers: { 'content-type': 'application/json' } })); } catch (_) { /* best effort */ }
+  try { for (const c of await self.clients.matchAll({ type: 'window' })) c.postMessage({ type: 'offline-progress', ...p }); } catch (_) { /* no pages */ }
+}
+
+let storing = null;
+/** Stores a release's list; a URL that fails is skipped, not the whole release. One at a time. */
+function store(rel) {
+  if (!storing) storing = storeNow(rel).catch(() => false).finally(() => { storing = null; });
+  return storing;
+}
+
+async function storeNow(rel) {
+  let res;
+  try { res = await fetch('precache.json', { cache: 'no-store' }); } catch (_) { await progress({ storing: false, failed: true }); return false; }
+  if (!res.ok) { await progress({ storing: false, failed: true }); return false; }
   const list = await res.json();
   const cache = await caches.open(release(list.release || rel));
   const missing = [];
   for (const u of list.urls) if (!(await cache.match(u))) missing.push(u);
+  const total = list.urls.length;
+  // The list itself, so a page can check file by file that the phone keeps everything (offline-ready.js)
+  await (await caches.open(CONFIG)).put('list', new Response(JSON.stringify(list), { headers: { 'content-type': 'application/json' } }));
+  let have = total - missing.length;
+  await progress({ storing: true, release: list.release || rel, total, have });
   for (let i = 0; i < missing.length; i += 8) {
     await Promise.all(missing.slice(i, i + 8).map(u => fetch(u, { cache: 'no-cache' })
-      .then(r => (r.ok ? cache.put(u, r) : null)).catch(() => null)));
+      .then(r => (r.ok ? cache.put(u, r).then(() => { have++; }) : null)).catch(() => null)));
+    await progress({ storing: true, release: list.release || rel, total, have });
   }
+  await progress({ storing: false, release: list.release || rel, total, have, failed: have < total });
   for (const k of await caches.keys()) if (k.startsWith('jds-release-') && k !== release(list.release || rel)) await caches.delete(k);
   // Pages an earlier version of this worker kept in the runtime cache: they belong to an old release
   const rt = await caches.open(RUNTIME);
@@ -74,6 +97,8 @@ async function told({ on, release: rel, forced = false }) {
 self.addEventListener('message', e => {
   // A reply port, when the page waits for the change to hold (the testers' switch reloads after it)
   if (e.data?.type === 'offline') e.waitUntil(told(e.data).finally(() => e.ports?.[0]?.postMessage('ok')));
+  // The ☁️ button's Reintentar: the release again, only what is missing (store skips what is kept)
+  if (e.data?.type === 'offline-retry') e.waitUntil(config().then(c => (c.on && !c.forced ? store(c.release) : false)));
 });
 
 // Whether offline mode is on, known without waiting: read at each worker start and kept up to date by
