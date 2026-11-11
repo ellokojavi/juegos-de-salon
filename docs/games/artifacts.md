@@ -136,8 +136,10 @@ joints); a trampoline with two coils whose pad squashes on a bounce; a fan whose
 streaks across its reach and a chevron for its direction; violet girders with white rivets; the spikes as
 Aletazo's: a red rail on the line the ball pops on, with two pink sixteen-point stars per cell spinning on
 it, each with a red halo and a dark eye, neighbours turning opposite ways; the basket a green cup with a
-pink joint on each rim, drawn over the ball so a ball inside reads as inside; a steel pipe the ball drops
-from; a flat pink ball ringed in white, with a fading trail that plays out once the run ends. The canvas
+pink joint on each rim, drawn over the ball so a ball inside reads as inside; the pipe the ball drops from,
+a cyan neon tube of tinted glass that fills the start's cell (kept free of parts), drawn over the ball so the
+ball waits dimmed inside it and drops out of its mouth, with chevrons of light flowing down it, a bright rim
+at the mouth and a soft cone of light below (the owner, 2026-11-11); a flat pink ball ringed in white, with a fading trail that plays out once the run ends. The canvas
 re-measures itself whenever its box changed, so the ball is always round.
 
 **What the ball touches lights up** (the owner, 2026-11-11): with `newRun(board, { contacts: true })` the
