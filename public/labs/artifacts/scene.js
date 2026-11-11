@@ -212,6 +212,9 @@ export function escena(canvas) {
     for (const f of level.fixed) if (f.type !== 'wall' && f.type !== 'spikes') part(f, true);
     basket(level.goal, s.won);
     pipeLight(level.start);
+    // While building, the ball waits up in the tube, barely seen; on Probar it lights up and slides down
+    // (s.emerge 0→1), then falls out of the mouth. The tube is drawn over it either way.
+    const tucked = !s.run || (s.emerge ?? 1) < 1;
     for (const p of s.board.placed) {
       if (p === s.dragging) continue;   // it floats as the ghost while it is dragged
       // the chosen part's dashed outline; a part just let go keeps it a moment, fading out (s.fading: { part, a })
@@ -251,7 +254,13 @@ export function escena(canvas) {
     // the trail, then the ball
     s.trail.forEach(([x, y], i) => { ctx.globalAlpha = 0.3 * i / s.trail.length; ctx.fillStyle = C.pink; ctx.beginPath(); ctx.arc(X(x), X(y), X(R) * (0.3 + 0.5 * i / s.trail.length), 0, 7); ctx.fill(); });
     ctx.globalAlpha = 1;
-    if (!s.popped) ball(s.run ? s.run.ball : level.start, s.roll || 0);
+    if (!s.popped && !tucked) ball(s.run.ball, s.roll || 0);
+    else if (!s.popped) {
+      const e = s.run ? 1 - (1 - s.emerge) ** 3 : 0, tuck = PIPE.top + R;
+      ctx.save(); ctx.globalAlpha = 0.2 + 0.8 * e;
+      ball({ x: level.start.x, y: tuck + (level.start.y - tuck) * e }, s.roll || 0);
+      ctx.restore();
+    }
     basketFront(level.goal, s.won);
     pipe(level.start);   // over the ball: it waits inside the tube and drops out of its mouth
     // particles

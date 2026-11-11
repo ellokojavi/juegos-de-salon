@@ -175,9 +175,14 @@ const totalOf = () => game.done.reduce((a, d) => a + d.pts, 0) + speedPoints();
 /* The cover                                                           */
 /* ------------------------------------------------------------------ */
 function show(id) { document.body.classList.toggle('jugando', id === 's-juego'); document.body.classList.remove('ganado'); for (const s of document.querySelectorAll('.screen')) s.classList.toggle('active', s.id === id); scrollTo(0, 0); foot(); }
-// The cover ends with the site's footer, the game's own comment as its option; other screens keep the comment alone (U-38)
+// The cover ends with the site's footer, the game's own comment as its option; other screens keep the comment alone, as the same chip (U-38)
 let comment = null;
-const foot = () => { if (!comment) return; if ($('s-portada').classList.contains('active')) footerInto($('pie'), { screen: 'artifacts-cover', inbox: false, options: [comment()], lang }); else $('pie').replaceChildren(comment()); };
+const foot = () => { if (!comment) return; if ($('s-portada').classList.contains('active')) footerInto($('pie'), { screen: 'artifacts-cover', inbox: false, options: [comment()], lang }); else {
+  // elsewhere the same violet chip as on the cover, without the footer around it
+  const b = comment(), [ic, ...label] = b.textContent.split(' ');
+  b.className = 'op-propia'; b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), ' ', el('span', {}, label.join(' ')));
+  $('pie').replaceChildren(el('div', { class: 'footer-links tiles chips' }, b));
+} };
 function texts() {
   document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang;
   $('btn-volver').textContent = L.laboratorio;
@@ -443,7 +448,7 @@ $('btn-probar').addEventListener('click', () => {
   unlockAudio();
   if (run) { run = null; say(L.elige); tray(); controls(); draw(); return; }
   picked = null; chosen = null; trail = []; ghost = null; popped = false; won = false;
-  run = newRun(board, { contacts: true }); last = performance.now(); acc = 0;
+  run = newRun(board, { contacts: true }); last = performance.now(); acc = 0; emerge = 0;
   say(''); tray(); controls();
 });
 $('btn-jugar').addEventListener('click', () => {
@@ -519,12 +524,15 @@ function finish(state) {
 /* ------------------------------------------------------------------ */
 const scene = escena(canvas);
 let ghost = null, hint = null, dragging = null, popped = false, won = false, roll = 0;
+// On Probar the ball first slides out of its pipe (0→1 over EMERGE_S), then the run starts
+const EMERGE_S = 0.35;
+let emerge = 1;
 function size() { if (scene.size()) draw(); }
 new ResizeObserver(size).observe($('tablero'));
 function draw() {
   let fading = null;
   if (letGo) { const a = 1 - (performance.now() - letGo.at) / FADE_MS; if (a > 0) fading = { part: letGo.part, a }; else letGo = null; }
-  scene.draw({ board, run, chosen, fading, ghost, hint, dragging, trail, roll, won, popped });
+  scene.draw({ board, run, chosen, fading, ghost, hint, dragging, trail, roll, won, popped, emerge });
 }
 // With a mouse, the picked part follows the pointer as a ghost before the click
 function mouseGhost(e) {
@@ -548,7 +556,8 @@ function frame(now) {
     if (game.left <= 0) { game.left = 0; clock(); SOUND.fail(); endGame(); }
   }
   if (onBoard) scene.tick(dt);
-  if (run && run.state === 'running') {
+  if (run && emerge < 1) emerge = Math.min(1, emerge + dt / EMERGE_S);
+  else if (run && run.state === 'running') {
     acc += dt;
     while (acc >= STEP && run.state === 'running') {
       const vx = run.ball.vx;

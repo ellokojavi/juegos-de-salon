@@ -811,19 +811,20 @@ body.azar-abierto { overflow: hidden; }
    the owner, 2026-11-09): the pill of the cards' tags, so the corner reads as part of the app and not as more game cards */
 footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgb(var(--purple-rgb) / 0.28) 45%, rgb(var(--pink-rgb) / 0.32)); }
 footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
-footer.atardecer .footer-links.tiles::before { content: none; }
-footer.atardecer .footer-links.tiles { display: flex; flex-wrap: wrap; justify-content: center; max-width: none; gap: 8px; margin-top: 18px; }
-footer.atardecer .footer-links.tiles > * { flex-direction: row; gap: 6px; min-height: 44px; padding: var(--s-4) var(--s-14) var(--s-4) var(--s-4); border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--glass); color: var(--ink); font: 800 0.82rem/1.2 var(--font-body); }
+footer.atardecer .footer-links.tiles::before, .footer-links.tiles.chips::before { content: none; }
+footer.atardecer .footer-links.tiles, .footer-links.tiles.chips { display: flex; flex-wrap: wrap; justify-content: center; max-width: none; gap: 8px; margin-top: 18px; }
+footer.atardecer .footer-links.tiles > *, .footer-links.tiles.chips > * { flex-direction: row; gap: 6px; min-height: 44px; padding: var(--s-4) var(--s-14) var(--s-4) var(--s-4); border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--glass); color: var(--ink); font: 800 0.82rem/1.2 var(--font-body); }
 footer.atardecer .footer-links.tiles > :is(#btn-buzon-portada, .op-buzon) { border-color: rgb(var(--cyan-rgb) / 0.5); background: rgb(var(--cyan-rgb) / 0.1); }
 footer.atardecer .footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--orange-rgb) / 0.55); background: rgb(var(--orange-rgb) / 0.12); }
 footer.atardecer .footer-links.tiles > *:active { filter: brightness(1.2); }
 /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
-footer.atardecer .tiles .ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
+footer.atardecer .tiles .ic, .tiles.chips .ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
 footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
-/* A screen's own options (La Copa's report and leave): violet, apart from the inbox and the coffee */
-footer.atardecer .footer-links.tiles > .op-propia { border-color: rgb(var(--purple-rgb) / 0.5); background: rgb(var(--purple-rgb) / 0.1); }
-footer.atardecer .tiles .op-propia .ic { background: rgb(var(--purple-rgb) / 0.4); }
+/* `.footer-links.tiles.chips`: the same chips outside the footer, e.g. a game's comment under its board.
+   A screen's own options (La Copa's report and leave): violet, apart from the inbox and the coffee */
+footer.atardecer .footer-links.tiles > .op-propia, .footer-links.tiles.chips > .op-propia { border-color: rgb(var(--purple-rgb) / 0.5); background: rgb(var(--purple-rgb) / 0.1); }
+footer.atardecer .tiles .op-propia .ic, .tiles.chips .op-propia .ic { background: rgb(var(--purple-rgb) / 0.4); }
 footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
 /* Offline, no coffee (the owner, 2026-11-09): paying needs Stripe, so its footer chip and the end-of-game invitation step aside until the signal is back */
 html.offline :is(#btn-apoyo-portada, .op-apoyo, #apoyo-pie) { display: none; }
