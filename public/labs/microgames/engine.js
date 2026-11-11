@@ -46,9 +46,12 @@ export function score100(marks) {
 /** A random stream: seeded (the same on every phone) when there is a seed, `Math.random` when not. */
 export const stream = (seed, what) => (seed ? rng(hash32(`microgames:${seed}:${what}`)) : Math.random);
 
-/** The run: `n` different games out of `ids`, shuffled by the seed's stream (or at random without one). */
-export function runOrder(ids, seed, n = RUN) {
+/** The run: `n` different games out of `ids`, shuffled by the seed's stream (or at random without one).
+ *  `apart` lists groups of games too alike to share a run (the two clock games): at most one of each group. */
+export function runOrder(ids, seed, n = RUN, apart = []) {
   const r = stream(seed, 'order'), a = ids.slice();
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a.slice(0, n);
+  const out = [];
+  for (const id of a) { if (out.length >= n) break; const g = apart.find(x => x.includes(id)); if (g && out.some(o => g.includes(o))) continue; out.push(id); }
+  return out;
 }

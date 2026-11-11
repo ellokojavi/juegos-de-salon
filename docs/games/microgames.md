@@ -23,7 +23,7 @@ in a row in the lab. «¡Al toque!» means "right away" (the owner first called 
 | `public/labs/microgames/engine.test.mjs` | Its tests |
 | `public/labs/microgames/rules.js` | The texts in English and Portuguese, keyed by the Spanish |
 | `public/labs/microgames/rules.test.mjs` | Every `t()` has both, with the same `{x}` |
-| `public/labs/microgames/game.js` | The shared stage helpers, the 29 microgames (`GAMES`), their names (`META`), the three types (`KINDS`), the cover and the run |
+| `public/labs/microgames/game.js` | The shared stage helpers, the 28 microgames (`GAMES`), their names (`META`), the three types (`KINDS`), the cover and the run |
 | `public/labs/microgames/style.css` | The stage and every microgame's look (moved from the artifact) |
 | `public/labs/microgames/index.html` | The page: the stage, the HUD, the run's marks and the footer |
 | `tools/e2e/microgames/lab.mjs` | End to end |
@@ -37,10 +37,10 @@ in `game.js`.
    **Cómo se juega** folded (C-8, D-550): the goal, the three ways to play each with its finger doing the
    gesture (**Toca** turquoise, **Arrastra** orange, **Desliza** purple) and the scoring in one sentence;
    the site footer last. Jugar goes straight into the run (the separate how-to screen is gone).
-2. **The run:** 10 different microgames drawn from the 29. Each starts with its intro card (the gesture
+2. **The run:** 10 different microgames drawn from the 28. Each starts with its intro card (the gesture
    of its type on top, the stage framed in the type's color, the name and a hint); the frame comes off
    when the game starts. Every three games the run speeds up by 10 % (`sp`). The HUD shows `n / 10`,
-   the stars so far and a mark per game (red 0, orange 1, turquoise 2, yellow 3 stars).
+   the stars so far and a mark per game: red with no star, green otherwise, pale for ★, green for ★★ and bright with a glow for ★★★.
 3. **The end** (C-19): a cheer, the points, the stars and the best, **Otra corrida**, the way back to the
    lab from `fin.js`, then each game's icon with its stars and points (🔥 on a streak). Sound and confetti
    on a good run (C-4).
@@ -49,11 +49,19 @@ in `game.js`.
 
 - **A game:** 0 to 3 stars, judged by the microgame. Its points are 10 per star times the speed it was
   played at (×1.0 the first three, ×1.1, ×1.2, ×1.3 the last): a ★★★ at the end is worth 39.
-- **Streak:** each game with ★★ or more right after another one adds +5 (🔥).
+- **Streak:** each game with ★★ or more right after another one adds +5 (🔥). It shows as it happens: an orange «🔥 Racha de n · +5» under the game's stars, and a flame ring on its marks at the top.
+- **After each game in a run:** its stars fill in one by one, golden and shining, with what it gave («+33 pts · ⚡ ×1,1»; the breakdown calls it «⚡ Bono de velocidad») so the speed's part is visible as it grows.
 - **A run:** the sum, shown in the HUD as it goes; a perfect run is 381.
+- **The end shows the run's summary (each game's stars and points) and the breakdown above Otra corrida** (the owner's call, over C-19's usual order): the stars × 10, what the speed added, the streaks (count × 5) and the total, so the player sees where the points came from.
 - **Uno al día and La Copa** compare `score100`: the stars weighed by speed, 0 to 100 as every other game
   on the platform (D-412), without the streak so a miss costs the same wherever it falls. A tie goes to
   the faster run (its seconds are in the `trackFinish` detail).
+
+## The two clock games
+
+¡Qué hora es! (pick the time a clock shows, out of three) and ¡A la hora! (set both hands to a digital time)
+never share a run: `runOrder`'s `apart` groups keep at most one of them. ¡A la hora! never asks for 12 nor
+for :00, where both hands start, so both always have to move.
 
 ## Shared runs, the run of the day and pauses
 
@@ -77,12 +85,12 @@ apples to count, the colour asked and the road to roll are the same too. Only th
 depends on the frame rate (a fly's jitter, a gust) can differ between phones; what is judged does not.
 The cover names the shared run's code.
 
-## The 29 microgames, by type
+## The 28 microgames, by type
 
 | Type | Games |
 |---|---|
 | 👆 Toca (17) | ¡Qué color!, ¡Cuenta!, ¡Calcula!, ¡Completa!, ¡Qué hora es!, ¡Su sombra!, ¡Más! (3 rounds), ¡Diferente!, ¡Cuál falta!, ¡Dónde quedó!, ¡Repite!, ¡Espera… ya!, ¡Para! (a radar), ¡Toca rápido! (a hand pump and a balloon), ¡Aplasta! (9 flies), ¡Revienta!, ¡No toques! (whack-a-mole) |
-| ✊ Arrastra (7) | ¡Ordena! (big on top), ¡A la hora! (set both hands to a digital time, 10 s), ¡Alimenta!, ¡Conecta! (four in a row), ¡Atrapa!, ¡Rebota! (pixel aliens), ¡Equilibra! (stacked blocks) |
+| ✊ Arrastra (6) | ¡Ordena! (big on top), ¡A la hora! (set both hands to a digital time, 10 s), ¡Conecta! (four in a row), ¡Atrapa!, ¡Rebota! (pixel aliens), ¡Equilibra! (stacked blocks) |
 | 💨 Desliza (5) | ¡Corta! (any direction), ¡Rueda! (a steel ball on a track), ¡Dibuja!, ¡Sigue! (a rat), ¡Limpia! |
 
 Each game gives 0 to 3 stars, mostly by time or accuracy; the rules of each are in its comment in
@@ -101,7 +109,7 @@ Each game gives 0 to 3 stars, mostly by time or accuracy; the rules of each are 
 ## Exceptions to the canons, for now
 
 - **C-2 (files):** `rules.js` holds the translations keyed by the Spanish, not a `LOCALES = { es, en, pt }`
-  by key: 190 short texts spread over 29 microgames read better where they are used.
+  by key: 190 short texts spread over 28 microgames read better where they are used.
 - **C-6 (memory):** a run is short (about a minute and a half) and is not resumed; only the best is kept.
 - **Characters:** every mascot is our own drawing (the muscle sponge in ¡Limpia!, the curly-haired
   tycoon in ¡Atrapa!, the dancing rat and moles). None copies a real person or a brand.
@@ -119,6 +127,6 @@ taking it out of the lab.
 
 `window.__microgames`: `game`, `order`, `idx`, `total`, `active`, `ids` and `only(id)` (a run of that one game).
 - **¡A la hora!:** the hand pointing nearest the finger turns (near the middle, the short one); the long one snaps to 5 minutes, the short one must be within half an hour of its place. Never 12:00, where both hands start.
-- **Testing:** the «T» tab (lab key holders) shows the 29 microgames as emoji buttons in their type's color, one tap plays it alone, and links today's run (D-551); the cover has neither.
+- **Testing:** the «T» tab (lab key holders) shows the 28 microgames as emoji buttons in their type's color, one tap plays it alone, and links today's run (D-551); the cover has neither.
 - **Exception to D-550 (no folded rules):** the cover itself shows the three ways to play (Toca, Arrastra, Desliza) with their moving gestures, so a «Cómo se juega» would repeat it; the owner asked to drop it so the cover fits above the fold.
 - **Ranking (D-212):** the `microgames` table under the stage, Week · All time · Friends, with signing in on the cover; a whole run of 10 offers to save its points, a microgame played alone from the tester tab never does.

@@ -14,7 +14,7 @@ import { getLang, coverLangToggle, COMMON } from '../../assets/js/i18n.js';
 import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
 import { rankingsVisibles } from '../../assets/js/jugador.js';
 import { TR } from './rules.js';
-import { RUN, newCode, speedAt, score, score100, stream, runOrder } from './engine.js';
+import { RUN, newCode, speedAt, score, score100, stream, runOrder, STREAK, gamePoints } from './engine.js';
 const GAME_ID = 'microgames';
 // The texts are written in Spanish where they are used; t() gives the player's language from rules.js (C-3)
 const LANG = getLang();
@@ -34,6 +34,9 @@ trackVisit();   // the site's traffic (D-208)
   const set = html => { screen.innerHTML = html; };
   const full = html => { screen.classList.add('full'); set(html); };
   const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+  // Stars that fill up one after another, golden and shining; `d` delays the first (for a row of them)
+  const shiny = (n, d = 0, cls = '') => `<span class="shiny ${cls}">${[0, 1, 2].map(k => `<b class="st${k < n ? ' on' : ''}" style="--d:${(d + k * 0.14).toFixed(2)}s">★</b>`).join('')}</span>`;
+  const multTxt = x => x.toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
   const T = ms => ms / sp;          // durations shrink as the run speeds up
   const tap = (el, fn) => el.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); if (active) fn(e); });
   const sizeFor = (cols, rows) => {
@@ -74,7 +77,10 @@ trackVisit();   // the site's traffic (D-208)
     const tag = document.createElement('div'); tag.className = `verdict-tag ${n ? 'good' : 'bad'}`; tag.textContent = n ? '✓' : '✗'; demo.append(tag);
     later(() => {
       stopAll();
-      set(`<div class="stars" style="color:${n ? 'var(--yellow)' : 'var(--red)'}">${stars(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>`);
+      const sc = score([...marks, n]), g = sc.games[sc.games.length - 1], run = (() => { let k = 0; for (let i = sc.games.length - 1; i >= 0 && sc.games[i].stars >= 2; i--) k++; return k; })();
+      set(`<div class="stars${n ? '' : ' none'}">${shiny(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>
+        ${n && order.length > 1 ? `<div class="gain num">${t('+{n} pts · ⚡ ×{x}', { n: gamePoints(n, idx - 1), x: multTxt(speedAt(idx - 1)) })}</div>` : ''}
+        ${g.streak ? `<div class="streak">${t('🔥 Racha de {n} · +{p}', { n: run, p: STREAK })}</div>` : ''}`);
       later(next, 900);
     }, reduce ? 400 : hold);
   }
@@ -89,7 +95,7 @@ trackVisit();   // the site's traffic (D-208)
   };
   const KIND = { quecolor: 'toca', cuenta: 'toca', calcula: 'toca', completa: 'toca', quehora: 'toca', sombra: 'toca', mas: 'toca', diferente: 'toca', cualfalta: 'toca', dondequedo: 'toca', repite: 'toca',
     espera: 'toca', para: 'toca', toca: 'toca', aplasta: 'toca', revienta: 'toca', notoques: 'toca',
-    ordena: 'arrastra', hands: 'arrastra', alimenta: 'arrastra', conecta: 'arrastra', atrapa: 'arrastra', rebota: 'arrastra', equilibra: 'arrastra',
+    ordena: 'arrastra', hands: 'arrastra', conecta: 'arrastra', atrapa: 'arrastra', rebota: 'arrastra', equilibra: 'arrastra',
     corta: 'desliza', cruza: 'desliza', dibuja: 'desliza', sigue: 'desliza', limpia: 'desliza' };
   let curGame = null;
   const GSTAGE = {
@@ -573,6 +579,14 @@ trackVisit();   // the site's traffic (D-208)
         }
         return false;
       };
+      // The four in a row that win, as [row, col] (to light them up)
+      const lineOf = (g, p) => {
+        for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) for (const [dr, dc] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+          const cells = [0, 1, 2, 3].map(k => [r + dr * k, c + dc * k]);
+          if (cells.every(([rr, cc]) => rr >= 0 && rr < R && cc >= 0 && cc < C && g[rr][cc] === p)) return cells;
+        }
+        return [];
+      };
       const heightOf = (g, c) => { let h = 0; while (h < R && g[h][c]) h++; return h; };
       const dropWins = (g, c, p) => { const h = heightOf(g, c); if (h >= R) return false; g[h][c] = p; const w = wins(g, p); g[h][c] = 0; return w; };
       // Build a board with exactly one winning column for you, and none for the rival
@@ -624,7 +638,12 @@ trackVisit();   // the site's traffic (D-208)
           d.className = 'dot me falling'; d.style.setProperty('--from', `${-(R - h + 1) * (cell + 4)}px`);
           slot.append(d); grid[h][c] = ME;
           active = false; cancelAnimationFrame(raf); timer.hidden = true;
-          setTimeout(() => { active = true; if (good) col.classList.add('win'); finish(good ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, good ? t('¡Cuatro en línea!') : t('¡Esa no conecta!')); }, reduce ? 50 : 450);
+          // Once it's dropped, the column stops being pointed at
+          cols.forEach(cc => cc.classList.remove('aim')); $id('c4').classList.add('done');
+          setTimeout(() => { active = true;
+            // Four in a row: those four light up and pulse, one after another, and the rest dims
+            if (good) lineOf(grid, ME).forEach(([r, cc], k) => { const dd = cols[cc].children[R - 1 - r].querySelector('.dot'); dd?.classList.add('glow'); dd?.style.setProperty('--k', k); });
+            finish(good ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, good ? t('¡Cuatro en línea!') : t('¡Esa no conecta!')); }, reduce ? 50 : 450);
         };
         listen({
           down: e => { mid = centers(); dragging = true; moved = false; sx = e.clientX; const L = lane.getBoundingClientRect(); onLane = e.clientY >= L.top - 30 && e.clientY <= L.bottom + 20; hand.classList.add('held'); },
@@ -825,21 +844,7 @@ trackVisit();   // the site's traffic (D-208)
         active = true; runTimer(T(6200), () => finish(blue >= 6 && wrong <= 1 ? 2 : blue >= 3 ? 1 : 0, t('{b}/9 azules · {w} malas', { b: blue, w: wrong })));
       }, '<span class="bubgoal"></span>', t('revienta solo las de este azul'));
     },
-    // 8 ¡ALIMENTA!: three animals, three foods; drag each food to its animal
-    alimenta() {
-      const ps = shuffle([['🐵', '🍌'], ['🐶', '🦴'], ['🐰', '🥕'], ['🐱', '🐟'], ['🐼', '🎋'], ['🐝', '🌸'], ['🐿️', '🌰']]).slice(0, 3);
-      command(t('¡ALIMENTA!'), () => {
-        const { lay, W, H } = lay0('');
-        const animals = ps.map(([a], i) => { const d = mk(lay, 'div', 'obj animal', a); place(d, W * (0.2 + 0.3 * i), H * 0.22); d.dataset.a = a; return d; });
-        let fed = 0, errs = 0; const t0 = performance.now();
-        shuffle([0, 1, 2]).forEach((pi, k) => { const f = mk(lay, 'div', 'obj food', ps[pi][1]), home = [W * (0.2 + 0.3 * k), H * 0.76]; place(f, ...home);
-          draggable(f, lay, (x, y) => { const hit = animals.find(d => near(posOf(d), [x, y], 52));
-            if (hit && hit.dataset.a === ps[pi][0]) { f.remove(); hit.classList.add('fed'); fed++; pop(lay, '😋', ...posOf(hit));
-              if (fed === 3) finish(errs === 0 ? timeStars(t0, 3, 4.5) : errs === 1 ? 2 : 1, t('¡Todos comieron!')); }
-            else { if (hit) { errs++; pop(lay, '✗', x, y, 'bad'); } back(f, home); } }); });
-        active = true; runTimer(T(6500), () => finish(0, t('{n} de 3', { n: fed })));
-      }, '🐵 ← 🍌', t('lleva cada comida a su animal'));
-    },
+
     // ¡REBOTA!: a Pong paddle at the bottom; the ball bounces on its own. Hit the three pixel aliens at the top; don't let it fall
     rebota() {
       // Three little pixel aliens (our own 8-bit drawings), each in its own color: '#' body, 'w' white, 'k' black
@@ -864,7 +869,7 @@ trackVisit();   // the site's traffic (D-208)
         let bx = W / 2, by = H * 0.6, an = (-60 - rand() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
         const mv = e => { px = Math.max(PW / 2 + W * 0.04, Math.min(W - PW / 2 - W * 0.04, ptIn(lay, e)[0])); };
         listen({ down: mv, move: mv });
-        animate((t, now) => { const dt = Math.min(0.03, (now - last) / 1000); last = now;
+        animate((tm, now) => { const dt = Math.min(0.03, (now - last) / 1000); last = now;
           pd.style.left = (px - PW / 2) + 'px'; pd.style.top = py + 'px';
           bx += vx * dt; by += vy * dt;
           if (bx < R) { bx = R; vx = Math.abs(vx); } if (bx > W - R) { bx = W - R; vx = -Math.abs(vx); } if (by < R) { by = R; vy = Math.abs(vy); }
@@ -874,7 +879,8 @@ trackVisit();   // the site's traffic (D-208)
           for (const g of targets) if (!g.hit && near([bx, by], [g.x, g.y], 30)) { g.hit = true; broken++; g.el.remove(); blast(lay, g.x, g.y, g.el.firstElementChild.dataset.c); vy = Math.abs(vy); pop(lay, '+1', g.x, g.y);
             if (broken === 3) { finish(3, t('¡Le diste a los tres!')); return false; } }
           place(pb, bx, by);
-          if (by > H + R) { finish(broken, broken ? t('Le diste a {n} de 3', { n: broken }) : t('¡Se te cayó!')); return false; } });
+          // Past the paddle it is lost: the game ends right there, not when the ball leaves the screen
+          if (by - R > py + 18) { finish(broken, broken ? t('Le diste a {n} de 3', { n: broken }) : t('¡Se te cayó!')); return false; } });
         active = true; runTimer(T(9000), () => finish(broken, t('Le diste a {n} de 3', { n: broken })));
       }, '🏓 → 👾👾👾', t('mueve la paleta y dale a los tres marcianos'));
     },
@@ -914,7 +920,7 @@ trackVisit();   // the site's traffic (D-208)
           place(d, wx, wy); d.style.setProperty('--dx', `${Math.sign(it.vu || it.u || a) * (60 + rand() * 40)}px`); d.style.setProperty('--dy', `${H}px`);
           pop(lay, '−★', wx, wy - 20, 'bad'); try { navigator.vibrate?.(40); } catch (_) { /* none */ }
           if (!items.length) { finish(0, t('¡Se cayó todo!')); return true; } return false; };
-        animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (dt <= 0) return;
+        animate((tm, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (dt <= 0) return;
           const nx = x + (tx - x) * Math.min(1, dt * 10); v = (nx - x) / dt; x = nx;
           // A little push now and then, so it never just stands still
           gust -= dt; if (gust <= 0) { gust = 0.9 + rand() * 0.9; w += (rand() < 0.5 ? -1 : 1) * 0.35 * (0.5 + rand() * 0.6) * sp; }
@@ -948,7 +954,7 @@ trackVisit();   // the site's traffic (D-208)
           top.setAttribute('transform', `translate(${topx} ${topy}) rotate(${a * 180 / Math.PI})`);
           hb.setAttribute('x', x - 42); hb.setAttribute('y', by);
           lay.classList.toggle('warn', items.some((it, k) => Math.abs(it.u - (k ? items[k - 1].u : 0)) > lim(k) * 0.6));
-          if (t >= dur) { finish(items.length, items.length === 3 ? t('¡No se cayó nada!') : t('Se cayeron {n}', { n: 3 - items.length })); return false; } });
+          if (tm >= dur) { finish(items.length, items.length === 3 ? t('¡No se cayó nada!') : t('Se cayeron {n}', { n: 3 - items.length })); return false; } });
         active = true; runTimer(dur, () => {});
       }, `<span style="display:inline-flex;flex-direction:column-reverse;align-items:center">${LOAD.map(k => chip(k, 1.1).replace('margin-right:4px', 'margin:0')).join('')}</span>`, t('que no se caiga nada del plato'));
     },
@@ -1025,7 +1031,7 @@ trackVisit();   // the site's traffic (D-208)
         draw(); place(here, x, y + 14);
         listen({ down: e => { finger = ptIn(lay, e); on = true; if (!started && near(finger, [x, y], 55)) { started = performance.now(); here.hidden = true; } },
           move: e => { finger = ptIn(lay, e); }, up: () => { on = false; } });
-        animate((t, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (!started) return;
+        animate((tm, now) => { const dt = Math.min(0.04, (now - last) / 1000); last = now; if (!started) return;
           const tt = (now - started) / 1000;
           // Every so often: a new heading (a sharp turn), a new speed, sometimes a short freeze
           if (tt >= nextTurn) { nextTurn = tt + (0.32 + rand() * 0.55) / sp; want = head + (rand() < 0.5 ? -1 : 1) * (0.7 + rand() * 1.6);
@@ -1191,7 +1197,7 @@ trackVisit();   // the site's traffic (D-208)
     // 29 ¡A LA HORA!: a digital time, and a clock with both hands on 12: drag each hand to it and say Listo.
     // The hand nearest the finger is the one that turns; the long one snaps to 5 minutes, the short one moves freely
     hands() {
-      const h = 1 + rnd(11), m = pick([0, 15, 30, 45, 0, 30, 10, 20, 40, 50, 5, 25, 35, 55]);   // never 12:00, where the hands start
+      const h = 1 + rnd(11), m = pick([15, 30, 45, 30, 10, 20, 40, 50, 5, 25, 35, 55]);   // never 12 nor :00: both hands start there, so both must move
       const shown = `${h}:${String(m).padStart(2, '0')}`;
       command(t('¡A LA HORA!'), () => {
         const ticks = [...Array(60).keys()].map(k => { const an = k * 6 * Math.PI / 180, big = k % 5 === 0; return `<line x1="${50 + (big ? 40 : 43) * Math.sin(an)}" y1="${50 - (big ? 40 : 43) * Math.cos(an)}" x2="${50 + 45 * Math.sin(an)}" y2="${50 - 45 * Math.cos(an)}" stroke="#fff" stroke-opacity="${big ? 1 : 0.4}" stroke-width="${big ? (k % 15 ? 1.5 : 3) : 0.8}"/>`; }).join('');
@@ -1342,7 +1348,6 @@ trackVisit();   // the site's traffic (D-208)
     ['para', t('¡PARA!'), '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
     ['aplasta', t('¡APLASTA!'), '🪰', 'Nueve moscas revoloteando: toca donde están y el matamoscas baja a aplastarlas. Dos de un golpe es ¡COMBO!'],
     ['revienta', t('¡REVIENTA!'), '🫧', 'Suben burbujas de distintos tamaños y colores parecidos: revienta solo las del azul que te muestran.'],
-    ['alimenta', t('¡ALIMENTA!'), '🐵', 'Lleva cada comida a su animal.'],
     ['rebota', t('¡REBOTA!'), '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
     ['equilibra', t('¡EQUILIBRA!'), '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
     ['dibuja', t('¡DIBUJA!'), '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
@@ -1378,7 +1383,7 @@ trackVisit();   // the site's traffic (D-208)
   $id('sound-slot')?.append(soundToggle());
   document.title = `${t('¡Al toque!')} ⚡ · ${t('Laboratorio')}`; $id('btn-volver').textContent = `‹ ${t('Laboratorio')}`; demo.setAttribute('aria-label', t('¡Al toque!'));
   // The run's progress in the corner: one mark per game, filled with how it went
-  const rb = $id('runbar'), runbar = () => { rb.hidden = false; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
+  const rb = $id('runbar'), runbar = () => { rb.hidden = false; const sg = score(marks).games; rb.innerHTML = order.map((_, i) => `<i class="${i < marks.length ? `s${marks[i]}${sg[i].streak || sg[i + 1]?.streak ? ' fire' : ''}` : i === idx - 1 ? 'cur' : ''}"></i>`).join(''); };
   let marks = [], startedAt = 0;
   // Under the stage: the site footer on the cover, with the game's 💬 comment as its option (C-17, U-38); just the comment elsewhere
   const pie = $id('pie'), COMMENT = Object.fromEntries(Object.entries({ titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué microjuegos te gustaron, cuáles no se entendían y qué le cambiarías.', ph: 'Por ejemplo: en ¡Corta! no me daba el tiempo.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' }).map(([k, v]) => [k, t(v)]));
@@ -1407,6 +1412,14 @@ trackVisit();   // the site's traffic (D-208)
     footer('portada');
     rankingEl.replaceChildren(tabla());
   }
+  // How the points came out, in three lines and the total: 10 per star, what the speed added, the streaks
+  const breakdown = sc => { const base = marks.reduce((a, m) => a + m * 10, 0), streaks = sc.games.filter(g => g.streak).length,
+      speed = sc.points - base - streaks * STREAK, top = speedAt(order.length - 1).toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
+    return `<div class="breakdown" aria-label="${t('Cómo se calcularon tus puntos')}">
+      <div><span>${t('{n} ★ × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
+      <div class="bonus"><span>${t('⚡ Bono de velocidad · sube cada 3 juegos, hasta ×{x}', { x: top })}</span><b class="num">+${speed}</b></div>
+      <div><span>${t('🔥 Rachas de ★★ o más: {n} × {p}', { n: streaks, p: STREAK })}</span><b class="num">+${streaks * STREAK}</b></div>
+      <div class="tot"><span>${t('Total')}</span><b class="num">${sc.points} ${t('pts')}</b></div></div>`; };
   function end() {
     hud.hidden = true; rb.hidden = true;
     const sc = score(marks), k = total / (order.length * 3), isBest = sc.points > bestPts;
@@ -1420,12 +1433,17 @@ trackVisit();   // the site's traffic (D-208)
     if (k >= 0.45) { SFX.win(); if (!reduce) confetti(); }
     // C-19: the result, the main action and Share, the exits, then the detail game by game
     set(`<div class="cmd">${k >= 0.75 ? t('¡Al toque!') : k >= 0.45 ? t('¡Bien!') : t('¡Otra!')}</div>
-      <div class="stars" style="color:var(--yellow)"><span class="num">${sc.points}</span> ${t('pts')}</div>
+      <div class="stars total"><span class="num" id="ptsup">0</span> ${t('pts')}</div>
       <div class="sub best">${total} / ${order.length * 3} ★ · ${td && !first ? t('la de hoy que cuenta: {n} pts', { n: td.p }) : TODAY ? t('¡Esta es la que cuenta hoy!') : isBest ? t('¡Tu mejor corrida!') : t('tu mejor: {n} pts', { n: bestPts })}</div>
+      <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b>${shiny(marks[i], 0.35 + i * 0.12, 'sm')}<em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>
+      ${breakdown(sc)}
       <div class="menu"><button class="btn btn--yellow" type="button" id="btn-otra">🔁 ${SEED ? t('Jugarla de nuevo') : t('Otra corrida')}</button>
-        <button class="btn btn--cyan btn--sm" type="button" id="btn-retar">📤 ${t('Reta a alguien con esta corrida')}</button><div id="exits"></div></div>
-      <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i><em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>`);
+        <button class="btn btn--cyan btn--sm" type="button" id="btn-retar">📤 ${t('Reta a alguien con esta corrida')}</button><div id="exits"></div></div>`);
     $id('exits').replaceWith(salidasFin('lab', { lang: LANG, raiz: '../../' }));
+    // The total counts up while the stars fill in
+    { const el = $id('ptsup'), t0 = performance.now(), D = reduce ? 0 : 1400;
+      const up = now => { if (!el.isConnected) return; const k = D ? Math.min(1, (now - t0) / D) : 1; el.textContent = Math.round(sc.points * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(up); };
+      requestAnimationFrame(up); }
     // A whole run counts for the ranking (D-212): never one microgame played alone from the tester tab
     const tablaFin = tabla({ entrar: false });
     rankingEl.replaceChildren(...(order.length === RUN && rankingsVisibles() ? [avisoPartida({ juego: GAME_ID, s: sc.points, ms: Date.now() - startedAt, alAnotar: () => tablaFin.recargar() })] : []), tablaFin);
@@ -1468,15 +1486,15 @@ trackVisit();   // the site's traffic (D-208)
     $btn('btn-seguir', () => { paused = false; if (scored) next(); else play(); });
   });
   // Every run has a code: the link's seed, today's, or a new one, so it can be shared and played the same
-  const newRun = () => { code = SEED || newCode(); return runOrder(META.map(m => m.id), code); };
+  const newRun = () => { code = SEED || newCode(); return runOrder(META.map(m => m.id), code, RUN, [['quehora', 'hands']]); };
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
   window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id), seed: SEED,
-    get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); } };
+    get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); }, run: ids => { code = SEED || newCode(); start(ids); } };
   // Testers only, in the T tab (never on the cover, which stays as players see it): play any microgame on its own, or today's run
   labAccess().then(ok => {
     if (!ok) return;
     return import('../../assets/js/tester-ribbon.js').then(({ setTesterContext, foldTesterRibbon }) => {
-      // One tap plays it: a grid of the 29 by their emoji, grouped by type (its color), the name on a long press
+      // One tap plays it: a grid of the 28 by their emoji, grouped by type (its color), the name on a long press
       const go = id => { foldTesterRibbon(); window.__microgames.only(id); };
       const grid = el('div', { class: 'tr-mg-grid', id: 'tr-mg' }, ...Object.keys(KINDS).flatMap(k => META.filter(m => KIND[m.id] === k).map(m =>
         el('button', { type: 'button', class: 'tr-mg-b', style: `--kc:${KINDS[k][2]}`, title: m.n, 'aria-label': m.n, 'data-id': m.id, onClick: () => go(m.id) }, m.i))));
