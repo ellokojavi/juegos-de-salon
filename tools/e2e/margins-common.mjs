@@ -42,6 +42,11 @@ export const measureMargins = `(()=>{
     if (!m || !m.matches('img, video, canvas, picture') || !visible(m) || skip(m)) continue;
     const s = getComputedStyle(c), a = m.getBoundingClientRect(), b = c.getBoundingClientRect();
     const top = a.top - b.top - px(s.borderTopWidth), left = a.left - b.left - px(s.borderLeftWidth), right = b.right - px(s.borderRightWidth) - a.right;
+    // a card laid out in a row (a wide, short screen) has its picture at its left corner: flush on top and left
+    if (getComputedStyle(c).flexDirection === 'row') {
+      if (Math.abs(top) > T || Math.abs(left) > T) off.push('M-3 ' + name(m) + ' in ' + name(c) + ': ' + Math.round(top) + ' px above, ' + Math.round(left) + ' px left');
+      continue;
+    }
     if (Math.abs(left - right) > T || Math.abs(top - (left + right) / 2) > T)
       off.push('M-3 ' + name(m) + ' in ' + name(c) + ': ' + Math.round(top) + ' px above, ' + Math.round(left) + ' / ' + Math.round(right) + ' px at the sides');
   }

@@ -178,19 +178,20 @@ export const CAMPAIGNS = {
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
   },
-  // 🧮 Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
+  // #️⃣ Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
   // the lab: `requires` keeps it unseen until flags/sudoku is on for this visitor (D-517), and it is not in
   // ACTIVE. Its picture is the real board half solved. Sudoku is not in games.js while in the lab, so the
   // item carries its own texts and link: the launch PR points `href` at the game's new folder (or uses the
   // game's own entry once it is in games.js)
   'sudoku-ya': {
-    emoji: '🧮',
+    // the game's drawn icon (a 3×3, labs/sudoku/icon.svg): there is no sudoku emoji (#1400)
+    icon: 'labs/sudoku/icon.svg',
     requires: ['sudoku'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
     title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
     hero: true,
     items: [{
-      emoji: '🧮', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
         es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
@@ -434,23 +435,55 @@ const node = (tag, cls, text) => {
 };
 
 /**
- * A big window's clip keeps even margins in its card (DESIGN.md §3 rule 7, M-3): when it is narrower
- * than the card (a short screen, a square clip), the same gap above it as on each side. Measured here
- * rather than in CSS: container units (cqw) are missing in some browsers the owner uses, which left the
- * clip flush on top. Kept up to date while the window is open.
+ * A big window's clip is as big as the screen allows and flush with its card on top and both sides
+ * (DESIGN.md §3 rule 7, M-3; the owner: no gutters, no excessive gap above, the clip as large as it fits).
+ * It takes the card's whole width unless the window would then not fit the screen; then the clip shrinks
+ * just enough, and the window narrows with it, so the clip stays flush. Kept up to date on resize.
  */
+export const HERO_FIT = 0.94; // of the screen's height the whole window may take
+export const HERO_MIN = 240;
+export const LADO_MAX = 0.55; // of the card's width the clip takes beside its texts // px: the narrowest the window gets for its clip
 export function evenHeroMargins(card) {
   const fit = () => {
-    for (const m of card.querySelectorAll('.splash-media')) {
-      // offsetWidth, not the bounding box: the window scales in as it opens, and a box measured then is smaller
-      const gap = Math.max(0, (m.parentElement.clientWidth - m.offsetWidth) / 2);
-      m.style.marginTop = gap > 0.5 ? `${gap}px` : '0px';
-      m.style.borderRadius = gap > 0.5 ? '10px' : '';
+    const m = card.querySelector('.splash-media');
+    if (!m) return;
+    card.style.width = '';
+    card.classList.remove('splash--lado');
+    m.style.width = '100%';
+    m.style.height = '';
+    // offsetWidth/Height, not the bounding box: the window scales in as it opens
+    // A narrower window wraps its texts into more lines, so it is measured again until it settles; never
+    // narrower than HERO_MIN, where the texts would wrap too much (a window that still does not fit scrolls)
+    const usual = card.offsetWidth;
+    // the window's own cap (max-height in splash.css), or HERO_FIT of the screen
+    const avail = Math.min(innerHeight * HERO_FIT, parseFloat(getComputedStyle(card).maxHeight) || Infinity) - 6;
+    for (let i = 0; i < 6; i++) {
+      const full = m.parentElement.clientWidth, ratio = m.offsetHeight / Math.max(1, m.offsetWidth);
+      // scrollHeight: the window is capped in height and scrolls inside, so its offsetHeight hides what overflows
+      const chrome = card.scrollHeight - m.offsetHeight;
+      const room = card.offsetWidth - full;
+      const target = Math.min(usual, Math.max(Math.min(usual, HERO_MIN), room + (avail - chrome) / ratio));
+      if (Math.abs(target - card.offsetWidth) < 1) break;
+      card.style.width = `${target}px`;
+    }
+    // A wide, short screen (a laptop): even at its narrowest the window does not fit, because the texts
+    // alone take most of the height. Then the window takes its usual wide size, the clip goes at the left
+    // (at most LADO_MAX of the card, as tall as the room left) and the card's texts at its right
+    if (card.scrollHeight - card.clientHeight > 2 && innerWidth > innerHeight) {
+      const item = m.parentElement, ratio = m.offsetWidth / Math.max(1, m.offsetHeight);
+      card.style.width = '';
+      card.classList.add('splash--lado');
+      m.style.width = 'auto';
+      for (let i = 0; i < 3; i++) {
+        const room = avail - (card.scrollHeight - item.offsetHeight);
+        m.style.height = `${Math.max(120, Math.min(room, item.clientWidth * LADO_MAX / ratio))}px`;
+      }
     }
   };
   fit();
-  if (globalThis.ResizeObserver) new ResizeObserver(fit).observe(card);
-  else globalThis.addEventListener?.('resize', fit);
+  globalThis.addEventListener?.('resize', fit);
+  // the clip's height is known once its first frame loads
+  card.querySelector('video.splash-media')?.addEventListener('loadedmetadata', fit, { once: true });
 }
 
 /** Each item as the window draws it: a game of games.js, or the campaign's own content. */
@@ -461,6 +494,7 @@ async function resolve(items, lang) {
     const g = i.game ? all.find(x => x.id === i.game) : null;
     return {
       emoji: i.emoji ?? g?.emoji ?? '',
+      icon: i.icon ? new URL(i.icon, ROOT).href : null,
       name: pick(i.title, lang) ?? pick(g?.name, lang) ?? '',
       text: pick(i.text, lang) ?? pick(g?.tagline, lang) ?? '',
       href: i.href ? new URL(i.href, ROOT).href : g?.path ? new URL(g.path, ROOT).href : null,
@@ -511,7 +545,12 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       const tick = setInterval(() => { if (!score.isConnected) return clearInterval(tick); s = (s + 50) % 1e6; score.textContent = `SCORE ${String(s).padStart(6, '0')}`; }, 120);
     }
   }
-  if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
+  // A game drawn as an icon (`icon`, Sudoku's icon.svg: there is no sudoku emoji) shows the drawing in place of the emoji
+  if (c.icon) {
+    const box = node('div', 'splash-emoji splash-icon');
+    const img = node('img'); Object.assign(img, { src: new URL(c.icon, ROOT).href, alt: '', decoding: 'async' });
+    box.append(img); head.append(box);
+  } else if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
   if (c.kicker) head.append(node('p', 'splash-kicker', pick(c.kicker, lang)));
   const h = node('h2', 'splash-titulo', pick(c.title, lang));
   h.id = 'splash-titulo';
@@ -560,7 +599,9 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       continue;
     }
     const body = node('div', 'splash-item-cuerpo');
-    body.append(node('h3', null, `${it.emoji} ${it.name}`.trim()));
+    const h3 = node('h3', null, it.icon ? it.name : `${it.emoji} ${it.name}`.trim());
+    if (it.icon) { const img = node('img', 'splash-icon-inline'); Object.assign(img, { src: it.icon, alt: '', decoding: 'async' }); h3.prepend(img); }
+    body.append(h3);
     if (it.text) body.append(node('p', null, it.text));
     if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', it.cta ?? `▶ ${pick(UI.play, lang)}`));
     a.append(body);

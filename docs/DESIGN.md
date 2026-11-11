@@ -214,11 +214,12 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
    - **M-1 Centered column:** the app's column (`.app`) is as far from the window's left as from its right.
    - **M-2 Even padding:** a card (`.panel`, `.notice`, `.mode`, `.hoja`, the splash window and its card)
      has the same padding on its left and its right.
-   - **M-3 Even media:** a picture or clip that opens a card is flush with it on top and both sides, or,
-     narrower than the card (a short screen, a square clip), keeps the same gap above as on each side,
-     rounded; never flush on one side with gutters on the others. The splash's big window does it in
-     `splash.js` (`evenHeroMargins`, measured in the page: container units are missing in some browsers), and `tools/e2e/splash/margins.mjs` also measures every
-     `hero` campaign on a phone, a short phone, a laptop and a big screen.
+   - **M-3 Even media:** a picture or clip that opens a card is flush with it on top and both sides, or
+     keeps the same gap above as on each side; never flush on one side with gutters on the others. When
+     a clip must be narrower than its window (a short screen, a square clip), the window narrows to it
+     rather than leaving gaps: `evenHeroMargins` in `splash.js` (the owner found an equal gap above
+     excessive), and `tools/e2e/splash/margins.mjs` measures every `hero` campaign on a phone, a short
+     phone, a laptop and a big screen.
    - With them: blocks 12 px apart (rule 6) and the board's 24 px of air before its buttons (U-11, D-309).
    A deliberate exception is marked `data-margins-ok` on the element, with its reason in a comment
    beside it. A new kind of card joins `CARDS` in `margins-common.mjs` in the PR that creates it.
