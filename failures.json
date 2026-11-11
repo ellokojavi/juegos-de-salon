@@ -2152,6 +2152,19 @@
       "date": "2026-11-11T06:08:19.629Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 42970045375,
+      "check": "end-to-end",
+      "pr": 1377,
+      "branch": "cover-gap-12",
+      "commit": "1dfd3c9dec1db607ba70a7c2f3288f3c84ed7cd4",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the ones left out stay outside, in the hand",
+      "signature": "6fad0784f2",
+      "date": "2026-11-11T06:18:32.642Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
