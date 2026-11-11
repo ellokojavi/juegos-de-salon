@@ -297,13 +297,23 @@ function start(level) {
 }
 
 /* ---------------- Play ---------------- */
+/** A cell's place on its board, as classes: the thick lines between boxes and the last row and column. */
+function edges(G, i) {
+  const r = Math.floor(i / G.n), c = i % G.n;
+  return (c === G.n - 1 ? ' ec' : c % G.bw === G.bw - 1 ? ' bc' : '') + (r === G.n - 1 ? ' er' : r % G.bh === G.bh - 1 ? ' br' : '');
+}
+
 function buildBoard() {
-  $('#board').replaceChildren(...[...Array(81)].map((_, i) => el('button', {
+  const G = E.geom(state);
+  const board = $('#board');
+  board.style.setProperty('--n', G.n);
+  board.dataset.n = G.n;
+  board.replaceChildren(...[...Array(G.cells)].map((_, i) => el('button', {
     type: 'button', class: 'cell', 'data-i': i,
-    'data-r': Math.floor(i / 9), 'data-c': i % 9,
     onClick: () => select(i),
   })));
-  $('#pad').replaceChildren(...[...Array(9)].map((_, k) => el('button', {
+  $('#pad').style.setProperty('--n', G.n);
+  $('#pad').replaceChildren(...[...Array(G.n)].map((_, k) => el('button', {
     type: 'button', class: 'key', 'data-d': k + 1, id: `key-${k + 1}`, onClick: () => press(k + 1),
   }, el('b', {}, String(k + 1)), el('small', {}))));
 }
@@ -312,21 +322,21 @@ function drawBoard() {
   const bad = new Set([...E.conflicts(state), ...E.wrong(state)]);
   const sel = selected >= 0 ? selected : -1;
   const selDigit = sel >= 0 ? state.cells[sel] : 0;
-  const n = E.counts(state);
+  const n = E.counts(state), G = E.geom(state);
   $$('#board .cell').forEach(cell => {
     const i = +cell.dataset.i, d = state.cells[i];
-    const peer = sel >= 0 && (E.PEERS[sel].includes(i));
-    cell.className = 'cell'
+    const peer = sel >= 0 && (G.peers[sel].includes(i));
+    cell.className = 'cell' + edges(G, i)
       + (E.isGiven(state, i) ? ' given' : E.isHinted(state, i) ? ' hinted' : d ? ' mine' : '')
       + (i === sel ? ' sel' : peer ? ' peer' : '')
       + (selDigit && d === selDigit && i !== sel ? ' same' : '')
       + (bad.has(i) ? ' bad' : '');
     if (d) cell.replaceChildren(String(d));
-    else if (state.notes[i]) cell.replaceChildren(el('span', { class: 'notes' }, ...[...Array(9)].map((_, k) => el('i', {}, E.hasNote(state, i, k + 1) ? String(k + 1) : ''))));
+    else if (state.notes[i]) cell.replaceChildren(el('span', { class: 'notes' }, ...[...Array(G.n)].map((_, k) => el('i', {}, E.hasNote(state, i, k + 1) ? String(k + 1) : ''))));
     else cell.replaceChildren();
   });
   $$('#pad .key').forEach(key => {
-    const d = +key.dataset.d, left = 9 - n[d];
+    const d = +key.dataset.d, left = G.n - n[d];
     key.classList.toggle('full', left <= 0);
     key.querySelector('small').textContent = left > 0 ? String(left) : '✓';
   });
@@ -340,7 +350,7 @@ function drawBoard() {
 
 function renderPlay() {
   if (E.isOver(state)) return renderResult();
-  if (!$('#board').children.length) buildBoard();
+  if ($('#board').children.length !== state.cells.length) buildBoard();
   drawBoard();
   showScreen('screen-play');
   drawClock();
@@ -397,9 +407,10 @@ function afterMove() {
 // same digit again empties a cell (there is no erase button: the owner swapped it for Give up)
 document.addEventListener('keydown', e => {
   if (!state || !$('#screen-play').classList.contains('active') || e.metaKey || e.ctrlKey || e.altKey) return;
-  const move = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 }[e.key];
-  if (move) { e.preventDefault(); select(selected < 0 ? 40 : (selected + move + 81) % 81); }
-  else if (/^[1-9]$/.test(e.key)) press(+e.key);
+  const G = E.geom(state);
+  const move = { ArrowUp: -G.n, ArrowDown: G.n, ArrowLeft: -1, ArrowRight: 1 }[e.key];
+  if (move) { e.preventDefault(); select(selected < 0 ? Math.floor(G.cells / 2) : (selected + move + G.cells) % G.cells); }
+  else if (/^[1-9]$/.test(e.key) && +e.key <= G.n) press(+e.key);
   else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') eraseCell();
   else if (e.key.toLowerCase() === 'n') { notesMode = !notesMode; drawBoard(); }
 });
@@ -424,7 +435,10 @@ function renderResult({ fresh = false } = {}) {
   solution.hidden = !gaveUp;
   $('#solution-title').hidden = !gaveUp;
   $('#solution-title').textContent = gaveUp ? T.solutionTitle : '';
-  solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + (E.isGiven(state, i) ? ' given' : ''), 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, String(d))) : []));
+  const G = E.geom(state);
+  solution.style.setProperty('--n', G.n);
+  solution.dataset.n = G.n;
+  solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + edges(G, i) + (E.isGiven(state, i) ? ' given' : '') }, String(d))) : []));
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(state.level); } }, fmt(T.again, { level: level.toLowerCase() })),
     // Sharing tells a solved board: giving up has nothing to share

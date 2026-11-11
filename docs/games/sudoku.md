@@ -14,8 +14,11 @@ score ("100 por completarlo, sin errores, y cada número mal puesto es 10 menos"
 
 ## Reglas
 
-Fill the 9×9 board so every row, every column and every 3×3 box holds 1 to 9 once. The game ends when the
-board is full and valid.
+Fill the board so every row, every column and every box holds each digit once. The game ends when the
+board is full and valid. **🟢 Fácil is a mini sudoku** (the owner asked, 2026-11-11, "como el Mini Sudoku de
+LinkedIn", so a round fits a party): **6×6, boxes of 2 rows × 3 columns, digits 1 to 6**. **🔴 Difícil stays
+the classic 9×9** with 3×3 boxes. The engine reads a board's size from its length (36 or 81, `geom` in
+`engine.js`); the board, the pad and the notes follow it.
 
 ### Score
 
@@ -48,8 +51,8 @@ solved grid and empties cells in mirrored pairs while the solution stays unique 
 
 | Level | Givens | Grade it needs |
 |---|---|---|
-| 🟢 Fácil (`easy`) | 38 | singles only (a cell with one candidate, a digit with one place in a unit) |
-| 🔴 Difícil (`hard`) | ~22–31 | needs locked candidates or naked/hidden pairs; never guessing |
+| 🟢 Fácil (`easy`), 6×6 | 12–14 of 36 | singles only (a cell with one candidate, a digit with one place in a unit) |
+| 🔴 Difícil (`hard`), 9×9 | ~22–31 of 81 | needs locked candidates or naked/hidden pairs; never guessing |
 
 A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixes the board of each level
 (the tests use it).

@@ -31,12 +31,14 @@ for (const level of ['easy', 'hard']) {
   ok(!await b.evaluate("!!document.getElementById('cuenta')"), `${level}: the countdown goes away`);
   ok(await b.active() === 'screen-play', `${level}: the board opens`);
   ok(await b.evaluate(`window.${S}.state().level`) === level, `${level}: at that level`);
-  ok(await b.evaluate("document.querySelectorAll('#board .cell').length") === 81, `${level}: 81 cells`);
+  const cellsN = level === 'easy' ? 36 : 81;
+  ok(await b.evaluate("document.querySelectorAll('#board .cell').length") === cellsN, `${level}: ${cellsN} cells (easy is the 6×6 mini sudoku)`);
+  ok(await b.evaluate("document.querySelectorAll('#pad .key').length") === Math.sqrt(cellsN), `${level}: the pad has 1 to ${Math.sqrt(cellsN)}`);
   if (level === 'easy') {
     // A digit that repeats in its row turns red; undo takes it back
     const r = JSON.parse(await b.evaluate(`(() => { const s = window.${S}.state();
-      const i = s.cells.findIndex(d => !d); const row = Math.floor(i / 9);
-      const d = s.cells.slice(row * 9, row * 9 + 9).find(Boolean);
+      const i = s.cells.findIndex(d => !d); const n = Math.sqrt(s.cells.length), row = Math.floor(i / n);
+      const d = s.cells.slice(row * n, row * n + n).find(Boolean);
       document.querySelector('#board .cell[data-i="' + i + '"]').click();
       document.getElementById('key-' + d).click();
       const red = document.querySelector('#board .cell[data-i="' + i + '"]').classList.contains('bad');

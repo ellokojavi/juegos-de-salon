@@ -1,6 +1,6 @@
 // Sudoku's engine: the generator gives one solution and the level's grade; the moves keep the rules.
 import assert from 'node:assert/strict';
-import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, giveUp, findHint, useHint, isHinted, completedUnits, PEERS, UNITS, LEVELS } from './engine.js';
+import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, giveUp, findHint, useHint, isHinted, completedUnits, PEERS, UNITS, LEVELS, geom, sizeOf } from './engine.js';
 
 assert.deepEqual(LEVELS, ['easy', 'hard'], 'two levels: easy and hard (the owner, 2026-11-10)');
 
@@ -20,15 +20,16 @@ for (const level of LEVELS) {
     assert.equal(count, 1, `${level} ${s}: one solution`);
     assert.deepEqual(solution, p.solution, `${level} ${s}: the stored solution`);
     assert.ok(p.givens.every((d, i) => !d || d === p.solution[i]), `${level} ${s}: the givens agree with the solution`);
-    assert.ok(p.givens.every((d, i) => !!d === !!p.givens[80 - i]), `${level} ${s}: symmetric`);
+    assert.equal(p.givens.length, sizeOf(level) ** 2, `${level} ${s}: ${sizeOf(level)}×${sizeOf(level)}`);
+    assert.ok(p.givens.every((d, i) => !!d === !!p.givens[p.givens.length - 1 - i]), `${level} ${s}: symmetric`);
     const g = grade(p.givens);
-    if (level === 'easy') { assert.equal(g, 0); assert.ok(givens >= 38, `easy keeps many givens (${givens})`); }
+    if (level === 'easy') { assert.equal(g, 0, 'easy needs singles only'); assert.ok(givens >= 12 && givens <= 16, `easy keeps 12 to 16 givens (${givens})`); }
     if (level === 'hard') { assert.equal(g, 1, 'hard needs more than singles, and no guessing'); assert.ok(givens < 32, `hard has few givens (${givens})`); }
   }
 }
 
 // Playing
-let s = newGame('easy', 'play');
+let s = newGame('hard', 'play');
 const empty = s.cells.map((d, i) => (d ? -1 : i)).filter(i => i >= 0);
 const given = s.cells.findIndex(Boolean);
 assert.equal(setDigit(s, given, 1), s, 'a given cannot change');
@@ -58,7 +59,7 @@ assert.deepEqual(counts(s).slice(1), Array(9).fill(9));
 assert.equal(setDigit(s, empty[0], 1), s, 'a finished game does not change');
 
 // The score: 100, minus 10 per wrong digit written; undo does not give it back; notes never count
-let q = newGame('easy', 'score');
+let q = newGame('hard', 'score');
 assert.equal(score(q), 100);
 const holes = q.cells.map((d, i) => (d ? -1 : i)).filter(i => i >= 0);
 const h0 = holes[0], bad = q.solution[h0] % 9 + 1;
@@ -106,9 +107,26 @@ while (!isOver(all)) all = useHint(all);
 assert.equal(score(all), 0);
 assert.equal(findHint(all), null);
 // A completed unit is reported for the celebration
-let cu = newGame('easy', 'units');
+let cu = newGame('hard', 'units');
 const row = [...Array(9)].map((_, c) => c);
 for (const i of row) if (!cu.cells[i]) cu = setDigit(cu, i, cu.solution[i]);
 assert.ok(completedUnits(cu, 0).some(u => u.length === 9 && u.every(i => i < 9)), 'the first row is complete');
 
 console.log('sudoku engine: ok');
+
+// The mini sudoku (easy, the owner 2026-11-11): 6×6, boxes of 2 rows × 3 columns, digits 1 to 6
+const G6 = geom(Array(36).fill(0));
+assert.equal(G6.units.length, 18);
+assert.ok(G6.peers.every(p => p.length === 12), 'every 6×6 cell has 12 peers');
+assert.deepEqual(G6.units[12], [0, 1, 2, 6, 7, 8], 'the first box is 2 rows × 3 columns');
+let m = newGame('easy', 'mini');
+assert.equal(m.cells.length, 36);
+const mHoles = m.cells.map((d, i) => (d ? -1 : i)).filter(i => i >= 0);
+assert.equal(setDigit(m, mHoles[0], 7), m, 'no 7 on a 6×6 board');
+assert.equal(toggleNote(m, mHoles[0], 7), m, 'no note 7 either');
+m = useHint(m);
+assert.ok(m.last.d >= 1 && m.last.d <= 6 && m.last.why !== 'solution', 'a hint on the mini board comes from logic');
+for (const i of mHoles) if (!m.cells[i]) m = setDigit(m, i, m.solution[i]);
+assert.ok(isOver(m), 'the mini board ends when full');
+assert.equal(score(m), 100 - 15);
+assert.deepEqual(counts(m).slice(1), Array(6).fill(6));

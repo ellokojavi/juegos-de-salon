@@ -1,12 +1,16 @@
 /**
  * Sudoku: the rules as a pure state machine (C-2): no DOM, no global state, testable in node.
  *
- * A board is 81 numbers, row by row, 0 for an empty cell. The generator fills a solved grid from a
+ * A board is n×n numbers (36 or 81), row by row, 0 for an empty cell. The generator fills a solved grid from a
  * seed, then empties cells in pairs (180° symmetry) while the puzzle keeps a single solution and a
  * grade no harder than the level asks. The grade is what a person needs to solve it by logic alone
  * (`grade`): 0 = singles only (a cell with one candidate, a digit with one place in a row, column or
  * box); 1 = also locked candidates and naked or hidden pairs; Infinity = beyond those. Easy keeps
  * many givens and singles; hard needs the grade-1 techniques (the owner kept only these two, 2026-11-10).
+ *
+ * Two sizes (the owner, 2026-11-11): easy is a mini sudoku of 6×6 with boxes of 2 rows × 3 columns
+ * and digits 1 to 6, so a round fits a party; hard stays 9×9. A board's size is read from its length
+ * (36 or 81 cells), so every function serves both.
  *
  * The score (for La Copa, when it goes there): 100 for the finished board, minus 10 for every digit
  * written that is not the solution's and 15 for every hint, never below 0. Notes never count. Giving
@@ -19,30 +23,43 @@ export const SCORE_MISTAKE = 10;
 export const SCORE_HINT = 15;
 /** Per level: the most techniques it may need, the fewest givens it keeps, and the grade it must need. */
 const LEVEL = {
-  easy: { maxGrade: 0, minGivens: 38, needGrade: 0 },
-  hard: { maxGrade: 1, minGivens: 22, needGrade: 1 },
+  easy: { size: 6, maxGrade: 0, minGivens: 12, needGrade: 0 },
+  hard: { size: 9, maxGrade: 1, minGivens: 22, needGrade: 1 },
 };
+export const sizeOf = level => (LEVEL[level] || LEVEL.easy).size;
 
-const ALL = 0x3fe; // bits 1..9
 const bit = d => 1 << d;
 const popcount = m => { let c = 0; while (m) { m &= m - 1; c++; } return c; };
 const lowDigit = m => 31 - Math.clz32(m & -m);
-const digitsOf = m => { const out = []; for (let d = 1; d <= 9; d++) if (m & bit(d)) out.push(d); return out; };
 
-/** The 27 units (9 rows, 9 columns, 9 boxes), each a list of cell indexes, and each cell's 20 peers. */
-export const UNITS = (() => {
-  const u = [];
-  for (let r = 0; r < 9; r++) u.push([...Array(9)].map((_, c) => r * 9 + c));
-  for (let c = 0; c < 9; c++) u.push([...Array(9)].map((_, r) => r * 9 + c));
-  for (let b = 0; b < 9; b++) {
-    const r0 = Math.floor(b / 3) * 3, c0 = (b % 3) * 3;
-    u.push([...Array(9)].map((_, k) => (r0 + Math.floor(k / 3)) * 9 + c0 + (k % 3)));
+/**
+ * A board's geometry, for n = 9 (boxes 3×3) or n = 6 (boxes 2 rows × 3 columns): its n rows, n columns
+ * and n boxes (`units`, rows first, then columns, then boxes), each cell's units and peers, and the
+ * mask of its digits.
+ */
+function makeGeom(n) {
+  const bh = n === 6 ? 2 : 3, bw = 3, cells = n * n;
+  const units = [];
+  for (let r = 0; r < n; r++) units.push([...Array(n)].map((_, c) => r * n + c));
+  for (let c = 0; c < n; c++) units.push([...Array(n)].map((_, r) => r * n + c));
+  for (let b = 0; b < n; b++) {
+    const r0 = Math.floor(b / (n / bw)) * bh, c0 = (b % (n / bw)) * bw;
+    units.push([...Array(n)].map((_, k) => (r0 + Math.floor(k / bw)) * n + c0 + (k % bw)));
   }
-  return u;
-})();
-const UNITS_OF = [...Array(81)].map((_, i) => UNITS.filter(u => u.includes(i)));
-export const PEERS = [...Array(81)].map((_, i) => [...new Set(UNITS_OF[i].flat())].filter(j => j !== i));
-export const boxOf = i => Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3);
+  const unitsOf = [...Array(cells)].map((_, i) => units.filter(u => u.includes(i)));
+  const peers = [...Array(cells)].map((_, i) => [...new Set(unitsOf[i].flat())].filter(j => j !== i));
+  let all = 0; for (let d = 1; d <= n; d++) all |= bit(d);
+  return { n, bh, bw, cells, units, unitsOf, peers, all };
+}
+const GEOM = { 36: makeGeom(6), 81: makeGeom(9) };
+/** The geometry of a board (or a state) by its number of cells. */
+export const geom = board => GEOM[(board.cells || board).length] || GEOM[81];
+export const geomOf = n => GEOM[n * n];
+const digitsOf = (m, n = 9) => { const out = []; for (let d = 1; d <= n; d++) if (m & bit(d)) out.push(d); return out; };
+
+/** The 9×9 board's 27 units and each cell's 20 peers (the 6×6 one's are in `geom`). */
+export const UNITS = GEOM[81].units;
+export const PEERS = GEOM[81].peers;
 
 /** A seeded random generator (mulberry32): the same seed, the same puzzle. */
 export function rng(seed) {
@@ -62,9 +79,9 @@ const shuffle = (list, rand) => {
 };
 
 /** Candidates of an empty cell given the board. */
-function candidates(board, i) {
-  let m = ALL;
-  for (const p of PEERS[i]) if (board[p]) m &= ~bit(board[p]);
+function candidates(board, i, G = geom(board)) {
+  let m = G.all;
+  for (const p of G.peers[i]) if (board[p]) m &= ~bit(board[p]);
   return m;
 }
 
@@ -73,18 +90,18 @@ function candidates(board, i) {
  * `rand`, digits are tried in random order and the first solution is returned in `first`.
  */
 export function solve(board, { limit = 2, rand = null } = {}) {
-  const b = [...board];
+  const b = [...board], G = geom(board);
   let count = 0, first = null;
   const go = () => {
     let best = -1, bestMask = 0, bestN = 10;
-    for (let i = 0; i < 81; i++) {
+    for (let i = 0; i < G.cells; i++) {
       if (b[i]) continue;
-      const m = candidates(b, i), n = popcount(m);
+      const m = candidates(b, i, G), n = popcount(m);
       if (n === 0) return false;
       if (n < bestN) { best = i; bestMask = m; bestN = n; if (n === 1) break; }
     }
     if (best < 0) { count++; if (!first) first = [...b]; return count >= limit; }
-    const ds = rand ? shuffle(digitsOf(bestMask), rand) : digitsOf(bestMask);
+    const ds = rand ? shuffle(digitsOf(bestMask, G.n), rand) : digitsOf(bestMask, G.n);
     for (const d of ds) {
       b[best] = d;
       if (go()) return true;
@@ -101,19 +118,19 @@ export function solve(board, { limit = 2, rand = null } = {}) {
  * (0 singles, 1 locked candidates and pairs), or Infinity when those do not finish it.
  */
 export function grade(board) {
-  const b = [...board];
-  const cand = b.map((v, i) => (v ? 0 : candidates(b, i)));
+  const b = [...board], G = geom(board), N = G.n, UNITS = G.units, PEERS = G.peers;
+  const cand = b.map((v, i) => (v ? 0 : candidates(b, i, G)));
   let hardest = 0;
   const place = (i, d) => {
     b[i] = d; cand[i] = 0;
     for (const p of PEERS[i]) cand[p] &= ~bit(d);
   };
   const singles = () => {
-    for (let i = 0; i < 81; i++) {
+    for (let i = 0; i < G.cells; i++) {
       if (!b[i] && popcount(cand[i]) === 1) { place(i, lowDigit(cand[i])); return true; }
     }
     for (const u of UNITS) {
-      for (let d = 1; d <= 9; d++) {
+      for (let d = 1; d <= N; d++) {
         let at = -1, n = 0;
         for (const i of u) if (!b[i] && cand[i] & bit(d)) { at = i; n++; }
         if (n === 1) { place(at, d); return true; }
@@ -126,7 +143,7 @@ export function grade(board) {
     let changed = false;
     // Locked candidates: a digit confined to one line inside a box (or one box inside a line)
     for (const u of UNITS) {
-      for (let d = 1; d <= 9; d++) {
+      for (let d = 1; d <= N; d++) {
         const where = u.filter(i => !b[i] && cand[i] & bit(d));
         if (where.length < 2) continue;
         for (const v of UNITS) {
@@ -145,11 +162,11 @@ export function grade(board) {
     }
     // Hidden pairs: two digits that fit only the same two cells of a unit clear those cells' other candidates
     for (const u of UNITS) {
-      const places = [...Array(10)].map((_, d) => (d ? u.filter(i => !b[i] && cand[i] & bit(d)) : []));
-      for (let d1 = 1; d1 <= 9; d1++) for (let d2 = d1 + 1; d2 <= 9; d2++) {
+      const places = [...Array(N + 1)].map((_, d) => (d ? u.filter(i => !b[i] && cand[i] & bit(d)) : []));
+      for (let d1 = 1; d1 <= N; d1++) for (let d2 = d1 + 1; d2 <= N; d2++) {
         const p1 = places[d1], p2 = places[d2];
         if (p1.length !== 2 || p2.length !== 2 || p1[0] !== p2[0] || p1[1] !== p2[1]) continue;
-        for (const i of p1) changed = eliminate(i, ~(bit(d1) | bit(d2)) & ALL) || changed;
+        for (const i of p1) changed = eliminate(i, ~(bit(d1) | bit(d2)) & G.all) || changed;
       }
     }
     return changed;
@@ -164,25 +181,25 @@ export function grade(board) {
 }
 
 /** A solved grid from `rand`. */
-export function solvedGrid(rand) {
-  return solve(Array(81).fill(0), { limit: 1, rand }).solution;
+export function solvedGrid(rand, n = 9) {
+  return solve(Array(n * n).fill(0), { limit: 1, rand }).solution;
 }
 
 /**
- * A puzzle of `level` from `seed`: { level, seed, givens, solution } (arrays of 81). Tries a few
+ * A puzzle of `level` from `seed`: { level, seed, givens, solution } (arrays of 36 or 81). Tries a few
  * solved grids until one reaches the level's grade; the last try is kept if none does.
  */
 export function generate(level = 'easy', seed = Date.now()) {
   const L = LEVEL[level] || LEVEL.easy;
-  const rand = rng(seed);
+  const rand = rng(seed), cells = L.size * L.size, last = cells - 1;
   let kept = null;
   for (let attempt = 0; attempt < 30; attempt++) {
-    const solution = solvedGrid(rand);
+    const solution = solvedGrid(rand, L.size);
     const puzzle = [...solution];
-    let givens = 81;
-    const order = shuffle([...Array(41)].map((_, i) => i), rand); // a cell and its mirror (80 − i)
+    let givens = cells;
+    const order = shuffle([...Array(Math.ceil(cells / 2))].map((_, i) => i), rand); // a cell and its mirror (last − i)
     for (const i of order) {
-      const j = 80 - i, pair = i === j ? 1 : 2;
+      const j = last - i, pair = i === j ? 1 : 2;
       if (givens - pair < L.minGivens) continue;
       const a = puzzle[i], c = puzzle[j];
       puzzle[i] = 0; puzzle[j] = 0;
@@ -202,7 +219,7 @@ export function newGame(level = 'easy', seed = Date.now()) {
   const p = generate(level, seed);
   return {
     level: p.level, seed: p.seed, givens: p.givens, solution: p.solution,
-    cells: [...p.givens], notes: Array(81).fill(0), history: [], elapsed: 0, moves: 0, mistakes: 0, hints: 0, hinted: [], done: false,
+    cells: [...p.givens], notes: Array(p.givens.length).fill(0), history: [], elapsed: 0, moves: 0, mistakes: 0, hints: 0, hinted: [], done: false,
   };
 }
 
@@ -214,7 +231,7 @@ const isFixed = (state, i) => isGiven(state, i) || isHinted(state, i);
 /** The cells whose digit repeats in a row, column or box (shown in red, without telling the solution). */
 export function conflicts(state) {
   const bad = new Set();
-  for (const u of UNITS) {
+  for (const u of geom(state).units) {
     const seen = {};
     for (const i of u) {
       const d = state.cells[i];
@@ -241,24 +258,24 @@ export function giveUp(state) {
   return { ...state, done: true, gaveUp: true };
 }
 
-/** How many of each digit 1..9 are on the board (index 0 unused). */
+/** How many of each digit 1..n are on the board (index 0 unused). */
 export function counts(state) {
-  const n = Array(10).fill(0);
+  const n = Array(geom(state).n + 1).fill(0);
   for (const d of state.cells) if (d) n[d]++;
   return n;
 }
 
 const push = (state, i) => [...state.history, { i, d: state.cells[i], n: state.notes[i] }].slice(-200);
-const solvedNow = cells => cells.every((d, i) => d !== 0 && UNITS_OF[i].every(u => u.every(j => j === i || cells[j] !== d)));
+const solvedNow = cells => cells.every((d, i) => d !== 0 && geom(cells).unitsOf[i].every(u => u.every(j => j === i || cells[j] !== d)));
 
 /** Writes digit `d` in cell `i` (the same digit again clears it); peers lose `d` from their notes. */
 export function setDigit(state, i, d) {
-  if (state.done || isFixed(state, i) || d < 1 || d > 9) return state;
+  if (state.done || isFixed(state, i) || d < 1 || d > geom(state).n) return state;
   const history = push(state, i);
   const cells = [...state.cells], notes = [...state.notes];
   cells[i] = cells[i] === d ? 0 : d;
   notes[i] = 0;
-  if (cells[i]) for (const p of PEERS[i]) notes[p] &= ~bit(d);
+  if (cells[i]) for (const p of geom(state).peers[i]) notes[p] &= ~bit(d);
   const done = solvedNow(cells);
   const mistakes = (state.mistakes || 0) + (cells[i] && cells[i] !== state.solution[i] ? 1 : 0);
   return { ...state, cells, notes, history, moves: state.moves + 1, mistakes, done };
@@ -266,7 +283,7 @@ export function setDigit(state, i, d) {
 
 /** Toggles note `d` in an empty cell `i`. */
 export function toggleNote(state, i, d) {
-  if (state.done || isFixed(state, i) || state.cells[i] || d < 1 || d > 9) return state;
+  if (state.done || isFixed(state, i) || state.cells[i] || d < 1 || d > geom(state).n) return state;
   const notes = [...state.notes];
   notes[i] ^= bit(d);
   return { ...state, notes, history: push(state, i) };
@@ -298,18 +315,19 @@ export function undo(state) {
  * digit fits only there in that unit) or 'solution' (it just is the solution's).
  */
 export function findHint(state, sel = -1) {
+  const G = geom(state), { units: UNITS, unitsOf: UNITS_OF } = G, N = G.n;
   const open = i => !isFixed(state, i) && state.cells[i] !== state.solution[i];
   const board = state.cells.map((d, i) => (d && d === state.solution[i] ? d : 0));
   const why = (i, d) => {
     if (popcount(candidates(board, i)) === 1) return 'single';
     for (const [k, kind] of [[0, 'row'], [1, 'col'], [2, 'box']]) {
-      const u = UNITS_OF[i].find(v => UNITS.indexOf(v) >= k * 9 && UNITS.indexOf(v) < k * 9 + 9);
+      const u = UNITS_OF[i].find(v => UNITS.indexOf(v) >= k * N && UNITS.indexOf(v) < k * N + N);
       if (u.every(j => j === i || board[j] || !(candidates(board, j) & bit(d)))) return kind;
     }
     return 'solution';
   };
   if (sel >= 0 && open(sel)) return { i: sel, d: state.solution[sel], why: why(sel, state.solution[sel]) };
-  const cells = [...Array(81).keys()].filter(open);
+  const cells = [...Array(G.cells).keys()].filter(open);
   if (!cells.length) return null;
   const single = cells.find(i => popcount(candidates(board, i)) === 1);
   if (single !== undefined) return { i: single, d: state.solution[single], why: 'single' };
@@ -321,11 +339,11 @@ export function findHint(state, sel = -1) {
 /** Uses a hint: writes the solution's digit in its cell, fixed from then on, and counts it (−15). */
 export function useHint(state, sel = -1) {
   if (state.done) return state;
-  const h = findHint(state, sel);
+  const h = findHint(state, sel), G2 = geom(state);
   if (!h) return state;
   const cells = [...state.cells], notes = [...state.notes];
   cells[h.i] = h.d; notes[h.i] = 0;
-  for (const p of PEERS[h.i]) notes[p] &= ~bit(h.d);
+  for (const p of G2.peers[h.i]) notes[p] &= ~bit(h.d);
   // Undo cannot take a hint back: the history forgets that cell
   const history = state.history.filter(x => x.i !== h.i);
   return { ...state, cells, notes, history, hints: (state.hints || 0) + 1, hinted: [...(state.hinted || []), h.i], done: solvedNow(cells), last: h };
@@ -333,7 +351,7 @@ export function useHint(state, sel = -1) {
 
 /** The units (rows, columns, boxes) cell `i` completes right now with the solution's digits: for the celebration. */
 export function completedUnits(state, i) {
-  return UNITS_OF[i].filter(u => u.every(j => state.cells[j] && state.cells[j] === state.solution[j]));
+  return geom(state).unitsOf[i].filter(u => u.every(j => state.cells[j] && state.cells[j] === state.solution[j]));
 }
 
 export const hasNote = (state, i, d) => !!(state.notes[i] & bit(d));
