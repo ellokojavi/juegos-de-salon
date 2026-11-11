@@ -29,7 +29,7 @@ const ES = {
   },
   ui: {
     sdLema: 'El clásico de los números, en mini o en grande.',
-    sdModo: [{ titulo: 'Modo fácil', sub: '6×6: menos casillas, más rápido' }, { titulo: 'Modo difícil', sub: '9×9 y pocas pistas: piensa con notas' }],
+    sdModo: [{ titulo: 'Modo fácil', sub: '6×6: menos casillas, más rápido' }, { titulo: 'Modo difícil', sub: '9×9 y casi vacío: piensa con notas' }],
     sdDemo: { row: '➡️ Fila: del 1 al {n}, sin repetir', col: '⬇️ Columna: tampoco se repite', box: '🔲 Cuadro de {box}: lo mismo', fill: '✨ ¡Solo cabe el {d}!', done: '🎉 ¡Resuelto!' },
     sdPickCell: 'Toca una casilla vacía y luego un número.',
     sdMistake: '❌ Ese número no va ahí: −10',
@@ -72,7 +72,7 @@ const EN = {
   },
   ui: {
     sdLema: 'The numbers classic, mini or full size.',
-    sdModo: [{ titulo: 'Easy mode', sub: '6×6: fewer cells, quicker' }, { titulo: 'Hard mode', sub: '9×9 and few clues: think with notes' }],
+    sdModo: [{ titulo: 'Easy mode', sub: '6×6: fewer cells, quicker' }, { titulo: 'Hard mode', sub: '9×9 and nearly empty: think with notes' }],
     sdDemo: { row: '➡️ Row: 1 to {n}, no repeats', col: '⬇️ Column: no repeats either', box: '🔲 {box} box: the same', fill: '✨ Only the {d} fits!', done: '🎉 Solved!' },
     sdPickCell: 'Tap an empty cell, then a number.',
     sdMistake: '❌ That number does not go there: −10',
@@ -115,7 +115,7 @@ const PT = {
   },
   ui: {
     sdLema: 'O clássico dos números, mini ou grande.',
-    sdModo: [{ titulo: 'Modo fácil', sub: '6×6: menos casas, mais rápido' }, { titulo: 'Modo difícil', sub: '9×9 e poucas pistas: pense com notas' }],
+    sdModo: [{ titulo: 'Modo fácil', sub: '6×6: menos casas, mais rápido' }, { titulo: 'Modo difícil', sub: '9×9 e quase vazio: pense com notas' }],
     sdDemo: { row: '➡️ Linha: de 1 a {n}, sem repetir', col: '⬇️ Coluna: também não repete', box: '🔲 Quadrado {box}: o mesmo', fill: '✨ Só cabe o {d}!', done: '🎉 Resolvido!' },
     sdPickCell: 'Toque numa casa vazia e depois num número.',
     sdMistake: '❌ Esse número não vai aí: −10',
