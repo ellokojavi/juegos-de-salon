@@ -343,8 +343,13 @@ const markVia = (id, now = Date.now()) => { try { globalThis.sessionStorage?.set
 /** How long the window stayed open: under 3 s, 3 to 10 s, 10 s or more. */
 export const dwellBand = ms => (ms < 3000 ? 't0' : ms < 10000 ? 't1' : 't2');
 export const REACH_KEY = 'juegos-de-salon:splash-alcance';
-/** Whether this is the first time this phone shows the campaign, and remember it. Never throws. */
+/**
+ * Whether this is the first time this phone shows the campaign, and remember it. Never throws.
+ * A browser that cannot remember (no storage: some in-app views, robots) is never a first reach:
+ * it would write a timeline row on every page (the bursts of four of Nov 11).
+ */
 export function firstReach(id, store = storage()) {
+  if (!store?.getItem || !store?.setItem) return false;
   try {
     let list = [];
     try { list = JSON.parse(store?.getItem(REACH_KEY) || '[]'); } catch (_) { /* a broken list starts over */ }
