@@ -31,6 +31,8 @@ export function lastState(storage = globalThis.localStorage) {
 const RAIZ = new URL('../../', import.meta.url);
 /** A storing not heard from in this long stopped (the worker was killed): it is not loading any more. */
 export const STALE_MS = 60_000;
+/** With no list and no word from the worker after this long, nothing is being stored. */
+export const NOTHING_MS = 15_000;
 
 export const TEXTS = {
   es: {
@@ -207,7 +209,14 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
     draw(s);
     try { globalThis.localStorage?.setItem(LAST_KEY, JSON.stringify(s)); } catch (_) { /* no storage */ }
   };
-  const refresh = () => readState({ nav }).then(show).catch(() => {});
+  // Nothing known yet and nothing heard from the worker in a while: it is not storing, so the sheet
+  // offers Reintentar instead of a ring that never fills
+  const born = Date.now();
+  const settle = s => (s.state === 'loading' && !s.total && Date.now() - born > NOTHING_MS ? { state: 'missing', have: 0, total: 0 } : s);
+  const refresh = () => readState({ nav }).then(s => {
+    show(settle(s));
+    if (s.state === 'loading' && !s.total) setTimeout(refresh, NOTHING_MS + 500);
+  }).catch(() => {});
   const pretend = state => {
     clearInterval(demo); demo = null;
     if (!state) { refresh(); return; }
