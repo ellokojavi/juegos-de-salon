@@ -3,6 +3,9 @@
 .alt-stage {
   /* The game's own colours and glyph sizes, with no token in base.css (DESIGN.md §4: docs/games/microgames.md) */
   --mg-281406: #281406;
+  --mg-a0102c: #a0102c;
+  --mg-9dff3a: #9dff3a; --mg-9dff3a-rgb: 157 255 58;
+  --mg-e9ffb8: #e9ffb8;
   --mg-3c1e0a: #3c1e0a;
   --mg-3c1e1e: #3c1e1e;
   --mg-465014: #465014;
@@ -211,7 +214,10 @@
 .demo .dot.c4hand { position: absolute; top: 3px; width: var(--cell); height: var(--cell); translate: -50% 0; transition: left 0.08s ease-out; cursor: grab; box-shadow: 0 6px 14px rgb(var(--mg-000000-rgb) / 0.45); }
 .demo .dot.c4hand.held { scale: 1.1; transition: none; }
 .demo .c4note.top { color: var(--yellow); font-size: var(--fs-100); }
-.demo .c4col.win { background: rgb(var(--yellow-rgb) / 0.30); }
+.demo .c4.done .dot:not(.glow) { filter: brightness(0.55) saturate(0.7); transition: filter 0.3s; }
+.demo .c4 .dot.glow { position: relative; z-index: 2; animation: c4glow 0.9s ease-in-out calc(var(--k, 0) * 0.08s) infinite alternate, c4pop 0.35s cubic-bezier(0.3, 1.8, 0.5, 1) calc(var(--k, 0) * 0.08s) both; }
+@keyframes c4glow { from { box-shadow: 0 0 0 3px var(--ink), 0 0 10px 3px rgb(var(--yellow-rgb) / 0.6); } to { box-shadow: 0 0 0 3px var(--ink), 0 0 24px 10px rgb(var(--yellow-rgb) / 0.9); } }
+@keyframes c4pop { from { scale: 0.6; } 60% { scale: 1.2; } to { scale: 1; } }
 .demo .c4cell { width: var(--cell); height: var(--cell); border-radius: 50%; background: var(--night); display: grid; place-items: center; overflow: visible; position: relative; }
 .demo .dot { display: block; width: 86%; height: 86%; border-radius: 50%; }
 .demo .you .dot { width: 22px; height: 22px; }
@@ -240,10 +246,12 @@
 .demo.green.hot { background: var(--mg-19b85c); box-shadow: inset 0 0 80px rgb(var(--mg-c8ffdc-rgb) / 0.40); }
 .demo.red, .demo.green { transition: background 0.12s; }
 /* While the scene is frozen at the end: a small ✓ or ✗ at the top, nothing covering what you did */
-.verdict-tag { position: absolute; top: 34px; left: 50%; translate: -50% 0; z-index: 20; font: 400 var(--fs-200)/1 var(--display); padding: 6px 16px; border-radius: 999px; pointer-events: none; animation: tagin 0.18s ease-out; }
-.verdict-tag.good { color: var(--mg-0f3d1f); background: var(--green); }
-.verdict-tag.bad { color: var(--ink); background: var(--red); }
-@keyframes tagin { from { scale: 0.5; opacity: 0; } }
+.verdict-tag { position: absolute; top: 64px; left: 50%; translate: -50% 0; z-index: 20; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
+  font: 400 var(--mg-fs-260)/1 var(--display); pointer-events: none; border: 3px solid var(--ink); rotate: -8deg;
+  box-shadow: 0 6px 0 var(--well), 0 0 0 6px rgb(var(--ink-rgb) / 0.12), 0 10px 24px rgb(var(--mg-000000-rgb) / 0.45); animation: tagin 0.42s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.verdict-tag.good { color: var(--mg-0f3d1f); background: radial-gradient(circle at 35% 30%, var(--mg-e9ffb8) 0 14%, var(--green) 55%, var(--mg-3ddc84)); box-shadow: 0 6px 0 var(--mg-0f3d1f), 0 0 26px rgb(var(--mg-9dff3a-rgb) / 0.55); }
+.verdict-tag.bad { color: var(--ink); background: radial-gradient(circle at 35% 30%, var(--mg-ff8fa0) 0 14%, var(--red) 55%, var(--mg-a0102c)); box-shadow: 0 6px 0 var(--mg-5a0f24), 0 0 26px rgb(var(--red-rgb) / 0.5); }
+@keyframes tagin { 0% { scale: 0.2; rotate: -40deg; opacity: 0; } 70% { scale: 1.15; } 100% { scale: 1; } }
 .demo .menu { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 
 .demo .cmd.white { color: var(--ink); }
@@ -638,9 +646,6 @@
 .demo .pzfixed, .demo .pzslot { position: absolute; }
 .demo .pzslot { border: 3px dashed var(--yellow); border-radius: 8px; box-sizing: border-box; }
 .demo .cand { cursor: grab; }
-.demo .animal { font-size: var(--mg-fs-300); padding: 6px; border-radius: 16px; border: 2px dashed var(--line); }
-.demo .animal.fed { border-color: var(--green); border-style: solid; }
-.demo .food { font-size: var(--mg-fs-260); cursor: grab; }
 .demo .drawer { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); width: 72%; height: 24%; background: linear-gradient(var(--mg-a06a35), var(--mg-7a4e24)); border-radius: 12px; display: grid; place-items: center; box-shadow: inset 0 -6px 0 var(--well-deep); }
 .demo .drawer .slot { height: 55%; background: var(--mg-1a0f08); border-radius: 8px; }
 .demo .drawer.gulp { animation: gulp 0.25s; } @keyframes gulp { 50% { scale: 1.05; } }
@@ -753,21 +758,26 @@
 .howto-rules .howkinds li { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-10); font-size: var(--fs-90); line-height: 1.3; }
 .howto-rules .howkinds .gstage { zoom: 0.5; border-color: var(--kc); }
 .howto-rules .howkinds b { color: var(--kc); }
+.demo .breakdown { width: min(100%, 320px); display: grid; gap: var(--s-4); padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); border: 1px solid var(--glass-border); font-size: var(--fs-85); text-align: left; }
+.demo .breakdown div { display: flex; justify-content: space-between; gap: var(--s-12); color: var(--muted); }
+.demo .breakdown b { color: var(--ink); font-weight: 900; }
+.demo .breakdown .tot { border-top: 1px solid var(--glass-border); padding-top: var(--s-4); margin-top: var(--s-2); color: var(--ink); font-weight: 900; }
+.demo .breakdown .tot b { color: var(--yellow); }
 .demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }
 /* The cover: the three ways to play side by side in a column, each with its moving gesture, then Jugar.
    It grows rather than clip its buttons on a short phone */
 .demo:has(.kinds) { min-height: max(480px, calc(100svh - 76px)); height: auto; }
 .demo:has(.kinds) .menu { width: 100%; }
 .demo:has(.kinds) .menu > #btn-jugar { flex: 0 1 320px; }
-.demo .kinds { display: grid; gap: var(--s-10); width: min(100%, 380px); }
-.demo .kind { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-12); padding: var(--s-10) var(--s-12); text-align: left;
+.demo .kinds { display: grid; gap: var(--s-14); width: min(100%, 400px); margin: var(--s-8) 0 var(--s-12); }
+.demo .kind { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-14); padding: var(--s-14) var(--s-16); text-align: left;
   border-radius: var(--r-16); border: 2px solid var(--kc); background: color-mix(in srgb, var(--kc) 10%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--kc) 25%, transparent);
   animation: kindin 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
 .demo .kind:nth-child(2) { animation-delay: 0.1s; } .demo .kind:nth-child(3) { animation-delay: 0.2s; }
 @keyframes kindin { from { opacity: 0; translate: 24px 0; } }
-.demo .kind .gstage { zoom: 0.62; border-color: var(--kc); }
+.demo .kind .gstage { zoom: 0.7; border-color: var(--kc); }
 .demo .kind b { display: block; font: 400 var(--fs-140)/1 var(--display); letter-spacing: 0.05em; color: var(--kc); }
-.demo .kind p { margin: 2px 0 0; color: var(--ink); font-weight: 700; font-size: var(--fs-85); line-height: 1.3; }
+.demo .kind p { margin: var(--s-4) 0 0; color: var(--ink); font-weight: 700; font-size: var(--fs-90); line-height: 1.35; }
 /* ¡A LA HORA!: the digital time above a bigger clock whose hands the finger turns */
 .demo .digital { font: 900 var(--mg-fs-240)/1 var(--font-num); color: var(--yellow); letter-spacing: 0.04em; margin-bottom: var(--s-8); }
 .demo .setclock { width: min(240px, 62vw); height: min(240px, 62vw); cursor: grab; }

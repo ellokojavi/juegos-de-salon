@@ -22,5 +22,8 @@ assert.deepEqual(a, b, 'the same seed gives the same run on every phone');
 assert.notDeepEqual(a, c, 'another seed, another run');
 assert.equal(new Set(a).size, RUN, 'ten different games');
 assert.equal(new Set(runOrder(IDS, '')).size, RUN, 'without a seed, still ten different');
+// The two clock games never share a run, and the run still has ten
+for (let k = 0; k < 300; k++) { const o = runOrder([...IDS, 'quehora', 'hands'], `S${k}`, RUN, [['quehora', 'hands']]);
+  assert.ok(!(o.includes('quehora') && o.includes('hands')), `run ${k}: one clock game at most`); assert.equal(o.length, RUN); }
 assert.match(newCode(), /^[A-HJ-NP-Z]{5}$/, 'a run code: 5 letters, no I or O');
 console.log('✓ microgames engine');

@@ -6,6 +6,11 @@ export const GAME_ID = 'microgames';
 // [es, en, pt]
 const ROWS = [
   ['pts', 'pts', 'pts'],
+  ['Cómo se calcularon tus puntos', 'How your points were worked out', 'Como seus pontos foram calculados'],
+  ['{n} ★ × 10 puntos', '{n} ★ × 10 points', '{n} ★ × 10 pontos'],
+  ['Velocidad (de ×1 a ×{x})', 'Speed (from ×1 to ×{x})', 'Velocidade (de ×1 a ×{x})'],
+  ['🔥 Rachas de ★★ o más: {n} × {p}', '🔥 Streaks of ★★ or better: {n} × {p}', '🔥 Sequências de ★★ ou mais: {n} × {p}'],
+  ['Total', 'Total', 'Total'],
   ['¡Por poco!', 'Close one!', 'Por pouco!'],
   ['¡Bien!', 'Nice!', 'Boa!'],
   ['¡Al toque!', 'In a Flash!', 'Na Hora!'],
@@ -97,10 +102,7 @@ const ROWS = [
   ['¡Todas las azules!', 'Every blue one!', 'Todas as azuis!'],
   ['{b}/9 azules · {w} malas', '{b}/9 blue · {w} wrong', '{b}/9 azuis · {w} erradas'],
   ['revienta solo las de este azul', 'pop only the ones in this blue', 'estoure só as deste azul'],
-  ['¡ALIMENTA!', 'FEED!', 'ALIMENTE!'],
-  ['¡Todos comieron!', 'Everyone ate!', 'Todos comeram!'],
   ['{n} de 3', '{n} of 3', '{n} de 3'],
-  ['lleva cada comida a su animal', 'take each food to its animal', 'leve cada comida ao seu animal'],
   ['¡REBOTA!', 'BOUNCE!', 'REBATA!'],
   ['¡Le diste a los tres!', 'You hit all three!', 'Acertou os três!'],
   ['Le diste a {n} de 3', 'You hit {n} of 3', 'Acertou {n} de 3'],
