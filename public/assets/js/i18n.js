@@ -203,7 +203,7 @@ export const COMMON = {
     shareSoloContext: 'Jugando solo',
     shareSoloCta: '🤔 ¿Me ganas? Se juega gratis desde el celular:',
     // A game's cover shares its own link (cover-share.js), behind the flag `cover-share`
-    shareGameCta: '👉 Juguemos a esto. Es gratis y se juega desde el celular:',
+    shareGameCta: '👉 ¿Jugamos? Es gratis y se juega desde el celular:',
     shareGame: 'Compartir este juego',
     shareSoloImage: '🤔 ¿Me ganas?',
     shareCopied: '¡Copiado! Pégalo en el chat.',
