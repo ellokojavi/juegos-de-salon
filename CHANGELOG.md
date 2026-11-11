@@ -1,5 +1,75 @@
 # Changelog
 
+## 1.7.16 — 2026-11-10
+- **Artefactos (lab), lighter screens**: the cover drops the «5 etapas · 6:00» chip and its tagline fits one line («Lleva la pelota a la canasta.»). On the board, a chosen part shows two small flat icons, turn and trash, floating just above it, fading out after 5 s without a touch or on a drag (and the part's outline fades when it is let go); Limpiar is gone, Deshacer · Pista · Rendirse share one row above Probar, and every help line under the board is one short line.
+
+## 1.7.15 — 2026-11-10
+- Every block on a game cover sits the same 12 px from the next, now checked for every game; ¡Al toque!'s ranking was 16 px away.
+- ¡Al toque!: the Desliza line no longer touches the top of its box, the hand stays inside it, and the cover fits above the fold again on a 375×812 phone.
+
+## 1.7.14 — 2026-11-10
+- Labs: 🐤 Aletazo, launched for everyone on 9 November, moves to La Bodega as 🚀 Lanzado.
+
+## 1.7.13 — 2026-11-10
+- The ranking under a game no longer touches its cover: the 16 px of space comes from `ranking.css` for every game (¡Al toque! had none; Flap had its own).
+
+## 1.7.12 — 2026-11-11
+- **¡Al toque!: the owner's feedback after a few runs** (lab, `/labs/microgames/`): the result explains its points with a short breakdown (stars × 10, what the speed added, the 🔥 streaks, the total) and shows the run's summary above Otra corrida; the run's marks at the top are just red (no star) or green, brighter the more stars; the ✓/✗ after each microgame is a bigger round badge with a pop, set lower so it no longer covers the run's marks; ¡Rebota!, ¡Equilibra! and ¡Sigue! no longer freeze when they end with a message (¡Rebota! now ends the moment the ball gets past the paddle); ¡Conecta! lights up the four in a row and stops pointing at the column once the disc drops; the cover gives the three ways to play more room; ¡A la hora! always needs both hands moved; a run plays at most one of the two clock games; and ¡Alimenta! is gone (28 microgames). After each game its stars fill in one by one, golden and shining, with the points it gave and its ⚡ speed bonus (×1 up to ×1.3, a step every 3 games, shown as «⚡ Bono de velocidad» in the breakdown); a streak shows as it happens (an orange «🔥 Racha de n · +5» and a flame ring on its marks); at the end the stars fill game by game and the total counts up.
+
+## 1.7.11 — 2026-11-10
+- **¡Al toque! (lab)**: el ranking se ve con el diseño del sitio (pestañas Semana, Siempre y Amigos), y la portada termina donde termina su contenido, sin franja vacía, entera en la pantalla.
+
+## 1.7.10 — 2026-11-10
+- **¡Al toque! (lab)**: la portada ya no repite «Cómo se juega» y cabe entera en la pantalla; el ⚡ del título da un salto de vez en cuando, y la mano de «Desliza» ya se ve. Tiene ranking (semana, siempre y amigos) como los demás juegos para uno, y la pestaña «T» muestra los 29 microjuegos como botones de colores.
+
+## 1.7.9 — 2026-11-10
+- **¡Al toque! (lab)**: en la pestaña «T» de los testers, «Probar un microjuego» abre cualquiera de los 29 directo, y está ahí también la corrida de hoy; la portada queda como la ven los jugadores.
+
+## 1.7.8 — 2026-11-10
+- **¡Al toque! (lab)**: los teléfonos con el modo sin conexión ya reciben cada versión nueva del juego; antes se quedaban con la primera que habían visto.
+
+## 1.7.7 — 2026-11-11
+- **¡Al toque! fills the screen and shows its three ways to play at once** (lab, `/labs/microgames/`): the stage takes the whole screen under the top bar, like the lab's other games, instead of a small 4:5 box. The cover now lays out Toca, Arrastra and Desliza together, each with a finger doing its gesture, above Jugar, instead of the microgame vignettes that took turns beside the ⚡.
+
+## 1.7.6 — 2026-11-10
+- **¡Al toque! (lab)**: nuevo microjuego ¡A la hora!: una hora digital y un reloj; arrastra la aguja corta y la larga hasta esa hora y toca ¡Listo! antes de 10 segundos.
+
+## 1.7.5 — 2026-11-10
+- **¡Al toque! (lab)**: la portada deja solo el botón Jugar, más ancho, y queda entera en la pantalla del teléfono sin bajar.
+
+## 1.7.4 — 2026-11-10
+- **¡Al toque! (lab)**: los microjuegos que se juegan solos junto al ⚡ de la portada se ven más grandes, y la portada ya no corta sus botones en un teléfono angosto.
+
+## 1.7.3 — 2026-11-10
+- **¡Al toque!, in the lab:** the cover's ⚡ sets off a little microgame on each side, one after another: a fly swatted, a colour word, a sum, bars sorting themselves, a balloon that pops and a clock.
+
+## 1.7.2 — 2026-11-10
+- **¡Al toque!, in the lab:** the rules are on the cover, folded under the stage, with the three ways to play; Jugar goes straight into the run.
+- **¡Al toque!:** the pump's hose is a real hose and stays tied to the balloon as it grows; the flyswatter lands where you tap and squashes the fly you hit.
+- **¡Al toque!:** points per game (by stars and speed, with streaks) and a 0–100 score for Uno al día and La Copa; a run with `?seed=` or `?today` is the same for everyone.
+- **¡Al toque!:** sound (with its 🔊 button), confetti on a good run, and the way back to the lab like every game.
+- **¡Al toque!:** in English and Portuguese, with the language on the cover.
+- **¡Al toque!:** the phone locking or another app pauses the game, and Seguir plays it again; the end offers to challenge someone with the same run, and the cover a run of the day that is the same for everyone.
+- **¡Al toque!:** in ¡Rueda! lifting the finger pauses the ball; in ¡Conecta! a tap on a column drops the disc; ¡Corta! says when the swipe was too short; ¡Cuenta! wobbles less; running out of time always says so.
+
+## 1.7.1 — 2026-11-10
+- **⚡ ¡Al toque!, microgames in the lab's Juegos en prueba** (`/labs/microgames/`): in the style of WarioWare, one quick order and 3 to 5 seconds to do it. Each run is 10 different games drawn from 28 (count, add, pop, sort, cut, follow the rat, balance the blocks…), one after another and a little faster every three. Before starting, it shows the three ways to play (tap, drag, swipe), each with a finger doing it, and every game's intro shows its own. Spanish only for now.
+
+## 1.7.0 — 2026-11-10
+- **🔑 Lab keys in the panel**: the owner gives a tester their lab link, sees who has a key and who uses it (🟢 active, 🟡 quiet, ⚪ never used) and removes a key in one tap, with no terminal. The owner may now read and write `labsLlaves/` in the Firebase rules.
+
+## 1.6.18 — 2026-11-10
+- **One name for the comment button**: the lab games that said "💬 Dejar un comentario" (Artifacts, Flap, Memorice, Code, Dominorama, Exploding Numbers, Stack) now say "💬 Sugerencias y comentarios", like the site's inbox and every other cover, in the three languages.
+
+## 1.6.17 — 2026-11-10
+- **Lab games' covers end with the site footer**, like the published ones: Sudoku, Chameleon, Fourth King, Julep, Artifacts, Flap, Memory, Code, Dominorama, Exploding Numbers and Stack. Their own 💬 comment is a tile of that footer on the cover and stays alone while playing. `site-footer.test.mjs` now walks `labs/` too and fails a lab game whose cover has no footer, so a game enters the lab already meeting it.
+
+## 1.6.16 — 2026-11-10
+- **La Copa: the Gran Final explains how every game scores.** On the final's rules, the games played whole (Shinobi, Babel, Tango…) now say how they score, like the short rounds; and Shinobi, Babel and Aletazo add that in the final their points count as they are, up to 100 (also when their round starts).
+
+## 1.6.15 — 2026-11-10
+- **Panel: no more bursts of identical "saw the campaign" rows.** A splash now counts as shown only once the page is in front of someone (a prerendered page or a background tab waits until it is visible), and the timeline writes one row per phone and campaign, on its first reach. Rows from a page that opened hidden carry `vis` (`hidden`/`prerender`) for a while, to learn where the four-in-a-second bursts of Nov 9–10 came from.
+
 ## 1.6.14 — 2026-11-09
 - **Las reglas empiezan plegadas en todas las portadas**: en Reinas, Zip, Tango y los demás juegos sueltos, y en Sudoku y El Camaleón del lab, el "Cómo se juega" se abre con un toque y la portada muestra lo que importa (D-550).
 

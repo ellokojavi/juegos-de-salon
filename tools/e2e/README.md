@@ -148,6 +148,8 @@ node tools/e2e/ci.mjs cup/tournament.mjs:demos   # just that part
 CI_RETRIES=1 node tools/e2e/ci.mjs a.mjs b.mjs     # as on GitHub: with a second attempt
 ```
 
+**A PR that changes a game's titles, rules panel or hand layout runs its part of `cup/tournament.mjs` before pushing** (`ci.mjs cup/tournament.mjs:labs` or `:cup`): that script asserts those details for every game, and from November 6 to 11, 2026 it went red on four PRs (#1244, #1245, #1284, #1377) only because its assertions had not followed the change (pattern `e2e-stale-assertion`, D-518). Update the assertion in the same commit as the change.
+
 `look.mjs` is not a test: it opens a single screen to review it one at a time, without playing the
 game. `node tools/e2e/look.mjs ahorcado game --width 320` takes the screenshot and warns if there is
 horizontal scroll, buttons or a folding panel's `<summary>` under 44 px (an invisible `::before` band counts, C-8, U-10) and how much space there is between the board and its buttons (D-309).
