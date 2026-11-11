@@ -511,7 +511,6 @@ node public/assets/js/azar.test.mjs
 node public/assets/js/back-guard.test.mjs
 node public/assets/js/buzon.test.mjs
 node public/assets/js/compartir.test.mjs
-node public/assets/js/cover-share.test.mjs
 node public/assets/js/conformance.test.mjs
 node public/assets/js/connection.test.mjs
 node public/assets/js/controls.test.mjs
