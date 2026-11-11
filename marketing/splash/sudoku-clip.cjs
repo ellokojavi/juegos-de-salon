@@ -54,7 +54,8 @@ function findStep(cells, solution, skipBoxes) {
   const p = await b.newPage({ viewport: { width: 420, height: 800 }, deviceScaleFactor: 1.4 });
   await p.goto(`${SITE}/labs/sudoku/?seed=SPLASH`);
   await p.waitForTimeout(800);
-  await p.evaluate(() => window.__sudoku.start?.('easy'));
+  // the 9×9 (hard): since #1400 easy is the 6×6, and findStep reads a 9×9 grid
+  await p.evaluate(() => window.__sudoku.start?.('hard'));
   await p.waitForTimeout(4500);
   await p.evaluate(() => {
     window.__sudoku.solveAllBut(34);

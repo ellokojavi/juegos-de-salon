@@ -185,18 +185,18 @@ export const CAMPAIGNS = {
   // game's own entry once it is in games.js)
   'sudoku-ya': {
     // the game's drawn icon (a 3×3, labs/sudoku/icon.svg): there is no sudoku emoji (#1400)
-    icon: 'labs/sudoku/icon.svg',
+    icon: 'labs/sudoku/icon.svg', emoji: '#️⃣',
     requires: ['sudoku'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
     title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
     hero: true,
     items: [{
-      icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      emoji: '#️⃣', icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
-        es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
-        en: 'Fill the board with 1 to 9 without repeating in a row, column or box. Easy or hard, with your score on the ranking.',
-        pt: 'Preencha o tabuleiro com números de 1 a 9 sem repetir na linha, coluna ou quadro. No fácil ou no difícil, com sua pontuação no ranking.',
+        es: 'Mini sudoku de 6×6 para una partida rápida, o el clásico de 9×9. Con tu puntaje en el ranking.',
+        en: 'A 6×6 mini sudoku for a quick game, or the classic 9×9. With your score on the ranking.',
+        pt: 'Mini sudoku de 6×6 para uma partida rápida, ou o clássico de 9×9. Com sua pontuação no ranking.',
       },
     }],
   },
@@ -452,20 +452,20 @@ export function evenHeroMargins(card) {
     m.style.width = '100%';
     m.style.height = '';
     // offsetWidth/Height, not the bounding box: the window scales in as it opens
-    // A narrower window wraps its texts into more lines, so it is measured again until it settles; never
-    // narrower than HERO_MIN, where the texts would wrap too much (a window that still does not fit scrolls)
+    // The clip takes the card's whole width, so the window's width sets the clip's size. A narrower window
+    // also wraps its texts into more lines, so the widths are tried from the usual one down to HERO_MIN and
+    // the widest that fits is kept (or, if none fits, the one that overflows least)
     const usual = card.offsetWidth;
     // the window's own cap (max-height in splash.css), or HERO_FIT of the screen
     const avail = Math.min(innerHeight * HERO_FIT, parseFloat(getComputedStyle(card).maxHeight) || Infinity) - 6;
-    for (let i = 0; i < 6; i++) {
-      const full = m.parentElement.clientWidth, ratio = m.offsetHeight / Math.max(1, m.offsetWidth);
-      // scrollHeight: the window is capped in height and scrolls inside, so its offsetHeight hides what overflows
-      const chrome = card.scrollHeight - m.offsetHeight;
-      const room = card.offsetWidth - full;
-      const target = Math.min(usual, Math.max(Math.min(usual, HERO_MIN), room + (avail - chrome) / ratio));
-      if (Math.abs(target - card.offsetWidth) < 1) break;
-      card.style.width = `${target}px`;
+    const over = () => card.scrollHeight - Math.min(avail, card.clientHeight);
+    let best = { w: usual, o: over() };
+    for (let w = usual - 8; best.o > 2 && w >= Math.min(usual, HERO_MIN); w -= 8) {
+      card.style.width = `${w}px`;
+      const o = over();
+      if (o < best.o) best = { w, o };
     }
+    card.style.width = best.w === usual ? '' : `${best.w}px`;
     // A wide, short screen (a laptop): even at its narrowest the window does not fit, because the texts
     // alone take most of the height. Then the window takes its usual wide size, the clip goes at the left
     // (at most LADO_MAX of the card, as tall as the room left) and the card's texts at its right
@@ -484,6 +484,10 @@ export function evenHeroMargins(card) {
   globalThis.addEventListener?.('resize', fit);
   // the clip's height is known once its first frame loads
   card.querySelector('video.splash-media')?.addEventListener('loadedmetadata', fit, { once: true });
+  // and the texts' height once the fonts load (a fallback font wraps differently)
+  document.fonts?.ready.then(fit);
+  // the window scales in as it opens: measured again when it has settled
+  setTimeout(fit, 400);
 }
 
 /** Each item as the window draws it: a game of games.js, or the campaign's own content. */

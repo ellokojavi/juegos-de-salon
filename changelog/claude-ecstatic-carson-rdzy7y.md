@@ -4,3 +4,4 @@ level: patch
 - **Even margins in the big splash windows**: on a short or wide screen the clip sits as far from the card's top as from its sides, instead of flush on top. A new design rule, checked end to end.
 - **Margins and preview links**: the design system's key margins (centered column, even card padding, even media in a card) are rules checked on every end-to-end screenshot, and a PR's preview link now appears only once the preview shows that version.
 - **Even padding on the ranking invitation**: the compact One a Day invitation had more padding on its left than its right; the new margin rule caught it.
+- **Big splash windows fit any screen**: the clip is as big as the screen allows and flush with its card; on a laptop it sits beside the texts. Sudoku's splash uses the game's drawn icon and names its 6×6 and 9×9 sizes.
