@@ -9,12 +9,14 @@
  * many givens and singles; hard needs the grade-1 techniques (the owner kept only these two, 2026-11-10).
  *
  * The score (for La Copa, when it goes there): 100 for the finished board, minus 10 for every digit
- * written that is not the solution's, never below 0. Notes never count. Giving up scores 0.
+ * written that is not the solution's and 15 for every hint, never below 0. Notes never count. Giving
+ * up scores 0.
  */
 
 export const LEVELS = ['easy', 'hard'];
 export const SCORE_FULL = 100;
 export const SCORE_MISTAKE = 10;
+export const SCORE_HINT = 15;
 /** Per level: the most techniques it may need, the fewest givens it keeps, and the grade it must need. */
 const LEVEL = {
   easy: { maxGrade: 0, minGivens: 38, needGrade: 0 },
@@ -200,11 +202,14 @@ export function newGame(level = 'easy', seed = Date.now()) {
   const p = generate(level, seed);
   return {
     level: p.level, seed: p.seed, givens: p.givens, solution: p.solution,
-    cells: [...p.givens], notes: Array(81).fill(0), history: [], elapsed: 0, moves: 0, mistakes: 0, done: false,
+    cells: [...p.givens], notes: Array(81).fill(0), history: [], elapsed: 0, moves: 0, mistakes: 0, hints: 0, hinted: [], done: false,
   };
 }
 
 export const isGiven = (state, i) => state.givens[i] !== 0;
+/** A cell a hint filled: it stays, like a given (its digit is the solution's). */
+export const isHinted = (state, i) => (state.hinted || []).includes(i);
+const isFixed = (state, i) => isGiven(state, i) || isHinted(state, i);
 
 /** The cells whose digit repeats in a row, column or box (shown in red, without telling the solution). */
 export function conflicts(state) {
@@ -228,7 +233,7 @@ export function wrong(state) {
 }
 
 /** The score so far: 100 minus 10 per wrong digit written, never below 0. */
-export const score = state => (state.gaveUp ? 0 : Math.max(0, SCORE_FULL - SCORE_MISTAKE * (state.mistakes || 0)));
+export const score = state => (state.gaveUp ? 0 : Math.max(0, SCORE_FULL - SCORE_MISTAKE * (state.mistakes || 0) - SCORE_HINT * (state.hints || 0)));
 
 /** Giving up ends the game with 0 points (as in La Copa's puzzles: rendirse da 0). */
 export function giveUp(state) {
@@ -248,7 +253,7 @@ const solvedNow = cells => cells.every((d, i) => d !== 0 && UNITS_OF[i].every(u 
 
 /** Writes digit `d` in cell `i` (the same digit again clears it); peers lose `d` from their notes. */
 export function setDigit(state, i, d) {
-  if (state.done || isGiven(state, i) || d < 1 || d > 9) return state;
+  if (state.done || isFixed(state, i) || d < 1 || d > 9) return state;
   const history = push(state, i);
   const cells = [...state.cells], notes = [...state.notes];
   cells[i] = cells[i] === d ? 0 : d;
@@ -261,7 +266,7 @@ export function setDigit(state, i, d) {
 
 /** Toggles note `d` in an empty cell `i`. */
 export function toggleNote(state, i, d) {
-  if (state.done || isGiven(state, i) || state.cells[i] || d < 1 || d > 9) return state;
+  if (state.done || isFixed(state, i) || state.cells[i] || d < 1 || d > 9) return state;
   const notes = [...state.notes];
   notes[i] ^= bit(d);
   return { ...state, notes, history: push(state, i) };
@@ -269,7 +274,7 @@ export function toggleNote(state, i, d) {
 
 /** Empties cell `i`: its digit or, if it has none, its notes. */
 export function erase(state, i) {
-  if (state.done || isGiven(state, i) || (!state.cells[i] && !state.notes[i])) return state;
+  if (state.done || isFixed(state, i) || (!state.cells[i] && !state.notes[i])) return state;
   const cells = [...state.cells], notes = [...state.notes];
   if (cells[i]) cells[i] = 0; else notes[i] = 0;
   return { ...state, cells, notes, history: push(state, i), moves: state.moves + 1 };
@@ -283,6 +288,52 @@ export function undo(state) {
   const cells = [...state.cells], notes = [...state.notes];
   cells[last.i] = last.d; notes[last.i] = last.n;
   return { ...state, cells, notes, history };
+}
+
+/**
+ * The hint (the owner asked, 2026-11-11): the cell to fill and why. The selected cell when it is open
+ * (empty or wrong); else the easiest one left: a cell with one candidate, then a digit with one place
+ * in a row, column or box, counted on the board without its wrong digits; else the open cell with the
+ * fewest candidates. `why` is 'single' (only that digit fits the cell), 'row' / 'col' / 'box' (the
+ * digit fits only there in that unit) or 'solution' (it just is the solution's).
+ */
+export function findHint(state, sel = -1) {
+  const open = i => !isFixed(state, i) && state.cells[i] !== state.solution[i];
+  const board = state.cells.map((d, i) => (d && d === state.solution[i] ? d : 0));
+  const why = (i, d) => {
+    if (popcount(candidates(board, i)) === 1) return 'single';
+    for (const [k, kind] of [[0, 'row'], [1, 'col'], [2, 'box']]) {
+      const u = UNITS_OF[i].find(v => UNITS.indexOf(v) >= k * 9 && UNITS.indexOf(v) < k * 9 + 9);
+      if (u.every(j => j === i || board[j] || !(candidates(board, j) & bit(d)))) return kind;
+    }
+    return 'solution';
+  };
+  if (sel >= 0 && open(sel)) return { i: sel, d: state.solution[sel], why: why(sel, state.solution[sel]) };
+  const cells = [...Array(81).keys()].filter(open);
+  if (!cells.length) return null;
+  const single = cells.find(i => popcount(candidates(board, i)) === 1);
+  if (single !== undefined) return { i: single, d: state.solution[single], why: 'single' };
+  for (const i of cells) { const w = why(i, state.solution[i]); if (w !== 'solution') return { i, d: state.solution[i], why: w }; }
+  const i = cells.reduce((a, b) => (popcount(candidates(board, b)) < popcount(candidates(board, a)) ? b : a));
+  return { i, d: state.solution[i], why: 'solution' };
+}
+
+/** Uses a hint: writes the solution's digit in its cell, fixed from then on, and counts it (−15). */
+export function useHint(state, sel = -1) {
+  if (state.done) return state;
+  const h = findHint(state, sel);
+  if (!h) return state;
+  const cells = [...state.cells], notes = [...state.notes];
+  cells[h.i] = h.d; notes[h.i] = 0;
+  for (const p of PEERS[h.i]) notes[p] &= ~bit(h.d);
+  // Undo cannot take a hint back: the history forgets that cell
+  const history = state.history.filter(x => x.i !== h.i);
+  return { ...state, cells, notes, history, hints: (state.hints || 0) + 1, hinted: [...(state.hinted || []), h.i], done: solvedNow(cells), last: h };
+}
+
+/** The units (rows, columns, boxes) cell `i` completes right now with the solution's digits: for the celebration. */
+export function completedUnits(state, i) {
+  return UNITS_OF[i].filter(u => u.every(j => state.cells[j] && state.cells[j] === state.solution[j]));
 }
 
 export const hasNote = (state, i, d) => !!(state.notes[i] & bit(d));
