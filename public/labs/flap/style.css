@@ -10,7 +10,7 @@
 #app { min-height: 100svh; gap: 0; }
 .pie { text-align: center; }
 /* The ranking, under the stage: the stage keeps the first screen, the table is below the fold */
-.ranking-aletazo { margin-top: var(--s-16); }
+/* Its distance from the stage comes from ranking.css (.app > #ranking) */
 .ranking-aletazo:empty, body.jugando .ranking-aletazo { display: none; }
 
 /* The stage: a tap anywhere on it flaps. The canvas is transparent over the app's night */
