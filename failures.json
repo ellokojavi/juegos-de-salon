@@ -2325,7 +2325,11 @@
       "error": "no failing test found in the log",
       "signature": "f2f83772a2",
       "date": "2026-11-11T21:01:45.613Z",
-      "fix": null,
+      "fix": {
+        "commit": "3fcac0ade9813c77e19cd89be4906b8a6643b861",
+        "date": "2026-11-11T23:05:24.409Z",
+        "stat": "51 file(s) +2202 −168: .github/workflows/launch.yml, README.md, changelog/claude-ecstatic-carson-rdzy7y.md, changelog/claude-kind-babbage-0gs9an.md, docs/AGENTS.md, …"
+      },
       "flaky": false
     },
     {
@@ -2372,7 +2376,11 @@
       "error": "✗ sudoku 320×568 es: «#️⃣ Empezar» ends at 582 px, 14 px below the fold",
       "signature": "199611e138",
       "date": "2026-11-11T22:26:06.308Z",
-      "fix": null,
+      "fix": {
+        "commit": "3fcac0ade9813c77e19cd89be4906b8a6643b861",
+        "date": "2026-11-11T23:05:24.409Z",
+        "stat": "4 file(s) +11 −3: public/cup/games/sudoku/style.css, tools/e2e/cup-games/languages.mjs, tools/e2e/paths.mjs, tools/e2e/visual/ref/sudoku-intro.png"
+      },
       "flaky": false
     }
   ]
