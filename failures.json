@@ -2297,6 +2297,19 @@
       "date": "2026-11-11T19:37:53.437Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43094926440,
+      "check": "tests",
+      "pr": 1402,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "16538fce923ce2e8441398b96af3732dcff6e0dc",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/game-labels.test.mjs",
+      "signature": "aa4336c111",
+      "date": "2026-11-11T21:00:31.384Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
