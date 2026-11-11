@@ -1,4 +1,3 @@
-level: minor
+level: patch
 
-- **Offline mode (lab)**: a ☁️ cloud in the home page's bar says whether this phone can play with no signal, in four states: storing (an arrow and a ring that fills), ready (the cloud glows with a ✓), something missing (amber "!", with Reintentar) and this browser saves no games (grey, struck through). A tap opens a sheet that explains the state and follows it live; while storing it shows a bar, the percentage and how many files. The service worker keeps its list and progress for any page to read and takes a retry (`offline-ready.js`, `offline-ready.css`, `sw.js`).
-- **Offline mode (lab)**: the T tab on the home page has one button per state of the ☁️ (Cargando, Listo, Falta algo, No se puede) and one back to the real state, so a tester sees each without cutting the network. The cloud is only on the home page.
+- **Offline mode (lab)**: the ☁️ no longer stays loading on a phone that stored the games before the cloud existed: the service worker stores its list for it on the next visit, and if nothing is heard from it in 15 s the sheet offers Reintentar instead of a ring that never fills.

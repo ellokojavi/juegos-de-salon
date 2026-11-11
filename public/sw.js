@@ -88,7 +88,10 @@ async function told({ on, release: rel, forced = false }) {
   encendido = !!on;
   cortado = !!on && !!forced;
   if (!on) { if (c.on) await forget(); return; }
-  if (c.on && c.release === rel && !!c.forced === cortado) return;
+  // A release stored before the ☁️ existed has no list for the page to check against: store it again
+  // (only what is missing is fetched), or the home page's cloud waits forever (the owner's laptop, 2026-11-11)
+  const listed = !!(await (await caches.open(CONFIG)).match('list'));
+  if (c.on && c.release === rel && !!c.forced === cortado) { if (rel && !cortado && !listed) await store(rel); return; }
   await setConfig({ on: true, release: rel ?? c.release, forced: cortado });
   // Cut, there is no network to store a release from: what is kept is what there is
   if (rel && !cortado && !(c.on && c.release === rel)) await store(rel);
