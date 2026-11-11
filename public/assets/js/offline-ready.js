@@ -21,6 +21,13 @@ import { pasosDe } from './instalar.js';
 import { loadCss } from './load-css.js';
 
 const CONFIG = 'jds-config';
+/** The last state read on this phone: the button starts in it (✓ when it was ready), never in a loading it already finished. */
+export const LAST_KEY = 'juegos-de-salon:offline-ready-last';
+
+/** The state to draw before the check ends: the last one read here, or null (then the button waits for the check). */
+export function lastState(storage = globalThis.localStorage) {
+  try { const s = JSON.parse(storage.getItem(LAST_KEY) || 'null'); return ['ready', 'missing', 'unsupported'].includes(s?.state) ? s : null; } catch (_) { return null; }
+}
 const RAIZ = new URL('../../', import.meta.url);
 /** A storing not heard from in this long stopped (the worker was killed): it is not loading any more. */
 export const STALE_MS = 60_000;
@@ -189,12 +196,17 @@ function openSheet({ doc, lang, get, retry, online }) {
  */
 export function offlineReadyButton({ doc = globalThis.document, lang = getLang(), nav = globalThis.navigator, tap = () => {} } = {}) {
   const btn = el('button', { type: 'button', class: 'icon-btn offline-ready', hidden: true });
-  let current = { state: 'loading', have: 0, total: 0 };
+  let current = lastState();
   let sheet = null;
   // A tester's pretend state (the T tab): while set, what the phone really keeps is not drawn
   let demo = null;
   const draw = s => { current = s; paint(btn, s, lang); if (sheet?.isOpen()) sheet.draw(s); };
-  const show = s => { if (!demo) draw(s); };
+  const show = s => {
+    if (demo) return;
+    btn.hidden = false;
+    draw(s);
+    try { globalThis.localStorage?.setItem(LAST_KEY, JSON.stringify(s)); } catch (_) { /* no storage */ }
+  };
   const refresh = () => readState({ nav }).then(show).catch(() => {});
   const pretend = state => {
     clearInterval(demo); demo = null;
@@ -211,17 +223,18 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
   };
   const retry = () => {
     if (demo) { pretend('loading'); return; }
-    show({ state: 'loading', have: current.have || 0, total: current.total || 0 });
+    show({ state: 'loading', have: current?.have || 0, total: current?.total || 0 });
     nav.serviceWorker?.ready?.then(r => r.active?.postMessage({ type: 'offline-retry' })).catch(() => {});
     // No word from the worker in a while: read again, so the sheet never spins forever
     setTimeout(refresh, 8000);
   };
-  btn.addEventListener('click', () => { tap(); sheet = openSheet({ doc, lang, get: () => current, retry, online: () => nav.onLine !== false }) || sheet; refresh(); });
+  btn.addEventListener('click', () => { tap(); sheet = openSheet({ doc, lang, get: () => current || { state: 'loading', have: 0, total: 0 }, retry, online: () => nav.onLine !== false }) || sheet; refresh(); });
   import('./flags.js').then(m => m.flag('offline')).then(on => {
     if (!on) return;
     loadCss(new URL('../css/offline-ready.css', import.meta.url));
-    btn.hidden = false;
-    paint(btn, current, lang);
+    // The last state read here draws at once; with none yet, the button shows when the check ends,
+    // so a phone that already keeps everything never flashes the loading ring on its way back home
+    if (current) { btn.hidden = false; paint(btn, current, lang); }
     refresh();
     nav.serviceWorker?.addEventListener?.('message', e => {
       if (e.data?.type !== 'offline-progress') return;

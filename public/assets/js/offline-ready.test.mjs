@@ -43,4 +43,14 @@ assert.deepEqual(await readState({ nav, cachesApi: caches(['/', '/zip/', '/a.js'
 assert.deepEqual(await readState({ nav, cachesApi: caches(['/zip/']) }), { state: 'missing', have: 1, total: 3 });
 assert.equal((await readState({ nav: {}, cachesApi: caches([]) })).state, 'unsupported', 'no service worker');
 assert.deepEqual((await import('./offline-ready.js')).TESTER_STATES.map(([s]) => s), ['loading', 'ready', 'missing', 'unsupported', null], 'the T tab: the four states and the real one');
+{
+  const { lastState, LAST_KEY } = await import('./offline-ready.js');
+  const m = new Map(); const st = { getItem: k => m.get(k) ?? null };
+  assert.equal(lastState(st), null, 'nothing read yet: no state to start in');
+  m.set(LAST_KEY, JSON.stringify({ state: 'ready', have: 3, total: 3 }));
+  assert.equal(lastState(st).state, 'ready', 'back on the home page, ready starts as ready, no loading flash');
+  m.set(LAST_KEY, JSON.stringify({ state: 'loading' }));
+  assert.equal(lastState(st), null, 'a loading is never replayed');
+  assert.equal(lastState({ getItem() { throw new Error('x'); } }), null);
+}
 console.log('✓ offline ready: four states from what the phone keeps, the sheet in three languages');
