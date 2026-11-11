@@ -37,6 +37,10 @@ for (const u of urls) {
 // gives an import its `?h=`, not a src, and the offline worker kept the unstamped file forever (¡Al toque!, 2026-11-10)
 const pages = d => readdirSync(join(SITE, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? pages(join(d, e.name)) : e.name === "index.html" ? [join(d, e.name)] : []);
 for (const p of pages("")) assert.ok(!/<script type="module" src="(?!https?:)/.test(readFileSync(join(SITE, p), "utf8")), `${p}: load its module with import, so it gets its ?h= (D-467)`);
+// A page whose game imports ranking.js links ranking.css, or its table draws as bare browser buttons (¡Al toque!, 2026-11-10)
+for (const p of pages("")) { const dir = join(SITE, p, ".."), js = join(dir, "game.js");
+  let src = ""; try { src = readFileSync(js, "utf8"); } catch (_) { continue; }
+  if (/assets\/js\/ranking\.js/.test(src)) assert.ok(readFileSync(join(SITE, p), "utf8").includes("ranking.css"), `${p}: its game shows a ranking, so it links ranking.css`); }
 const bytes = urls.map(u => u.split('?')[0]).filter(f => /\.\w+$/.test(f)).reduce((n, f) => n + statSync(join(SITE, f)).size, 0);
 assert.ok(bytes < 8 * 1048576, `the precache stays under 8 MB (${(bytes / 1048576).toFixed(1)} MB)`);
 console.log(`✓ precache: ${urls.length} URLs, ${(bytes / 1048576).toFixed(1)} MB, every offline-capable game and nothing heavy`);
