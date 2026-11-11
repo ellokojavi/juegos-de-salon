@@ -34,7 +34,8 @@ the tagline, the language toggle, the best (no format chip: the owner dropped «
 
 ## How it is played
 
-- **The board:** 8 × 11 cells, drawn on a canvas (`data-tablero`). Fixed pieces are the level's: violet
+- **The board:** 8 × 11 cells, drawn on a canvas (`data-tablero`), as big as the screen's height allows
+  under the header and over the help line, the tray, Probar and the helpers (the full width on a 390 × 844 phone). Fixed pieces are the level's: violet
   walls, red spikes (touching them pops the ball), the yellow basket, and parts marked 🔩 that cannot move.
 - **The parts** (two cells wide, one tall, anchored at the tapped cell): 📐 ramp (↘ or ↙), 🪵 plank,
   🛝 trampoline (throws the ball up about 7 rows, always the same height), 🌀 fan (blows the ball
@@ -94,9 +95,11 @@ the generated pool (`levels.js`, 72 levels in six tiers of 12, regenerated on 20
 (Tier 4, «Medio +», 2 parts among decoys, stays in the pool unused.) The first game of the day draws
 its five with the day's seed, the same for everyone; «Jugar otra vez» draws another five at random.
 
-- **The clock:** one for the whole game, 6:00, as Tren en Vilo's header: the five dots on the left (passed
-  in green, given up in red, the one in play in white, the rest as rings) and «⏳ 5:59» on the right, with
-  «Etapa 2 de 5» in yellow centred under them and the stage's difficulty under it. It runs while building and
+- **The clock:** one for the whole game, 6:00, in a one-line header so the board gets the height (the
+  owner, 2026-11-11): the five dots on the left (passed in green, given up in red, the one in play in white,
+  the rest as rings), «Etapa 2 de 5» in yellow in the middle with the stage's difficulty small under it, and
+  «⏳ 5:59» on the right. As each stage starts, «Etapa 2 de 5» and its difficulty are announced big over the
+  board for a moment (1.6 s, a fade; not under reduced motion) and leave the header to keep them. It runs while building and
   testing, stops while a stage's summary is open or the page is hidden, and blinks pink in the last
   30 s. At 0:00 the game ends where it is: «⏱️ ¡Se acabó el tiempo!».
 - **A stage passed** opens a summary over the board: «¡Etapa 2 superada!», its stars, the parts used,
@@ -137,8 +140,8 @@ streaks across its reach and a chevron for its direction; violet girders with wh
 Aletazo's: a red rail on the line the ball pops on, with two pink sixteen-point stars per cell spinning on
 it, each with a red halo and a dark eye, neighbours turning opposite ways; the basket a green cup with a
 pink joint on each rim, drawn over the ball so a ball inside reads as inside; the pipe the ball drops from,
-a cyan neon tube of tinted glass that fills the start's cell (kept free of parts), drawn over the ball so the
-ball waits dimmed inside it and drops out of its mouth, with chevrons of light flowing down it, a bright rim
+a cyan neon tube that fills the start's cell (kept free of parts), drawn under the ball so the ball waits
+inside it in full colour and drops out of its mouth, with chevrons of light flowing down it, a bright rim
 at the mouth and a soft cone of light below (the owner, 2026-11-11); a flat pink ball ringed in white, with a fading trail that plays out once the run ends. The canvas
 re-measures itself whenever its box changed, so the ball is always round.
 

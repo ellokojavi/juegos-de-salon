@@ -1,3 +1,3 @@
 level: patch
 
-- **Artefactos (lab)**: the pipe at the top is now a cyan neon glass tube. The ball waits inside it and drops out of its mouth, with light flowing down the tube and a soft cone of light below it.
+- **Artefactos (lab)**: a bigger board. The stage and its difficulty now sit between the dots and the clock, so the board takes the height that frees up (the full width on most phones). Each stage is announced big over the board for a moment as it starts, and the ball waits inside the cyan pipe in full colour.

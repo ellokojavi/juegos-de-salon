@@ -38,11 +38,12 @@
 
     <!-- The workshop: the board, the tray of parts and the buttons to try it -->
     <section class="screen stack" id="s-juego">
-      <!-- As Tren en Vilo's: the five dots and the game's clock on one line, the stage and its difficulty centred under them -->
-      <div class="cabecera"><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj-caja"><span aria-hidden="true">⏳</span> <span class="reloj" id="reloj" role="timer"></span></span></div>
-      <div class="etapa-titulo"><h2 class="etapa" id="nivel"></h2><p class="muted" id="dificultad"></p></div>
+      <!-- One line, so the board gets the height: the five dots, the stage and its difficulty in the middle, the game's clock -->
+      <div class="cabecera"><span class="etapas" id="etapas" aria-hidden="true"></span><div class="etapa-titulo"><h2 class="etapa" id="nivel"></h2><p class="muted" id="dificultad"></p></div><span class="reloj-caja"><span aria-hidden="true">⏳</span> <span class="reloj" id="reloj" role="timer"></span></span></div>
       <div class="tablero" id="tablero" data-tablero>
         <canvas id="lienzo"></canvas>
+        <!-- Each stage starts announced big over the board for a moment, then the header keeps it -->
+        <div class="anuncio" id="anuncio" aria-hidden="true"><b id="anuncio-etapa"></b><span id="anuncio-dificultad"></span></div>
         <!-- The chosen part's buttons, over it on the board; they go after 5 s without a touch or on a drag -->
         <div class="acciones" id="acciones" hidden>
           <!-- Icons only: a turning arrow and a trash can; their words are the aria-label, in the player's language -->

@@ -214,6 +214,9 @@ function startLevel(lv) {
   board = newBoard(lv); history = []; run = null; picked = null; chosen = null; trail = []; won = false; popped = false; ghost = null; hint = null; game.hints = 0; giveUpArmed(false);
   $('resultado').hidden = true; document.body.classList.remove('ganado');
   $('nivel').textContent = fmt(L.etapa, game.at + 1); $('dificultad').textContent = L.dificultad[lv.tier];
+  // the stage announced big over the board for a moment (restarting its animation), then only the header keeps it
+  $('anuncio-etapa').textContent = $('nivel').textContent; $('anuncio-dificultad').textContent = $('dificultad').textContent;
+  const an = $('anuncio'); an.classList.remove('ver'); void an.offsetWidth; an.classList.add('ver');
   $('etapas').replaceChildren(...STAGE_TIERS.map((_, i) => el('span', { class: i < game.at ? (game.done[i]?.ok ? 'ok' : 'no') : i === game.at ? 'ahora' : '' })));
   say(L.elige);
   startedAt = Date.now(); game.stageAt = game.left; game.paused = false;
