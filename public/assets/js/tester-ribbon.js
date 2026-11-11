@@ -53,6 +53,8 @@ html[data-en-juego] .tr:not(.con-ctx), body.jugando .tr:not(.con-ctx) { display:
 .tr-fila { display: flex; gap: 8px; align-items: center; }
 .tr-fila input { width: 4.2em; padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: inherit; font: 800 1rem var(--font-num); text-align: center; }
 .tr-fila .btn { flex: 1; }
+.tr-sim select { width: 100%; padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: inherit; font: 700 0.9rem var(--font-body); }
+.tr-sim select option { color: #000; }
 @media (prefers-reduced-motion: reduce) { .tr { transition: none; } }
 `;
 

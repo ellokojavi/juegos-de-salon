@@ -119,3 +119,4 @@ taking it out of the lab.
 
 `window.__microgames`: `game`, `order`, `idx`, `total`, `active`, `ids` and `only(id)` (a run of that one game).
 - **¡A la hora!:** the hand pointing nearest the finger turns (near the middle, the short one); the long one snaps to 5 minutes, the short one must be within half an hour of its place. Never 12:00, where both hands start.
+- **Testing:** the «T» tab (lab key holders) plays any microgame on its own («Probar un microjuego») or opens today's run (D-551); the cover has neither.

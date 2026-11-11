@@ -4,7 +4,8 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
 import { SFX, initSound, soundToggle } from '../../assets/js/sound.js';
-import { confetti } from '../../assets/js/ui.js';
+import { confetti, el } from '../../assets/js/ui.js';
+import { labAccess } from '../../assets/js/lab-access.js';
 import { salidasFin } from '../../assets/js/fin.js';
 import { param, tiene } from '../../assets/js/parametros.js';
 import { semillaDel } from '../../assets/js/uno-al-dia.js';
@@ -1466,5 +1467,15 @@ trackVisit();   // the site's traffic (D-208)
   // For the end-to-end test: what the page is doing, and a way to play one game on its own
   window.__microgames = { get game() { return curGame; }, get order() { return order.slice(); }, get idx() { return idx; }, get total() { return total; }, get active() { return active; }, ids: META.map(m => m.id), seed: SEED,
     get code() { return code; }, get marks() { return marks.slice(); }, get paused() { return paused; }, only: id => { code = SEED || newCode(); start([id]); } };
+  // Testers only, in the T tab (never on the cover, which stays as players see it): play any microgame on its own, or today's run
+  labAccess().then(ok => {
+    if (!ok) return;
+    return import('../../assets/js/tester-ribbon.js').then(({ setTesterContext, foldTesterRibbon }) => {
+      const pickG = el('select', { id: 'tr-mg', 'aria-label': 'Microjuego' }, ...META.map(m => el('option', { value: m.id }, `${m.i} ${m.n}`)));
+      setTesterContext(el('div', { class: 'tr-sim' }, el('small', {}, '⚡ Probar un microjuego'), pickG,
+        el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'tr-mg-go', onClick: () => { foldTesterRibbon(); window.__microgames.only(pickG.value); } }, 'Jugar este'),
+        el('a', { class: 'btn btn--sm', href: '?today' }, '📅 Corrida de hoy')));
+    });
+  }).catch(() => {});
   cover();
 })();
