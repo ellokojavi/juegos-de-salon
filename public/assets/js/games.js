@@ -429,6 +429,32 @@ export const SUELTOS = [
     nuevoDesde: '2026-11-09',
     diasNuevo: 10,
   },
+  {
+    // Out of the lab like Aletazo (D-517's way): La Copa's screen in cup/games/sudoku/, its page /sudoku/,
+    // launched by flags/sudoku at 21:00 Pacific on 2026-11-11 (the `launch` workflow, D-529). Its levels
+    // are La Copa's variants: 🟢 easy, the 6×6 mini, by default (a cup day, Uno al día), and 🔴 hard, the
+    // 9×9. The id, its ranking tables (`sudoku_easy`, `sudoku_hard`) and the usage signal are the lab's;
+    // the lab prototype /labs/sudoku/ stays until the cleanup PR. There is no sudoku emoji: #️⃣ stands in
+    // where only text fits, and the cover shows the drawn icon (cup/games/sudoku/icon.svg)
+    id: 'sudoku',
+    lanza: 'sudoku',
+    copa: { pozo: 17 },
+    // Uno al día: by date, never by flag: from the day after the launch, joining the next deck
+    unoAlDia: { orden: 22, desde: '2026-11-12' },
+    slug: 'sudoku',
+    emoji: '#️⃣',
+    name: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
+    tagline: { es: 'El clásico de los números: mini de 6×6 o el de 9×9.', en: 'The numbers classic: a 6×6 mini or the 9×9.', pt: 'O clássico dos números: mini de 6×6 ou o de 9×9.' },
+    keywords: {
+      es: ['sudoku', 'números', 'numeros', 'lógica', 'logica', 'puzle', 'solitario', 'mini sudoku', 'cuadros'],
+      en: ['sudoku', 'numbers', 'logic', 'puzzle', 'solo', 'mini sudoku', 'grid'],
+      pt: ['sudoku', 'números', 'lógica', 'quebra-cabeça', 'solitário', 'mini sudoku', 'quadrados'],
+    },
+    tipos: ['logic'],
+    duration: '3–15',
+    nuevoDesde: '2026-11-12',
+    diasNuevo: 10,
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true, ...(m.lanza ? { oculto: !lanzado(m.lanza) } : {}) }));
 

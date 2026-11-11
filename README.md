@@ -50,6 +50,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🥷 [Shinobi](https://juegosdesalon.cl/shinobi/) | 1 | Play alone | Also in The Cup |
 | 🗼 [Babel](https://juegosdesalon.cl/babel/) | 1 | Play alone | Also in The Cup |
 | 🐤 [Flap / Aletazo / Bate-Asa](https://juegosdesalon.cl/flap/) | 1 | Play alone | Also in The Cup |
+| #️⃣ [Sudoku](https://juegosdesalon.cl/sudoku/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -165,6 +166,12 @@ Spec and design: [docs/games/stick.md](docs/games/stick.md), [docs/games/stack.m
 A one-tap flyer inspired by Dong Nguyen's [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), built as a La Copa game the way Shinobi and Babel were (D-517), with its page `/flap/`: every tap gives the bird a flap upwards, and it flies through hoops (dead center counts double) and the gaps in walls, with 3 lives and a new level every 5 gates. The day's course comes from the cup's seed, the same for everyone. It comes out at 00:00 Pacific on 2026-11-09, when the launch workflow switches the flag `aletazo` and its splash `aletazo-ya` on (D-529); it carries the «Nuevo» label for 10 days, and Uno al día may deal it from the deck shuffled on 2026-11-28. The lab prototype stays at `/labs/flap/` until the cleanup PR.
 
 Spec and design: [docs/games/flap.md](docs/games/flap.md)
+
+### #️⃣ Sudoku (launches 2026-11-11, 21:00 Pacific)
+
+The numbers classic, built as a La Copa game the way Aletazo was (D-517), with its page `/sudoku/`, in two levels picked with an electric lever: 🟢 easy, a 6×6 mini sudoku (boxes of 2×3), and 🔴 hard, the classic 9×9. Every board has one solution and is solved by logic. The score is 0 to 100: 100 for the board, minus 10 for each wrong digit and 15 for each hint; giving up scores 0. A cup day and Uno al día play easy unless the cup's admin picks hard for that day; the rankings are one per level (`sudoku_easy`, `sudoku_hard`). It comes out when the launch workflow switches the flag `sudoku` on; Uno al día may deal it from the deck shuffled after 2026-11-12. The lab prototype stays at `/labs/sudoku/` until the cleanup PR.
+
+Spec and design: [docs/games/sudoku.md](docs/games/sudoku.md)
 
 ### Retired cup games
 
@@ -477,6 +484,7 @@ node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
 node public/cup/games/stack/engine.test.mjs
 node public/cup/games/stick/engine.test.mjs
+node public/cup/games/sudoku/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/labs/artifacts/engine.test.mjs
@@ -490,7 +498,6 @@ node public/labs/julep/engine.test.mjs
 node public/labs/memory/engine.test.mjs
 node public/labs/microgames/engine.test.mjs
 node public/labs/stack/engine.test.mjs
-node public/labs/sudoku/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs
@@ -759,6 +766,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 | Shinobi | Shinobi | Shinobi |
 | Babel | Babel | Babel |
 | Aletazo | Flap | Bate-Asa |
+| Sudoku | Sudoku | Sudoku |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
@@ -874,7 +882,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🗼 Babel (La Copa game, launched by flag; Stack in the lab)](docs/games/stack.md)
 - [🥷 Shinobi (La Copa game; Stick Ninja in the lab before)](docs/games/stick.md)
-- [🧮 Sudoku (lab, in Juegos en prueba)](docs/games/sudoku.md)
+- [#️⃣ Sudoku (La Copa game, launched by flag; the lab prototype stays until the cleanup)](docs/games/sudoku.md)
 - [☀️ Tango](docs/games/tango.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [🧶 Untangle (Desenredo)](docs/games/untangle.md)

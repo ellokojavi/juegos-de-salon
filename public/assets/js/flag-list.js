@@ -25,6 +25,7 @@ export const FLAGS = {
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'aletazo': '🐤 Aletazo: the game, on the home page, the search and new cups (D-517\'s way), launched 2026-11-09 at 00:00 Pacific',
+  'sudoku': '#️⃣ Sudoku: the game, on the home page, the search and new cups (D-517\'s way), launching 2026-11-11 at 21:00 Pacific',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',

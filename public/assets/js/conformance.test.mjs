@@ -31,7 +31,9 @@ assert.deepEqual([...PARTS['conformance.mjs']].sort(), folders.map(f => f.split(
 // frozen when the check reached them, since the manifest's schema (a folder with rules.js) does not fit them yet
 const FROZEN = ['conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso', 'rutas', 'loteo', 'pintaminas', 'agentes', 'puentes', 'stick', 'stack',
   // 🐤 Aletazo: built in cup/games/ like Babel; the owner's call (2026-11-08, #1315), until the schema covers the Cup-built games
-  'aletazo'];
+  'aletazo',
+  // #️⃣ Sudoku: built in cup/games/ like Aletazo (D-517's way, 2026-11-11)
+  'sudoku'];
 const debt = JSON.parse(readFileSync(new URL('../../../docs/manifest-debt.json', import.meta.url), 'utf8')).games;
 for (const g of ALL_GAMES) {
   if (byId[g.id]) continue;

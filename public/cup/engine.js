@@ -51,7 +51,8 @@ export const POZO_FIJO = POZO.filter(id => !LANZADOS.some(g => g.id === id));
  * picks one per day and everyone plays it; standalone, the player picks it in the waiting room. A day
  * is written `id` (the default) or `id:variant` in `meta.cal`, so the cups from before read the same.
  */
-export const VARIANTES = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'] };
+// Sudoku's levels (D-517's way): easy, the 6×6 mini, is the default a cup day and Uno al día play
+export const VARIANTES = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'], sudoku: ['easy', 'hard'] };
 /** A calendar entry split into its game and its variant: `'loteo:utilities'` → `{ id: 'loteo', variante: 'utilities' }`. */
 export function diaDeCal(x) {
   if (String(x || '').includes(TRIO_SEP)) return { id: TRIO, variante: null };

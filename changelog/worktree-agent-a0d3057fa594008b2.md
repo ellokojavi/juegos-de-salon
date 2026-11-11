@@ -1,0 +1,3 @@
+level: minor
+
+- **#️⃣ Sudoku leaves the lab, ready to launch by flag** (D-517's way, launching 2026-11-11 at 21:00 Pacific): its page `/sudoku/`, La Copa (a cup day plays the 🟢 6×6 mini unless the admin picks 🔴 hard, the 9×9) and Uno al día (from the deck after 2026-11-12), in es, en and pt. The lab's game moved to `cup/games/sudoku/`: the electric level lever, the demo board on the cover with the drawn icon, notes, undo, the hint (−15), giving up, and the score from 0 to 100. Rankings stay one per level (`sudoku_easy`, `sudoku_hard`). Hidden until `flags/sudoku` is on; the lab prototype stays until the cleanup.

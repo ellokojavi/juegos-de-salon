@@ -129,9 +129,9 @@ if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) locat
  * everyone, or 🧪 with a lab key): the answer this phone kept may be old, so a hidden one asks Firebase
  * before sending the visitor to the home page. Inside a cup and in Uno al día (`?today`, which deals it by
  * date) it always opens: they chose it for everyone alike, and a cup chose it when it
- * was out. lab: #seccion-stick, lab: #seccion-stack, lab: #seccion-aletazo
+ * was out. lab: #seccion-stick, lab: #seccion-stack, lab: #seccion-aletazo, lab: #seccion-sudoku
  */
-const LANZA = { stack: () => flag('stack'), aletazo: () => flag('aletazo') };
+const LANZA = { stack: () => flag('stack'), aletazo: () => flag('aletazo'), sudoku: () => flag('sudoku') };
 // Not awaited: the module must not pause halfway, its listeners need everything below defined
 if (SUELTO && !HOY && gameById(PRACTICA)?.oculto) (LANZA[PRACTICA]?.() ?? Promise.resolve(false)).then(si => { if (!si) location.replace(RAIZ); }).catch(() => location.replace(RAIZ));
 // En la genérica, el juego queda con su nombre en inglés: `?linea&hoy` → `?timeline-flash&today` (D-266)
@@ -1824,8 +1824,12 @@ function varianteSuelta(id) {
   return vs.includes(guardada) ? guardada : vs[0];
 }
 function guardarVariante(id, v) { try { localStorage.setItem(claveVariante(id), v); } catch (_) { /* solo esta vez */ } }
-/** The ranking table of a variant (D-331): the default one is the game's own, the others go apart. */
-const varianteRk = (id, v) => (v && v !== JUEGOS[id]?.variantes?.[0] ? v : '');
+/**
+ * The ranking table of a variant (D-331): the default one is the game's own, the others go apart. Sudoku
+ * ranked each level apart from the lab (`sudoku_easy`, `sudoku_hard`) and keeps those tables.
+ */
+const RK_POR_VARIANTE = ['sudoku'];
+const varianteRk = (id, v) => (v && (v !== JUEGOS[id]?.variantes?.[0] || RK_POR_VARIANTE.includes(id)) ? v : '');
 
 /**
  * The variant picker of the waiting room (D-331): the game's own if it brings one (Pintaminas' lever),

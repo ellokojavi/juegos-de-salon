@@ -130,3 +130,24 @@ for (const i of mHoles) if (!m.cells[i]) m = setDigit(m, i, m.solution[i]);
 assert.ok(isOver(m), 'the mini board ends when full');
 assert.equal(score(m), 100 - 15);
 assert.deepEqual(counts(m).slice(1), Array(6).fill(6));
+
+// La Copa's interface: the day's board is the same on every phone, in the day's level; the trial leaves 6 open
+{
+  const { generateDay, dayGame, card, DAY_LEVEL, TRIAL_OPEN } = await import('./engine.js');
+  assert.equal(DAY_LEVEL, 'easy', 'a cup day plays the 6×6 mini unless the admin picks hard');
+  const a = generateDay('ABCDE', 2), b = generateDay('ABCDE', 2);
+  assert.deepEqual(a, b, 'the same code and day, the same board');
+  assert.equal(a.givens.length, 36);
+  assert.notDeepEqual(generateDay('ABCDE', 3).givens, a.givens, 'another day, another board');
+  const h = generateDay('ABCDE', 2, { variante: 'hard' });
+  assert.equal(h.level, 'hard');
+  assert.equal(h.givens.length, 81);
+  const t = generateDay('ABCDE', 2, { ensayo: true, sal: 'ensayo' });
+  assert.equal(t.givens.filter(d => !d).length, TRIAL_OPEN, 'the trial leaves 6 cells open');
+  assert.ok(t.givens.every((d, i) => !d || d === t.solution[i]));
+  let s = dayGame(t);
+  for (const i of s.cells.map((d, k) => (d ? -1 : k)).filter(k => k >= 0)) s = setDigit(s, i, s.solution[i]);
+  assert.ok(isOver(s) && score(s) === 100, 'the trial is solved with its 6 digits');
+  assert.match(card(s), /🟢 6×6\n✨/);
+  assert.match(card({ ...dayGame(h), mistakes: 2, hints: 1 }), /🔴 9×9\n❌❌💡/);
+}
