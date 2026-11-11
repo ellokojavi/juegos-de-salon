@@ -4,7 +4,8 @@ A machine puzzle for one player: each level drops a ball from a pipe and the pla
 grid so that it ends in the basket. An original game in the genre of
 [The Incredible Machine](https://en.wikipedia.org/wiki/The_Incredible_Machine) (Sierra, 1993), credited
 on the cover and in the lab: the board, the four parts, the six levels and the neon look are our own;
-no name, art, sound or level comes from it.
+no name, art, sound or level comes from it. Since 2026-11-11 it wears the flat neon of the other
+games (the owner chose option B of two mockups): Tren en Vilo's layout and beams, Aletazo's spikes.
 
 ## Summary
 
@@ -20,9 +21,10 @@ no name, art, sound or level comes from it.
 
 ## Cover
 
-The demo board solving levels by itself, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
-(`details.panel`), the language toggle, the best (no format chip: the owner dropped «5 etapas · 6:00»
-on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's order. The tagline is one line:
+The demo board solving levels by itself, the title in white (`display--lg`, as Reinas' and Tren en Vilo's),
+the tagline, the language toggle, the best (no format chip: the owner dropped «5 etapas · 6:00» on
+2026-11-11; the fourth step says it), a yellow «⚙️ Jugar», and «🧠 Cómo se juega» folded
+(`details.panel`) with the credit and its link inside it, as Tren en Vilo keeps Poly Bridge's, in C-5's order. The tagline is one line:
 «Lleva la pelota a la canasta.»
 
 1. 🧩 Arrastra una pieza de abajo al tablero.
@@ -54,7 +56,7 @@ on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's 
 - **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
   send it back to the tray. A tap on a free cell with a part chosen also moves it there.
 - **↶ Deshacer** undoes the last change (place, move, turn, remove), up to 40. The three
-  helpers share one row above Probar: ↶ Deshacer · 💡 Pista · 🏳️ Rendirse (there is no Limpiar since 2026-11-11). Each
+  helpers share one row under Probar, as Tren en Vilo's: ↶ Deshacer · 💡 Pista · 🏳️ Rendirse (there is no Limpiar since 2026-11-11). Each
   step says the next one under the board in one short line (cut with an ellipsis if a phone is too
   narrow), and the phone gives a small tick on each snap and a pulse on placing.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
@@ -92,8 +94,9 @@ the generated pool (`levels.js`, 72 levels in six tiers of 12, regenerated on 20
 (Tier 4, «Medio +», 2 parts among decoys, stays in the pool unused.) The first game of the day draws
 its five with the day's seed, the same for everyone; «Jugar otra vez» draws another five at random.
 
-- **The clock:** one for the whole game, 6:00, in the header beside «Etapa 2 de 5», the stage's
-  difficulty and five dots (passed in green, the one in play in yellow). It runs while building and
+- **The clock:** one for the whole game, 6:00, as Tren en Vilo's header: the five dots on the left (passed
+  in green, given up in red, the one in play in white, the rest as rings) and «⏳ 5:59» on the right, with
+  «Etapa 2 de 5» in yellow centred under them and the stage's difficulty under it. It runs while building and
   testing, stops while a stage's summary is open or the page is hidden, and blinks pink in the last
   30 s. At 0:00 the game ends where it is: «⏱️ ¡Se acabó el tiempo!».
 - **A stage passed** opens a summary over the board: «¡Etapa 2 superada!», its stars, the parts used,
@@ -125,13 +128,26 @@ re-verifies the pool (every answer still wins and is legible, none has a shorter
 
 ## The look (`scene.js`)
 
-Everything is drawn on the canvas, no image files: the app's neon night with a dotted grid; wooden
-ramps and planks with grain and brass bolts (the level's fixed ones in a cooler wood with steel
-bolts); a trampoline with two coils whose pad squashes on a bounce; a fan whose blades spin, with
-breeze streaks across its reach and a chevron for its direction; violet steel girders with rivets;
-red spikes that glow, each a rhombus pointed up and down; a woven basket that glows and pulses, its weave and rim drawn over the ball so a ball inside reads as inside; a steel pipe the ball drops from; a ball
-with light, shadow and a stripe that turns as it rolls, and a fading trail that plays out once the run ends. The canvas re-measures itself whenever its box changed, so the ball is always round. Particles mark a bounce,
-a pop on the spikes (the ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
+Everything is drawn on the canvas, no image files, in the flat neon of the other games: a night sky
+(blue to violet) with stars and dark hills over the dotted grid, and a cyan line along the bottom, the
+floor that blows the ball up. Ramps and planks are Tren en Vilo's beams: yellow with a dark edge, a dashed
+middle line and a pink joint ringed in white at each end (the level's fixed ones in steel grey with grey
+joints); a trampoline with two coils whose pad squashes on a bounce; a fan whose blades spin, with breeze
+streaks across its reach and a chevron for its direction; violet girders with white rivets; the spikes as
+Aletazo's: a red rail on the line the ball pops on, with two pink sixteen-point stars per cell spinning on
+it, each with a red halo and a dark eye, neighbours turning opposite ways; the basket a green cup with a
+pink joint on each rim, drawn over the ball so a ball inside reads as inside; a steel pipe the ball drops
+from; a flat pink ball ringed in white, with a fading trail that plays out once the run ends. The canvas
+re-measures itself whenever its box changed, so the ball is always round.
+
+**What the ball touches lights up** (the owner, 2026-11-11): with `newRun(board, { contacts: true })` the
+engine says each step where the ball presses on a surface and how hard (`'touch'`, `v` = the speed into it;
+the generator and the tests do not ask, and it changes nothing in the run). The drawing lights that spot
+along the surface in the surface's colour (pale yellow on a beam, green on a trampoline or the cup, cyan on
+a fan, lilac on a girder or a side), as strong as the blow: rolling leaves a faint line along where the
+ball goes, fading in a third of a second; a knock lights a longer, brighter stretch; past 4 cells/s a small
+white ring opens where it hit, and past 6.5 a few sparks fly. Particles also mark a pop on the spikes (the
+ball bursts), the explosion on the bottom and a win (confetti from the basket). While a part is picked the
 part floats over a green or red slot where it would land.
 The cover shows a board (up to 240 px wide, smaller on short screens, none under 640 px tall) building and solving the levels by itself, one after another: each part of the answer rises from below the board and glides along an arc into its slot, lit in cyan, as a player would drag it; then the ball drops and the machine works.
 

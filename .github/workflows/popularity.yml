@@ -91,13 +91,22 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/statuses/$sha" -f state=success -f context=owner-approval -f description='weekly popularity: only the generated lines (D-547)' > /dev/null
           gh workflow run tests.yml --ref "$branch"
           gh workflow run e2e.yml --ref "$branch"
-          # end-to-end appears only once its scripts end (#1273): wait until both checks exist
+          # Wait on the commit's check runs through REST (2026-11-09, #1345): `gh pr checks` reads the
+          # PR's checks through GraphQL, where the workflow token sees neither the runs dispatched by
+          # hand nor which checks are required, so it waited an hour and failed with both checks green.
+          # end-to-end appears only once its scripts end (#1273); the newest run of each name counts.
+          verdict=pending
           for i in $(seq 1 120); do
-            names=$(gh pr checks "$pr" --json name --jq '.[].name' || true)
-            echo "$names" | grep -qx tests && echo "$names" | grep -qx end-to-end && break
+            verdict=$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/check-runs?per_page=100" --jq '
+              [.check_runs[] | select(.name == "tests" or .name == "end-to-end")]
+              | group_by(.name) | map(max_by(.started_at))
+              | if any(.status == "completed" and .conclusion != "success") then "failed"
+                elif length == 2 and all(.conclusion == "success") then "passed"
+                else "pending" end' || echo pending)
+            [ "$verdict" = pending ] || break
             sleep 30
           done
-          gh pr checks "$pr" --required --watch --fail-fast --interval 30 || { echo "::error::the checks of #$pr did not pass: it stays open"; exit 1; }
+          [ "$verdict" = passed ] || { echo "::error::the checks of #$pr did not pass ($verdict): it stays open"; exit 1; }
           if [ "$(gh pr view "$pr" --json mergeable --jq .mergeable)" = CONFLICTING ]; then echo "::error::#$pr conflicts with main"; exit 1; fi
           gh pr merge "$pr" --merge
           gh workflow run publish.yml --ref main

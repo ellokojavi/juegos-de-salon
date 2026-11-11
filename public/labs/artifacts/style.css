@@ -6,14 +6,14 @@
 
 /* The cover's demo: a level solving itself, framed like the board */
 .demo {
-  width: min(62%, 240px); aspect-ratio: 8 / 11; margin: 0 auto var(--s-10); border-radius: var(--radius);
+  width: min(72%, 270px); aspect-ratio: 8 / 11; margin: 0 auto var(--s-12); border-radius: var(--r-16);
   border: 1px solid var(--glass-border); background: var(--artifacts-floor); overflow: hidden; box-shadow: var(--shadow-panel);
 }
 .demo canvas { display: block; width: 100%; height: 100%; }
 @media (max-height: 760px) { .demo { width: min(45%, 170px); } }
 /* A short phone keeps Jugar in the first screen (U-39): the demo steps aside */
 @media (max-height: 640px) { .demo { display: none; } }
-.credito { margin: 0; font-size: var(--fs-85); text-wrap: balance; }
+.credito { margin: var(--s-10) 0 0; font-size: var(--fs-85); text-wrap: balance; }
 .credito a { color: var(--cyan); }
 .pasos { list-style: none; margin: var(--s-10) 0 0; padding: 0; display: grid; gap: var(--s-8); }
 .pasos li { display: grid; grid-template-columns: 30px 1fr; gap: var(--s-8); align-items: center; font-size: var(--fs-90); }
@@ -22,18 +22,20 @@
 /* The run on the cover: the level, its difficulty, the stars */
 .niveles { justify-content: center; }
 
-.cabecera { display: flex; align-items: center; gap: var(--s-6); }
-.cabecera .chip { white-space: nowrap; }
-/* A little air between «Etapa 1 de 5» and its difficulty */
-#dificultad { margin-left: var(--s-8); }
-/* The five stages as dots: passed, failed, the one in play */
-.etapas { display: flex; gap: var(--s-4); flex: 1; justify-content: center; }
-.etapas span { width: 10px; height: 10px; border-radius: 50%; background: var(--glass-border); }
-.etapas .ok { background: var(--lime); }
-.etapas .no { background: var(--red); }
-.etapas .ahora { background: var(--yellow); box-shadow: 0 0 0 3px rgb(var(--yellow-rgb) / 0.3); }
-.reloj { font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; }
+.cabecera { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); font-weight: 900; }
+/* The five stages as dots, as Tren en Vilo's: passed, failed, the one in play, still to come */
+.etapas { display: flex; gap: var(--s-6); }
+.etapas span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line-faint); }
+.etapas .ok { background: var(--lime); border-color: var(--lime); }
+.etapas .no { background: var(--red); border-color: var(--red); }
+.etapas .ahora { background: var(--ink); border-color: var(--ink); }
+.reloj-caja { white-space: nowrap; }
+.reloj { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 .reloj.apurado { color: var(--pink); animation: artifacts-late 1s ease-in-out infinite; }
+/* «Etapa 2 de 5» in yellow, centred, its difficulty under it */
+.etapa-titulo { display: grid; gap: var(--s-2); text-align: center; }
+.etapa-titulo p { margin: 0; }
+.etapa { margin: 0; font: var(--fs-140) var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
 @keyframes artifacts-late { 50% { opacity: 0.55; } }
 /* The result's table: a row per stage, the speed and the total */
 .tabla-fin { width: 100%; border-collapse: collapse; font-size: var(--fs-85); }
@@ -47,13 +49,11 @@
 .leyenda { font-size: var(--fs-75); margin: var(--s-8) 0 0; }
 .score-big { font: 900 clamp(3rem, 16vw, 4.4rem)/1 var(--font-num); color: var(--yellow); text-shadow: var(--shadow-text); }
 .sello { margin: 0; font-weight: 900; }
-.cabecera b { font-family: var(--font-display); font-size: var(--fs-140); letter-spacing: 0.04em; white-space: nowrap; }
-@media (max-width: 360px) { .cabecera b { font-size: var(--fs-110); } .cabecera .chip { font-size: var(--fs-75); padding-inline: var(--s-6); } .etapas span { width: 7px; height: 7px; } .reloj { font-size: var(--fs-110); } }
 
 /* The board: an 8 × 11 grid, as wide as the screen allows and never taller than it */
 .tablero {
-  position: relative; width: min(100%, max(220px, calc((100svh - 430px) * 8 / 11))); aspect-ratio: 8 / 11; margin: 0 auto;
-  border: 1px solid var(--glass-border); border-radius: var(--radius); background: var(--artifacts-floor);
+  position: relative; width: min(100%, max(220px, calc((100svh - 470px) * 8 / 11))); aspect-ratio: 8 / 11; margin: 0 auto;
+  border: 1px solid var(--glass-border); border-radius: var(--r-16); background: var(--artifacts-floor);
   overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #lienzo { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: none; }
@@ -102,7 +102,8 @@ body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: no
 .estrellas { font-size: var(--fs-200); letter-spacing: 0.2em; color: var(--yellow); text-shadow: var(--shadow-text); }
 .pie { text-align: center; margin-top: var(--s-16); }
 /* Once won, only the result card speaks: the tray and the buttons under the board step aside */
-body.ganado #s-juego > .bandeja, body.ganado #s-juego > .btn-row, body.ganado #s-juego .stack > .btn-row, body.ganado .mensaje { visibility: hidden; }
+body.ganado #s-juego > .bandeja, body.ganado .herramientas, body.ganado .mensaje { visibility: hidden; }
+.herramientas { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
 .herramientas .btn { padding-inline: var(--s-6); white-space: nowrap; min-width: 0; }
 @media (max-width: 360px) { .herramientas .btn { font-size: var(--fs-90); } }
 

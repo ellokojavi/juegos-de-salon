@@ -178,6 +178,27 @@ export const CAMPAIGNS = {
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
   },
+  // 🧮 Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
+  // the lab: `requires` keeps it unseen until flags/sudoku is on for this visitor (D-517), and it is not in
+  // ACTIVE. Its picture is the real board half solved. Sudoku is not in games.js while in the lab, so the
+  // item carries its own texts and link: the launch PR points `href` at the game's new folder (or uses the
+  // game's own entry once it is in games.js)
+  'sudoku-ya': {
+    emoji: '🧮',
+    requires: ['sudoku'],
+    kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
+    title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
+    hero: true,
+    items: [{
+      emoji: '🧮', href: 'labs/sudoku/', img: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
+      text: {
+        es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
+        en: 'Fill the board with 1 to 9 without repeating in a row, column or box. Easy or hard, with your score on the ranking.',
+        pt: 'Preencha o tabuleiro com números de 1 a 9 sem repetir na linha, coluna ou quadro. No fácil ou no difícil, com sua pontuação no ranking.',
+      },
+    }],
+  },
   // 🐤 Aletazo leaves the lab (D-517's way) and the bird the teaser `flap-soon` showed now plays: one game,
   // big, as Tren en Vilo's launch (`hero`), its clip a 24 s loop seamless to the pixel through day,
   // afternoon, night and day again (marketing/splash/teaser/flap-play.html, the owner's request).

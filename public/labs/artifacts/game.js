@@ -448,7 +448,7 @@ $('btn-probar').addEventListener('click', () => {
   unlockAudio();
   if (run) { run = null; say(L.elige); tray(); controls(); draw(); return; }
   picked = null; chosen = null; trail = []; ghost = null; popped = false; won = false;
-  run = newRun(board); last = performance.now(); acc = 0; emerge = 0;
+  run = newRun(board, { contacts: true }); last = performance.now(); acc = 0; emerge = 0;
   say(''); tray(); controls();
 });
 $('btn-jugar').addEventListener('click', () => {
@@ -564,7 +564,8 @@ function frame(now) {
       stepRun(run, STEP); acc -= STEP;
       roll += vx * STEP / R;
       for (const e of run.events.splice(0)) {
-        if (e.type === 'knock') SOUND.knock();
+        if (e.type === 'touch') scene.contact(e);
+        else if (e.type === 'knock') SOUND.knock();
         else if (e.type === 'boing') { SOUND.boing(); if (e.part) scene.boing(e.part); scene.burst(run.ball.x, run.ball.y + R, [scene.C.lime, '#ffffff'], 8, 3); }
         else if (e.type === 'boom') { popped = true; trail = []; scene.explode(e.x, e.y); SOUND.boom(); vibrate([40, 30, 80]); }
         else if (e.type === 'spiked') { popped = true; scene.burst(e.x, e.y, [scene.C.pink, scene.C.red, '#ffffff'], 26, 5); }
@@ -618,12 +619,13 @@ function demoFrame(dt) {
     if (k >= 1 && demo.t >= GLIDE) {
       if (!demo.board.placed.includes(goal)) { demo.board.placed.push(goal); demo.scene.burst(goal.c + 1, goal.r + 0.6, [demo.scene.C.yellow, '#ffffff'], 8, 2.5); }
       moving = null;
-      if (demo.t >= GLIDE + PAUSE) { demo.k++; demo.t = 0; if (demo.k >= demo.parts.length) demo.run = newRun(demo.board); }
+      if (demo.t >= GLIDE + PAUSE) { demo.k++; demo.t = 0; if (demo.k >= demo.parts.length) demo.run = newRun(demo.board, { contacts: true }); }
     }
   } else if (demo.run.state === 'running') {
     for (let t = 0; t < dt && demo.run.state === 'running'; t += STEP) {
       demo.roll += demo.run.ball.vx * STEP / R; stepRun(demo.run, STEP);
       for (const e of demo.run.events.splice(0)) {
+        if (e.type === 'touch') demo.scene.contact(e);
         if (e.type === 'boing' && e.part) demo.scene.boing(e.part);
         if (e.type === 'won') { demo.won = true; const g = demo.board.level.goal; demo.scene.burst(g.c + 1, g.r + 0.3, [demo.scene.C.yellow, demo.scene.C.pink, demo.scene.C.cyan], 30, 6); }
       }

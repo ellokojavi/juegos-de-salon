@@ -163,6 +163,8 @@ export function newRun(board, opts = {}) {
     fans: parts.filter(p => p.type === 'fan'),
     goal: level.goal, t: 0, still: 0, state: 'running', events: [],
     path: opts.path ? [] : null,
+    // With `contacts`, every step the ball presses on a surface says where and how hard ('touch'), for the drawing only
+    contacts: !!opts.contacts,
   };
 }
 
@@ -194,6 +196,7 @@ export function stepRun(run, dt) {
     b.x += nx * (R - d); b.y += ny * (R - d);
     const vn = b.vx * nx + b.vy * ny;
     if (vn >= 0) continue;
+    if (run.contacts) run.events.push({ type: 'touch', x: cx, y: cy, v: -vn, seg: s });
     if (s[4] === 'spring' && ny < -0.5) {
       b.vy = -SPRING_V; b.vx *= 0.9;
       run.events.push({ type: 'boing', part: s[5] });
