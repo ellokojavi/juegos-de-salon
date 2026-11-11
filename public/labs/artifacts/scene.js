@@ -3,7 +3,7 @@
  * no image files. A night sky with stars and hills over a dotted grid, the floor that blows the ball up
  * marked in cyan; ramps and planks as yellow beams with pink joints (the level's fixed ones in steel
  * grey), a coiled trampoline that squashes, a fan whose blades spin and whose breeze shows, violet
- * girders, spikes as Aletazo's spinning neon stars on a red rail, a green cup with pink rims, a cyan glass
+ * girders, spikes as Aletazo's spinning neon stars on a red rail, a green cup with pink rims, a cyan neon
  * tube the ball waits in and drops out of, a flat pink ball. What the ball touches lights up where it touches, as strong as the
  * blow: a faint line where it rolls, a flash and a ring on a hard hit, a few sparks on the hardest.
  * Colours are read from the design tokens of base.css.
@@ -156,7 +156,7 @@ export function escena(canvas) {
     ctx.restore();
     for (const x of [x0, x1]) { ctx.fillStyle = C.pink; ctx.strokeStyle = '#fff'; ctx.lineWidth = X(0.04); ctx.beginPath(); ctx.arc(X(x), X(top), X(0.11), 0, 7); ctx.fill(); ctx.stroke(); }
   }
-  /* The pipe the ball drops from: a cyan neon tube of glass, the ball waiting inside it (the start's cell is
+  /* The pipe the ball drops from: a cyan neon tube, the ball waiting hidden inside it (the start's cell is
      kept free, so the tube fits in it), light flowing down it, a bright rim at its mouth */
   const PIPE = { top: -0.3, bot: 0.96, w: 0.42 };
   /** The soft cone of light under the mouth, drawn with the floor so the parts sit over it */
@@ -165,12 +165,12 @@ export function escena(canvas) {
     cone.addColorStop(0, 'rgba(46,230,214,0.2)'); cone.addColorStop(1, 'rgba(46,230,214,0)');
     ctx.fillStyle = cone; ctx.beginPath(); ctx.moveTo(X(x - w), X(bot)); ctx.lineTo(X(x + w), X(bot)); ctx.lineTo(X(x + w * 1.8), X(bot + 1.2)); ctx.lineTo(X(x - w * 1.8), X(bot + 1.2)); ctx.fill();
   }
-  /** The tube itself, drawn over the ball: tinted glass, so the waiting ball shows dimmed inside it */
+  /** The tube itself, opaque and drawn over the ball, so the ball waits hidden inside it until it drops out */
   function pipe(s) {
     const { top, bot, w } = PIPE, x = s.x;
     ctx.save();
     ctx.beginPath(); ctx.roundRect(X(x - w), X(top), X(w * 2), X(bot - top), X(0.1));
-    ctx.fillStyle = 'rgba(21,7,38,0.5)'; ctx.fill();
+    ctx.fillStyle = C.bg1; ctx.fill();
     ctx.save(); ctx.clip();
     ctx.strokeStyle = 'rgba(46,230,214,0.5)'; ctx.lineWidth = X(0.05); ctx.lineCap = 'round';
     for (let k = 0; k < 3; k++) { const y = top + ((clock * 0.9 + k / 3) % 1) * (bot - top); ctx.beginPath(); ctx.moveTo(X(x - 0.16), X(y - 0.08)); ctx.lineTo(X(x), X(y)); ctx.lineTo(X(x + 0.16), X(y - 0.08)); ctx.stroke(); }
@@ -262,7 +262,7 @@ export function escena(canvas) {
       ctx.restore();
     }
     basketFront(level.goal, s.won);
-    pipe(level.start);   // over the ball: it waits inside the tube and drops out of its mouth
+    pipe(level.start);   // over the ball: it waits hidden inside the tube and drops out of its mouth on Probar
     // particles
     for (const p of sparks) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.colour; ctx.beginPath(); ctx.arc(X(p.x), X(p.y), X(p.size), 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
