@@ -13,6 +13,9 @@
 /* ---------- The waiting room: the name and its line ---------- */
 .sd-cabeza { display: grid; gap: var(--s-4); justify-items: center; }
 .sd-titulo { margin: 0; }
+/* One word: never broken across lines («SUDOK / U» on a phone, the owner saw it), and as wide as the cover, not the demo */
+.sd-cabeza { width: 100%; justify-self: stretch; text-align: center; }
+.sd-nombre { white-space: nowrap; }
 .sd-lema { margin: 0; color: var(--muted); font-weight: 700; text-align: center; }
 body.sd-hard .sd-nombre { background: linear-gradient(90deg, var(--sd-knob-hard), var(--yellow), var(--sd-knob-hard)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
