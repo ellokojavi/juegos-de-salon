@@ -388,8 +388,8 @@
       const bajo = puesto ? [el('span', { id: 'uad-pts' }, fmt(P.ptsN, { n: miles(pts) })), ' · ', quedan(hoy)] : [quedan(hoy)];
       const dias = e.racha ? fmt(e.racha === 1 ? P.dia1 : P.dias, { n: e.racha }) : '';
       const partes = [
-        e.racha ? [`🔥 ${dias}`, `${T.rachaLabel}: ${dias}`] : null,
-        e.comodines ? [`🧊 ${e.comodines}`, `${T.comodinesLabel}: ${e.comodines}`] : null,
+        e.racha ? [`🔥 ${dias}`, `${mayus(T.rachaLabel)}: ${dias}`] : null,
+        e.comodines ? [`🧊 ${e.comodines}`, `${mayus(T.comodinesLabel)}: ${e.comodines}`] : null,
         // Played today: a check and what it added, «✅ +125 hoy» (the owner's request)
         hecho ? [`✅ ${fmt(P.hoyMas, { p: miles(hecho.points) })}`, fmt(P.hoyMas, { p: `${miles(hecho.points)} ${P.pts}` })] : null,
       ].filter(Boolean);
@@ -398,7 +398,7 @@
         grande,
         el('p', { class: 'estado bajo' }, ...bajo),
         ...(aviso ? [el('p', { class: 'estado lugar', id: 'uad-lugar' }, aviso)] : []),
-        ...(partes.length ? [el('p', { class: 'estado uad-linea', id: 'uad-trio', 'aria-label': partes.map(x => x[1]).join('. ') }, partes.map(x => x[0]).join(' · '))] : []),
+        ...(partes.length ? [el('p', { class: 'estado uad-linea', id: 'uad-trio', role: 'img', 'aria-label': partes.map(x => x[1]).join('. ') }, partes.map(x => x[0]).join(' · '))] : []),
         ...(conComo ? [como()] : []));
     }
     /** «¿Cómo se ganan los puntos?»: opens the rules. */
