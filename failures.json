@@ -2139,6 +2139,19 @@
         "stat": "1 file(s) +2 −0: changelog/bodega-aletazo.md"
       },
       "flaky": false
+    },
+    {
+      "run": 42970045411,
+      "check": "tests",
+      "pr": 1377,
+      "branch": "cover-gap-12",
+      "commit": "1dfd3c9dec1db607ba70a7c2f3288f3c84ed7cd4",
+      "test": "README up to date",
+      "error": "ERROR · appeared e2e: cover-gaps.mjs",
+      "signature": "4efb9bb88e",
+      "date": "2026-11-11T06:08:19.629Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
