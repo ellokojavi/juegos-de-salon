@@ -2116,7 +2116,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\nError: Uncaught TypeError: Cannot read properties of null (reading 'textContent')",
       "signature": "ee14a725da",
       "date": "2026-11-11T02:37:50.993Z",
-      "fix": null,
+      "fix": {
+        "commit": "f0cfe3fb154fea5856f8c8495a4a0d3c863ddfde",
+        "date": "2026-11-11T02:44:51.658Z",
+        "stat": "1 file(s) +2 −2: tools/e2e/microgames/lab.mjs"
+      },
       "flaky": false
     }
   ]
