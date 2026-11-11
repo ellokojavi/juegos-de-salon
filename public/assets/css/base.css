@@ -441,6 +441,9 @@ details.panel summary::-webkit-details-marker { display: none; }
 }
 .sound-toggle:active, .icon-btn:active { transform: scale(0.92); }
 .topbar .tools { display: flex; gap: 8px; align-items: center; }
+/* With the cover's share button (cover-share.js) a 320 px bar has no room for the game's chip: the
+   cover's title right below names the game, so the chip steps aside there */
+@media (max-width: 359px) { .topbar:has(#btn-share-cover:not([hidden])) .tools .chip { display: none; } }
 
 /* --- Transición entre turnos (overlay compartido: salud / pásale el celular) --- */
 .handoff {

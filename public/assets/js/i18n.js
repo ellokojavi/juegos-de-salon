@@ -202,6 +202,9 @@ export const COMMON = {
     shareResult: '📤 Compartir mi resultado',
     shareSoloContext: 'Jugando solo',
     shareSoloCta: '🤔 ¿Me ganas? Se juega gratis desde el celular:',
+    // A game's cover shares its own link (cover-share.js), behind the flag `cover-share`
+    shareGameCta: '👉 ¿Jugamos? Es gratis y se juega desde el celular:',
+    shareGame: 'Compartir este juego',
     shareSoloImage: '🤔 ¿Me ganas?',
     shareCopied: '¡Copiado! Pégalo en el chat.',
     shareDownloaded: 'La imagen se descargó y el texto quedó copiado.',
@@ -455,6 +458,8 @@ export const COMMON = {
     shareResult: '📤 Share my result',
     shareSoloContext: 'Playing solo',
     shareSoloCta: '🤔 Can you beat me? It\'s free to play on your phone:',
+    shareGameCta: '👉 Let\'s play this. It\'s free and you play it on your phone:',
+    shareGame: 'Share this game',
     shareSoloImage: '🤔 Can you beat me?',
     shareCopied: 'Copied! Paste it in the chat.',
     shareDownloaded: 'The image was downloaded and the text was copied.',
@@ -705,6 +710,8 @@ export const COMMON = {
     shareResult: '📤 Compartilhar resultado',
     shareSoloContext: 'Jogando sozinho',
     shareSoloCta: '🤔 Consegue me vencer? É grátis e se joga pelo celular:',
+    shareGameCta: '👉 Bora jogar isso? É grátis e se joga pelo celular:',
+    shareGame: 'Compartilhar este jogo',
     shareSoloImage: '🤔 Consegue me vencer?',
     shareCopied: 'Copiado! Cole no chat.',
     shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
@@ -960,6 +967,9 @@ export function coverLangToggle(onChange) {
     slot.replaceChildren();
     slot.hidden = true;
   };
+  // The cover's share button, in the top bar beside the language (cover-share.js)
+  // lab: #seccion-cover-share
+  flag('cover-share').then(on => { if (on) import('./cover-share.js').then(m => m.mountCoverShare({ cover: slot })); }).catch(() => {});
   // Published for everyone: no wait and no flash; in the lab, once the key answers
   // lab: #seccion-compact-lang
   if (stateOf(cachedFlags(), 'compact-lang') === 'all') queueMicrotask(compact);
