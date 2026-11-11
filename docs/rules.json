@@ -140,18 +140,35 @@
    "debt": "docs/design-allowlist.json"
   },
   {
-   "id": "media-margins",
-   "title": "A picture or clip inside a card sits with even margins: as far from the top as from the sides, or flush on all of them",
+   "id": "key-margins",
+   "title": "The key margins are even: centered column, even card padding, even media in a card (DESIGN.md rule 7)",
    "doc": "docs/DESIGN.md",
    "form": [
     "check"
    ],
    "enforcedBy": [
+    "tools/e2e/margins-common.mjs",
     "tools/e2e/splash/margins.mjs"
    ],
    "applies": [
-    "public/assets/css/splash.css",
+    "public/**/*.css",
     "public/assets/js/splash.js"
+   ]
+  },
+  {
+   "id": "preview-live",
+   "title": "A preview link is given only once the preview serves that commit",
+   "doc": "docs/PREVIEWS.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    ".github/workflows/preview.yml",
+    "tools/agents/preview-ready.mjs"
+   ],
+   "applies": [
+    ".github/workflows/preview.yml",
+    ".github/previews/update.sh"
    ]
   },
   {

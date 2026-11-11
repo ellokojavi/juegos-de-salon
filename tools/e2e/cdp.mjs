@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
 import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs';
 import { measureOverlap } from './spacing-common.mjs';
+import { measureMargins } from './margins-common.mjs';
 import { isFolder as isFolder } from './output.mjs';
 // CHROME: another path to the browser (Linux, a cloud session)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -177,6 +178,11 @@ export async function launch({ port: requested, dir, out, width = 390, height = 
           pairs = first.filter(p => again.has(who(p)));
         }
         if (pairs.length) console.log(`✗ ${name}: buttons on top of each other (U-12): ${pairs.join(', ')}`);
+      } catch (_) { /* no page */ }
+      // And the design system's key margins (DESIGN.md §3 rule 7, M-1…M-3): centered column, even padding, even media
+      try {
+        const off = JSON.parse(await api.evaluate(measureMargins));
+        if (off.length) console.log(`✗ ${name}: uneven margins (DESIGN.md rule 7): ${off.join(', ')}`);
       } catch (_) { /* no page */ }
     },
     close: () => { ws.close(); chrome.kill(); },

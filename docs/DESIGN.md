@@ -208,12 +208,20 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
    a ranking that is its own section under the stage takes it from `ranking.css`. No game sets
    that space itself. The end-to-end `spacing` check (`tools/e2e/cover-gaps.mjs`, run by
    `conformance.mjs` for every game with a `game.json` and by ¡Al toque!'s script) measures it.
-7. **A picture or clip inside a card has even margins** (the owner, 2026-11-11). It is flush with the
-   card on all three sides, or, when it is narrower than the card (a short screen, a square clip), it
-   keeps the same gap above it as on each side, and gets rounded corners. Never flush on one side
-   with gutters on the others. The splash's big window does it in `splash.css` (`--hero-w`,
-   `--hero-gap`); the end-to-end check `tools/e2e/splash/margins.mjs` measures every `hero` campaign
-   on a phone, a short phone, a laptop and a big screen.
+7. **The key margins are even** (the owner, 2026-11-11: "márgenes clave"). What the eye compares
+   side against side is the same on both, measured on every screenshot of every end-to-end script
+   (`tools/e2e/margins-common.mjs`, called by `b.shot()` in `cdp.mjs` and reported by `look.mjs`):
+   - **M-1 Centered column:** the app's column (`.app`) is as far from the window's left as from its right.
+   - **M-2 Even padding:** a card (`.panel`, `.notice`, `.mode`, `.hoja`, the splash window and its card)
+     has the same padding on its left and its right.
+   - **M-3 Even media:** a picture or clip that opens a card is flush with it on top and both sides, or,
+     narrower than the card (a short screen, a square clip), keeps the same gap above as on each side,
+     rounded; never flush on one side with gutters on the others. The splash's big window does it in
+     `splash.css` (`--hero-w`, `--hero-gap`), and `tools/e2e/splash/margins.mjs` also measures every
+     `hero` campaign on a phone, a short phone, a laptop and a big screen.
+   - With them: blocks 12 px apart (rule 6) and the board's 24 px of air before its buttons (U-11, D-309).
+   A deliberate exception is marked `data-margins-ok` on the element, with its reason in a comment
+   beside it. A new kind of card joins `CARDS` in `margins-common.mjs` in the PR that creates it.
 8. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
    lint cannot: whether a colour means what it should, whether a title took the right step,
    whether a new control should be a component.
