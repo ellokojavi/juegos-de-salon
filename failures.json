@@ -2133,7 +2133,11 @@
       "error": "AssertionError [ERR_ASSERTION]: changelog/bodega-aletazo.md: the first line must be \"level: patch\" (or minor, or major)\ncode: 'ERR_ASSERTION',\nexpected: true,",
       "signature": "498082a772",
       "date": "2026-11-11T05:42:52.295Z",
-      "fix": null,
+      "fix": {
+        "commit": "c43fb1877b1baa06d542439ffcbcdd022238f721",
+        "date": "2026-11-11T05:45:01.218Z",
+        "stat": "1 file(s) +2 −0: changelog/bodega-aletazo.md"
+      },
       "flaky": false
     }
   ]
