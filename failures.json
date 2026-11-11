@@ -2344,6 +2344,19 @@
         "stat": "2 file(s) +4 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 43107488361,
+      "check": "end-to-end",
+      "pr": 1404,
+      "branch": "claude/eager-wright-ru9xmi",
+      "commit": "01bcbc97bebc7a6c4e1adfb84066d4780a383b41",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ ¿Dónde queda?: the trial clock fits between back and the sound (147 | 0,0 | 226)",
+      "signature": "719a040e34",
+      "date": "2026-11-11T22:11:26.535Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
