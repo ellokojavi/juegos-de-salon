@@ -423,7 +423,13 @@ const ROOT = new URL('../../', import.meta.url);
 
 function loadStyle() {
   if (document.getElementById('splash-css')) return;
-  const link = Object.assign(document.createElement('link'), { id: 'splash-css', rel: 'stylesheet', href: new URL('assets/css/splash.css', ROOT).href });
+  // Versioned with the release (the meta set-version.py stamps): built here, not in the page's HTML, so the
+  // content hashes do not reach it, and a browser kept the old splash.css next to the new splash.js (the
+  // owner saw Sudoku's icon at its natural size in the panel's preview)
+  const release = document.querySelector('meta[name="release"]')?.content;
+  const href = new URL('assets/css/splash.css', ROOT);
+  if (release) href.searchParams.set('v', release);
+  const link = Object.assign(document.createElement('link'), { id: 'splash-css', rel: 'stylesheet', href: href.href });
   document.head.append(link);
 }
 
@@ -490,6 +496,48 @@ export function evenHeroMargins(card) {
   setTimeout(fit, 400);
 }
 
+/**
+ * Whether an open splash window looks right (the owner, 2026-11-11: a campaign is checked when it is made and
+ * when it is switched on, in the panel's preview and in the real home page). Pure DOM reading: `doc` is the
+ * page with the window open (an iframe's document from the panel, the page itself in the end-to-end tests).
+ * Returns the problems found, in plain words; none means it looks right:
+ * - its texts are there (a title, and each card's name or a clip);
+ * - nothing drawn as an icon or emoji is bigger than ICON_MAX (a drawing at its natural size);
+ * - its stylesheet is the one of this release (a stale splash.css draws a new window wrong);
+ * - the whole window fits the screen, Play included;
+ * - a big window's clip is flush with its card (DESIGN.md §3 rule 7, M-3).
+ */
+export const ICON_MAX = 64;
+export function splashHealth(doc = document) {
+  const win = doc.defaultView || globalThis, out = [];
+  const card = doc.querySelector('.splash');
+  if (!card) return ['the window did not open'];
+  if (!card.querySelector('.splash-titulo')?.textContent.trim()) out.push('it has no title');
+  for (const it of card.querySelectorAll('.splash-item')) {
+    if (!it.querySelector('h3')?.textContent.trim() && !it.querySelector('.splash-media')) out.push('a card with neither a name nor a picture');
+  }
+  for (const img of card.querySelectorAll('img:not(.splash-media), svg')) {
+    const r = img.getBoundingClientRect();
+    if (Math.max(r.width, r.height) > ICON_MAX) out.push(`an icon drawn ${Math.round(r.width)} px wide (at most ${ICON_MAX})`);
+  }
+  const release = doc.querySelector('meta[name="release"]')?.content;
+  const css = doc.getElementById('splash-css')?.getAttribute('href') || '';
+  if (release && !css.includes(release)) out.push('its stylesheet is not this release\'s');
+  const over = card.scrollHeight - card.clientHeight;
+  if (over > 2) out.push(`the window is ${over} px taller than the screen: Play may be out of sight`);
+  if (card.classList.contains('splash--hero')) {
+    const m = card.querySelector('.splash-media'), item = m?.parentElement;
+    if (m && item) {
+      const a = m.getBoundingClientRect(), b = item.getBoundingClientRect(), s = win.getComputedStyle(item);
+      const top = a.top - b.top - (parseFloat(s.borderTopWidth) || 0), left = a.left - b.left - (parseFloat(s.borderLeftWidth) || 0);
+      const right = b.right - (parseFloat(s.borderRightWidth) || 0) - a.right;
+      const row = s.flexDirection === 'row';
+      if (Math.abs(top) > 1 || Math.abs(left) > 1 || (!row && Math.abs(right) > 1)) out.push(`its clip is not flush with its card (${Math.round(top)} px above, ${Math.round(left)} / ${Math.round(right)} px at the sides)`);
+    }
+  }
+  return out;
+}
+
 /** Each item as the window draws it: a game of games.js, or the campaign's own content. */
 async function resolve(items, lang) {
   const needsGames = items.some(i => i.game);
@@ -552,7 +600,9 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   // A game drawn as an icon (`icon`, Sudoku's icon.svg: there is no sudoku emoji) shows the drawing in place of the emoji
   if (c.icon) {
     const box = node('div', 'splash-emoji splash-icon');
-    const img = node('img'); Object.assign(img, { src: new URL(c.icon, ROOT).href, alt: '', decoding: 'async' });
+    const img = node('img'); Object.assign(img, { src: new URL(c.icon, ROOT).href, alt: '', decoding: 'async', width: 48, height: 48 });
+    // its size also inline: a drawing must never show at its natural size, even before splash.css loads
+    Object.assign(img.style, { width: '1em', height: '1em' });
     box.append(img); head.append(box);
   } else if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
   if (c.kicker) head.append(node('p', 'splash-kicker', pick(c.kicker, lang)));
@@ -604,7 +654,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
     }
     const body = node('div', 'splash-item-cuerpo');
     const h3 = node('h3', null, it.icon ? it.name : `${it.emoji} ${it.name}`.trim());
-    if (it.icon) { const img = node('img', 'splash-icon-inline'); Object.assign(img, { src: it.icon, alt: '', decoding: 'async' }); h3.prepend(img); }
+    if (it.icon) { const img = node('img', 'splash-icon-inline'); Object.assign(img, { src: it.icon, alt: '', decoding: 'async', width: 24, height: 24 }); Object.assign(img.style, { width: '1.1em', height: '1.1em' }); h3.prepend(img); }
     body.append(h3);
     if (it.text) body.append(node('p', null, it.text));
     if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', it.cta ?? `▶ ${pick(UI.play, lang)}`));

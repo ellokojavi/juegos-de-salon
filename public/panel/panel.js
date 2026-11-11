@@ -35,7 +35,7 @@ import {
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { feedbackRows, countStages, STAGES, FILTERS } from './feedback.js';
-import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
+import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS, splashHealth } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { dayOf as diaDe, toLocalInput, checkPick, switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
@@ -1921,10 +1921,38 @@ function vistaSplash(today) {
    and shrunk. It shows still (`&paused`) until ▶ is pressed, like a video; then it plays for this visit */
 function vistazo(id, nombre, playing) {
   const play = () => { S.campPeek.add(id); render(); };
-  return el('div', { class: 'vistazo-marco', 'data-play': playing ? '1' : '0' },
-    el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' }),
-    playing ? null : el('button', { type: 'button', class: 'vistazo-play', 'aria-label': `Play ${nombre}`, title: 'Play', onClick: play },
-      el('span', { 'aria-hidden': 'true' })));
+  // The preview checks itself (splashHealth, the owner's request): ✓ when the window looks right, ⚠️ with
+  // what is wrong otherwise, so a campaign is not switched on looking broken
+  const salud = el('p', { class: 'vistazo-salud muted small', role: 'status' }, 'Checking the preview…');
+  const frame = el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' });
+  frame.addEventListener('load', () => revisarVistazo(frame, salud));
+  return el('div', { class: 'vistazo' },
+    el('div', { class: 'vistazo-marco', 'data-play': playing ? '1' : '0' }, frame,
+      playing ? null : el('button', { type: 'button', class: 'vistazo-play', 'aria-label': `Play ${nombre}`, title: 'Play', onClick: play },
+        el('span', { 'aria-hidden': 'true' }))),
+    salud);
+}
+
+/* Waits for the window inside the preview (up to 6 s) and writes what splashHealth finds under it */
+function revisarVistazo(frame, salud) {
+  const t0 = Date.now();
+  const tick = () => {
+    let doc = null;
+    try { doc = frame.contentDocument; } catch { /* another origin: nothing to read */ }
+    const card = doc?.querySelector('.splash');
+    if (!card && Date.now() - t0 < 6000) return setTimeout(tick, 250);
+    // a moment for its fonts, clip and fit (evenHeroMargins) to settle
+    setTimeout(() => {
+      // read again: the page inside may have navigated (its `?splash` dropped from the address) meanwhile
+      let now = null;
+      try { now = frame.contentDocument; } catch { /* another origin */ }
+      if (!now?.defaultView) return;
+      const issues = splashHealth(now);
+      salud.textContent = issues.length ? `⚠️ ${issues.join(' · ')}` : '✓ Looks right on a phone';
+      salud.classList.toggle('vistazo-salud--mal', issues.length > 0);
+    }, 900);
+  };
+  tick();
 }
 
 /* 🧩 Site features and 🎨 skins (D-477): `controls/`, read by the site through assets/js/controls.js */

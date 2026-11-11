@@ -8,7 +8,7 @@ in a row in the lab. «¡Al toque!» means "right away" (the owner first called 
 ## Summary
 
 - **Where:** `https://juegosdesalon.cl/labs/microgames/`, in the lab (each person's key, D-281, D-284).
-  Id `microgames` in the usage signal; the best run is `microgames:best-points` (points) and `microgames:best` (stars, out of 30). Not in `games.js`: lab only.
+  Id `microgames` in the usage signal (named «¡Al toque!» in the panel and every list inside by `LAB_NAMES` in games.js, `game-labels.test.mjs`); the best run is `microgames:best-points` (points) and `microgames:best` (stars, out of 30). Not in `games.js`: lab only.
 - **For whom:** one player, on a phone held upright.
 - **Language:** Spanish, English and Portuguese (C-3), with the toggle on the cover. The Spanish is written
   where each text is used, inside `t('…')`; `rules.js` has its English and Portuguese keyed by that
