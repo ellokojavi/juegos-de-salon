@@ -4,10 +4,11 @@
 //
 //   python3 -m http.server 8791 -d public &
 //   node marketing/splash/sudoku-clip.cjs /tmp/sudoku-frames
-//   ffmpeg -framerate 30 -i /tmp/sudoku-frames/f%04d.png -vf "scale=480:-2,format=yuv420p" \
+//   ffmpeg -framerate 30 -i /tmp/sudoku-frames/f%04d.png -vf "crop=iw-12:ih-12:6:6,scale=480:480,format=yuv420p" \
 //     -c:v libx264 -crf 26 -preset slow -movflags +faststart -an public/assets/splash/sudoku.mp4
 //
 // The poster (sudoku-start.jpg) is the first frame and the still (sudoku.jpg) the last.
+// The crop drops the board's own white rounded border: the splash's media frame is the border (no double edge).
 const { chromium } = require('playwright');
 const OUT = process.argv[2];
 (async () => {
