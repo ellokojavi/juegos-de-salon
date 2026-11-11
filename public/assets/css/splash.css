@@ -44,9 +44,6 @@
 }
 .splash-cabeza { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 28px; }
 .splash-emoji { font-size: 3rem; line-height: 1; animation: bounce 1.6s ease-in-out infinite; }
-/* A game with no emoji draws its icon instead (Sudoku's 3×3): the emoji's size, inline in a name */
-.splash-icon { display: block; width: 1em; height: 1em; margin: 0 auto; }
-.splash-icon-inline { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -0.18em; }
 .splash-kicker { margin: 0; font-weight: 900; font-size: var(--fs-75); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
 .splash-titulo {
   margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.04em;

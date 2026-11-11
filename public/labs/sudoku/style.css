@@ -32,8 +32,8 @@
 .cell.er { border-bottom: 0; }
 .cell.bc { border-right: 2px solid var(--ink); }
 .cell.br { border-bottom: 2px solid var(--ink); }
-/* The 6×6 board's digits are bigger, as its cells are */
-.board[data-n="6"] .cell { font-size: clamp(1.3rem, calc(var(--side) / 11), 2.2rem); }
+/* The 6×6 board's digits are bigger, as its cells are (in vw: the board is about the screen's width, up to 460 px) */
+.board[data-n="6"] .cell { font-size: clamp(1.7rem, 9vw, 2.6rem); }
 .cell.given { color: var(--ink); }
 .cell.peer { background: var(--glass); }
 .cell.same { background: rgb(var(--cyan-rgb) / 0.22); }

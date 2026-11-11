@@ -178,24 +178,24 @@ export const CAMPAIGNS = {
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
   },
-  // Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
+  // 🧮 Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
   // the lab: `requires` keeps it unseen until flags/sudoku is on for this visitor (D-517), and it is not in
   // ACTIVE. Its picture is the real board half solved. Sudoku is not in games.js while in the lab, so the
   // item carries its own texts and link: the launch PR points `href` at the game's new folder (or uses the
   // game's own entry once it is in games.js)
   'sudoku-ya': {
-    emoji: '#️⃣', icon: 'labs/sudoku/icon.svg',
+    emoji: '🧮',
     requires: ['sudoku'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
     title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
     hero: true,
     items: [{
-      emoji: '#️⃣', icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', img: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      emoji: '🧮', href: 'labs/sudoku/', img: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
-        es: 'Mini sudoku de 6×6 para una partida rápida, o el clásico de 9×9. Con tu puntaje en el ranking.',
-        en: 'A 6×6 mini sudoku for a quick game, or the classic 9×9. With your score on the ranking.',
-        pt: 'Mini sudoku de 6×6 para uma partida rápida, ou o clássico de 9×9. Com sua pontuação no ranking.',
+        es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
+        en: 'Fill the board with 1 to 9 without repeating in a row, column or box. Easy or hard, with your score on the ranking.',
+        pt: 'Preencha o tabuleiro com números de 1 a 9 sem repetir na linha, coluna ou quadro. No fácil ou no difícil, com sua pontuação no ranking.',
       },
     }],
   },
@@ -445,7 +445,6 @@ async function resolve(items, lang) {
       text: pick(i.text, lang) ?? pick(g?.tagline, lang) ?? '',
       href: i.href ? new URL(i.href, ROOT).href : g?.path ? new URL(g.path, ROOT).href : null,
       img: i.img ? new URL(i.img, ROOT).href : null,
-      icon: i.icon ? new URL(i.icon, ROOT).href : null,
       still: i.still ? new URL(i.still, ROOT).href : null,
       ratio: i.ratio ?? null,
       smooth: !!i.smooth,
@@ -492,9 +491,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       const tick = setInterval(() => { if (!score.isConnected) return clearInterval(tick); s = (s + 50) % 1e6; score.textContent = `SCORE ${String(s).padStart(6, '0')}`; }, 120);
     }
   }
-  // A game with no emoji of its own draws its icon (`icon`, an image path; Sudoku's 3×3, 2026-11-11)
-  if (c.icon) { const im = node('img', 'splash-emoji splash-icon'); im.src = new URL(c.icon, ROOT).href; im.alt = ''; head.append(im); }
-  else if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
+  if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
   if (c.kicker) head.append(node('p', 'splash-kicker', pick(c.kicker, lang)));
   const h = node('h2', 'splash-titulo', pick(c.title, lang));
   h.id = 'splash-titulo';
@@ -543,9 +540,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       continue;
     }
     const body = node('div', 'splash-item-cuerpo');
-    const h3 = node('h3', null, `${it.icon ? '' : it.emoji} ${it.name}`.trim());
-    if (it.icon) { const im = node('img', 'splash-icon-inline'); im.src = it.icon; im.alt = ''; h3.prepend(im, ' '); }
-    body.append(h3);
+    body.append(node('h3', null, `${it.emoji} ${it.name}`.trim()));
     if (it.text) body.append(node('p', null, it.text));
     if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', it.cta ?? `▶ ${pick(UI.play, lang)}`));
     a.append(body);
