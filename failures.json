@@ -2186,6 +2186,19 @@
       "date": "2026-11-11T15:09:58.631Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43068174129,
+      "check": "end-to-end",
+      "pr": 1395,
+      "branch": "claude/serene-hypatia-2i9nus",
+      "commit": "c8351b7467a09af264abb7f6a1fbcbfe149b82d7",
+      "test": "(end-to-end)",
+      "error": "no failing test found in the log",
+      "signature": "f2f83772a2",
+      "date": "2026-11-11T17:40:16.505Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
