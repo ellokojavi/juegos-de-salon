@@ -2210,7 +2210,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/labs/microgames/verdict.test.mjs",
       "signature": "fa8a4b5c96",
       "date": "2026-11-11T18:16:16.207Z",
-      "fix": null,
+      "fix": {
+        "commit": "c54e6658d60b1a429994e4916ae6ed0a7cb443a2",
+        "date": "2026-11-11T18:20:35.601Z",
+        "stat": "3 file(s) +10 −12: public/labs/microgames/rules.test.mjs, public/labs/microgames/style.css, public/labs/microgames/verdict.test.mjs"
+      },
       "flaky": false
     }
   ]
