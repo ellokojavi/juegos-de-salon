@@ -168,7 +168,7 @@ and ranking table). It is in the three languages.
 - **Launched by a flag** (`lanza: 'aletazo'`, D-517): hidden from the home page, the search, the filters,
   /records/ and a new cup's pool until `flags/aletazo` is *all*. The `launch` workflow switches it, and the
   splash `aletazo-ya`, at 2026-11-09T08:00:00Z (00:00 Pacific, D-529), dispatched by a scheduled task. Its
-  card in /labs/ (`#seccion-aletazo`) keeps the switch and points to `/flap/`, with the prototype as a link.
+  card in /labs/ (`#seccion-aletazo`, in La Bodega since the launch) keeps the switch and points to `/flap/`, with the prototype as a link.
 - **The cup's screen** (`ui.js`): the waiting room shows the title with the swaying 🐤, the line «Un toque,
   un aletazo.» and the credit to Flappy Bird, over the cover's demo (the autopilot flying by night). After
   the cup's countdown the bird hovers with «👆 Toca para aletear» until the first tap; the HUD, levels,
