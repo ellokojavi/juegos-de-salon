@@ -2267,6 +2267,19 @@
         "stat": "2 file(s) +4 −0: docs/facts.json, tools/e2e/README.md"
       },
       "flaky": false
+    },
+    {
+      "run": 43083243411,
+      "check": "end-to-end",
+      "pr": 1401,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "12c138aabbf8087339b67862e4c8376ecde118a5",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ tres-juegos-demo-es: uneven margins (DESIGN.md rule 7): M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides, M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides, M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides",
+      "signature": "85fedbafc5",
+      "date": "2026-11-11T19:15:39.060Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
