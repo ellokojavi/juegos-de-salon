@@ -93,19 +93,28 @@ jobs:
           FOLDER: ${{ steps.build.outputs.folder }}
         run: .github/previews/update.sh "$FOLDER" "$RUNNER_TEMP/site"
 
-      # One comment per PR, updated on each push
+      # One comment per PR, updated on each push. The link is given only once the preview serves this
+      # commit (the owner's rule, 2026-11-11: a link that still shows the old version confuses): first a
+      # ⏳ without the link, then preview-ready.mjs waits for the commit to be live and puts the link in
       - if: steps.visual.outputs.show == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
           SHA: ${{ github.event.pull_request.head.sha }}
-          FOLDER: ${{ steps.build.outputs.folder }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
-          url="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/juegos-de-salon-previews/$FOLDER/"
-          body=$(printf '<!-- preview -->\n🔍 **Preview of this PR:** %s\n\nUpdated to %s; the link shows it about two minutes after this comment changes. Rooms are real (the real Firebase), but plays do not reach the panel or the rankings. To see the lab, open your previews lab link once per browser (docs/PREVIEWS.md, D-429).' "$url" "${SHA:0:7}")
-          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate --jq '.[] | select(.body | startswith("<!-- preview -->")) | .id' | head -1)
-          if [ -n "$id" ]; then
-            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
+          say() {
+            id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate --jq '.[] | select(.body | startswith("<!-- preview -->")) | .id' | head -1)
+            if [ -n "$id" ]; then
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$1" > /dev/null
+            else
+              gh pr comment "$PR" -R "$GITHUB_REPOSITORY" --body "$1"
+            fi
+          }
+          say "$(printf '<!-- preview -->\n⏳ **Preview of %s on its way.** The link appears here once it shows this version (about two minutes).' "${SHA:0:7}")"
+          if out=$(node tools/agents/preview-ready.mjs "$BRANCH" "$SHA" --wait 10); then
+            url=${out#ready }
+            say "$(printf '<!-- preview -->\n🔍 **Preview of this PR, live at %s:** %s\n\nRooms are real (the real Firebase), but plays do not reach the panel or the rankings. To see the lab, open your previews lab link once per browser (docs/PREVIEWS.md, D-429).' "${SHA:0:7}" "$url")"
           else
-            gh pr comment "$PR" -R "$GITHUB_REPOSITORY" --body "$body"
+            say "$(printf '<!-- preview -->\n⚠️ **The preview of %s did not go live in 10 minutes.** %s\n\nRe-run the Preview check (docs/PREVIEWS.md, If something goes wrong).' "${SHA:0:7}" "$out")"
           fi

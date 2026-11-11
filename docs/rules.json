@@ -140,6 +140,38 @@
    "debt": "docs/design-allowlist.json"
   },
   {
+   "id": "key-margins",
+   "title": "The key margins are even: centered column, even card padding, even media in a card (DESIGN.md rule 7)",
+   "doc": "docs/DESIGN.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/margins-common.mjs",
+    "tools/e2e/splash/margins.mjs"
+   ],
+   "applies": [
+    "public/**/*.css",
+    "public/assets/js/splash.js"
+   ]
+  },
+  {
+   "id": "preview-live",
+   "title": "A preview link is given only once the preview serves that commit",
+   "doc": "docs/PREVIEWS.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    ".github/workflows/preview.yml",
+    "tools/agents/preview-ready.mjs"
+   ],
+   "applies": [
+    ".github/workflows/preview.yml",
+    ".github/previews/update.sh"
+   ]
+  },
+  {
    "id": "english",
    "title": "Every name in the repo is English; the Spanish ones left only shrink (D-316, D-354)",
    "doc": "CLAUDE.md",

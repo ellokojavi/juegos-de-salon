@@ -11,8 +11,13 @@ https://ellokojavi.github.io/juegos-de-salon-previews/<branch>/
 
 `.github/workflows/preview.yml` builds the PR's site on every push (as `publish.yml` builds the real
 one, plus `noindex` on every page and without the `CNAME`), puts it in the branch's folder of the
-`juegos-de-salon-previews` repo with `.github/previews/update.sh`, and comments the link on the PR (one
-comment, updated on each push). That repo publishes itself with its own Pages workflow, which
+`juegos-de-salon-previews` repo with `.github/previews/update.sh`, and comments on the PR (one
+comment, updated on each push). **A preview link is given only once it is live** (the owner, 2026-11-11:
+a link that still shows the old version confuses): the comment first says ⏳ without the link, and
+`tools/agents/preview-ready.mjs` waits until the preview's pages carry this commit (their `release`
+meta) before putting the link in. A session follows the same rule: before giving the owner a preview
+link, in a message or anywhere, it runs `node tools/agents/preview-ready.mjs` (its branch and HEAD by
+default) and gives the link only after `ready`. That repo publishes itself with its own Pages workflow, which
 `update.sh` writes on every push. When the PR closes its folder is deleted, and every push also
 deletes the folders of PRs no longer open: nothing piles up and nobody maintains it. The repo keeps a
 single commit, with no history.

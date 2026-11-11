@@ -86,6 +86,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
   the `end-to-end` check on GitHub is the gate.
 - **Big files**: nothing over 5 MB enters git (D-494).
+- **A preview link only when it is live**: run `node tools/agents/preview-ready.mjs` and give the owner the
+  link only after it says `ready` ([docs/PREVIEWS.md](docs/PREVIEWS.md)); the PR's comment does the same.
 
 ## Before proposing a merge (detail in [docs/MERGING.md](docs/MERGING.md))
 

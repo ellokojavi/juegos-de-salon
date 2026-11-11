@@ -86,9 +86,11 @@ for (const [id, c] of Object.entries(CAMPAIGNS)) {
   for (const k of ['title', 'lead', 'kicker', 'close']) {
     if (c[k]) for (const l of langs) assert.ok(c[k][l], `${id}.${k} without ${l}`);
   }
+  // a drawn icon in place of the emoji exists in the site
+  if (c.icon) assert.ok(existsSync(new URL(`../../${c.icon}`, import.meta.url)), `${id}: icon ${c.icon} does not exist`);
   for (const it of c.items || []) {
     // A clip from GIPHY is served from GIPHY (not copied into the site, for its rights); anything else is ours
-    for (const f of [it.img, it.video, it.still]) if (f) {
+    for (const f of [it.img, it.video, it.still, it.icon]) if (f) {
       if (/^https?:/.test(f)) assert.ok(f.startsWith('https://media.giphy.com/'), `${id}: ${f} is from outside the site and not GIPHY`);
       else assert.ok(existsSync(new URL(`../../${f}`, import.meta.url)), `${id}: ${f} does not exist`);
     }

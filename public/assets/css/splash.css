@@ -44,6 +44,9 @@
 }
 .splash-cabeza { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 28px; }
 .splash-emoji { font-size: 3rem; line-height: 1; animation: bounce 1.6s ease-in-out infinite; }
+/* A drawn icon in place of the emoji (`icon` in splash.js): the emoji's size, 1 em square */
+.splash-icon img { display: block; width: 1em; height: 1em; }
+.splash-icon-inline { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.3em; }
 .splash-kicker { margin: 0; font-weight: 900; font-size: var(--fs-75); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
 .splash-titulo {
   margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.04em;
@@ -119,16 +122,31 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
 .splash--hero { width: min(94vw, 440px); }
 .splash--hero .splash-items { grid-template-columns: 1fr; }
 .splash--hero .splash-item { flex-direction: column; }
-.splash--hero .splash-media { width: min(100%, calc(90dvh - 500px)); height: auto; aspect-ratio: var(--ratio, 1); align-self: center; }
+/* The clip's size is set by evenHeroMargins (splash.js): the card's whole width, or, when the window would
+   not fit the screen, smaller with the window narrowed to it, so it is always flush with its card (DESIGN.md
+   §3 rule 7, M-3; tools/e2e/splash/margins.mjs checks it). --hero-w is only the first guess, before it runs */
+.splash--hero .splash-media {
+  --hero-w: min(100%, calc(90dvh - 500px));
+  width: var(--hero-w); height: auto; aspect-ratio: var(--ratio, 1); align-self: center;
+}
 .splash--hero .splash-item-cuerpo { padding: 12px 14px 14px; gap: 8px; }
+/* A wide, short screen (evenHeroMargins): the clip at the left, flush with the card on top, left and bottom,
+   and the texts and Play at its right */
+.splash--hero.splash--lado { width: min(90vw, 760px); }
+.splash--hero.splash--lado .splash-item { flex-direction: row; align-items: stretch; }
+.splash--hero.splash--lado .splash-media { flex: none; align-self: flex-start; }
+.splash--hero.splash--lado .splash-item-cuerpo { flex: 1; justify-content: center; }
 .splash--hero .splash-item h3 { font-size: 1.2rem; }
 .splash--hero .splash-item p { font-size: var(--fs-90); line-height: 1.4; display: block; -webkit-line-clamp: none; overflow: visible; flex: none; }
-@media (max-width: 600px) { .splash--hero .splash-media { width: min(100%, calc(92dvh - 390px)); } }
+@media (max-width: 600px) { .splash--hero .splash-media { --hero-w: min(100%, calc(92dvh - 390px)); } }
 .splash--hero .splash-jugar { width: 100%; align-self: stretch; padding: 10px 14px; font-size: var(--fs-110); }
 @media (max-width: 600px) and (max-height: 720px) {
-  .splash--hero .splash-media { width: min(100%, calc(92dvh - 375px)); }
+  .splash--hero .splash-media { --hero-w: min(100%, calc(92dvh - 375px)); }
   .splash--hero .splash-item p { font-size: var(--fs-85); line-height: 1.3; }
 }
+/* A very short phone (640 px tall): the big window drops its emoji or icon above the title, so its clip can
+   stay flush with the card and the whole window, Play included, still fits (DESIGN.md §3 rule 7) */
+@media (max-width: 600px) and (max-height: 680px) { .splash--hero .splash-emoji { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .splash, .splash-fondo, .splash-emoji { animation: none; }
 }
