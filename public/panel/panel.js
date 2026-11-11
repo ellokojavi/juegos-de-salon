@@ -2133,6 +2133,12 @@ function renderNav(now) {
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
   // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
   const noArranca = salud(S.days, { from: dayOf(now) - 1, to: dayOf(now) }).total.arranque > 0;
+  // The bottom bar's real height, so the page leaves that much room below its last line
+  const nav = $('#nav');
+  if (!nav.dataset.sized && typeof ResizeObserver === 'function') {
+    nav.dataset.sized = '1';
+    new ResizeObserver(() => document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`)).observe(nav);
+  }
   const tab = (sec, extra = {}) => {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null, ...extra },
@@ -2143,7 +2149,6 @@ function renderNav(now) {
   const labs = (extra = {}) => el('a', { href: '../labs/', ...extra },
     el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs'),
     S.flags ? el('span', { class: 'campanas-tab-hoy', title: 'Lab flags live for everyone; switch them on their /labs/ cards' }, ` ${Object.keys(FLAGS).filter(id => flagState(S.flags, id) === 'all').length}/${Object.keys(FLAGS).length} 🚀`) : null);
-  const nav = $('#nav');
   nav.classList.toggle('nav--mas', !!S.navMore);
   if (!S.navMore) { nav.replaceChildren(...SECCIONES.map(sec => tab(sec)), labs()); return; }
   // ☰ More stands for the section it holds when that one is open

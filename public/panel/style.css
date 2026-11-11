@@ -163,13 +163,13 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   /* Seis secciones en 320 px (D-251): cada nombre en una línea */
   .nav-panel .nombre { white-space: nowrap; }
   .nav-panel .vivo { position: absolute; top: 6px; right: calc(50% - 18px); margin: 0; }
-  #screen-panel { padding-bottom: calc(76px + var(--safe-bottom)); }
+  /* The room the bar takes: measured by panel.js (--nav-h), so a new section never hides the last lines */
+  #screen-panel { padding-bottom: calc(var(--nav-h, calc(76px + var(--safe-bottom))) + var(--s-16)); }
 }
 /* Ocho dominios (D-348) no caben en una fila de celular: dos filas de cuatro, todos a la vista */
 @media (max-width: 599px) {
   .nav-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2) var(--s-4); }
   .nav-panel a { max-width: none; min-width: 0; padding: var(--s-4) var(--s-2); min-height: 44px; }
-  #screen-panel { padding-bottom: calc(130px + var(--safe-bottom)); }
 }
 
 /* The owner's bell (D-504): an icon, dim until this device is on */
