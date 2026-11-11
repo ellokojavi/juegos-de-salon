@@ -2167,7 +2167,11 @@
       "error": "✗ the ones left out stay outside, in the hand",
       "signature": "6fad0784f2",
       "date": "2026-11-11T06:18:32.642Z",
-      "fix": null,
+      "fix": {
+        "commit": "ab7f17af260c0bed43a978c22cfc13040c2dc2e0",
+        "date": "2026-11-11T06:34:02.615Z",
+        "stat": "2 file(s) +2 −0: docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     }
   ]
