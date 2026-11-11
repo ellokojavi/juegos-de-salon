@@ -3,7 +3,7 @@
  * sound, that sends the game's name, one line inviting to play and the link (U-30). The name and its
  * emoji come from the top bar's chip, which every game page has. The link is the page alone, never
  * its search or hash, so a room code or a seed is not passed on. Without a share menu it copies the
- * message and the button says so for two seconds.
+ * message and the button shows a check for two seconds.
  */
 import { el, ICONO_COMPARTIR } from './ui.js';
 import { getLang, COMMON } from './i18n.js';
@@ -31,7 +31,11 @@ export function mountCoverShare({ doc = document, lang = getLang() } = {}) {
   btn.addEventListener('click', async () => {
     const { emoji, name } = gameOfChip(tools.querySelector('.chip')?.textContent || doc.title);
     const r = await compartir({ titulo: name, texto: coverShareText({ C, emoji, name }), url: coverUrl(), que: 'cover' });
-    if (r === 'copied') { btn.title = C.shareCopied; setTimeout(() => { btn.title = C.shareGame; }, 2000); }
+    // A title is never seen on a phone: the icon turns into a check while the message is copied
+    if (r === 'copied') {
+      btn.textContent = '✓'; btn.title = C.shareCopied; btn.setAttribute('aria-label', C.shareCopied);
+      setTimeout(() => { btn.innerHTML = ICONO_COMPARTIR; btn.title = C.shareGame; btn.setAttribute('aria-label', C.shareGame); }, 2000);
+    }
   });
   tools.insertBefore(btn, tools.querySelector('#sound-slot'));
   // Only on the cover: once the game starts the intro screen leaves and the button with it
