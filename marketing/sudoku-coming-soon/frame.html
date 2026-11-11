@@ -1,0 +1,14 @@
+<!doctype html>
+<!-- The still layer of the Sudoku "Coming soon" video (build.mjs): the site's night, the game's icon and
+     COMING SOON in Bangers; the clip is laid over the empty square by ffmpeg -->
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/css/base.css">
+<style>
+  html, body { margin: 0; width: 1080px; height: 1080px; overflow: hidden; }
+  body { background: radial-gradient(120% 90% at 50% 0%, #5a1a6e 0%, #2a0f4a 45%, #12062a 100%); display: grid; justify-items: center; align-content: center; }
+  .icon { width: 88px; height: 88px; }
+  h1 { font-family: 'Bangers', sans-serif; font-weight: 400; font-size: 118px; letter-spacing: 3px; line-height: 1; margin: 18px 0 0;
+       color: #ffd23f; text-shadow: 5px 5px 0 #d6286e; }
+  .hole { width: 700px; height: 700px; margin-top: 30px; border-radius: 22px; background: #000; box-shadow: 0 0 0 4px rgb(255 255 255 / .18), 0 20px 60px rgb(0 0 0 / .5); }
+</style></head>
+<body><img class="icon" src="/labs/sudoku/icon.svg" alt=""><h1>COMING SOON</h1><div class="hole"></div></body></html>

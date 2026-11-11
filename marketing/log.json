@@ -537,6 +537,33 @@
         "al_dia": true,
         "pendiente": []
       }
+    },
+    {
+      "id": "sudoku-coming-soon",
+      "tipo": "video",
+      "titulo": "Sudoku: Coming soon (WhatsApp)",
+      "carpeta": "marketing/sudoku-coming-soon/",
+      "memoria": "marketing/sudoku-coming-soon/README.md",
+      "version": 1,
+      "fecha": "2026-11-11",
+      "idioma": "en",
+      "app": "1.7.32",
+      "archivos": [
+        {
+          "ruta": "marketing/sudoku-coming-soon/output/sudoku-coming-soon-6s.mp4",
+          "formato": "1:1",
+          "ancho": 1080,
+          "alto": 1080,
+          "segundos": 6,
+          "uso": "WhatsApp"
+        }
+      ],
+      "fuente": "marketing/sudoku-coming-soon/frame.html",
+      "construir": "marketing/sudoku-coming-soon/build.mjs",
+      "juegos": [
+        "sudoku"
+      ],
+      "laboratorio": true
     }
   ]
 }
