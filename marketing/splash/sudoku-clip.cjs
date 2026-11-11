@@ -9,7 +9,8 @@
 //   ffmpeg -framerate 30 -i /tmp/sudoku-frames/f%04d.png -vf "scale=480:-2,format=yuv420p" \
 //     -c:v libx264 -crf 26 -preset slow -movflags +faststart -an public/assets/splash/sudoku.mp4
 //
-// The board is shot without its own outer border, so the splash's media frame is the only edge (D-355).
+// The board is shot alone on a plain ground with an even margin, and every zoom is centered on its box,
+// so the margins are the same on all four sides at every moment (the owner's request, D-355).
 // The poster (sudoku-start.jpg) is the first frame and the still (sudoku.jpg) the last.
 const { chromium } = require('playwright');
 const OUT = process.argv[2];
@@ -58,28 +59,34 @@ function findStep(cells, solution, skipBoxes) {
   await p.evaluate(() => {
     window.__sudoku.solveAllBut(34);
     const bd = document.getElementById('board');
-    Object.assign(bd.style, { position: 'relative', zIndex: 50, transition: 'none', border: '0', borderRadius: '0' });
+    Object.assign(bd.style, { position: 'relative', zIndex: 50, transition: 'none' });
+    // only the board on a plain ground, so the margin around it is even on every side and in every zoom
+    const css = document.createElement('style');
+    css.textContent = 'html, body { background: #1a0d33 !important; } body * { visibility: hidden; } #board, #board * { visibility: visible; }';
+    document.head.append(css);
     const ring = document.createElement('div');
     ring.id = 'clip-ring';
     Object.assign(ring.style, { position: 'absolute', width: '33.333%', height: '33.333%', boxSizing: 'border-box', border: '1.5px solid #ffd23f', borderRadius: '3px', opacity: 0, pointerEvents: 'none', boxShadow: '0 0 0 2000px rgb(10 4 30 / 0.45)' });
     bd.append(ring);
     document.getElementById('hint')?.style.setProperty('visibility', 'hidden');
   });
-  const r = await p.$eval('#board', e => { const x = e.getBoundingClientRect(); return { x: x.x, y: x.y, width: x.width, height: x.height }; });
+  // the frame: the board plus an even margin (PAD of its side) all around
+  const PAD = 0.06;
+  const r = await p.$eval('#board', (e, PAD) => { const x = e.getBoundingClientRect(); const m = x.width * PAD; return { x: x.x - m, y: x.y - m, width: x.width + 2 * m, height: x.height + 2 * m }; }, PAD);
 
   let n = 0;
   const shot = () => p.screenshot({ path: `${OUT}/f${String(n++).padStart(4, '0')}.png`, clip: r });
   const hold = async k => { for (let i = 0; i < k; i++) await shot(); };
   const ease = t => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
-  const S = 2.4; // the box takes 80% of the view: a margin of the board around it
+  // zoomed, the frame holds the box and one whole cell of the board on each side: (3 + 2) / 9 × S = 1 + 2 × PAD
+  const S = (1 + 2 * PAD) * 9 / 5;
   const view = (u, box) => p.evaluate(([u, box, S]) => {
     const bd = document.getElementById('board');
     const ox = ((box % 3) * 3 + 1.5) / 9 * 100, oy = (Math.floor(box / 3) * 3 + 1.5) / 9 * 100;
     const s = 1 + (S - 1) * u;
     bd.style.transformOrigin = '0 0';
-    // centered on the box, but never past the board's edge (no empty margin in the frame)
-    const clamp = t => Math.min(0, Math.max(-(s - 1) * 100, t));
-    bd.style.transform = `translate(${clamp(u * (50 - ox * s))}%, ${clamp(u * (50 - oy * s))}%) scale(${s})`;
+    // always centered on the box, so the ring sits at the same distance from every edge of the frame
+    bd.style.transform = `translate(${u * (50 - ox * s)}%, ${u * (50 - oy * s)}%) scale(${s})`;
     const ring = document.getElementById('clip-ring');
     Object.assign(ring.style, { left: `${(box % 3) * 33.333}%`, top: `${Math.floor(box / 3) * 33.333}%`, opacity: u });
   }, [u, box, S]);
