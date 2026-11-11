@@ -263,12 +263,13 @@
 .demo.red.hot { background: var(--mg-e0153f); box-shadow: inset 0 0 80px rgb(var(--mg-ffc8d2-rgb) / 0.35); }
 .demo.green.hot { background: var(--mg-19b85c); box-shadow: inset 0 0 80px rgb(var(--mg-c8ffdc-rgb) / 0.40); }
 .demo.red, .demo.green { transition: background 0.12s; }
-/* While the scene is frozen at the end: a small ✓ or ✗ at the top, nothing covering what you did */
-.verdict-tag { position: absolute; top: 64px; left: 50%; translate: -50% 0; z-index: 20; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
-  font: 400 var(--mg-fs-260)/1 var(--display); pointer-events: none; border: 3px solid var(--ink); rotate: -8deg;
+/* While the scene is frozen at the end: a small ✓ or ✗ in the middle of the HUD strip (the top 40px no game
+   draws in), so it never covers what you did. verdict.test.mjs keeps its bottom above 40px. */
+.verdict-tag { position: absolute; top: 4px; left: 50%; translate: -50% 0; z-index: 20; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  font: 400 var(--fs-140)/1 var(--display); pointer-events: none; border: 2px solid var(--ink); rotate: -8deg;
   box-shadow: 0 6px 0 var(--well), 0 0 0 6px rgb(var(--ink-rgb) / 0.12), 0 10px 24px rgb(var(--mg-000000-rgb) / 0.45); animation: tagin 0.42s cubic-bezier(0.3, 1.8, 0.5, 1); }
-.verdict-tag.good { color: var(--mg-0f3d1f); background: radial-gradient(circle at 35% 30%, var(--mg-e9ffb8) 0 14%, var(--green) 55%, var(--mg-3ddc84)); box-shadow: 0 6px 0 var(--mg-0f3d1f), 0 0 26px rgb(var(--mg-9dff3a-rgb) / 0.55); }
-.verdict-tag.bad { color: var(--ink); background: radial-gradient(circle at 35% 30%, var(--mg-ff8fa0) 0 14%, var(--red) 55%, var(--mg-a0102c)); box-shadow: 0 6px 0 var(--mg-5a0f24), 0 0 26px rgb(var(--red-rgb) / 0.5); }
+.verdict-tag.good { color: var(--mg-0f3d1f); background: radial-gradient(circle at 35% 30%, var(--mg-e9ffb8) 0 14%, var(--green) 55%, var(--mg-3ddc84)); box-shadow: 0 3px 0 var(--mg-0f3d1f), 0 0 14px rgb(var(--mg-9dff3a-rgb) / 0.55); }
+.verdict-tag.bad { color: var(--ink); background: radial-gradient(circle at 35% 30%, var(--mg-ff8fa0) 0 14%, var(--red) 55%, var(--mg-a0102c)); box-shadow: 0 3px 0 var(--mg-5a0f24), 0 0 14px rgb(var(--red-rgb) / 0.5); }
 @keyframes tagin { 0% { scale: 0.2; rotate: -40deg; opacity: 0; } 70% { scale: 1.15; } 100% { scale: 1; } }
 .demo .menu { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 
