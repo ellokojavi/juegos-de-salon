@@ -30,6 +30,11 @@
       "date": "2026-10-28",
       "what": "Rule changes to La Copa's dropout (self-service comeback) and first-time guided boards were both declined: do not propose loosening D-347 or tutorial boards without a new reason.",
       "from": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+    },
+    {
+      "date": "2026-11-11",
+      "what": "Mini Sudoku 6x6 was declined with no comment, while a 🧮 Sudoku is already in the lab: check the lab for the same family before proposing another number puzzle; prefer ideas that bring groups back",
+      "from": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
     }
   ],
   "ideas": [
@@ -137,7 +142,7 @@
       "proof": "Cups created per week: from about 3 (13 in four weeks) to 5 or more, with at least a third of new cups coming from the button, read two rounds after it lands.",
       "recommendation": "Yes, in Labs: it is the cheapest way to turn a finished cup into the next week's habit, where the app's players already are.",
       "question": "Try «La Copa: otra semana con el mismo grupo» in the lab?",
-      "status": "proposed",
+      "status": "graduated",
       "date": "2026-11-04",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
       "history": [
@@ -146,8 +151,28 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        },
+        {
+          "date": "2026-11-11",
+          "status": "approved",
+          "why": "Owner checked Yes, in Labs",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        },
+        {
+          "date": "2026-11-11",
+          "status": "prototyped",
+          "why": "Built behind its flag (public/cup/game.js, create.js), card in /labs/",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        },
+        {
+          "date": "2026-11-11",
+          "status": "graduated",
+          "why": "Launched to everyone; its card is in La Bodega",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
         }
-      ]
+      ],
+      "why": "Launched to everyone; its card is in La Bodega",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
     },
     {
       "id": "mini-sudoku",
@@ -160,7 +185,7 @@
       "recommendation": "Yes, in Labs: it is the most played daily-puzzle format worldwide, it travels with no words, and it fits the house's LinkedIn line.",
       "inspiration": "Sudoku (Number Place, Howard Garns, 1979; named by Nikoli), in the 6×6 daily form LinkedIn Games launched as Mini Sudoku in 2025: https://www.linkedin.com/games/mini-sudoku/",
       "question": "Try «Mini Sudoku 6×6» in the lab?",
-      "status": "proposed",
+      "status": "discarded",
       "date": "2026-11-04",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1165",
       "history": [
@@ -169,6 +194,34 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        },
+        {
+          "date": "2026-11-11",
+          "status": "discarded",
+          "why": "Owner checked No, no comment",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1165"
+        }
+      ],
+      "why": "Owner checked No, no comment"
+    },
+    {
+      "id": "routes-paid-hint",
+      "title": "Rutas rotas: una pista que cuesta puntos",
+      "lane": "existing",
+      "evidence": "check, 2026-10-11 to 2026-11-07: Broken Routes one-player 181 started → 56 finished (31%), 125 abandoned, median 51/100 in 2:54; next weakest published games finish 42% (Untangle) and 58% (Train on the Edge); Queens 73%, Babel 86%. In La Copa it holds (22 played, 0 abandoned, average 69), so the drop is the casual player alone. The board marks no fitting edges on purpose (#359), and undo/restart are the only help today.",
+      "cost": "One PR in public/cup/games/routes/: a 💡 Pista button that marks one rectangle of a shortest solution for the current stage, −3 points per hint (a new score layer and a breakdown line, D-295 amended), three languages for the button and the line, engine tests for the hint (it always shortens the distance) and the score, and the routes end-to-end script. No Firebase change.",
+      "prototype": "Behind its flag in /labs/ (D-395), Spanish only: lab browsers see the 💡 button on /routes/ (not in La Copa until it is published).",
+      "proof": "Broken Routes one-player finish rate from 31% to 45% or more with 100+ starts, read two rounds after it lands, with the La Copa average not falling.",
+      "recommendation": "Yes, in Labs: it targets the biggest loss among popular games, and a hint that costs points is how the house already helps (D-292, D-310).",
+      "status": "proposed",
+      "date": "2026-11-11",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1381",
+      "history": [
+        {
+          "date": "2026-11-11",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1381"
         }
       ]
     }
@@ -189,6 +242,13 @@
       "ideas": [
         "cup-next-week-same-group",
         "mini-sudoku"
+      ]
+    },
+    {
+      "date": "2026-11-11",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1381",
+      "ideas": [
+        "routes-paid-hint"
       ]
     }
   ]
