@@ -12,7 +12,7 @@
  * - cups: `torneos/`, read through the cup engine (`historiaCopa`), which has no environment: a lab
  *   cup carries its tag;
  * - feedback: `feedback/`, also with no environment;
- * - campaigns seen: `stats/<env>/days/<day>/seen/` (D-503), one row per phone and splash campaign (its first reach, once the page is visible)
+ * - campaigns seen: `stats/<env>/days/<day>/seen/` (D-503), one row per phone and splash campaign (its first reach, once the page is visible; identical rows within two minutes are joined)
  *   or of the donation card (`c: 'support'`), with the name the phone knew; skins are not campaigns.
  *
  * Days are Pacific days (the panel's clock, the one La Copa splits its days with): "the last 7 days"
@@ -45,6 +45,9 @@ export function pacificRange({ from, to }, now = Date.now()) {
  * game?, mode?, origin? ('card' | 'random' | 'daily', how an offline game was opened), detail?, winner?, tie?, cup?: { code, name, lab, day }, startedAt?, text?, to? }`,
  * where `to` is the panel card it opens (`['sala', [code, day]]`).
  */
+/** Identical campaign rows this close together are one row (`times`). */
+export const SEEN_BURST_MS = 2 * 60000;
+
 export function keyEvents({ days = {}, torneos = {}, feedback = {} } = {}, range, now = Date.now()) {
   const { from, to } = pacificRange(range, now);
   const desde = isoOf(from), hasta = isoOf(to);
@@ -94,13 +97,25 @@ export function keyEvents({ days = {}, torneos = {}, feedback = {} } = {}, range
     push({ at: f.at, kind: 'feedback', id, who: [{ name: f.nombre || '', co: '' }], tipo: f.tipo || '', text: String(f.texto || ''), tester: f.tester || '' });
   }
 
-  // Campaigns seen (D-503): who saw which splash, or opened the donation card
+  // Campaigns seen (D-503): who saw which splash, or opened the donation card. Rows that look the same
+  // (campaign, name, country) within SEEN_BURST_MS are one row with `times`: a phone that cannot remember
+  // its first reach (no storage) still writes one row per page, and they came in bursts of four
+  const seen = [];
   for (let d = span.from; d <= span.to; d++) {
     for (const [id, v] of Object.entries(days[String(d)]?.seen || {})) {
       if (!v || typeof v.at !== 'number' || !v.c) continue;
-      push({ at: v.at, kind: 'campaign', id, campaign: v.c, who: [{ name: v.name || '', co: v.co || '', bot: !!v.r }] });
+      seen.push({ at: v.at, kind: 'campaign', id, campaign: v.c, who: [{ name: v.name || '', co: v.co || '', bot: !!v.r }] });
     }
   }
+  const last = new Map(), rows = [];
+  for (const e of seen.sort((a, b) => a.at - b.at)) {
+    const key = [e.campaign, e.who[0].name, e.who[0].co, e.who[0].bot].join('|');
+    const prev = last.get(key);
+    if (prev && e.at - prev.lastAt <= SEEN_BURST_MS) { prev.row.times = (prev.row.times || 1) + 1; prev.lastAt = e.at; continue; }
+    last.set(key, { row: e, lastAt: e.at });
+    rows.push(e);
+  }
+  rows.forEach(push);
 
   return out.sort((a, b) => b.at - a.at || KINDS.indexOf(a.kind) - KINDS.indexOf(b.kind));
 }
