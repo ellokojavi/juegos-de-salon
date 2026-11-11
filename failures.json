@@ -2280,6 +2280,19 @@
       "date": "2026-11-11T19:15:39.060Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43086631373,
+      "check": "end-to-end",
+      "pr": 1401,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "d0047ebcacef24c28798bf46a6f80f46e4a1874e",
+      "test": "cup/tournament.mjs:cup",
+      "error": "✗ the ones left out stay outside, in the hand",
+      "signature": "6fad0784f2",
+      "date": "2026-11-11T19:37:53.437Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
