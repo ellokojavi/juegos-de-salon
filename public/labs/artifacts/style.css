@@ -24,6 +24,8 @@
 
 .cabecera { display: flex; align-items: center; gap: var(--s-6); }
 .cabecera .chip { white-space: nowrap; }
+/* A little air between «Etapa 1 de 5» and its difficulty */
+#dificultad { margin-left: var(--s-8); }
 /* The five stages as dots: passed, failed, the one in play */
 .etapas { display: flex; gap: var(--s-4); flex: 1; justify-content: center; }
 .etapas span { width: 10px; height: 10px; border-radius: 50%; background: var(--glass-border); }

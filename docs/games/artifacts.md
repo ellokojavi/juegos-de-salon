@@ -52,8 +52,8 @@ on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's 
   ball runs; every touch gives them 5 s more.
 - **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
   send it back to the tray. A tap on a free cell with a part chosen also moves it there.
-- **↶ Deshacer** undoes the last change (place, move, turn, remove), up to 40. Under Probar, the three
-  helpers share one row: ↶ Deshacer · 💡 Pista · 🏳️ Rendirse (there is no Limpiar since 2026-11-11). Each
+- **↶ Deshacer** undoes the last change (place, move, turn, remove), up to 40. The three
+  helpers share one row above Probar: ↶ Deshacer · 💡 Pista · 🏳️ Rendirse (there is no Limpiar since 2026-11-11). Each
   step says the next one under the board in one short line (cut with an ellipsis if a phone is too
   narrow), and the phone gives a small tick on each snap and a pulse on placing.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
