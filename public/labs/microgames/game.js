@@ -79,7 +79,7 @@ trackVisit();   // the site's traffic (D-208)
       stopAll();
       const sc = score([...marks, n]), g = sc.games[sc.games.length - 1], run = (() => { let k = 0; for (let i = sc.games.length - 1; i >= 0 && sc.games[i].stars >= 2; i--) k++; return k; })();
       set(`<div class="stars${n ? '' : ' none'}">${shiny(n)}</div><div class="sub">${note || (n ? ['', t('¡Por poco!'), t('¡Bien!'), t('¡Al toque!')][n] : t('¡Fallaste!'))}</div>
-        ${n && order.length > 1 ? `<div class="gain num">${t('+{n} pts · velocidad ×{x}', { n: gamePoints(n, idx - 1), x: multTxt(speedAt(idx - 1)) })}</div>` : ''}
+        ${n && order.length > 1 ? `<div class="gain num">${t('+{n} pts · ⚡ ×{x}', { n: gamePoints(n, idx - 1), x: multTxt(speedAt(idx - 1)) })}</div>` : ''}
         ${g.streak ? `<div class="streak">${t('🔥 Racha de {n} · +{p}', { n: run, p: STREAK })}</div>` : ''}`);
       later(next, 900);
     }, reduce ? 400 : hold);
@@ -1417,7 +1417,7 @@ trackVisit();   // the site's traffic (D-208)
       speed = sc.points - base - streaks * STREAK, top = speedAt(order.length - 1).toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
     return `<div class="breakdown" aria-label="${t('Cómo se calcularon tus puntos')}">
       <div><span>${t('{n} ★ × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
-      <div><span>${t('Velocidad: sube cada 3 juegos, hasta ×{x}', { x: top })}</span><b class="num">+${speed}</b></div>
+      <div class="bonus"><span>${t('⚡ Bono de velocidad · sube cada 3 juegos, hasta ×{x}', { x: top })}</span><b class="num">+${speed}</b></div>
       <div><span>${t('🔥 Rachas de ★★ o más: {n} × {p}', { n: streaks, p: STREAK })}</span><b class="num">+${streaks * STREAK}</b></div>
       <div class="tot"><span>${t('Total')}</span><b class="num">${sc.points} ${t('pts')}</b></div></div>`; };
   function end() {

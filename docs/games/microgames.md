@@ -50,7 +50,7 @@ in `game.js`.
 - **A game:** 0 to 3 stars, judged by the microgame. Its points are 10 per star times the speed it was
   played at (×1.0 the first three, ×1.1, ×1.2, ×1.3 the last): a ★★★ at the end is worth 39.
 - **Streak:** each game with ★★ or more right after another one adds +5 (🔥). It shows as it happens: an orange «🔥 Racha de n · +5» under the game's stars, and a flame ring on its marks at the top.
-- **After each game in a run:** its stars fill in one by one, golden and shining, with what it gave («+33 pts · velocidad ×1,1») so the speed's part is visible as it grows.
+- **After each game in a run:** its stars fill in one by one, golden and shining, with what it gave («+33 pts · ⚡ ×1,1»; the breakdown calls it «⚡ Bono de velocidad») so the speed's part is visible as it grows.
 - **A run:** the sum, shown in the HUD as it goes; a perfect run is 381.
 - **The end shows the run's summary (each game's stars and points) and the breakdown above Otra corrida** (the owner's call, over C-19's usual order): the stars × 10, what the speed added, the streaks (count × 5) and the total, so the player sees where the points came from.
 - **Uno al día and La Copa** compare `score100`: the stars weighed by speed, 0 to 100 as every other game
