@@ -39,7 +39,7 @@ import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splas
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { dayOf as diaDe, toLocalInput, checkPick, switches, status as campaignStatus, overlaps, move, archive, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
-import { stateOf as flagState } from '../assets/js/flags.js';
+import { stateOf as flagState, flag } from '../assets/js/flags.js';
 import { FLAGS } from '../assets/js/flag-list.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import { wireReleasePush } from './release-push.js';
@@ -2111,21 +2111,54 @@ function vistaLlaves(now) {
   ];
 }
 
+/*
+ * On a phone, five tabs and ☰ More (lab: #seccion-panel-nav-more): the rest open in a sheet, in groups.
+ * A computer keeps the whole column.
+ */
+const NAV_TABS = ['resumen', 'timeline', 'salud', 'feedback'];
+const NAV_GROUPS = [['Players', ['grupo', 'individuales', 'usuarios']], ['Games', ['torneo', 'unoaldia']], ['Owner', ['trafico', 'campanas', 'llaves', 'labs']]];
+flag('panel-nav-more').then(on => { S.navMore = on; if (S.user) render(); }).catch(() => {});
+
+function abrirMas(open) {
+  const sheet = $('#nav-mas');
+  if (!sheet) return;
+  if (open) { sheet.showModal?.() ?? sheet.setAttribute('open', ''); } else sheet.close?.();
+}
+
 function renderNav(now) {
+  // A redraw while the sheet is open would close it under the finger
+  if ($('#nav-mas')?.open) return;
   const actual = seccionDe(S.ruta);
   // Un punto verde en Ahora cuando hay algo en juego: se ve desde cualquier sección
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
   // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
   const noArranca = salud(S.days, { from: dayOf(now) - 1, to: dayOf(now) }).total.arranque > 0;
-  $('#nav').replaceChildren(...SECCIONES.map(sec => {
+  const tab = (sec, extra = {}) => {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
-    return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null },
+    return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null, ...extra },
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
       sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null,
       sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday' }) : null);
-  }), el('a', { href: '../labs/' },
+  };
+  const labs = (extra = {}) => el('a', { href: '../labs/', ...extra },
     el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs'),
-    S.flags ? el('span', { class: 'campanas-tab-hoy', title: 'Lab flags live for everyone; switch them on their /labs/ cards' }, ` ${Object.keys(FLAGS).filter(id => flagState(S.flags, id) === 'all').length}/${Object.keys(FLAGS).length} 🚀`) : null));
+    S.flags ? el('span', { class: 'campanas-tab-hoy', title: 'Lab flags live for everyone; switch them on their /labs/ cards' }, ` ${Object.keys(FLAGS).filter(id => flagState(S.flags, id) === 'all').length}/${Object.keys(FLAGS).length} 🚀`) : null);
+  const nav = $('#nav');
+  nav.classList.toggle('nav--mas', !!S.navMore);
+  if (!S.navMore) { nav.replaceChildren(...SECCIONES.map(sec => tab(sec)), labs()); return; }
+  // ☰ More stands for the section it holds when that one is open
+  const enMas = !NAV_TABS.includes(actual);
+  const [icoMas, nombreMas] = enMas && SECCION[actual] ? SECCION[actual] : ['☰', 'More'];
+  const sheet = el('dialog', { class: 'nav-mas', id: 'nav-mas', 'aria-label': 'More sections', onClick: ev => { if (ev.target === ev.currentTarget || ev.target.closest('a')) abrirMas(false); } },
+    el('div', { class: 'nav-mas-hoja' },
+      ...NAV_GROUPS.map(([titulo, secs]) => el('section', {}, el('h3', {}, titulo),
+        el('div', { class: 'nav-mas-lista' }, ...secs.map(sec => (sec === 'labs' ? labs() : tab(sec)))))),
+      el('button', { class: 'btn', type: 'button', onClick: () => abrirMas(false) }, 'Close')));
+  nav.replaceChildren(
+    ...SECCIONES.map(sec => tab(sec, NAV_TABS.includes(sec) ? {} : { class: 'nav-extra' })), labs({ class: 'nav-extra' }),
+    el('button', { class: 'nav-mas-btn', type: 'button', 'aria-haspopup': 'dialog', 'aria-current': enMas ? 'page' : null, onClick: () => abrirMas(true) },
+      el('span', { class: 'ico', 'aria-hidden': 'true' }, icoMas), el('span', { class: 'nombre' }, enMas ? nombreMas : 'More')),
+    sheet);
 }
 
 /** A redraw within the second, not one per message: a live room sends many (D-473). */
