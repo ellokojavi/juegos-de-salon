@@ -8,7 +8,8 @@
   ],
   "U-5": [
     { "file": "public/cup/games/stick/texts.js", "path": "default.es.ui.snAchMoving", "lang": "es", "reason": "«Blanco móvil» is a moving target, not a phone: móvil as an adjective." },
-    { "file": "public/assets/js/i18n.js", "path": "COMMON.pt.rk.pinWarn", "lang": "pt", "reason": "It warns not to reuse the bank's password (senha) as the PIN: the bank's word is the right one there." }
+    { "file": "public/assets/js/i18n.js", "path": "COMMON.pt.rk.pinWarn", "lang": "pt", "reason": "It warns not to reuse the bank's password (senha) as the PIN: the bank's word is the right one there." },
+    { "file": "public/assets/js/games.js", "path": "LAB_NAMES.clave.name.pt", "lang": "pt", "reason": "«A senha» is the lab game's own Portuguese name (public/labs/code), a code to crack, not a PIN; listed so the panel names it." }
   ],
   "U-6": [
     { "file": "public/cup/games/plots/texts.js", "path": "default.en.ui.ltAreaOne", "lang": "en", "reason": "«The 1 asks for 1 square»: asks is a verb, not a plural noun." },
