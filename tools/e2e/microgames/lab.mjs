@@ -34,7 +34,7 @@ ok(await ev(`(()=>{const h=document.querySelector('.kind .g-desliza .hand').getB
 ok(await ev(`document.querySelector('.demo').getBoundingClientRect().bottom <= innerHeight`), 'the cover fits above the fold');
 ok(await ev(`!!document.querySelector('#sound-slot .sound-toggle')`), 'a sound button in the top bar (C-4)');
 await ev(`document.getElementById('btn-jugar').click(); 1`);
-ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.querySelector('#rules-slot details')`, 2000), 'Jugar starts the run, with the HUD, and the rules go away');
+ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.getElementById('ranking').children.length`, 2000), 'Jugar starts the run, with the HUD, and the ranking goes away');
 const order = await ev(`__microgames.order`);
 ok(order.length === 10 && new Set(order).size === 10, `ten different microgames (${order.join(', ')})`);
 ok(await ev(`document.querySelectorAll('#runbar i').length`) === 10, 'a mark per game in the run');
@@ -79,7 +79,7 @@ ok(await waitFor(`!!document.getElementById('btn-retar')`, 6000) && /^[A-HJ-NP-Z
 
 // In English
 await b.go(`${SITE}/labs/microgames/?test&lang=en`, 800);
-ok(/microgames in a row/.test(await ev(`document.getElementById('screen').textContent`)) && /How to play/.test(await ev(`document.getElementById('rules-slot').textContent`)), 'in English, the cover and its rules');
+ok(/microgames in a row/.test(await ev(`document.getElementById('screen').textContent`)) && /SWIPE/.test(await ev(`document.querySelector('.kinds').textContent`)), 'in English, the cover and its three ways');
 await ev(`__microgames.only('cuenta'); 1`); await sleep(300);
 ok(/COUNT!/.test(await ev(`document.getElementById('screen').textContent`)), 'and the microgames');
 b.close();
