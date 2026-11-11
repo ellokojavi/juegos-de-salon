@@ -137,30 +137,45 @@ function renderResumeSlot() {
  * A real solved board with six holes, each the only one in its row, column and box. In turn, each hole
  * lights its row, its column and its box, saying the rule, and then the digit that fits pops in. When the
  * six are in, a pause and it starts again. It sleeps off screen (onScreen, #883) and stands still, solved,
- * with reduced motion.
+ * with reduced motion. It follows the lever (the owner, 2026-11-11): the 6×6 mini sudoku on easy, the
+ * 9×9 on hard.
  */
-const DEMO_SOLUTION = '534678912672195348198342567859761423426853791713924856961537284287419635345286179'.split('').map(Number);
-const DEMO_HOLES = [0, 16, 31, 42, 64, 62]; // rows 0 1 3 4 7 6, columns 0 7 4 6 1 8, six different boxes
+const DEMOS = {
+  easy: { // rows 0 1 2 3 4 5, columns 0 4 2 5 1 3, the six boxes
+    solution: '561432432156613245254613125364346521'.split('').map(Number), holes: [0, 10, 14, 23, 25, 33],
+  },
+  hard: { // rows 0 1 3 4 7 6, columns 0 7 4 6 1 8, six different boxes
+    solution: '534678912672195348198342567859761423426853791713924856961537284287419635345286179'.split('').map(Number), holes: [0, 16, 31, 42, 64, 62],
+  },
+};
 const QUIET = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const STEP_MS = 950;
 const PHASES = ['row', 'col', 'box', 'fill'];
-let demoStarted = false;
-function startDemo() {
-  if (demoStarted) return;
-  demoStarted = true;
+let demoLevel = null, demoRun = 0;
+/** The rule's words for a board: its digits (1 to n) and its box (3×3 or 2×3). */
+const demoText = (phase, G) => fmt(T.demo[phase], { n: G.n, box: `${G.bh}×${G.bw}` });
+function startDemo(level = chosen) {
+  if (demoLevel === level) return;
+  demoLevel = level;
+  const run = ++demoRun;
+  const { solution: DEMO_SOLUTION, holes: DEMO_HOLES } = DEMOS[level];
+  const G = E.geom(DEMO_SOLUTION), N = G.n;
   const box = $('#demo'), caption = $('#demo-caption');
-  const cells = DEMO_SOLUTION.map((d, i) => el('span', { class: 'sd-dcell', 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, DEMO_HOLES.includes(i) ? '' : String(d)));
+  box.style.setProperty('--n', N);
+  box.dataset.n = N;
+  box.classList.remove('done');
+  const cells = DEMO_SOLUTION.map((d, i) => el('span', { class: 'sd-dcell' + edges(G, i) }, DEMO_HOLES.includes(i) ? '' : String(d)));
   box.replaceChildren(...cells);
   if (QUIET()) {
     DEMO_HOLES.forEach(i => { cells[i].textContent = String(DEMO_SOLUTION[i]); cells[i].classList.add('filled'); });
-    caption.textContent = T.demo.row;
+    caption.textContent = demoText('row', G);
     return;
   }
   let t0 = 0;
   const total = (DEMO_HOLES.length * PHASES.length + 3) * STEP_MS;
   let last = -1;
   const frame = now => {
-    if (!box.isConnected) return;
+    if (!box.isConnected || run !== demoRun) return;
     if (!t0) t0 = now;
     const step = Math.floor(((now - t0) % total) / STEP_MS);
     if (step !== last) { last = step; paint(step); }
@@ -173,12 +188,12 @@ function startDemo() {
     if (step === 0) DEMO_HOLES.forEach(i => { cells[i].textContent = ''; cells[i].classList.remove('filled', 'pop'); });
     if (k >= DEMO_HOLES.length) { caption.textContent = '🎉 ' + T.solved; box.classList.add('done'); return; }
     box.classList.remove('done');
-    const i = DEMO_HOLES[k], r = Math.floor(i / 9), c = i % 9;
+    const i = DEMO_HOLES[k], r = Math.floor(i / N), c = i % N;
     const inUnit = j => {
-      const jr = Math.floor(j / 9), jc = j % 9;
+      const jr = Math.floor(j / N), jc = j % N;
       if (phase === 'row') return jr === r;
       if (phase === 'col') return jc === c;
-      if (phase === 'box') return Math.floor(jr / 3) === Math.floor(r / 3) && Math.floor(jc / 3) === Math.floor(c / 3);
+      if (phase === 'box') return Math.floor(jr / G.bh) === Math.floor(r / G.bh) && Math.floor(jc / G.bw) === Math.floor(c / G.bw);
       return false;
     };
     cells.forEach((cell, j) => cell.classList.toggle('lit', inUnit(j)));
@@ -187,7 +202,7 @@ function startDemo() {
       cells[i].textContent = String(DEMO_SOLUTION[i]);
       cells[i].classList.add('filled', 'pop');
       caption.textContent = fmt(T.demo.fill, { d: DEMO_SOLUTION[i] });
-    } else caption.textContent = T.demo[phase];
+    } else caption.textContent = demoText(phase, G);
   }
   next();
 }
@@ -266,7 +281,7 @@ function renderModes() {
       title.textContent = T.switch[+on].title; sub.textContent = T.switch[+on].sub;
       if (!QUIET()) wave(lever, on);
       if (on) startFlicker(lever); else flicker++;
-      setTheme(); drawBest(); drawRanking();
+      setTheme(); drawBest(); drawRanking(); startDemo();
     },
   },
   el('span', { class: 'sd-plate', 'aria-hidden': 'true' },
@@ -292,18 +307,28 @@ function start(level) {
   // The classic 3, 2, 1, ¡A jugar! (D-105): the board is built underneath, the clock starts when it says go
   counting = true;
   renderPlay();
-  cuentaRegresiva({ titulo: `🔢 ${T.title} · ${LEVEL_EMOJI[level]} ${levelName(level)}`, ya: T.play })
+  cuentaRegresiva({ titulo: [el('img', { class: 'sd-icon', src: 'icon.svg', alt: '' }), ` ${T.title} · ${LEVEL_EMOJI[level]} ${levelName(level)}`], ya: T.play })
     .then(() => { counting = false; if ($('#screen-play').classList.contains('active')) startClock(); });
 }
 
 /* ---------------- Play ---------------- */
+/** A cell's place on its board, as classes: the thick lines between boxes and the last row and column. */
+function edges(G, i) {
+  const r = Math.floor(i / G.n), c = i % G.n;
+  return (c === G.n - 1 ? ' ec' : c % G.bw === G.bw - 1 ? ' bc' : '') + (r === G.n - 1 ? ' er' : r % G.bh === G.bh - 1 ? ' br' : '');
+}
+
 function buildBoard() {
-  $('#board').replaceChildren(...[...Array(81)].map((_, i) => el('button', {
+  const G = E.geom(state);
+  const board = $('#board');
+  board.style.setProperty('--n', G.n);
+  board.dataset.n = G.n;
+  board.replaceChildren(...[...Array(G.cells)].map((_, i) => el('button', {
     type: 'button', class: 'cell', 'data-i': i,
-    'data-r': Math.floor(i / 9), 'data-c': i % 9,
     onClick: () => select(i),
   })));
-  $('#pad').replaceChildren(...[...Array(9)].map((_, k) => el('button', {
+  $('#pad').style.setProperty('--n', G.n);
+  $('#pad').replaceChildren(...[...Array(G.n)].map((_, k) => el('button', {
     type: 'button', class: 'key', 'data-d': k + 1, id: `key-${k + 1}`, onClick: () => press(k + 1),
   }, el('b', {}, String(k + 1)), el('small', {}))));
 }
@@ -312,21 +337,21 @@ function drawBoard() {
   const bad = new Set([...E.conflicts(state), ...E.wrong(state)]);
   const sel = selected >= 0 ? selected : -1;
   const selDigit = sel >= 0 ? state.cells[sel] : 0;
-  const n = E.counts(state);
+  const n = E.counts(state), G = E.geom(state);
   $$('#board .cell').forEach(cell => {
     const i = +cell.dataset.i, d = state.cells[i];
-    const peer = sel >= 0 && (E.PEERS[sel].includes(i));
-    cell.className = 'cell'
+    const peer = sel >= 0 && (G.peers[sel].includes(i));
+    cell.className = 'cell' + edges(G, i)
       + (E.isGiven(state, i) ? ' given' : E.isHinted(state, i) ? ' hinted' : d ? ' mine' : '')
       + (i === sel ? ' sel' : peer ? ' peer' : '')
       + (selDigit && d === selDigit && i !== sel ? ' same' : '')
       + (bad.has(i) ? ' bad' : '');
     if (d) cell.replaceChildren(String(d));
-    else if (state.notes[i]) cell.replaceChildren(el('span', { class: 'notes' }, ...[...Array(9)].map((_, k) => el('i', {}, E.hasNote(state, i, k + 1) ? String(k + 1) : ''))));
+    else if (state.notes[i]) cell.replaceChildren(el('span', { class: 'notes' }, ...[...Array(G.n)].map((_, k) => el('i', {}, E.hasNote(state, i, k + 1) ? String(k + 1) : ''))));
     else cell.replaceChildren();
   });
   $$('#pad .key').forEach(key => {
-    const d = +key.dataset.d, left = 9 - n[d];
+    const d = +key.dataset.d, left = G.n - n[d];
     key.classList.toggle('full', left <= 0);
     key.querySelector('small').textContent = left > 0 ? String(left) : '✓';
   });
@@ -340,7 +365,7 @@ function drawBoard() {
 
 function renderPlay() {
   if (E.isOver(state)) return renderResult();
-  if (!$('#board').children.length) buildBoard();
+  if ($('#board').children.length !== state.cells.length) buildBoard();
   drawBoard();
   showScreen('screen-play');
   drawClock();
@@ -397,9 +422,10 @@ function afterMove() {
 // same digit again empties a cell (there is no erase button: the owner swapped it for Give up)
 document.addEventListener('keydown', e => {
   if (!state || !$('#screen-play').classList.contains('active') || e.metaKey || e.ctrlKey || e.altKey) return;
-  const move = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 }[e.key];
-  if (move) { e.preventDefault(); select(selected < 0 ? 40 : (selected + move + 81) % 81); }
-  else if (/^[1-9]$/.test(e.key)) press(+e.key);
+  const G = E.geom(state);
+  const move = { ArrowUp: -G.n, ArrowDown: G.n, ArrowLeft: -1, ArrowRight: 1 }[e.key];
+  if (move) { e.preventDefault(); select(selected < 0 ? Math.floor(G.cells / 2) : (selected + move + G.cells) % G.cells); }
+  else if (/^[1-9]$/.test(e.key) && +e.key <= G.n) press(+e.key);
   else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') eraseCell();
   else if (e.key.toLowerCase() === 'n') { notesMode = !notesMode; drawBoard(); }
 });
@@ -424,7 +450,10 @@ function renderResult({ fresh = false } = {}) {
   solution.hidden = !gaveUp;
   $('#solution-title').hidden = !gaveUp;
   $('#solution-title').textContent = gaveUp ? T.solutionTitle : '';
-  solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + (E.isGiven(state, i) ? ' given' : ''), 'data-r': Math.floor(i / 9), 'data-c': i % 9 }, String(d))) : []));
+  const G = E.geom(state);
+  solution.style.setProperty('--n', G.n);
+  solution.dataset.n = G.n;
+  solution.replaceChildren(...(gaveUp ? state.solution.map((d, i) => el('span', { class: 'cell' + edges(G, i) + (E.isGiven(state, i) ? ' given' : '') }, String(d))) : []));
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(state.level); } }, fmt(T.again, { level: level.toLowerCase() })),
     // Sharing tells a solved board: giving up has nothing to share

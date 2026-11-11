@@ -14,8 +14,11 @@ score ("100 por completarlo, sin errores, y cada número mal puesto es 10 menos"
 
 ## Reglas
 
-Fill the 9×9 board so every row, every column and every 3×3 box holds 1 to 9 once. The game ends when the
-board is full and valid.
+Fill the board so every row, every column and every box holds each digit once. The game ends when the
+board is full and valid. **🟢 Fácil is a mini sudoku** (the owner asked, 2026-11-11, "como el Mini Sudoku de
+LinkedIn", so a round fits a party): **6×6, boxes of 2 rows × 3 columns, digits 1 to 6**. **🔴 Difícil stays
+the classic 9×9** with 3×3 boxes. The engine reads a board's size from its length (36 or 81, `geom` in
+`engine.js`); the board, the pad and the notes follow it.
 
 ### Score
 
@@ -48,17 +51,19 @@ solved grid and empties cells in mirrored pairs while the solution stays unique 
 
 | Level | Givens | Grade it needs |
 |---|---|---|
-| 🟢 Fácil (`easy`) | 38 | singles only (a cell with one candidate, a digit with one place in a unit) |
-| 🔴 Difícil (`hard`) | ~22–31 | needs locked candidates or naked/hidden pairs; never guessing |
+| 🟢 Fácil (`easy`), 6×6 | 12–14 of 36 | singles only (a cell with one candidate, a digit with one place in a unit) |
+| 🔴 Difícil (`hard`), 9×9 | ~22–31 of 81 | needs locked candidates or naked/hidden pairs; never guessing |
 
 A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixes the board of each level
 (the tests use it).
 
 ## Look
 
-The game's emoji is 🧮 (🔢 is Toque y Fama's). The cover's hero is a drawn icon instead of the emoji (the
-owner's request): a sudoku on ruled notebook paper (no margin line, the owner asked), its digits in ink and one in pink,
-as an inline SVG coloured from the tokens (`.sd-logo` in `style.css`).
+**The game's icon is drawn** (the owner, 2026-11-11: the abacus 🧮 did not look like a sudoku, and there is no sudoku
+emoji): a 3×3 with digits in the hard level's dark red, its 9 in yellow (`icon.svg`). It goes wherever the game shows
+its emoji on screen: the cover's hero, the chip, How to play, the countdown and its /labs/ card (its splash is
+another session's work). Where only text fits (the tab's title, the share message, rankings, the panel) the
+game's emoji is **#️⃣**, the owner's pick of a text stand-in (🔢 is Toque y Fama's).
 
 ## Modos
 
@@ -74,7 +79,10 @@ with signing in.
 
 - **Demo:** a small solved board with six holes, each the only one in its row, column and box. In turn each hole
   lights its row, then its column, then its box, with a line that says the rule, and then its digit pops in
-  ("¡Solo cabe el 7!"). It sleeps off screen (`onScreen`) and stands solved with reduced motion.
+  ("¡Solo cabe el 7!"). It sleeps off screen (`onScreen`) and stands solved with reduced motion. It follows the lever
+  (the owner, 2026-11-11): on easy it is the 6×6 board with its 2×3 boxes, on hard the 9×9, and its line names
+  that board's digits and box ("Fila: del 1 al 6", "Cuadro de 2×3"). The lead and the first step of how to play
+  say both sizes.
 - **The electric lever** (Pintaminas' switch, D-291): every flip sends a ring of electricity out of the plate
   (green to easy, red and yellow to hard) and jolts it. Up to hard there is a flash over the view, sparks, a glow
   that flickers like a bad contact, and the whole page turns over: `body.sd-hard`, a red-violet background, a red
