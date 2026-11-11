@@ -193,9 +193,9 @@ export const CAMPAIGNS = {
       emoji: '#️⃣', icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', img: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
-        es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
-        en: 'Fill the board with 1 to 9 without repeating in a row, column or box. Easy or hard, with your score on the ranking.',
-        pt: 'Preencha o tabuleiro com números de 1 a 9 sem repetir na linha, coluna ou quadro. No fácil ou no difícil, com sua pontuação no ranking.',
+        es: 'Mini sudoku de 6×6 para una partida rápida, o el clásico de 9×9. Con tu puntaje en el ranking.',
+        en: 'A 6×6 mini sudoku for a quick game, or the classic 9×9. With your score on the ranking.',
+        pt: 'Mini sudoku de 6×6 para uma partida rápida, ou o clássico de 9×9. Com sua pontuação no ranking.',
       },
     }],
   },
