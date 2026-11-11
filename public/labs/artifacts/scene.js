@@ -156,7 +156,7 @@ export function escena(canvas) {
     ctx.restore();
     for (const x of [x0, x1]) { ctx.fillStyle = C.pink; ctx.strokeStyle = '#fff'; ctx.lineWidth = X(0.04); ctx.beginPath(); ctx.arc(X(x), X(top), X(0.11), 0, 7); ctx.fill(); ctx.stroke(); }
   }
-  /* The pipe the ball drops from: a cyan neon tube, the ball waiting inside it (the start's cell is
+  /* The pipe the ball drops from: a cyan neon tube, the ball waiting hidden inside it (the start's cell is
      kept free, so the tube fits in it), light flowing down it, a bright rim at its mouth */
   const PIPE = { top: -0.3, bot: 0.96, w: 0.42 };
   /** The soft cone of light under the mouth, drawn with the floor so the parts sit over it */
@@ -165,7 +165,7 @@ export function escena(canvas) {
     cone.addColorStop(0, 'rgba(46,230,214,0.2)'); cone.addColorStop(1, 'rgba(46,230,214,0)');
     ctx.fillStyle = cone; ctx.beginPath(); ctx.moveTo(X(x - w), X(bot)); ctx.lineTo(X(x + w), X(bot)); ctx.lineTo(X(x + w * 1.8), X(bot + 1.2)); ctx.lineTo(X(x - w * 1.8), X(bot + 1.2)); ctx.fill();
   }
-  /** The tube itself, drawn under the ball, so the ball waits inside it in full colour */
+  /** The tube itself, opaque and drawn over the ball, so the ball waits hidden inside it until it drops out */
   function pipe(s) {
     const { top, bot, w } = PIPE, x = s.x;
     ctx.save();
@@ -212,7 +212,6 @@ export function escena(canvas) {
     for (const f of level.fixed) if (f.type !== 'wall' && f.type !== 'spikes') part(f, true);
     basket(level.goal, s.won);
     pipeLight(level.start);
-    pipe(level.start);   // under the ball: it waits inside the tube, in full colour, and drops out of its mouth
     for (const p of s.board.placed) {
       if (p === s.dragging) continue;   // it floats as the ghost while it is dragged
       // the chosen part's dashed outline; a part just let go keeps it a moment, fading out (s.fading: { part, a })
@@ -254,6 +253,7 @@ export function escena(canvas) {
     ctx.globalAlpha = 1;
     if (!s.popped) ball(s.run ? s.run.ball : level.start, s.roll || 0);
     basketFront(level.goal, s.won);
+    pipe(level.start);   // over the ball: it waits hidden inside the tube and drops out of its mouth on Probar
     // particles
     for (const p of sparks) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.colour; ctx.beginPath(); ctx.arc(X(p.x), X(p.y), X(p.size), 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
