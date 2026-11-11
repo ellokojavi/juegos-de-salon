@@ -125,6 +125,16 @@ console.log('timeline.test.mjs ✓');
   assert.deepEqual(evs.map(e => [e.kind, e.campaign, e.who[0].name]), [['campaign', 'tres-juegos-demo', 'Cata'], ['campaign', 'support', '']]);
   assert.equal(countKinds(evs).campaign, 2);
 }
+// A burst of identical rows (same campaign, name, country) is one row with its count
+{
+  const seen = { [today]: { seen: {
+    a: { c: 'flap', at: now - 10 * 60000, co: 'US' }, b: { c: 'flap', at: now - 10 * 60000 + 200, co: 'US' },
+    c: { c: 'flap', at: now - 10 * 60000 + 400, co: 'US' }, d: { c: 'flap', at: now - 10 * 60000 + 600, co: 'US' },
+    e: { c: 'flap', at: now - 10 * 60000 + 300, co: 'BR' }, f: { c: 'flap', at: now - 2 * 60000, co: 'US' },
+  } } };
+  const evs = keyEvents({ days: seen }, { from: today - 6, to: today }, now);
+  assert.deepEqual(evs.map(e => [e.who[0].co, e.times || 1]), [['US', 1], ['BR', 1], ['US', 4]]);
+}
 console.log('timeline campaigns ok');
 
 // Where an offline game came from, when the app knew it
