@@ -33,3 +33,7 @@
 @media (prefers-reduced-motion: reduce) {
   [data-state="loading"] .or-flecha, .or-destello .or-icono { animation: none; }
 }
+
+/* The T tab's buttons, one per state (testers only) */
+.tr-or-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); }
+.tr-or-grid .btn:last-child { grid-column: 1 / -1; }

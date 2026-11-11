@@ -42,4 +42,5 @@ const nav = { serviceWorker: {}, onLine: true };
 assert.deepEqual(await readState({ nav, cachesApi: caches(['/', '/zip/', '/a.js']) }), { state: 'ready', have: 3, total: 3 });
 assert.deepEqual(await readState({ nav, cachesApi: caches(['/zip/']) }), { state: 'missing', have: 1, total: 3 });
 assert.equal((await readState({ nav: {}, cachesApi: caches([]) })).state, 'unsupported', 'no service worker');
+assert.deepEqual((await import('./offline-ready.js')).TESTER_STATES.map(([s]) => s), ['loading', 'ready', 'missing', 'unsupported', null], 'the T tab: the four states and the real one');
 console.log('✓ offline ready: four states from what the phone keeps, the sheet in three languages');

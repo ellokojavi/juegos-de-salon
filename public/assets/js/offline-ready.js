@@ -191,9 +191,26 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
   const btn = el('button', { type: 'button', class: 'icon-btn offline-ready', hidden: true });
   let current = { state: 'loading', have: 0, total: 0 };
   let sheet = null;
-  const show = s => { current = s; paint(btn, s, lang); if (sheet?.isOpen()) sheet.draw(s); };
+  // A tester's pretend state (the T tab): while set, what the phone really keeps is not drawn
+  let demo = null;
+  const draw = s => { current = s; paint(btn, s, lang); if (sheet?.isOpen()) sheet.draw(s); };
+  const show = s => { if (!demo) draw(s); };
   const refresh = () => readState({ nav }).then(show).catch(() => {});
+  const pretend = state => {
+    clearInterval(demo); demo = null;
+    if (!state) { refresh(); return; }
+    if (state !== 'loading') { demo = -1; draw(state === 'missing' ? { state, have: 291, total: 318 } : { state, have: 318, total: 318 }); return; }
+    // Storing: the ring and the sheet fill in about six seconds, then ready with its flash
+    let have = 0;
+    draw({ state: 'loading', have, total: 318 });
+    demo = setInterval(() => {
+      have = Math.min(318, have + 16);
+      if (have < 318) { draw({ state: 'loading', have, total: 318 }); return; }
+      clearInterval(demo); demo = -1; draw({ state: 'ready', have, total: 318 });
+    }, 300);
+  };
   const retry = () => {
+    if (demo) { pretend('loading'); return; }
     show({ state: 'loading', have: current.have || 0, total: current.total || 0 });
     nav.serviceWorker?.ready?.then(r => r.active?.postMessage({ type: 'offline-retry' })).catch(() => {});
     // No word from the worker in a while: read again, so the sheet never spins forever
@@ -213,6 +230,15 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
     });
     globalThis.addEventListener?.('online', refresh);
     globalThis.addEventListener?.('offline', refresh);
+    // The T tab, for testers: one button per state, to see each one without cutting the network
+    import('./tester-ribbon.js').then(({ setTesterContext }) => setTesterContext(testerControls(pretend))).catch(() => {});
   }).catch(() => {});
   return btn;
+}
+
+/** The tester's buttons: the four states and back to the real one (labels for testers, like the tab's other controls). */
+export const TESTER_STATES = [['loading', '⏳ Cargando'], ['ready', '✅ Listo'], ['missing', '⚠️ Falta algo'], ['unsupported', '🚫 No se puede'], [null, '↩️ Estado real']];
+export function testerControls(pretend) {
+  const buttons = TESTER_STATES.map(([state, label]) => el('button', { type: 'button', class: 'btn btn--ghost btn--sm', 'data-state': state || 'real', onClick: () => pretend(state) }, label));
+  return el('div', { class: 'tr-sim', id: 'tr-offline-ready' }, el('small', {}, '☁️ Estados de la nube'), el('div', { class: 'tr-or-grid' }, ...buttons));
 }
