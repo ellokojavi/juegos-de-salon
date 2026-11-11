@@ -190,7 +190,7 @@ export const CAMPAIGNS = {
     title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
     hero: true,
     items: [{
-      emoji: '🧮', href: 'labs/sudoku/', img: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      emoji: '🧮', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
         es: 'Llena el tablero con números del 1 al 9 sin repetir en fila, columna ni cuadro. En fácil o difícil, y con tu puntaje en el ranking.',
