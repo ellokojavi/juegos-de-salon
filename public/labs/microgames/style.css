@@ -429,7 +429,7 @@
 :is(.demo, .howto-rules) .g-desliza svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 :is(.demo, .howto-rules) .g-desliza .gpath { fill: none; stroke: rgb(var(--ink-rgb) / 0.25); stroke-width: 3; stroke-dasharray: 5 6; }
 :is(.demo, .howto-rules) .g-desliza .gink { fill: none; stroke: var(--kc); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; animation: gt-ink 2s ease-in-out infinite; }
-:is(.demo, .howto-rules) .g-desliza .hand { left: 0; top: 0; translate: none; offset-path: path('M14 56 C36 8 62 70 86 30 S128 14 138 52'); offset-rotate: 0deg; offset-anchor: 50% 6%; animation: gt-hand 2s ease-in-out infinite; }
+:is(.demo, .howto-rules) .g-desliza .hand { left: 0; top: 0; translate: none; offset-path: path('M16 36 C36 4 60 46 82 18 S120 6 130 32'); offset-rotate: 0deg; offset-anchor: 50% 6%; animation: gt-hand 2s ease-in-out infinite; }
 @keyframes gt-ink { 0% { stroke-dashoffset: 200; } 80%, 100% { stroke-dashoffset: 0; } }
 @keyframes gt-hand { 0% { offset-distance: 0%; } 80%, 100% { offset-distance: 100%; } }
 
@@ -807,3 +807,13 @@
 .demo .setclock line.held { filter: drop-shadow(0 0 3px var(--ink)); }
 .demo .setclock + .btn { margin-top: var(--s-12); }
 .demo .runsum span.shiny { display: inline-flex; gap: 1px; }
+/* The title's ⚡ gives a little jolt now and then */
+.demo .cmd .tbolt { display: inline-block; animation: tbolt 2.6s ease-in-out infinite; transform-origin: 50% 80%; filter: drop-shadow(0 0 6px rgb(var(--yellow-rgb) / 0.6)); }
+@keyframes tbolt { 0%, 70%, 100% { rotate: 0deg; scale: 1; } 74% { rotate: -14deg; scale: 1.25; } 78% { rotate: 10deg; scale: 0.95; } 82% { rotate: -6deg; scale: 1.1; } 86% { rotate: 0deg; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .demo .cmd .tbolt { animation: none; } }
+/* The tester tab's picker (D-551): every microgame by its emoji, framed in its type's color */
+.tr-mg-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-6); }
+.tr-mg-b { aspect-ratio: 1; display: grid; place-items: center; padding: 0; border-radius: var(--r-10); border: 1px solid var(--kc); background: rgb(var(--ink-rgb) / 0.06); font-size: var(--fs-140); line-height: 1; cursor: pointer; transition: scale 0.1s, background 0.1s; }
+.tr-mg-b:hover, .tr-mg-b:focus-visible { background: rgb(var(--ink-rgb) / 0.16); outline: none; }
+.tr-mg-b:active { scale: 0.9; }
+.tr-mg-today { align-self: flex-start; color: var(--cyan); font-weight: 800; font-size: var(--fs-90); text-decoration: none; }

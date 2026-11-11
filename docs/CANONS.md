@@ -274,6 +274,7 @@ When each device keeps a secret (a number, a fleet):
   in `tools/e2e/` walks the screens of `paths.mjs` in each language of `LANGS` against
   Spanish. A script that checks something of one language walks `LANGS`, not a hand-written list, and
   takes what it expects from the dictionary: so a new language is tested the day it comes in.
+- **Testing shortcuts go in the «T» tester tab** (D-551): playing one level or microgame directly, jumping to a state or simulating an end is a control registered with `setTesterContext` behind `labAccess`, never a button on the cover or a player screen, so the cover is always what players see.
 
 ## C-13 · Documentation
 

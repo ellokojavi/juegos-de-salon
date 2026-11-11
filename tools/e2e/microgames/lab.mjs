@@ -1,5 +1,5 @@
 // ¡Al toque! in the lab end to end, at /labs/microgames/: the lab offers it under Games being tried, crediting
-// WarioWare; the stage fills the screen; the cover shows the three ways to play at once (each with its moving gesture) above Jugar, the credit, its rules folded (the three ways to play, each with its gesture),
+// WarioWare; the stage fills the screen; the cover shows the three ways to play at once (each with its moving gesture) above Jugar, the credit, no folded rules (D-550 exception), the ranking,
 // the sound button and the site footer; Jugar starts a run of 10
 // different microgames, with the HUD, a mark per game and the first intro wearing its type's gesture; a single
 // game (¡Calcula!, answered right) ends on the run's summary with points, stars, Otra corrida and the way back to
@@ -29,11 +29,12 @@ ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends
 ok(await ev(`__microgames.ids.length`) === 28, "twenty-eight microgames");
 await b.shot('01-cover');
 
-ok(await ev(`document.querySelector('#rules-slot details.panel')?.open === false`), 'the rules are on the cover, folded (D-550)');
-ok(await ev(`document.querySelectorAll('#rules-slot .howkinds li').length`) === 3 && await ev(`!!document.querySelector('#rules-slot .gstage .hand')`), 'with the three ways to play, each with its finger');
+ok(await ev(`document.querySelectorAll('.kinds .kind').length === 3 && document.querySelectorAll('.kinds .gstage .hand').length === 3`), 'the cover shows the three ways to play, each with its finger (instead of folded rules)');
+ok(await ev(`(()=>{const h=document.querySelector('.kind .g-desliza .hand').getBoundingClientRect(), g=document.querySelector('.kind .g-desliza').getBoundingClientRect(); return h.bottom <= g.bottom + 1})()`), 'and Desliza\'s hand stays inside its box');
+ok(await ev(`document.querySelector('.demo').getBoundingClientRect().bottom <= innerHeight`), 'the cover fits above the fold');
 ok(await ev(`!!document.querySelector('#sound-slot .sound-toggle')`), 'a sound button in the top bar (C-4)');
 await ev(`document.getElementById('btn-jugar').click(); 1`);
-ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.querySelector('#rules-slot details')`, 2000), 'Jugar starts the run, with the HUD, and the rules go away');
+ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.getElementById('ranking').children.length`, 2000), 'Jugar starts the run, with the HUD, and the ranking goes away');
 const order = await ev(`__microgames.order`);
 ok(order.length === 10 && new Set(order).size === 10, `ten different microgames (${order.join(', ')})`);
 ok(await ev(`document.querySelectorAll('#runbar i').length`) === 10, 'a mark per game in the run');
@@ -78,15 +79,16 @@ ok(await waitFor(`!!document.getElementById('btn-retar')`, 6000) && /^[A-HJ-NP-Z
 
 // In English
 await b.go(`${SITE}/labs/microgames/?test&lang=en`, 800);
-ok(/microgames in a row/.test(await ev(`document.getElementById('screen').textContent`)) && /How to play/.test(await ev(`document.getElementById('rules-slot').textContent`)), 'in English, the cover and its rules');
+ok(/microgames in a row/.test(await ev(`document.getElementById('screen').textContent`)) && /SWIPE/.test(await ev(`document.querySelector('.kinds').textContent`)), 'in English, the cover and its three ways');
 await ev(`__microgames.only('cuenta'); 1`); await sleep(300);
 ok(/COUNT!/.test(await ev(`document.getElementById('screen').textContent`)), 'and the microgames');
 b.close();
 const s = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 640 });
 await s.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'at 320 px, no sideways scroll on the cover');
-await s.evaluate(`document.getElementById('reglas').open = true; 1`); await sleep(200);
-ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'nor with the rules open');
+ok(await s.evaluate(`!document.getElementById('reglas') && document.querySelector('#ranking').children.length > 0`), 'no folded rules (the cover shows the three ways), and the ranking under the stage');
+await s.evaluate(`document.querySelector('.tr-tab')?.click(); 1`); await sleep(300);
+ok(await s.evaluate(`document.querySelectorAll('.tr-mg-b').length === __microgames.ids.length`), 'the tester tab offers every microgame (D-551)');
 s.close();
 if (failures) { console.log(`✗ ${failures} failed`); process.exit(1); }
 console.log('✓ ¡Al toque! in the lab');
