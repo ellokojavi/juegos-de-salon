@@ -389,8 +389,6 @@ export const REUSES = {
   // The owner's sheets of 🚂 Tren en Vilo's trains and visitors, kept in the lab after the game left it (D-456)
   'labs/bridges/trains': ['cup/games/bridges/'],
   'labs/bridges/visitors': ['cup/games/bridges/'],
-  // The lab's Sudoku prototype plays on La Copa's engine since the game left the lab (D-517's way), until the cleanup PR
-  'labs/sudoku': ['cup/games/sudoku/'],
   // The home page's lab experiments (D-363, D-387): loaded only with ?lab or their parameter
   '': ['labs/home/', 'labs/experiments.css'],
 };

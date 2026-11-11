@@ -24,7 +24,6 @@ import battleshipManifest from './manifests/battleship.js';
 import generalaManifest from './manifests/generala.js';
 import julepManifest from './manifests/labs/julep.js';
 import fourthKingManifest from './manifests/labs/fourth-king.js';
-import sudokuManifest from './manifests/labs/sudoku.js';
 import cupManifest from './manifests/cup.js';
 
 /**
@@ -588,7 +587,8 @@ export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_D
  * The lab's games that are not in games.js yet, by the id their usage signal carries (`GAME_ID` in each
  * game), so every list inside (the owner's panel, its activity monitor, rankings tools) names them as the
  * player reads them instead of showing the id (the owner saw ¡Al toque! as "microgames"). A lab game with
- * a game.json takes its name from its manifest; one without lists it here. `game-labels.test.mjs` fails
+ * a game.json takes its name from its manifest; one without lists it here (Sudoku left it when it
+ * graduated: its entry is in SUELTOS). `game-labels.test.mjs` fails
  * when a game sends signals with an id that has no name.
  */
 export const LAB_NAMES = {
@@ -599,7 +599,6 @@ export const LAB_NAMES = {
   clave: { emoji: '🔐', name: { es: 'La clave', en: 'The Code', pt: 'A senha' } },
   camaleon: { emoji: '🦎', name: { es: 'El Camaleón', en: 'Chameleon', pt: 'Camaleão' } },
   'numeros-explosivos': { emoji: '💥', name: { es: 'Números explosivos', en: 'Exploding Numbers', pt: 'Números explosivos' } },
-  sudoku: { emoji: sudokuManifest.emoji, name: sudokuManifest.name },
 };
 
 export function gameLabel(id, lang = 'es') {

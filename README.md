@@ -528,6 +528,7 @@ node public/assets/js/daily-recap.test.mjs
 node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/flags.test.mjs
+node public/assets/js/game-labels.test.mjs
 node public/assets/js/game-manifest.test.mjs
 node public/assets/js/game-names.test.mjs
 node public/assets/js/games.test.mjs

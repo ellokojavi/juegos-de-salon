@@ -178,25 +178,24 @@ export const CAMPAIGNS = {
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
   },
-  // #️⃣ Sudoku, the owner's invitation to play it (2026-11-11), made ahead and kept off until the game leaves
-  // the lab: `requires` keeps it unseen until flags/sudoku is on for this visitor (D-517), and it is not in
-  // ACTIVE. Its picture is the real board half solved. Sudoku is not in games.js while in the lab, so the
-  // item carries its own texts and link: the launch PR points `href` at the game's new folder (or uses the
-  // game's own entry once it is in games.js)
+  // #️⃣ Sudoku leaves the lab (D-517's way, the owner's request for 2026-11-11 21:00 Pacific): its splash
+  // invites to play it. `requires` keeps it unseen until flags/sudoku is on for this visitor, so the
+  // `launch` workflow switches both on together and it appears with the game. Play opens its page ready
+  // to start (`?play`). Its picture is the real board finding digits by lines; its icon the drawn 3×3
   'sudoku-ya': {
-    // the game's drawn icon (a 3×3, labs/sudoku/icon.svg): there is no sudoku emoji (#1400)
-    icon: 'labs/sudoku/icon.svg', emoji: '#️⃣',
+    // the game's drawn icon (a 3×3, cup/games/sudoku/icon.svg): there is no sudoku emoji (#1400)
+    icon: 'cup/games/sudoku/icon.svg', emoji: '#️⃣',
     requires: ['sudoku'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
     title: { es: '¿Te atreves con un Sudoku?', en: 'Up for a Sudoku?', pt: 'Topa um Sudoku?' },
     hero: true,
     items: [{
-      emoji: '#️⃣', icon: 'labs/sudoku/icon.svg', href: 'labs/sudoku/', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
+      emoji: '#️⃣', icon: 'cup/games/sudoku/icon.svg', href: 'sudoku/?play', video: 'assets/splash/sudoku.mp4', img: 'assets/splash/sudoku-start.jpg', still: 'assets/splash/sudoku.jpg', ratio: '1 / 1', smooth: true,
       title: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
       text: {
-        es: 'Mini sudoku de 6×6 para una partida rápida, o el clásico de 9×9. Con tu puntaje en el ranking.',
-        en: 'A 6×6 mini sudoku for a quick game, or the classic 9×9. With your score on the ranking.',
-        pt: 'Mini sudoku de 6×6 para uma partida rápida, ou o clássico de 9×9. Com sua pontuação no ranking.',
+        es: 'Mini sudoku de 6×6 para una partida rápida, o el clásico de 9×9. Ya está en La Copa y en Uno al día.',
+        en: 'A 6×6 mini sudoku for a quick game, or the classic 9×9. Now in The Cup and One a Day too.',
+        pt: 'Mini sudoku de 6×6 para uma partida rápida, ou o clássico de 9×9. Já está na Copa e no Um por dia.',
       },
     }],
   },

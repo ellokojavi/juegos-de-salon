@@ -1429,6 +1429,7 @@
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/flags.test.mjs",
+    "public/assets/js/game-labels.test.mjs",
     "public/assets/js/game-manifest.test.mjs",
     "public/assets/js/game-names.test.mjs",
     "public/assets/js/games.test.mjs",
