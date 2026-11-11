@@ -2310,6 +2310,19 @@
       "date": "2026-11-11T21:00:31.384Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43094926446,
+      "check": "end-to-end",
+      "pr": 1402,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "16538fce923ce2e8441398b96af3732dcff6e0dc",
+      "test": "(end-to-end)",
+      "error": "no failing test found in the log",
+      "signature": "f2f83772a2",
+      "date": "2026-11-11T21:01:45.613Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
