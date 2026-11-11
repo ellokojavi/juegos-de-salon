@@ -19,11 +19,26 @@ board is full and valid.
 
 ### Score
 
-**100 for the finished board, minus 10 for every digit written that is not the solution's**, never below 0
+**100 for the finished board, minus 10 for every digit written that is not the solution's and 15 for every hint**, never below 0
 (`score` in `engine.js`). Each wrong digit turns red at once and the line under the board says "−10";
 undo does not give the 10 back, notes never count. **Giving up scores 0** (as in La Copa's puzzles). The score shows next to the clock and on the result,
 and goes to the panel in `trackFinish` (`puntaje`, `errores`). It is the score La Copa will use if the
 sudoku goes there. A digit that repeats in its row, column or box is red too.
+
+### Hints
+
+**💡 Pista** (the owner asked, 2026-11-11) costs **15 points**, as a hint does in La Copa's puzzles, and asks
+twice like 🏳️ Rendirse (the first tap shows «💡 ¿Seguro? −15» for 3 s). It fills the selected cell when it is
+open (empty or wrong); else the easiest one left: a cell with one candidate, then a digit with one place in a
+row, column or box, counted on the board without its wrong digits (`findHint` in `engine.js`). The line under
+the board says why («En esa fila, el 7 solo cabe ahí. −15»). A hinted cell is fixed, in yellow, and undo does
+not take it back. The result counts the hints next to the mistakes.
+
+### The celebration
+
+A right digit pops with a soft ring (lime; yellow for a hint), and a row, column or box it completes gets a
+light that runs along it from that cell (`celebrate` in `game.js`, `.pop-ok`, `.pop-hint`, `.sweep`). Nothing
+moves with reduced motion.
 
 ### Levels and the generator (`engine.js`)
 
@@ -73,7 +88,7 @@ with signing in.
 ## Flujo
 
 Intro (resume panel with level and time, the level lever and ¡A jugar!, how to play in three short lines, folded: D-550) → play (level, clock and score, the board,
-the 1–9 pad with how many of each are left, ✏️ Notas, ↩️ Deshacer and 🏳️ Rendirse on the right) → result (the score and how it was made, level and time,
+the 1–9 pad with how many of each are left, ✏️ Notas · ↩️ Deshacer over 💡 Pista · 🏳️ Rendirse, two by two) → result (the score and how it was made, level and time,
 Another sudoku of that level, Share through `compartir.js`, Change difficulty, and the exit to the lab from
 `fin.js`, C-19).
 

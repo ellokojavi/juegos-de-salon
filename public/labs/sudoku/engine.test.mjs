@@ -1,6 +1,6 @@
 // Sudoku's engine: the generator gives one solution and the level's grade; the moves keep the rules.
 import assert from 'node:assert/strict';
-import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, giveUp, PEERS, UNITS, LEVELS } from './engine.js';
+import { generate, grade, solve, newGame, setDigit, toggleNote, erase, undo, conflicts, counts, hasNote, isOver, wrong, score, giveUp, findHint, useHint, isHinted, completedUnits, PEERS, UNITS, LEVELS } from './engine.js';
 
 assert.deepEqual(LEVELS, ['easy', 'hard'], 'two levels: easy and hard (the owner, 2026-11-10)');
 
@@ -82,5 +82,33 @@ let g = setDigit(newGame('easy', 'give-up'), 0, 1);
 g = giveUp(newGame('easy', 'give-up'));
 assert.ok(isOver(g) && g.gaveUp && score(g) === 0, 'giving up ends it with 0');
 assert.equal(giveUp(g), g, 'a finished game cannot give up again');
+
+// Hints (the owner, 2026-11-11): the right digit, −15 each, fixed, not undone, with a reason a person can follow
+let hs = newGame('hard', 'hint');
+const first = findHint(hs);
+assert.ok(first && first.d === hs.solution[first.i] && !hs.cells[first.i], 'a hint names an empty cell and its digit');
+assert.ok(['single', 'row', 'col', 'box'].includes(first.why), `on a fresh hard board the hint is a deduction (${first.why})`);
+hs = useHint(hs);
+assert.equal(hs.cells[first.i], first.d);
+assert.ok(isHinted(hs, first.i));
+assert.equal(score(hs), 85, 'a hint costs 15');
+assert.equal(setDigit(hs, first.i, (first.d % 9) + 1), hs, 'a hinted cell is fixed');
+assert.equal(undo(hs).cells[first.i], first.d, 'undo does not take a hint back');
+// The selected open cell is the one hinted, a wrong digit there included
+const holesH = hs.cells.map((d, i) => (d ? -1 : i)).filter(i => i >= 0);
+let w = setDigit(hs, holesH[3], (hs.solution[holesH[3]] % 9) + 1);
+w = useHint(w, holesH[3]);
+assert.equal(w.cells[holesH[3]], w.solution[holesH[3]], 'a hint fixes the selected wrong cell');
+assert.equal(score(w), 100 - 10 - 30, 'one mistake and two hints');
+// Hints alone finish the board, and the score never goes below 0
+let all = newGame('easy', 'hints-all');
+while (!isOver(all)) all = useHint(all);
+assert.equal(score(all), 0);
+assert.equal(findHint(all), null);
+// A completed unit is reported for the celebration
+let cu = newGame('easy', 'units');
+const row = [...Array(9)].map((_, c) => c);
+for (const i of row) if (!cu.cells[i]) cu = setDigit(cu, i, cu.solution[i]);
+assert.ok(completedUnits(cu, 0).some(u => u.length === 9 && u.every(i => i < 9)), 'the first row is complete');
 
 console.log('sudoku engine: ok');

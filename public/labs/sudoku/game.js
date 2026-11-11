@@ -47,11 +47,39 @@ function disarmGiveUp() {
   const b = $('#btn-give-up');
   b.classList.remove('armado'); b.textContent = T.giveUp;
 }
+let hintArmed = false, hintTimer = 0;
+function disarmHint() {
+  hintArmed = false; clearTimeout(hintTimer);
+  const b = $('#btn-hint');
+  b.classList.remove('armado'); b.textContent = T.hint;
+}
 
-function say(text) {
+/**
+ * The celebration of a right digit (the owner asked for something subtle but pretty, 2026-11-11): the
+ * cell pops with a soft ring, and a row, column or box it completes gets a light that runs along it.
+ * A hint's cell pops in yellow. Nothing moves with reduced motion (the CSS drops it).
+ */
+function celebrate(i, { hint = false } = {}) {
+  const cellOf = j => $(`#board .cell[data-i="${j}"]`);
+  const play = (node, cls, delay = 0) => {
+    if (!node) return;
+    node.classList.remove(cls); void node.offsetWidth;
+    node.style.setProperty('--k', `${delay}ms`);
+    node.classList.add(cls);
+    node.addEventListener('animationend', () => node.classList.remove(cls), { once: true });
+  };
+  play(cellOf(i), hint ? 'pop-hint' : 'pop-ok');
+  // A unit just completed: the light runs from the cell outwards, cell by cell
+  for (const unit of E.completedUnits(state, i)) {
+    const from = unit.indexOf(i);
+    unit.forEach((j, k) => play(cellOf(j), 'sweep', 120 + Math.abs(k - from) * 45));
+  }
+}
+
+function say(text, ms = 1800) {
   clearTimeout(flash);
   $('#hint').textContent = text;
-  flash = setTimeout(() => { flash = 0; if (state && !E.isOver(state)) drawBoard(); }, 1800);
+  flash = setTimeout(() => { flash = 0; if (state && !E.isOver(state)) drawBoard(); }, ms);
 }
 
 const elapsed = () => (state ? state.elapsed + (since ? Date.now() - since : 0) : 0);
@@ -289,7 +317,7 @@ function drawBoard() {
     const i = +cell.dataset.i, d = state.cells[i];
     const peer = sel >= 0 && (E.PEERS[sel].includes(i));
     cell.className = 'cell'
-      + (E.isGiven(state, i) ? ' given' : d ? ' mine' : '')
+      + (E.isGiven(state, i) ? ' given' : E.isHinted(state, i) ? ' hinted' : d ? ' mine' : '')
       + (i === sel ? ' sel' : peer ? ' peer' : '')
       + (selDigit && d === selDigit && i !== sel ? ' same' : '')
       + (bad.has(i) ? ' bad' : '');
@@ -325,14 +353,16 @@ function select(i) {
 }
 
 function press(d) {
-  if (selected < 0 || E.isGiven(state, selected)) { vibrate(30); return; }
+  if (selected < 0 || E.isGiven(state, selected) || E.isHinted(state, selected)) { vibrate(30); return; }
   const before = state;
   state = notesMode && !state.cells[selected] ? E.toggleNote(state, selected, d) : E.setDigit(state, selected, d);
   if (state === before) return;
   SFX.tap();
   const missed = state.mistakes > (before.mistakes || 0);
   if (missed) { vibrate(80); say(T.mistake); }
+  const right = !missed && state.cells[selected] && state.cells[selected] === state.solution[selected];
   afterMove();
+  if (right && !E.isOver(state)) { SFX.reveal(); celebrate(selected); }
 }
 
 function eraseCell() {
@@ -350,6 +380,7 @@ function undoMove() {
 
 function afterMove() {
   if (giveUpArmed) disarmGiveUp();
+  if (hintArmed) disarmHint();
   if (E.isOver(state)) {
     stopClock();
     save();
@@ -384,7 +415,9 @@ function renderResult({ fresh = false } = {}) {
   $('#result-score').textContent = fmt(T.scoreResult, { score: points });
   $('#result-line').textContent = fmt(T.solvedLine, { level: `${LEVEL_EMOJI[state.level]} ${level}`, time });
   // Giving up: the title and the 0 already say it (U-8), so no detail line under them
-  $('#result-detail').textContent = gaveUp ? '' : n ? fmt(T.scoreDetailMistakes, { n }) : T.scoreDetail;
+  const h = state.hints || 0;
+  const detail = [n ? fmt(T.scoreDetailMistakes, { n }) : '', h ? fmt(T.scoreDetailHints, { n: h }) : ''].filter(Boolean).join(' ');
+  $('#result-detail').textContent = gaveUp ? '' : detail || T.scoreDetail;
   $('#result-detail').hidden = gaveUp;
   // On giving up, the solution, under the exits (C-19): the givens in white, the rest in cyan
   const solution = $('#result-board');
@@ -428,6 +461,7 @@ function init() {
   giveUpBtn.addEventListener('click', () => {
     if (!state || E.isOver(state)) return;
     if (!giveUpArmed) {
+      if (hintArmed) disarmHint();
       giveUpArmed = true; SFX.tap(); vibrate(15);
       giveUpBtn.textContent = T.giveUpSure; giveUpBtn.classList.add('armado');
       giveUpTimer = setTimeout(disarmGiveUp, 3000);
@@ -438,6 +472,26 @@ function init() {
     afterMove();
   });
   $('#btn-undo').addEventListener('click', undoMove);
+  // A hint asks twice too, saying its price (−15): the selected cell if it is open, else the easiest one
+  const hintBtn = $('#btn-hint');
+  hintBtn.addEventListener('click', () => {
+    if (!state || E.isOver(state) || counting) return;
+    if (!hintArmed) {
+      if (giveUpArmed) disarmGiveUp();
+      hintArmed = true; SFX.tap(); vibrate(15);
+      hintBtn.textContent = T.hintSure; hintBtn.classList.add('armado');
+      hintTimer = setTimeout(disarmHint, 3000);
+      return;
+    }
+    disarmHint();
+    const before = state;
+    state = E.useHint(state, selected);
+    if (state === before) return;
+    const h = state.last;
+    selected = h.i;
+    afterMove();
+    if (!E.isOver(state)) { SFX.reveal(); celebrate(h.i, { hint: true }); say(fmt(T.hintWhy[h.why] || T.hintWhy.solution, { d: h.d }), 4500); }
+  });
   renderModes();
   renderResumeSlot();
 }

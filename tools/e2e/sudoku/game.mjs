@@ -67,6 +67,20 @@ for (const level of ['easy', 'hard']) {
 // Giving up asks twice (U-15): the first tap arms it, the second ends with 0 and the solution
 await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
 ok(!(await b.evaluate("!!document.getElementById('btn-erase')")), 'there is no erase button');
+// A hint asks twice, fills the selected cell with its digit and says why; a right digit celebrates (the owner, 2026-11-11)
+for (let t = 0; t < 30 && await b.evaluate("!!document.getElementById('cuenta')"); t++) await sleep(200);
+const hcell = await b.evaluate(`(() => { const s = window.${S}.state(); const i = s.cells.findIndex(d => !d); document.querySelector('#board .cell[data-i="' + i + '"]').click(); return i; })()`);
+await b.evaluate("document.getElementById('btn-hint').click(); 1"); await sleep(150);
+ok(await b.evaluate("document.getElementById('btn-hint').classList.contains('armado')") && await b.evaluate(`window.${S}.state().cells[${hcell}]`) === 0, 'the first tap on Hint only arms it, saying its price');
+await b.evaluate("document.getElementById('btn-hint').click(); 1"); await sleep(150);
+const hr = JSON.parse(await b.evaluate(`JSON.stringify({ s: window.${S}.state(), cls: document.querySelector('#board .cell[data-i="${hcell}"]').className, why: document.getElementById('hint').textContent, score: document.getElementById('score-line').textContent })`));
+ok(hr.s.cells[hcell] === hr.s.solution[hcell] && /hinted/.test(hr.cls), `the hint fills that cell with its digit, marked (${hr.cls})`);
+ok(/💡/.test(hr.why) && /15/.test(hr.why), `it says why, and its price (${hr.why})`);
+ok(/85/.test(hr.score), `a hint costs 15 points (${hr.score})`);
+ok(/pop-hint/.test(hr.cls), 'the hinted cell pops');
+await b.shot('hint');
+const rc = await b.evaluate(`(() => { const s = window.${S}.state(); const i = s.cells.findIndex(d => !d); document.querySelector('#board .cell[data-i="' + i + '"]').click(); document.getElementById('key-' + s.solution[i]).click(); return document.querySelector('#board .cell[data-i="' + i + '"]').className; })()`);
+ok(/pop-ok/.test(rc), `a right digit pops (${rc})`);
 await b.evaluate("document.getElementById('btn-give-up').click(); 1"); await sleep(200);
 ok(await b.active() === 'screen-play' && await b.evaluate("document.getElementById('btn-give-up').classList.contains('armado')"), 'the first tap on Give up only arms it');
 await b.evaluate("document.getElementById('btn-give-up').click(); 1"); await sleep(400);
