@@ -264,7 +264,7 @@
 .demo.green.hot { background: var(--mg-19b85c); box-shadow: inset 0 0 80px rgb(var(--mg-c8ffdc-rgb) / 0.40); }
 .demo.red, .demo.green { transition: background 0.12s; }
 /* While the scene is frozen at the end: a small ✓ or ✗ in the middle of the HUD strip (the top 40px no game
-   draws in), so it never covers what you did. verdict.test.mjs keeps its bottom above 40px. */
+   draws in), so it never covers what you did. rules.test.mjs keeps its bottom above 40px. */
 .verdict-tag { position: absolute; top: 4px; left: 50%; translate: -50% 0; z-index: 20; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
   font: 400 var(--fs-140)/1 var(--display); pointer-events: none; border: 2px solid var(--ink); rotate: -8deg;
   box-shadow: 0 6px 0 var(--well), 0 0 0 6px rgb(var(--ink-rgb) / 0.12), 0 10px 24px rgb(var(--mg-000000-rgb) / 0.45); animation: tagin 0.42s cubic-bezier(0.3, 1.8, 0.5, 1); }
@@ -292,7 +292,7 @@
 .demo .opts4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .demo .opts4 button, .demo .opts3 button { font: 400 var(--mg-fs-220) var(--display); color: var(--ink); background: var(--glass); border: 1px solid var(--line); border-radius: 14px; padding: 10px 0; cursor: pointer; font-variant-numeric: tabular-nums; }
 .demo .op { font: 400 clamp(var(--mg-fs-300), 14vw, var(--mg-fs-440))/1 var(--display); letter-spacing: 0.04em; color: var(--ink); }
-.demo .opts3 { display: grid; grid-template-columns: repeat(3, 76px); gap: 20px; margin-top: 10px; }
+.demo .opts3 { display: grid; grid-template-columns: repeat(3, 76px); gap: 20px; margin-top: 4px; }
 .demo .opts3.low { position: absolute; left: 50%; bottom: 9%; translate: -50% 0; margin: 0; grid-template-columns: repeat(3, 64px); gap: calc(var(--s-32) + 12px); }
 .demo .opts3.low button { font-size: var(--fs-160); padding: 8px 0; }
 .demo .picking button { transition: opacity 0.25s, scale 0.25s, filter 0.25s; }
@@ -557,7 +557,7 @@
 .mascot b { position: absolute; right: 96px; top: 6px; white-space: nowrap; font: 400 var(--fs-140) var(--display); letter-spacing: 0.05em; color: var(--ink); padding: 4px 10px; border-radius: 12px; background: var(--pink); box-shadow: 3px 3px 0 var(--ink-on-yellow); rotate: -8deg; }
 .mascot.tycoon { right: auto; left: -14px; bottom: -14px; width: 190px; transform-origin: 0 100%; animation: tycoon 1.7s cubic-bezier(0.3, 1.4, 0.5, 1) forwards; }
 .mascot.tycoon svg { width: 170px; margin: 0; }
-.mascot.tycoon b { right: auto; left: 132px; top: 10px; background: var(--mg-3ddc84); color: var(--mg-0f3d1f); rotate: 8deg; }
+.mascot.tycoon b { right: auto; left: 132px; top: 4px; background: var(--mg-3ddc84); color: var(--mg-0f3d1f); rotate: 8deg; }
 .mascot.tycoon .thumb { transform-origin: 124px 92px; animation: thumbup 0.5s ease-in-out 0.35s 2 alternate; }
 .mascot.tycoon .bills { animation: billfan 0.4s ease-in-out infinite alternate; }
 @keyframes thumbup { to { transform: rotate(-12deg) translateY(-4px); } }
