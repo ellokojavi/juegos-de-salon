@@ -1416,8 +1416,8 @@ trackVisit();   // the site's traffic (D-208)
   const breakdown = sc => { const base = marks.reduce((a, m) => a + m * 10, 0), streaks = sc.games.filter(g => g.streak).length,
       speed = sc.points - base - streaks * STREAK;
     return `<div class="breakdown" aria-label="${t('Cómo se calcularon tus puntos')}">
-      <div><span>${t('{n} ★ × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
-      <div class="bonus"><span>${t('⚡ Bono de velocidad')} <small>${t('sube cada 3 juegos')}</small></span><b class="num">+${speed}</b></div>
+      <div><span>${t('⭐ {n} estrellas × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
+      <div><span>${t('⚡ Bono de velocidad')}</span><b class="num">+${speed}</b></div>
       <div><span>${t('🔥 Rachas de ★★ o más: {n} × {p}', { n: streaks, p: STREAK })}</span><b class="num">+${streaks * STREAK}</b></div>
       <div class="tot"><span>${t('Total')}</span><b class="num">${sc.points} ${t('pts')}</b></div></div>`; };
   function end() {
