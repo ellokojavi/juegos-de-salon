@@ -755,7 +755,9 @@
 .demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }
 /* The cover's hero: ⚡ in the middle, and on one side then the other a microgame playing itself out in 1.7 s */
 /* The cover grows rather than clip its buttons on a narrow phone */
-.demo:has(.hero) { aspect-ratio: auto; min-height: min(125vw, 560px); }
+.demo:has(.hero) { aspect-ratio: auto; }
+.demo:has(.hero) .menu { width: 100%; }
+.demo:has(.hero) .menu > #btn-jugar { flex: 0 1 320px; }
 .demo .hero { position: relative; width: min(100%, 440px); height: 104px; }
 .demo .hero .bolt { position: absolute; left: 50%; top: 50%; translate: -50% -50%; font-size: clamp(var(--mg-fs-350), 14vw, var(--mg-fs-500)); line-height: 1; z-index: 2; filter: drop-shadow(0 0 14px rgb(var(--yellow-rgb) / 0.55)); }
 .demo .hero .bolt.zap { animation: hzap 1.7s ease-out; }
