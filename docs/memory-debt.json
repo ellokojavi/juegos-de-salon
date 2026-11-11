@@ -68,6 +68,10 @@
     {
       "id": "aletazo",
       "reason": "Built in cup/games/: its attempt is kept by the Cup's shared screen (public/cup/cuenta.js, per cup, day and player, which does not use createSessionStore because a day outlasts its 12 hours), not by its own code"
+    },
+    {
+      "id": "sudoku",
+      "reason": "Built in cup/games/ like Aletazo: its board, saved after every move with ctx.guardar, is kept by the Cup's shared screen (public/cup/cuenta.js), not by its own code; the lab prototype (labs/sudoku/) still uses createSessionStore until the cleanup PR"
     }
   ]
 }

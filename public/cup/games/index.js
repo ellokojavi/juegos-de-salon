@@ -75,6 +75,7 @@ const CODE = {
   stick: () => Promise.all([import('./stick/engine.js'), import('./stick/ui.js')]),
   stack: () => Promise.all([import('./stack/engine.js'), import('./stack/ui.js')]),
   aletazo: () => Promise.all([import('./flap/engine.js'), import('./flap/ui.js')]),
+  sudoku: () => Promise.all([import('./sudoku/engine.js'), import('./sudoku/ui.js')]),
   final: () => Promise.all([import('./final/engine.js'), import('./final/ui.js')]),
 };
 CODE.trio = CODE.final;
@@ -117,6 +118,11 @@ const BUILD = {
   aletazo: ([m, ui]) => delLab('aletazo', {
     generarDia: m.generateDay, puntajeDia: m.dayScore,
   }, { portada: ui.cover, titulo: ui.title, montar: ui.mount, resultado: ui.result, desglose: ui.breakdown }),
+  // #️⃣ Sudoku, out of the lab like Aletazo (D-517's way), launched by flags/sudoku. Its levels are its
+  // variants (easy, the 6×6 mini, by default; hard, the 9×9), its score 0 to 100 already
+  sudoku: ([m, ui]) => delLab('sudoku', { generarDia: m.generateDay }, {
+    portada: ui.cover, titulo: ui.title, montar: ui.mount, resultado: ui.result, desglose: ui.breakdown, selector: ui.selector, clock: ui.clock, caro: ui.caro,
+  }),
   final: ([final, uiFinal]) => ({
     ...juego(final, uiFinal),
     // A round with no short version is the game whole, built with its own generator for the final

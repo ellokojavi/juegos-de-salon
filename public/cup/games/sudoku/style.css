@@ -1,0 +1,184 @@
+/* #️⃣ Sudoku in La Copa (moved from labs/sudoku/style.css). What is shared lives in assets/css/base.css and
+   the cup's style.css; this file keeps the board, its pad, the level lever and the cover's demo, on the tokens
+   (DESIGN.md §1). Everything is prefixed `sd-`. */
+
+/* Its thematic colours (DESIGN.md §4): the level lever's metal, the same as Pintaminas' hard-mode lever */
+:root {
+  --sd-plate-light: #4a4f5c; --sd-plate-dark: #23262e; --sd-plate-edge: #6b7180;
+  --sd-axle-light: #d9dde5; --sd-axle-dark: #7b8190;
+  --sd-arm-1: #aeb4c0; --sd-arm-2: #e6e9ef; --sd-arm-3: #9aa0ad;
+  --sd-knob-easy: #c8ff8a; --sd-knob-hard: #ff8a8a; --sd-knob-shade-easy: #3f8f12; --sd-knob-shade-hard: #c4142b;
+}
+
+/* ---------- The waiting room: the name and its line ---------- */
+.sd-cabeza { display: grid; gap: var(--s-4); justify-items: center; }
+.sd-titulo { margin: 0; }
+/* One word: never broken across lines («SUDOK / U» on a phone, the owner saw it), and as wide as the cover, not the demo */
+.sd-cabeza { width: 100%; justify-self: stretch; text-align: center; }
+.sd-nombre { white-space: nowrap; }
+.sd-lema { margin: 0; color: var(--muted); font-weight: 700; text-align: center; }
+body.sd-hard .sd-nombre { background: linear-gradient(90deg, var(--sd-knob-hard), var(--yellow), var(--sd-knob-hard)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---------- The cover's demo: the drawn icon and a small board solving itself; on a short phone the board
+   shrinks (down to 110 px) so ¡Empezar! stays above the fold (landing-fold.mjs) ---------- */
+.sd-portada { margin: 0 auto; display: grid; gap: var(--s-8); justify-items: center; }
+.sd-logo { width: 4.5rem; height: 4.5rem; transform: rotate(-6deg); filter: drop-shadow(0 0 18px rgb(var(--red-rgb) / 0.5)); }
+.sd-demo { --dside: clamp(110px, calc(100svh - 560px), min(70vw, 230px)); width: var(--dside); aspect-ratio: 1; display: grid; grid-template-columns: repeat(var(--n, 9), 1fr);
+  background: var(--well-deep); border: 2px solid var(--ink); border-radius: var(--r-8); overflow: hidden;
+  box-shadow: 0 0 22px rgb(var(--cyan-rgb) / 0.3); transition: box-shadow 0.4s; }
+.sd-dcell { display: grid; place-items: center; font-family: var(--font-num); font-weight: 800; font-size: calc(var(--dside) / 17); color: rgb(var(--ink-rgb) / 0.75);
+  border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); transition: background 0.25s; }
+.sd-dcell.ec { border-right: 0; } .sd-dcell.er { border-bottom: 0; }
+.sd-dcell.bc { border-right: 2px solid var(--ink); }
+.sd-dcell.br { border-bottom: 2px solid var(--ink); }
+.sd-demo[data-n="6"] .sd-dcell { font-size: calc(var(--dside) / 11); }
+.sd-dcell.lit { background: rgb(var(--cyan-rgb) / 0.22); color: var(--ink); }
+.sd-dcell.target { background: rgb(var(--yellow-rgb) / 0.4); box-shadow: inset 0 0 0 2px var(--yellow); }
+.sd-dcell.filled { color: var(--lime); }
+.sd-dcell.pop { animation: pop 0.45s ease-out; }
+.sd-demo.done { box-shadow: 0 0 30px rgb(var(--lime-rgb) / 0.55); }
+.sd-demo-caption { margin: 0; min-height: 1.5em; font-weight: 700; color: var(--ink); text-align: center; }
+body.sd-hard .sd-demo { box-shadow: 0 0 24px rgb(var(--red-rgb) / 0.45); }
+body.sd-hard .sd-dcell.lit { background: rgb(var(--red-rgb) / 0.24); }
+body.sd-hard .sd-dcell.filled { color: var(--sd-knob-hard); }
+
+/* ---------- The board: n×n cells (6×6 easy, 9×9 hard), a thicker line between the boxes ---------- */
+.sd-juego { width: 100%; }
+.sd-puntos { margin: 0; text-align: center; color: var(--yellow); font-weight: 800; font-variant-numeric: tabular-nums; }
+.sd-board {
+  --side: min(100%, 460px, calc(100svh - 300px));
+  width: var(--side); aspect-ratio: 1; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(var(--n, 9), 1fr); grid-template-rows: repeat(var(--n, 9), 1fr);
+  background: var(--well-deep); border: 2px solid var(--ink); border-radius: var(--r-8); overflow: hidden;
+}
+.sd-cell {
+  position: relative; display: grid; place-items: center; padding: 0; margin: 0; min-width: 0; min-height: 0;
+  border: 0; border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);
+  background: transparent; color: var(--cyan); cursor: pointer;
+  font-family: var(--font-num); font-weight: 800; font-size: clamp(1rem, calc(var(--side) / 16), 1.6rem);
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
+}
+.sd-cell.ec { border-right: 0; }
+.sd-cell.er { border-bottom: 0; }
+.sd-cell.bc { border-right: 2px solid var(--ink); }
+.sd-cell.br { border-bottom: 2px solid var(--ink); }
+/* The 6×6 board's digits are bigger, as its cells are */
+.sd-board[data-n="6"] .sd-cell { font-size: clamp(1.7rem, 9vw, 2.6rem); }
+.sd-cell.given { color: var(--ink); }
+.sd-cell.peer { background: var(--glass); }
+.sd-cell.same { background: rgb(var(--cyan-rgb) / 0.22); }
+.sd-cell.sel { background: rgb(var(--yellow-rgb) / 0.35); }
+.sd-cell.bad { color: var(--red); background: rgb(var(--red-rgb) / 0.18); }
+.sd-cell.given.bad { color: var(--ink); }
+.sd-cell.bad.sel { box-shadow: inset 0 0 0 2px var(--yellow); }
+/* A hint's cell: fixed like a given, in yellow so you remember it was a hint */
+.sd-cell.hinted { color: var(--yellow); }
+.sd-board.terminado .sd-cell { cursor: default; }
+body.sd-hard .sd-board { box-shadow: 0 0 0 2px rgb(var(--red-rgb) / 0.6), 0 0 18px rgb(var(--red-rgb) / 0.35); }
+
+/* A cell's notes: a 3×3 of small digits */
+.sd-notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
+.sd-notes i { display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: clamp(0.5rem, calc(var(--side) / 48), 0.75rem); color: var(--muted); line-height: 1; }
+
+/* ---------- The pad: 1 to n, with how many are left of each ---------- */
+.sd-pad { display: grid; grid-template-columns: repeat(var(--n, 9), 1fr); gap: var(--s-4); width: min(100%, 460px); margin: 0 auto; }
+.sd-key {
+  display: grid; justify-items: center; gap: 0; padding: var(--s-6) 0; border: 1px solid var(--glass-border); border-radius: var(--r-8);
+  background: var(--glass); color: var(--ink); cursor: pointer; font-family: var(--font-num);
+  -webkit-tap-highlight-color: transparent;
+}
+.sd-key b { font-size: var(--fs-140); line-height: 1.1; }
+.sd-key small { font-size: var(--fs-75); color: var(--muted); }
+.sd-key:active { transform: scale(0.94); }
+.sd-key.full { opacity: 0.4; }
+
+.sd-tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
+.sd-tools .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
+.sd-tools #btn-notes.on { border-color: var(--yellow); color: var(--yellow); }
+/* Armed: the second tap acts (the same yellow as La Copa's armed buttons) */
+.sd-tools .btn.armado { border-color: var(--yellow); color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.12); }
+.sd-line { margin: 0; min-height: 1.4em; }
+
+/* The end: the stamp and the button */
+.sd-fin:empty { display: none; }
+.sd-sello { margin: 0; text-align: center; font: var(--fs-160) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
+.sd-sello.mal { color: var(--yellow); }
+/* Given up: the solution's digits in cyan, the givens in white */
+.sd-cell.solucion { color: var(--cyan); }
+
+/* ---------- The celebration of a right digit: a pop with a soft ring, and a light along a completed unit ---------- */
+.sd-cell.pop-ok, .sd-cell.pop-hint { animation: sd-pop 0.42s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.sd-cell.pop-ok::after, .sd-cell.pop-hint::after { content: ''; position: absolute; inset: 12%; border-radius: 50%; pointer-events: none;
+  border: 2px solid var(--lime); animation: sd-ring 0.6s ease-out forwards; }
+.sd-cell.pop-hint::after { border-color: var(--yellow); }
+.sd-cell.sweep { animation: sd-sweep 0.7s ease-out var(--k, 0ms) both; }
+@keyframes sd-pop { 0% { transform: scale(0.7); } 60% { transform: scale(1.14); } 100% { transform: none; } }
+@keyframes sd-ring { 0% { opacity: 0.9; transform: scale(0.6); } 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes sd-sweep { 0% { box-shadow: inset 0 0 0 40px transparent; } 35% { box-shadow: inset 0 0 0 40px rgb(var(--lime-rgb) / 0.28); } 100% { box-shadow: inset 0 0 0 40px transparent; } }
+
+/* ---------- The level: a lever on a metal plate (Pintaminas' hard-mode switch). Down and green is easy, up and red is hard ---------- */
+.sd-lever { position: relative; display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; -webkit-tap-highlight-color: transparent; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+/* On, the whole rectangle glows and flickers at random like a bad contact: ui.js moves --glow (0 to 1) */
+.sd-lever.on { --glow: 0.7; border-color: rgb(var(--red-rgb) / calc(0.4 + 0.6 * var(--glow))); background: rgb(var(--red-rgb) / calc(0.06 + 0.1 * var(--glow)));
+  box-shadow: 0 0 calc(4px + 26px * var(--glow)) rgb(var(--red-rgb) / calc(0.2 + 0.6 * var(--glow))), 0 0 calc(2px + 6px * var(--glow)) rgb(var(--yellow-rgb) / calc(0.4 * var(--glow))) inset;
+  transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
+.sd-label { display: grid; gap: var(--s-2); min-width: 0; }
+.sd-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
+.sd-lever.on .sd-label b { color: var(--sd-knob-hard); }
+.sd-label .muted { font-size: var(--fs-85); }
+.sd-plate { position: relative; width: 74px; height: 64px; border-radius: var(--r-12); background: linear-gradient(160deg, var(--sd-plate-light), var(--sd-plate-dark));
+  border: 2px solid var(--sd-plate-edge); box-shadow: inset 0 2px 4px rgb(var(--ink-rgb) / 0.15), inset 0 -3px 6px rgb(var(--well-rgb) / 0.5); }
+.sd-track { position: absolute; inset: 0; pointer-events: none; }
+.sd-track svg { width: 100%; height: 100%; display: block; }
+.sd-groove { fill: none; stroke: rgb(var(--well-rgb) / 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgb(var(--ink-rgb) / 0.18)); }
+.sd-axle { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-axle-light), var(--sd-axle-dark)); box-shadow: 0 1px 2px rgb(var(--well-rgb) / 0.6); }
+.sd-arm { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--sd-arm-1), var(--sd-arm-2), var(--sd-arm-3)); transform-origin: 50% 100%; transform: rotate(-38deg);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.sd-knob { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--sd-knob-easy), var(--sd-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
+.sd-lever.on .sd-arm { transform: rotate(38deg); }
+.sd-lever.on .sd-knob { background: radial-gradient(circle at 35% 35%, var(--sd-knob-hard), var(--sd-knob-shade-hard)); }
+.sd-lever:active { transform: scale(0.98); }
+.sd-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+/* The sparks on the plate, while hard is on */
+.sd-bolt { position: absolute; font-size: var(--fs-100); opacity: 0; pointer-events: none; z-index: 1; }
+.sd-bolt.b1 { top: -10px; left: -8px; } .sd-bolt.b2 { top: 6px; right: -12px; } .sd-bolt.b3 { bottom: -8px; left: 6px; }
+.sd-lever.on .sd-bolt { animation: sd-spark 1.6s ease-out infinite; }
+.sd-lever.on .b2 { animation-delay: 0.45s; } .sd-lever.on .b3 { animation-delay: 0.9s; }
+.sd-lever.on .sd-plate { border-color: var(--sd-knob-hard); }
+@keyframes sd-spark { 0% { opacity: 0; transform: scale(0.4) rotate(-20deg); } 10% { opacity: 1; transform: scale(1.2) rotate(10deg); } 25%, 100% { opacity: 0; transform: scale(0.8); } }
+
+/* The electric wave: a ring that leaves the plate on every flip, and the plate jolts */
+.sd-wave { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; pointer-events: none;
+  border: 3px solid var(--sd-knob-easy); box-shadow: 0 0 16px var(--sd-knob-easy), inset 0 0 12px var(--sd-knob-easy); animation: sd-wave 0.85s ease-out forwards; }
+.sd-wave.hard { border-color: var(--sd-knob-hard); box-shadow: 0 0 18px var(--sd-knob-hard), 0 0 6px var(--yellow), inset 0 0 14px var(--yellow); }
+@keyframes sd-wave { 0% { opacity: 1; transform: scale(0.6); } 100% { opacity: 0; transform: scale(5.5); } }
+.sd-lever.zap .sd-plate { animation: sd-jolt 0.5s ease-out; }
+@keyframes sd-jolt { 0% { transform: translateX(-2px); } 20% { transform: translateX(3px); } 40% { transform: translateX(-2px); } 100% { transform: none; } }
+
+/* The flash over the whole view when switching to hard */
+.sd-flash { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: sd-flash 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgb(var(--ink-rgb) / 0.95), rgb(var(--red-rgb) / 0.7) 45%, rgb(var(--yellow-rgb) / 0.3)); }
+@keyframes sd-flash { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Hard turns the whole page over: a charged red-violet panel with a yellow spark */
+body.sd-hard {
+  --bg1: #1c020a; --bg1-rgb: 28 2 10; --bg2: #3a0618; --bg2-rgb: 58 6 24; --bg3: #200836; --bg3-rgb: 32 8 54;
+  --fondo:
+    radial-gradient(1100px 600px at 10% -10%, rgba(255, 70, 100, 0.34), transparent 60%),
+    radial-gradient(900px 500px at 110% 15%, rgba(255, 210, 63, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(160, 60, 255, 0.32), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-arm, .sd-lever { transition: none; }
+  .sd-lever.on .sd-bolt { animation: none; opacity: 1; }
+  .sd-dcell.pop, .sd-lever.zap .sd-plate { animation: none; }
+  .sd-cell.pop-ok, .sd-cell.pop-hint, .sd-cell.sweep, .sd-cell.pop-ok::after, .sd-cell.pop-hint::after { animation: none; }
+}

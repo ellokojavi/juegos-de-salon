@@ -556,6 +556,12 @@ export const PATHS = {
   stick: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
   stack: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
   aletazo: { intro: [], game: [START] },
+  // Sudoku: the cover (the lever on easy), then Empezar and the countdown to the 6×6 board; `hard` the 9×9 one
+  // hard: waits for the level lever before tapping it, and for the 9×9's 81 cells after starting, so every
+  // language photographs the same board (on the runner the lever was once tapped before it existed)
+  sudoku: { intro: [], game: [START, `1`, `1`, `1`, `1`], hard: [
+    `new Promise(r => { const t = setInterval(() => { const b = document.getElementById('btn-level'); if (b) { clearInterval(t); b.click(); r(1); } }, 100); setTimeout(() => { clearInterval(t); r(0); }, 8000); })`, `1`, START, `1`,
+    `new Promise(r => { const t = setInterval(() => { if (document.querySelectorAll('.sd-cell').length === 81) { clearInterval(t); r(1); } }, 100); setTimeout(() => { clearInterval(t); r(0); }, 8000); })`, `1`, `1`] },
   puentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`],
@@ -759,6 +765,7 @@ for (const g of ['ahorcado', 'batalla-naval', 'toque-y-fama']) {
 export const VISUAL_SKIP = {
   babel: 'its cover depends on the live flags/stack value from Firebase, so the end-to-end job and the Visual references workflow draw it differently (7.63 %)',
   flap: 'its cover is the live demo flying over a city drawn with Math.random (scene.js skyline) and the autopilot in real time, so no two loads draw the same pixels; tools/e2e/flap/game.mjs checks the cover instead',
+  sudoku: 'its cover is a demo board solving itself in real time, and the page reads the live flags/sudoku value (launch by flag, like Babel), so two runs drew it 0.63 % apart while the Visual references workflow saw no change; tools/e2e/sudoku/page.mjs and cup-games/languages.mjs check the cover instead',
   where: 'its intro differed 1.26 % between two runs on the same runner: something on it is not fixed yet (#1249 step 15)',
 };
 

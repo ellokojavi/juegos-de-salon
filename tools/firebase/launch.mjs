@@ -4,9 +4,11 @@
  * 📣 Campaigns does, `splash/<id>` patched with { on: true, at }). Run by the `launch` workflow,
  * which a scheduled task dispatches at the hour.
  *
- *   node tools/firebase/launch.mjs --flag stick --flag stack --splash shinobi-babel \
+ *   node tools/firebase/launch.mjs --flag stick --flag stack --splash shinobi-babel [--off <id>] \
  *     --not-before 2026-11-02T08:00:00Z [--until 2026-11-09T08:00:00Z] [--first] [--apply]
  *
+ * `--off <id>` turns a campaign off at the same moment (`splash/<id>` patched { on: false, at }): the
+ * promotion of the last launch gives way to the new one (Aletazo's, at Sudoku's launch, the owner's request).
  * `--until` ends the campaigns it turns on (a day, or an exact moment in ISO, splash.js); `--first`
  * puts them ahead of the others in the queue. A campaign the panel never saved is created, if it is in
  * splash.js's CAMPAIGNS.
@@ -18,11 +20,12 @@ import { token, read, write, fail } from './firebase-admin.mjs';
 import { CAMPAIGNS } from '../../public/assets/js/splash.js';
 
 export function parse(argv) {
-  const o = { flags: [], splash: [], notBefore: null, until: null, first: false, apply: false };
+  const o = { flags: [], splash: [], off: [], notBefore: null, until: null, first: false, apply: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i], v = argv[i + 1];
     if (a === '--flag') { o.flags.push(v); i++; }
     else if (a === '--splash') { o.splash.push(v); i++; }
+    else if (a === '--off') { o.off.push(v); i++; }
     else if (a === '--not-before') { o.notBefore = v; i++; }
     else if (a === '--until') { o.until = v; i++; }
     else if (a === '--first') o.first = true;
@@ -30,10 +33,10 @@ export function parse(argv) {
     else throw new Error(`Unknown argument: ${a}`);
   }
   const id = /^[a-z][a-z0-9-]{0,40}$/;
-  for (const x of [...o.flags, ...o.splash]) if (!id.test(x || '')) throw new Error(`Not an id: ${x}`);
+  for (const x of [...o.flags, ...o.splash, ...o.off]) if (!id.test(x || '')) throw new Error(`Not an id: ${x}`);
   if (o.notBefore && Number.isNaN(Date.parse(o.notBefore))) throw new Error(`Not a date: ${o.notBefore}`);
   if (o.until && (!/^\d{4}-\d{2}-\d{2}/.test(o.until) || Number.isNaN(Date.parse(o.until)))) throw new Error(`Not a date: ${o.until}`);
-  if (!o.flags.length && !o.splash.length) throw new Error('Nothing to launch: give --flag or --splash');
+  if (!o.flags.length && !o.splash.length && !o.off.length) throw new Error('Nothing to launch: give --flag, --splash or --off');
   return o;
 }
 
@@ -41,6 +44,7 @@ export function parse(argv) {
 export const plan = (o, now) => [
   ...o.flags.map(f => [`flags/${f}`, 'PUT', { state: 'all', at: now }]),
   ...o.splash.map(s => [`splash/${s}`, 'PATCH', { on: true, at: now, ...(o.until ? { until: o.until } : {}), ...(o.first ? { order: -1 } : {}) }]),
+  ...o.off.map(s => [`splash/${s}`, 'PATCH', { on: false, at: now }]),
 ];
 
 if (import.meta.url === `file://${process.argv[1]}`) {

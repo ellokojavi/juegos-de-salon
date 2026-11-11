@@ -368,6 +368,8 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 /* A 390×780 phone drawn at half size */
 .vistazo-marco { width: 195px; height: 390px; margin: var(--s-4) auto var(--s-8); overflow: hidden; border-radius: var(--r-16); border: 1px solid var(--glass-border); background: var(--pn-marco); }
 .vistazo-marco { position: relative; }
+.vistazo-salud { text-align: center; margin: 0 0 var(--s-8); }
+.vistazo-salud--mal { color: var(--red); }
 .vistazo-marco iframe { width: 390px; height: 780px; border: 0; transform: scale(0.5); transform-origin: 0 0; pointer-events: none; }
 /* ▶ over the still preview, as on a video */
 .vistazo-play { position: absolute; inset: 0; display: grid; place-items: center; border: 0; background: rgb(var(--bg1-rgb) / 0.2); cursor: pointer; }

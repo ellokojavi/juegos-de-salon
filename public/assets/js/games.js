@@ -429,6 +429,32 @@ export const SUELTOS = [
     nuevoDesde: '2026-11-09',
     diasNuevo: 10,
   },
+  {
+    // Out of the lab like Aletazo (D-517's way): La Copa's screen in cup/games/sudoku/, its page /sudoku/,
+    // launched by flags/sudoku at 21:00 Pacific on 2026-11-11 (the `launch` workflow, D-529). Its levels
+    // are La Copa's variants: 🟢 easy, the 6×6 mini, by default (a cup day, Uno al día), and 🔴 hard, the
+    // 9×9. The id, its ranking tables (`sudoku_easy`, `sudoku_hard`) and the usage signal are the lab's;
+    // the lab prototype /labs/sudoku/ stays until the cleanup PR. There is no sudoku emoji: #️⃣ stands in
+    // where only text fits, and the cover shows the drawn icon (cup/games/sudoku/icon.svg)
+    id: 'sudoku',
+    lanza: 'sudoku',
+    copa: { pozo: 17 },
+    // Uno al día: by date, never by flag: from the day after the launch, joining the next deck
+    unoAlDia: { orden: 22, desde: '2026-11-12' },
+    slug: 'sudoku',
+    emoji: '#️⃣',
+    name: { es: 'Sudoku', en: 'Sudoku', pt: 'Sudoku' },
+    tagline: { es: 'El clásico de los números: mini de 6×6 o el de 9×9.', en: 'The numbers classic: a 6×6 mini or the 9×9.', pt: 'O clássico dos números: mini de 6×6 ou o de 9×9.' },
+    keywords: {
+      es: ['sudoku', 'números', 'numeros', 'lógica', 'logica', 'puzle', 'solitario', 'mini sudoku', 'cuadros'],
+      en: ['sudoku', 'numbers', 'logic', 'puzzle', 'solo', 'mini sudoku', 'grid'],
+      pt: ['sudoku', 'números', 'lógica', 'quebra-cabeça', 'solitário', 'mini sudoku', 'quadrados'],
+    },
+    tipos: ['logic'],
+    duration: '3–15',
+    nuevoDesde: '2026-11-12',
+    diasNuevo: 10,
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true, ...(m.lanza ? { oculto: !lanzado(m.lanza) } : {}) }));
 
@@ -557,8 +583,26 @@ export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_D
  * uno que se fue, o una versión vieja de la app que todavía manda señales. En los tres casos
  * hay que poder verlo, no perderlo en silencio (C-16).
  */
+/**
+ * The lab's games that are not in games.js yet, by the id their usage signal carries (`GAME_ID` in each
+ * game), so every list inside (the owner's panel, its activity monitor, rankings tools) names them as the
+ * player reads them instead of showing the id (the owner saw ¡Al toque! as "microgames"). A lab game with
+ * a game.json takes its name from its manifest; one without lists it here (Sudoku left it when it
+ * graduated: its entry is in SUELTOS). `game-labels.test.mjs` fails
+ * when a game sends signals with an id that has no name.
+ */
+export const LAB_NAMES = {
+  microgames: { emoji: '⚡', name: { es: '¡Al toque!', en: 'In a Flash!', pt: 'Na Hora!' } },
+  memory: { emoji: '👀', name: { es: 'Memorice', en: 'Memorice', pt: 'Memorice' } },
+  artifacts: { emoji: '⚙️', name: { es: 'Artefactos', en: 'Artifacts', pt: 'Artefatos' } },
+  dominorama: { emoji: '🎲', name: { es: 'Dominorama', en: 'Dominorama', pt: 'Dominorama' } },
+  clave: { emoji: '🔐', name: { es: 'La clave', en: 'The Code', pt: 'A senha' } },
+  camaleon: { emoji: '🦎', name: { es: 'El Camaleón', en: 'Chameleon', pt: 'Camaleão' } },
+  'numeros-explosivos': { emoji: '💥', name: { es: 'Números explosivos', en: 'Exploding Numbers', pt: 'Números explosivos' } },
+};
+
 export function gameLabel(id, lang = 'es') {
-  const g = BY_ID[id];
+  const g = BY_ID[id] || LAB_NAMES[id];
   return g ? `${g.emoji} ${g.name[lang] || g.name.es}` : String(id || '?');
 }
 

@@ -142,6 +142,11 @@
         "public/cup/games/stick/style.css",
         "public/cup/games/stick/texts.js",
         "public/cup/games/stick/ui.js",
+        "public/cup/games/sudoku/engine.js",
+        "public/cup/games/sudoku/icon.svg",
+        "public/cup/games/sudoku/style.css",
+        "public/cup/games/sudoku/texts.js",
+        "public/cup/games/sudoku/ui.js",
         "public/cup/games/tango/engine.js",
         "public/cup/games/tango/ui.js",
         "public/cup/games/timeline/engine.js",
@@ -978,6 +983,22 @@
       "labs": false,
       "bodega": false,
       "path": "flap/"
+    },
+    {
+      "id": "sudoku",
+      "emoji": "#️⃣",
+      "name": {
+        "es": "Sudoku",
+        "en": "Sudoku",
+        "pt": "Sudoku"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "3–15",
+      "labs": false,
+      "bodega": false,
+      "path": "sudoku/"
     }
   ],
   "themes": [
@@ -1135,7 +1156,6 @@
     "public/assets/js/manifests/hangman.js",
     "public/assets/js/manifests/labs/fourth-king.js",
     "public/assets/js/manifests/labs/julep.js",
-    "public/assets/js/manifests/labs/sudoku.js",
     "public/assets/js/manifests/liars-dice.js",
     "public/assets/js/manifests/timeline.js",
     "public/assets/js/month-end.js",
@@ -1267,6 +1287,9 @@
     "public/cup/games/stick/scene.js",
     "public/cup/games/stick/texts.js",
     "public/cup/games/stick/ui.js",
+    "public/cup/games/sudoku/engine.js",
+    "public/cup/games/sudoku/texts.js",
+    "public/cup/games/sudoku/ui.js",
     "public/cup/games/tango/engine.js",
     "public/cup/games/tango/ui.js",
     "public/cup/games/timeline/engine.js",
@@ -1409,6 +1432,7 @@
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/flags.test.mjs",
+    "public/assets/js/game-labels.test.mjs",
     "public/assets/js/game-manifest.test.mjs",
     "public/assets/js/game-names.test.mjs",
     "public/assets/js/games.test.mjs",
@@ -1473,6 +1497,7 @@
     "public/cup/games/stack/engine.test.mjs",
     "public/cup/games/stick/engine.test.mjs",
     "public/cup/games/stick/issue-1103.test.mjs",
+    "public/cup/games/sudoku/engine.test.mjs",
     "public/cup/planilla.test.mjs",
     "public/cup/recap.test.mjs",
     "public/cup/reportes.test.mjs",
@@ -1726,6 +1751,7 @@
     "stick/game.mjs",
     "structured-data.mjs",
     "sudoku/game.mjs",
+    "sudoku/page.mjs",
     "tango/give-up.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
@@ -1955,7 +1981,7 @@
     },
     {
       "path": "docs/games/sudoku.md",
-      "title": "🧮 Sudoku (lab, in Juegos en prueba)"
+      "title": "#️⃣ Sudoku (La Copa game, launched by flag; the lab prototype stays until the cleanup)"
     },
     {
       "path": "docs/games/tango.md",

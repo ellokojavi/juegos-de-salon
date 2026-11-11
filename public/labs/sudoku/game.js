@@ -19,8 +19,8 @@ import { onScreen } from '../../assets/js/on-screen.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { GAME_ID, LEVELS, LEVEL_EMOJI, LOCALES } from './rules.js';
 import * as E from './engine.js';
-// Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
-import manifest from '../../assets/js/manifests/labs/sudoku.js';
+// The game's facts are its entry in games.js since it left the lab (D-517's way); the prototype keeps its emoji here
+const manifest = { emoji: '#️⃣' };
 
 // Counts the visit on load, even if nobody plays (D-208)
 trackVisit();

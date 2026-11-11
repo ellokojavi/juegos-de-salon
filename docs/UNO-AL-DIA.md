@@ -43,7 +43,7 @@ el contenido del día:
 
 | Juego | Modo | El desafío común del día | Puntaje del día (0 a 100; Babel, Shinobi and 🐤 Aletazo (from 2026-11-10), uncapped in their game, go through a smooth curve here, D-526) |
 |---|---|---|---|
-| ⏳ Línea Relámpago, 🔢 Toque y Fama: Número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
+| ⏳ Línea Relámpago, 🔢 Toque y Fama: Número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy); from 2026-11-12 also #️⃣ Sudoku, in its default 🟢 easy 6×6 | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
