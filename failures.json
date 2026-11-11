@@ -2122,6 +2122,19 @@
         "stat": "1 file(s) +2 −2: tools/e2e/microgames/lab.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 42967304847,
+      "check": "tests",
+      "pr": 1376,
+      "branch": "bodega-aletazo",
+      "commit": "4e34292b6598f732c0645d039d7cdcb83a1b3293",
+      "test": "tools/release/changelog.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: changelog/bodega-aletazo.md: the first line must be \"level: patch\" (or minor, or major)\ncode: 'ERR_ASSERTION',\nexpected: true,",
+      "signature": "498082a772",
+      "date": "2026-11-11T05:42:52.295Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
