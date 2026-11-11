@@ -4,6 +4,8 @@
   /* The game's own colours and glyph sizes, with no token in base.css (DESIGN.md §4: docs/games/microgames.md) */
   --mg-281406: #281406;
   --mg-a0102c: #a0102c;
+  --mg-8fc79c: #8fc79c;
+  --mg-19f26a: #19f26a; --mg-19f26a-rgb: 25 242 106;
   --mg-9dff3a: #9dff3a; --mg-9dff3a-rgb: 157 255 58;
   --mg-e9ffb8: #e9ffb8;
   --mg-3c1e0a: #3c1e0a;
@@ -746,9 +748,13 @@
 .demo .credit { font-size: var(--fs-85); font-weight: 700; } .demo .credit a { color: var(--cyan); }
 .demo .best { font-size: var(--fs-90); color: var(--yellow); }
 .demo .runbar { position: absolute; top: 36px; left: 50%; translate: -50% 0; display: flex; gap: 4px; z-index: 3; }
-.demo .runbar i { width: 10px; height: 10px; border-radius: 8px; background: var(--glass-border); }
+.demo .runbar i { width: 12px; height: 12px; border-radius: 8px; background: var(--glass-border); }
 .demo .runbar i.cur { background: var(--ink); box-shadow: 0 0 6px var(--ink); }
-.demo .runbar i.s0 { background: var(--red); } .demo .runbar i.s1 { background: var(--mg-ff9a1f); } .demo .runbar i.s2 { background: var(--cyan); } .demo .runbar i.s3 { background: var(--yellow); }
+/* How each game went: red if it gave no star, green otherwise, deeper and brighter the more stars (★ pale, ★★ green, ★★★ glowing) */
+.demo .runbar i.s0 { background: var(--red); }
+.demo .runbar i.s1 { background: var(--mg-8fc79c); }
+.demo .runbar i.s2 { background: var(--mg-3ddc84); }
+.demo .runbar i.s3 { background: var(--mg-19f26a); box-shadow: 0 0 7px rgb(var(--mg-19f26a-rgb) / 0.8); }
 .demo .runsum { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 10px; }
 .demo .runsum span { display: grid; justify-items: center; gap: 0px; } .demo .runsum b { font-size: var(--fs-140); line-height: 1; } .demo .runsum i { font-style: normal; font-size: var(--fs-75); color: var(--yellow); letter-spacing: 1px; }
 /* The cover's folded rules (C-8, D-550): one line each for the three ways to play, with its moving gesture */

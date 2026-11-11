@@ -40,7 +40,7 @@ in `game.js`.
 2. **The run:** 10 different microgames drawn from the 28. Each starts with its intro card (the gesture
    of its type on top, the stage framed in the type's color, the name and a hint); the frame comes off
    when the game starts. Every three games the run speeds up by 10 % (`sp`). The HUD shows `n / 10`,
-   the stars so far and a mark per game (red 0, orange 1, turquoise 2, yellow 3 stars).
+   the stars so far and a mark per game: red with no star, green otherwise, pale for ★, green for ★★ and bright with a glow for ★★★.
 3. **The end** (C-19): a cheer, the points, the stars and the best, **Otra corrida**, the way back to the
    lab from `fin.js`, then each game's icon with its stars and points (🔥 on a streak). Sound and confetti
    on a good run (C-4).
