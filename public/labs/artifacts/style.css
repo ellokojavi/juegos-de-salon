@@ -61,7 +61,17 @@
 .acciones { position: absolute; z-index: 1; display: flex; gap: var(--s-6); transform: translate(-50%, calc(-100% - var(--s-4))); animation: artifacts-pop 0.15s ease-out; }
 .acciones.abajo { transform: translate(-50%, var(--s-4)); }
 .acciones[hidden] { display: none; }
-.acciones .btn { padding: var(--s-6) var(--s-10); min-height: 40px; font-size: var(--fs-90); white-space: nowrap; box-shadow: var(--shadow-panel); }
+/* Small, flat, round icon buttons: no 3D edge, just a solid fill and a thin border */
+.acciones .icono {
+  appearance: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--glass-border); background: var(--bg1); color: var(--ink); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.acciones .icono { position: relative; }
+.acciones .icono::before { content: ''; position: absolute; inset: -4px; }   /* a 44 px touch target around the 36 px circle */
+.acciones .icono:active { transform: scale(0.92); }
+.acciones .icono--quitar { color: var(--danger-soft); }
+.acciones .icono svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes artifacts-pop { from { opacity: 0; } }
 
 /* The tray: one button per kind of part, with how many are left */

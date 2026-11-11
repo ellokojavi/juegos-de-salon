@@ -37,7 +37,7 @@ const LOCALES = {
     ],
     jugar: '⚙️ Jugar', nivel: 'Nivel {n}', objetivo: 'Lleva la pelota a la 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tabla', spring: 'Cama elástica', fan: 'Ventilador' },
-    probar: '▶ Probar', parar: '■ Parar', girar: '↔ Girar', quitar: '🗑 Quitar',
+    probar: '▶ Probar', parar: '■ Parar', girar: 'Girar', quitar: 'Quitar',
     elige: 'Arrastra una pieza al tablero.', toca: 'Toca dónde va la {p}.', noCabe: 'Ahí no cabe.',
     movida: 'Arrástrala para moverla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta para quitarla.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', pista: '💡 Pista', pistaDice: 'Pon una {p} donde brilla (−1 ★).', sinPista: 'Ya tienes todo: prueba.', rendirse: '🏳️ Rendirse', rendirseSeguro: '¿Seguro?', rendida: 'Etapa saltada.',
     fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo.', stuck: 'Se atascó. Prueba otra cosa.' },
@@ -58,7 +58,7 @@ const LOCALES = {
     ],
     jugar: '⚙️ Play', nivel: 'Level {n}', objetivo: 'Get the ball to the 🧺',
     piezas: { ramp: 'Ramp', plank: 'Plank', spring: 'Trampoline', fan: 'Fan' },
-    probar: '▶ Try', parar: '■ Stop', girar: '↔ Turn', quitar: '🗑 Remove',
+    probar: '▶ Try', parar: '■ Stop', girar: 'Turn', quitar: 'Remove',
     elige: 'Drag a part onto the board.', toca: 'Tap where the {p} goes.', noCabe: 'It does not fit there.',
     movida: 'Drag it to move it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go to remove it.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', pista: '💡 Hint', pistaDice: 'Put a {p} where it glows (−1 ★).', sinPista: 'You have it all: try it.', rendirse: '🏳️ Give up', rendirseSeguro: 'Sure?', rendida: 'Stage skipped.',
     fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom.', stuck: 'Stuck. Try something else.' },
@@ -79,7 +79,7 @@ const LOCALES = {
     ],
     jugar: '⚙️ Jogar', nivel: 'Nível {n}', objetivo: 'Leve a bola até a 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tábua', spring: 'Cama elástica', fan: 'Ventilador' },
-    probar: '▶ Testar', parar: '■ Parar', girar: '↔ Girar', quitar: '🗑 Tirar',
+    probar: '▶ Testar', parar: '■ Parar', girar: 'Girar', quitar: 'Tirar',
     elige: 'Arraste uma peça ao tabuleiro.', toca: 'Toque onde vai a {p}.', noCabe: 'Aí não cabe.',
     movida: 'Arraste para mover.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte para tirar.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', pista: '💡 Dica', pistaDice: 'Ponha uma {p} onde brilha (−1 ★).', sinPista: 'Você já tem tudo: teste.', rendirse: '🏳️ Desistir', rendirseSeguro: 'Certeza?', rendida: 'Etapa pulada.',
     fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo.', stuck: 'Presa. Tente outra coisa.' },
@@ -187,7 +187,8 @@ function texts() {
   $('pasos').replaceChildren(...L.como.map(([e, t]) => el('li', {}, el('span', { 'aria-hidden': 'true' }, e), el('span', {}, t))));
   $('btn-jugar').textContent = L.jugar;
   $('btn-probar').textContent = L.probar; $('btn-deshacer').textContent = L.deshacer;
-  $('btn-girar').textContent = L.girar; $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse; $('btn-quitar').textContent = L.quitar;
+  $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse;
+  for (const [id, t] of [['btn-girar', L.girar], ['btn-quitar', L.quitar]]) { $(id).setAttribute('aria-label', t); $(id).title = t; }   // icons only on the board
   $('btn-otra').textContent = L.otraVez;
   comment = () => el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',

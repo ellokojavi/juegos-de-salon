@@ -46,7 +46,8 @@ on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's 
   pointer before the click).
 - **One tap turns:** a tap on a placed ramp or fan turns it round at once (planks and trampolines have
   no direction). The tapped (or just placed) part becomes the chosen one (dashed outline), and its own
-  ↔ Girar (ramps and fans) and 🗑 Quitar float on the board just above it (below it on the top row).
+  Girar (ramps and fans) and Quitar float on the board just above it (below it on the top row), as two
+  small flat round icons, a turning arrow and a trash can, with no words (the words are their aria-label).
   They go away after 5 s without a touch (letting the part go), while a part is dragged, and while the
   ball runs; every touch gives them 5 s more.
 - **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
