@@ -100,3 +100,7 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-contar .rk-jugador { margin: 0; }
 @keyframes rk-contar-entra { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .rk-contar { animation: none; } }
+
+/* The ranking under a game's stage keeps its distance from it: the page column (.app) has no gap,
+   so a ranking that is its own section takes the space here, once for every game, not in each game's CSS */
+.app > #ranking:not(:empty) { margin-top: var(--s-16); }

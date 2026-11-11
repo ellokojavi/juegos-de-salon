@@ -87,6 +87,7 @@ const s = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 640 }
 await s.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'at 320 px, no sideways scroll on the cover');
 ok(await s.evaluate(`!document.getElementById('reglas') && document.querySelector('#ranking').children.length > 0`), 'no folded rules (the cover shows the three ways), and the ranking under the stage');
+ok(await s.evaluate(`document.getElementById('ranking').getBoundingClientRect().top - document.getElementById('demo').getBoundingClientRect().bottom >= 12`), 'the ranking keeps its distance from the stage (ranking.css, not touching it)');
 await s.evaluate(`document.querySelector('.tr-tab')?.click(); 1`); await sleep(300);
 ok(await s.evaluate(`document.querySelectorAll('.tr-mg-b').length === __microgames.ids.length`), 'the tester tab offers every microgame (D-551)');
 s.close();

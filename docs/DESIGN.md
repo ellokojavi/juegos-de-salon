@@ -151,7 +151,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | Chat | `.chat*` | the room's chat bubble |
 | Random | `.azar*` | the random-game control (D-237) |
 | One a day | `.uad*` | |
-| Ranking | `.rk-*` in `ranking.css` | tables, rows, medals (D-212) |
+| Ranking | `.rk-*` in `ranking.css` | tables, rows, medals (D-212); a ranking section under the stage (`.app > #ranking`) takes its own 16 px from it, no game sets that space |
 | Keyboard | `teclado.css` | |
 | Topbar, footer | `.topbar`, footer | |
 
