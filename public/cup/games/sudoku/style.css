@@ -16,10 +16,11 @@
 .sd-lema { margin: 0; color: var(--muted); font-weight: 700; text-align: center; }
 body.sd-hard .sd-nombre { background: linear-gradient(90deg, var(--sd-knob-hard), var(--yellow), var(--sd-knob-hard)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* ---------- The cover's demo: the drawn icon and a small board solving itself ---------- */
+/* ---------- The cover's demo: the drawn icon and a small board solving itself; on a short phone the board
+   shrinks (down to 110 px) so ¡Empezar! stays above the fold (landing-fold.mjs) ---------- */
 .sd-portada { margin: 0 auto; display: grid; gap: var(--s-8); justify-items: center; }
 .sd-logo { width: 4.5rem; height: 4.5rem; transform: rotate(-6deg); filter: drop-shadow(0 0 18px rgb(var(--red-rgb) / 0.5)); }
-.sd-demo { --dside: min(70vw, 230px); width: var(--dside); aspect-ratio: 1; display: grid; grid-template-columns: repeat(var(--n, 9), 1fr);
+.sd-demo { --dside: clamp(110px, calc(100svh - 560px), min(70vw, 230px)); width: var(--dside); aspect-ratio: 1; display: grid; grid-template-columns: repeat(var(--n, 9), 1fr);
   background: var(--well-deep); border: 2px solid var(--ink); border-radius: var(--r-8); overflow: hidden;
   box-shadow: 0 0 22px rgb(var(--cyan-rgb) / 0.3); transition: box-shadow 0.4s; }
 .sd-dcell { display: grid; place-items: center; font-family: var(--font-num); font-weight: 800; font-size: calc(var(--dside) / 17); color: rgb(var(--ink-rgb) / 0.75);

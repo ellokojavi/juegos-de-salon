@@ -21,6 +21,9 @@ for (const [i, { id, slug }] of SUELTOS.entries()) {
   if (part && slug !== part) continue;
   // Sudoku is Sudoku, and 🟢 Fácil is «Fácil», in Portuguese too: its ranking's title is the same line
   const allowed = id === 'sudoku' ? ['Ranking de Sudoku'] : [];
-  failures += await checkLanguages(id, { dicts: [LOCALES, REGISTRY], port: 9470 + i, out: `${OUT}/${slug}`, allowed });
+  // Sudoku draws a new board each time: a fixed seed gives every language the same one, so the cells a
+  // board leaves empty (each a button) count the same against Spanish
+  const query = id === 'sudoku' ? '?seed=LANGS' : undefined;
+  failures += await checkLanguages(id, { dicts: [LOCALES, REGISTRY], port: 9470 + i, out: `${OUT}/${slug}`, allowed, query });
 }
 console.log(failures ? `✗ La Copa games: ${failures} check(s) in red` : `La Copa games: ${part || `all ${SUELTOS.length}`} in every language`);
