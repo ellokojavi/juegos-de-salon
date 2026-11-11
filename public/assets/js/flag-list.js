@@ -28,6 +28,7 @@ export const FLAGS = {
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
+  'cover-share': '📤 Game covers: a share button in the top bar sends the game\'s link with one line about it',
   'compact-lang': '🌐 Game covers: the language as one flag button in the top bar, not the toggle under the title (D-537)',
   'offline': '📴 Offline mode: the app stores the offline-capable games on the phone and opens them with no signal (D-538, PR 2 of 8)',
   'news-once': '📣 Each piece of news told once: no home window on a visit from a notification, no splash for games already played, an ended cup seen on its board is not recapped again (D-546)',
