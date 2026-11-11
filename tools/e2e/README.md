@@ -156,6 +156,7 @@ horizontal scroll, buttons or a folding panel's `<summary>` under 44 px (an invi
 Also, **every `b.shot()` of any script measures that space** (`spacing-common.mjs`) and prints ✗ if a
 button is less than 24 px from a `data-tablero`: the script goes red (with `SPACING_REPORT=1`
 it prints the space of every screenshot, even when it passes). It also prints ✗ if two buttons of the screen sit on top of each other (U-12, `spacing-common.mjs`; a deliberate stack is marked `data-overlap-ok`, D-520). `--lang de` (or `en`, `pt`) opens it in that language;
+The **key margins** (DESIGN.md §3 rule 7) are measured on every `b.shot()` too (`margins-common.mjs`): the app's column centered (M-1), every card with the same padding left and right (M-2), and a picture or clip that opens a card with even margins (M-3); `look.mjs` reports them. A deliberate exception is marked `data-margins-ok`.
 The **space between a cover's blocks** (DESIGN.md §3 rule 6) is measured by `cover-gaps.mjs`: the panels, stage and ranking of a game's first screen sit 12 px from the next. `conformance.mjs` runs it as each game's `spacing` check, and ¡Al toque!'s `microgames/lab.mjs` too.
 `--height`, `--notches` (a phone with a notch), `--chat` (mounts the room chat's 💬 bubble and names any button it covers, C-15) and `--out <folder>` are the other options. The
 panel is viewed with seeded data: `look.mjs panel <shot>`, with `data`, `now`, `tournament`, `games`,
@@ -283,6 +284,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `home/recap.mjs` | The recap of an ended cup over the home page (D-423), with La Copa's podium demo (`?recap=demo`): the window in the three languages at 320 px, its final table as the image the cup shares (a 1080 px image in place of the rows, D-427), the link to the cup, the ✕, the hidden `/cup/recap/` frame gone once it answered, nothing recorded by the demo, and its card in the lab. Then Uno al día's season (D-424, `?recap=season-demo`): the same window in the three languages, eight players week by week, the player 3rd and marked, the new season's line, the link to /today/, Cerrar recording nothing, and its own lab card |
 | `home/popular.mjs` | What players see since D-369: the 🔥 Popular label on three cards (not La Copa nor "New"), the ✨ Nuevos / 🔥 Populares chips above the types in three languages at 320 px and their filtering, ⭐ Favoritos in that row and centered, the app's name on the floating menu and its tap, the space under the floating filters, and the menu still floating after a tap on a short result until the player scrolls up (D-371) |
 | `splash/languages.mjs` | Every splash campaign in all languages: each one as `?splash=<id>` against the Spanish one (D-199, D-355; a campaign that is not on needs a lab key, which localhost always counts as, D-395) |
+| `splash/margins.mjs` | Every big splash (`hero`) on a phone, a short phone, a laptop and a big screen: its clip as far from the card's top as from its sides, or flush on all three (DESIGN.md §3 rule 7, M-3) |
 
 ## Visual regression (#1249)
 
