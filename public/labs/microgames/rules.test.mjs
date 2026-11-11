@@ -12,4 +12,11 @@ for (const k of used) for (const l of ['en', 'pt']) {
   assert.equal(holes(TR[l][k]), holes(k), `${l} «${k}» keeps its {x}`);
 }
 assert.equal(new Set(KEYS).size, KEYS.length, 'no key twice');
+// R-10: ¡Rebota!, ¡Equilibra! and ¡Sigue! froze at their end because their frame loop's `t` (the time)
+// hid t(): the message threw and the game waited for its timer. No callback whose parameter is `t` may call t('…')
+for (const m of src.matchAll(/\(\s*t\s*(?:,[^)]*)?\)\s*=>\s*\{/g)) {
+  let i = m.index + m[0].length - 1, depth = 0, j = i;
+  for (; j < src.length; j++) { if (src[j] === '{') depth++; else if (src[j] === '}' && --depth === 0) break; }
+  assert.ok(!/\bt\('/.test(src.slice(i, j)), `a callback with a \`t\` parameter calls t('…') at line ${src.slice(0, m.index).split('\n').length}: rename the parameter`);
+}
 console.log(`✓ microgames: ${used.length} texts in es, en and pt`);
