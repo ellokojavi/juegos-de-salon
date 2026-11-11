@@ -101,7 +101,7 @@ trackVisit();   // the site's traffic (D-208)
   const GSTAGE = {
     toca: '<i class="gbox"></i><i class="gbox mid"></i><i class="gbox"></i><i class="rip"></i><span class="hand">👆</span>',
     arrastra: '<i class="gslot"></i><i class="gpiece"></i><span class="hand">👆</span>',
-    desliza: '<svg viewBox="0 0 150 76"><path class="gpath" d="M16 36 C36 4 60 46 82 18 S120 6 130 32"/><path class="gink" pathLength="200" d="M16 36 C36 4 60 46 82 18 S120 6 130 32"/></svg><span class="hand">👆</span>',
+    desliza: '<svg viewBox="0 0 150 76"><path class="gpath" d="M18 38 C38 20 60 50 82 30 S118 22 130 38"/><path class="gink" pathLength="200" d="M18 38 C38 20 60 50 82 30 S118 22 130 38"/></svg><span class="hand">👆</span>',
   };
   const gesture = id => { const k = KIND[id]; if (!k) return ''; const [label, , col] = KINDS[k];
     return `<div class="gest g-${k}" style="--kc:${col}"><div class="gstage" aria-hidden="true">${GSTAGE[k]}</div><b>${label}</b></div>`; };

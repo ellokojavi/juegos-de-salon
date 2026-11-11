@@ -6,6 +6,7 @@
 // the lab, and the best is kept; a seed gives the same run twice; the 28 start without errors; a hidden page
 // pauses and Seguir replays the game; the end offers Reta a alguien; the cover and games in English; at 320 px no sideways scroll. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
+import { coverGapsOff } from '../cover-gaps.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/microgames-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
@@ -30,8 +31,9 @@ ok(await ev(`__microgames.ids.length`) === 28, "twenty-eight microgames");
 await b.shot('01-cover');
 
 ok(await ev(`document.querySelectorAll('.kinds .kind').length === 3 && document.querySelectorAll('.kinds .gstage .hand').length === 3`), 'the cover shows the three ways to play, each with its finger (instead of folded rules)');
-ok(await ev(`(()=>{const h=document.querySelector('.kind .g-desliza .hand').getBoundingClientRect(), g=document.querySelector('.kind .g-desliza').getBoundingClientRect(); return h.bottom <= g.bottom + 1})()`), 'and Desliza\'s hand stays inside its box');
-ok(await ev(`document.querySelector('.demo').getBoundingClientRect().bottom <= innerHeight`), 'the cover fits above the fold');
+ok(await (async () => { let inside = true; for (let k = 0; k < 10; k++) { inside = inside && await ev(`(()=>{const g=document.querySelector('.kind .g-desliza').getBoundingClientRect(), h=document.querySelector('.kind .g-desliza .hand').getBoundingClientRect(); return h.top >= g.top - 1 && h.bottom <= g.bottom + 1 && h.left >= g.left - 1 && h.right <= g.right + 1})()`); await sleep(200); } return inside; })(), 'and Desliza\'s hand stays inside its box all along its path');
+ok(await ev(`(()=>{const g=document.querySelector('.kind .g-desliza').getBoundingClientRect(), p=document.querySelector('.kind .g-desliza .gpath').getBoundingClientRect(); return p.top - g.top >= 8})()`), 'and its line keeps clear of the box\'s top edge');
+ok(await ev(`document.querySelector('.demo').getBoundingClientRect().bottom <= innerHeight`), 'the cover fits above the fold ' + await ev(`document.querySelector('.demo').getBoundingClientRect().bottom + '/' + innerHeight + ' scroll ' + scrollY`));
 ok(await ev(`!!document.querySelector('#sound-slot .sound-toggle')`), 'a sound button in the top bar (C-4)');
 await ev(`document.getElementById('btn-jugar').click(); 1`);
 ok(await waitFor(`!document.getElementById('hud').hidden && !!__microgames.game && !document.getElementById('ranking').children.length`, 2000), 'Jugar starts the run, with the HUD, and the ranking goes away');
@@ -87,7 +89,8 @@ const s = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 640 }
 await s.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await s.evaluate(`document.documentElement.scrollWidth <= innerWidth`), 'at 320 px, no sideways scroll on the cover');
 ok(await s.evaluate(`!document.getElementById('reglas') && document.querySelector('#ranking').children.length > 0`), 'no folded rules (the cover shows the three ways), and the ranking under the stage');
-ok(await s.evaluate(`document.getElementById('ranking').getBoundingClientRect().top - document.getElementById('demo').getBoundingClientRect().bottom >= 12`), 'the ranking keeps its distance from the stage (ranking.css, not touching it)');
+ok(await s.evaluate(`document.getElementById('ranking').getBoundingClientRect().top - document.getElementById('demo').getBoundingClientRect().bottom === 12`), 'the ranking sits 12 px under the stage, like every block of a cover (ranking.css)');
+ok(await s.evaluate(coverGapsOff) === '[]', 'every block of the cover is 12 px from the next');
 await s.evaluate(`document.querySelector('.tr-tab')?.click(); 1`); await sleep(300);
 ok(await s.evaluate(`document.querySelectorAll('.tr-mg-b').length === __microgames.ids.length`), 'the tester tab offers every microgame (D-551)');
 s.close();
