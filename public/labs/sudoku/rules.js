@@ -9,9 +9,9 @@ export const LEVEL_EMOJI = { easy: '🟢', hard: '🔴' };
 
 const ES = {
   ui: {
-    docTitle: 'Sudoku 🧮 · Juegos de Salón', gameChip: '🧮 Sudoku', menu: '‹ Laboratorio',
+    docTitle: 'Sudoku #️⃣ · Juegos de Salón', gameChip: 'Sudoku', menu: '‹ Laboratorio',
     title: 'Sudoku', lead: 'Llena el tablero sin repetir números en ninguna fila, columna ni cuadro.',
-    howTitle: '🧮 Cómo se juega',
+    howTitle: 'Cómo se juega',
     levels: { easy: 'Fácil', hard: 'Difícil' },
     switch: [{ title: 'Modo fácil', sub: '6×6: menos celdas y dígitos, más rápido' }, { title: 'Modo difícil', sub: '9×9 y pocas pistas: hay que pensar con notas' }],
     play: '¡A jugar!',
@@ -38,9 +38,9 @@ const ES = {
 
 const EN = {
   ui: {
-    docTitle: 'Sudoku 🧮 · Parlor Games', gameChip: '🧮 Sudoku', menu: '‹ Lab',
+    docTitle: 'Sudoku #️⃣ · Parlor Games', gameChip: 'Sudoku', menu: '‹ Lab',
     title: 'Sudoku', lead: 'Fill the board without repeating a number in any row, column or box.',
-    howTitle: '🧮 How to play',
+    howTitle: 'How to play',
     levels: { easy: 'Easy', hard: 'Hard' },
     switch: [{ title: 'Easy mode', sub: '6×6: fewer cells and digits, quicker' }, { title: 'Hard mode', sub: '9×9 and few clues: think with notes' }],
     play: 'Let\'s play!',
@@ -67,9 +67,9 @@ const EN = {
 
 const PT = {
   ui: {
-    docTitle: 'Sudoku 🧮 · Jogos de Salão', gameChip: '🧮 Sudoku', menu: '‹ Laboratório',
+    docTitle: 'Sudoku #️⃣ · Jogos de Salão', gameChip: 'Sudoku', menu: '‹ Laboratório',
     title: 'Sudoku', lead: 'Preencha o tabuleiro sem repetir números em nenhuma linha, coluna ou quadrado.',
-    howTitle: '🧮 Como se joga',
+    howTitle: 'Como se joga',
     levels: { easy: 'Fácil', hard: 'Difícil' },
     switch: [{ title: 'Modo fácil', sub: '6×6: menos casas e dígitos, mais rápido' }, { title: 'Modo difícil', sub: '9×9 e poucas pistas: pense com notas' }],
     play: 'Vamos jogar!',

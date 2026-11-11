@@ -59,9 +59,11 @@ A board takes a few milliseconds (hard ~40 ms) in the phone. `?seed=<text>` fixe
 
 ## Look
 
-The game's emoji is 🧮 (🔢 is Toque y Fama's). The cover's hero is a drawn icon instead of the emoji (the
-owner's request): a sudoku on ruled notebook paper (no margin line, the owner asked), its digits in ink and one in pink,
-as an inline SVG coloured from the tokens (`.sd-logo` in `style.css`).
+**The game's icon is drawn** (the owner, 2026-11-11: the abacus 🧮 did not look like a sudoku, and there is no sudoku
+emoji): a 3×3 with digits in the hard level's dark red, its 9 in yellow (`icon.svg`). It goes wherever the game shows
+its emoji on screen: the cover's hero, the chip, How to play, the countdown, its /labs/ card and its splash (an
+`icon` field in `splash.js`). Where only text fits (the tab's title, the share message, rankings, the panel) the
+game's emoji is **#️⃣**, the owner's pick of a text stand-in (🔢 is Toque y Fama's).
 
 ## Modos
 

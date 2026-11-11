@@ -307,7 +307,7 @@ function start(level) {
   // The classic 3, 2, 1, ¡A jugar! (D-105): the board is built underneath, the clock starts when it says go
   counting = true;
   renderPlay();
-  cuentaRegresiva({ titulo: `🔢 ${T.title} · ${LEVEL_EMOJI[level]} ${levelName(level)}`, ya: T.play })
+  cuentaRegresiva({ titulo: [el('img', { class: 'sd-icon', src: 'icon.svg', alt: '' }), ` ${T.title} · ${LEVEL_EMOJI[level]} ${levelName(level)}`], ya: T.play })
     .then(() => { counting = false; if ($('#screen-play').classList.contains('active')) startClock(); });
 }
 
