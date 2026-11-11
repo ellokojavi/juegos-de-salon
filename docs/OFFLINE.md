@@ -160,7 +160,11 @@ PR that changes what is kept on the phone.
      (4.5:1), checked by a test.
    - **The random game offline** (the owner, 2026-11-07): the 🎲 picks only games this phone keeps and
      can play (`guardados` in `azar.js`), so it never lands on a page that cannot open.
-9. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
+9. ✅ **Is this phone ready?** (the owner, 2026-11-11): a ☁️ cloud in the home page's bar (`offline-ready.js`)
+   checks file by file that the release's list is kept and shows one of four states: storing, ready ✓
+   (glows), missing ! (Reintentar asks the worker to store what is missing) and unsupported (private mode,
+   an old browser). A tap opens a sheet explaining the state, live (`offline-ready.test.mjs`).
+10. Publish: the owner flips `flags/offline` to *all*; RP-13 ✅.
 
 ## Risks
 

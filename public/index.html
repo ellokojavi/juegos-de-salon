@@ -516,7 +516,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings">🏅</a><span id="share-slot"></span></div></div>
+    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><span id="offline-ready-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings">🏅</a><span id="share-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -602,6 +602,8 @@
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
+    // Offline mode's ☁️ (D-538): whether this phone can play with no signal; hidden while the flag is off. lab: #seccion-offline
+    import('./assets/js/offline-ready.js').then(({ offlineReadyButton }) => document.getElementById('offline-ready-slot').append(offlineReadyButton({ tap: () => SFX.tap() }))).catch(() => {});
     document.addEventListener('click', e => { if (e.target.closest('.game-card, .fav, .lang-toggle button, .filtros button, .link-btn')) SFX.tap(); });
     const lang = getLang();
     document.documentElement.lang = lang;
