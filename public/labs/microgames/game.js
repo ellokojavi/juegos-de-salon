@@ -1342,7 +1342,7 @@ trackVisit();   // the site's traffic (D-208)
     ['atrapa', t('¡ATRAPA!'), '🪙', 'Arrastra la canasta: atrapa las monedas y esquiva las bombas, cada vez más rápido.'],
     ['corta', t('¡CORTA!'), '🥪', 'Desliza por la línea punteada para cortar la comida (sándwich, sandía, pizza, torta…). El corte va en cualquier dirección: de lado, de arriba abajo o en diagonal.'],
     ['ordena', t('¡ORDENA!'), '🐘', 'Cuatro números o animales en columna. Los puestos van de grande (arriba) a chico (abajo) y cada uno toma el tamaño de su puesto: arrástralos hasta que el más grande quede arriba.'],
-    ['calcula', t('¡CALCULA!'), '➕', 'Una operación rápida y tres respuestas.'],
+    ['calcula', t('¡CALCULA!'), '🧮', 'Una operación rápida y tres respuestas.'],
     ['conecta', t('¡CONECTA!'), '🟡', 'Cuatro en línea: toca la columna que gana (o arrastra tu ficha hasta ella); cae sola a su lugar.'],
     ['limpia', t('¡LIMPIA!'), '🧽', 'Una mesa, una cocina, una ventana o un plato sucios: pasa el dedo hasta que se vea todo limpio.'],
     ['para', t('¡PARA!'), '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
@@ -1414,10 +1414,10 @@ trackVisit();   // the site's traffic (D-208)
   }
   // How the points came out, in three lines and the total: 10 per star, what the speed added, the streaks
   const breakdown = sc => { const base = marks.reduce((a, m) => a + m * 10, 0), streaks = sc.games.filter(g => g.streak).length,
-      speed = sc.points - base - streaks * STREAK, top = speedAt(order.length - 1).toFixed(1).replace('.', LANG === 'en' ? '.' : ',');
+      speed = sc.points - base - streaks * STREAK;
     return `<div class="breakdown" aria-label="${t('Cómo se calcularon tus puntos')}">
       <div><span>${t('{n} ★ × 10 puntos', { n: total })}</span><b class="num">${base}</b></div>
-      <div class="bonus"><span>${t('⚡ Bono de velocidad · sube cada 3 juegos, hasta ×{x}', { x: top })}</span><b class="num">+${speed}</b></div>
+      <div class="bonus"><span>${t('⚡ Bono de velocidad')} <small>${t('sube cada 3 juegos')}</small></span><b class="num">+${speed}</b></div>
       <div><span>${t('🔥 Rachas de ★★ o más: {n} × {p}', { n: streaks, p: STREAK })}</span><b class="num">+${streaks * STREAK}</b></div>
       <div class="tot"><span>${t('Total')}</span><b class="num">${sc.points} ${t('pts')}</b></div></div>`; };
   function end() {
