@@ -10,7 +10,9 @@ import { salidasFin } from '../../assets/js/fin.js';
 import { param, tiene } from '../../assets/js/parametros.js';
 import { semillaDel } from '../../assets/js/uno-al-dia.js';
 import { shareLink } from '../../assets/js/compartir.js';
-import { getLang, coverLangToggle } from '../../assets/js/i18n.js';
+import { getLang, coverLangToggle, COMMON } from '../../assets/js/i18n.js';
+import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
+import { rankingsVisibles } from '../../assets/js/jugador.js';
 import { TR } from './rules.js';
 import { RUN, newCode, speedAt, score, score100, stream, runOrder } from './engine.js';
 const GAME_ID = 'microgames';
@@ -93,7 +95,7 @@ trackVisit();   // the site's traffic (D-208)
   const GSTAGE = {
     toca: '<i class="gbox"></i><i class="gbox mid"></i><i class="gbox"></i><i class="rip"></i><span class="hand">👆</span>',
     arrastra: '<i class="gslot"></i><i class="gpiece"></i><span class="hand">👆</span>',
-    desliza: '<svg viewBox="0 0 150 76"><path class="gpath" d="M14 56 C36 8 62 70 86 30 S128 14 138 52"/><path class="gink" pathLength="200" d="M14 56 C36 8 62 70 86 30 S128 14 138 52"/></svg><span class="hand">👆</span>',
+    desliza: '<svg viewBox="0 0 150 76"><path class="gpath" d="M16 36 C36 4 60 46 82 18 S120 6 130 32"/><path class="gink" pathLength="200" d="M16 36 C36 4 60 46 82 18 S120 6 130 32"/></svg><span class="hand">👆</span>',
   };
   const gesture = id => { const k = KIND[id]; if (!k) return ''; const [label, , col] = KINDS[k];
     return `<div class="gest g-${k}" style="--kc:${col}"><div class="gstage" aria-hidden="true">${GSTAGE[k]}</div><b>${label}</b></div>`; };
@@ -1385,25 +1387,25 @@ trackVisit();   // the site's traffic (D-208)
     if (screenName === 'portada') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [b], lang: LANG }); else pie.replaceChildren(b); };
   // The three ways to play, for the cover's folded rules (C-8, D-550): each with its gesture, moving
   const HOW = { toca: t('la respuesta, en el momento justo o muchas veces seguidas.'), arrastra: t('algo con el dedo hasta su lugar, o de lado a lado.'), desliza: t('el dedo por la pantalla: corta, recorre o frota.') };
-  const rules = () => `<details class="panel howto-rules" id="reglas"><summary>${t('Cómo se juega')}</summary>
-    <p>${t('Haz lo que dice la orden antes de que se acabe la barra: 10 microjuegos seguidos, cada vez más rápido.')}</p>
-    <ul class="howkinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<li style="--kc:${col}"><span class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</span><span><b>${label[0]}${label.slice(1).toLowerCase()}</b> ${HOW[k]}</span></li>`).join('')}</ul>
-    <p>${t('Cada microjuego da hasta ★★★; los puntos son 10 por estrella, por la velocidad, y +5 por cada racha de ★★ o más.')}</p></details>`;
+  // The ranking (D-212), as every game played alone: the `microgames` table under the stage, with signing in on the cover
+  const rankingEl = $id('ranking');
+  const tabla = ({ entrar = true } = {}) => bloqueTabla({ tabla: GAME_ID, titulo: String((COMMON[LANG] || COMMON.es).rk.titleOf).replace('{game}', t('¡Al toque!')), entrar });
   function cover() {
     stopAll(); active = false; paused = false; hud.hidden = true; rb.hidden = true; undress();
     const td = TODAY ? today() : null;
     // The three ways to play, all at once, each with its finger doing the gesture, above Jugar
     const cap = x => x[0].toUpperCase() + x.slice(1);
-    set(`<div class="cmd">⚡ ${t('¡Al toque!')}</div>
+    set(`<div class="cmd"><span class="tbolt" aria-hidden="true">⚡</span> ${t('¡Al toque!')}</div>
       <div class="sub">${TODAY ? t('La corrida de hoy: la misma para todos, y cuenta la primera.') : t('{n} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!', { n: RUN })}</div>
       ${SEED && !TODAY ? `<div class="sub best">${t('Corrida compartida · {c}: la misma para todos', { c: `<b class="num">${SEED}</b>` })}</div>` : ''}
       <div class="kinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<div class="kind" style="--kc:${col}"><div class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</div><div><b>${label}</b><p>${cap(HOW[k])}</p></div></div>`).join('')}</div>
       <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ ${TODAY ? (td ? t('Jugarla de nuevo') : t('Jugar la de hoy')) : t('Jugar')}</button></div>
       ${td ? `<div class="sub best">${t('Hoy hiciste {n} pts', { n: `<span class="num">${td.p}</span>` })}</div>` : bestPts ? `<div class="sub best">${t('Tu mejor corrida: {n} pts', { n: `<span class="num">${bestPts}</span>` })}</div>` : ''}
       <div class="sub credit">${t('Inspirado en {w}, de Nintendo.', { w: `<a href="https://${LANG}.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>` })}</div>`);
-    $id('rules-slot').innerHTML = rules(); $id('screen').prepend(coverLangToggle(() => location.reload()));
+    $id('screen').prepend(coverLangToggle(() => location.reload()));
     $btn('btn-jugar', () => start(newRun()));
     footer('portada');
+    rankingEl.replaceChildren(tabla());
   }
   function end() {
     hud.hidden = true; rb.hidden = true;
@@ -1424,6 +1426,9 @@ trackVisit();   // the site's traffic (D-208)
         <button class="btn btn--cyan btn--sm" type="button" id="btn-retar">📤 ${t('Reta a alguien con esta corrida')}</button><div id="exits"></div></div>
       <div class="runsum" data-tablero>${order.map((id, i) => `<span><b>${META.find(m => m.id === id).i}</b><i>${'★'.repeat(marks[i])}${'☆'.repeat(3 - marks[i])}</i><em class="num">${sc.games[i].points}${sc.games[i].streak ? '🔥' : ''}</em></span>`).join('')}</div>`);
     $id('exits').replaceWith(salidasFin('lab', { lang: LANG, raiz: '../../' }));
+    // A whole run counts for the ranking (D-212): never one microgame played alone from the tester tab
+    const tablaFin = tabla({ entrar: false });
+    rankingEl.replaceChildren(...(order.length === RUN && rankingsVisibles() ? [avisoPartida({ juego: GAME_ID, s: sc.points, ms: Date.now() - startedAt, alAnotar: () => tablaFin.recargar() })] : []), tablaFin);
     $btn('btn-otra', () => start(newRun()));
     // The same run for whoever opens the link: its code (or today's), never the stars
     $btn('btn-retar', () => shareLink({ title: t('¡Al toque!'), text: t('Hice {n} pts en ¡Al toque! ⚡ ¿Me ganas con la misma corrida?', { n: sc.points }),
@@ -1446,7 +1451,7 @@ trackVisit();   // the site's traffic (D-208)
   function start(list) {
     stopAll(); active = false; paused = false; undress();
     total = 0; idx = 0; sp = 1; order = list; marks = []; lastStars = 0; startedAt = Date.now();
-    hud.hidden = false; hudS.textContent = `0 ${t('pts')}`; $id('rules-slot').replaceChildren();
+    hud.hidden = false; hudS.textContent = `0 ${t('pts')}`; rankingEl.replaceChildren();
     trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
     footer('juego');
     next();
@@ -1471,10 +1476,12 @@ trackVisit();   // the site's traffic (D-208)
   labAccess().then(ok => {
     if (!ok) return;
     return import('../../assets/js/tester-ribbon.js').then(({ setTesterContext, foldTesterRibbon }) => {
-      const pickG = el('select', { id: 'tr-mg', 'aria-label': 'Microjuego' }, ...META.map(m => el('option', { value: m.id }, `${m.i} ${m.n}`)));
-      setTesterContext(el('div', { class: 'tr-sim' }, el('small', {}, '⚡ Probar un microjuego'), pickG,
-        el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'tr-mg-go', onClick: () => { foldTesterRibbon(); window.__microgames.only(pickG.value); } }, 'Jugar este'),
-        el('a', { class: 'btn btn--sm', href: '?today' }, '📅 Corrida de hoy')));
+      // One tap plays it: a grid of the 29 by their emoji, grouped by type (its color), the name on a long press
+      const go = id => { foldTesterRibbon(); window.__microgames.only(id); };
+      const grid = el('div', { class: 'tr-mg-grid', id: 'tr-mg' }, ...Object.keys(KINDS).flatMap(k => META.filter(m => KIND[m.id] === k).map(m =>
+        el('button', { type: 'button', class: 'tr-mg-b', style: `--kc:${KINDS[k][2]}`, title: m.n, 'aria-label': m.n, 'data-id': m.id, onClick: () => go(m.id) }, m.i))));
+      setTesterContext(el('div', { class: 'tr-sim tr-mg-box' }, el('small', {}, '⚡ Jugar un microjuego'), grid,
+        el('a', { class: 'tr-mg-today', href: '?today' }, '📅 Corrida de hoy ›')));
     });
   }).catch(() => {});
   cover();

@@ -119,4 +119,6 @@ taking it out of the lab.
 
 `window.__microgames`: `game`, `order`, `idx`, `total`, `active`, `ids` and `only(id)` (a run of that one game).
 - **¡A la hora!:** the hand pointing nearest the finger turns (near the middle, the short one); the long one snaps to 5 minutes, the short one must be within half an hour of its place. Never 12:00, where both hands start.
-- **Testing:** the «T» tab (lab key holders) plays any microgame on its own («Probar un microjuego») or opens today's run (D-551); the cover has neither.
+- **Testing:** the «T» tab (lab key holders) shows the 29 microgames as emoji buttons in their type's color, one tap plays it alone, and links today's run (D-551); the cover has neither.
+- **Exception to D-550 (no folded rules):** the cover itself shows the three ways to play (Toca, Arrastra, Desliza) with their moving gestures, so a «Cómo se juega» would repeat it; the owner asked to drop it so the cover fits above the fold.
+- **Ranking (D-212):** the `microgames` table under the stage, Week · All time · Friends, with signing in on the cover; a whole run of 10 offers to save its points, a microgame played alone from the tester tab never does.
