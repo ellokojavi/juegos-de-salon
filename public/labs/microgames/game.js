@@ -1376,8 +1376,7 @@ trackVisit();   // the site's traffic (D-208)
     set(`<div class="hero" id="hero" aria-hidden="true"><div class="hv" id="hv"></div><span class="bolt" id="bolt">⚡</span></div><div class="cmd">${t('¡Al toque!')}</div>
       <div class="sub">${TODAY ? t('La corrida de hoy: la misma para todos, y cuenta la primera.') : t('{n} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!', { n: RUN })}</div>
       ${SEED && !TODAY ? `<div class="sub best">${t('Corrida compartida · {c}: la misma para todos', { c: `<b class="num">${SEED}</b>` })}</div>` : ''}
-      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ ${TODAY ? (td ? t('Jugarla de nuevo') : t('Jugar la de hoy')) : t('Jugar')}</button>
-        ${TODAY ? '' : `<a class="btn btn--cyan btn--sm" id="btn-hoy" href="?today">📅 ${t('La corrida de hoy')}</a>`}</div>
+      <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ ${TODAY ? (td ? t('Jugarla de nuevo') : t('Jugar la de hoy')) : t('Jugar')}</button></div>
       ${td ? `<div class="sub best">${t('Hoy hiciste {n} pts', { n: `<span class="num">${td.p}</span>` })}</div>` : bestPts ? `<div class="sub best">${t('Tu mejor corrida: {n} pts', { n: `<span class="num">${bestPts}</span>` })}</div>` : ''}
       <div class="sub credit">${t('Inspirado en {w}, de Nintendo.', { w: `<a href="https://${LANG}.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>` })}</div>`);
     heroLoop();

@@ -59,7 +59,7 @@ in `game.js`.
 
 Every run has a code (5 letters, as a cup's): the link's `?seed=`, today's, or a new one drawn for the run.
 The end's **📤 Reta a alguien con esta corrida** shares the link with that code, so a friend plays the same
-run (La Copa's idea, inside the lab). **📅 La corrida de hoy** on the cover opens `?today`: Uno al día's
+run (La Copa's idea, inside the lab). A `?today` link (no longer a cover button: the cover keeps only Jugar, so it fits above the fold) opens: Uno al día's
 idea, inside the lab: the same run for everyone that day, and the first one played is the one that counts
 (`microgames:today`, `{ d, p, s, m }`: date, points, the 0–100 score and the stars). Neither touches the
 real La Copa or Uno al día: both are shared calendars, and ¡Al toque! stays in the lab until the owner
