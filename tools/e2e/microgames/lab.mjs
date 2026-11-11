@@ -3,7 +3,7 @@
 // the sound button and the site footer; Jugar starts a run of 10
 // different microgames, with the HUD, a mark per game and the first intro wearing its type's gesture; a single
 // game (¡Calcula!, answered right) ends on the run's summary with points, stars, Otra corrida and the way back to
-// the lab, and the best is kept; a seed gives the same run twice; the 28 start without errors; a hidden page
+// the lab, and the best is kept; a seed gives the same run twice; the 29 start without errors; a hidden page
 // pauses and Seguir replays the game; the end offers Reta a alguien; the cover and games in English; at 320 px no sideways scroll. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -24,7 +24,7 @@ ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Jugar
 ok(await ev(`document.getElementById('bolt')?.textContent === '⚡' && /h-/.test(document.getElementById('hv').className)`), 'the ⚡ on top, with a microgame playing beside it');
 ok(/WarioWare/.test(await ev(`document.getElementById('link-warioware')?.textContent || ''`)), 'the cover credits WarioWare');
 ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends with the site footer and its comment');
-ok(await ev(`__microgames.ids.length`) === 28, 'twenty-eight microgames');
+ok(await ev(`__microgames.ids.length`) === 29, "twenty-nine microgames");
 await b.shot('01-cover');
 
 ok(await ev(`document.querySelector('#rules-slot details.panel')?.open === false`), 'the rules are on the cover, folded (D-550)');
@@ -60,7 +60,7 @@ await b.go(`${SITE}/labs/microgames/?test`, 800);
 await ev(`window.__errs = []; addEventListener('error', e => __errs.push(__microgames.game + ': ' + e.message)); 1`);
 for (const id of await ev(`__microgames.ids`)) { await ev(`__microgames.only('${id}'); 1`); await sleep(2600); }
 const errs = await ev(`__errs`);
-ok(!errs.length, `the 28 microgames start without errors${errs.length ? `: ${errs.join(' · ')}` : ''}`);
+ok(!errs.length, `the 29 microgames start without errors${errs.length ? `: ${errs.join(' · ')}` : ''}`);
 
 // The phone locks mid-game: the game stops and waits for Seguir, then the same game starts again
 await ev(`__microgames.only('calcula'); 1`); await sleep(2600);

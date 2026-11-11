@@ -23,7 +23,7 @@ in a row in the lab. «¡Al toque!» means "right away" (the owner first called 
 | `public/labs/microgames/engine.test.mjs` | Its tests |
 | `public/labs/microgames/rules.js` | The texts in English and Portuguese, keyed by the Spanish |
 | `public/labs/microgames/rules.test.mjs` | Every `t()` has both, with the same `{x}` |
-| `public/labs/microgames/game.js` | The shared stage helpers, the 28 microgames (`GAMES`), their names (`META`), the three types (`KINDS`), the cover and the run |
+| `public/labs/microgames/game.js` | The shared stage helpers, the 29 microgames (`GAMES`), their names (`META`), the three types (`KINDS`), the cover and the run |
 | `public/labs/microgames/style.css` | The stage and every microgame's look (moved from the artifact) |
 | `public/labs/microgames/index.html` | The page: the stage, the HUD, the run's marks and the footer |
 | `tools/e2e/microgames/lab.mjs` | End to end |
@@ -37,7 +37,7 @@ in `game.js`.
    **Cómo se juega** folded (C-8, D-550): the goal, the three ways to play each with its finger doing the
    gesture (**Toca** turquoise, **Arrastra** orange, **Desliza** purple) and the scoring in one sentence;
    the site footer last. Jugar goes straight into the run (the separate how-to screen is gone).
-2. **The run:** 10 different microgames drawn from the 28. Each starts with its intro card (the gesture
+2. **The run:** 10 different microgames drawn from the 29. Each starts with its intro card (the gesture
    of its type on top, the stage framed in the type's color, the name and a hint); the frame comes off
    when the game starts. Every three games the run speeds up by 10 % (`sp`). The HUD shows `n / 10`,
    the stars so far and a mark per game (red 0, orange 1, turquoise 2, yellow 3 stars).
@@ -77,12 +77,12 @@ apples to count, the colour asked and the road to roll are the same too. Only th
 depends on the frame rate (a fly's jitter, a gust) can differ between phones; what is judged does not.
 The cover names the shared run's code.
 
-## The 28 microgames, by type
+## The 29 microgames, by type
 
 | Type | Games |
 |---|---|
 | 👆 Toca (17) | ¡Qué color!, ¡Cuenta!, ¡Calcula!, ¡Completa!, ¡Qué hora es!, ¡Su sombra!, ¡Más! (3 rounds), ¡Diferente!, ¡Cuál falta!, ¡Dónde quedó!, ¡Repite!, ¡Espera… ya!, ¡Para! (a radar), ¡Toca rápido! (a hand pump and a balloon), ¡Aplasta! (9 flies), ¡Revienta!, ¡No toques! (whack-a-mole) |
-| ✊ Arrastra (6) | ¡Ordena! (big on top), ¡Alimenta!, ¡Conecta! (four in a row), ¡Atrapa!, ¡Rebota! (pixel aliens), ¡Equilibra! (stacked blocks) |
+| ✊ Arrastra (7) | ¡Ordena! (big on top), ¡A la hora! (set both hands to a digital time, 10 s), ¡Alimenta!, ¡Conecta! (four in a row), ¡Atrapa!, ¡Rebota! (pixel aliens), ¡Equilibra! (stacked blocks) |
 | 💨 Desliza (5) | ¡Corta! (any direction), ¡Rueda! (a steel ball on a track), ¡Dibuja!, ¡Sigue! (a rat), ¡Limpia! |
 
 Each game gives 0 to 3 stars, mostly by time or accuracy; the rules of each are in its comment in
@@ -101,7 +101,7 @@ Each game gives 0 to 3 stars, mostly by time or accuracy; the rules of each are 
 ## Exceptions to the canons, for now
 
 - **C-2 (files):** `rules.js` holds the translations keyed by the Spanish, not a `LOCALES = { es, en, pt }`
-  by key: 190 short texts spread over 28 microgames read better where they are used.
+  by key: 190 short texts spread over 29 microgames read better where they are used.
 - **C-6 (memory):** a run is short (about a minute and a half) and is not resumed; only the best is kept.
 - **Characters:** every mascot is our own drawing (the muscle sponge in ¡Limpia!, the curly-haired
   tycoon in ¡Atrapa!, the dancing rat and moles). None copies a real person or a brand.
@@ -118,3 +118,4 @@ taking it out of the lab.
 ## For the end-to-end test
 
 `window.__microgames`: `game`, `order`, `idx`, `total`, `active`, `ids` and `only(id)` (a run of that one game).
+- **¡A la hora!:** the hand pointing nearest the finger turns (near the middle, the short one); the long one snaps to 5 minutes, the short one must be within half an hour of its place. Never 12:00, where both hands start.
