@@ -1,0 +1,3 @@
+level: minor
+
+- **Offline mode (lab)**: a ☁️ cloud in the home page's bar says whether this phone can play with no signal, in four states: storing (an arrow and a ring that fills), ready (the cloud glows with a ✓), something missing (amber "!", with Reintentar) and this browser saves no games (grey, struck through). A tap opens a sheet that explains the state and follows it live; while storing it shows a bar, the percentage and how many files. The service worker keeps its list and progress for any page to read and takes a retry (`offline-ready.js`, `offline-ready.css`, `sw.js`).

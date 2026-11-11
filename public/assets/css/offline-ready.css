@@ -1,0 +1,35 @@
+/* The home page's ☁️ button and its sheet (offline-ready.js, D-538): a cyan→lime cloud that glows
+   when the phone keeps everything, an arrow and a ring while it stores, amber with "!" when
+   something is missing, grey and struck through when the browser keeps nothing. */
+.offline-ready { position: relative; padding: 0; }
+.or-icono { width: 28px; height: 28px; overflow: visible; }
+.or-c1 { stop-color: var(--cyan); }
+.or-c2 { stop-color: var(--lime); }
+.or-a1 { stop-color: var(--yellow); }
+.or-a2 { stop-color: var(--orange); }
+.or-nube { fill: url(#or-cg); }
+.or-marca { fill: none; stroke: var(--ink-on-cyan); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.or-punto { fill: var(--ink-on-yellow); stroke: none; }
+[data-state="ready"] .or-nube { filter: drop-shadow(0 0 3px rgb(var(--cyan-rgb) / 0.9)); }
+[data-state="loading"] .or-nube { opacity: 0.55; filter: none; }
+[data-state="loading"] .or-flecha { animation: or-baja 1.2s ease-in-out infinite; }
+[data-state="missing"] .or-nube { fill: url(#or-ag); }
+[data-state="missing"] .or-marca { stroke: var(--ink-on-yellow); }
+[data-state="unsupported"] .or-nube { fill: var(--line-faint); }
+[data-state="unsupported"] .or-marca { stroke: var(--bg2); stroke-width: 2.4; }
+.or-anillo { position: absolute; inset: calc(-1 * var(--s-4)); width: calc(100% + var(--s-8)); height: calc(100% + var(--s-8)); transform: rotate(-90deg); pointer-events: none; }
+.or-anillo circle { fill: none; stroke: var(--glass-border); stroke-width: 2.5; }
+.or-anillo .or-lleno { stroke: var(--cyan); stroke-linecap: round; transition: stroke-dasharray 0.4s; }
+.or-destello .or-icono { animation: or-destello 0.9s ease-out 1; }
+@keyframes or-baja { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
+@keyframes or-destello { 0% { transform: scale(1); } 40% { transform: scale(1.25); filter: drop-shadow(0 0 8px rgb(var(--lime-rgb) / 0.9)); } 100% { transform: scale(1); } }
+.or-hoja-icono { align-self: center; }
+.or-hoja-icono .or-icono { width: 72px; height: 72px; }
+.or-lineas { display: grid; gap: var(--s-8); }
+.or-barra { height: var(--s-6); border-radius: var(--r-pill); background: var(--glass-border); overflow: hidden; }
+.or-barra i { display: block; height: 100%; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--cyan), var(--lime)); transition: width 0.4s; }
+.or-barra[hidden], .or-pct[hidden] { display: none; }
+.or-pct { text-align: center; font-weight: 900; font-size: var(--fs-110); color: var(--cyan); }
+@media (prefers-reduced-motion: reduce) {
+  [data-state="loading"] .or-flecha, .or-destello .or-icono { animation: none; }
+}
