@@ -2105,6 +2105,19 @@
         "stat": "2 file(s) +6 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 42946614847,
+      "check": "end-to-end",
+      "pr": 1372,
+      "branch": "microgames-cover-ranking",
+      "commit": "83096ae95eb7b2ea23da26e2635e1eed9fd983dc",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\nError: Uncaught TypeError: Cannot read properties of null (reading 'textContent')",
+      "signature": "ee14a725da",
+      "date": "2026-11-11T02:37:50.993Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
