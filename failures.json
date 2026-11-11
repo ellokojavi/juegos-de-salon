@@ -2150,7 +2150,11 @@
       "error": "ERROR · appeared e2e: cover-gaps.mjs",
       "signature": "4efb9bb88e",
       "date": "2026-11-11T06:08:19.629Z",
-      "fix": null,
+      "fix": {
+        "commit": "ab7f17af260c0bed43a978c22cfc13040c2dc2e0",
+        "date": "2026-11-11T06:22:06.690Z",
+        "stat": "2 file(s) +2 −0: docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     },
     {
