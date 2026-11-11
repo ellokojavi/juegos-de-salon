@@ -2278,7 +2278,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ tres-juegos-demo-es: uneven margins (DESIGN.md rule 7): M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides, M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides, M-3 .splash-media in .splash-item: 0 px above, 0 / 225 px at the sides",
       "signature": "85fedbafc5",
       "date": "2026-11-11T19:15:39.060Z",
-      "fix": null,
+      "fix": {
+        "commit": "d0047ebcacef24c28798bf46a6f80f46e4a1874e",
+        "date": "2026-11-11T19:46:27.615Z",
+        "stat": "32 file(s) +483 −205: changelog/claude-affectionate-cori-1vopjw.md, changelog/claude-eager-bohr-ohnpg7.md, changelog/claude-ecstatic-carson-rdzy7y.md, docs/DESIGN.md, docs/games/sudoku.md, …"
+      },
       "flaky": false
     },
     {
@@ -2292,7 +2296,7 @@
       "signature": "6fad0784f2",
       "date": "2026-11-11T19:37:53.437Z",
       "fix": null,
-      "flaky": false
+      "flaky": true
     }
   ]
 }
