@@ -30,7 +30,7 @@ export const TEXTS = {
     button: 'Juegos sin señal',
     loading: { title: 'Preparando los juegos…', body: n => `Este celular está guardando los juegos para jugar sin señal. ${n}`, left: (have, total) => `Van ${have} de ${total} archivos.`, more: 'Puedes seguir jugando mientras tanto.' },
     ready: { title: 'Listo para jugar sin señal', body: 'Este celular ya guardó los juegos que se juegan en un solo celular. Si pierdes la señal, siguen funcionando.', more: 'Las salas con varios celulares, La Copa y los rankings vuelven con la señal.' },
-    missing: { title: 'Faltan algunos juegos', body: (have, total) => `Se cortó la descarga: este celular guardó ${have} de ${total} archivos.`, more: 'Conéctate un momento y toca Reintentar.', offline: 'Sin señal no se puede seguir: vuelve a intentarlo cuando la tengas.' },
+    missing: { title: 'Faltan algunos juegos', body: (have, total) => `Se cortó la descarga: este celular guardó ${have} de ${total} archivos.`, more: 'Toca Reintentar y deja esta página abierta un momento.', none: 'Este celular todavía no guardó los juegos.', offline: 'Sin señal no se puede seguir: vuelve a intentarlo cuando la tengas.' },
     unsupported: { title: 'Este navegador no guarda juegos', body: 'Este navegador no deja guardar sitios en el celular (puede ser el modo incógnito o un navegador antiguo).', more: 'Ábrelo en Chrome o Safari normal, o instala la app.' },
     ios: '📲 En iPhone, lo guardado dura más con la app en la pantalla de inicio: Safari puede borrar los datos de un sitio que no abres en unos días.',
     retry: 'Reintentar',
@@ -40,8 +40,8 @@ export const TEXTS = {
     button: 'Games with no signal',
     loading: { title: 'Getting the games ready…', body: n => `This phone is saving the games to play with no signal. ${n}`, left: (have, total) => `${have} of ${total} files so far.`, more: 'You can keep playing meanwhile.' },
     ready: { title: 'Ready to play with no signal', body: 'This phone has saved the games that need only one phone. If you lose the signal, they keep working.', more: 'Rooms with several phones, La Copa and the leaderboards come back with the signal.' },
-    missing: { title: 'Some games are missing', body: (have, total) => `The download was cut: this phone saved ${have} of ${total} files.`, more: 'Get online for a moment and tap Try again.', offline: 'It cannot go on with no signal: try again when you have it.' },
-    unsupported: { title: 'This browser saves no games', body: 'This browser does not let sites be saved on the phone (it may be private mode or an old browser).', more: 'Open it in regular Chrome or Safari, or install the app.' },
+    missing: { title: 'Some games are missing', body: (have, total) => `The download was cut: this phone saved ${have} of ${total} files.`, more: 'Tap Try again and keep this page open for a moment.', none: 'This phone has not saved the games yet.', offline: 'It can\'t continue without signal: try again once you have it.' },
+    unsupported: { title: 'This browser can\'t save games', body: 'This browser does not let sites be saved on the phone (it may be private mode or an old browser).', more: 'Open it in regular Chrome or Safari, or install the app.' },
     ios: '📲 On iPhone, what is saved lasts longer with the app on your home screen: Safari may clear the data of a site you have not opened for a few days.',
     retry: 'Try again',
     ok: 'Got it',
@@ -50,7 +50,7 @@ export const TEXTS = {
     button: 'Jogos sem sinal',
     loading: { title: 'Preparando os jogos…', body: n => `Este celular está salvando os jogos para jogar sem sinal. ${n}`, left: (have, total) => `Já foram ${have} de ${total} arquivos.`, more: 'Você pode continuar jogando enquanto isso.' },
     ready: { title: 'Pronto para jogar sem sinal', body: 'Este celular já salvou os jogos que se jogam em um só celular. Se você perder o sinal, eles continuam funcionando.', more: 'As salas com vários celulares, La Copa e os rankings voltam com o sinal.' },
-    missing: { title: 'Faltam alguns jogos', body: (have, total) => `O download foi interrompido: este celular salvou ${have} de ${total} arquivos.`, more: 'Conecte-se um momento e toque em Tentar de novo.', offline: 'Sem sinal não dá para continuar: tente de novo quando tiver.' },
+    missing: { title: 'Faltam alguns jogos', body: (have, total) => `O download foi interrompido: este celular salvou ${have} de ${total} arquivos.`, more: 'Toque em Tentar de novo e deixe esta página aberta um momento.', none: 'Este celular ainda não salvou os jogos.', offline: 'Sem sinal não dá para continuar: tente de novo quando tiver.' },
     unsupported: { title: 'Este navegador não salva jogos', body: 'Este navegador não deixa salvar sites no celular (pode ser o modo anônimo ou um navegador antigo).', more: 'Abra no Chrome ou Safari normal, ou instale o app.' },
     ios: '📲 No iPhone, o que foi salvo dura mais com o app na tela de início: o Safari pode apagar os dados de um site que você não abre há alguns dias.',
     retry: 'Tentar de novo',
@@ -77,7 +77,7 @@ export function linesOf(s, { lang = getLang(), online = true, steps = null } = {
   const ios = String(steps || '').startsWith('ios') && s.state !== 'unsupported' ? [T.ios] : [];
   if (s.state === 'loading') return [T.loading.body(s.total ? T.loading.left(s.have, s.total) : ''), T.loading.more, ...ios];
   if (s.state === 'ready') return [T.ready.body, T.ready.more, ...ios];
-  if (s.state === 'missing') return [T.missing.body(s.have, s.total), online ? T.missing.more : T.missing.offline, ...ios];
+  if (s.state === 'missing') return [s.total ? T.missing.body(s.have, s.total) : T.missing.none, online ? T.missing.more : T.missing.offline, ...ios];
   return [T.unsupported.body, T.unsupported.more];
 }
 
