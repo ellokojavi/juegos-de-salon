@@ -26,20 +26,21 @@
     <section class="screen active stack" id="s-portada">
       <div class="intro-hero">
         <div class="demo" aria-hidden="true"><canvas id="demo"></canvas></div>
-        <h1 class="display display--xl rainbow">Artefactos</h1>
+        <h1 class="display display--lg">Artefactos</h1>
         <p class="lead muted" id="lema"></p>
-        <p class="credito muted" id="credito"></p>
       </div>
-      <details class="panel" id="como"><summary id="como-titulo"></summary><ul class="pasos" id="pasos"></ul></details>
       <div class="idioma" id="lang-slot"></div>
       <div class="chips niveles" id="niveles"></div>
+      <!-- Jugar before the rules (C-5); the credit inside «Cómo se juega», as Tren en Vilo's -->
       <button type="button" class="btn btn--yellow" id="btn-jugar"></button>
+      <details class="panel" id="como"><summary id="como-titulo"></summary><p class="credito muted" id="credito"></p><ul class="pasos" id="pasos"></ul></details>
     </section>
 
     <!-- The workshop: the board, the tray of parts and the buttons to try it -->
     <section class="screen stack" id="s-juego">
-      <!-- The stage, its difficulty, the five dots and the game's clock, always in view -->
-      <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj" id="reloj" role="timer"></span></div>
+      <!-- As Tren en Vilo's: the five dots and the game's clock on one line, the stage and its difficulty centred under them -->
+      <div class="cabecera"><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj-caja"><span aria-hidden="true">⏳</span> <span class="reloj" id="reloj" role="timer"></span></span></div>
+      <div class="etapa-titulo"><h2 class="etapa" id="nivel"></h2><p class="muted" id="dificultad"></p></div>
       <div class="tablero" id="tablero" data-tablero>
         <canvas id="lienzo"></canvas>
         <!-- The chosen part's buttons, over it on the board; they go after 5 s without a touch or on a drag -->
@@ -60,13 +61,13 @@
       <p class="mensaje" id="mensaje" aria-live="polite"></p>
       <div class="bandeja" id="bandeja" role="group"></div>
       <div class="stack">
-        <!-- The three helpers in one row: undo, a hint (costs a star) and giving the stage up (two taps); Probar under them -->
-        <div class="btn-row herramientas">
+        <!-- Probar first, the three helpers under it in one row (undo, a hint that costs a star, giving the stage up with two taps), as Tren en Vilo's -->
+        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
+        <div class="herramientas">
           <button type="button" class="btn btn--ghost btn--sm" id="btn-deshacer"></button>
           <button type="button" class="btn btn--ghost btn--sm" id="btn-pista"></button>
           <button type="button" class="btn btn--ghost btn--sm" id="btn-rendirse"></button>
         </div>
-        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
       </div>
     </section>
     <!-- The result: the total, how it adds up stage by stage, and the way to play again -->
