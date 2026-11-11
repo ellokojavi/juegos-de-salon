@@ -19,6 +19,8 @@ if (part && !SUELTOS.some(m => m.slug === part)) throw new Error(`--part ${part}
 let failures = 0;
 for (const [i, { id, slug }] of SUELTOS.entries()) {
   if (part && slug !== part) continue;
-  failures += await checkLanguages(id, { dicts: [LOCALES, REGISTRY], port: 9470 + i, out: `${OUT}/${slug}` });
+  // Sudoku is Sudoku, and 🟢 Fácil is «Fácil», in Portuguese too: its ranking's title is the same line
+  const allowed = id === 'sudoku' ? ['Ranking de Sudoku'] : [];
+  failures += await checkLanguages(id, { dicts: [LOCALES, REGISTRY], port: 9470 + i, out: `${OUT}/${slug}`, allowed });
 }
 console.log(failures ? `✗ La Copa games: ${failures} check(s) in red` : `La Copa games: ${part || `all ${SUELTOS.length}`} in every language`);

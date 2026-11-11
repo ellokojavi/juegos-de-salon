@@ -557,7 +557,11 @@ export const PATHS = {
   stack: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
   aletazo: { intro: [], game: [START] },
   // Sudoku: the cover (the lever on easy), then Empezar and the countdown to the 6×6 board; `hard` the 9×9 one
-  sudoku: { intro: [], game: [START, `1`, `1`, `1`, `1`], hard: [`document.getElementById('btn-level').click(); 1`, `1`, START, `1`, `1`, `1`, `1`] },
+  // hard: waits for the level lever before tapping it, and for the 9×9's 81 cells after starting, so every
+  // language photographs the same board (on the runner the lever was once tapped before it existed)
+  sudoku: { intro: [], game: [START, `1`, `1`, `1`, `1`], hard: [
+    `new Promise(r => { const t = setInterval(() => { const b = document.getElementById('btn-level'); if (b) { clearInterval(t); b.click(); r(1); } }, 100); setTimeout(() => { clearInterval(t); r(0); }, 8000); })`, `1`, START, `1`,
+    `new Promise(r => { const t = setInterval(() => { if (document.querySelectorAll('.sd-cell').length === 81) { clearInterval(t); r(1); } }, 100); setTimeout(() => { clearInterval(t); r(0); }, 8000); })`, `1`, `1`] },
   puentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`],
