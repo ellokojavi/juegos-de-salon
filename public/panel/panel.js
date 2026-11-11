@@ -2117,6 +2117,12 @@ function renderNav(now) {
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
   // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
   const noArranca = salud(S.days, { from: dayOf(now) - 1, to: dayOf(now) }).total.arranque > 0;
+  // The bottom bar's real height, so the page leaves that much room below its last line
+  const nav = $('#nav');
+  if (!nav.dataset.sized && typeof ResizeObserver === 'function') {
+    nav.dataset.sized = '1';
+    new ResizeObserver(() => document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`)).observe(nav);
+  }
   $('#nav').replaceChildren(...SECCIONES.map(sec => {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null },
