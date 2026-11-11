@@ -176,7 +176,7 @@ export function escena(canvas) {
     ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.ellipse(x - r * 0.38, y - r * 0.42, r * 0.22, r * 0.14, -0.6, 0, 7); ctx.fill();
   }
 
-  /** The whole board. s: { board, run, chosen, picked, ghost: {type,c,r,dir,ok}, trail, roll, won } */
+  /** The whole board. s: { board, run, chosen, fading: {part,a}, picked, ghost: {type,c,r,dir,ok}, trail, roll, won } */
   function draw(s) {
     if (!s.board || !canvas.width) return;
     const { level } = s.board, building = !s.run;
@@ -200,8 +200,10 @@ export function escena(canvas) {
     pipe(level.start);
     for (const p of s.board.placed) {
       if (p === s.dragging) continue;   // it floats as the ghost while it is dragged
-      if (p === s.chosen && building) {
-        ctx.save(); ctx.strokeStyle = C.yellow; ctx.lineWidth = Math.max(2, X(0.03)); ctx.setLineDash([X(0.12), X(0.08)]); ctx.lineDashOffset = -clock * 20;
+      // the chosen part's dashed outline; a part just let go keeps it a moment, fading out (s.fading: { part, a })
+      const outline = p === s.chosen ? 1 : s.fading?.part === p ? s.fading.a : 0;
+      if (outline > 0 && building) {
+        ctx.save(); ctx.globalAlpha = outline; ctx.strokeStyle = C.yellow; ctx.lineWidth = Math.max(2, X(0.03)); ctx.setLineDash([X(0.12), X(0.08)]); ctx.lineDashOffset = -clock * 20;
         ctx.beginPath(); ctx.roundRect(X(p.c) + 3, X(p.r) + 3, X(2) - 6, X(1) - 6, X(0.15)); ctx.stroke(); ctx.restore();
       }
       part(p);

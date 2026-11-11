@@ -26,7 +26,7 @@ const GAME_ID = 'artifacts';
 const KEY = 'juegos-de-salon:artifacts';
 const LOCALES = {
   es: {
-    lema: 'Arma la máquina y lleva la pelota a la canasta.',
+    lema: 'Lleva la pelota a la canasta.',
     credito: ['Un juego de máquinas como ', ', de Sierra (1993).'], wiki: 'https://es.wikipedia.org/wiki/The_Incredible_Machine',
     comoSeJuega: '🧠 Cómo se juega',
     como: [
@@ -37,17 +37,17 @@ const LOCALES = {
     ],
     jugar: '⚙️ Jugar', nivel: 'Nivel {n}', objetivo: 'Lleva la pelota a la 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tabla', spring: 'Cama elástica', fan: 'Ventilador' },
-    probar: '▶ Probar', parar: '■ Parar', limpiar: '🧹 Limpiar', girar: '↔ Girar', quitar: '🗑 Quitar',
-    elige: 'Arrastra una pieza al tablero (o tócala y toca una casilla).', toca: 'Toca el tablero para poner la {p}.', noCabe: 'Ahí no cabe.',
-    movida: 'Toca para girarla · arrástrala para moverla · suéltala fuera para quitarla.', movidaFija: 'Arrástrala para moverla · suéltala fuera para quitarla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta aquí para devolverla a la bandeja.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', sinPiezas: 'Prueba primero sin piezas, o pon una.', pista: '💡 Pista', pistaDice: 'Prueba poner una {p} donde brilla. Cada pista cuesta una ★.', sinPista: 'Ya tienes todo lo de la respuesta: prueba.', rendirse: '🏳️ Rendirse', rendirseSeguro: '¿Seguro? Toca otra vez', rendida: 'Etapa saltada.',
-    fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo. Prueba otra cosa.', stuck: 'Se quedó atascada. Prueba otra cosa.' },
-    gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente etapa ›', otraVez: 'Jugar otra vez', formato: '5 etapas · {n}', mejor: '🏆 Récord: {n}', etapa: 'Etapa {n} de 5', superada: '¡Etapa {n} superada!', enTiempo: 'En {n}.', verResultado: 'Ver el resultado ›', record: '🏆 ¡Nuevo récord!', sinTiempo: '⏱️ ¡Se acabó el tiempo!', finJuego: '¡Listo!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificultad', 'Piezas', 'Tiempo', 'Puntos'], rapidez: '⚡ Rapidez (usaste {n})', total: 'Total', leyenda: 'Cada etapa vale 10, más 5 / 3 / 1 por usar pocas piezas (★★★ / ★★ / ★), más hasta 10 por rapidez.', tuMejor: 'Tu récord: {n}',
+    probar: '▶ Probar', parar: '■ Parar', girar: 'Girar', quitar: 'Quitar',
+    elige: 'Arrastra una pieza al tablero.', toca: 'Toca dónde va la {p}.', noCabe: 'Ahí no cabe.',
+    movida: 'Arrástrala para moverla.', suelta: 'Suelta para ponerla.', soltarQuitar: 'Suelta para quitarla.', soltarTablero: 'Llévala al tablero.', quitada: 'De vuelta a la bandeja.', deshecho: 'Deshecho.', deshacer: '↶ Deshacer', pista: '💡 Pista', pistaDice: 'Pon una {p} donde brilla (−1 ★).', sinPista: 'Ya tienes todo: prueba.', rendirse: '🏳️ Rendirse', rendirseSeguro: '¿Seguro?', rendida: 'Etapa saltada.',
+    fallos: { spiked: '¡Pinchazo! 📌 Prueba otra cosa.', boom: '¡Bum! 💥 Tocó el fondo.', stuck: 'Se atascó. Prueba otra cosa.' },
+    gano: '¡Funciona!', linea: ['Con 1 pieza.', 'Con {n} piezas.'], siguiente: 'Siguiente etapa ›', otraVez: 'Jugar otra vez', mejor: '🏆 Récord: {n}', etapa: 'Etapa {n} de 5', superada: '¡Etapa {n} superada!', enTiempo: 'En {n}.', verResultado: 'Ver el resultado ›', record: '🏆 ¡Nuevo récord!', sinTiempo: '⏱️ ¡Se acabó el tiempo!', finJuego: '¡Listo!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificultad', 'Piezas', 'Tiempo', 'Puntos'], rapidez: '⚡ Rapidez (usaste {n})', total: 'Total', leyenda: 'Cada etapa vale 10, más 5 / 3 / 1 por usar pocas piezas (★★★ / ★★ / ★), más hasta 10 por rapidez.', tuMejor: 'Tu récord: {n}',
     fin: '¡Armaste todas las máquinas! 🏆', laboratorio: '‹ Laboratorio', otro: '🎲 Otro', dificultad: ['Aprendiendo', 'Fácil', 'Fácil +', 'Medio', 'Medio +', 'Difícil', 'Experto'],
     comentarAbrir: '💬 Sugerencias y comentarios',
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos qué nivel te costó, si las piezas se ponían fácil y qué pieza te gustaría.', ph: 'Por ejemplo: el nivel 3 me costó mucho.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   },
   en: {
-    lema: 'Build the machine and get the ball into the basket.',
+    lema: 'Get the ball into the basket.',
     credito: ['A machine game like ', ', by Sierra (1993).'], wiki: 'https://en.wikipedia.org/wiki/The_Incredible_Machine',
     comoSeJuega: '🧠 How to play',
     como: [
@@ -58,17 +58,17 @@ const LOCALES = {
     ],
     jugar: '⚙️ Play', nivel: 'Level {n}', objetivo: 'Get the ball to the 🧺',
     piezas: { ramp: 'Ramp', plank: 'Plank', spring: 'Trampoline', fan: 'Fan' },
-    probar: '▶ Try', parar: '■ Stop', limpiar: '🧹 Clear', girar: '↔ Turn', quitar: '🗑 Remove',
-    elige: 'Drag a part onto the board (or tap it, then tap a cell).', toca: 'Tap the board to place the {p}.', noCabe: 'It does not fit there.',
-    movida: 'Tap to turn it · drag to move it · drop it outside to remove it.', movidaFija: 'Drag to move it · drop it outside to remove it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go here to put it back in the tray.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', sinPiezas: 'Try it with no parts first, or place one.', pista: '💡 Hint', pistaDice: 'Try a {p} where it glows. Each hint costs one ★.', sinPista: 'You already have everything the answer needs: try it.', rendirse: '🏳️ Give up', rendirseSeguro: 'Sure? Tap again', rendida: 'Stage skipped.',
-    fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom. Try something else.', stuck: 'It got stuck. Try something else.' },
-    gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next stage ›', otraVez: 'Play again', formato: '5 stages · {n}', mejor: '🏆 Best: {n}', etapa: 'Stage {n} of 5', superada: 'Stage {n} cleared!', enTiempo: 'In {n}.', verResultado: 'See the result ›', record: '🏆 New best!', sinTiempo: '⏱️ Time is up!', finJuego: 'Done!', superadas: '{n} of 5 stages cleared.', columnas: ['Stage', 'Difficulty', 'Parts', 'Time', 'Points'], rapidez: '⚡ Speed (you used {n})', total: 'Total', leyenda: 'Each stage is worth 10, plus 5 / 3 / 1 for using few parts (★★★ / ★★ / ★), plus up to 10 for speed.', tuMejor: 'Your best: {n}',
+    probar: '▶ Try', parar: '■ Stop', girar: 'Turn', quitar: 'Remove',
+    elige: 'Drag a part onto the board.', toca: 'Tap where the {p} goes.', noCabe: 'It does not fit there.',
+    movida: 'Drag it to move it.', suelta: 'Let go to place it.', soltarQuitar: 'Let go to remove it.', soltarTablero: 'Bring it onto the board.', quitada: 'Back in the tray.', deshecho: 'Undone.', deshacer: '↶ Undo', pista: '💡 Hint', pistaDice: 'Put a {p} where it glows (−1 ★).', sinPista: 'You have it all: try it.', rendirse: '🏳️ Give up', rendirseSeguro: 'Sure?', rendida: 'Stage skipped.',
+    fallos: { spiked: 'Popped! 📌 Try something else.', boom: 'Boom! 💥 It hit the bottom.', stuck: 'Stuck. Try something else.' },
+    gano: 'It works!', linea: ['With 1 part.', 'With {n} parts.'], siguiente: 'Next stage ›', otraVez: 'Play again', mejor: '🏆 Best: {n}', etapa: 'Stage {n} of 5', superada: 'Stage {n} cleared!', enTiempo: 'In {n}.', verResultado: 'See the result ›', record: '🏆 New best!', sinTiempo: '⏱️ Time is up!', finJuego: 'Done!', superadas: '{n} of 5 stages cleared.', columnas: ['Stage', 'Difficulty', 'Parts', 'Time', 'Points'], rapidez: '⚡ Speed (you used {n})', total: 'Total', leyenda: 'Each stage is worth 10, plus 5 / 3 / 1 for using few parts (★★★ / ★★ / ★), plus up to 10 for speed.', tuMejor: 'Your best: {n}',
     fin: 'You built every machine! 🏆', laboratorio: '‹ Lab', otro: '🎲 Another', dificultad: ['Learning', 'Easy', 'Easy +', 'Medium', 'Medium +', 'Hard', 'Expert'],
     comentarAbrir: '💬 Suggestions and comments',
     comentario: { titulo: 'What did you think?', lead: 'Tell us which level was hard, if placing parts was easy and what part you would like.', ph: 'For example: level 3 was very hard.', nombre: 'Name or nickname (optional)', enviar: 'Send comment', enviando: 'Sending…', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your comment arrived.', guardado: 'There is no internet right now: your comment is saved on this phone and will be sent later.', error: 'It could not be sent. Try again in a while.', cancelar: 'Cancel', cerrar: 'Close' },
   },
   pt: {
-    lema: 'Monte a máquina e leve a bola até a cesta.',
+    lema: 'Leve a bola até a cesta.',
     credito: ['Um jogo de máquinas como ', ', da Sierra (1993).'], wiki: 'https://pt.wikipedia.org/wiki/The_Incredible_Machine',
     comoSeJuega: '🧠 Como se joga',
     como: [
@@ -79,11 +79,11 @@ const LOCALES = {
     ],
     jugar: '⚙️ Jogar', nivel: 'Nível {n}', objetivo: 'Leve a bola até a 🧺',
     piezas: { ramp: 'Rampa', plank: 'Tábua', spring: 'Cama elástica', fan: 'Ventilador' },
-    probar: '▶ Testar', parar: '■ Parar', limpiar: '🧹 Limpar', girar: '↔ Girar', quitar: '🗑 Tirar',
-    elige: 'Arraste uma peça para o tabuleiro (ou toque nela e numa casa).', toca: 'Toque o tabuleiro para colocar a {p}.', noCabe: 'Aí não cabe.',
-    movida: 'Toque para girar · arraste para mover · solte fora para tirar.', movidaFija: 'Arraste para mover · solte fora para tirar.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte aqui para devolver à bandeja.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', sinPiezas: 'Teste primeiro sem peças, ou coloque uma.', pista: '💡 Dica', pistaDice: 'Tente uma {p} onde brilha. Cada dica custa uma ★.', sinPista: 'Você já tem tudo o que a resposta pede: teste.', rendirse: '🏳️ Desistir', rendirseSeguro: 'Certeza? Toque de novo', rendida: 'Etapa pulada.',
-    fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo. Tente outra coisa.', stuck: 'Ficou presa. Tente outra coisa.' },
-    gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próxima etapa ›', otraVez: 'Jogar de novo', formato: '5 etapas · {n}', mejor: '🏆 Recorde: {n}', etapa: 'Etapa {n} de 5', superada: 'Etapa {n} superada!', enTiempo: 'Em {n}.', verResultado: 'Ver o resultado ›', record: '🏆 Novo recorde!', sinTiempo: '⏱️ Acabou o tempo!', finJuego: 'Pronto!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificuldade', 'Peças', 'Tempo', 'Pontos'], rapidez: '⚡ Rapidez (você usou {n})', total: 'Total', leyenda: 'Cada etapa vale 10, mais 5 / 3 / 1 por usar poucas peças (★★★ / ★★ / ★), mais até 10 por rapidez.', tuMejor: 'Seu recorde: {n}',
+    probar: '▶ Testar', parar: '■ Parar', girar: 'Girar', quitar: 'Tirar',
+    elige: 'Arraste uma peça ao tabuleiro.', toca: 'Toque onde vai a {p}.', noCabe: 'Aí não cabe.',
+    movida: 'Arraste para mover.', suelta: 'Solte para colocar.', soltarQuitar: 'Solte para tirar.', soltarTablero: 'Leve ao tabuleiro.', quitada: 'De volta à bandeja.', deshecho: 'Desfeito.', deshacer: '↶ Desfazer', pista: '💡 Dica', pistaDice: 'Ponha uma {p} onde brilha (−1 ★).', sinPista: 'Você já tem tudo: teste.', rendirse: '🏳️ Desistir', rendirseSeguro: 'Certeza?', rendida: 'Etapa pulada.',
+    fallos: { spiked: 'Furou! 📌 Tente outra coisa.', boom: 'Bum! 💥 Bateu no fundo.', stuck: 'Presa. Tente outra coisa.' },
+    gano: 'Funciona!', linea: ['Com 1 peça.', 'Com {n} peças.'], siguiente: 'Próxima etapa ›', otraVez: 'Jogar de novo', mejor: '🏆 Recorde: {n}', etapa: 'Etapa {n} de 5', superada: 'Etapa {n} superada!', enTiempo: 'Em {n}.', verResultado: 'Ver o resultado ›', record: '🏆 Novo recorde!', sinTiempo: '⏱️ Acabou o tempo!', finJuego: 'Pronto!', superadas: '{n} de 5 etapas superadas.', columnas: ['Etapa', 'Dificuldade', 'Peças', 'Tempo', 'Pontos'], rapidez: '⚡ Rapidez (você usou {n})', total: 'Total', leyenda: 'Cada etapa vale 10, mais 5 / 3 / 1 por usar poucas peças (★★★ / ★★ / ★), mais até 10 por rapidez.', tuMejor: 'Seu recorde: {n}',
     fin: 'Você montou todas as máquinas! 🏆', laboratorio: '‹ Laboratório', otro: '🎲 Outro', dificultad: ['Aprendendo', 'Fácil', 'Fácil +', 'Médio', 'Médio +', 'Difícil', 'Expert'],
     comentarAbrir: '💬 Sugestões e comentários',
     comentario: { titulo: 'O que achou?', lead: 'Conte qual nível foi difícil, se era fácil colocar as peças e que peça você gostaria.', ph: 'Por exemplo: o nível 3 foi muito difícil.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Agora não há internet: seu comentário ficou no celular e será enviado depois.', error: 'Não foi possível enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
@@ -186,8 +186,9 @@ function texts() {
   $('como-titulo').textContent = L.comoSeJuega;
   $('pasos').replaceChildren(...L.como.map(([e, t]) => el('li', {}, el('span', { 'aria-hidden': 'true' }, e), el('span', {}, t))));
   $('btn-jugar').textContent = L.jugar;
-  $('btn-probar').textContent = L.probar; $('btn-limpiar').textContent = L.limpiar; $('btn-deshacer').textContent = L.deshacer;
-  $('btn-girar').textContent = L.girar; $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse; $('btn-quitar').textContent = L.quitar;
+  $('btn-probar').textContent = L.probar; $('btn-deshacer').textContent = L.deshacer;
+  $('btn-pista').textContent = L.pista; $('btn-rendirse').textContent = L.rendirse;
+  for (const [id, t] of [['btn-girar', L.girar], ['btn-quitar', L.quitar]]) { $(id).setAttribute('aria-label', t); $(id).title = t; }   // icons only on the board
   $('btn-otra').textContent = L.otraVez;
   comment = () => el('button', {
     type: 'button', class: 'link-btn', id: 'btn-comentario',
@@ -197,9 +198,8 @@ function texts() {
   levelChips();
 }
 function levelChips() {
-  // The cover: the format, and the best on this phone
+  // The cover: the best on this phone (the format, 5 stages against the clock, is in «Cómo se juega»)
   $('niveles').replaceChildren(
-    el('span', { class: 'chip chip--gold', id: 'formato' }, fmt(L.formato, mmss(CLOCK_MS))),
     save.best ? el('span', { class: 'chip', id: 'mejor' }, fmt(L.mejor, save.best)) : '');
 }
 
@@ -263,16 +263,44 @@ function pick(t) {
   tray(); controls(); draw();
 }
 function controls() {
-  const tools = !!chosen && !run;
-  $('btn-girar').hidden = !tools || !flippable(chosen); $('btn-quitar').hidden = !tools; $('btn-limpiar').hidden = tools;
+  actions();
   $('btn-probar').textContent = run ? L.parar : L.probar;
   $('btn-probar').disabled = !!run && run.state === 'won';
-  $('btn-limpiar').disabled = !!run || !board.placed.length;
   $('btn-deshacer').disabled = !!run || !history.length;
   $('btn-pista').disabled = !!run; $('btn-rendirse').disabled = !!run && run.state === 'won';
 }
 const flippable = p => p.type === 'ramp' || p.type === 'fan';
-const hintFor = p => flippable(p) ? L.movida : L.movidaFija;
+const hintFor = () => L.movida;
+/*
+ * The chosen part's own buttons, Girar and Quitar, float over it on the board (under it on the top row).
+ * They go away while a part is dragged, when the ball runs, and after 5 s without a touch, which also lets
+ * the part go. Every touch (controls() runs on each one) gives them 5 s more.
+ */
+const ACTIONS_MS = 5000, FADE_MS = 220;
+let actionsTimer = null, fadeTimer = null, lastChosen = null, letGo = null;
+function actions() {
+  const box = $('acciones'), on = !!chosen && !run && !dragging && !drag?.moved;
+  clearTimeout(actionsTimer);
+  // A part let go (deselected) keeps its outline a moment, fading out on the board
+  if (lastChosen && lastChosen !== chosen) letGo = { part: lastChosen, at: performance.now() };
+  if (chosen) letGo = null;
+  lastChosen = chosen;
+  if (!on) {
+    // the buttons fade out, then hide
+    if (!box.hidden && !box.classList.contains('saliendo')) {
+      box.classList.add('saliendo');
+      fadeTimer = setTimeout(() => { box.hidden = true; box.classList.remove('saliendo'); }, FADE_MS);
+    }
+    return;
+  }
+  clearTimeout(fadeTimer); box.classList.remove('saliendo'); box.hidden = false;
+  $('btn-girar').hidden = !flippable(chosen);
+  const W = $('tablero').clientWidth, H = $('tablero').clientHeight, top = chosen.r === 0;
+  const half = box.offsetWidth / 2, x = Math.max(half + 4, Math.min(W - half - 4, (chosen.c + 1) / COLS * W));
+  box.style.left = `${x}px`; box.style.top = `${(top ? chosen.r + 1 : chosen.r) / ROWS * H}px`;
+  box.classList.toggle('abajo', top);
+  actionsTimer = setTimeout(() => { chosen = null; if ($('mensaje').textContent === L.movida) say(L.elige); controls(); draw(); }, ACTIONS_MS);
+}
 
 /* Undo: a snapshot of the board before every change */
 let history = [];
@@ -313,8 +341,8 @@ addEventListener('pointermove', e => {
   if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < SLOP) return;
   if (!drag.moved) {
     drag.moved = true; vibrate(8);
-    if (drag.kind === 'move') { dragging = drag.part; chosen = null; controls(); }
-    picked = null; tray();
+    if (drag.kind === 'move') { dragging = drag.part; chosen = null; }
+    picked = null; tray(); controls();
     document.body.classList.add('arrastrando');
   }
   const at = boardAt(e, drag.lift);
@@ -375,9 +403,8 @@ canvas.addEventListener('pointerdown', e => {
   }
   tray(); controls(); draw();
 });
-$('btn-girar').addEventListener('click', () => { if (chosen && flippable(chosen)) { remember(); flip(chosen); SOUND.flip(); controls(); draw(); } });
+$('btn-girar').addEventListener('click', () => { if (chosen && flippable(chosen)) { remember(); flip(chosen); SOUND.flip(); vibrate(10); controls(); draw(); } });
 $('btn-quitar').addEventListener('click', () => { if (chosen) { remember(); remove(board, chosen); chosen = null; SOUND.lift(); say(L.quitada); tray(); controls(); draw(); } });
-$('btn-limpiar').addEventListener('click', () => { remember(); for (const p of [...board.placed]) remove(board, p); chosen = null; picked = null; say(L.elige); tray(); controls(); draw(); });
 $('btn-deshacer').addEventListener('click', undo);
 /* A hint: where one part of the answer goes, one the board does not have yet. Each one costs a star, down to none. */
 const same = (a, b) => a.type === b.type && a.c === b.c && a.r === b.r && (!flippable(a) || (a.dir ?? 1) === (b.dir ?? 1));
@@ -494,7 +521,11 @@ const scene = escena(canvas);
 let ghost = null, hint = null, dragging = null, popped = false, won = false, roll = 0;
 function size() { if (scene.size()) draw(); }
 new ResizeObserver(size).observe($('tablero'));
-function draw() { scene.draw({ board, run, chosen, ghost, hint, dragging, trail, roll, won, popped }); }
+function draw() {
+  let fading = null;
+  if (letGo) { const a = 1 - (performance.now() - letGo.at) / FADE_MS; if (a > 0) fading = { part: letGo.part, a }; else letGo = null; }
+  scene.draw({ board, run, chosen, fading, ghost, hint, dragging, trail, roll, won, popped });
+}
 // With a mouse, the picked part follows the pointer as a ghost before the click
 function mouseGhost(e) {
   if (e.pointerType !== 'mouse' || run || !board || !picked || drag) return;
@@ -602,4 +633,4 @@ initSound();
 texts();
 requestAnimationFrame(frame);
 // For the end-to-end script: the game's state, and a level's solution to play it like a player would
-window.__artifacts = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, startGame, stagesFor, fits, fixedSegments };
+window.__artifacts = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, get chosen() { return chosen; }, startGame, stagesFor, fits, fixedSegments };

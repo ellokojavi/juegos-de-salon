@@ -24,6 +24,8 @@
 
 .cabecera { display: flex; align-items: center; gap: var(--s-6); }
 .cabecera .chip { white-space: nowrap; }
+/* A little air between «Etapa 1 de 5» and its difficulty */
+#dificultad { margin-left: var(--s-8); }
 /* The five stages as dots: passed, failed, the one in play */
 .etapas { display: flex; gap: var(--s-4); flex: 1; justify-content: center; }
 .etapas span { width: 10px; height: 10px; border-radius: 50%; background: var(--glass-border); }
@@ -55,7 +57,28 @@
   overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #lienzo { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: none; }
-.mensaje { margin: 0; min-height: 1.4em; text-align: center; font-weight: 700; color: var(--muted); }
+/* The help under the board: always one line */
+.mensaje { margin: 0; min-height: 1.4em; text-align: center; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The chosen part's Girar and Quitar, floating just above it (below it on the top row) */
+.acciones { position: absolute; z-index: 1; display: flex; gap: var(--s-6); transform: translate(-50%, calc(-100% - var(--s-4))); animation: artifacts-pop 0.15s ease-out; }
+.acciones.abajo { transform: translate(-50%, var(--s-4)); }
+.acciones[hidden] { display: none; }
+/* Going away (5 s without a touch, a drag, the ball running, the part let go): a short fade out */
+.acciones { transition: opacity 0.22s ease-out; }
+.acciones.saliendo { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .acciones { transition: none; animation: none; } }
+/* Small, flat, round icon buttons: no 3D edge, just a solid fill and a thin border */
+.acciones .icono {
+  appearance: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--glass-border); background: var(--bg1); color: var(--ink); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.acciones .icono { position: relative; }
+.acciones .icono::before { content: ''; position: absolute; inset: -4px; }   /* a 44 px touch target around the 36 px circle */
+.acciones .icono:active { transform: scale(0.92); }
+.acciones .icono--quitar { color: var(--danger-soft); }
+.acciones .icono svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes artifacts-pop { from { opacity: 0; } }
 
 /* The tray: one button per kind of part, with how many are left */
 .bandeja { display: flex; flex-wrap: wrap; gap: var(--s-8); justify-content: center; }
@@ -80,5 +103,6 @@ body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: no
 .pie { text-align: center; margin-top: var(--s-16); }
 /* Once won, only the result card speaks: the tray and the buttons under the board step aside */
 body.ganado #s-juego > .bandeja, body.ganado #s-juego > .btn-row, body.ganado #s-juego .stack > .btn-row, body.ganado .mensaje { visibility: hidden; }
-.herramientas .btn { padding-inline: var(--s-8); white-space: nowrap; }
+.herramientas .btn { padding-inline: var(--s-6); white-space: nowrap; min-width: 0; }
+@media (max-width: 360px) { .herramientas .btn { font-size: var(--fs-90); } }
 
