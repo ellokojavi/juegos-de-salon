@@ -77,7 +77,10 @@ with signing in.
 
 - **Demo:** a small solved board with six holes, each the only one in its row, column and box. In turn each hole
   lights its row, then its column, then its box, with a line that says the rule, and then its digit pops in
-  ("¡Solo cabe el 7!"). It sleeps off screen (`onScreen`) and stands solved with reduced motion.
+  ("¡Solo cabe el 7!"). It sleeps off screen (`onScreen`) and stands solved with reduced motion. It follows the lever
+  (the owner, 2026-11-11): on easy it is the 6×6 board with its 2×3 boxes, on hard the 9×9, and its line names
+  that board's digits and box ("Fila: del 1 al 6", "Cuadro de 2×3"). The lead and the first step of how to play
+  say both sizes.
 - **The electric lever** (Pintaminas' switch, D-291): every flip sends a ring of electricity out of the plate
   (green to easy, red and yellow to hard) and jolts it. Up to hard there is a flash over the view, sparks, a glow
   that flickers like a bad contact, and the whole page turns over: `body.sd-hard`, a red-violet background, a red

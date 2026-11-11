@@ -13,7 +13,7 @@ const S = '__sudoku';
 
 await b.go(SITE + '/labs/sudoku/?seed=e2e'); await b.evaluate('localStorage.clear(); 1'); await b.go(SITE + '/labs/sudoku/?seed=e2e');
 ok(await b.evaluate("document.getElementById('btn-level').getAttribute('aria-checked')") === 'false', 'the lever starts down, on easy');
-ok(await b.evaluate("document.querySelectorAll('#demo .sd-dcell').length") === 81, 'the cover shows the demo board');
+ok(await b.evaluate("document.querySelectorAll('#demo .sd-dcell').length") === 36, 'the cover shows the 6×6 demo board on easy');
 await sleep(1200);
 ok(await b.evaluate("!!document.getElementById('demo-caption').textContent"), 'the demo says why a digit goes');
 ok(await b.evaluate("!!document.getElementById('best-line').textContent"), 'the cover shows the best score line');
@@ -23,6 +23,7 @@ for (const level of ['easy', 'hard']) {
     await b.evaluate("document.getElementById('btn-level').click(); 1"); await sleep(400);
     ok(await b.evaluate("document.getElementById('btn-level').classList.contains('on')"), 'the lever goes up to hard (red)');
     ok(await b.evaluate("document.body.classList.contains('sd-hard')"), 'hard turns the cover over');
+    ok(await b.evaluate("document.querySelectorAll('#demo .sd-dcell').length") === 81, 'on hard the demo is the 9×9 board');
     await b.shot('cover-hard');
   }
   await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(400);
