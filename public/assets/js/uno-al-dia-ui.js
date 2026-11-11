@@ -334,7 +334,9 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
         });
       }).catch(() => {});
     }
-    if (primera) await R.subirHoy({ fecha, dia });
+    // Today's points enter the month before the table is read again: the table read while they
+    // were being written showed the month without today's, and then /today/ showed another place
+    if (primera) { await R.subirHoy({ fecha, dia }); ranking?.recargar?.(); }
     // Los avisos (D-230): su último día y su racha; el globo del ícono; y la oferta, la segunda vez
     const Av = await import('./uno-al-dia-avisos.js');
     Av.globo();
