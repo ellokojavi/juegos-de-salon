@@ -799,3 +799,8 @@
 .demo .h-clock .hclock i { position: absolute; left: calc(50% - 2px); bottom: 50%; width: 5px; height: 26px; border-radius: var(--r-pill); background: var(--cyan); transform-origin: 50% 100%; animation: hhand 1.7s cubic-bezier(0.3, 1.4, 0.5, 1) forwards; }
 @keyframes hhand { 0% { rotate: 0deg; } 60%, 100% { rotate: 450deg; } }
 @media (prefers-reduced-motion: reduce) { .demo .hero * { animation: none !important; opacity: 1 !important; } }
+/* ¡A LA HORA!: the digital time above a bigger clock whose hands the finger turns */
+.demo .digital { font: 900 var(--mg-fs-240)/1 var(--font-num); color: var(--yellow); letter-spacing: 0.04em; margin-bottom: var(--s-8); }
+.demo .setclock { width: min(240px, 62vw); height: min(240px, 62vw); cursor: grab; }
+.demo .setclock line.held { filter: drop-shadow(0 0 3px var(--ink)); }
+.demo .setclock + .btn { margin-top: var(--s-12); }

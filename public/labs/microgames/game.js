@@ -86,7 +86,7 @@ trackVisit();   // the site's traffic (D-208)
   };
   const KIND = { quecolor: 'toca', cuenta: 'toca', calcula: 'toca', completa: 'toca', quehora: 'toca', sombra: 'toca', mas: 'toca', diferente: 'toca', cualfalta: 'toca', dondequedo: 'toca', repite: 'toca',
     espera: 'toca', para: 'toca', toca: 'toca', aplasta: 'toca', revienta: 'toca', notoques: 'toca',
-    ordena: 'arrastra', alimenta: 'arrastra', conecta: 'arrastra', atrapa: 'arrastra', rebota: 'arrastra', equilibra: 'arrastra',
+    ordena: 'arrastra', hands: 'arrastra', alimenta: 'arrastra', conecta: 'arrastra', atrapa: 'arrastra', rebota: 'arrastra', equilibra: 'arrastra',
     corta: 'desliza', cruza: 'desliza', dibuja: 'desliza', sigue: 'desliza', limpia: 'desliza' };
   let curGame = null;
   const GSTAGE = {
@@ -1185,6 +1185,41 @@ trackVisit();   // the site's traffic (D-208)
           finish(ok ? (s < 2 ? 3 : s < 3.4 ? 2 : 1) : 0, ok ? null : t('Eran las {h}', { h: right })); }));
       }, '🕐', t('aguja corta: hora · aguja larga: minutos'));
     },
+    // 29 ¡A LA HORA!: a digital time, and a clock with both hands on 12: drag each hand to it and say Listo.
+    // The hand nearest the finger is the one that turns; the long one snaps to 5 minutes, the short one moves freely
+    hands() {
+      const h = 1 + rnd(11), m = pick([0, 15, 30, 45, 0, 30, 10, 20, 40, 50, 5, 25, 35, 55]);   // never 12:00, where the hands start
+      const shown = `${h}:${String(m).padStart(2, '0')}`;
+      command(t('¡A LA HORA!'), () => {
+        const ticks = [...Array(60).keys()].map(k => { const an = k * 6 * Math.PI / 180, big = k % 5 === 0; return `<line x1="${50 + (big ? 40 : 43) * Math.sin(an)}" y1="${50 - (big ? 40 : 43) * Math.cos(an)}" x2="${50 + 45 * Math.sin(an)}" y2="${50 - 45 * Math.cos(an)}" stroke="#fff" stroke-opacity="${big ? 1 : 0.4}" stroke-width="${big ? (k % 15 ? 1.5 : 3) : 0.8}"/>`; }).join('');
+        const nums = [...Array(12).keys()].map(k => { const an = (k + 1) * Math.PI / 6; return `<text x="${50 + 33 * Math.sin(an)}" y="${50 - 33 * Math.cos(an) + 3.5}" font-size="${(k + 1) % 3 ? 7 : 10}" fill="#fff" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900">${k + 1}</text>`; }).join('');
+        set(`<div class="digital num">${shown}</div><svg class="clock setclock" id="sc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#1f0c38" stroke="#ffd23f" stroke-width="3"/>${ticks}${nums}<line id="hh" x1="50" y1="50" x2="50" y2="28" stroke="#ffd23f" stroke-width="5.5" stroke-linecap="round"/><line id="mh" x1="50" y1="50" x2="50" y2="13" stroke="#2ee6d6" stroke-width="3.2" stroke-linecap="round"/><circle cx="50" cy="50" r="3.5" fill="#fff"/></svg><button class="btn btn--yellow btn--sm" type="button" id="ok">${t('¡Listo!')}</button>`);
+        const sc = $id('sc'), hh = $id('hh'), mh = $id('mh');
+        let ha = 0, ma = 0, grab = null;
+        const draw = (n, an, len) => { n.setAttribute('x2', 50 + len * Math.sin(an * Math.PI / 180)); n.setAttribute('y2', 50 - len * Math.cos(an * Math.PI / 180)); };
+        const angle = e => { const r = sc.getBoundingClientRect(); return (Math.atan2(e.clientX - r.left - r.width / 2, r.top + r.height / 2 - e.clientY) * 180 / Math.PI + 360) % 360; };
+        const gap = (a, b) => { const d = Math.abs(a - b) % 360; return Math.min(d, 360 - d); };
+        const turn = e => { const an = angle(e); if (grab === 'm') { ma = Math.round(an / 30) * 30 % 360; draw(mh, ma, 37); } else { ha = an; draw(hh, ha, 22); } };
+        sc.style.touchAction = 'none';
+        sc.addEventListener('pointerdown', e => { e.preventDefault(); if (!active) return; sc.setPointerCapture(e.pointerId);
+          // Which hand: the one pointing nearest the finger; near the middle, the short one
+          const an = angle(e), r = sc.getBoundingClientRect(), d = Math.hypot(e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2) / (r.width / 2);
+          grab = d < 0.3 ? 'h' : gap(an, ma) <= gap(an, ha) ? (d > 0.45 || gap(an, ha) > 25 ? 'm' : 'h') : 'h';
+          (grab === 'm' ? mh : hh).classList.add('held'); turn(e); });
+        sc.addEventListener('pointermove', e => { if (grab && active) turn(e); });
+        const drop = () => { if (!grab) return; (grab === 'm' ? mh : hh).classList.remove('held'); grab = null; };
+        sc.addEventListener('pointerup', drop); sc.addEventListener('pointercancel', drop);
+        const wrong = t('Eran las {h}: la corta en el {a}, la larga en el {b}', { h: shown, a: h, b: m ? m / 5 : 12 });
+        const show = () => { draw(hh, ((h % 12) + m / 60) * 30, 22); draw(mh, m * 6, 37); };
+        active = true; const t0 = runTimer(T(10000), () => { show(); finish(0, wrong, 1400); });
+        tap($id('ok'), () => {
+          // The minute hand must be exact; the hour hand within half an hour of where it belongs
+          const ok = ma === m * 6 % 360 && gap(ha, ((h % 12) + m / 60) * 30) <= 15;
+          if (!ok) show();
+          finish(ok ? timeStars(t0, 5, 7.5) : 0, ok ? null : wrong, ok ? 800 : 1400);
+        });
+      }, '🕰️', t('arrastra cada aguja y toca ¡Listo!'));
+    },
     // 27 ¡SU SOMBRA!: one thing and three silhouettes: its own, its mirror image, and a different one
     sombra() {
       const POOL = ['🦒', '🐘', '🦖', '🐓', '🦜', '🚲', '🎸', '🦕', '🐿️', '🦘', '🐊', '🛵', '🐕', '🦩'];
@@ -1315,6 +1350,7 @@ trackVisit();   // the site's traffic (D-208)
     ['cualfalta', t('¡CUÁL FALTA!'), '👀', 'Cuatro cosas; una se va y queda su hueco. Eliges cuál era y vuela de vuelta a su lugar: calza si acertaste.'],
     ['mas', t('¡MÁS!'), '⚖️', 'Tres rondas seguidas, cada una más pareja: toca la bandeja con más. A veces las dos tienen lo mismo y a veces cosas distintas de otro tamaño, para engañar al ojo. Una ★ por acierto.'],
     ['quehora', t('¡QUÉ HORA ES!'), '🕐', 'Un reloj de agujas y tres horas.'],
+    ['hands', t('¡A LA HORA!'), '🕰️', 'Una hora digital y un reloj con las agujas en el 12: arrastra la corta a la hora y la larga a los minutos, y toca ¡Listo! antes de 10 segundos.'],
     ['sombra', t('¡SU SOMBRA!'), '🌑', 'Una figura y tres siluetas: su sombra, su reflejo y la de otro.'],
     ['completa', t('¡COMPLETA!'), '🔢', 'Una serie de números: cuál sigue.'],
     ['notoques', t('¡NO TOQUES!'), '🔨', 'Como golpear topos de arcade: salen topos de los hoyos y a veces una bomba. Golpea los topos, nunca la bomba.'],
