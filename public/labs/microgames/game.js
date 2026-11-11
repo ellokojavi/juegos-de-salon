@@ -1388,34 +1388,18 @@ trackVisit();   // the site's traffic (D-208)
     <p>${t('Haz lo que dice la orden antes de que se acabe la barra: 10 microjuegos seguidos, cada vez más rápido.')}</p>
     <ul class="howkinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<li style="--kc:${col}"><span class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</span><span><b>${label[0]}${label.slice(1).toLowerCase()}</b> ${HOW[k]}</span></li>`).join('')}</ul>
     <p>${t('Cada microjuego da hasta ★★★; los puntos son 10 por estrella, por la velocidad, y +5 por cada racha de ★★ o más.')}</p></details>`;
-  // The cover's ⚡ sets off a microgame on each side, one after another: a fly swatted, a colour word, a sum,
-  // bars sorting themselves, a balloon that pops. Each bit is CSS that plays once; reduced motion keeps one still
-  const HERO = [
-    ['fly', () => `<i class="hfly">🪰</i><b class="hpaf">${t('¡PAF!')}</b>`],
-    ['stroop', () => `<b class="hword">${t('ROJO')}</b><i class="hdot"></i>`],
-    ['sum', '<b class="hsum">7 + 5</b><b class="hres">= 12</b>'],
-    ['sort', '<i class="hbar b1"></i><i class="hbar b2"></i><i class="hbar b3"></i>'],
-    ['balloon', '<i class="hbal">🎈</i><i class="hpop">💥</i>'],
-    ['clock', '<i class="hclock"><i></i></i>'],
-  ];
-  const heroLoop = () => {
-    const hv = $id('hv'), bolt = $id('bolt'); let k = reduce ? 2 : Math.floor(Math.random() * HERO.length);   // still: the sum, whole
-    const show = () => { if (!hv.isConnected) return; const [cls, html] = HERO[k % HERO.length];
-      hv.className = `hv h-${cls} ${k % 2 ? 'side-r' : 'side-l'}`; hv.innerHTML = typeof html === 'function' ? html() : html;
-      bolt.classList.remove('zap'); void bolt.offsetWidth; bolt.classList.add('zap'); k++;
-      if (!reduce) later(show, 1700); };
-    show();
-  };
   function cover() {
     stopAll(); active = false; paused = false; hud.hidden = true; rb.hidden = true; undress();
     const td = TODAY ? today() : null;
-    set(`<div class="hero" id="hero" aria-hidden="true"><div class="hv" id="hv"></div><span class="bolt" id="bolt">⚡</span></div><div class="cmd">${t('¡Al toque!')}</div>
+    // The three ways to play, all at once, each with its finger doing the gesture, above Jugar
+    const cap = x => x[0].toUpperCase() + x.slice(1);
+    set(`<div class="cmd">⚡ ${t('¡Al toque!')}</div>
       <div class="sub">${TODAY ? t('La corrida de hoy: la misma para todos, y cuenta la primera.') : t('{n} microjuegos seguidos, de 3 a 5 segundos cada uno. Lee la orden y hazlo… ¡al toque!', { n: RUN })}</div>
       ${SEED && !TODAY ? `<div class="sub best">${t('Corrida compartida · {c}: la misma para todos', { c: `<b class="num">${SEED}</b>` })}</div>` : ''}
+      <div class="kinds">${Object.entries(KINDS).map(([k, [label, , col]]) => `<div class="kind" style="--kc:${col}"><div class="gstage g-${k}" aria-hidden="true">${GSTAGE[k]}</div><div><b>${label}</b><p>${cap(HOW[k])}</p></div></div>`).join('')}</div>
       <div class="menu"><button class="btn btn--yellow" type="button" id="btn-jugar">▶ ${TODAY ? (td ? t('Jugarla de nuevo') : t('Jugar la de hoy')) : t('Jugar')}</button></div>
       ${td ? `<div class="sub best">${t('Hoy hiciste {n} pts', { n: `<span class="num">${td.p}</span>` })}</div>` : bestPts ? `<div class="sub best">${t('Tu mejor corrida: {n} pts', { n: `<span class="num">${bestPts}</span>` })}</div>` : ''}
       <div class="sub credit">${t('Inspirado en {w}, de Nintendo.', { w: `<a href="https://${LANG}.wikipedia.org/wiki/WarioWare" target="_blank" rel="noopener" id="link-warioware">WarioWare</a>` })}</div>`);
-    heroLoop();
     $id('rules-slot').innerHTML = rules(); $id('screen').prepend(coverLangToggle(() => location.reload()));
     $btn('btn-jugar', () => start(newRun()));
     footer('portada');

@@ -1,5 +1,5 @@
 // ¡Al toque! in the lab end to end, at /labs/microgames/: the lab offers it under Games being tried, crediting
-// WarioWare; the cover has Jugar, the credit, its rules folded (the three ways to play, each with its gesture),
+// WarioWare; the stage fills the screen; the cover shows the three ways to play at once (each with its moving gesture) above Jugar, the credit, its rules folded (the three ways to play, each with its gesture),
 // the sound button and the site footer; Jugar starts a run of 10
 // different microgames, with the HUD, a mark per game and the first intro wearing its type's gesture; a single
 // game (¡Calcula!, answered right) ends on the run's summary with points, stars, Otra corrida and the way back to
@@ -21,7 +21,9 @@ ok(/WarioWare/.test(await ev(`document.querySelector('#seccion-microgames a[href
 
 await b.go(`${SITE}/labs/microgames/?test`, 1000);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Jugar');
-ok(await ev(`document.getElementById('bolt')?.textContent === '⚡' && /h-/.test(document.getElementById('hv').className)`), 'the ⚡ on top, with a microgame playing beside it');
+ok(await ev(`[...document.querySelectorAll('#screen .kinds .kind')].filter(k => k.querySelector('.gstage .hand')).length`) === 3, 'the three ways to play at once, each with its finger doing the gesture');
+ok(await ev(`(() => { const k = document.querySelector('#screen .kinds').getBoundingClientRect(), j = document.getElementById('btn-jugar').getBoundingClientRect(); return k.bottom <= j.top; })()`), 'and Jugar under them');
+ok(await ev(`Math.abs(document.getElementById('demo').getBoundingClientRect().height - (innerHeight - 76)) < 40 || document.getElementById('demo').getBoundingClientRect().height >= innerHeight - 76`), 'the stage fills the screen under the top bar');
 ok(/WarioWare/.test(await ev(`document.getElementById('link-warioware')?.textContent || ''`)), 'the cover credits WarioWare');
 ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends with the site footer and its comment');
 ok(await ev(`__microgames.ids.length`) === 29, "twenty-nine microgames");
