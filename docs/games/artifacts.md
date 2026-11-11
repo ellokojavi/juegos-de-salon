@@ -49,7 +49,8 @@ on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's 
   Girar (ramps and fans) and Quitar float on the board just above it (below it on the top row), as two
   small flat round icons, a turning arrow and a trash can, with no words (the words are their aria-label).
   They go away after 5 s without a touch (letting the part go), while a part is dragged, and while the
-  ball runs; every touch gives them 5 s more.
+  ball runs; every touch gives them 5 s more. They leave with a short fade (0.22 s), and a part that is let
+  go keeps its dashed outline for that same moment, fading out on the board.
 - **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
   send it back to the tray. A tap on a free cell with a part chosen also moves it there.
 - **↶ Deshacer** undoes the last change (place, move, turn, remove), up to 40. The three

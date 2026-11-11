@@ -63,6 +63,10 @@
 .acciones { position: absolute; z-index: 1; display: flex; gap: var(--s-6); transform: translate(-50%, calc(-100% - var(--s-4))); animation: artifacts-pop 0.15s ease-out; }
 .acciones.abajo { transform: translate(-50%, var(--s-4)); }
 .acciones[hidden] { display: none; }
+/* Going away (5 s without a touch, a drag, the ball running, the part let go): a short fade out */
+.acciones { transition: opacity 0.22s ease-out; }
+.acciones.saliendo { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .acciones { transition: none; animation: none; } }
 /* Small, flat, round icon buttons: no 3D edge, just a solid fill and a thin border */
 .acciones .icono {
   appearance: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border-radius: 50%;

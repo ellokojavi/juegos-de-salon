@@ -276,13 +276,24 @@ const hintFor = () => L.movida;
  * They go away while a part is dragged, when the ball runs, and after 5 s without a touch, which also lets
  * the part go. Every touch (controls() runs on each one) gives them 5 s more.
  */
-const ACTIONS_MS = 5000;
-let actionsTimer = null;
+const ACTIONS_MS = 5000, FADE_MS = 220;
+let actionsTimer = null, fadeTimer = null, lastChosen = null, letGo = null;
 function actions() {
   const box = $('acciones'), on = !!chosen && !run && !dragging && !drag?.moved;
   clearTimeout(actionsTimer);
-  box.hidden = !on;
-  if (!on) return;
+  // A part let go (deselected) keeps its outline a moment, fading out on the board
+  if (lastChosen && lastChosen !== chosen) letGo = { part: lastChosen, at: performance.now() };
+  if (chosen) letGo = null;
+  lastChosen = chosen;
+  if (!on) {
+    // the buttons fade out, then hide
+    if (!box.hidden && !box.classList.contains('saliendo')) {
+      box.classList.add('saliendo');
+      fadeTimer = setTimeout(() => { box.hidden = true; box.classList.remove('saliendo'); }, FADE_MS);
+    }
+    return;
+  }
+  clearTimeout(fadeTimer); box.classList.remove('saliendo'); box.hidden = false;
   $('btn-girar').hidden = !flippable(chosen);
   const W = $('tablero').clientWidth, H = $('tablero').clientHeight, top = chosen.r === 0;
   const half = box.offsetWidth / 2, x = Math.max(half + 4, Math.min(W - half - 4, (chosen.c + 1) / COLS * W));
@@ -510,7 +521,11 @@ const scene = escena(canvas);
 let ghost = null, hint = null, dragging = null, popped = false, won = false, roll = 0;
 function size() { if (scene.size()) draw(); }
 new ResizeObserver(size).observe($('tablero'));
-function draw() { scene.draw({ board, run, chosen, ghost, hint, dragging, trail, roll, won, popped }); }
+function draw() {
+  let fading = null;
+  if (letGo) { const a = 1 - (performance.now() - letGo.at) / FADE_MS; if (a > 0) fading = { part: letGo.part, a }; else letGo = null; }
+  scene.draw({ board, run, chosen, fading, ghost, hint, dragging, trail, roll, won, popped });
+}
 // With a mouse, the picked part follows the pointer as a ghost before the click
 function mouseGhost(e) {
   if (e.pointerType !== 'mouse' || run || !board || !picked || drag) return;
@@ -618,4 +633,4 @@ initSound();
 texts();
 requestAnimationFrame(frame);
 // For the end-to-end script: the game's state, and a level's solution to play it like a player would
-window.__artifacts = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, startGame, stagesFor, fits, fixedSegments };
+window.__artifacts = { get board() { return board; }, get run() { return run; }, get game() { return game; }, LEVELS, POOL, get level() { return level; }, get chosen() { return chosen; }, startGame, stagesFor, fits, fixedSegments };

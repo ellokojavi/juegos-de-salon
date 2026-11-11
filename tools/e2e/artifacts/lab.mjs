@@ -2,7 +2,7 @@
 // the tagline, the credit, «Cómo se juega» (four steps), the language toggle (no format chip)
 // and a yellow Jugar in the first screen; Jugar starts stage 1 of 5 with its difficulty, the five dots and
 // the clock running; Probar with no parts fails and says so; the tray, one-tap turning, Girar and Quitar
-// floating over the chosen part (gone on a drag and after 5 s), dragging to move, Deshacer and dropping
+// floating over the chosen part (fading out on a drag and after 5 s), dragging to move, Deshacer and dropping
 // off the board work by real drags; the three helpers and the help each fit one line; each of the five stages is solved with its
 // known answer, placed by drags: a summary per stage that stops the clock, then the next stage, harder;
 // after the fifth, the result: the total, a row per stage, the speed and the total, «Jugar otra vez» and
@@ -81,8 +81,10 @@ ok(t1 !== 'ramp' && t1 !== 'fan' || await ev(`__artifacts.board.placed[0].dir`) 
 ok(await ev(`(() => { const a = document.getElementById('acciones'), k = document.getElementById('lienzo').getBoundingClientRect(), r = a.getBoundingClientRect();
   return !a.hidden && !document.getElementById('btn-quitar').hidden && r.bottom <= k.top + 3 * k.height / 11 + 1; })()`), 'Girar and Quitar float just above the chosen part');
 if (t1 === 'ramp' || t1 === 'fan') { await ev(`document.getElementById('btn-girar').click(); 1`); ok(await ev(`__artifacts.board.placed[0].dir`) === d0, 'the floating Girar turns it'); }
-await sleep(5300);
-ok(await ev(`document.getElementById('acciones').hidden`), 'after 5 s without a touch they go away');
+await sleep(5080);
+ok(await ev(`document.getElementById('acciones').classList.contains('saliendo')`), 'after 5 s without a touch they fade out');
+await sleep(400);
+ok(await ev(`document.getElementById('acciones').hidden && !__artifacts.chosen`), 'then they are gone, and the part is let go');
 await ev(TAP(2, 3)); await sleep(100);
 if (t1 === 'ramp' || t1 === 'fan') { await ev(`document.getElementById('btn-girar').click(); 1`); }
 ok(!await ev(`document.getElementById('acciones').hidden`), 'a tap on the part brings them back');
