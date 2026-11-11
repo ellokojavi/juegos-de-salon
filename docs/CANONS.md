@@ -86,6 +86,7 @@ public/<carpeta>/
 - Every visible text lives in `LOCALES.es`, `LOCALES.en` and `LOCALES.pt` in `rules.js`. No string literals in `game.js`.
 - Fixed HTML texts are marked with `data-i18n="clave"` (or `data-i18n-html`) and applied with `applyStatic(T)`.
 - The language is read with `getLang()` and the `langToggle()` toggle goes in each game's intro, with `coverLangToggle()`: behind the flag `compact-lang` it becomes one flag button in the top bar instead (D-537).
+- Behind the flag `cover-share`, `coverLangToggle()` also mounts a share button in the cover's top bar (`public/assets/js/cover-share.js`): it sends the game's name, one inviting line and the page's link without its search or hash (no room code or seed, U-30), copies it where there is no share menu, and hides once the game starts.
 - **There is a single language selector, `langToggle()`, and it looks the same across the app** (D-231).
   No screen builds its own. Its standard:
   - A glass pill (`--glass`) with one button per language in `LANGS`, in `LANGS` order.
