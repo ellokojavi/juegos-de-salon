@@ -2227,7 +2227,11 @@
       "error": "AssertionError [ERR_ASSERTION]: CONTRIBUTING.md rules block is stale: node tools/agents/rules.mjs contributing\n+ actual - expected\ncode: 'ERR_ASSERTION',",
       "signature": "bd44b2dfef",
       "date": "2026-11-11T18:36:38.692Z",
-      "fix": null,
+      "fix": {
+        "commit": "baaaf59e10f15d5a7436e13f7e51ee2011b332cd",
+        "date": "2026-11-11T18:51:03.967Z",
+        "stat": "16 file(s) +165 −24: .github/pull_request_template.md, .github/workflows/preview.yml, CLAUDE.md, CONTRIBUTING.md, changelog/claude-ecstatic-carson-rdzy7y.md, …"
+      },
       "flaky": false
     },
     {
@@ -2240,7 +2244,11 @@
       "error": "ERROR · appeared e2e: splash/margins.mjs",
       "signature": "41c0dbf213",
       "date": "2026-11-11T18:38:20.271Z",
-      "fix": null,
+      "fix": {
+        "commit": "baaaf59e10f15d5a7436e13f7e51ee2011b332cd",
+        "date": "2026-11-11T18:51:03.967Z",
+        "stat": "16 file(s) +165 −24: .github/pull_request_template.md, .github/workflows/preview.yml, CLAUDE.md, CONTRIBUTING.md, changelog/claude-ecstatic-carson-rdzy7y.md, …"
+      },
       "flaky": false
     },
     {
@@ -2253,7 +2261,11 @@
       "error": "ERROR · appeared e2e: margins-common.mjs, splash/margins.mjs",
       "signature": "74abe47c28",
       "date": "2026-11-11T18:47:03.321Z",
-      "fix": null,
+      "fix": {
+        "commit": "baaaf59e10f15d5a7436e13f7e51ee2011b332cd",
+        "date": "2026-11-11T18:51:03.967Z",
+        "stat": "2 file(s) +4 −0: docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     }
   ]
