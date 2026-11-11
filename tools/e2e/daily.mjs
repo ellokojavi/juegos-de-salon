@@ -134,7 +134,7 @@ ok(await waitFor(`/🔥 1/.test(document.getElementById('uad-trio')?.textContent
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'the month calendar is titled "Calendario"');
 ok(await ev(`document.querySelectorAll('#uad-cal .hoy').length`) === 1 && /🧶/.test(await text('#uad-cal .hoy')), "the calendar marks today with the game's emoji");
 ok(/^\d+$/.test(await text('#uad-cal .hoy .cal-pts')), `and the points it added in a pill: the game plus the streak bonus (${await text('#uad-cal .hoy .cal-pts')})`);
-ok(/🔥 1 día · hoy \+\d+/.test(await text('#uad-trio')), `the season box's line says the streak and what today added (${await text('#uad-trio')})`);
+ok(/🔥 1 día · ✅ \+\d+ hoy/.test(await text('#uad-trio')), `the season box's line says the streak and what today added (${await text('#uad-trio')})`);
 ok(!await ev(`!!document.getElementById('uad-por-juego')`), 'no "Por juego" block (owner\'s request)');
 ok(!await ev(`!!document.getElementById('btn-compartir-uad')`), 'nor «Compartir mi resultado» on /today/ (owner\'s request)');
 
