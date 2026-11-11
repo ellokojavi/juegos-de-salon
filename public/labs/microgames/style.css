@@ -756,7 +756,7 @@
 .demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }
 /* The cover: the three ways to play side by side in a column, each with its moving gesture, then Jugar.
    It grows rather than clip its buttons on a short phone */
-.demo:has(.kinds) { min-height: max(480px, calc(100svh - 76px)); height: auto; }
+.demo:has(.kinds) { aspect-ratio: auto; min-height: 0; height: auto; padding-block: var(--s-16); }   /* the cover is as tall as what it holds: no empty band */
 .demo:has(.kinds) .menu { width: 100%; }
 .demo:has(.kinds) .menu > #btn-jugar { flex: 0 1 320px; }
 .demo .kinds { display: grid; gap: var(--s-10); width: min(100%, 380px); }
