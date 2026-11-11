@@ -2308,7 +2308,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/js/game-labels.test.mjs",
       "signature": "aa4336c111",
       "date": "2026-11-11T21:00:31.384Z",
-      "fix": null,
+      "fix": {
+        "commit": "85b98594b9ccd7d531e43f1c4b8cf0928d86fd51",
+        "date": "2026-11-11T21:54:18.710Z",
+        "stat": "50 file(s) +2187 −167: .github/workflows/launch.yml, README.md, changelog/claude-ecstatic-carson-rdzy7y.md, changelog/claude-kind-babbage-0gs9an.md, docs/AGENTS.md, …"
+      },
       "flaky": false
     },
     {
