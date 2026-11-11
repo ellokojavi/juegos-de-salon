@@ -14,6 +14,7 @@ import { output, isFolder } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { manifestFolders, readManifest } from '../generators/manifests.mjs';
 import { excuses } from '../generators/conformance.mjs';
+import { coverGapsOff, COVER_GAP } from './cover-gaps.mjs';
 import { gameById } from '../../public/assets/js/games.js';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
@@ -68,6 +69,8 @@ for (const folder of chosen) {
   ok(!errs.length && !logs.length, `${folder} · load: no console errors${errs.length || logs.length ? ': ' + [...errs, ...logs][0].slice(0, 160) : ''}`);
   ok(await b.evaluate(`!!document.querySelector('.screen.active')`), `${folder} · load: a screen is showing`);
   await b.shot(`${folder.replace('/', '-')}-intro`);
+  const off = JSON.parse(await b.evaluate(coverGapsOff));
+  ok(!off.length, `${folder} · spacing: the cover's blocks are ${COVER_GAP} px apart${off.length ? ` (${off.join(', ')})` : ''}`);
 
   // share and result: the page goes through the shared modules
   const loaded = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').map(r => new URL(r.name).pathname))`).then(JSON.parse);

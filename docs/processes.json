@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5",
+  "checkedUpTo": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -493,11 +493,22 @@
           "date": "2026-11-06",
           "what": "tournament.mjs:labs asserted Agentes' folded rules; two PRs had to update the script after a lab change (#1244, #1245)",
           "commit": null
+        },
+        {
+          "date": "2026-11-07T22:09:28.061Z",
+          "what": "#1284 end-to-end: cup/tournament.mjs:cup",
+          "commit": "0999a7fdc3ed4683cef0293381295c0545793393"
+        },
+        {
+          "date": "2026-11-11T06:18:32.642Z",
+          "what": "#1377 end-to-end: cup/tournament.mjs:cup",
+          "commit": "1dfd3c9dec1db607ba70a7c2f3288f3c84ed7cd4"
         }
       ],
       "mechanism": null,
       "signatures": [
-        "0faec1e3e5"
+        "0faec1e3e5",
+        "6fad0784f2"
       ]
     },
     {
@@ -668,16 +679,16 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-10",
-      "to": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5"
+      "date": "2026-11-11",
+      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
     },
     "usability": {
-      "date": "2026-11-10",
-      "to": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5"
+      "date": "2026-11-11",
+      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
     },
     "ideas": {
-      "date": "2026-11-04",
-      "to": "e44291b1f43b60d74678a089aa03fccf7cec8615"
+      "date": "2026-11-11",
+      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
     }
   },
   "rounds": [
@@ -864,6 +875,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352",
       "note": "dispatched documentation and usability; 12 changelog entries collected; mechanism push-guard design-lint gate for design-lint-gate; e2e-stale-assertion left for tomorrow"
+    },
+    {
+      "date": "2026-11-11",
+      "from": "4d0531ee8ce69ebc6a8400ef491cee99816e60f5",
+      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched documentation (#1380), usability, ideas; collected 21 changelog entries; popularity refreshed; CI signatures 0faec1e3e5 and 6fad0784f2 promoted to e2e-stale-assertion"
     }
   ],
   "ownerDecisions": [

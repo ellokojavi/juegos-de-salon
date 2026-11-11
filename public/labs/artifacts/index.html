@@ -42,6 +42,12 @@
       <div class="cabecera"><b id="nivel"></b><span class="chip" id="dificultad"></span><span class="etapas" id="etapas" aria-hidden="true"></span><span class="reloj" id="reloj" role="timer"></span></div>
       <div class="tablero" id="tablero" data-tablero>
         <canvas id="lienzo"></canvas>
+        <!-- The chosen part's buttons, over it on the board; they go after 5 s without a touch or on a drag -->
+        <div class="acciones" id="acciones" hidden>
+          <!-- Icons only: a turning arrow and a trash can; their words are the aria-label, in the player's language -->
+          <button type="button" class="icono" id="btn-girar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>
+          <button type="button" class="icono icono--quitar" id="btn-quitar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
+        </div>
         <div class="capa" id="resultado" hidden>
           <div class="panel tarjeta stack">
             <p class="display display--lg" id="res-titulo"></p>
@@ -53,20 +59,14 @@
       </div>
       <p class="mensaje" id="mensaje" aria-live="polite"></p>
       <div class="bandeja" id="bandeja" role="group"></div>
-      <!-- One row of tools, always the same height: Deshacer and Limpiar, or with a part chosen, Girar and Quitar beside Deshacer -->
-      <div class="btn-row herramientas">
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-deshacer"></button>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-limpiar"></button>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-girar" hidden></button>
-        <button type="button" class="btn btn--ghost btn--sm" id="btn-quitar" hidden></button>
-      </div>
       <div class="stack">
-        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
-        <!-- A hint (costs a star) and giving the stage up (two taps) -->
+        <!-- The three helpers in one row: undo, a hint (costs a star) and giving the stage up (two taps); Probar under them -->
         <div class="btn-row herramientas">
+          <button type="button" class="btn btn--ghost btn--sm" id="btn-deshacer"></button>
           <button type="button" class="btn btn--ghost btn--sm" id="btn-pista"></button>
           <button type="button" class="btn btn--ghost btn--sm" id="btn-rendirse"></button>
         </div>
+        <button type="button" class="btn btn--yellow" id="btn-probar"></button>
       </div>
     </section>
     <!-- The result: the total, how it adds up stage by stage, and the way to play again -->

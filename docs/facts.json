@@ -1617,6 +1617,7 @@
     "code/lab.mjs",
     "conformance.mjs",
     "contact-sheet.mjs",
+    "cover-gaps.mjs",
     "cup-games/languages.mjs",
     "cup/again.mjs",
     "cup/archived.mjs",

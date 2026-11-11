@@ -151,7 +151,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | Chat | `.chat*` | the room's chat bubble |
 | Random | `.azar*` | the random-game control (D-237) |
 | One a day | `.uad*` | |
-| Ranking | `.rk-*` in `ranking.css` | tables, rows, medals (D-212); a ranking section under the stage (`.app > #ranking`) takes its own 16 px from it, no game sets that space |
+| Ranking | `.rk-*` in `ranking.css` | tables, rows, medals (D-212); a ranking section under the stage (`.app > #ranking`) takes its 12 px from it (§3 rule 6), no game sets that space |
 | Keyboard | `teclado.css` | |
 | Topbar, footer | `.topbar`, footer | |
 
@@ -203,7 +203,12 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
 5. **Migration is per game, never two in one PR** (phase 5, #1193), with before and after
    screenshots at 390 and 320 px and the intended differences listed in the PR. A PR that touches a
    game's CSS for another reason migrates it in the same PR.
-6. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
+6. **A cover's blocks are 12 px apart, all of them** (the owner, 2026-11-10). The panels, the stage
+   and the ranking of a game's first screen sit the same 12 px from the next, the gap of a `.stack`;
+   a ranking that is its own section under the stage takes it from `ranking.css`. No game sets
+   that space itself. The end-to-end `spacing` check (`tools/e2e/cover-gaps.mjs`, run by
+   `conformance.mjs` for every game with a `game.json` and by ¡Al toque!'s script) measures it.
+7. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
    lint cannot: whether a colour means what it should, whether a title took the right step,
    whether a new control should be a component.
 

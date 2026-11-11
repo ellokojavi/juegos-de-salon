@@ -185,3 +185,12 @@ console.log('splash ✓');
   whenVisible(() => ran++, { visibilityState: 'visible' });
   assert.equal(ran, 2, 'a visible page counts at once');
 }
+
+// A browser with no storage cannot remember: never a first reach, so no row per page
+{
+  assert.equal(firstReach('x', null), false);
+  assert.equal(firstReach('x', {}), false);
+  const m = new Map(), store = { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v) };
+  assert.equal(firstReach('x', store), true);
+  assert.equal(firstReach('x', store), false);
+}

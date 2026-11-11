@@ -7,10 +7,10 @@ export const GAME_ID = 'microgames';
 const ROWS = [
   ['pts', 'pts', 'pts'],
   ['Cómo se calcularon tus puntos', 'How your points were worked out', 'Como seus pontos foram calculados'],
-  ['{n} ★ × 10 puntos', '{n} ★ × 10 points', '{n} ★ × 10 pontos'],
+  ['⭐ {n} estrellas × 10 puntos', '⭐ {n} stars × 10 points', '⭐ {n} estrelas × 10 pontos'],
   ['🔥 Rachas de ★★ o más: {n} × {p}', '🔥 Streaks of ★★ or better: {n} × {p}', '🔥 Sequências de ★★ ou mais: {n} × {p}'],
   ['Total', 'Total', 'Total'],
-  ['⚡ Bono de velocidad · sube cada 3 juegos, hasta ×{x}', '⚡ Speed bonus · goes up every 3 games, up to ×{x}', '⚡ Bônus de velocidade · sobe a cada 3 jogos, até ×{x}'],
+  ['⚡ Bono de velocidad', '⚡ Speed bonus', '⚡ Bônus de velocidade'],
   ['+{n} pts · ⚡ ×{x}', '+{n} pts · ⚡ ×{x}', '+{n} pts · ⚡ ×{x}'],
   ['🔥 Racha de {n} · +{p}', '🔥 {n} in a row · +{p}', '🔥 Sequência de {n} · +{p}'],
   ['¡Por poco!', 'Close one!', 'Por pouco!'],
