@@ -784,7 +784,6 @@
 .demo .breakdown { width: min(100%, 320px); display: grid; gap: var(--s-4); padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); border: 1px solid var(--glass-border); font-size: var(--fs-85); text-align: left; }
 .demo .breakdown div { display: flex; justify-content: space-between; gap: var(--s-12); color: var(--muted); }
 .demo .breakdown b { color: var(--ink); font-weight: 900; }
-.demo .breakdown .bonus { color: var(--cyan); font-weight: 800; } .demo .breakdown .bonus b { color: var(--cyan); text-shadow: 0 0 8px rgb(var(--cyan-rgb) / 0.6); }
 .demo .breakdown .tot { border-top: 1px solid var(--glass-border); padding-top: var(--s-4); margin-top: var(--s-2); color: var(--ink); font-weight: 900; }
 .demo .breakdown .tot b { color: var(--yellow); }
 .demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }
