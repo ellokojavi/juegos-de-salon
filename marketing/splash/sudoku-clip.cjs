@@ -9,8 +9,8 @@
 //   ffmpeg -framerate 30 -i /tmp/sudoku-frames/f%04d.png -vf "scale=480:-2,format=yuv420p" \
 //     -c:v libx264 -crf 26 -preset slow -movflags +faststart -an public/assets/splash/sudoku.mp4
 //
-// The board is shot alone on a plain ground with an even margin, and every zoom is centered on its box,
-// so the margins are the same on all four sides at every moment (the owner's request, D-355).
+// The frame is exactly the grid, without its own border or any ground around it, and a zoom never shows
+// past the grid's edge; the splash card gives the even margin around the clip (DESIGN.md §3 rule 7).
 // The poster (sudoku-start.jpg) is the first frame and the still (sudoku.jpg) the last.
 const { chromium } = require('playwright');
 const OUT = process.argv[2];
@@ -59,7 +59,7 @@ function findStep(cells, solution, skipBoxes) {
   await p.evaluate(() => {
     window.__sudoku.solveAllBut(34);
     const bd = document.getElementById('board');
-    Object.assign(bd.style, { position: 'relative', zIndex: 50, transition: 'none' });
+    Object.assign(bd.style, { position: 'relative', zIndex: 50, transition: 'none', border: '0', borderRadius: '0' });
     // only the board on a plain ground, so the margin around it is even on every side and in every zoom
     const css = document.createElement('style');
     css.textContent = 'html, body { background: #1a0d33 !important; } body * { visibility: hidden; } #board, #board * { visibility: visible; }';
@@ -70,8 +70,8 @@ function findStep(cells, solution, skipBoxes) {
     bd.append(ring);
     document.getElementById('hint')?.style.setProperty('visibility', 'hidden');
   });
-  // the frame: the board plus an even margin (PAD of its side) all around
-  const PAD = 0.06;
+  // the frame: exactly the board, with no ground around it (the owner: no dark band outside the grid)
+  const PAD = 0;
   const r = await p.$eval('#board', (e, PAD) => { const x = e.getBoundingClientRect(); const m = x.width * PAD; return { x: x.x - m, y: x.y - m, width: x.width + 2 * m, height: x.height + 2 * m }; }, PAD);
 
   let n = 0;
@@ -85,8 +85,9 @@ function findStep(cells, solution, skipBoxes) {
     const ox = ((box % 3) * 3 + 1.5) / 9 * 100, oy = (Math.floor(box / 3) * 3 + 1.5) / 9 * 100;
     const s = 1 + (S - 1) * u;
     bd.style.transformOrigin = '0 0';
-    // always centered on the box, so the ring sits at the same distance from every edge of the frame
-    bd.style.transform = `translate(${u * (50 - ox * s)}%, ${u * (50 - oy * s)}%) scale(${s})`;
+    // centered on the box, but never past the board's edge: the frame shows only the grid
+    const clamp = t => Math.min(0, Math.max(-(s - 1) * 100, t));
+    bd.style.transform = `translate(${clamp(u * (50 - ox * s))}%, ${clamp(u * (50 - oy * s))}%) scale(${s})`;
     const ring = document.getElementById('clip-ring');
     Object.assign(ring.style, { left: `${(box % 3) * 33.333}%`, top: `${Math.floor(box / 3) * 33.333}%`, opacity: u });
   }, [u, box, S]);

@@ -433,6 +433,26 @@ const node = (tag, cls, text) => {
   return n;
 };
 
+/**
+ * A big window's clip keeps even margins in its card (DESIGN.md §3 rule 7, M-3): when it is narrower
+ * than the card (a short screen, a square clip), the same gap above it as on each side. Measured here
+ * rather than in CSS: container units (cqw) are missing in some browsers the owner uses, which left the
+ * clip flush on top. Kept up to date while the window is open.
+ */
+export function evenHeroMargins(card) {
+  const fit = () => {
+    for (const m of card.querySelectorAll('.splash-media')) {
+      // offsetWidth, not the bounding box: the window scales in as it opens, and a box measured then is smaller
+      const gap = Math.max(0, (m.parentElement.clientWidth - m.offsetWidth) / 2);
+      m.style.marginTop = gap > 0.5 ? `${gap}px` : '0px';
+      m.style.borderRadius = gap > 0.5 ? '10px' : '';
+    }
+  };
+  fit();
+  if (globalThis.ResizeObserver) new ResizeObserver(fit).observe(card);
+  else globalThis.addEventListener?.('resize', fit);
+}
+
 /** Each item as the window draws it: a game of games.js, or the campaign's own content. */
 async function resolve(items, lang) {
   const needsGames = items.some(i => i.game);
@@ -560,6 +580,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   card.append(...[x, head, list, compat, foot, done].filter(Boolean));
   layer.append(backdrop, card);
   document.body.append(layer);
+  if (c.hero) evenHeroMargins(card);
   const prevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   const before = document.activeElement;

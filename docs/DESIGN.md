@@ -217,7 +217,7 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
    - **M-3 Even media:** a picture or clip that opens a card is flush with it on top and both sides, or,
      narrower than the card (a short screen, a square clip), keeps the same gap above as on each side,
      rounded; never flush on one side with gutters on the others. The splash's big window does it in
-     `splash.css` (`--hero-w`, `--hero-gap`), and `tools/e2e/splash/margins.mjs` also measures every
+     `splash.js` (`evenHeroMargins`, measured in the page: container units are missing in some browsers), and `tools/e2e/splash/margins.mjs` also measures every
      `hero` campaign on a phone, a short phone, a laptop and a big screen.
    - With them: blocks 12 px apart (rule 6) and the board's 24 px of air before its buttons (U-11, D-309).
    A deliberate exception is marked `data-margins-ok` on the element, with its reason in a comment
