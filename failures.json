@@ -2173,6 +2173,19 @@
         "stat": "2 file(s) +2 −0: docs/facts.json, tools/e2e/README.md"
       },
       "flaky": false
+    },
+    {
+      "run": 43043683867,
+      "check": "end-to-end",
+      "pr": 1385,
+      "branch": "ccr-319abcfc-5v4dor",
+      "commit": "8a3fb29c61892ca345b6f26667aa5ab74a6c57f5",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ the ones left out stay outside, in the hand",
+      "signature": "64e836cef7",
+      "date": "2026-11-11T15:09:58.631Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
