@@ -22,9 +22,12 @@ export const coverShareText = ({ C, emoji, name }) => [cabecera({ emoji, titulo:
 /** The page's own link, without search or hash. */
 export const coverUrl = (loc = globalThis.location) => `${loc.origin}${loc.pathname}`;
 
-export function mountCoverShare({ doc = document, lang = getLang() } = {}) {
+export function mountCoverShare({ cover = null, doc = document, lang = getLang() } = {}) {
   const tools = doc.querySelector('.topbar .tools');
-  if (!tools || tools.querySelector('#btn-share-cover')) return null;
+  if (!tools) return null;
+  // A cover drawn again brings a new slot: the button already there follows it
+  const had = tools.querySelector('#btn-share-cover');
+  if (had) { had.follow?.(cover); return had; }
   const C = COMMON[lang] || COMMON.es;
   const btn = el('button', { type: 'button', class: 'icon-btn', id: 'btn-share-cover', title: C.shareGame, 'aria-label': C.shareGame });
   btn.innerHTML = ICONO_COMPARTIR;
@@ -38,11 +41,13 @@ export function mountCoverShare({ doc = document, lang = getLang() } = {}) {
     }
   });
   tools.insertBefore(btn, tools.querySelector('#sound-slot'));
-  // Only on the cover: once the game starts the intro screen leaves and the button with it
-  const intro = doc.getElementById('screen-intro');
-  if (intro) {
-    const sync = () => { btn.hidden = !intro.classList.contains('active'); };
-    new MutationObserver(sync).observe(intro, { attributes: true, attributeFilter: ['class'] });
+  // Only on the cover: `cover` is the language slot coverLangToggle() put there; once the game starts
+  // (the cover's screen leaves, or its node is dropped) the button goes too, giving the bar back
+  const onCover = () => !!cover?.isConnected && !cover.parentElement?.closest('[hidden], .screen:not(.active)');
+  const sync = () => { const h = !onCover(); if (btn.hidden !== h) btn.hidden = h; };
+  btn.follow = c => { cover = c; sync(); };
+  if (cover) {
+    new MutationObserver(sync).observe(doc.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'hidden'] });
     sync();
   }
   return btn;

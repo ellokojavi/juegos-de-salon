@@ -969,7 +969,7 @@ export function coverLangToggle(onChange) {
   };
   // The cover's share button, in the top bar beside the language (cover-share.js)
   // lab: #seccion-cover-share
-  flag('cover-share').then(on => { if (on) import('./cover-share.js').then(m => m.mountCoverShare()); }).catch(() => {});
+  flag('cover-share').then(on => { if (on) import('./cover-share.js').then(m => m.mountCoverShare({ cover: slot })); }).catch(() => {});
   // Published for everyone: no wait and no flash; in the lab, once the key answers
   // lab: #seccion-compact-lang
   if (stateOf(cachedFlags(), 'compact-lang') === 'all') queueMicrotask(compact);
