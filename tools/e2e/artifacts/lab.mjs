@@ -1,8 +1,9 @@
 // Artefactos in the lab end to end, at /labs/artifacts/: the lab offers it with its credit; the cover has
-// the tagline, the credit, «Cómo se juega» (four steps), the language toggle, the format (5 etapas · 6:00)
+// the tagline, the credit, «Cómo se juega» (four steps), the language toggle (no format chip)
 // and a yellow Jugar in the first screen; Jugar starts stage 1 of 5 with its difficulty, the five dots and
-// the clock running; Probar with no parts fails and says so; the tray, one-tap turning, dragging to move,
-// Deshacer and dropping off the board work by real drags; each of the five stages is solved with its
+// the clock running; Probar with no parts fails and says so; the tray, one-tap turning, Girar and Quitar
+// floating over the chosen part (gone on a drag and after 5 s), dragging to move, Deshacer and dropping
+// off the board work by real drags; the three helpers and the help each fit one line; each of the five stages is solved with its
 // known answer, placed by drags: a summary per stage that stops the clock, then the next stage, harder;
 // after the fifth, the result: the total, a row per stage, the speed and the total, «Jugar otra vez» and
 // the way back to the lab; the best is kept; in English the cover is in English; at 320 px no sideways
@@ -31,10 +32,11 @@ ok(await ev(`document.querySelector('#seccion-artifacts h2')?.textContent`) === 
 await b.go(`${SITE}/labs/artifacts/?test`, 1000);
 ok(await waitFor(`!!document.getElementById('btn-jugar')?.textContent`), 'the cover has Jugar');
 ok(await ev(`document.querySelector('h1').textContent`) === 'Artefactos' && /^Artefactos/.test(await ev(`document.title`)), 'the title: Artefactos');
-ok(/Arma la máquina/.test(await ev(`document.getElementById('lema').textContent`)), 'the tagline');
+ok(await ev(`document.getElementById('lema').textContent`) === 'Lleva la pelota a la canasta.', 'the tagline, short');
+ok(await ev(`(() => { const e = document.getElementById('lema'); return e.getBoundingClientRect().height < parseFloat(getComputedStyle(e).lineHeight) * 1.5; })()`), 'the tagline in one line');
 ok(/The Incredible Machine/.test(await ev(`document.getElementById('credito').textContent`)) && /wikipedia/.test(await ev(`document.getElementById('link-tim')?.href || ''`)), 'the credit, with its link');
 ok(await ev(`document.querySelectorAll('#pasos li').length`) === 4, 'four steps under «Cómo se juega»');
-ok(await ev(`document.getElementById('formato')?.textContent`) === '5 etapas · 6:00', 'the format: «5 etapas · 6:00»');
+ok(await ev(`!document.getElementById('formato') && !/5 etapas · 6:00/.test(document.getElementById('niveles').textContent)`), 'no «5 etapas · 6:00» chip on the cover');
 ok(await ev(`!!(document.getElementById('lang-slot').compareDocumentPosition(document.getElementById('btn-jugar')) & Node.DOCUMENT_POSITION_FOLLOWING)`), 'the language toggle comes before Jugar (C-5)');
 ok(await ev(`(() => { const r = document.getElementById('btn-jugar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Jugar in the first screen');
 await b.shot('01-cover');
@@ -52,7 +54,8 @@ const c0 = await ev(`__artifacts.game.left`); await sleep(1300);
 ok(await ev(`__artifacts.game.left`) < c0 - 900 && /^[56]:\d\d$/.test(await ev(`document.getElementById('reloj').textContent`)), `the clock runs (${await ev(`document.getElementById('reloj').textContent`)})`);
 ok(await ev(`(() => { const r = document.getElementById('btn-probar').getBoundingClientRect(); return r.bottom <= innerHeight; })()`), 'Probar in view with the board');
 await ev(`document.getElementById('btn-probar').click(); 1`);
-ok(await waitFor(`/Prueba otra cosa/.test(document.getElementById('mensaje').textContent)`, 8000), 'with no parts the ball does not make it, and it says why');
+ok(await waitFor(`/Bum|Pinchazo|atascó/.test(document.getElementById('mensaje').textContent)`, 8000), 'with no parts the ball does not make it, and it says why');
+ok(await ev(`!document.getElementById('btn-limpiar') && (r => r.every(b => b.getBoundingClientRect().top === r[0].getBoundingClientRect().top))([...document.querySelectorAll('#btn-deshacer, #btn-pista, #btn-rendirse')])`), 'no Limpiar; Deshacer, Pista and Rendirse in one row');
 
 // Real drags, as a mouse makes them: press, a few moves, let go (x, y in cells of the board; null = off the board)
 const DRAG = (from, to) => `(async () => {
@@ -75,8 +78,17 @@ ok(await ev(`__artifacts.board.placed.length`) === 1 && await ev(PART).then(p =>
 const d0 = await ev(`__artifacts.board.placed[0].dir`);
 await ev(TAP(2, 3)); await sleep(100);
 ok(t1 !== 'ramp' && t1 !== 'fan' || await ev(`__artifacts.board.placed[0].dir`) === -d0, 'one tap on a ramp or a fan turns it round');
+ok(await ev(`(() => { const a = document.getElementById('acciones'), k = document.getElementById('lienzo').getBoundingClientRect(), r = a.getBoundingClientRect();
+  return !a.hidden && !document.getElementById('btn-quitar').hidden && r.bottom <= k.top + 3 * k.height / 11 + 1; })()`), 'Girar and Quitar float just above the chosen part');
+if (t1 === 'ramp' || t1 === 'fan') { await ev(`document.getElementById('btn-girar').click(); 1`); ok(await ev(`__artifacts.board.placed[0].dir`) === d0, 'the floating Girar turns it'); }
+await sleep(5300);
+ok(await ev(`document.getElementById('acciones').hidden`), 'after 5 s without a touch they go away');
+await ev(TAP(2, 3)); await sleep(100);
+if (t1 === 'ramp' || t1 === 'fan') { await ev(`document.getElementById('btn-girar').click(); 1`); }
+ok(!await ev(`document.getElementById('acciones').hidden`), 'a tap on the part brings them back');
 await ev(DRAG([2.5, 3.5], [1, 4.5]));
 ok(await ev(PART).then(p => JSON.parse(p)[0].slice(0, 2).join()) === '0,4', 'dragging it moves it, snapped to the grid');
+ok(await ev(`(() => { const m = document.getElementById('mensaje'); return m.scrollWidth <= m.clientWidth; })()`), 'the help fits one line');
 await ev(`document.getElementById('btn-deshacer').click(); 1`);
 ok(await ev(PART).then(p => JSON.parse(p)[0].slice(0, 2).join()) === '2,3', 'Deshacer puts it back');
 await ev(DRAG([2.5, 3.5], null));
@@ -121,7 +133,7 @@ await ev(`document.getElementById('btn-otra').click(); 1`);
 ok(await waitFor(`document.getElementById('nivel').textContent === 'Etapa 1 de 5'`) && await ev(`JSON.stringify(__artifacts.game.stages.map(l => l.id))`) !== day, 'Jugar otra vez: a new game, five other stages');
 
 await b.go(`${SITE}/labs/artifacts/?lang=en&test`, 1000);
-ok(await waitFor(`/Build the machine/.test(document.getElementById('lema').textContent)`), 'in English, the cover is in English');
+ok(await waitFor(`/Get the ball into the basket/.test(document.getElementById('lema').textContent)`), 'in English, the cover is in English');
 ok(new RegExp(`Best: ${total}`).test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'and the best is kept');
 ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
 b.close();

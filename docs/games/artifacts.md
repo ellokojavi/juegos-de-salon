@@ -21,8 +21,9 @@ no name, art, sound or level comes from it.
 ## Cover
 
 The demo board solving levels by itself, the rainbow title, the tagline, the credit with its link, «🧠 Cómo se juega» folded
-(`details.panel`), the language toggle, the format («5 etapas · 6:00») and the best,
-and a yellow «⚙️ Jugar», in C-5's order.
+(`details.panel`), the language toggle, the best (no format chip: the owner dropped «5 etapas · 6:00»
+on 2026-11-11; the fourth step says it) and a yellow «⚙️ Jugar», in C-5's order. The tagline is one line:
+«Lleva la pelota a la canasta.»
 
 1. 🧩 Arrastra una pieza de abajo al tablero.
 2. ↔️ Toca una rampa o un ventilador para girarlo; arrastra para moverlo; suéltalo fuera para quitarlo.
@@ -44,13 +45,16 @@ and a yellow «⚙️ Jugar», in C-5's order.
   place it. The tap way stays: tap a part in the tray, then a cell (with a mouse, its ghost follows the
   pointer before the click).
 - **One tap turns:** a tap on a placed ramp or fan turns it round at once (planks and trampolines have
-  no direction). The tapped part becomes the chosen one (dashed outline): ↔ Girar and 🗑 Quitar take
-  Limpiar's place in the tools row, so nothing below the board moves.
+  no direction). The tapped (or just placed) part becomes the chosen one (dashed outline), and its own
+  ↔ Girar (ramps and fans) and 🗑 Quitar float on the board just above it (below it on the top row).
+  They go away after 5 s without a touch (letting the part go), while a part is dragged, and while the
+  ball runs; every touch gives them 5 s more.
 - **Moving and removing:** drag a placed part to move it; drop it off the board (its edge goes red) to
   send it back to the tray. A tap on a free cell with a part chosen also moves it there.
-- **↶ Deshacer** undoes the last change (place, move, turn, remove, Limpiar), up to 40; 🧹 Limpiar sends
-  everything back to the tray. Each step says the next one under the board, and the phone gives a
-  small tick on each snap and a pulse on placing.
+- **↶ Deshacer** undoes the last change (place, move, turn, remove), up to 40. Under Probar, the three
+  helpers share one row: ↶ Deshacer · 💡 Pista · 🏳️ Rendirse (there is no Limpiar since 2026-11-11). Each
+  step says the next one under the board in one short line (cut with an ellipsis if a phone is too
+  narrow), and the phone gives a small tick on each snap and a pulse on placing.
 - **Keyboard:** R turns the chosen part, Delete removes it, Ctrl/⌘+Z undoes, Esc lets go.
 - **▶ Probar** runs the ball with a fixed-step physics (gravity, bounces, a little friction). It ends
   **won** only once the ball **rests on the basket's floor** (down on it, slower than 0.6 cells/s for
@@ -98,7 +102,7 @@ its five with the day's seed, the same for everyone; «Jugar otra vez» draws an
 - **The result** (`#s-fin`): the stamp (new best, time is up, or done), the total, how many stages
   were passed, a table with a row per stage (difficulty, stars, time, points as 10 + bonus), the speed
   with the time used, the total and a one-line legend; the best on this phone; «Jugar otra vez» and
-  the way back to the lab. The cover shows the format («5 etapas · 6:00») and the best
+  the way back to the lab. The cover shows the best
   (`juegos-de-salon:artifacts`).
 
 **How the pool is made** (`tools/generators/artifacts-levels.mjs`): each level is built backwards

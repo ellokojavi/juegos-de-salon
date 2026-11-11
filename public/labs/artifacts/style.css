@@ -55,7 +55,14 @@
   overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #lienzo { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: none; }
-.mensaje { margin: 0; min-height: 1.4em; text-align: center; font-weight: 700; color: var(--muted); }
+/* The help under the board: always one line */
+.mensaje { margin: 0; min-height: 1.4em; text-align: center; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The chosen part's Girar and Quitar, floating just above it (below it on the top row) */
+.acciones { position: absolute; z-index: 1; display: flex; gap: var(--s-6); transform: translate(-50%, calc(-100% - var(--s-4))); animation: artifacts-pop 0.15s ease-out; }
+.acciones.abajo { transform: translate(-50%, var(--s-4)); }
+.acciones[hidden] { display: none; }
+.acciones .btn { padding: var(--s-6) var(--s-10); min-height: 40px; font-size: var(--fs-90); white-space: nowrap; box-shadow: var(--shadow-panel); }
+@keyframes artifacts-pop { from { opacity: 0; } }
 
 /* The tray: one button per kind of part, with how many are left */
 .bandeja { display: flex; flex-wrap: wrap; gap: var(--s-8); justify-content: center; }
@@ -80,5 +87,6 @@ body.arrastrando, body.arrastrando * { cursor: grabbing; -webkit-user-select: no
 .pie { text-align: center; margin-top: var(--s-16); }
 /* Once won, only the result card speaks: the tray and the buttons under the board step aside */
 body.ganado #s-juego > .bandeja, body.ganado #s-juego > .btn-row, body.ganado #s-juego .stack > .btn-row, body.ganado .mensaje { visibility: hidden; }
-.herramientas .btn { padding-inline: var(--s-8); white-space: nowrap; }
+.herramientas .btn { padding-inline: var(--s-6); white-space: nowrap; min-width: 0; }
+@media (max-width: 360px) { .herramientas .btn { font-size: var(--fs-90); } }
 
