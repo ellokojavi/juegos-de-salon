@@ -167,7 +167,7 @@ function openSheet({ doc, lang, get, retry, online }) {
     bar.hidden = s.state !== 'loading';
     const p = s.total ? Math.round(100 * s.have / s.total) : 0;
     bar.firstChild.style.width = `${Math.max(p, 4)}%`;
-    pct.hidden = s.state !== 'loading';
+    pct.hidden = s.state !== 'loading' || !s.total;
     pct.textContent = `${p}%`;
     const ok = el('button', { type: 'button', class: 'btn btn--yellow', onClick: close }, T.ok);
     row.replaceChildren(...(s.state === 'missing' && online()
