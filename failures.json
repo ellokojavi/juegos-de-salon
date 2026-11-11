@@ -2229,6 +2229,19 @@
       "date": "2026-11-11T18:36:38.692Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43079310495,
+      "check": "tests",
+      "pr": 1401,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "c9e27e802b9119fdbcf93ea6cda9648099779acc",
+      "test": "README up to date",
+      "error": "ERROR · appeared e2e: splash/margins.mjs",
+      "signature": "41c0dbf213",
+      "date": "2026-11-11T18:38:20.271Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
