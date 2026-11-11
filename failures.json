@@ -2357,6 +2357,19 @@
       "date": "2026-11-11T22:11:26.535Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43108812978,
+      "check": "end-to-end",
+      "pr": 1402,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "0288eea759af1b434b70902a4ef68f7767edee13",
+      "test": "landing-fold.mjs",
+      "error": "✗ sudoku 320×568 es: «#️⃣ Empezar» ends at 582 px, 14 px below the fold",
+      "signature": "199611e138",
+      "date": "2026-11-11T22:26:06.308Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
