@@ -303,7 +303,7 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   "☕ Invítame a un café": invitations, cards opened, taps to Stripe and payments in the range, with their
   rates, one bar per day and a CSV (`supportStats` in `public/panel/campaigns.js`).
 - **Since D-461:** `splash/<campaign>/<event>`, what each splash window did: `shown`, `reach` (the first
-  time on this phone, remembered in `juegos-de-salon:splash-alcance`), `play` (its link tapped), `close`,
+  time on this phone, remembered in `juegos-de-salon:splash-alcance`; a browser with no storage never reaches), `play` (its link tapped), `close`,
   and how long it stayed open before either (`t0` under 3 s, `t1` 3–10 s, `t2` 10 s or more). `shown` and
   `reach` wait until the page is visible (a prerender or background tab counts when it comes to the front). A preview
   never counts. Shown in 📣 Campaigns. Since D-466 also `start` and `finish`: after a Play tap, the first
