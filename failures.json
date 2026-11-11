@@ -2199,6 +2199,19 @@
       "date": "2026-11-11T17:40:16.505Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43075760361,
+      "check": "tests",
+      "pr": 1399,
+      "branch": "claude/affectionate-cori-1vopjw",
+      "commit": "e6835bad3d5475211766efeca0f5c9260b5d0cf6",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/labs/microgames/verdict.test.mjs",
+      "signature": "fa8a4b5c96",
+      "date": "2026-11-11T18:16:16.207Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
