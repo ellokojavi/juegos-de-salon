@@ -730,13 +730,14 @@
 .demo .holes button { height: 84px; border-radius: 50%; border: 0; background: radial-gradient(ellipse at 50% 70%, var(--mg-0d0418) 55%, var(--mg-3a2410) 56%); font-size: var(--mg-fs-260); cursor: pointer; }
 @media (max-width: 420px) { .demo .flags { grid-template-columns: repeat(2, 120px); } .demo .holes { grid-template-columns: repeat(3, 76px); } .demo .holes button { height: 76px; } }
 
-@media (max-width: 760px) { .demo { max-width: 420px; justify-self: center; } }
 @media (max-width: 420px) { .demo .ttt { grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 /* ---- The lab page around the stage ---- */
 
 .alt-stage { display: grid; place-items: center; }
-.alt-stage .demo { width: 100%; max-width: 480px; }
+.alt-stage .demo { width: 100%; max-width: none; aspect-ratio: auto; height: calc(100svh - 76px); min-height: 480px; }
+/* One screen, like the lab's other games: the top bar and the stage filling the rest; the rules and the footer below the fold */
+#app { min-height: 100svh; gap: 0; }
 .demo .credit { font-size: var(--fs-85); font-weight: 700; } .demo .credit a { color: var(--cyan); }
 .demo .best { font-size: var(--fs-90); color: var(--yellow); }
 .demo .runbar { position: absolute; top: 36px; left: 50%; translate: -50% 0; display: flex; gap: 4px; z-index: 3; }
@@ -753,52 +754,20 @@
 .howto-rules .howkinds .gstage { zoom: 0.5; border-color: var(--kc); }
 .howto-rules .howkinds b { color: var(--kc); }
 .demo .runsum em { font-style: normal; font-size: var(--fs-75); color: var(--muted); }
-/* The cover's hero: ⚡ in the middle, and on one side then the other a microgame playing itself out in 1.7 s */
-/* The cover grows rather than clip its buttons on a narrow phone */
-.demo:has(.hero) { aspect-ratio: auto; }
-.demo:has(.hero) .menu { width: 100%; }
-.demo:has(.hero) .menu > #btn-jugar { flex: 0 1 320px; }
-.demo .hero { position: relative; width: min(100%, 440px); height: 104px; }
-.demo .hero .bolt { position: absolute; left: 50%; top: 50%; translate: -50% -50%; font-size: clamp(var(--mg-fs-350), 14vw, var(--mg-fs-500)); line-height: 1; z-index: 2; filter: drop-shadow(0 0 14px rgb(var(--yellow-rgb) / 0.55)); }
-.demo .hero .bolt.zap { animation: hzap 1.7s ease-out; }
-@keyframes hzap { 0% { scale: 1; rotate: 0deg; } 8% { scale: 1.25; rotate: -10deg; } 16% { scale: 0.95; rotate: 6deg; } 26%, 100% { scale: 1; rotate: 0deg; } }
-.demo .hv { position: absolute; top: 0; bottom: 0; width: 36%; display: grid; place-items: center; scale: 1.55; }
-@media (max-width: 380px) { .demo .hv { scale: 1.3; } }
-.demo .hv.side-l { left: 0; } .demo .hv.side-r { right: 0; }
-.demo .hv > * { grid-area: 1 / 1; font-style: normal; }
-/* A fly zigzags in, the swat lands: ¡PAF! */
-.demo .h-fly .hfly { font-size: var(--mg-fs-240); animation: hfly 1.7s ease-in-out forwards; }
-@keyframes hfly { 0% { translate: -40px -30px; opacity: 0; } 12% { opacity: 1; } 25% { translate: 20px -10px; } 40% { translate: -14px 14px; } 52% { translate: 0 0; scale: 1; } 58% { scale: 1.6 0.3; } 100% { scale: 1.6 0.3; opacity: 0.5; } }
-.demo .h-fly .hpaf { font: 400 var(--fs-200)/1 var(--display); color: var(--yellow); rotate: -12deg; opacity: 0; animation: hpaf 1.7s ease-out forwards; }
-@keyframes hpaf { 0%, 54% { opacity: 0; scale: 0.3; } 62% { opacity: 1; scale: 1.25; } 70%, 88% { opacity: 1; scale: 1; } 100% { opacity: 0; } }
-/* A colour word in the wrong ink, and the right swatch answers it */
-.demo .h-stroop .hword { font: 400 var(--fs-200)/1 var(--display); color: var(--mg-4d8bff); translate: 0 -18px; animation: hin 1.7s ease-out forwards; }
-.demo .h-stroop .hdot { width: 30px; height: 30px; border-radius: 50%; background: var(--mg-4d8bff); translate: 0 24px; box-shadow: 0 0 0 3px var(--yellow); opacity: 0; animation: hpick 1.7s ease-out forwards; }
-@keyframes hin { 0% { opacity: 0; scale: 0.4; } 15%, 85% { opacity: 1; scale: 1; } 100% { opacity: 0; } }
-@keyframes hpick { 0%, 40% { opacity: 0; scale: 0.2; } 52% { opacity: 1; scale: 1.3; } 60%, 85% { opacity: 1; scale: 1; } 100% { opacity: 0; } }
-/* A sum, and its answer pops */
-.demo .h-sum .hsum { font: 900 var(--fs-160)/1 var(--font-num); color: var(--ink); translate: 0 -16px; animation: hin 1.7s ease-out forwards; }
-.demo .h-sum .hres { font: 900 var(--fs-160)/1 var(--font-num); color: var(--lime); translate: 0 18px; opacity: 0; animation: hpick 1.7s ease-out forwards; }
-/* Three bars that sort themselves, big to small */
-.demo .h-sort { display: block; }
-.demo .h-sort .hbar { position: absolute; bottom: 24px; width: 22px; border-radius: var(--r-8); background: var(--cyan); animation: hfade 1.7s ease-out forwards; }
-.demo .h-sort .b1 { height: 30px; left: calc(50% - 34px); animation: hfade 1.7s ease-out forwards, hb1 1.7s ease-in-out forwards; }
-.demo .h-sort .b2 { height: 68px; left: calc(50% - 10px); background: var(--yellow); animation: hfade 1.7s ease-out forwards, hb2 1.7s ease-in-out forwards; }
-.demo .h-sort .b3 { height: 48px; left: calc(50% + 14px); background: var(--pink); }
-@keyframes hb1 { 0%, 30% { translate: 0; } 60%, 100% { translate: 48px; } }
-@keyframes hb2 { 0%, 30% { translate: 0; } 60%, 100% { translate: -24px; } }
-@keyframes hfade { 0% { opacity: 0; } 12%, 85% { opacity: 1; } 100% { opacity: 0; } }
-.demo .h-sort .b3 { animation: hfade 1.7s ease-out forwards, hb3 1.7s ease-in-out forwards; }
-@keyframes hb3 { 0%, 30% { translate: 0; } 60%, 100% { translate: -24px; } }
-/* A balloon pumped up until it pops */
-.demo .h-balloon .hbal { font-size: var(--mg-fs-240); animation: hbal 1.7s ease-in forwards; }
-@keyframes hbal { 0% { scale: 0.5; } 15% { scale: 0.75; } 30% { scale: 0.95; } 45% { scale: 1.25; } 58% { scale: 1.6; opacity: 1; } 60%, 100% { scale: 1.8; opacity: 0; } }
-.demo .h-balloon .hpop { font-size: var(--mg-fs-240); opacity: 0; animation: hpaf 1.7s ease-out forwards; }
-/* A clock whose hand spins round to the hour */
-.demo .h-clock .hclock { position: relative; width: 64px; height: 64px; border-radius: 50%; border: 4px solid var(--yellow); animation: hfade 1.7s ease-out forwards; }
-.demo .h-clock .hclock i { position: absolute; left: calc(50% - 2px); bottom: 50%; width: 5px; height: 26px; border-radius: var(--r-pill); background: var(--cyan); transform-origin: 50% 100%; animation: hhand 1.7s cubic-bezier(0.3, 1.4, 0.5, 1) forwards; }
-@keyframes hhand { 0% { rotate: 0deg; } 60%, 100% { rotate: 450deg; } }
-@media (prefers-reduced-motion: reduce) { .demo .hero * { animation: none !important; opacity: 1 !important; } }
+/* The cover: the three ways to play side by side in a column, each with its moving gesture, then Jugar.
+   It grows rather than clip its buttons on a short phone */
+.demo:has(.kinds) { min-height: max(480px, calc(100svh - 76px)); height: auto; }
+.demo:has(.kinds) .menu { width: 100%; }
+.demo:has(.kinds) .menu > #btn-jugar { flex: 0 1 320px; }
+.demo .kinds { display: grid; gap: var(--s-10); width: min(100%, 380px); }
+.demo .kind { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-12); padding: var(--s-10) var(--s-12); text-align: left;
+  border-radius: var(--r-16); border: 2px solid var(--kc); background: color-mix(in srgb, var(--kc) 10%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--kc) 25%, transparent);
+  animation: kindin 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.demo .kind:nth-child(2) { animation-delay: 0.1s; } .demo .kind:nth-child(3) { animation-delay: 0.2s; }
+@keyframes kindin { from { opacity: 0; translate: 24px 0; } }
+.demo .kind .gstage { zoom: 0.62; border-color: var(--kc); }
+.demo .kind b { display: block; font: 400 var(--fs-140)/1 var(--display); letter-spacing: 0.05em; color: var(--kc); }
+.demo .kind p { margin: 2px 0 0; color: var(--ink); font-weight: 700; font-size: var(--fs-85); line-height: 1.3; }
 /* ¡A LA HORA!: the digital time above a bigger clock whose hands the finger turns */
 .demo .digital { font: 900 var(--mg-fs-240)/1 var(--font-num); color: var(--yellow); letter-spacing: 0.04em; margin-bottom: var(--s-8); }
 .demo .setclock { width: min(240px, 62vw); height: min(240px, 62vw); cursor: grab; }
