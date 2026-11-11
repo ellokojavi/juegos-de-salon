@@ -21,6 +21,7 @@ export const FLAGS = {
   'cup-podium-early': '🏆 La Copa: on the last day, once nothing left to play can change the first three places, the board announces the podium before the cup closes',
   'cup-again': '🏆 La Copa: «Otra copa con este grupo» under a finished cup\'s podium, for its admin: the create screen comes filled from that cup, to check and confirm (#1165)',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
+  'uad-clean-hero': '📅 Uno al día: a cleaner points box, your place big, last month\'s crown on its own, the streak in one line',
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'aletazo': '🐤 Aletazo: the game, on the home page, the search and new cups (D-517\'s way), launched 2026-11-09 at 00:00 Pacific',

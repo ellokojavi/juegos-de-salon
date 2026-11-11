@@ -113,6 +113,12 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
   same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
   die until today was played. The home card's chip **▶ Jugar hoy** rolls it straight from the home
   page (see "The home card: two destinations").
+  In the lab (flag `uad-clean-hero`, the owner's pick of three mockups, 2026-11-11) the season box is
+  cleaner: the place big (#3 del mes) with the points and the days left under it in plain text (the
+  points big while there is no place), last month's 👑 chip on a row of its own, and the streak, the
+  wildcards and today's points in one line (🔥 9 días · 🧊 1 · ✅ +125 hoy). Without "Hoy sumaste…", the
+  "te faltan N pts para pasar a X" line, the best streak and today's bonus: today's breakdown is in the
+  calendar's day.
 - Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Jugar otro
   y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.". (Sharing the result stays on the
   game's result card; on /today/ what is shared is the ranking, 2026-10-22.)
@@ -283,7 +289,7 @@ acumulado:
 
 | Bloque | Qué muestra |
 |---|---|
-| **Temporada** (D-414) | The month's points ("Temporada de octubre · quedan 11 días", the total in yellow), the place and who is just ahead ("#3 del mes · te faltan 40 pts para pasar a Yayo"), what today added, then 🔥 streak, best streak, 🧊 wildcards and today's bonus, and "¿Cómo se ganan los puntos?" (a four-line dialog) |
+| **Temporada** (D-414) | The month's points ("Temporada de octubre · quedan 11 días", the total in yellow), the place and who is just ahead ("#3 del mes · te faltan 40 pts para pasar a Yayo"), what today added, then 🔥 streak, best streak, 🧊 wildcards and today's bonus, and "¿Cómo se ganan los puntos?" (a four-line dialog). In the lab (`uad-clean-hero`, `#seccion-uad-clean-hero`), the cleaner box: 👑 on its own row, the place big ("#3 del mes") over the points and the days left, and one line "🔥 9 días · 🧊 1 · ✅ +125 hoy" (`pts.hoyMas`) |
 | **Jugar** | Before playing, **Jugar** (the die) right under the season box, above the fold (U-39) |
 | **Rankings** | Pestañas (D-414, the same under the result): **Mes** (the season's points) · **Hoy** (el desafío de hoy; when a Mes tab is there, a note under it, `todayGameOnly`, says its points are the game's alone and the streak bonus is added in Mes) · **Rachas** (mejor racha) · **Amigos** (the month's points among friends: los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron). Under them, **📤 Compartir el ranking** (2026-10-22, the owner's request): a 1080 px picture of the tab on screen (top 10, the player's neighbours, their row highlighted, `laminaRanking` in `uno-al-dia-ui.js`), a short line ("Voy #3 en el ranking de Uno al día. ¿Me alcanzas? Juega el de hoy:") and the link to /today/, with the player's invite link when signed in. Without file sharing, the picture downloads and the text is copied (`compartir.js`). Only on /today/, not /records/ |
 | **Hoy** | Once played, after the ranking (the owner's request): el juego con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), el reloj al próximo ("Próximo juego en 7 h 12 min."), Jugar otro y Repetir. **Compartir mi resultado** was removed from /today/ (2026-10-22); the game's result card keeps it |
