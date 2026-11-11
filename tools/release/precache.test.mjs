@@ -3,7 +3,7 @@
 // page and the heavy media stay out, and each JS/CSS URL carries the ?h= set-version.py gives it.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { precache, NEVER, BIG } from './precache.mjs';
@@ -33,6 +33,10 @@ for (const u of urls) {
   }
   if (/\.(webp|jpe?g|png)$/.test(f)) assert.ok(statSync(join(SITE, f)).size <= BIG, `${f}: big pictures are cached when seen, not up front`);
 }
+// A page loads its own modules through `import`, never `<script type="module" src>`: the import map
+// gives an import its `?h=`, not a src, and the offline worker kept the unstamped file forever (¡Al toque!, 2026-11-10)
+const pages = d => readdirSync(join(SITE, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? pages(join(d, e.name)) : e.name === "index.html" ? [join(d, e.name)] : []);
+for (const p of pages("")) assert.ok(!/<script type="module" src="(?!https?:)/.test(readFileSync(join(SITE, p), "utf8")), `${p}: load its module with import, so it gets its ?h= (D-467)`);
 const bytes = urls.map(u => u.split('?')[0]).filter(f => /\.\w+$/.test(f)).reduce((n, f) => n + statSync(join(SITE, f)).size, 0);
 assert.ok(bytes < 8 * 1048576, `the precache stays under 8 MB (${(bytes / 1048576).toFixed(1)} MB)`);
 console.log(`✓ precache: ${urls.length} URLs, ${(bytes / 1048576).toFixed(1)} MB, every offline-capable game and nothing heavy`);
