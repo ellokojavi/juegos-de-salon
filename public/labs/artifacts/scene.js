@@ -197,6 +197,13 @@ export function escena(canvas) {
     for (const f of level.fixed) if (f.type === 'wall') girder(f);
     for (const f of level.fixed) if (f.type !== 'wall' && f.type !== 'spikes') part(f, true);
     basket(level.goal, s.won);
+    // While building, the ball waits tucked in the pipe, only its bottom showing; on Probar it slides out
+    // (s.emerge 0→1) and then falls. It is drawn behind the pipe until it is out.
+    const tucked = !s.run || (s.emerge ?? 1) < 1;
+    if (tucked && !s.popped) {
+      const e = s.run ? 1 - (1 - s.emerge) ** 3 : 0, tuck = 0.36 - R + 0.07;
+      ball({ x: level.start.x, y: tuck + (level.start.y - tuck) * e }, s.roll || 0);
+    }
     pipe(level.start);
     for (const p of s.board.placed) {
       if (p === s.dragging) continue;   // it floats as the ghost while it is dragged
@@ -225,7 +232,7 @@ export function escena(canvas) {
     // the trail, then the ball
     s.trail.forEach(([x, y], i) => { ctx.globalAlpha = 0.3 * i / s.trail.length; ctx.fillStyle = C.pink; ctx.beginPath(); ctx.arc(X(x), X(y), X(R) * (0.3 + 0.5 * i / s.trail.length), 0, 7); ctx.fill(); });
     ctx.globalAlpha = 1;
-    if (!s.popped) ball(s.run ? s.run.ball : level.start, s.roll || 0);
+    if (!s.popped && !tucked) ball(s.run.ball, s.roll || 0);
     basketFront(level.goal, s.won);
     // particles
     for (const p of sparks) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.colour; ctx.beginPath(); ctx.arc(X(p.x), X(p.y), X(p.size), 0, 7); ctx.fill(); }
