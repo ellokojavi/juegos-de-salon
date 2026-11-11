@@ -113,6 +113,12 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
   same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
   die until today was played. The home card's chip **▶ Jugar hoy** rolls it straight from the home
   page (see "The home card: two destinations").
+  In the lab (flag `uad-clean-hero`, the owner's pick of three mockups, 2026-11-11) the season box is
+  cleaner: the place big (#3 del mes) with the points and the days left under it in plain text (the
+  points big while there is no place), last month's 👑 chip on a row of its own, and the streak, the
+  wildcards and today's points in one line (🔥 9 días · 🧊 1 · hoy +125). Without "Hoy sumaste…", the
+  "te faltan N pts para pasar a X" line, the best streak and today's bonus: today's breakdown is in the
+  calendar's day.
 - Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Jugar otro
   y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.". (Sharing the result stays on the
   game's result card; on /today/ what is shared is the ranking, 2026-10-22.)

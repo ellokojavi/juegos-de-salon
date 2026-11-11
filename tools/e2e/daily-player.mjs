@@ -69,7 +69,7 @@ ok(await waitFor(`!!document.querySelector('.rk-ranking[data-tabla="uno-al-dia"]
 ok(await waitFor(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'with Sara in "Mes"');
 const tabs = await ev(`[...document.querySelectorAll('.rk-ranking[data-tabla="uno-al-dia"] .rk-seg button')].map(b=>b.textContent).join(' · ')`);
 ok(tabs === 'Mes · Hoy · Rachas · Amigos', `tabs: ${tabs}`);
-ok(await waitFor(`/#1 del mes/.test(document.getElementById('uad-puntos')?.innerText||'')`), `the season box says her place (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
+ok(await waitFor(`/#1\\s+del mes/.test(document.getElementById('uad-puntos')?.innerText||'')`), `the season box says her place (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 await ev(`document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] [data-p="rachas"]').click(); 1`);
 ok(await waitFor(`/🔥/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'Rachas shows the streak with 🔥');
 ok(/comodín/.test(await text('#uad-invitar')), `inviting says what you win (${(await text('#uad-invitar')).replace(/\n/g, ' / ')})`);
@@ -111,7 +111,7 @@ ok(Object.keys(d.invitados[sara]).length === 1, "playing again doesn't add anoth
 await switchTo('sara', 'pedro');
 await b.go(`${SITE}/today/`, 2200);
 ok(await waitFor(`/aceptó tu desafío: ganaste un comodín/.test(document.querySelector('[data-aviso="aceptado"]')?.innerText||'')`), `Sara sees her challenge was accepted (${await text('[data-aviso="aceptado"]')})`);
-ok(/🧊 1/.test(await text('#uad-comodines')), 'and has a wildcard');
+ok(await waitFor(`/🧊 1/.test(document.getElementById('uad-trio')?.textContent || '')`, 12), `and has a wildcard (${await text('#uad-trio')})`);
 await b.go(`${SITE}/today/`, 2200);
 ok(!await ev(`!!document.querySelector('[data-aviso="aceptado"]')`), 'the notice shows only once');
 await b.shot('sara-wildcard');
@@ -120,7 +120,7 @@ await b.shot('sara-wildcard');
 await b.go(`${SITE}/records/?test`, 1500);
 ok(await waitFor(`/Sara/.test(document.querySelector('[data-tabla="uno-al-dia-pts"] .rk-lista')?.innerText||'')`), "/records/ shows Uno al día's month points, with Sara");
 await b.go(`${SITE}/today/?test`, 1800);
-ok(await waitFor(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'') && /#1 del mes/.test(document.getElementById('uad-puntos')?.innerText||'')`), `/today/ shows the same ranking and her place (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
+ok(await waitFor(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'') && /#1\\s+del mes/.test(document.getElementById('uad-puntos')?.innerText||'')`), `/today/ shows the same ranking and her place (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 await b.shot('daily-points');
 // Sharing the ranking (owner's request): its picture, a short line and her invite link
 ok(await ev(`!!document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] #btn-uad-compartir-ranking')`), 'the ranking carries its share button');

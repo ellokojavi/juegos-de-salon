@@ -77,6 +77,10 @@
     .uad-trio div { display: grid; }
     .uad-trio b { font: 900 1.4rem/1.15 var(--font-num); font-variant-numeric: tabular-nums; }
     .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.74rem; }
+    /* The cleaner box (lab, uad-clean-hero): the place in the points' type, its points and the days plain */
+    .hero.limpia .bajo { color: var(--muted); font-size: 0.95rem; }
+    .hero.limpia .bajo #uad-pts { color: var(--ink); }
+    .hero.limpia .uad-linea { padding-top: 10px; border-top: 1px solid var(--glass-border); font: 800 1.05rem var(--font-num); }
     .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.92rem var(--font-body); text-decoration: underline; cursor: pointer; }
     /* A short phone (320×568, 375×667): the cover and the season's box shrink so Jugar is seen
        without scrolling (U-39) */
@@ -176,6 +180,7 @@
     import { fmt, tirarHoy, rotuloJugar, jugarOtro, tarjetaInvitar, botonCompartirRanking, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
     import { walk, seasonPoints, bonusFor } from '../assets/js/daily-points.js';
     import { UNO_AL_DIA, UAD_PUNTOS, periodoMes } from '../assets/js/records.js';
+    import { flag, cachedFlags, stateOf } from '../assets/js/flags.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
@@ -232,6 +237,11 @@
     let rkGuardado = null;
     // The days uploaded too late for points (#879): Firebase says which, after the sync
     let tarde = [];
+    // The cleaner season box (lab, the owner's pick): the first drawing goes by what this phone last saw of
+    // the flag, so a player does not wait on the network; a lab key holder gets it on the redraw.
+    // lab: #seccion-uad-clean-hero
+    let limpia = stateOf(cachedFlags(), 'uad-clean-hero') === 'all';
+    flag('uad-clean-hero').then(v => { if (v !== limpia) { limpia = v; dibujar(); } }).catch(() => {});
 
     /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
     const dibujar = async ({ avisos = [] } = {}) => {
@@ -245,7 +255,7 @@
          points are won goes under Jugar, so Jugar is seen without scrolling (U-39) */
       const quien = await desafio;
       const conJugar = !e.dia && !quien;
-      nuevo.push(temporada(e, w, !conJugar));
+      nuevo.push((limpia ? temporadaLimpia : temporada)(e, w, !conJugar));
 
       /* Hoy: si falta, el dado (o el desafío de quien invitó); jugado, el resultado y compartir */
       if (!e.dia && quien) {
@@ -321,6 +331,7 @@
     const sentado = () => { try { return !!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid; } catch (_) { return false; } };
     const leerCache = periodo => { if (!sentado()) return null; try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isFinite(c.s) ? c.s : null; } catch (_) { return null; } };
     const leerCacheLugar = periodo => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && typeof c.l === 'string' ? c.l : null; } catch (_) { return null; } };
+    const leerCachePuesto = periodo => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isInteger(c.r) && c.r > 0 ? c.r : null; } catch (_) { return null; } };
     const ponerCache = v => { try { if (v) localStorage.setItem(CACHE, JSON.stringify(v)); else localStorage.removeItem(CACHE); } catch (_) { /* sin memoria */ } };
 
     /** The season's box: the points (Firebase's, the last ones it gave, or this phone's), the place and the numbers. */
@@ -350,6 +361,42 @@
           el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
           el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
           el('div', {}, el('b', {}, `+${bonusFor(e.racha + (e.dia ? 0 : 1))}`), el('small', {}, P.bonoHoy))),
+        ...(conComo ? [como()] : []));
+    }
+
+    /**
+     * The cleaner season box (lab, flag uad-clean-hero, the owner's pick): last month's crown on its
+     * own, the place big with the points and the days left under it (the points big while the place
+     * is not known), and the streak, wildcards and today's points in one line. Today's breakdown is
+     * in the calendar's day. lab: #seccion-uad-clean-hero
+     */
+    function temporadaLimpia(e, w, conComo = true) {
+      const hoy = e.hoy, [y, m] = hoy.split('-').map(Number);
+      const yo = enRed?.yo || null;
+      const pts = enRed?.fila ? enRed.fila.s : leerCache(periodoMes(hoy)) ?? seasonPoints(w, hoy);
+      // The place the server gave, or the last one it gave this month, so the big number does not jump
+      // (a read that failed keeps it; one that found no row this month cleared it)
+      const puesto = enRed?.fila?.puesto ?? (sentado() ? leerCachePuesto(periodoMes(hoy)) : null);
+      const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
+      let aviso = null;
+      if (!puesto && yo && !e.dia) aviso = P.juegaHoy;
+      else if (!puesto && yo && e.dia) aviso = P.enUnMomento;
+      const grande = puesto
+        ? el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-puesto' }, fmt(P.chipPuesto, { p: puesto })), el('small', {}, P.delMes))
+        : el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-pts' }, miles(pts)), el('small', {}, P.pts));
+      const bajo = puesto ? [el('span', { id: 'uad-pts' }, fmt(P.ptsN, { n: miles(pts) })), ' · ', quedan(hoy)] : [quedan(hoy)];
+      const dias = e.racha ? fmt(e.racha === 1 ? P.dia1 : P.dias, { n: e.racha }) : '';
+      const partes = [
+        e.racha ? [`🔥 ${dias}`, `${T.rachaLabel}: ${dias}`] : null,
+        e.comodines ? [`🧊 ${e.comodines}`, `${T.comodinesLabel}: ${e.comodines}`] : null,
+        hecho ? [fmt(P.hoyMas, { p: miles(hecho.points) }), `${fmt(P.hoyMas, { p: miles(hecho.points) })} ${P.pts}`] : null,
+      ].filter(Boolean);
+      return el('section', { class: 'panel hero limpia', id: 'uad-puntos' },
+        ...(enRed?.campeon ? [el('div', { class: 'chips' }, el('span', { class: 'chip chip--gold' }, fmt(P.campeon, { mes: mesLargo(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) })))] : []),
+        grande,
+        el('p', { class: 'estado bajo' }, ...bajo),
+        ...(aviso ? [el('p', { class: 'estado lugar', id: 'uad-lugar' }, aviso)] : []),
+        ...(partes.length ? [el('p', { class: 'estado uad-linea', id: 'uad-trio', 'aria-label': partes.map(x => x[1]).join('. ') }, partes.map(x => x[0]).join(' · '))] : []),
         ...(conComo ? [como()] : []));
     }
     /** «¿Cómo se ganan los puntos?»: opens the rules. */

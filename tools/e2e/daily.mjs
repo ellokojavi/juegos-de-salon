@@ -57,7 +57,8 @@ await waitFor(`!!document.getElementById('btn-uad-chip')`);
 /* ---------- The card opens Uno al día; its Jugar rolls the die (D-414) ---------- */
 await ev(`document.getElementById('btn-uad-abrir').click(); 1`);
 ok(await waitFor(`location.pathname === '/today/' && !!document.getElementById('btn-uad-jugar')`, 12), 'tapping it opens /today/, with the season and a Jugar button');
-ok(/Temporada de octubre/.test(await text('#uad-puntos')) && /quedan 26 días/.test(await text('#uad-puntos')), `the season box says the month and the days left (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
+// The cleaner season box (lab flag uad-clean-hero, on for localhost): the points big and the days left
+ok(await waitFor(`!!document.querySelector('#uad-puntos.limpia')`, 20) && /quedan 26 días/.test(await text('#uad-puntos')), `the season box says the points and the days left (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 await b.shot('today-before');
 await click('#btn-uad-jugar');
 ok(await waitFor(`!!document.querySelector('.azar-capa')`, 12), 'Jugar rolls the die');
@@ -133,7 +134,7 @@ ok(await waitFor(`/🔥 1/.test(document.getElementById('uad-trio')?.textContent
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'the month calendar is titled "Calendario"');
 ok(await ev(`document.querySelectorAll('#uad-cal .hoy').length`) === 1 && /🧶/.test(await text('#uad-cal .hoy')), "the calendar marks today with the game's emoji");
 ok(/^\d+$/.test(await text('#uad-cal .hoy .cal-pts')), `and the points it added in a pill: the game plus the streak bonus (${await text('#uad-cal .hoy .cal-pts')})`);
-ok(/Hoy sumaste \d+ pts/.test(await text('#uad-puntos')), `the season box says what today added (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
+ok(/🔥 1 día · hoy \+\d+/.test(await text('#uad-trio')), `the season box's line says the streak and what today added (${await text('#uad-trio')})`);
 ok(!await ev(`!!document.getElementById('uad-por-juego')`), 'no "Por juego" block (owner\'s request)');
 ok(!await ev(`!!document.getElementById('btn-compartir-uad')`), 'nor «Compartir mi resultado» on /today/ (owner\'s request)');
 
@@ -145,7 +146,7 @@ await ev(`(()=>{const d=JSON.parse(localStorage.getItem('${KEY}'));
   for(let n=12;n<=14;n++)d.dias[f(n)]={j:'anio',s:40,ms:1,at:1,n:1};
   localStorage.setItem('${KEY}',JSON.stringify(d));return 1})()`);
 await b.go(`${SITE}/today/`, 1500);
-ok(/🔥 9/.test(await text('#uad-trio')) && /\b9\b/.test(await text('#uad-trio')), `streak of 9 and best streak of 9 (${(await text('#uad-trio')).replace(/\n/g, ' ')})`);
+ok(await waitFor(`/🔥 9 días/.test(document.getElementById('uad-trio')?.textContent || '')`, 20), `a streak of 9 days (${await text('#uad-trio')})`);
 await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElementChild.click(); 1`); await sleep(300);
 ok(/septiembre/i.test(await text('.uad-cal-cab')) && /👑/.test(await text('#uad-cal')), "the previous month shows September's days");
 await b.shot('today');
