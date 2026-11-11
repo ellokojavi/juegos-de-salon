@@ -2216,6 +2216,19 @@
         "stat": "3 file(s) +10 −12: public/labs/microgames/rules.test.mjs, public/labs/microgames/style.css, public/labs/microgames/verdict.test.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 43079020512,
+      "check": "tests",
+      "pr": 1401,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "8ebbc81ac3558a0ccca26c8ae3d14b85b1a04ffc",
+      "test": "tools/agents/rules.test.mjs",
+      "error": "AssertionError [ERR_ASSERTION]: CONTRIBUTING.md rules block is stale: node tools/agents/rules.mjs contributing\n+ actual - expected\ncode: 'ERR_ASSERTION',",
+      "signature": "bd44b2dfef",
+      "date": "2026-11-11T18:36:38.692Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
