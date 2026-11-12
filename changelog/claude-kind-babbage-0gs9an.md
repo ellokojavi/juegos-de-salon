@@ -1,3 +1,3 @@
 level: patch
 
-- **Offline mode**: a stylesheet or script the app loads without its version stamp (the ☁️'s, a La Copa game's) is fetched fresh while online and taken from the phone only with no signal; before, the phone kept serving the first copy it saw, so the ☁️ kept its old bouncing arrow instead of the shimmer.
+- **Offline mode**: the ☁️'s shimmer while storing is faster (one pass in 2.4 s instead of 6) and smooth: the cloud is no longer drawn again on each step of progress, only its ring moves, so the colours never jump.

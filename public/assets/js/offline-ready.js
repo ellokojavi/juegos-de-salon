@@ -131,12 +131,14 @@ export function iconSvg(state) {
 
 /**
  * Storing: the cloud shimmers like the site's titles (`.rainbow` in base.css: yellow, pink, cyan,
- * lime), sliding across in 6 s (the owner, 2026-11-12). The button is drawn again on each progress
+ * lime), sliding across in SHIMMER_S (the owner, 2026-11-12). The button is drawn again on each progress
  * tick, so the slide starts where the clock is, never from the beginning; still with reduced motion.
  */
+/** One pass of the shimmer, in seconds: brisk, like a light running over it (the owner, 2026-11-12: "más rápido y fluido"). */
+export const SHIMMER_S = 2.4;
 function shimmer(now = Date.now()) {
   const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-  const move = still ? '' : `<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="1 0" dur="6s" begin="-${((now % 6000) / 1000).toFixed(2)}s" repeatCount="indefinite"/>`;
+  const move = still ? '' : `<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="1 0" dur="${SHIMMER_S}s" begin="-${((now % (SHIMMER_S * 1000)) / 1000).toFixed(2)}s" repeatCount="indefinite"/>`;
   return '<linearGradient id="or-tg" x1="0" y1="0" x2="1" y2="0" spreadMethod="repeat">'
     + '<stop offset="0" class="or-t1"/><stop offset=".25" class="or-t2"/><stop offset=".5" class="or-t3"/><stop offset=".75" class="or-t4"/><stop offset="1" class="or-t1"/>'
     + `${move}</linearGradient>`;
@@ -147,9 +149,15 @@ function paint(btn, s, lang) {
   const T = TEXTS[lang] || TEXTS.es;
   const was = btn.dataset.state;
   btn.dataset.state = s.state;
+  const p = s.total ? s.have / s.total : 0;
+  // Same state, only the ring moves: the cloud is never drawn again, so its shimmer runs unbroken
+  const ring = btn.querySelector('.or-lleno');
+  if (was === s.state && btn.querySelector('.or-icono')) {
+    ring?.setAttribute('stroke-dasharray', `${(RING * p).toFixed(1)} ${RING.toFixed(1)}`);
+    return;
+  }
   btn.innerHTML = iconSvg(s.state);
   if (s.state === 'loading') {
-    const p = s.total ? s.have / s.total : 0;
     btn.insertAdjacentHTML('afterbegin', `<svg class="or-anillo" viewBox="0 0 50 50" aria-hidden="true"><circle cx="25" cy="25" r="23"/><circle class="or-lleno" cx="25" cy="25" r="23" stroke-dasharray="${(RING * p).toFixed(1)} ${RING.toFixed(1)}"/></svg>`);
   }
   // The glow lights up once, with a flash, when it just finished
@@ -185,7 +193,7 @@ function openSheet({ doc, lang, get, retry, online }) {
   const draw = s => {
     if (!layer) return;
     panel.dataset.state = s.state;
-    icon.innerHTML = iconSvg(s.state);
+    if (panel.dataset.drawn !== s.state) { icon.innerHTML = iconSvg(s.state); panel.dataset.drawn = s.state; }
     title.textContent = T[s.state].title;
     lines.replaceChildren(...linesOf(s, { lang, online: online(), steps: pasosDe() }).filter(Boolean).map(p => el('p', {}, p)));
     bar.hidden = s.state !== 'loading';
