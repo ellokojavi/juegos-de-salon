@@ -512,6 +512,7 @@ node firebase/splash.test.mjs
 node marketing/served.test.mjs
 node marketing/splash/campaigns.test.mjs
 node marketing/splash/teaser.test.mjs
+node public/assets/css/font-synthesis.test.mjs
 node public/assets/css/fonts-preload.test.mjs
 node public/assets/js/all-games.test.mjs
 node public/assets/js/arrastre.test.mjs

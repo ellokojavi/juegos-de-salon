@@ -1414,6 +1414,7 @@
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
     "marketing/splash/teaser.test.mjs",
+    "public/assets/css/font-synthesis.test.mjs",
     "public/assets/css/fonts-preload.test.mjs",
     "public/assets/js/all-games.test.mjs",
     "public/assets/js/arrastre.test.mjs",
