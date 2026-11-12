@@ -1,12 +1,11 @@
 // node public/labs/transfer/engine.test.mjs: the rules (C-12)
 import assert from 'node:assert/strict';
 import { run, newGame, place, unplace, go, hint, planCards, isOver, totalStars } from './engine.js';
-import { CITIES, LOCALES, HEARTS } from './rules.js';
+import { CITIES, TRIPS, LOCALES, HEARTS } from './rules.js';
 const LEVELS = CITIES.santiago.levels, STATIONS = CITIES.santiago.stations;
 
-// Every city: five levels, each solution arrives, every station and line it names exists, the steps grow
+// Every level of every city's pool: its solution arrives, every station and line it names exists, the steps grow
 for (const [id, city] of Object.entries(CITIES)) {
-  assert.equal(city.levels.length, 5, id);
   city.levels.forEach((level, i) => {
     const where = id + ' level ' + (i + 1);
     const r = run(level, level.solution.map(c => level.hand[c]));
@@ -17,10 +16,16 @@ for (const [id, city] of Object.entries(CITIES)) {
     assert.ok(city.stations[level.goal] && city.stations[level.start.station], where);
     assert.ok(level.hand.some((_, c) => !run(level, [level.hand[c]]).ok), where + ': a wrong card exists');
   });
-  // The same five steps everywhere: a closed station on the fourth, a station to pass on the fifth, and each bites
-  assert.ok(city.levels[3].closed?.length && city.levels[4].via, id);
-  assert.deepEqual(city.levels.map(l => l.slots), [1, 2, 3, 4, 5], id);
+  for (const level of city.levels) assert.equal(level.city, id, 'each level knows its city');
 }
+
+// The game: five trips, each on a different metro, each harder (count, other platform, transfer, closed, via)
+assert.equal(TRIPS.length, 5);
+assert.equal(new Set(TRIPS.map(l => l.city)).size, 5, 'five different metros');
+assert.deepEqual(TRIPS.map(l => l.slots), [1, 2, 3, 4, 5]);
+assert.ok(TRIPS[1].hand[TRIPS[1].solution[0]].t === 'turn', 'trip 2 needs the other platform');
+assert.ok(TRIPS[2].solution.some(c => TRIPS[2].hand[c].t === 'change'), 'trip 3 needs a transfer');
+assert.ok(TRIPS[3].closed?.length && TRIPS[4].via, 'trip 4 has a closed station, trip 5 a station to pass');
 
 // Santiago's levels, one by one: its solution arrives, fits its slots, and every station it names exists
 LEVELS.forEach((level, i) => {
