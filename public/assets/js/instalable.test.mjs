@@ -44,7 +44,7 @@ await caso('los íconos de tools/release/icons.mjs están todos, con su medida',
 
 await caso('the service worker caches only in offline mode, pages network-first (D-538; sw.test.mjs tests it)', () => {
   const sw = readFileSync(join(PUBLIC, 'sw.js'), 'utf8');
-  assert.match(sw, /if \(encendido\) e\.respondWith\(keep\(req\)\)/, 'files are touched only with offline mode on');
+  assert.match(sw, /if \(encendido\) e\.respondWith\(unhashed\(url\) \? fresh\(req\) : keep\(req\)\)/, 'files are touched only with offline mode on');
   assert.match(sw, /encendido \? page\(req\) : fetch\(req\)/, 'pages go to the network as before with it off');
 });
 

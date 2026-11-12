@@ -155,4 +155,19 @@ assert.equal(await w.get('/zip/?connection=online', 'navigate'), 'zip v4', 'the 
 assert.equal(await w.get('/zip/', 'navigate'), 'zip v4', 'and the cut is over');
 await w.tell({ type: 'offline', on: true, release: '0.2.0-def', forced: false });
 
+// A stylesheet a module adds without its ?h= (loadCss): online it is always the latest, offline the last kept
+{
+  const s2 = { files: { '/': 'home', '/assets/css/x.css': 'css v1' }, list: { release: 'r', urls: ['./'] } };
+  const w3 = worker({ site: s2 });
+  await w3.ready();
+  await w3.tell({ type: 'offline', on: true, release: 'r' });
+  assert.equal(await w3.get('/assets/css/x.css'), 'css v1');
+  await w3.ready();
+  s2.files['/assets/css/x.css'] = 'css v2';
+  assert.equal(await w3.get('/assets/css/x.css'), 'css v2', 'an unhashed stylesheet is never stuck on an old copy (the ☁️, 2026-11-12)');
+  await w3.ready();
+  w3.net.up = false;
+  assert.equal(await w3.get('/assets/css/x.css'), 'css v2', 'and without signal the last one kept is served');
+}
+
 console.log('✓ sw: off changes nothing; on stores the release, pages network-first, ?h= from the cache, old releases go; a tester\'s cut answers only from the cache');
