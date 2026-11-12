@@ -1,6 +1,6 @@
 // Game icons (docs/DESIGN.md rule 9): a screen that shows a game's icon in the page uses gameIcon()
 // / withIcon() from game-icon.js, so a game drawn as an icon (Sudoku) shows its drawing everywhere.
-// It scans public/ for a game's `.emoji` written into DOM-building code; text-only places keep the
+// It scans public/ for a game's `.emoji` written into DOM-building code or drawn on a canvas; text-only places keep the
 // emoji stand-in and are listed below with their reason. Uso: node public/assets/js/game-icons.test.mjs
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -12,10 +12,11 @@ const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 // A game's emoji: a game entry (g, G, j, J, game, juego, elegido), La Copa's table or a lookup by id
 const GAME_EMOJI = /\b(?:J|G|g|j|game|juego|elegido)\.emoji\b|JUEGOS_COPA(?:_ES)?(?:\[[^\]]*\]|\.[a-z]+)\??\.emoji|(?:gameById|juegoDia)\([^)]*\)\??\.emoji|JC\[[^\]]*\]\??\.emoji/;
 // …written into the page: an element, a node, its text or its HTML
-const DOM = /\bel\(|\bnode\(|textContent|replaceChildren|\.append\(|innerHTML|<span|conEmoji\(/;
+const DOM = /\bel\(|\bnode\(|textContent|replaceChildren|\.append\(|innerHTML|<span|conEmoji\(|fillText|conHalo\(/;  // the page, and canvas drawings (dice, share images)
 
 // The text-only places (and the owner's own pages): file, a piece of the line, why the emoji stays
 const ALLOWED = [
+  ['public/assets/js/compartir.js', 'fillText(juego.emoji', 'the stand-in on the share image when the game has no drawing or it failed to load'],
   ['public/today/index.html', 'fmt(T.hoyListo', 'a sentence formatted as text ("You played #️⃣ Sudoku…"): the emoji stands in'],
   ['public/labs/daily-score/index.html', '${emoji(', "a lab prototype built as an HTML string, the owner's only"],
 ];

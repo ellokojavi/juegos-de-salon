@@ -63,6 +63,10 @@ old debt in `docs/manifest-debt.json`, which only shrinks; an old entry moves wi
   a new mode goes in `MODES`. The rest the home page asks is in C-17 (`games.test.mjs`).
 - `keywords`: es, en and pt, at least three each (D-404; `search.test.mjs`); a lab game may go without.
 - `labs: true` and `slug` while it lives under `public/labs/` (C-18).
+- `icon: '<folder>/icon.svg'` (path from the site root) when no emoji fits the game: the drawing then shows
+  everywhere on screen —list, pills, buttons, dice, share images— through `game-icon.js`, and `emoji` stays as
+  the text stand-in (messages, `<title>`). Never write `.emoji` into the screen yourself: DESIGN.md rule 9,
+  `game-icons.test.mjs`.
 - `reuses`, only if it plays another game's engine on purpose: those files, for the e2e scope
   (`scope.test.mjs`).
 - `unoAlDia: { orden, desde, hasta?, grupo? }` if it enters One a Day: `orden` is the next free place
