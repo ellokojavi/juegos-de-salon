@@ -61,8 +61,8 @@ export function minBid(prev, pinta, rules = {}) {
   // (D-490, Wikipedia: "puede cambiar la pinta por una cantidad mayor").
   if (rules.obligada) return !prev ? 1 : pinta === prev.p || rules.changeFace ? prev.n + 1 : Infinity;
   if (!prev) return rules.noAceOpen && pinta === 1 ? Infinity : 1;
-  // Into aces: half rounded up, or with the classic rules half plus one when even (6 fives → 4 aces, D-490)
-  if (pinta === 1) return prev.p === 1 ? prev.n + 1 : rules.halfPlusOne ? Math.floor(prev.n / 2) + 1 : Math.ceil(prev.n / 2);
+  // Into aces: half rounded up, also with the classic rules (6 fives → 3 aces; players' feedback, D-490 amended)
+  if (pinta === 1) return prev.p === 1 ? prev.n + 1 : Math.ceil(prev.n / 2);
   if (prev.p === 1) return prev.n * 2 + 1;
   return pinta > prev.p ? prev.n : prev.n + 1;
 }
@@ -86,10 +86,10 @@ export const MIN_CALZAR = 3;
  * Lo de los tres jugadores es porque en un duelo solo hay una mano tapada, así que la cuenta
  * exacta deja de ser un riesgo y pasa a ser aritmética: el que calza ya sabe casi todo.
  */
-export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR, rules = {}) {
-  // Classic rules (lab, D-490): calzar also in a duel, and a player with one die may calzar at any time
-  if (!bid || jugadores < (rules.classic ? MIN_PLAYERS : MIN_CALZAR)) return false;
-  return (rules.classic && rules.oneDie) || bid.n * 2 >= totalDice;
+export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR) {
+  // The same with the classic rules: from half the table and three players, also with one die (players' feedback)
+  if (!bid || jugadores < MIN_CALZAR) return false;
+  return bid.n * 2 >= totalDice;
 }
 
 /**
@@ -289,7 +289,8 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
   let last = null;
 
   const nuevaRonda = () => {
-    const obligada = !!config.traditional && !!opener && st[opener].dice === 1 && !st[opener].obligado;
+    // Not in a duel: with two players left the round is a normal one (players' feedback)
+    const obligada = !!config.traditional && !!opener && st[opener].dice === 1 && !st[opener].obligado && aliveNow().length > 2;
     if (obligada) st[opener].obligado = true;
     return {
       n: history.length, opener, rolls: {}, bid: null, bids: [], obligada, pass: null, passed: {},
@@ -298,15 +299,14 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
   };
   const classic = !!config.traditional;
   /**
-   * The rules for `who` in this round. With the classic rules (D-490): going into aces is half
-   * plus one, the obligada round is open (everyone sees the others' dice, not their own), and in
-   * it a player who also has one die may change the face.
+   * The rules for `who` in this round. With the classic rules (D-490): no opening in aces, and in
+   * the obligada round (closed: each player sees only their own dice) a player who also has one
+   * die may change the face.
    */
   const rulesOf = (r, who = r.current) => ({
-    obligada: !!r.obligada, noAceOpen: classic, halfPlusOne: classic, open: !!r.obligada,
+    obligada: !!r.obligada, noAceOpen: classic,
     changeFace: !!r.obligada && !!who && who !== r.opener && st[who]?.dice === 1,
   });
-  const calzaRules = who => ({ classic, oneDie: !!who && st[who]?.dice === 1 });
   const pasarOn = classic && !!config.pasar;
   const canPassNow = (r, who) => pasarOn && !!r.bid && !r.passed[who] && st[who]?.dice === perPlayer && perPlayer === DICE_PER_PLAYER;
   // The pass still standing: nobody has bid since, so the player on turn may doubt it
@@ -409,7 +409,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
         cerrar(round, { type: 'dudoPaso', by: play.from, of: round.pass.by });
       } else if (play.t === 'dudo' && round.bid) {
         cerrar(round, { type: 'dudo', by: play.from });
-      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length, calzaRules(play.from))) {
+      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length)) {
         cerrar(round, { type: 'calza', by: play.from });
       } else if (play.t === 'timeout' && config.turnSecs > 0 && Number(play.r) === round.n) {
         // Only the player on turn sends it, from their own phone, and only for this round
@@ -443,7 +443,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     rules: rulesOf(round, current), obligada: !!round.obligada,
     canPass: !!current && canPassNow(round, current), pass: round.pass, passStanding: passStands(round),
     rolls: round.rolls, bid: round.bid, bids: round.bids, end: round.end,
-    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length, calzaRules(current)),
+    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length),
     last, history, done,
     winner: done ? (vivos[0] || null) : null,
   };

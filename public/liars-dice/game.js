@@ -185,9 +185,7 @@ async function act() {
         const salt = randomSalt();
         S.secrets[v.round] = { dice: dados, salt };
         saveSession();
-        // In the open obligada round (D-490) everyone must see the others' die, so it travels in the
-        // clear along with its hash; each screen hides the player's own (honour, as at the table)
-        S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt), ...(v.rules.open ? { d: writeDice(dados) } : {}) });
+        S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt) });
       } else {
         S.transport.send({ t: 'roll', from: r, d: writeDice(dados) });
       }
@@ -211,12 +209,10 @@ async function act() {
     const mine = diceOf(v, 'B');
     if (!mine) return;
     // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/games/liars-dice.md)
-    // In the open obligada round (D-490) it sees the others' dice and not its own
-    const vistos = v.rules.open ? v.alive.filter(r => r !== 'B').flatMap(r => diceOf(v, r) || []) : null;
     const jugada = botMove({
       myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar, rules: v.rules,
       rivales: v.alive.filter(r => r !== 'B').map(r => v.st[r].dice),
-      seen: vistos, canPass: v.canPass, passStanding: v.passStanding,
+      canPass: v.canPass, passStanding: v.passStanding,
     });
     setTimeout(() => {
       if (!S || S.mode !== 'cpu') return;
@@ -314,16 +310,9 @@ function renderRivals(v, yo) {
   box.innerHTML = '';
   for (const r of M.players) {
     const s = v.st[r];
-    const vistos = v.rules.open && r !== yo && !s.out ? diceOf(v, r) : null;
-    // Your own die in the open round: a die-sized ❓, as visible as the rivals' dice
-    const propio = v.rules.open && r === yo && !s.out;
-    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') + (vistos || propio ? ' seen' : '') },
+    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') },
       el('span', { class: 'n' }, nameOf(r)),
-      vistos ? el('span', { class: 'd dice-row' }, ...vistos.map(d => dieEl(d, { small: true })))
-        // One ❓ per die you hold (rooms playtest: with three dice the strip showed a single one)
-        : propio ? el('span', { class: 'd dice-row', 'aria-label': s.dice > 1 ? T.yourDiceHidden : T.yourDieHidden },
-          ...Array.from({ length: s.dice }, () => el('span', { class: 'die die--sm hidden-die', 'aria-hidden': 'true' }, '❓')))
-        : el('span', { class: 'd' }, s.out ? '—' : '🎲'.repeat(s.dice)),
+      el('span', { class: 'd' }, s.out ? '—' : '🎲'.repeat(s.dice)),
     ));
   }
 }
@@ -332,14 +321,12 @@ function renderRivals(v, yo) {
 function showObligada(v) {
   // One phone: what the previous player saw stays under the notice, and it holds the next one's die
   $('#rivals').innerHTML = ''; $('#mine').innerHTML = ''; $('#bid-board').innerHTML = ''; $('#actions').innerHTML = '';
-  const local = S.mode === 'local';
   let next = null;
   const stage = el('div', { class: 'stage pop obligada-notice' },
     el('div', { class: 'count' }, '☝️'),
     el('div', { class: 'next-name' }, T.obligadaTitle),
     el('div', { class: 'outcome' }, fmt(T.obligadaWho, { name: nameOf(v.opener) })),
     el('p', { class: 'hint' }, T.obligadaOpen),
-    local ? el('p', { class: 'hint' }, T.obligadaLocal) : null,
     el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); next && next(); } }, T.obligadaOk),
   );
   SFX.reveal(); vibrate([40, 40, 40]);
@@ -368,12 +355,9 @@ function renderPlay(v) {
   else {
     agite.onJolt = null;
     soltarVaso();
-    // In the open obligada round your own die is the one you do not see (D-490)
-    const oculto = v.rules.open;
-    mine.append(el('div', { class: 'mine-label' }, oculto ? (dados.length > 1 ? T.yourDiceHidden : T.yourDieHidden) : T.yourDice));
+    mine.append(el('div', { class: 'mine-label' }, T.yourDice));
     const giros = S.giros?.[`${v.round}:${yo}`];
     const fila = el('div', { class: 'dice-row' }, ...dados.map((d, i) => {
-      if (oculto) return el('span', { class: 'die hidden-die', 'aria-label': '?' }, '❓');
       const dado = dieEl(d);
       if (giros?.[i]) dado.style.rotate = `${giros[i]}deg`;   // as it landed on the cloth
       return dado;
@@ -511,14 +495,11 @@ function renderActions(v, yo, miTurno, tapados = false) {
     // table of six never noticed the button, which shows up only once the bid reaches half the dice
     S.calzarVisto ||= new Set();
     const aviso = `${v.round}:${v.bids.length}:${v.current}`;
-    // Open early because the player has one die (classic rules), not because the bid reached half
-    // the table: that is a different reason, so it gets its own one-time line that says why (playtest)
-    const porUno = v.canCalzar && v.st[v.current]?.dice === 1 && v.bid.n * 2 < v.totalDice;
-    const visto = porUno ? `${v.current}:1` : v.current;
+    const visto = v.current;
     // The one-time calzar line is for everyone, with or without the classic rules (D-490, launched D-495)
     if (v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
       S.calzarVisto.add(visto); S.calzarAviso = aviso;
-      acciones.append(el('p', { class: 'calzar-hint' + (porUno ? ' one-die' : '') }, '🎯 ', fmt(porUno ? T.calzarOneDie : T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
+      acciones.append(el('p', { class: 'calzar-hint' }, '🎯 ', fmt(T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
     }
   }
   box.append(acciones);
@@ -586,7 +567,7 @@ function escucharAgite() {
 
 /** Are this role's dice still to roll? */
 function cubiertos(v, role, dados) {
-  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open' && !v.rules?.open;
+  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open';
 }
 
 /**
@@ -952,7 +933,6 @@ function setupChat(mode) {
 
 /* ---------- Pase del celular (C-9) ---------- */
 function showPass(role) {
-  // One phone in the open obligada round: the screen under the pass shows the next player's die
   // The board and the buttons go too: the pass screen sits on an empty table (playtest)
   $('#rivals').innerHTML = ''; $('#mine').innerHTML = ''; $('#bid-board').innerHTML = ''; $('#actions').innerHTML = '';
   showHandoff([passBlock({ label: T.hoPass, name: nameOf(role), button: T.hoReady })],

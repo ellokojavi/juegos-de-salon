@@ -57,18 +57,15 @@ takes the same `rules`. The audit against the traditional rules is in #897.
 
 **Round two (D-490, the owner's answers in #897).** Also under the switch:
 
-- **Into aces is half plus one** when even (6 fives → 4 aces), half rounded up when odd.
-- **Calzar** also in a duel (D-71 stays for the public game), and a player with **one die may calzar
-  at any time**. A correct calza at five keeps five. The first time the button opens to a player
-  in a game, a cyan line under it says what calzar is (`.calzar-hint`).
+- **Into aces is half rounded up**, as in the public game (6 fives → 3 aces; D-552 replaced D-490's
+  half plus one after a cacho table's feedback).
+- **Calzar** as in the public game: from half the dice and with three players or more, also with one
+  die (D-552). A correct calza at five keeps five. The first time the button opens to a player in a
+  game, a cyan line under it says what calzar is (`.calzar-hint`).
 - **The obligada round is automatic and announced**: a full-screen notice for everyone (☝️ Ronda
-  obligada · «X quedó con un dado»), also with two players left, and a line in the hand all round.
-- **It is open**: the rivals' strip shows each other player's die face up and your own as ❓; your
-  hand shows ❓ ("Tu dado: esta ronda no lo ves"), and the shake does not apply that round.
-  In a room the dice of that round travel in the clear (`roll` with `d` and `h`), so nobody has to
-  reveal at the end; each phone hides its own. **One phone:** the pass screen and the notice clear
-  the table under them (the previous screen showed the next player's die), and the notice asks
-  whoever does not hold the phone not to look at it, since every screen shows their die.
+  obligada · «X quedó con un dado»), only with three players or more alive (D-552), and a line in the
+  hand all round.
+- **It is closed** (D-552): each player sees only their own dice, as in any round.
 - **Changing the face**: in the obligada round a player other than the opener who also has one die
   may change the face, always raising the quantity (`rules.changeFace`).
 - **Variantes**, a folded row that shows only with the switch on, each off: **Pasar** (five dice
@@ -78,8 +75,7 @@ takes the same `rules`. The audit against the traditional rules is in #897.
 - **The rules say why** (playtest): a face closed by a rule (`.pinta.closed`, kept
   tappable with `aria-disabled`) puts one muted line under the faces (`.face-why`: no opening in aces,
   or the obligada round's fixed face with its one-die exception), which pulses when the face is tapped;
-  the calzar line has its own one-time version when it opened because you have one die
-  (`.calzar-hint.one-die`); the siciliana reveal adds "Primera apuesta de la partida: se pierden dos
+  the siciliana reveal adds "Primera apuesta de la partida: se pierden dos
   dados". **Pasar** shows "Paso" plus "✋ Tienes mano para pasar" when the hand allows it, and
   otherwise **"Paso de farol"** with a line saying the pass can be doubted: the bluff stays (it is part
   of the traditional game), but the label tells a first-timer it is one. "De farol" because it is the
@@ -92,8 +88,7 @@ takes the same `rules`. The audit against the traditional rules is in #897.
   shows only once the bid reaches half the dice (13 of 25); simulated, a five-player game first
   allows it around round 11 of ~23, in 16% of the rounds, with nothing announcing it.
 
-The bot: in the open round it counts the dice it sees (`seen`) and treats its own as unknown; it
-passes with a qualifying hand half the time and doubts a pass about a third of the time.
+The bot passes with a qualifying hand half the time and doubts a pass about a third of the time.
 Tested end to end by `tools/e2e/liars-dice/classic.mjs`.
 
 **In a room** (rooms playtest with 2 to 5 phones, D-490): the host's switch and variants travel in the
@@ -102,8 +97,7 @@ validate like the other config keys; before that, a room with the classic rules 
 (permission denied, also on rematch). The lobby names the table's rules and its variants
 (`.lobby-rules`) so a guest knows before the ace will not open; a guest plays the
 host's rules and gets their explanations too; the one-time calzar line shows to everyone, with or without
-the classic rules (D-495);
-in the obligada round your own strip shows one ❓ per die you hold. The playtest is
+the classic rules (D-495). The playtest is
 `tools/e2e/liars-dice/rooms-classic.mjs`: it opens rooms in the production Firebase, so it is in
 `ALSO_FIREBASE` and CI does not run it. With `SICILIANA=1` it always doubts the first bid and checks that every phone shows the siciliana line and the same two-dice loss.
 

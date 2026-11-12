@@ -1,6 +1,6 @@
 // Liar's Dice end to end, the 📜 classic rules (D-487, D-490): the folded Variants row, the
-// open obligada round (its notice, the rivals' dice face up, your own as ❓), the one-time calzar
-// hint, against the phone and with three players on one phone. For everyone since D-495.
+// closed obligada round (its notice, your own dice only; none in a duel), the one-time calzar
+// hint (never in a duel), against the phone and with three players on one phone. For everyone since D-495.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output();
@@ -28,7 +28,7 @@ async function setup(mode, names) {
 
 /** Plays until `until()` is true or the game ends; returns what it saw along the way. */
 async function play(until, max = 400) {
-  const seen = { obligadaNotice: 0, hidden: 0, faces: 0, calzarHint: 0 };
+  const seen = { obligadaNotice: 0, own: 0, calzarHint: 0, duelCalzar: 0 };
   for (let k = 0; k < max && (await screen()) !== 'screen-result'; k++) {
     if (await overlay()) {
       // Playtest: no die may sit under an overlay that is not the reveal (the pass screen, the notices)
@@ -45,19 +45,16 @@ async function play(until, max = 400) {
     if (!(await ev(`!!document.querySelector('#actions .btn')`))) { await sleep(250); continue; }
     const v = await ev(`(()=>{const v=window.__dudo.view();return {ob:v.obligada,can:v.canCalzar}})()`);
     if (v.ob) {
-      if (await ev(`!!document.querySelector('#mine .hidden-die') && !document.querySelector('#mine .die:not(.hidden-die)')`)) seen.hidden++;
-      if (await ev(`!!document.querySelector('#rivals .rival.seen .die:not(.hidden-die)')`)) seen.faces++;
-      if (await ev(`(()=>{const q=document.querySelector('#rivals .die--sm.hidden-die');return !!q&&q.getBoundingClientRect().width>=24})()`)) seen.ownStrip = (seen.ownStrip || 0) + 1;
-      // One ❓ in the strip per die you hold (rooms playtest: three dice showed a single ❓)
-      if (await ev(`(()=>{const v=window.__dudo.view();const i=window.__dudo.match().players.indexOf(v.current);const x=document.querySelectorAll('#rivals .rival')[i];return !!x&&x.querySelectorAll('.hidden-die').length!==v.st[v.current].dice})()`)) seen.stripBad = (seen.stripBad || 0) + 1;
-      if (seen.hidden === 1) await b.shot('obligada-table');
+      // Closed obligada round: you see your own dice, never the others' (owner's choice, players' feedback)
+      if (await ev(`!!document.querySelector('#mine .die') && !document.querySelector('#rivals .die')`)) seen.own++;
+      if (seen.own === 1) await b.shot('obligada-table');
       // A face the obligada round closes says why, under the faces (playtest)
       if (await ev(`!!document.querySelector('.pinta.closed') && !!document.querySelector('#actions .face-why')`)) {
         if (!seen.obligadaWhy) await b.shot('obligada-why');
         seen.obligadaWhy = (seen.obligadaWhy || 0) + 1;
       }
     }
-    if (await ev(`!!document.querySelector('#actions .calzar-hint.one-die')`)) { if (!seen.oneDie) await b.shot('calzar-one-die'); seen.oneDie = (seen.oneDie || 0) + 1; }
+    if (v.can && (await ev(`window.__dudo.view().alive.length`)) === 2) seen.duelCalzar++;
     if (await ev(`!!document.querySelector('#actions .calzar-hint')`)) { if (!seen.calzarHint) await b.shot('calzar-hint'); seen.calzarHint++; }
     if (until && (await until(seen))) return seen;
     const r = k % 3 === 2 ? await doubt() : await bid(0);
@@ -67,15 +64,13 @@ async function play(until, max = 400) {
   return seen;
 }
 
-/* ---------- Against the phone: a duel, obligada with two players left ---------- */
+/* ---------- Against the phone: a duel, no obligada round and no calzar (players' feedback) ---------- */
 await setup(2, ['Javi']);
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(600);
 check(await ev(`window.__dudo.match().config.traditional === true`), 'the classic rules travel in the config');
 const duel = await play(null);
-check(duel.obligadaNotice > 0, `the obligada round is announced in a duel (${duel.obligadaNotice} times)`);
-check(duel.hidden > 0, 'in the obligada round your own die shows as ❓');
-check(duel.faces > 0, "in the obligada round the phone's die shows face up");
-check(duel.ownStrip > 0, 'in the obligada round your own ❓ in the strip is die-sized');
+check(duel.obligadaNotice === 0, `no obligada round in a duel (${duel.obligadaNotice} notices)`);
+check(duel.duelCalzar === 0, `no calzar in a duel (${duel.duelCalzar} times)`);
 
 /* ---------- Against the phone with Pasar on: a pass is a play, the game goes on (playtest, the bot's pass froze it) ---------- */
 await setup(2, ['Javi']);
@@ -90,12 +85,10 @@ await setup(0, ['Javi', 'Cata', 'Nico']);
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(500);
 const tres = await play(null, 700);
 check(tres.obligadaNotice > 0, 'three on one phone: the obligada round is announced');
-check(tres.hidden > 0 && tres.faces > 0, "three on one phone: the others' dice face up, your own as ❓");
+check(tres.own > 0, 'three on one phone: in the obligada round you see your own dice and not the others\'');
 check(tres.calzarHint > 0, 'the first time calzar opens, a line says what it is');
 check(duel.obligadaWhy > 0 || tres.obligadaWhy > 0, 'in the obligada round, a closed face says why under the faces');
-check(!tres.stripBad && !duel.stripBad, `in the obligada round your strip shows one ❓ per die you hold (${(tres.stripBad || 0) + (duel.stripBad || 0)} wrong)`);
 check(!tres.diceUnder, `three on one phone: no die under the pass screen or a notice (${tres.diceUnder || 0})`);
-console.log(`  (calzar opened by one die, with its reason: ${(duel.oneDie || 0) + (tres.oneDie || 0)} times)`);
 
 /* ---------- Three on one phone, Pasar and the siciliana on: the reasons a first-timer needs (playtest) ---------- */
 await setup(0, ['Javi', 'Cata', 'Nico']);
