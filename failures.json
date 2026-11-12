@@ -2989,7 +2989,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ the lab offers El Camaleón under Juegos en prueba",
       "signature": "785d1a6884",
       "date": "2026-11-12T18:52:33.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "6c008b9856d9f2aa2a3f6ea001ffe9c6f21c7693",
+        "date": "2026-11-12T19:54:53.552Z",
+        "stat": "11 file(s) +224 −100: changelog/transfer-trips.md, docs/games/transfer.md, public/labs/transfer/engine.test.mjs, public/labs/transfer/game.js, public/labs/transfer/index.html, …"
+      },
       "flaky": false
     },
     {
@@ -3003,7 +3007,7 @@
       "signature": "040e541b9b",
       "date": "2026-11-12T19:28:18.377Z",
       "fix": null,
-      "flaky": false
+      "flaky": true
     }
   ]
 }
