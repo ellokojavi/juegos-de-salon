@@ -156,6 +156,21 @@
    ]
   },
   {
+   "id": "game-icons",
+   "title": "A game's icon on screen goes through gameIcon(): its drawing when it has one, the emoji only in text (DESIGN.md rule 9)",
+   "doc": "docs/DESIGN.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "public/assets/js/game-icons.test.mjs"
+   ],
+   "applies": [
+    "public/**/*.js",
+    "public/**/*.html"
+   ]
+  },
+  {
    "id": "preview-live",
    "title": "A preview link is given only once the preview serves that commit",
    "doc": "docs/PREVIEWS.md",

@@ -2,7 +2,8 @@
  * La Copa — the create-a-Cup screen, loaded the first time it opens (#860).
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
-import { $, con, conEmoji, el, vibrate } from '../assets/js/ui.js';
+import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
+import { $, el, vibrate } from '../assets/js/ui.js';
 import { ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, tieneFinal, zonaDeIdioma } from './engine.js';
 import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { LANGS } from '../assets/js/i18n.js';
@@ -88,7 +89,7 @@ function elegirJuegos() {
     mano.innerHTML = ''; linea.innerHTML = '';
     poner(mano, fueraDe().map(id => el('button', {
       type: 'button', class: `card${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-juego': id, 'aria-pressed': String(sel?.id === id), onClick: () => tocarFuera(id),
-    }, el('span', { class: con('em', JUEGOS_COPA[id].emoji) }, JUEGOS_COPA[id].emoji), el('span', { class: 't' }, JUEGOS_COPA[id].nombre))));
+    }, gameIcon(JUEGOS_COPA[id], { class: 'em' }), el('span', { class: 't' }, JUEGOS_COPA[id].nombre))));
     mano.classList.toggle('dim', sel?.zona === 'fuera');
     linea.classList.toggle('blanco', sel?.zona === 'fuera');
     vista().forEach((id, i) => {
@@ -96,12 +97,12 @@ function elegirJuegos() {
       linea.append(el('button', {
         type: 'button', class: `event${sel?.id === id ? (arrastrando ? ' hueco' : ' sel') : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `${moviendo() ? 'm' : 'r'}${i}`,
         'aria-pressed': String(sel?.id === id), onClick: () => tocarDia(i),
-      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', JUEGOS_COPA[id].emoji) }, JUEGOS_COPA[id].emoji), nombreJ(id),
+      }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(JUEGOS_COPA[id], { class: 'em' }), nombreJ(id),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿')));
     });
     if (ranuraSirve(dias().length)) linea.append(ranura(dias().length));
     linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
-      el('span', { class: 'em' }, JUEGOS_COPA.final.emoji), nombreJ('final', T.gamesFinal)));
+      gameIcon(JUEGOS_COPA.final, { class: 'em' }), nombreJ('final', T.gamesFinal)));
     marcar();
     pintarVariantes();
     const ayuda = !sel ? 'nada' : arrastrando ? `arr-${sel.zona}` : sel.zona;
@@ -125,7 +126,7 @@ function elegirJuegos() {
       o.nodo.classList.add('dos', 'variantes');
       o.nodo.dataset.variantes = id;
       cajaVariantes.append(el('div', { class: 'cal-variante' },
-        el('p', { class: 'cal-variante-t' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), ' ', conEmoji(J.emoji, J.nombre)), o.nodo));
+        el('p', { class: 'cal-variante-t' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), ' ', withIcon(J, J.nombre)), o.nodo));
     }
   }
 
@@ -145,7 +146,7 @@ function elegirJuegos() {
     ],
     activo: () => nodo.isConnected && !nodo.hidden,
     vibrar: vibrate,
-    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: con('em', JUEGOS_COPA[item.dataset.juego].emoji) }, JUEGOS_COPA[item.dataset.juego].emoji), el('span', { class: 't' }, JUEGOS_COPA[item.dataset.juego].nombre)),
+    avatar: item => el('div', { class: 'vilo-carta' }, gameIcon(JUEGOS_COPA[item.dataset.juego], { class: 'em' }), el('span', { class: 't' }, JUEGOS_COPA[item.dataset.juego].nombre)),
     alAlzar: (item, zona) => {
       sel = { zona, id: item.dataset.juego }; destino = null; arrastrando = true; pintar();
     },
@@ -228,7 +229,7 @@ function armarSemana() {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cartas = [...lista.querySelectorAll('.semana-dia')].map(f => {
       const em = f.querySelector('.em'), b = f.querySelector('.semana-juego b'), small = f.querySelector('.semana-juego small');
-      return { f, em, b, small, real: [em.textContent, em.className, b.textContent, small.textContent], quieta: false };
+      return { f, em, b, small, real: [em, b.textContent, small.textContent], quieta: false };
     });
     // Each card keeps the height of the game it lands on: a longer name passing by does not wrap
     // and push the rows below (it is cut on one line while it spins, C-8)
@@ -240,13 +241,13 @@ function armarSemana() {
       cartas.forEach((c, i) => {
         if (c.quieta) return;
         if (t >= 300 + i * 90) {
-          [c.em.textContent, c.em.className, c.b.textContent, c.small.textContent] = c.real;
+          c.em.replaceWith(c.real[0]); c.em = c.real[0]; [c.b.textContent, c.small.textContent] = c.real.slice(1);
           c.f.classList.remove('baraja'); c.f.style.height = ''; c.f.classList.add('cae'); c.quieta = true;
           return;
         }
         giran++;
         const G = JUEGOS_COPA[POZO[Math.floor(Math.random() * POZO.length)]];
-        c.em.textContent = G.emoji; c.em.className = con('em', G.emoji); c.b.textContent = G.nombre; c.small.textContent = G.habilidad;
+        const em = gameIcon(G, { class: 'em' }); c.em.replaceWith(em); c.em = em; c.b.textContent = G.nombre; c.small.textContent = G.habilidad;
         c.f.classList.add('baraja');
       });
       if (!giran) clearInterval(rueda);
@@ -267,7 +268,7 @@ function armarSemana() {
     const J = JUEGOS_COPA[id];
     const sub = [J.habilidad, nombreVariante(id)].filter(Boolean).join(' · ');
     return el('div', { class: `semana-dia${arrastrando && sel === id ? ' hueco' : ''}${destino === `m${i}` ? ' on' : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `m${i}` },
-      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', J.emoji) }, J.emoji)),
+      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(J, { class: 'em' })),
       el('button', { type: 'button', class: 'semana-juego', onClick: () => { SFX.tap(); hoja(i); } }, el('b', {}, J.nombre), el('small', {}, sub)),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿'));
   }
@@ -284,7 +285,7 @@ function armarSemana() {
     }
     lista.replaceChildren(...filas);
     finalFila.hidden = !conFinal();
-    finalFila.replaceChildren(el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })), el('span', { class: 'em' }, JUEGOS_COPA.final.emoji)),
+    finalFila.replaceChildren(el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })), gameIcon(JUEGOS_COPA.final, { class: 'em' })),
       el('span', { class: 'semana-juego' }, el('b', {}, JUEGOS_COPA.final.nombre), el('small', {}, cal.length - 1 > FINAL_RONDAS ? fmt(T.weekFinalDraw, { n: FINAL_RONDAS }) : fmt(T.weekFinal, { n: cal.length - 1 }))));
     const cuenta = {};
     for (const id of semana()) (cuenta[familia(id)] ||= { n: 0, nombre: JUEGOS_COPA[id].habilidad }).n++;
@@ -319,7 +320,7 @@ function armarSemana() {
           if (id !== actual) { const x = semana(); if (k >= 0) x[k] = actual; x[i] = id; aMano(x); }
           listo();
         },
-      }, el('span', { class: con('em', G.emoji) }, G.emoji), el('span', { class: 't' }, el('b', {}, G.nombre), el('small', {}, lemaDe(id))),
+      }, gameIcon(G, { class: 'em' }), el('span', { class: 't' }, el('b', {}, G.nombre), el('small', {}, lemaDe(id))),
       etiqueta ? el('span', { class: 'etiqueta' + (k < 0 && id !== actual ? ' nueva' : '') }, etiqueta) : null);
     });
     const cerrar = el('button', { type: 'button', class: 'btn btn--yellow btn--sm hoja-listo', id: 'hoja-listo', onClick: () => { SFX.tap(); cerrarHoja(); } }, T.weekClose);
@@ -327,7 +328,7 @@ function armarSemana() {
       el('div', { class: 'hoja-fondo', onClick: () => cerrarHoja() }),
       el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-label': fmt(T.gamesDay, { d: i + 1 }) },
         el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
-        el('div', { class: 'hoja-cabeza' }, el('h3', {}, fmt(T.gamesDay, { d: i + 1 }), ' · ', ...conEmoji(J.emoji, J.nombre)), cerrar),
+        el('div', { class: 'hoja-cabeza' }, el('h3', {}, fmt(T.gamesDay, { d: i + 1 }), ' · ', ...withIcon(J, J.nombre)), cerrar),
         el('div', { class: 'hoja-mover' }, mover(-1, T.weekEarlier), mover(1, T.weekLater)),
         version,
         el('div', { class: 'field' }, el('label', {}, T.weekSwap)),
@@ -347,7 +348,7 @@ function armarSemana() {
     fuentes: [{ contenedor: lista, item: '.semana-dia', eje: 'libre', nombre: 'dia' }],
     activo: () => nodo.isConnected && !capa,
     vibrar: vibrate,
-    avatar: item => el('div', { class: 'vilo-carta' }, el('span', { class: con('em', JUEGOS_COPA[item.dataset.juego].emoji) }, JUEGOS_COPA[item.dataset.juego].emoji), el('span', { class: 't' }, JUEGOS_COPA[item.dataset.juego].nombre)),
+    avatar: item => el('div', { class: 'vilo-carta' }, gameIcon(JUEGOS_COPA[item.dataset.juego], { class: 'em' }), el('span', { class: 't' }, JUEGOS_COPA[item.dataset.juego].nombre)),
     alAlzar: item => { sel = item.dataset.juego; destino = null; arrastrando = true; pintar(); },
     medir: () => [...lista.querySelectorAll('.semana-dia')].map(x => {
       const r = x.getBoundingClientRect();
@@ -381,8 +382,8 @@ function armarFinde() {
   const pintar = () => lista.replaceChildren(...cal.map((x, i) => {
     const ids = x.split(TRIO_SEP).map(y => diaDeCal(y).id);
     return el('div', { class: 'semana-dia finde-dia', 'data-dia': i, 'data-juegos': ids.join(',') },
-      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: 'em' }, JUEGOS_COPA.trio.emoji)),
-      el('span', { class: 'semana-juego' }, ...ids.map(id => el('small', { class: 'finde-juego' }, `${JUEGOS_COPA[id].emoji} ${JUEGOS_COPA[id].nombre}`))));
+      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(JUEGOS_COPA.trio, { class: 'em' })),
+      el('span', { class: 'semana-juego' }, ...ids.map(id => el('small', { class: 'finde-juego' }, ...[].concat(textWithIcon(JUEGOS_COPA[id], JUEGOS_COPA[id].nombre))))));
   }));
   const dado = el('button', { type: 'button', class: 'btn-dado', id: 'btn-dado-finde', onClick: () => { SFX.tap(); vibrate(15); cal = findeAlAzar({ familia }); pintar(); } }, T.weekDice);
   const nodo = el('div', { class: 'panel', id: 'crear-finde', hidden: true },

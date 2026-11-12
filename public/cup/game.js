@@ -10,12 +10,13 @@
  * La misma pantalla sirve los juegos sueltos de la portada en /queens/ (D-149, D-162, D-198).
  */
 import { crearArrastre } from '../assets/js/arrastre.js';
-import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { showWaiting } from '../assets/js/waiting.js';
 import { applyStatic, COMMON, SITIO, LANGS, getLang, coverLangToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { flag } from '../assets/js/flags.js';
 import { factsLine } from '../assets/js/how-to-play-facts.js';
@@ -813,14 +814,14 @@ function tarjetaDia(d, rotulo) {
   else if (fuera(Lc, S.yo, now)) accion = null;
   // Con el admin solo no se juega (D-118): falta con quién competir
   else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'notice', id: 'falta-gente' }, T.needSecond);
-  else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, `${J.emoji} ${T.play}`);
-  else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, `${J.emoji} ${T.resume}`);
+  else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, textWithIcon(J, T.play));
+  else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, textWithIcon(J, T.resume));
   return el('div', { class: `panel dia-card ${est}` },
     el('div', { class: 'dia-top' },
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
       x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : auto ? `${T.x2Auto}` : `${T.x2} ${T.wildUsed}`) : null),
-    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, est !== 'jugado' && fuera(Lc, S.yo, now) ? T.outTitle : hastaCuando(d, est, now)))),
+    el('div', { class: 'dia-juego' }, gameIcon(J, { class: 'dia-emoji' }), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, est !== 'jugado' && fuera(Lc, S.yo, now) ? T.outTitle : hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
     accion && comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin', id: 'comodin-hoy' }, T.wildToday) : null,
     accion,
@@ -885,16 +886,16 @@ function misDias(d, now) {
       detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo, now)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
-      accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
+      accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, textWithIcon(J, T.play));
     } else if (est === 'en-curso') {
       detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
-      accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
+      accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, textWithIcon(J, T.resume));
     } else if (est === 'perdido') detalle = T.notPlayed;
     else if (est === 'anulado') detalle = T.dayCancelled;
     else detalle = fmt(T.opensOn, { fecha: fechaCorta(meta.win[k].a, meta.tz) });
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
-      el('span', { class: con('md-emoji', J.emoji) }, J.emoji),
+      gameIcon(J, { class: 'md-emoji' }),
       el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: `${claseX2(esFinal(meta, k))} md-x2` }, auto && w === k ? T.x2Auto : T.x2) : null), el('small', {}, detalle)),
       est === 'jugado' ? el('span', { class: 'md-go' }, '›') : accion,
     ];
@@ -1398,12 +1399,12 @@ function antesDeJugar(d) {
     const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'btn-comodin', 'aria-checked': 'false', 'aria-label': T.wildUse,
       onClick: () => { SFX.tap(); usarComodin = !usarComodin; sw.classList.toggle('on', usarComodin); sw.setAttribute('aria-checked', String(usarComodin));
         // Empezar says what it spends (C-8, U-15): the start is the confirmation
-        empezar.textContent = usarComodin ? `🃏 ${T.startWild}` : `${J.emoji} ${T.start}`; } });
+        empezar.replaceChildren(...(usarComodin ? [`🃏 ${T.startWild}`] : [].concat(textWithIcon(J, T.start)))); } });
     comodin = el('div', { class: 'toggle-row', id: 'fila-comodin' },
       el('span', { class: 'txt' }, el('b', {}, el('span', { 'aria-hidden': 'true' }, '🃏 '), T.wildTitle), el('small', {}, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast)), sw);
   }
   const sinGente = faltaGente(Lc);
-  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
+  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, textWithIcon(J, T.start));
   if (sinGente) avisoError(err, T.needSecond);
   precalentar(id,
     () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: rondasPara(meta, d) }),
@@ -1483,7 +1484,7 @@ function conJuego(id, luego) {
 }
 
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
-const heroe = (id, J) => JUEGOS[id]?.portada?.({ variante: J.variante || null }) ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
+const heroe = (id, J) => JUEGOS[id]?.portada?.({ variante: J.variante || null }) ?? gameIcon(J, { class: 'icon' });
 
 /**
  * Un juego que tarda en armarse (`caro`, El caso, D-260) se arma mientras se lee la antesala, sin
@@ -1574,9 +1575,9 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
 function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
   if (J === JUEGOS_COPA.final) return Promise.resolve(0);
-  $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
+  $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, withIcon(J, J.nombre)));
   $('#jugar-body').innerHTML = '';
-  return cuentaComun({ titulo: conEmoji(J.emoji, J.nombre), ya: T.letsPlay });
+  return cuentaComun({ titulo: withIcon(J, J.nombre), ya: T.letsPlay });
 }
 
 async function jugar(d, { nuevo = false } = {}) {
@@ -1628,7 +1629,7 @@ async function jugar(d, { nuevo = false } = {}) {
 
   const head = $('#jugar-head');
   head.innerHTML = '';
-  head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
+  head.append(el('span', { class: 'jugar-titulo' }, withIcon(J, J.nombre)));
   if (yaCorria) head.after(el('p', { class: 'notice', id: 'aviso-otro-celular' }, T.resumedElsewhere));
   // No clock in the header while playing (D-379), except in a game whose speed scores and that has
   // no countdown of its own (`clock` in its ui.js, D-384). The end-to-end scripts read the time
@@ -1864,7 +1865,7 @@ function practica(id, varianteElegida = null) {
   // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
   if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   // En el laboratorio, "‹ Laboratorio" es largo: bajo 400 px el chip queda solo con el emoji (U-12)
-  if (SUELTO) $('#chip-juego').replaceChildren(el('span', { class: con('', J.emoji) }, J.emoji), el('span', { class: LABS ? 'chip-txt chip-txt--lab' : 'chip-txt' }, ` ${J.nombre}`));
+  if (SUELTO) $('#chip-juego').replaceChildren(gameIcon(J), el('span', { class: LABS ? 'chip-txt chip-txt--lab' : 'chip-txt' }, ` ${J.nombre}`));
   if (HOY) {
     // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
     const fecha = fechaLocal(), deHoy = juegoDel(fecha);
@@ -1912,7 +1913,7 @@ function practica(id, varianteElegida = null) {
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     // Un juego `diario` (El caso, D-267) no: lo abre un amigo que no sabe de copas, y arriba ya dice qué caso es (U-8)
     LABS && !gameById(id)?.diario ? el('p', { class: 'muted center' }, T.practiceHint) : null,
-    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla, variante); } }, `${J.emoji} ${T.start}`),
+    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla, variante); } }, textWithIcon(J, T.start)),
     volverDePractica(),
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
@@ -1933,7 +1934,7 @@ function practica(id, varianteElegida = null) {
       hoy.estadoLlave = st;
       const line = lockLine(st, { lang: LANG });
       if (line) linea.textContent = line;
-      if (st === 'resume') boton.textContent = `${J.emoji} ${T.resume}`;
+      if (st === 'resume') boton.replaceChildren(...[].concat(textWithIcon(J, T.resume)));
       boton.disabled = false;
       return st;
     });
@@ -2049,7 +2050,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
   head.innerHTML = '';
-  poner(head, SUELTO ? null : el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
+  poner(head, SUELTO ? null : el('span', { class: 'jugar-titulo' }, withIcon(J, J.nombre)), ensayo ? chipPrueba() : null);
   head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379, D-384)
   const cron = mostrarReloj(head, mod, () => reloj.leer(rel, Date.now()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
@@ -2165,7 +2166,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
   body.innerHTML = '';
   poner(body,
     el('div', { class: 'result-hero' },
-      el('span', { class: con('trophy pop', J.emoji) }, J.emoji),
+      gameIcon(J, { class: 'trophy pop' }),
       el('h2', { class: 'display display--md' }, J.nombre),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),

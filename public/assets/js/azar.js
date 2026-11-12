@@ -14,6 +14,7 @@
  * aparece el emoji del elegido, grande, en vez del dado.
  */
 import { el } from './ui.js';
+import { gameIcon } from './game-icon.js';
 import { crearDado } from './dado3d.js';
 import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
@@ -169,7 +170,7 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
   const dado = creado && { dibujar: (x, y) => { pose = [x, y]; creado.dibujar(x, y); } };
   if (dado) foto = () => { try { creado.dibujar(...pose); return lienzo.toDataURL('image/png'); } catch { return null; } };
   if (!dado) {
-    lienzo.replaceWith(el('div', { class: 'azar-sin-3d' }, elegido.emoji));
+    lienzo.replaceWith(el('div', { class: 'azar-sin-3d' }, gameIcon(elegido)));
     revelar();
     return;
   }

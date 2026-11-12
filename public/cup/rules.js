@@ -2747,7 +2747,7 @@ export const conVariante = (J, v) => {
 /** Los juegos en un idioma: lo de BASE más sus textos. */
 export const juegosCopa = (lang = 'es') => {
   const L = LOCALES[lang] || ES;
-  return Object.fromEntries(Object.entries(BASE).map(([id, b]) => [id, { ...b, ...L.juegos[id] }]));
+  return Object.fromEntries(Object.entries(BASE).map(([id, b]) => [id, { id, ...b, ...L.juegos[id] }]));
 };
 /** En español: el panel, las herramientas y las pruebas nombran los juegos así. */
 export const JUEGOS_COPA = juegosCopa('es');

@@ -171,7 +171,8 @@
   </dialog>
 
   <script type="module">
-    import { el, conEmoji } from '../assets/js/ui.js';
+    import { el } from '../assets/js/ui.js';
+    import { gameIcon, withIcon } from '../assets/js/game-icon.js';
     import { getLang, coverLangToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
     import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
     import { trackVisit } from '../assets/js/transport/stats.js';
@@ -200,7 +201,7 @@
     const pagina = document.getElementById('uad-pagina');
     // El nombre de un solitario está en las reglas de La Copa; el de un juego de grupo, en games.js
     const nombreDe = id => JC[id]?.nombre || gameById(id)?.name?.[lang] || id;
-    const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', nombreDe(id));
+    const nombre = id => withIcon({ id, emoji: juegoDia(id)?.emoji || JC[id]?.emoji || '🎲' }, nombreDe(id));
     const miles = n => Number(n || 0).toLocaleString(lang);
     const mesLargo = (y, m) => new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(y, m - 1, 1));
     const mayus = t => t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
@@ -425,7 +426,7 @@
         const [y, m, d] = f.split('-').map(Number);
         const g = juegoDia(x?.game ?? (n >= 1 ? juegoDel(f) : null));
         const fila = (k, v, cls) => el('div', cls ? { class: cls } : {}, el('dt', {}, k), el('dd', {}, v));
-        const juego = fila(P.juego, `${g?.emoji || '🎲'} ${g ? nombreDe(g.id) : x?.game || ''}`, 'ancha');
+        const juego = fila(P.juego, g ? withIcon(g, nombreDe(g.id)) : `🎲 ${x?.game || ''}`, 'ancha');
         const dias = k => fmt(k === 1 ? P.dia1 : P.dias, { n: k });
         const filas = x?.played
           ? [juego, fila(P.puntaje, `${x.score} / 100`), fila(P.racha, `🔥 ${dias(x.streak)}`), fila(P.bono, `+${x.bonus}`), fila(P.sumo, fmt(P.ptsN, { n: miles(x.points) }), 'suma')]
@@ -459,7 +460,7 @@
           // Up to today each day is a button that opens its details; the days to come are only a number
           const ver = { type: 'button', 'data-dia': f, 'aria-expanded': 'false', 'aria-controls': 'uad-dia', onClick: () => { tap(); abierto = abierto === f ? null : f; detalle(); } };
           if (x?.played) cal.append(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': x.late ? `${fmt(P.diaAria, { d, p: x.points })}. ${P.tarde}` : fmt(P.diaAria, { d, p: x.points }) },
-            el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.game)?.emoji || '•'), el('small', { class: 'cal-pts' }, x.late ? '⏳' : String(x.points))));
+            el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.game) ? gameIcon(juegoDia(x.game)) : '•'), el('small', { class: 'cal-pts' }, x.late ? '⏳' : String(x.points))));
           else if (x?.saved) cal.append(el('button', { ...ver, class: `salvado${h}`, 'aria-label': fmt(P.comodinAria, { d }) }, '🧊'));
           else if (f <= e.hoy) cal.append(el('button', { ...ver, class: h.trim() || null }, String(d)));
           else cal.append(el('span', {}, String(d)));
