@@ -15,7 +15,8 @@
  * - Other files of the site (decks, pictures, music once played) and the Firebase SDK on gstatic:
  *   from the cache if there, else the network, and kept. Firebase's own traffic is never touched.
  * - The release's list (`precache.json`, tools/release/precache.mjs) is stored when the page
- *   reports a release this worker has not stored yet; then older releases' caches go.
+ *   reports a release this worker has not stored yet; a `?h=` file an older release kept is copied
+ *   from it, so only what changed is downloaded; then older releases' caches go.
  * - **Readiness** (the home page's ☁️ button, offline-ready.js): while storing, the list and how many
  *   of its files are kept go in the config cache (`progress`) and to every open page as an
  *   `offline-progress` message; `{ type: 'offline-retry' }` stores the release again (a cut download).
@@ -57,8 +58,16 @@ async function storeNow(rel) {
   if (!res.ok) { await progress({ storing: false, failed: true }); return false; }
   const list = await res.json();
   const cache = await caches.open(release(list.release || rel));
+  // Differential: a ?h= file is its content, so one an older release kept is copied, not downloaded
+  // again; only pages, unhashed files and what changed go to the network (a release used to fetch all)
+  const older = (await caches.keys()).filter(k => k.startsWith('jds-release-') && k !== release(list.release || rel));
   const missing = [];
-  for (const u of list.urls) if (!(await cache.match(u))) missing.push(u);
+  for (const u of list.urls) {
+    if (await cache.match(u)) continue;
+    let kept = null;
+    if (u.includes('?h=')) for (const k of older) { kept = await (await caches.open(k)).match(u); if (kept) break; }
+    if (kept) await cache.put(u, kept); else missing.push(u);
+  }
   const total = list.urls.length;
   // The list itself, so a page can check file by file that the phone keeps everything (offline-ready.js)
   await (await caches.open(CONFIG)).put('list', new Response(JSON.stringify(list), { headers: { 'content-type': 'application/json' } }));
