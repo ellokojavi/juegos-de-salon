@@ -1,9 +1,9 @@
 // Liar's Dice's 📜 classic rules (D-487, D-490, D-491) in a ROOM, with N phones against the
 // real Firebase: like online.mjs, it opens real rooms, so it is run by hand and never in CI.
 // It plays whole games and checks, on every phone, that the screens agree; that the obligada
-// round's notice reaches every phone, that each phone sees its rivals' dice and never its own;
-// the calzar hint, the closed ace and its reason, half plus one into aces, Pasar and doubting it,
-// the siciliana, a reload mid-obligada and the rematch. With SICILIANA=1 the first bid of the game
+// round's notice reaches every phone, that each phone sees its own dice and never its rivals'
+// (closed, D-490 amended); the calzar hint (never in a duel), the closed ace and its reason, half
+// rounded up into aces, Pasar and doubting it, the siciliana and the rematch. With SICILIANA=1 the first bid of the game
 // is always doubted, so the siciliana really happens: every phone must show its line and the
 // loser must be down two dice on every phone. At the end every phone leaves the room
 // for good (`transport.dispose()`), so the room is deleted at once instead of waiting to expire.
@@ -43,7 +43,7 @@ const state = d => ev(d, `(()=>{const s=window.__dudo?.view();if(!s)return JSON.
     dice:Object.fromEntries(Object.entries(s.st).map(([r,x])=>[r,x.dice])),me:window.__dudo.session().role})})()`).then(JSON.parse).catch(() => ({ none: true }));
 const overlay = d => ev(d, `(()=>{const h=document.getElementById('handoff');return h.hidden?'':h.innerText.replace(/\\n/g,' | ').slice(0,160)})()`).catch(() => '');
 const closeOverlay = d => ev(d, `(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'none';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`).catch(() => '');
-const seen = { notice: {}, sicWhy: 0, calzarHint: {}, oneDie: 0, aceWhy: 0, halfPlusOne: [], calzas: 0, duelCalza: 0, passes: 0, bluffs: 0, passDoubted: 0, ownShown: 0, obTurns: 0, rivalsFaceUp: 0, faceChange: 0, syncMax: 0, syncSum: 0, syncN: 0, mismatches: 0, reloaded: false };
+const seen = { notice: {}, sicWhy: 0, calzarHint: {}, oneDie: 0, aceWhy: 0, halfPlusOne: [], calzas: 0, duelCalza: 0, passes: 0, bluffs: 0, passDoubted: 0, ownHidden: 0, obTurns: 0, rivalsFaceUp: 0, faceChange: 0, syncMax: 0, syncSum: 0, syncN: 0, mismatches: 0, reloaded: false };
 const shot = async (d, name) => { try { await d.shot(`${N}p-${name}`); } catch (_) {} };
 
 /* ---------------- Room ---------------- */
@@ -137,36 +137,17 @@ async function playGame(tag) {
       seen.sicOutcome = losers.map(([r, n]) => `${r}-${n}`).join(',');
       sicBefore = null;
     }
-    // Open obligada round: everyone sees the others' dice and never their own
+    // Closed obligada round (players' feedback): each phone sees its own dice and never the others'
     if (v.ob && v.phase === 'bid') {
       seen.obTurns++;
       for (const r of ROLES) {
         const d = devs[r];
         if (!(await state(d)).dice[r]) continue;   // out of the game
-        if (await overlay(d)) continue;             // a notice arriving: the table under it is not what the player sees
-        if (seen.skipOwn === r) { seen.skipOwn = null; continue; }   // PATCH: the reloaded phone re-renders on the next play
-        const own = await ev(d, `!!document.querySelector('#mine .die:not(.hidden-die)')`);
-        const ownStrip = await ev(d, `(()=>{const me=window.__dudo.session().role;const x=document.querySelectorAll('#rivals .rival')[window.__dudo.match().players.indexOf(me)];return !!x?.querySelector('.die:not(.hidden-die)')})()`);
-        if (own || ownStrip) { seen.ownShown++; await shot(d, `OWN-DIE-SHOWN-${r}`); }
-        if (await ev(d, `!!document.querySelector('#rivals .rival.seen .die:not(.hidden-die)')`)) seen.rivalsFaceUp++;
+        if (await overlay(d)) continue;             // a notice arriving
+        if (!(await ev(d, `!!document.querySelector('#mine .die')`))) { seen.ownHidden++; await shot(d, `OWN-DIE-HIDDEN-${r}`); }
+        if (await ev(d, `!!document.querySelector('#rivals .die')`)) seen.rivalsFaceUp++;
       }
       if (seen.obTurns === 1) for (const r of ROLES) await shot(devs[r], `obligada-table-${r}`);
-      // Reload a phone mid-obligada: the opener, whose own die must stay hidden after it comes back
-      if (!seen.reloaded && !process.env.NORELOAD) {
-        seen.reloaded = true;
-        const r = ROLES.find(x => x !== v.current && v.dice[x]) || ROLES[1];
-        const d = devs[r], h = hostOf(ROLES.indexOf(r));
-        const t0 = Date.now();
-        await d.go(`${h}/liars-dice/?room=${code}`, 500);
-        const ok = await d.until(`window.__dudo?.view()?.round === ${v.round}`, 15000);
-        if (PATCH) await patch(d);
-        for (let j = 0; j < 6 && (await overlay(d)); j++) { if (await ev(d, `!!document.querySelector('#handoff .obligada-notice')`)) { seen.reloadNotice = true; (seen.notice[v.round] ||= new Set()).add(r); } await closeOverlay(d); await sleep(200); }
-        const own = PATCH ? false : await ev(d, `!!document.querySelector('#mine .die:not(.hidden-die)')`);
-        if (PATCH) seen.skipOwn = r;
-        check(ok && !own, `${r} reloaded mid-obligada: back in round ${v.round} in ${Date.now() - t0} ms, own die still hidden`);
-        await shot(d, `reloaded-mid-obligada-${r}`);
-        continue;
-      }
     }
     if (v.phase !== 'bid' || !v.current) { await sleep(300); continue; }
     const d = devs[v.current];
@@ -180,10 +161,8 @@ async function playGame(tag) {
     }
     // Hints on the phone on turn
     if (await ev(d, `!!document.querySelector('#actions .calzar-hint')`)) {
-      const one = await ev(d, `!!document.querySelector('#actions .calzar-hint.one-die')`);
-      const tagH = `${v.current}${one ? '-one' : ''}`;
+      const tagH = v.current;
       if (!seen.calzarHint[tagH]) { seen.calzarHint[tagH] = await ev(d, `document.querySelector('#actions .calzar-hint').textContent`); await shot(d, `calzar-hint-${tagH}`); }
-      if (one) seen.oneDie++;
     }
     if (v.canCalzar && !(await ev(d, `!!document.querySelector('#actions .btn--cyan')`))) { check(false, `${v.current} can calzar but sees no Calzar button`); }
     // Opening: the ace is closed and the reason is there (not in obligada)
@@ -192,13 +171,13 @@ async function playGame(tag) {
       if (why !== 'open' && /ases|aces/i.test(why)) seen.aceWhy++; else if (why !== 'open' || true) { if (!seen.aceBad) { seen.aceBad = why; } }
       if (seen.aceWhy === 1) await shot(d, 'no-ace-opening');
     }
-    // Into aces: half plus one
+    // Into aces: half rounded up (players' feedback)
     if (v.bid && !v.ob && !v.bid.endsWith('x1') && seen.halfPlusOne.length < 4 && Math.random() < 0.5) {
       const n = +v.bid.split('x')[0];
       const got = await ev(d, `(()=>{const a=document.querySelectorAll('.pinta')[0];if(a.disabled||a.getAttribute('aria-disabled'))return -1;a.click();return window.__dudo.session().sel?.n??-1})()`);
       if (got > 0) {
         seen.halfPlusOne.push(`${n}→${got}`);
-        check(got === Math.floor(n / 2) + 1, `into aces from ${n}: ${got} (half plus one is ${Math.floor(n / 2) + 1})`);
+        check(got === Math.ceil(n / 2), `into aces from ${n}: ${got} (half rounded up is ${Math.ceil(n / 2)})`);
         if (seen.halfPlusOne.length === 1) await shot(d, 'into-aces');
         const t = await ev(d, `(()=>{const b=document.querySelector('#actions .btn--yellow');const t=b.textContent;b.click();return t})()`);
         await sleep(500); continue;
@@ -215,10 +194,10 @@ async function playGame(tag) {
       if (seen.passes + seen.bluffs === 1) console.log(`  pass button: "${p.t}" · "${p.line}"`);
       await sleep(700); continue;
     }
-    // Calzar: often enough to see it, and always the first time in a duel
+    // Calzar: often enough to see it; never in a duel (players' feedback)
     const alive = Object.values(v.dice).filter(x => x > 0).length;
-    if (v.canCalzar && (Math.random() < 0.35 || (alive === 2 && !seen.duelCalza))) {
-      if (alive === 2) { seen.duelCalza++; await shot(d, 'duel-calzar'); }
+    if (v.canCalzar && alive === 2) seen.duelCalza++;
+    if (v.canCalzar && Math.random() < 0.35) {
       await ev(d, `document.querySelector('#actions .btn--cyan').click(), 1`); seen.calzas++; await sleep(800); continue;
     }
     // Otherwise a bid (a face change in obligada when allowed) or a doubt
@@ -265,7 +244,9 @@ if (SICILIANA) {
   check(ROLES.every(r => sicSaw.has(r)), `siciliana: every phone saw its line (${[...sicSaw].join(',')})`);
   check(!!seen.sicOutcome, `siciliana: the outcome was checked on every phone (${seen.sicOutcome || 'never'})`);
 }
-check(seen.ownShown === 0, `no phone ever showed its own die in obligada (${seen.ownShown})`);
+check(seen.ownHidden === 0, `every phone saw its own dice in obligada (${seen.ownHidden} hidden)`);
+check(seen.rivalsFaceUp === 0, `no phone saw a rival's dice in obligada (${seen.rivalsFaceUp})`);
+check(seen.duelCalza === 0, `no calzar in a duel (${seen.duelCalza})`);
 console.log('seen:', JSON.stringify({ ...seen, notice: Object.fromEntries(rounds.map(k => [k, [...seen.notice[k]]])), syncAvg: seen.syncN ? Math.round(seen.syncSum / seen.syncN) : 0 }));
 for (const r of ROLES) {
   const errs = devs[r].errors.concat(devs[r].logs.filter(l => !/vibrate|permission_denied/i.test(l)));

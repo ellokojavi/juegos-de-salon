@@ -152,11 +152,7 @@
 .hist .up { color: var(--lime); font-weight: 900; white-space: nowrap; }
 
 /* ---------- Classic rules, round 2 (lab, D-490) ---------- */
-/* The open obligada round: the rivals' dice face up, your own as ❓ */
-.rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: var(--s-2); }
-.rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: var(--s-4); }
-.rivals .rival.seen .die--sm.hidden-die { font-size: var(--fs-100); padding: 0; }
-.die.hidden-die { display: grid; place-items: center; font-size: var(--fs-160); grid-template: none; }
+/* The obligada round */
 .obligada-banner { font-size: var(--fs-90); text-align: center; margin-top: var(--s-6); }
 .obligada-notice .next-name { font-size: clamp(2rem, 10vw, 3rem); }
 .obligada-notice .hint { max-width: 34ch; margin: var(--s-8) auto 0; }
