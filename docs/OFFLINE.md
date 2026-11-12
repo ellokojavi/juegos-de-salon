@@ -104,6 +104,8 @@ PR that changes what is kept on the phone.
   shared JS and CSS, fonts and icons. La Copa's own files and what they import (not `cup/games/`'s pictures, D-544); not the OG cards, not the panel. About 4 MB today; `precache.test.mjs` fails over 8 MB.
 - **Music is never precached**: it is cached once a song plays online; until then offline is silent.
   Sound effects are precached.
+- **A new release downloads only what changed**: a `?h=` file is its content, so one an older release kept is
+  copied into the new release's cache; only pages, unhashed files and changed files are fetched (`sw.test.mjs`).
 - The Firebase SDK on gstatic is cached at runtime when used, for when the signal returns.
 - No update prompt is needed: pages are network-first and every module and stylesheet is content-hashed (D-467).
 - Big pictures (Dónde's satellite tiles, over 100 KB each) are cached the first time they are seen.
