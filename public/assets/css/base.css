@@ -18,6 +18,9 @@
 @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('../fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 :root {
+  /* No faux bold or italic: a weight a font is not loaded in uses the nearest real one. WebKit's fake
+     bold thickens glyphs to the right without widening them and cut the countdown's last digit */
+  font-synthesis: none;
   --bg1: #150726; --bg1-rgb: 21 7 38;
   --bg2: #2a0a4a; --bg2-rgb: 42 10 74;
   --bg3: #0b1e3f; --bg3-rgb: 11 30 63;
@@ -61,6 +64,9 @@
   --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
   --fs-140: 1.4rem; --fs-160: 1.6rem; --fs-200: 2rem;
   --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
+  /* Bangers' letters lean out of their box on the right: big display text keeps this much room so
+     Safari, which paints only the box on an animated layer, does not cut the last one */
+  --ink-overhang: 0.08em;
   --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
   /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
   --font-num: 'Nunito', system-ui, -apple-system, sans-serif;
@@ -134,6 +140,8 @@ body {
   line-height: 0.95;
   text-transform: uppercase;
   margin: 0;
+  /* room for the letters' lean, given back by the margin so the layout does not move */
+  padding-inline: var(--ink-overhang); margin-inline: calc(-1 * var(--ink-overhang));
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--pink-rgb) / 0.45);
 }
 .display--xl { font-size: clamp(2.6rem, 12vw, 4.4rem); }
@@ -778,7 +786,7 @@ body.azar-abierto { overflow: hidden; }
   background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
 }
 .cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
-.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 800; line-height: 1; color: var(--yellow); text-align: center; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 400; line-height: 1; padding-inline: var(--ink-overhang); color: var(--yellow); text-align: center; }
 .cuenta-num.late { animation: cuenta-late .9s ease-out both; }
 .cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
 .cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
