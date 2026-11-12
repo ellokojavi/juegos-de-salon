@@ -47,3 +47,5 @@ in its folder (its engine is tested in `public/cup/games/juegos.test.mjs`) and n
 its `ui.js` (the end-to-end scripts drive it through La Copa's `window.__copa`). It does not save with
 `createSessionStore` (C-6): the Cup keeps its attempt (`public/cup/cuenta.js`, `docs/memory-debt.json`).
 It has no `game.json` (`docs/manifest-debt.json`).
+
+- **What a mistake costs** (lab, flag `mistakes-rule`): while playing, one line under the title says it, from this game's `errores` text; see [cup.md](cup.md#reglas).

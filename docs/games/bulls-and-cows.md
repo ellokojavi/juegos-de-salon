@@ -200,3 +200,5 @@ The shared sheet of the keypad and the guess boards (`public/assets/css/teclado.
 Its catalogue entry, modes, session key, Firebase paths and the exceptions above live in
 `public/bulls-and-cows/game.json`, moved out of games.js by `node tools/generators/manifests.mjs migrate`. Edit it there
 and run `node tools/generators/manifests.mjs`; games.js reads the generated module.
+
+- **What a mistake costs** (lab, flag `mistakes-rule`): in La Copa's Número, one line under the title says it («❌ Cada intento que las pistas ya descartaban resta 15.»); see [cup.md](cup.md#reglas).

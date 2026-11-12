@@ -168,3 +168,5 @@ every value unchanged. Intended differences, the nearer step: the clues' text 1.
 1.4 (was 1.5), the 🔍 beside the title 2 rem (was 2.1), the clues' heading, the «nueva» tag and the
 💬 0.75 rem (were 0.8, 0.68, 0.7); the cards' padding 6 px (was 5), the clues 8 px apart (were 7),
 the rules' cards with a 10 px corner (was 9) and the cover's cards 8 px (was 7), 6 px apart (were 5).
+
+- **What a mistake costs** (lab, flag `mistakes-rule`): while playing, one line under the title says it, from this game's `errores` text; see [cup.md](cup.md#reglas).
