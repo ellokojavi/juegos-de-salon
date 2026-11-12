@@ -1,9 +1,28 @@
 // node public/labs/transfer/engine.test.mjs: the rules (C-12)
 import assert from 'node:assert/strict';
 import { run, newGame, place, unplace, go, hint, planCards, isOver, totalStars } from './engine.js';
-import { LEVELS, LOCALES, STATIONS, HEARTS } from './rules.js';
+import { CITIES, LOCALES, HEARTS } from './rules.js';
+const LEVELS = CITIES.santiago.levels, STATIONS = CITIES.santiago.stations;
 
-// Every level: its solution arrives, fits its slots, and every station it names exists
+// Every city: five levels, each solution arrives, every station and line it names exists, the steps grow
+for (const [id, city] of Object.entries(CITIES)) {
+  assert.equal(city.levels.length, 5, id);
+  city.levels.forEach((level, i) => {
+    const where = id + ' level ' + (i + 1);
+    const r = run(level, level.solution.map(c => level.hand[c]));
+    assert.ok(r.ok, where + ' solution: ' + r.reason);
+    assert.ok(level.solution.length <= level.slots, where + ' fits');
+    for (const l of level.lines) { assert.equal(l.ends.length, 2, where); for (const s of l.stops) assert.ok(city.stations[s], where + ': ' + s + ' exists'); }
+    for (const c of level.hand) if (c.t === 'change') assert.ok(level.lines.some(l => l.id === c.line && l.stops.includes(c.toward)), where + ': ' + c.line + ' towards ' + c.toward);
+    assert.ok(city.stations[level.goal] && city.stations[level.start.station], where);
+    assert.ok(level.hand.some((_, c) => !run(level, [level.hand[c]]).ok), where + ': a wrong card exists');
+  });
+  // The same five steps everywhere: a closed station on the fourth, a station to pass on the fifth, and each bites
+  assert.ok(city.levels[3].closed?.length && city.levels[4].via, id);
+  assert.deepEqual(city.levels.map(l => l.slots), [1, 2, 3, 4, 5], id);
+}
+
+// Santiago's levels, one by one: its solution arrives, fits its slots, and every station it names exists
 LEVELS.forEach((level, i) => {
   const r = run(level, level.solution.map(c => level.hand[c]));
   assert.ok(r.ok, 'level ' + (i + 1) + ' solution: ' + r.reason);
