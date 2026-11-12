@@ -2410,7 +2410,11 @@
       "error": "❌ hangman-intro: 1.28 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part hangman; the new and the diff images are in /home/runner/work/_te",
       "signature": "35593c2b55",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2423,7 +2427,11 @@
       "error": "❌ generala-intro: 1.11 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part generala; the new and the diff images are in /home/runner/work/_",
       "signature": "3ea6c1b664",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2436,7 +2444,11 @@
       "error": "❌ word-intro: 0.92 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part word; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "2df5c9bb8d",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2449,7 +2461,11 @@
       "error": "❌ battleship-intro: 1.68 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part battleship; the new and the diff images are in /home/runner/wo",
       "signature": "9f98092ad5",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2462,7 +2478,11 @@
       "error": "❌ julep-intro: 1.04 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part julep; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "fbd0624170",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2475,7 +2495,11 @@
       "error": "❌ year-intro: 0.57 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part year; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "d49d696bb5",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2488,7 +2512,11 @@
       "error": "❌ cup-intro: 0.43 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part cup; the new and the diff images are in /home/runner/work/_temp/e2e/v",
       "signature": "8ad49dd1fa",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2501,7 +2529,11 @@
       "error": "❌ timeline-intro: 1.58 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part timeline; the new and the diff images are in /home/runner/work/_",
       "signature": "d9b2c8c88e",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2514,7 +2546,11 @@
       "error": "❌ routes-intro: 0.52 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part routes; the new and the diff images are in /home/runner/work/_temp",
       "signature": "62be3524f9",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2527,7 +2563,11 @@
       "error": "❌ bulls-and-cows-intro: 1.44 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bulls-and-cows; the new and the diff images are in /home/r",
       "signature": "e0bef0eea0",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2540,7 +2580,11 @@
       "error": "❌ paint-mines-intro: 0.48 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part paint-mines; the new and the diff images are in /home/runner/",
       "signature": "e3b5ab6139",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2553,7 +2597,11 @@
       "error": "❌ connections-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part connections; the new and the diff images are in /home/runner/",
       "signature": "ae7cb33e46",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2566,7 +2614,11 @@
       "error": "❌ queens-intro: 0.31 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part queens; the new and the diff images are in /home/runner/work/_temp",
       "signature": "5159959e1f",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2579,7 +2631,11 @@
       "error": "❌ shinobi-intro: 0.30 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part shinobi; the new and the diff images are in /home/runner/work/_te",
       "signature": "38af0f601f",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2592,7 +2648,11 @@
       "error": "❌ fourth-king-intro: 0.64 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part fourth-king; the new and the diff images are in /home/runner/",
       "signature": "7edbe57dfb",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2605,7 +2665,11 @@
       "error": "❌ untangle-intro: 0.47 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part untangle; the new and the diff images are in /home/runner/work/_",
       "signature": "49f7b4998f",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2618,7 +2682,11 @@
       "error": "❌ bridges-intro: 0.51 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges; the new and the diff images are in /home/runner/work/_te",
       "signature": "36f4ebd05d",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -2631,7 +2699,11 @@
       "error": "❌ liars-dice-intro: 0.94 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice; the new and the diff images are in /home/runner/wo",
       "signature": "ebee19746a",
       "date": "2026-11-12T01:33:56.980Z",
-      "fix": null,
+      "fix": {
+        "commit": "4bc84d55d7287a9ad0aa5262cd5219e61a26cf42",
+        "date": "2026-11-12T01:46:54.843Z",
+        "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
+      },
       "flaky": false
     }
   ]
