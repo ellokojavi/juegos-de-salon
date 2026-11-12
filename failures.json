@@ -3008,6 +3008,19 @@
       "date": "2026-11-12T19:28:18.377Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43302153584,
+      "check": "tests",
+      "pr": 1426,
+      "branch": "scoring-rule-visible",
+      "commit": "3e27a8129e4a010ff1a99f026924f1a6d4c5715d",
+      "test": "README up to date",
+      "error": "ERROR · appeared e2e: tango/mistakes-rule.mjs",
+      "signature": "9438d71394",
+      "date": "2026-11-12T20:39:40.008Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
