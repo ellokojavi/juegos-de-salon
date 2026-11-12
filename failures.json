@@ -2965,6 +2965,19 @@
         "stat": "1 file(s) +1 −1: public/labs/transfer/game.js"
       },
       "flaky": false
+    },
+    {
+      "run": 43270939335,
+      "check": "end-to-end",
+      "pr": 1422,
+      "branch": "claude/ecstatic-carson-rdzy7y",
+      "commit": "6a13d3b99f8252ae15812b9b61159b638fe56bc6",
+      "test": "visual.mjs:liars-dice",
+      "error": "❌ liars-dice-intro: 11.09 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice; the new and the diff images are in /home/runner/w",
+      "signature": "c7da246b68",
+      "date": "2026-11-12T17:43:55.901Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
