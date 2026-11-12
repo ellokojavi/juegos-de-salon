@@ -1,6 +1,4 @@
-level: minor
+level: patch
 
-- **#️⃣ Sudoku leaves the lab, ready to launch by flag** (D-517's way, launching 2026-11-11 at 21:00 Pacific): its page `/sudoku/`, La Copa (a cup day plays the 🟢 6×6 mini unless the admin picks 🔴 hard, the 9×9) and Uno al día (from the deck after 2026-11-12), in es, en and pt. The lab's game moved to `cup/games/sudoku/`: the electric level lever, the demo board on the cover with the drawn icon, notes, undo, the hint (−15), giving up, and the score from 0 to 100. Rankings stay one per level (`sudoku_easy`, `sudoku_hard`). Hidden until `flags/sudoku` is on; the lab prototype stays until the cleanup.
-- **Launch at 21:00 Pacific**: the `launch` workflow can also turn a splash campaign off (`--off`), so Sudoku's flag and its splash go on and Aletazo's promotion goes off at the same moment. Sudoku's splash opens its page ready to play and says it is in La Copa and Uno al día.
-- **Splash campaigns check themselves**: the panel's preview of each campaign says ✓ or ⚠️ (an icon drawn too big, an old stylesheet, a window taller than the screen, a clip not flush), and the end-to-end tests check every campaign the same way. The splash's stylesheet now follows each release, which drew Sudoku's icon huge in the panel.
-- **Lab games named in the panel**: ¡Al toque!, Sudoku, Memorice, Artefactos, Dominorama, La clave, El Camaleón and Números explosivos showed their internal id in the panel's lists; they now show their name, and a test stops a game from sending signals without one.
+- **Launch workflow**: its input to turn a splash campaign off is now `turn_off`. A bare `off` is a YAML boolean, so GitHub rejected it at Sudoku's launch (Aletazo's promotion was ended by its end time instead); a test stops input names that YAML reads as booleans.
+- **Sudoku's icon on the home page**: its card and the search show the game's drawn 3×3 icon instead of #️⃣.

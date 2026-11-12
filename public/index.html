@@ -396,6 +396,7 @@
        queda casi 90 px más baja que con el emoji arriba (D-239) */
     .game-card.alta { position: relative; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; grid-template-areas: "emoji h2" "tag tag" "meta meta"; column-gap: 8px; row-gap: 8px; align-items: center; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
     .game-card.alta .emoji { width: 40px; height: 40px; font-size: 1.6rem; border-radius: 12px; }
+    .game-card .emoji .game-icon { width: 1.15em; height: 1.15em; display: block; }
     .game-card.alta .texto { display: contents; }
     .game-card.alta h2 { grid-area: h2; font-size: clamp(1.05rem, 5vw, 1.35rem); line-height: 1.05; }
     .game-card.alta .tag { grid-area: tag; font-size: 0.82rem; line-height: 1.3; margin: 0; }
@@ -692,7 +693,8 @@
       const [, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
       const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon') + (g.torneo ? ' torneo' : ''), href: g.available ? g.path : null, 'aria-disabled': g.available ? null : 'true', 'data-id': g.id, style: `animation-delay:${i * 60}ms` },
-        el('div', { class: 'emoji' }, el('span', { class: con('', g.emoji) }, g.emoji)),
+        // A game drawn as an icon (`icon` in games.js, Sudoku's 3×3: there is no sudoku emoji) shows the drawing
+        el('div', { class: 'emoji' }, g.icon ? el('img', { class: 'game-icon', src: g.icon, alt: '', width: 40, height: 40, decoding: 'async' }) : el('span', { class: con('', g.emoji) }, g.emoji)),
         el('div', { class: 'texto' },
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
           el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),
