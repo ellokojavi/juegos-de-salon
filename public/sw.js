@@ -170,13 +170,31 @@ async function keep(req) {
 }
 
 /** What an uncut worker does with a request, once it knows whether offline mode is on. */
+/**
+ * A code or style file of this site asked without its ?h= (a stylesheet a module adds with loadCss, a
+ * JSON): its name does not change when its content does, so the cache cannot be trusted with it.
+ * Network first, like a page, and the cache only without signal: kept cache-first, the ☁️'s old
+ * stylesheet outlived its new code for good (the owner, 2026-11-12).
+ */
+const unhashed = url => url.origin === self.location.origin && !url.searchParams.has('h') && /\.(css|js|json)$/.test(url.pathname);
+
+async function fresh(req) {
+  const net = fetch(req).then(r => {
+    if (r.ok) { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(req, copy)); }
+    return r;
+  });
+  const timeout = new Promise(res => setTimeout(() => res(null), PAGE_TIMEOUT));
+  const r = await Promise.race([net.catch(() => null), timeout]);
+  return r || (await fromCache(req)) || (await fromCache(req, { ignoreSearch: true })) || net;
+}
+
 function normal(req) {
   const url = new URL(req.url);
   const mine = url.origin === self.location.origin;
   if (req.method !== 'GET' || (!mine && !SDK.test(req.url))) return fetch(req);
   if (mine && (url.pathname.endsWith('/sw.js') || url.pathname.endsWith('/precache.json'))) return fetch(req);
   if (req.mode === 'navigate') return encendido ? page(req) : fetch(req);
-  return encendido ? keep(req) : fetch(req);
+  return encendido ? (unhashed(url) ? fresh(req) : keep(req)) : fetch(req);
 }
 
 self.addEventListener('fetch', e => {
@@ -200,7 +218,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(leido.then(() => (encendido ? page(req) : fetch(req))));
     return;
   }
-  if (encendido) e.respondWith(keep(req));
+  if (encendido) e.respondWith(unhashed(url) ? fresh(req) : keep(req));
 });
 
 self.addEventListener('install', () => self.skipWaiting());

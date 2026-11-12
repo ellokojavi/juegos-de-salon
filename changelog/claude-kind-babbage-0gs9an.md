@@ -1,3 +1,3 @@
 level: patch
 
-- **Offline mode (lab)**: while the games are being saved, the ☁️ shimmers in the titles' colours (yellow, pink, cyan, lime) instead of moving its arrow; still with reduced motion.
+- **Offline mode**: a stylesheet or script the app loads without its version stamp (the ☁️'s, a La Copa game's) is fetched fresh while online and taken from the phone only with no signal; before, the phone kept serving the first copy it saw, so the ☁️ kept its old bouncing arrow instead of the shimmer.
