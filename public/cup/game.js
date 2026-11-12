@@ -16,7 +16,7 @@ import { applyStatic, COMMON, SITIO, LANGS, getLang, coverLangToggle, withLang }
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
-import { gameIcon, withIcon } from '../assets/js/game-icon.js';
+import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { flag } from '../assets/js/flags.js';
 import { factsLine } from '../assets/js/how-to-play-facts.js';
@@ -814,8 +814,8 @@ function tarjetaDia(d, rotulo) {
   else if (fuera(Lc, S.yo, now)) accion = null;
   // Con el admin solo no se juega (D-118): falta con quién competir
   else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'notice', id: 'falta-gente' }, T.needSecond);
-  else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, withIcon(J, T.play));
-  else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, withIcon(J, T.resume));
+  else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, textWithIcon(J, T.play));
+  else if (est === 'en-curso') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); jugar(d); } }, textWithIcon(J, T.resume));
   return el('div', { class: `panel dia-card ${est}` },
     el('div', { class: 'dia-top' },
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
@@ -886,10 +886,10 @@ function misDias(d, now) {
       detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo, now)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
-      accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, withIcon(J, T.play));
+      accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, textWithIcon(J, T.play));
     } else if (est === 'en-curso') {
       detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
-      accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, withIcon(J, T.resume));
+      accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, textWithIcon(J, T.resume));
     } else if (est === 'perdido') detalle = T.notPlayed;
     else if (est === 'anulado') detalle = T.dayCancelled;
     else detalle = fmt(T.opensOn, { fecha: fechaCorta(meta.win[k].a, meta.tz) });
@@ -1399,12 +1399,12 @@ function antesDeJugar(d) {
     const sw = el('button', { type: 'button', class: 'switch', role: 'switch', id: 'btn-comodin', 'aria-checked': 'false', 'aria-label': T.wildUse,
       onClick: () => { SFX.tap(); usarComodin = !usarComodin; sw.classList.toggle('on', usarComodin); sw.setAttribute('aria-checked', String(usarComodin));
         // Empezar says what it spends (C-8, U-15): the start is the confirmation
-        empezar.replaceChildren(...(usarComodin ? [`🃏 ${T.startWild}`] : withIcon(J, T.start))); } });
+        empezar.replaceChildren(...(usarComodin ? [`🃏 ${T.startWild}`] : [].concat(textWithIcon(J, T.start)))); } });
     comodin = el('div', { class: 'toggle-row', id: 'fila-comodin' },
       el('span', { class: 'txt' }, el('b', {}, el('span', { 'aria-hidden': 'true' }, '🃏 '), T.wildTitle), el('small', {}, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast)), sw);
   }
   const sinGente = faltaGente(Lc);
-  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, withIcon(J, T.start));
+  const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, textWithIcon(J, T.start));
   if (sinGente) avisoError(err, T.needSecond);
   precalentar(id,
     () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: rondasPara(meta, d) }),
@@ -1913,7 +1913,7 @@ function practica(id, varianteElegida = null) {
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     // Un juego `diario` (El caso, D-267) no: lo abre un amigo que no sabe de copas, y arriba ya dice qué caso es (U-8)
     LABS && !gameById(id)?.diario ? el('p', { class: 'muted center' }, T.practiceHint) : null,
-    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla, variante); } }, withIcon(J, T.start)),
+    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla, variante); } }, textWithIcon(J, T.start)),
     volverDePractica(),
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
@@ -1934,7 +1934,7 @@ function practica(id, varianteElegida = null) {
       hoy.estadoLlave = st;
       const line = lockLine(st, { lang: LANG });
       if (line) linea.textContent = line;
-      if (st === 'resume') boton.replaceChildren(...withIcon(J, T.resume));
+      if (st === 'resume') boton.replaceChildren(...[].concat(textWithIcon(J, T.resume)));
       boton.disabled = false;
       return st;
     });

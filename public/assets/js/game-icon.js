@@ -39,3 +39,13 @@ export function gameIcon(game, { size = 1, class: clase = '', emoji } = {}) {
 
 /** "icon Name" as nodes, the drop-in for `conEmoji(g.emoji, name)`. */
 export const withIcon = (game, text, opts) => [gameIcon(game, opts), ` ${text}`];
+
+/**
+ * For a place that was plain text (`${J.emoji} ${T.start}` on a button): a game without a drawing keeps
+ * exactly that one text node, since a separate span moved the button's text a pixel or two (the visual
+ * check caught it on Toque y Fama: Palabra); a game with a drawing gets the image and the text.
+ */
+export const textWithIcon = (game, text, opts) => {
+  if (!iconOf(game)) return `${opts?.emoji ?? (typeof game === 'string' ? gameById(game)?.emoji : game?.emoji) ?? ''} ${text}`;
+  return [gameIcon(game, opts), ` ${text}`];
+};

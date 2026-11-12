@@ -2,7 +2,7 @@
  * La Copa — the create-a-Cup screen, loaded the first time it opens (#860).
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
-import { gameIcon, withIcon } from '../assets/js/game-icon.js';
+import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
 import { $, el, vibrate } from '../assets/js/ui.js';
 import { ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, tieneFinal, zonaDeIdioma } from './engine.js';
 import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
@@ -383,7 +383,7 @@ function armarFinde() {
     const ids = x.split(TRIO_SEP).map(y => diaDeCal(y).id);
     return el('div', { class: 'semana-dia finde-dia', 'data-dia': i, 'data-juegos': ids.join(',') },
       el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(JUEGOS_COPA.trio, { class: 'em' })),
-      el('span', { class: 'semana-juego' }, ...ids.map(id => el('small', { class: 'finde-juego' }, ...withIcon(JUEGOS_COPA[id], JUEGOS_COPA[id].nombre)))));
+      el('span', { class: 'semana-juego' }, ...ids.map(id => el('small', { class: 'finde-juego' }, ...[].concat(textWithIcon(JUEGOS_COPA[id], JUEGOS_COPA[id].nombre))))));
   }));
   const dado = el('button', { type: 'button', class: 'btn-dado', id: 'btn-dado-finde', onClick: () => { SFX.tap(); vibrate(15); cal = findeAlAzar({ familia }); pintar(); } }, T.weekDice);
   const nodo = el('div', { class: 'panel', id: 'crear-finde', hidden: true },
