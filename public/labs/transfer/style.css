@@ -63,7 +63,9 @@
 .tr-dir__head { fill: none; stroke: var(--tr); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .tr-dir__name { fill: var(--tr); font: italic 800 12px var(--font-body); paint-order: stroke; stroke: var(--bg1); stroke-width: 3; }
 .tr-arrow { fill: var(--cyan); stroke: var(--bg1); stroke-width: 2; stroke-linejoin: round; }
-.tr-train-ring { fill: var(--bg1); stroke: var(--cyan); stroke-width: 3; }
+.tr-train-ring { fill: var(--bg1); stroke: var(--cyan); stroke-width: 3; transition: stroke 0.15s; }
+.tr-mover.is-arrived .tr-train-ring { stroke: var(--lime); }
+.tr-stop circle { transition: fill 0.2s; }
 
 /* ---------- Cards ---------- */
 .tr-plan, .tr-hand { display: flex; flex-wrap: wrap; gap: var(--s-8); }

@@ -223,7 +223,7 @@ function placeNames(lv, used, pos, tags = []) {
     for (const side of tries) {
       const box = nameBox(id, side, x, y);
       let cost = 0;
-      for (const o of boxes) if (meets(box, o, 14)) cost += 10;
+      for (const o of boxes) if (meets(box, o, 10)) cost += 10;
       for (const o of used) if (o !== id) { const [ox, oy] = pos(o); if (meets(box, [ox - 10, oy - 10, ox + 10, oy + 10])) cost += 10; }
       if (crosses(box, segs)) cost += 5;
       if (crosses(box, ext)) cost += 8;
@@ -300,6 +300,85 @@ function aheadOf(lv, train, at, toPx) {
   return back ? [2 * pts[i][0] - back[0], 2 * pts[i][1] - back[1]] : null;
 }
 
+/** The train's moves on a drawn map (each short, so a whole plan rides in a few seconds). */
+const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const tween = (ms, fn) => new Promise(done => {
+  if (reduced) { fn(1); return done(); }
+  const t0 = performance.now();
+  const tick = now => { const t = Math.min(1, (now - t0) / ms); fn(t); if (t < 1) requestAnimationFrame(tick); else done(); };
+  requestAnimationFrame(tick);
+});
+class Ride {
+  constructor(map) {
+    this.map = map; this.geo = map.geo; this.mover = map.querySelector('#tr-mover'); this.arrow = this.mover.querySelector('.tr-arrow');
+    this.at = this.geo.lv.start.station; this.p = this.geo.at(this.at); this.ang = +this.arrow.dataset.ang || 0;
+    map.querySelector(`.tr-stop[data-station="${this.at}"]`)?.classList.add('is-lit');
+  }
+  place([x, y], k = 1) { this.mover.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)})${k !== 1 ? ` scale(${k.toFixed(3)})` : ''}`); this.p = [x, y]; }
+  turnTo(ang) { this.ang = ang; this.arrow.style.display = ''; this.arrow.setAttribute('transform', `rotate(${ang.toFixed(1)})`); }
+  /** The points along `line` from the station the train is at to `to`, bends included. */
+  route(to, line) {
+    const { lv, at, toPx } = this.geo, l = lv.lines.find(x => x.id === line);
+    const pts = [], ids = [];
+    l.stops.forEach((id, i) => { pts.push(at(id)); ids.push(id); const b = (l.bends || []).find(x => x.after === id); if (b && i + 1 < l.stops.length) { pts.push(toPx(b.at)); ids.push(null); } });
+    const a = ids.indexOf(this.at), b = ids.indexOf(to);
+    if (a < 0 || b < 0) return [this.p, at(to)];
+    return a <= b ? pts.slice(a, b + 1) : pts.slice(b, a + 1).reverse();
+  }
+  /** Along a polyline: the point at `d` px from its start, and the heading there. */
+  static along(pts, d) {
+    for (let i = 1; i < pts.length; i++) {
+      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], L = Math.hypot(x1 - x0, y1 - y0);
+      if (d <= L || i === pts.length - 1) { const k = L ? Math.min(1, d / L) : 1; return [[x0 + (x1 - x0) * k, y0 + (y1 - y0) * k], Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI]; }
+      d -= L;
+    }
+    return [pts[0], 0];
+  }
+  /** The arrow turns by the short way round, from where it points to `ang`. */
+  async spin(ang, ms = 220) {
+    const from = this.ang, delta = ((ang - from + 540) % 360) - 180;
+    if (Math.abs(delta) < 1) return this.turnTo(ang);
+    await tween(ms, t => this.turnTo(from + delta * easeInOut(t)));
+  }
+  /** One station on: speed up, glide, slow down, and settle on the dot with a small dip. */
+  async hop(to, line) {
+    const pts = this.route(to, line), total = pts.slice(1).reduce((s, q, i) => s + Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1]), 0);
+    const [, head] = Ride.along(pts, 0.01);
+    await this.spin(head, 120);
+    await tween(Math.min(380, 170 + total * 1.6), t => { const [p, a] = Ride.along(pts, total * easeInOut(t)); this.place(p); this.turnTo(a); });
+    this.at = to;
+    this.map.querySelector(`.tr-stop[data-station="${to}"]`)?.classList.add('is-lit');
+    SFX.tap?.();
+    await tween(140, t => this.place(this.p, 1 - 0.12 * Math.sin(Math.PI * t)));
+  }
+  /** After a card: the arrow turns to where the train heads now (the other platform, a transfer). */
+  async face(train) {
+    const { lv, at, toPx } = this.geo, ahead = aheadOf(lv, train, at, toPx);
+    if (!ahead) return;
+    const ang = Math.atan2(ahead[1] - this.p[1], ahead[0] - this.p[0]) * 180 / Math.PI;
+    const changed = Math.abs(((ang - this.ang + 540) % 360) - 180) > 1;
+    await this.spin(ang, 280);
+    if (changed) await tween(160, t => this.place(this.p, 1 + 0.12 * Math.sin(Math.PI * t)));
+  }
+  /** A closed station: the train starts towards it and stops short. */
+  async bump(to, line) {
+    const pts = this.route(to, line), from = this.p, [p] = Ride.along(pts, 14);
+    await tween(160, t => this.place([from[0] + (p[0] - from[0]) * easeInOut(t), from[1] + (p[1] - from[1]) * easeInOut(t)]));
+    await tween(220, t => this.place([p[0] + (from[0] - p[0]) * easeInOut(t), p[1] + (from[1] - p[1]) * easeInOut(t)]));
+  }
+  /** A route that fails: the train shakes where it stopped. */
+  async shake() {
+    const [x, y] = this.p;
+    await tween(300, t => this.place([x + Math.sin(t * Math.PI * 6) * 4 * (1 - t), y]));
+    this.p = [x, y];
+  }
+  /** At the destination: the ring pulses. */
+  async arrive() {
+    this.mover.classList.add('is-arrived');
+    await tween(360, t => this.place(this.p, 1 + 0.25 * Math.sin(Math.PI * t)));
+  }
+}
+
 function drawMap(lv, { train, lit = [] } = {}) {
   mapCity = lv.city;
   const { used, at, toPx, sides, tags, w, h } = frame(lv);
@@ -330,22 +409,27 @@ function drawMap(lv, { train, lit = [] } = {}) {
     g.append(t);
     root.append(g);
   }
+  // The geometry stays on the map, so the ride can move the train without drawing it again
+  root.geo = { lv, at, toPx };
   if (train) {
     const [cx, cy] = at(train.at);
-    root.append(svg('circle', { cx, cy, r: 15, class: 'tr-train-ring' }));
+    // The train, its ring and its arrow move as one: the ring and the train never turn, the arrow does
+    const mover = svg('g', { class: 'tr-mover', id: 'tr-mover', transform: `translate(${Math.round(cx)},${Math.round(cy)})` });
+    mover.append(svg('circle', { cx: 0, cy: 0, r: 15, class: 'tr-train-ring' }));
     // The arrow: which way the train heads, towards the next station (or the next bend) on its line
     const ahead = aheadOf(lv, train, at, toPx);
-    if (ahead) {
-      const ang = Math.atan2(ahead[1] - cy, ahead[0] - cx) * 180 / Math.PI;
-      root.append(svg('path', { class: 'tr-arrow', d: 'M19,-7 L29,0 L19,7 Z', transform: `translate(${Math.round(cx)},${Math.round(cy)}) rotate(${Math.round(ang)})` }));
-    }
+    const arrow = svg('path', { class: 'tr-arrow', d: 'M19,-7 L29,0 L19,7 Z' });
+    if (ahead) { const ang = Math.atan2(ahead[1] - cy, ahead[0] - cx) * 180 / Math.PI; arrow.setAttribute('transform', `rotate(${Math.round(ang)})`); arrow.dataset.ang = ang; }
+    else arrow.style.display = 'none';
+    mover.append(arrow);
     // The train, drawn (no emoji): a front with its window and two lights, centred on the ring
-    const g = svg('g', { class: 'tr-train', id: 'tr-train', transform: `translate(${Math.round(cx)},${Math.round(cy) - 1})` });
+    const g = svg('g', { class: 'tr-train', id: 'tr-train', transform: 'translate(0,-1)' });
     g.append(svg('rect', { x: -7, y: -8, width: 14, height: 15, rx: 4, class: 'tr-train__body' }),
       svg('rect', { x: -4.5, y: -5.5, width: 9, height: 5, rx: 1.5, class: 'tr-train__window' }),
       svg('circle', { cx: -3.5, cy: 3, r: 1.3, class: 'tr-train__light' }), svg('circle', { cx: 3.5, cy: 3, r: 1.3, class: 'tr-train__light' }),
       svg('path', { d: 'M-5 7l-2 3M5 7l2 3', class: 'tr-train__feet' }));
-    root.append(g);
+    mover.append(g);
+    root.append(mover);
   }
   return root;
 }
@@ -398,20 +482,24 @@ async function sendTrain() {
   SFX.tap();
   renderHand();
   const { state: next, result } = E.go(LV(), state);
-  // The ride: the train lights each station it passes
-  const lit = [lv.start.station];
+  // The ride: the train glides from station to station (it speeds up, slows down and settles), lights each
+  // one it passes, and its arrow turns to where it heads after each card (the other platform, a transfer)
+  const map = drawMap(lv, { train: { at: lv.start.station, line: lv.start.line, toward: lv.start.toward } });
+  $('#map').replaceChildren(map);
+  const ride = new Ride(map);
   // …and the card it is following lights up in the route (cards run in order, empty slots skipped)
   const running = [...$('#plan').children].filter(n => n.classList.contains('tr-card'));
   for (let i = 0; i < result.steps.length; i++) {
+    const step = result.steps[i];
     running.forEach((n, k) => n.classList.toggle('is-now', k === i));
-    for (const s of result.steps[i].path) {
-      lit.push(s);
-      $('#map').replaceChildren(drawMap(lv, { train: { at: s, line: result.steps[i].line, toward: result.steps[i].toward }, lit }));
-      if (!reduced) await sleep(320);
-    }
+    for (const s of step.path) await ride.hop(s, step.line);
+    const failed = !result.ok && i === result.steps.length - 1;
+    if (failed && result.reason === 'closed') await ride.bump(result.closed, step.line);
+    await ride.face({ at: step.station, line: step.line, toward: step.toward });
+    if (failed) await ride.shake();
   }
-  const last = result.steps[result.steps.length - 1];
-  if (last) $('#map').replaceChildren(drawMap(lv, { train: { at: last.station, line: last.line, toward: last.toward }, lit }));
+  running.forEach(n => n.classList.remove('is-now'));
+  if (result.ok) await ride.arrive();
   verdict = { result, next, levelIndex: state.level };
   busy = false;
   if (result.ok) { SFX.win(); vibrate([30, 40, 30]); } else { vibrate(120); }
