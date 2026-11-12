@@ -237,11 +237,12 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
    cover hero, its result heading and Play/Start/Resume buttons, La Copa's day screens, game picker,
    calendar (create and join) and day result, Rankings (`/records/`), Uno al día's page (`/today/`)
    the dice (its no-3D fallback, and the 3D die's face, drawn into its texture by `dado3d.js`) and the
-   splash's name and Play button (its own `icon` per item). **Text keeps the emoji**: share messages and
-   invitations, `<title>`, notifications, share cards drawn on a canvas, the owner's panel, and a
-   sentence formatted as text.
-   `public/assets/js/game-icons.test.mjs` fails when a screen writes a game's `.emoji` into the page
-   without the helper; a text-only place joins its `ALLOWED` list with its reason.
+   splash's name and Play button (its own `icon` per item), and the result image to share
+   (`laminaResultado()` in `compartir.js` loads the drawing and draws it). **Text keeps the emoji**:
+   share messages and invitations, `<title>`, notifications, the owner's panel, and a sentence
+   formatted as text. A new game sets `icon` from the start (docs/ADD-GAME.md).
+   `public/assets/js/game-icons.test.mjs` fails when a screen writes a game's `.emoji` into the page,
+   or draws it on a canvas (`fillText`), without the helper; a text-only place joins its `ALLOWED` list with its reason.
 
 ## 4. Escapes
 

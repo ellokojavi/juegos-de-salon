@@ -28,6 +28,15 @@ import { tiene } from './parametros.js';
 export const EMOJI_OSCUROS = ['〰️', '➕'];
 
 /** Dibuja con halo claro si el texto trae un emoji oscuro; si no, tal cual. */
+/** The game's drawn icon as a loaded image, or null (no drawing, or it failed to load). */
+async function cargarIcono(juego) {
+  // Loaded here, not at the top: game-icon.js brings games.js, which a share of the app does not need
+  const { iconUrl } = await import('./game-icon.js');
+  const src = iconUrl(juego);
+  if (!src) return null;
+  return new Promise(ok => { const img = new Image(); img.onload = () => ok(img); img.onerror = () => ok(null); img.src = src; });
+}
+
 function conHalo(c, texto, dibujar) {
   if (!EMOJI_OSCUROS.some(e => texto.includes(e))) { dibujar(); return; }
   c.save(); c.shadowColor = 'rgba(255,255,255,0.95)'; c.shadowBlur = 14;
@@ -297,7 +306,12 @@ export async function laminaResultado({ cab, url, juego = null, nombre = '', pun
   // Lo de adentro, de arriba abajo: [alto, cómo dibujarlo]
   const bloques = [];
   if (juego) {
-    bloques.push([130, (c, W, y) => { c.font = fuente(400, 110); conHalo(c, juego.emoji, () => c.fillText(juego.emoji, W / 2, y + 108)); }]);
+    // A game with a drawn icon shows the drawing here too (DESIGN.md rule 9); the emoji stands in if it fails to load
+    const dibujo = await cargarIcono(juego);
+    bloques.push([130, (c, W, y) => {
+      if (dibujo) { c.drawImage(dibujo, W / 2 - 55, y + 12, 110, 110); return; }
+      c.font = fuente(400, 110); conHalo(c, juego.emoji, () => c.fillText(juego.emoji, W / 2, y + 108));
+    }]);
     bloques.push([84, (c, W, y) => { c.font = fuente(400, 68, TITULAR); c.fillStyle = COLORES.amarillo; ajustar(c, juego.nombre, W - 120); c.fillText(juego.nombre, W / 2, y + 66); }]);
   }
   if (nombre) bloques.push([64, (c, W, y) => { c.font = fuente(800, 44); c.fillStyle = '#ffffff'; ajustar(c, `👤 ${nombre}`, W - 120); c.fillText(`👤 ${nombre}`, W / 2, y + 48); }]);

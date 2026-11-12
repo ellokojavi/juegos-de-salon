@@ -2,7 +2,7 @@
  * A game's icon on screen (docs/DESIGN.md, "Game icons"): its drawing when the game has one
  * (`icon` in games.js, a path from the site's root, like Sudoku's), else its emoji in a span with
  * the light outline the dark ones need (`con`). Every screen that shows a game's icon in the page
- * uses this; text (share messages, `<title>`, notifications, images drawn on a canvas) keeps the
+ * uses this; text (share messages, `<title>`, notifications, a game without a drawing on a canvas) keeps the
  * emoji, which stands in for the drawing. `game-icons.test.mjs` keeps new screens on it.
  */
 import { el, con } from './ui.js';
