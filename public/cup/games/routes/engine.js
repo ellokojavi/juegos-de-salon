@@ -87,6 +87,18 @@ export function minimo(estado, tope = 8) {
 }
 
 /**
+ * A hint (#1381): the first turn of a shortest solution from `estado`, the rectangle whose turn leaves
+ * the board one turn closer (null when it is already solved or beyond `tope`). The rectangles are tried
+ * in RECTANGULOS order, so the same board always gets the same hint.
+ */
+export function pista(estado, tope = 8) {
+  const m = minimo(estado, tope);
+  if (!m) return null;
+  for (const r of RECTANGULOS) if (minimo(girar(estado, r), m - 1) === m - 1) return r;
+  return null;
+}
+
+/**
  * Las piezas: un mapa de metro de 3×3. Cada línea entra por un borde del tablero, pasa de pieza en
  * pieza sin repetir y sale por otro borde; en cada borde entre piezas usa una de sus dos puertas. Se
  * rehace hasta que toda pieza tenga al menos un tramo y no haya dos piezas iguales (si no, habría más
@@ -201,8 +213,10 @@ export const generarEtapa = (semilla, n) => generar(`${semilla}:etapa-${n + 1}`,
  */
 export const TIEMPO_S = 7 * 60, RAPIDO_S = 60;
 export const PUNTOS_ETAPA = 17, BONO_VELOCIDAD = 10, BONO_GIROS = 5;
+/** Each 💡 hint costs this much (#1381), the last layer, never below 0. Only the standalone page offers hints. */
+export const COSTO_PISTA = 3;
 const entre01 = x => Math.max(0, Math.min(1, x));
-export function puntajePartida(hechas, segundos, { etapas = ETAPAS.length, tiempo = TIEMPO_S } = {}) {
+export function puntajePartida(hechas, segundos, { etapas = ETAPAS.length, tiempo = TIEMPO_S, pistas = 0 } = {}) {
   const completa = hechas.length >= etapas;
   const base = Math.round((PUNTOS_ETAPA * ETAPAS.length * Math.min(hechas.length, etapas)) / etapas);
   const rapido = Math.min(tiempo / 2, (RAPIDO_S * etapas) / ETAPAS.length);
@@ -210,7 +224,9 @@ export function puntajePartida(hechas, segundos, { etapas = ETAPAS.length, tiemp
   const giros = hechas.reduce((a, h) => a + h.giros, 0), minimos = hechas.reduce((a, h) => a + h.minimo, 0);
   const eficiencia = hechas.length ? entre01((minimos / giros - 0.5) / 0.5) : 0;
   const ptsVelocidad = Math.round(BONO_VELOCIDAD * velocidad), ptsGiros = Math.round(BONO_GIROS * eficiencia);
-  return { total: base + ptsVelocidad + ptsGiros, base, ptsVelocidad, ptsGiros, giros, minimos, completa };
+  const bruto = base + ptsVelocidad + ptsGiros;
+  const ptsPistas = Math.min(bruto, COSTO_PISTA * Math.max(0, pistas | 0));
+  return { total: bruto - ptsPistas, base, ptsVelocidad, ptsGiros, ptsPistas, pistas: Math.max(0, pistas | 0), giros, minimos, completa };
 }
 
 /**

@@ -15,6 +15,8 @@ const ES = {
     desempate: 'Si empatas, gana quien tardó menos.',
   },
   ui: {
+    rrHint: 'Pista (−3)',
+    rrHintShown: 'Gira el rectángulo marcado: es parte del camino más corto.',
     rrStage: 'Etapa {n} de {t}',
     rrScoreboard: 'Giros: {g} · Mínimo: {m}',
     rrClock: '⏳ {t}',
@@ -37,6 +39,8 @@ const ES = {
     rrBdTurns: '🔄 Giros ({g}, mínimo {m}): +{p}.',
     rrBdStage: '{c} Etapa {n}: {g} giros (mínimo {m}).',
     rrBdRestartOne: 'Reiniciaste 1 vez.',
+    rrBdHintOne: '💡 1 pista: −{p}.',
+    rrBdHints: '💡 {n} pistas: −{p}.',
     rrBdRestarts: 'Reiniciaste {n} veces.',
   },
 };
@@ -53,6 +57,8 @@ const EN = {
     desempate: 'On a tie, the faster player wins.',
   },
   ui: {
+    rrHint: 'Hint (−3)',
+    rrHintShown: 'Turn the marked rectangle: it is part of the shortest way.',
     rrStage: 'Stage {n} of {t}',
     rrScoreboard: 'Turns: {g} · Fewest: {m}',
     rrClock: '⏳ {t}',
@@ -75,6 +81,8 @@ const EN = {
     rrBdTurns: '🔄 Turns ({g}, fewest {m}): +{p}.',
     rrBdStage: '{c} Stage {n}: {g} turns (fewest {m}).',
     rrBdRestartOne: 'You restarted 1 time.',
+    rrBdHintOne: '💡 1 hint: −{p}.',
+    rrBdHints: '💡 {n} hints: −{p}.',
     rrBdRestarts: 'You restarted {n} times.',
   },
 };
@@ -91,6 +99,8 @@ const PT = {
     desempate: 'Se empatar, ganha quem levou menos tempo.',
   },
   ui: {
+    rrHint: 'Dica (−3)',
+    rrHintShown: 'Gire o retângulo marcado: ele faz parte do caminho mais curto.',
     rrStage: 'Etapa {n} de {t}',
     rrScoreboard: 'Giros: {g} · Mínimo: {m}',
     rrClock: '⏳ {t}',
@@ -113,6 +123,8 @@ const PT = {
     rrBdTurns: '🔄 Giros ({g}, mínimo {m}): +{p}.',
     rrBdStage: '{c} Etapa {n}: {g} giros (mínimo {m}).',
     rrBdRestartOne: 'Você reiniciou 1 vez.',
+    rrBdHintOne: '💡 1 dica: −{p}.',
+    rrBdHints: '💡 {n} dicas: −{p}.',
     rrBdRestarts: 'Você reiniciou {n} vezes.',
   },
 };

@@ -74,6 +74,13 @@ Empezar goes through the cup's 3, 2, 1 countdown (D-105).
 - **The breakdown** (`desglose`): «🚇 Etapas (5 de 5): +85.», «⏱ Rapidez (2:10): +8.» (without the five,
   «⏱ Rapidez: +0 (faltaron etapas).»), «🔄 Giros (24, mínimo 18): +3.», then each stage («🟨 Etapa 3: 5 giros
   (mínimo 4).») and how many times you restarted.
+- **💡 Hint** (#1381), behind the runtime flag `routes-hint` (D-498): only on the standalone page, for one
+  player, never in a La Copa day nor its trial session. «💡 Pista (−3)» sits beside the clock and the turns;
+  a tap marks for a moment, in white like a drag, the first rectangle of a shortest solution
+  (`pista()` in the engine: turning it always leaves one turn less to the minimum) and says «Gira el
+  rectángulo marcado: es parte del camino más corto.». Turning it is up to the player. Each hint is a last
+  score layer, −3 (`COSTO_PISTA`, never below 0), counted in the moves (`pistas`) and in the breakdown
+  («💡 2 pistas: −6.»).
 - **Share card:** one line per stage, the turns against the minimum without giving the boards away:
   «🟩 1: 2/2», «🟨 3: 5/4», and «⬛ 4: —» for the stages not reached.
 

@@ -67,6 +67,9 @@
 .rr-acciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-8); }
 .rr-acciones .btn { width: 100%; min-width: 0; min-height: 44px; padding: var(--s-4); font-size: var(--fs-90); white-space: normal; line-height: 1.15; }
 .rr-acciones .btn:disabled { opacity: 0.4; }
+/* 💡 Hint (#1381): beside the clock and the turns, one tap high */
+.rr-fila .rr-pista { min-height: 44px; padding: var(--s-4) var(--s-12); font-size: var(--fs-90); }
+.rr-juego:has(#btn-pista) .rr-tablero[data-tablero] { width: min(100%, 360px, max(200px, calc(100svh - 365px))); }
 .rr-acciones .btn.armado { color: var(--rr-alerta); border-color: var(--rr-alerta); background: rgb(var(--rr-alerta-rgb) / 0.12); }
 
 /* The end: the stamp */

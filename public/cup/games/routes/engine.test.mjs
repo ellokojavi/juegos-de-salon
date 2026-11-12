@@ -2,7 +2,7 @@
 // mínimo es exacto (se compara con una búsqueda simple, contando el tablero entero dado vuelta como
 // solución), cada tablero es justo (no viene resuelto) y cada una de las cinco etapas da justo su mínimo.
 import assert from 'node:assert/strict';
-import { generar, generarEtapa, generarDia, tarjeta, girar, resuelto, minimo, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, TIEMPO_ENSAYO_S, PUNTOS_ETAPA } from './engine.js';
+import { generar, generarEtapa, generarDia, tarjeta, girar, resuelto, minimo, puntajePartida, pista, COSTO_PISTA, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, TIEMPO_ENSAYO_S, PUNTOS_ETAPA } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -105,4 +105,24 @@ assert.notEqual(generarDia('KQRST', 3).semilla, generarDia('KQRSA', 3).semilla);
 // The share card: one line per stage, ⬛ the ones not reached
 assert.equal(tarjeta([{ giros: 2, minimo: 2 }, { giros: 5, minimo: 3 }]), '🟩 1: 2/2\n🟨 2: 5/3\n⬛ 3: —\n⬛ 4: —\n⬛ 5: —');
 assert.equal(tarjeta([], 2), '⬛ 1: —\n⬛ 2: —');
+// A hint (#1381): one rectangle of a shortest solution, so turning it always shortens the distance by one
+for (let n = 0; n < ETAPAS.length; n++) {
+  const t = generarEtapa('PISTA', n);
+  let e = t.inicio;
+  for (let d = t.minimo; d > 0; d--) {
+    const r = pista(e);
+    assert.ok(r && RECTANGULOS.includes(r), `stage ${n + 1}: a hint at distance ${d}`);
+    e = girar(e, r);
+    assert.equal(minimo(e), d - 1, `stage ${n + 1}: the hint shortens the distance from ${d} to ${d - 1}`);
+  }
+  assert.ok(resuelto(t.piezas, e), `stage ${n + 1}: following the hints solves it`);
+  assert.equal(pista(e), null, 'a solved board has no hint');
+}
+// Each hint subtracts COSTO_PISTA (3), the last layer, never below 0
+{
+  const sin = puntajePartida(perfectas, 200), con = puntajePartida(perfectas, 200, { pistas: 2 });
+  assert.equal(COSTO_PISTA, 3);
+  assert.equal(con.total, sin.total - 6); assert.equal(con.ptsPistas, 6); assert.equal(sin.ptsPistas, 0);
+  assert.equal(puntajePartida([], 10, { pistas: 4 }).total, 0, 'never below 0');
+}
 console.log('✓ Rutas rotas');

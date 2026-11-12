@@ -12,9 +12,14 @@
  * the state is rebuilt from the day's seed and them, so a cup day resumes where it was.
  *
  * The board does not mark which edges already fit (#359): reading the lines is the game.
+ *
+ * 💡 Hint (#1381), only on the standalone page, never in La Copa nor its trial, behind its runtime
+ * flag (lab: #seccion-routes-hint): it marks one rectangle of a shortest solution, and each one costs
+ * COSTO_PISTA points (`J.pistas`).
  */
 import { el } from '../../../assets/js/ui.js';
-import { generar, generarEtapa, girar, resuelto, puntajePartida, tarjeta, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, pista, puntajePartida, tarjeta, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
+import { flag } from '../../../assets/js/flags.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { mmss } from '../../../assets/js/time-format.js';
 
@@ -215,7 +220,7 @@ export function montar(raiz, ctx) {
   const { T, fmt, SFX, vibrate, p } = ctx;
   const etapas = p.etapas || ETAPAS.length, limite = p.tiempo || TIEMPO_S * 1000;
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? ctx.jugadas : {};
-  const J = { etapa: 0, hechas: [], giros: [], reinicios: 0, fin: null, seg: 0, ...previa };
+  const J = { etapa: 0, hechas: [], giros: [], reinicios: 0, pistas: 0, fin: null, seg: 0, ...previa };
   J.hechas = (J.hechas || []).slice(0, etapas); J.giros = (J.giros || []).filter(i => RECTANGULOS[i]);
   J.etapa = Math.min(J.etapa | 0, etapas - 1);
   const guardar = () => ctx.guardar({ ...J, hechas: J.hechas.map(x => ({ ...x })), giros: J.giros.slice() });
@@ -226,6 +231,11 @@ export function montar(raiz, ctx) {
   const caja = el('div', { class: 'stack rr-juego' });
   raiz.append(caja);
   let t = null, estado = null, tab = null, relojNodo = null, acabado = !!J.fin, reloj = null;
+  // Hints only for one player on the standalone page (`data-suelto`), not La Copa's day nor its trial
+  let conPistas = false, ponerPista = null;
+  if (document.body.hasAttribute('data-suelto') && !ctx.textoFin && !J.fin) {
+    flag('routes-hint').then(on => { conPistas = on; if (on) ponerPista?.(); }).catch(() => {});
+  }
   // The hook for the end-to-end tests (as the lab's): the moves, the board in play and a turn as if dragged
   window.__rutas = { J, get t() { return t; }, get estado() { return estado; }, girar: r => tab?.caja.dispatchEvent(new CustomEvent('girar', { detail: r })) };
 
@@ -245,6 +255,19 @@ export function montar(raiz, ctx) {
     relojNodo = el('p', { class: 'rr-reloj', id: 'rr-reloj' });
     const aviso = el('p', { class: 'rr-aviso', 'aria-live': 'polite' });
     const avisar = (x, bien = false) => { aviso.className = `rr-aviso${bien ? ' bien' : ''}`; aviso.textContent = x; };
+    // 💡 Hint: marks the first rectangle of a shortest solution for a moment; turning it is up to the player
+    let pistaTimer = null;
+    const botonPista = el('button', { type: 'button', class: 'btn btn--ghost btn--sm rr-pista', id: 'btn-pista', onClick: () => {
+      if (acabado || resuelto(t.piezas, estado)) return;
+      const r = pista(estado);
+      if (!r) return;
+      J.pistas++; guardar();
+      SFX.tap(); vibrate(10);
+      tab.marcar(r);
+      clearTimeout(pistaTimer);
+      pistaTimer = setTimeout(() => tab.marcar(null), 1800);
+      avisar(T.rrHintShown);
+    } }, `💡 ${T.rrHint}`);
     const pintar = () => {
       marcador.textContent = fmt(T.rrScoreboard, { g: J.giros.length, m: t.minimo });
       reiniciar.disabled = !J.giros.length;
@@ -300,7 +323,7 @@ export function montar(raiz, ctx) {
       J.hechas.push({ giros: J.giros.length, minimo: t.minimo });
       tab.caja.classList.add('bloqueado');
       // Restart and Give up go away with the stage done: giving up in the pause makes no sense
-      acciones.remove();
+      acciones.remove(); botonPista.remove(); ponerPista = null;
       const perfecta = J.giros.length <= t.minimo;
       if (J.hechas.length >= etapas) { acabar('completa'); return; }
       J.etapa++; J.giros = [];
@@ -316,7 +339,10 @@ export function montar(raiz, ctx) {
       setTimeout(() => { if (!acabado && raiz.isConnected) jugarEtapa(); }, quieto() ? 1000 : 2300);
     };
     tab.poner(estado);
-    caja.replaceChildren(cabeza, el('div', { class: 'rr-fila' }, relojNodo, marcador), tab.caja, aviso, acciones);
+    const fila = el('div', { class: 'rr-fila' }, relojNodo, marcador);
+    ponerPista = () => { if (!botonPista.isConnected && !acabado) fila.append(botonPista); };
+    if (conPistas) ponerPista();
+    caja.replaceChildren(cabeza, fila, tab.caja, aviso, acciones);
     tic();
     pintar();
   }
@@ -375,7 +401,7 @@ export function montar(raiz, ctx) {
 }
 
 /** The layered score (D-295) of a finished game, with its own number of stages and clock. */
-const puntaje = e => puntajePartida(e?.hechas || [], e?.seg || 0, { etapas: e?.etapas || ETAPAS.length, tiempo: (e?.tiempo || TIEMPO_S * 1000) / 1000 });
+const puntaje = e => puntajePartida(e?.hechas || [], e?.seg || 0, { etapas: e?.etapas || ETAPAS.length, tiempo: (e?.tiempo || TIEMPO_S * 1000) / 1000, pistas: e?.pistas || 0 });
 
 export function resultado(e) {
   const r = puntaje(e);
@@ -389,6 +415,7 @@ export function desglose(e, { T, fmt, mmss: tiempo = mmss }) {
     r.completa ? fmt(T.rrBdSpeed, { t: tiempo((e.seg || 0) * 1000), p: r.ptsVelocidad }) : T.rrBdNoSpeed];
   if (hechas.length) lineas.push(fmt(T.rrBdTurns, { g: r.giros, m: r.minimos, p: r.ptsGiros }));
   lineas.push(...hechas.map((x, k) => fmt(T.rrBdStage, { c: x.giros <= x.minimo ? '🟩' : '🟨', n: k + 1, g: x.giros, m: x.minimo })));
+  if (r.pistas) lineas.push(fmt(r.pistas === 1 ? T.rrBdHintOne : T.rrBdHints, { n: r.pistas, p: r.ptsPistas }));
   if (e?.reinicios) lineas.push(e.reinicios === 1 ? T.rrBdRestartOne : fmt(T.rrBdRestarts, { n: e.reinicios }));
   return lineas;
 }
