@@ -116,13 +116,6 @@
           <a class="btn btn--yellow" id="btn-microgames" href="microgames/">⚡ Jugar ¡Al toque!</a>
         </section>
 
-        <section class="panel seccion" id="seccion-sudoku">
-          <h2><img src="sudoku/icon.svg" alt="" style="width:1.1em;height:1.1em;vertical-align:-0.15em"> Sudoku</h2>
-          <p class="muted" style="margin:0">El clásico de los números, para jugar solo: llena el tablero sin repetir números en ninguna fila, columna ni cuadro. Fácil es un mini sudoku de 6×6 (del 1 al 6); difícil, el clásico de 9×9, con notas, deshacer y reloj. 100 puntos al terminar, 10 menos por cada número mal puesto.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Listo para lanzar con su interruptor: su página <a href="../sudoku/">/sudoku/</a>, La Copa (un día de copa, en fácil o difícil) y Uno al día, en los tres idiomas, con su ranking por nivel.</p>
-          <a class="btn btn--yellow" id="btn-sudoku" href="../sudoku/">▶ Jugar Sudoku</a>
-          <a class="link-btn" id="btn-sudoku-lab" href="sudoku/">El prototipo del laboratorio</a>
-        </section>
 
 
 
@@ -326,6 +319,16 @@
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
           <!-- The design system's components page (D-533, phase 3 of #1188): the owner's and the agents' reference; the page lives in the lab, behind its door, and names this card -->
+          <section class="panel seccion plegada" id="seccion-sudoku" data-launched="2026-11-11">
+            <details>
+              <summary><h2><img src="sudoku/icon.svg" alt="" style="width:1.1em;height:1.1em;vertical-align:-0.15em"> Sudoku</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. El clásico de los números es para todos: llena el tablero sin repetir números en ninguna fila, columna ni cuadro; fácil es un mini sudoku de 6×6 y difícil, el clásico de 9×9, con notas, deshacer y reloj. Está en la portada, la búsqueda, La Copa, Uno al día y su ranking por nivel, en los tres idiomas, en <a href="../sudoku/">/sudoku/</a>.</p>
+                <a class="btn btn--yellow" id="btn-sudoku" href="../sudoku/">▶ Jugar Sudoku</a>
+                <a class="link-btn" id="btn-sudoku-lab" href="sudoku/">El prototipo del laboratorio</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-aletazo" data-launched="2026-11-09">
             <details>
               <summary><h2>🐤 Aletazo</h2><span class="flecha" aria-hidden="true">›</span></summary>
