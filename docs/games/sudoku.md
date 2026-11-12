@@ -9,7 +9,7 @@ score ("100 por completarlo, sin errores, y cada número mal puesto es 10 menos"
 
 - **Where:** `/labs/sudoku/`, behind the lab's door (D-281, D-395), `noindex`, its card in /labs/'s
   🎲 Juegos en prueba. Not in `games.js` while it is in the lab. Id `sudoku` in the usage signal and in
-  `localStorage` (`juegos-de-salon:sudoku:session`). Its facts are in `game.json`.
+  `localStorage` (`juegos-de-salon:sudoku:session`). Its facts are in `games.js` (it left the lab in #1404).
 - **For whom:** one player. In es, en and pt.
 
 ## Reglas
@@ -118,7 +118,8 @@ after every move (`createSessionStore`, C-6).
 
 ## Archivos
 
-- `public/labs/sudoku/game.json`: the manifest (#1249), `rules.js`: levels and LOCALES, `engine.js`: the
+- `public/cup/games/sudoku/`: the La Copa game since it left the lab (`engine.js`, `ui.js`, `texts.js`,
+  `style.css`); its facts in `games.js`. In the lab prototype, `public/labs/sudoku/`: `rules.js`: levels and LOCALES, `engine.js`: the
   generator, the grader and the moves, `engine.test.mjs`, `game.js`: screens and drawing, `style.css`: the
   board and the pad, on the tokens.
 - `tools/e2e/sudoku/game.mjs`: plays both levels to the result (a wrong digit in red costs 10, a note, undo, the score);
