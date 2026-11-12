@@ -125,7 +125,21 @@ export function iconSvg(state) {
   return `<svg class="or-icono" viewBox="0 0 24 24" aria-hidden="true"><defs>`
     + '<linearGradient id="or-cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="or-c1"/><stop offset="1" class="or-c2"/></linearGradient>'
     + '<linearGradient id="or-ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="or-a1"/><stop offset="1" class="or-a2"/></linearGradient>'
+    + (state === 'loading' ? shimmer() : '')
     + `</defs><path class="or-nube" d="${CLOUD}"/><g class="or-marca">${MARK[state] || ''}</g></svg>`;
+}
+
+/**
+ * Storing: the cloud shimmers like the site's titles (`.rainbow` in base.css: yellow, pink, cyan,
+ * lime), sliding across in 6 s (the owner, 2026-11-12). The button is drawn again on each progress
+ * tick, so the slide starts where the clock is, never from the beginning; still with reduced motion.
+ */
+function shimmer(now = Date.now()) {
+  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const move = still ? '' : `<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="1 0" dur="6s" begin="-${((now % 6000) / 1000).toFixed(2)}s" repeatCount="indefinite"/>`;
+  return '<linearGradient id="or-tg" x1="0" y1="0" x2="1" y2="0" spreadMethod="repeat">'
+    + '<stop offset="0" class="or-t1"/><stop offset=".25" class="or-t2"/><stop offset=".5" class="or-t3"/><stop offset=".75" class="or-t4"/><stop offset="1" class="or-t1"/>'
+    + `${move}</linearGradient>`;
 }
 
 const RING = 2 * Math.PI * 23;

@@ -11,8 +11,13 @@
 .or-marca { fill: none; stroke: var(--ink-on-cyan); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .or-punto { fill: var(--ink-on-yellow); stroke: none; }
 [data-state="ready"] .or-nube { filter: drop-shadow(0 0 3px rgb(var(--cyan-rgb) / 0.9)); }
-[data-state="loading"] .or-nube { opacity: 0.55; filter: none; }
-[data-state="loading"] .or-flecha { animation: or-baja 1.2s ease-in-out infinite; }
+/* Storing: the titles' shimmer (.rainbow) over the cloud, no movement of the arrow (the owner, 2026-11-12) */
+.or-t1 { stop-color: var(--yellow); }
+.or-t2 { stop-color: var(--pink); }
+.or-t3 { stop-color: var(--cyan); }
+.or-t4 { stop-color: var(--lime); }
+[data-state="loading"] .or-nube { fill: url(#or-tg); filter: none; }
+[data-state="loading"] .or-marca { stroke: var(--bg1); }
 [data-state="missing"] .or-nube { fill: url(#or-ag); }
 [data-state="missing"] .or-marca { stroke: var(--ink-on-yellow); }
 [data-state="unsupported"] .or-nube { fill: var(--line-faint); }
@@ -21,7 +26,6 @@
 .or-anillo circle { fill: none; stroke: var(--glass-border); stroke-width: 2.5; }
 .or-anillo .or-lleno { stroke: var(--cyan); stroke-linecap: round; transition: stroke-dasharray 0.4s; }
 .or-destello .or-icono { animation: or-destello 0.9s ease-out 1; }
-@keyframes or-baja { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
 @keyframes or-destello { 0% { transform: scale(1); } 40% { transform: scale(1.25); filter: drop-shadow(0 0 8px rgb(var(--lime-rgb) / 0.9)); } 100% { transform: scale(1); } }
 .or-hoja-icono { align-self: center; }
 .or-hoja-icono .or-icono { width: 72px; height: 72px; }
@@ -31,7 +35,7 @@
 .or-barra[hidden], .or-pct[hidden] { display: none; }
 .or-pct { text-align: center; font-weight: 900; font-size: var(--fs-110); color: var(--cyan); }
 @media (prefers-reduced-motion: reduce) {
-  [data-state="loading"] .or-flecha, .or-destello .or-icono { animation: none; }
+  .or-destello .or-icono { animation: none; }
 }
 
 /* The T tab's buttons, one per state (testers only) */
