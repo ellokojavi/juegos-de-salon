@@ -7,7 +7,7 @@ and levels are our own. The map is the **real Santiago Metro** (the owner, 2026-
 station names, with their real geometry, diagonals and curves): Lines 1, 2, 3 and 5 around the centre,
 stations in their real order, on a schematic like the maps in the stations (the owner, same day: the
 real geometry looked deformed): straight runs at 0°, 45° and 90°, even spacing, rounded corners at the
-bends (`bends` in rules.js) and each name on a side chosen by hand. Platforms are named after the real terminals (dirección Los Dominicos).
+bends (`bends` in rules.js) and each name on a side chosen by hand; `tools/e2e/transfer/labels.js` fails the e2e run if any name touches another name, a dot, a line or the train on any trip (the owner: names must never overlap). Platforms are named after the real terminals (dirección Los Dominicos).
 Other cities can come as more trips. Names (C-3): Transbordo · Transfer · Baldeação.
 
 ## Resumen

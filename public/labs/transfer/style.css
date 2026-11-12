@@ -31,7 +31,7 @@
 .tr-stop.is-via circle { fill: var(--orange); }
 .tr-stop.is-closed circle { fill: var(--red); }
 .tr-stop.is-lit circle { fill: var(--cyan); }
-.tr-name { fill: var(--ink); font: 700 11px var(--font-body); paint-order: stroke; stroke: var(--bg1); stroke-width: 3; }
+.tr-name { fill: var(--ink); font: 700 13px var(--font-body); paint-order: stroke; stroke: var(--bg1); stroke-width: 3; }
 .tr-stop.is-goal .tr-name { fill: var(--yellow); }
 .tr-x { fill: var(--ink); font: 900 10px sans-serif; text-anchor: middle; }
 .tr-train { font-size: 22px; text-anchor: middle; dominant-baseline: central; }

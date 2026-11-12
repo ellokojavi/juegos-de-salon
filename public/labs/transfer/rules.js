@@ -12,21 +12,21 @@ export const HEARTS = 3;
  * The stations, real ones of Santiago's Metro, on a schematic map like the ones in the stations:
  * straight runs at 0°, 45° and 90°, even spacing, the real order and the real shape simplified
  * (x grows east and y south, one unit per stretch between neighbours). `label` is the side its name
- * goes (l, r, t, b, or tl: above to the left), chosen by hand so the centre stays legible.
+ * goes (l, r, t, b, or a corner: tl, tr, br), chosen by hand so the centre stays legible.
  */
 export const STATIONS = {
   heroes: { name: 'Los Héroes', x: 0, y: 6, label: 'l' }, moneda: { name: 'La Moneda', x: 1, y: 6, label: 't' },
-  uchile: { name: 'Universidad de Chile', x: 2, y: 6, label: 'b' }, lucia: { name: 'Santa Lucía', x: 3, y: 6, label: 'r' },
-  catolica: { name: 'Universidad Católica', x: 4, y: 5, label: 'r' }, baquedano: { name: 'Baquedano', x: 5, y: 4, label: 'r' },
-  salvador: { name: 'Salvador', x: 6, y: 3, label: 'r' }, montt: { name: 'Manuel Montt', x: 7, y: 2, label: 'l' },
+  uchile: { name: 'Universidad de Chile', x: 2, y: 6, label: 'br' }, lucia: { name: 'Santa Lucía', x: 4, y: 6, label: 'tl' },
+  catolica: { name: 'Universidad Católica', x: 5, y: 5, label: 'tl' }, baquedano: { name: 'Baquedano', x: 6, y: 4, label: 'r' },
+  salvador: { name: 'Salvador', x: 7, y: 3, label: 'r' }, montt: { name: 'Manuel Montt', x: 8, y: 2, label: 'l' },
   patronato: { name: 'Patronato', x: 2, y: 1, label: 'r' }, calycanto: { name: 'Puente Cal y Canto', x: 1, y: 2, label: 'r' },
-  ana: { name: 'Santa Ana', x: 0, y: 4, label: 'tl' }, toesca: { name: 'Toesca', x: 0, y: 7.5, label: 'l' },
+  ana: { name: 'Santa Ana', x: 0, y: 4, label: 'tr' }, toesca: { name: 'Toesca', x: 0, y: 7.5, label: 'l' },
   ohiggins: { name: "Parque O'Higgins", x: 0, y: 9, label: 'r' }, hospitales: { name: 'Hospitales', x: 1, y: 0.5, label: 'r' },
-  armas: { name: 'Plaza de Armas', x: 2, y: 4, label: 'b' }, almagro: { name: 'Parque Almagro', x: 2, y: 7.5, label: 'r' },
-  matta: { name: 'Matta', x: 3, y: 9, label: 'b' }, irarrazaval: { name: 'Irarrázaval', x: 5, y: 9, label: 'r' },
+  armas: { name: 'Plaza de Armas', x: 2, y: 4, label: 'tr' }, almagro: { name: 'Parque Almagro', x: 2, y: 7.5, label: 'r' },
+  matta: { name: 'Matta', x: 3, y: 9, label: 'b' }, irarrazaval: { name: 'Irarrázaval', x: 6, y: 9, label: 'r' },
   quinta: { name: 'Quinta Normal', x: -2, y: 4, label: 't' }, cumming: { name: 'Cumming', x: -1, y: 4, label: 'b' },
-  bellas: { name: 'Bellas Artes', x: 3.5, y: 4, label: 't' }, bustamante: { name: 'Parque Bustamante', x: 5, y: 5.5, label: 'r' },
-  isabel: { name: 'Santa Isabel', x: 5, y: 7, label: 'r' },
+  bellas: { name: 'Bellas Artes', x: 4.25, y: 4, label: 'tr' }, bustamante: { name: 'Parque Bustamante', x: 6, y: 5.5, label: 'r' },
+  isabel: { name: 'Santa Isabel', x: 6, y: 7, label: 'r' },
 };
 
 /**

@@ -2,6 +2,7 @@
 // checks run it in every language (tools/e2e/conformance.mjs). Born from tools/generators/new-game.mjs.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
+import { readFileSync } from 'node:fs';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
 const OUT = output();
@@ -13,6 +14,9 @@ await b.go(SITE + '/labs/transfer/'); await b.evaluate('localStorage.clear(); 1'
 await b.shot('cover');
 await b.evaluate("document.querySelector('.mode').click(); 1"); await sleep(300);
 ok(await b.active() === 'screen-play', 'the game starts');
+const clashes = await b.evaluate(readFileSync(new URL('./labels.js', import.meta.url), 'utf8'));
+ok(!clashes.length, 'no station name overlaps a name, a dot or a line' + (clashes.length ? ': ' + clashes.join(', ') : ''));
+await b.evaluate('__transfer.drawLevel(0); 1');
 // Trip 1, a wrong route first: it costs a heart and offers another try
 await b.evaluate("document.querySelector('[data-card]').click(); document.getElementById('btn-go').click(); 1");
 await b.until("!!document.getElementById('btn-retry')", 5000);

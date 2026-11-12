@@ -107,10 +107,11 @@ function cardEl(card, attrs = {}) {
 /* ---------------- The map ---------------- */
 // A schematic like a station's map: straight runs at 0°, 45° and 90° between stations and bends
 // (rules.js), each corner rounded, so the lines read cleanly and still show their shape.
-const UNIT = 52, PAD = 16;   // px per stretch between stations: even spacing
-const LABEL = { l: [-11, 4, 'end'], tl: [-8, -10, 'end'], r: [11, 4, 'start'], t: [0, -13, 'middle'], b: [0, 20, 'middle'] };
+const UNIT = 50, PAD = 12;   // px per stretch between stations: even spacing
+// Far enough from the dot that the train's ring (r 15) never covers its own station's name
+const LABEL = { l: [-19, 4, 'end'], tl: [-15, -19, 'end'], tr: [15, -19, 'start'], br: [15, 30, 'start'], r: [19, 4, 'start'], t: [0, -23, 'middle'], b: [0, 33, 'middle'] };
 function labelBox(id, x, y) {
-  const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'], tw = STATIONS[id].name.length * 6.2;
+  const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'], tw = STATIONS[id].name.length * 7.4;
   const left = anchor === 'start' ? x + dx : anchor === 'end' ? x + dx - tw : x - tw / 2;
   return [Math.min(x - 16, left), Math.min(y - 16, y + dy - 11), Math.max(x + 16, left + tw), Math.max(y + 16, y + dy + 3)];
 }
@@ -119,7 +120,7 @@ function frame(lv) {
   const xs = used.map(s => STATIONS[s].x), ys = used.map(s => STATIONS[s].y);
   const x0 = Math.min(...xs), y0 = Math.min(...ys);
   const k = UNIT;
-  // The frame grows to hold every name (about 6.2 units per letter at 11 px)
+  // The frame grows to hold every name (about 7.4 units per letter at 13 px)
   const place0 = id => [(STATIONS[id].x - x0) * k, (STATIONS[id].y - y0) * k];
   let minX = 0, maxX = 0, minY = 0, maxY = 0;
   for (const id of used) {
@@ -310,5 +311,5 @@ function init() {
 }
 
 // The hook for the end-to-end tests (C-14)
-window.__transfer = { state: () => state, levels: LEVELS, start, send: sendTrain, place: i => { state = E.place(state, i); renderHand(); } };
+window.__transfer = { state: () => state, levels: LEVELS, drawLevel: i => $('#map').replaceChildren(drawMap(LEVELS[i])), start, send: sendTrain, place: i => { state = E.place(state, i); renderHand(); } };
 init();
