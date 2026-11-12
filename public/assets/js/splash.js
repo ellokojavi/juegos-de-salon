@@ -642,7 +642,9 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       screen.append(...a.childNodes);
       const sticker = node('div', 'splash-cart-sticker');
       sticker.append(node('b', null, it.name.toUpperCase()));
-      const play = node('span', `btn ${it.color === 'cyan' ? 'btn--cyan' : ''} splash-jugar`, `${it.emoji} ${pick(UI.play, lang)}`);
+      const play = node('span', `btn ${it.color === 'cyan' ? 'btn--cyan' : ''} splash-jugar`, it.icon ? null : `${it.emoji} ${pick(UI.play, lang)}`);
+      // A game drawn as an icon (Sudoku's) shows the drawing on its Play button too, not the #️⃣ stand-in
+      if (it.icon) { const img = node('img', 'splash-icon-inline'); Object.assign(img, { src: it.icon, alt: '', decoding: 'async', width: 24, height: 24 }); Object.assign(img.style, { width: '1.1em', height: '1.1em' }); play.append(img, ` ${pick(UI.play, lang)}`); }
       const pins = node('div', 'splash-cart-pines');
       pins.setAttribute('aria-hidden', 'true');
       // The name on top, inside the cartridge, over its screen (the owner's request)

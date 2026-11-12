@@ -6,7 +6,8 @@
  * huecos negros en las esquinas, y recalcular el sombreado de 80 capas en cada cuadro trababa
  * la animación en el celular.
  *
- * crearDado(lienzo, emojis) → { dibujar(ax, ay), soltar() } o null si no hay WebGL. A face can also be
+ * crearDado(lienzo, emojis) → { dibujar(ax, ay), soltar() } o null si no hay WebGL. A face can be an <img>
+ * (a game's drawn icon, game-icon.js): the texture is drawn again once it loads. A face can also be
  * a number from 1 to 6: then it carries pips, as a real die (Dudo's), all of them on white. Las caras van en el
  * orden: adelante, derecha, atrás, izquierda, arriba, abajo. ax y ay son grados (como
  * rotateX(ax) rotateY(ay) en CSS, pero con el eje y hacia arriba).
@@ -66,6 +67,12 @@ function texturas(emojis) {
   x.textAlign = 'center'; x.textBaseline = 'middle';
   x.font = `${L * 0.5}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
   emojis.forEach((e, i) => {
+    // A drawn icon (an <img>, Sudoku's: there is no sudoku emoji), at the emoji's size once it has loaded;
+    // until then its stand-in `alt` text
+    if (e && typeof e === 'object') {
+      if (e.complete && e.naturalWidth) return x.drawImage(e, L * i + L * 0.22, L * 0.22, L * 0.56, L * 0.56);
+      return x.fillText(e.dataset?.emoji || '', L * i + L / 2, L * 0.53);
+    }
     if (typeof e !== 'number') return x.fillText(e, L * i + L / 2, L * 0.53);
     x.fillStyle = '#1a1a1a';
     for (const pos of PUNTOS[e]) {
@@ -142,6 +149,11 @@ export function crearDado(lienzo, emojis) {
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texturas(emojis));
+  // A face that is a drawing still loading: redrawn into the texture when it arrives (the next frame shows it)
+  for (const e of emojis) if (e && typeof e === 'object' && !e.complete) e.addEventListener('load', () => {
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texturas(emojis));
+  }, { once: true });
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
