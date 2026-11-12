@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
+  "checkedUpTo": "044b688806aed7aaf35f8ada8a952daa01dd9078",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -510,7 +510,11 @@
           "commit": "d0047ebcacef24c28798bf46a6f80f46e4a1874e"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-12",
+        "what": "cup/tournament.mjs reads the open pool in the page; pool-from-page.test.mjs refuses an e2e script that imports POZO_ABIERTO in Node",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1416"
+      },
       "signatures": [
         "0faec1e3e5",
         "6fad0784f2"
@@ -673,6 +677,12 @@
       "key": "design-lint-gate",
       "what": "push-guard.mjs hook runs design-lint.mjs --gate and stops git push on a hit not allowlisted (push-guard.test.mjs)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352"
+    },
+    {
+      "date": "2026-11-12",
+      "key": "e2e-stale-assertion",
+      "what": "cup/tournament.mjs reads the open pool in the page; pool-from-page.test.mjs refuses an e2e script that imports POZO_ABIERTO in Node",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1416"
     }
   ],
   "queueDone": [
@@ -888,6 +898,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#1380), usability, ideas; collected 21 changelog entries; popularity refreshed; CI signatures 0faec1e3e5 and 6fad0784f2 promoted to e2e-stale-assertion"
+    },
+    {
+      "date": "2026-11-12",
+      "from": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
+      "to": "044b688806aed7aaf35f8ada8a952daa01dd9078",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1415",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1416",
+      "note": "docs #1413, usability #1414; routes hint (#1381:1) delegated, branch deletion denied"
     }
   ],
   "ownerDecisions": [
