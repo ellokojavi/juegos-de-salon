@@ -36,7 +36,7 @@ const cut = (line, from, to) => ({ ...line, stops: line.stops.slice(line.stops.i
 const SCL_ST = {
   heroes: { name: 'Los Héroes', x: 0, y: 6, label: 'l' }, moneda: { name: 'La Moneda', x: 1, y: 6, label: 't' },
   uchile: { name: 'Universidad de Chile', x: 2, y: 6, label: 'br' }, lucia: { name: 'Santa Lucía', x: 4, y: 6, label: 'tl' },
-  catolica: { name: 'Universidad Católica', x: 5, y: 5, label: 'tl' }, baquedano: { name: 'Baquedano', x: 6, y: 4, label: 'r' },
+  catolica: { name: 'Universidad Católica', x: 5, y: 5, label: 'br' }, baquedano: { name: 'Baquedano', x: 6, y: 4, label: 'br' },
   salvador: { name: 'Salvador', x: 7, y: 3, label: 'r' }, montt: { name: 'Manuel Montt', x: 8, y: 2, label: 'l' },
   patronato: { name: 'Patronato', x: 2, y: 1, label: 'r' }, calycanto: { name: 'Puente Cal y Canto', x: 1, y: 2, label: 'r' },
   ana: { name: 'Santa Ana', x: 0, y: 4, label: 'tr' }, toesca: { name: 'Toesca', x: 0, y: 7.5, label: 'l' },
@@ -55,7 +55,8 @@ const SCL = {
 };
 const SCL_LEVELS = [
   { // 1 · counting stations, along the Alameda
-    lines: [cut(SCL.l1, 'heroes', 'baquedano')], start: { station: 'heroes', line: 'l1', toward: 'baquedano' }, goal: 'lucia',
+    // A single-line trip still shows the lines that cross it (the owner, 2026-11-12: Baquedano is not only Line 1)
+    lines: [cut(SCL.l1, 'heroes', 'baquedano'), cut(SCL.l2, 'patronato', 'ohiggins'), cut(SCL.l3, 'calycanto', 'matta'), cut(SCL.l5, 'cumming', 'baquedano')], start: { station: 'heroes', line: 'l1', toward: 'baquedano' }, goal: 'lucia',
     hand: [ride(2), ride(3), ride(4)], slots: 1, solution: [1],
   },
   { // 2 · the other platform
@@ -107,7 +108,7 @@ const BUE_LEVELS = [
     hand: [ride(2), ride(3), ride(4)], slots: 1, solution: [1],
   },
   { // 2 · the other platform, under Avenida de Mayo
-    lines: [cut(BUE.a, 'congreso', 'plazamayo')], start: { station: 'piedras', line: 'a', toward: 'plazamayo' }, goal: 'saenz',
+    lines: [cut(BUE.a, 'congreso', 'plazamayo'), cut(BUE.c, 'pellegrini', 'constitucion'), cut(BUE.e, 'peru', 'entrerios')], start: { station: 'piedras', line: 'a', toward: 'plazamayo' }, goal: 'saenz',
     hand: [ride(1), END, TURN, ride(2), ride(3)], slots: 2, solution: [2, 3],
   },
   { // 3 · a transfer at Carlos Pellegrini

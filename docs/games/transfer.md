@@ -24,7 +24,7 @@ train's ring or the room past a line's end; then `dirTags` puts each direction w
 them. `tools/e2e/transfer/labels.js` checks the five trips in the browser (names, directions, stubs, and
 that every line is drawn). **The train** is a drawn icon centred on its ring, with an arrow towards where it
 heads. **The cards** carry drawn icons in the line's colour: an arrow over small stops (ride), an arrow to a
-bar (to the end), a U-turn (other platform), ⇄ (change); while the train rides, the card it follows lights up. Names (C-3): Transbordo · Transfer · Baldeação.
+bar (to the end), a U-turn (other platform), ⇄ (change); while the train rides, the card it follows lights up. **The ride is animated** (the owner, 2026-11-12): the train speeds up, slows down and settles on each station (`Ride` in game.js, each hop under 0.4 s); its arrow turns the short way round after the other platform or a transfer; at a closed station it starts off and stops short; a failed route shakes it; at the destination its ring pulses. With reduced motion it jumps. **A single-line trip still draws the lines that cross it** (the owner, same day: Baquedano is not only Line 1), as do the first two trips. Names (C-3): Transbordo · Transfer · Baldeação.
 
 ## Resumen
 
