@@ -2382,6 +2382,19 @@
         "stat": "4 file(s) +11 −3: public/cup/games/sudoku/style.css, tools/e2e/cup-games/languages.mjs, tools/e2e/paths.mjs, tools/e2e/visual/ref/sudoku-intro.png"
       },
       "flaky": false
+    },
+    {
+      "run": 43134033443,
+      "check": "tests",
+      "pr": 1408,
+      "branch": "claude/practical-brahmagupta-i9m6uc",
+      "commit": "4d59ae1e3edbfabfd51edf2a8848e6aa75147610",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/css/font-synthesis.test.mjs",
+      "signature": "8039831680",
+      "date": "2026-11-12T01:23:55.954Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
