@@ -489,7 +489,7 @@ const ES = {
     comentarAbrir: '💬 Sugerencias y comentarios',
     docTitle: 'Transbordo 🚉 · Juegos de Salón', gameChip: '🚉 Transbordo', menu: '‹ Laboratorio',
     title: 'Transbordo', lead: 'Arma la ruta con tus cartas y viaja en metro por nueve ciudades del mundo.',
-    howTitle: '🚉 Cómo se juega',
+    howTitle: '🧠 Cómo se juega',
     
     resumeTitle: '⏯ Hay un viaje a medias', resume: 'Continuar', delete: 'Borrar',
     levelOf: 'Viaje {n} de {total}', from: 'Sales de', to: 'Llegas a', via: 'Pasando por', closedLabel: 'Cerrada',
@@ -511,7 +511,7 @@ const EN = {
     comentarAbrir: '💬 Suggestions and comments',
     docTitle: 'Transfer 🚉 · Parlor Games', gameChip: '🚉 Transfer', menu: '‹ Lab',
     title: 'Transfer', lead: 'Build the route with your cards and ride the metro in nine cities around the world.',
-    howTitle: '🚉 How to play',
+    howTitle: '🧠 How to play',
     
     resumeTitle: '⏯ There is a trip in progress', resume: 'Continue', delete: 'Delete',
     levelOf: 'Trip {n} of {total}', from: 'From', to: 'To', via: 'Via', closedLabel: 'Closed',
@@ -533,7 +533,7 @@ const PT = {
     comentarAbrir: '💬 Sugestões e comentários',
     docTitle: 'Baldeação 🚉 · Jogos de Salão', gameChip: '🚉 Baldeação', menu: '‹ Laboratório',
     title: 'Baldeação', lead: 'Monte a rota com suas cartas e viaje de metrô por nove cidades do mundo.',
-    howTitle: '🚉 Como se joga',
+    howTitle: '🧠 Como se joga',
     
     resumeTitle: '⏯ Há uma viagem pela metade', resume: 'Continuar', delete: 'Apagar',
     levelOf: 'Viagem {n} de {total}', from: 'Saída', to: 'Chegada', via: 'Passando por', closedLabel: 'Fechada',

@@ -24,6 +24,7 @@ const cityName = id => CITIES[id].name[lang] || CITIES[id].name.es;
 import * as E from './engine.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/transfer.js';
+import { onScreen } from '../../assets/js/on-screen.js';
 
 // Counts the visit on load, even if nobody plays (D-208)
 trackVisit();
@@ -60,6 +61,35 @@ function footer(screen) {
   const pie = $('#pie');
   if (screen === 'cover') footerInto(pie, { screen: `${GAME_ID}-cover`, inbox: false, options: [comment], lang });
   else pie.replaceChildren(comment);
+}
+
+/* ---------------- The cover's demo ---------------- */
+// Each city's transfer trip (its level 3) in turn: its cards in the route, then the train riding them —
+// gliding, turning its arrow at the transfer, lighting each card — and arriving. While the cover is on
+// screen only (onScreen); with reduced motion, the first map stands still.
+let demoK = 0;
+const onCover = () => $('#screen-intro').classList.contains('active');
+const demoNext = onScreen($('#demo'), () => { demoCycle(); });
+async function demoCycle() {
+  if (!onCover()) return setTimeout(demoNext, 600);
+  const ids = Object.keys(CITIES), lv = CITIES[ids[demoK++ % ids.length]].levels[2];
+  const map = drawMap(lv, { train: { at: lv.start.station, line: lv.start.line, toward: lv.start.toward } });
+  $('#demo-map').replaceChildren(map);
+  const cards = lv.solution.map(c => cardEl(lv.hand[c], { tabindex: '-1', class: 'tr-card tr-card--placed' + (lv.hand[c].line ? ' tr-line--' + lv.hand[c].line : '') }, lv));
+  $('#demo-plan').replaceChildren(...cards);
+  if (reduced) return;
+  const result = E.run(lv, lv.solution.map(c => lv.hand[c])), ride = new Ride(map, { quiet: true });
+  await sleep(900);
+  for (let i = 0; i < result.steps.length && onCover(); i++) {
+    const step = result.steps[i];
+    cards.forEach((n, k) => n.classList.toggle('is-now', k === i));
+    for (const st of step.path) await ride.hop(st, step.line);
+    await ride.face({ at: step.station, line: step.line, toward: step.toward });
+  }
+  cards.forEach(n => n.classList.remove('is-now'));
+  if (onCover()) await ride.arrive();
+  await sleep(1600);
+  demoNext();
 }
 
 /* ---------------- Intro ---------------- */
@@ -115,8 +145,8 @@ const ICON = {
   change: '<path d="M5 11h21"/><path d="M21 6l5 5-5 5"/><path d="M27 21H6"/><path d="M11 16l-5 5 5 5"/>',
 };
 const cardIcon = card => el('span', { class: 'tr-card__icon', 'aria-hidden': 'true', html: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${ICON[card.t]}</svg>` });
-function cardEl(card, attrs = {}) {
-  const sub = card.t === 'change' ? el('small', {}, headingOf(level(), card.line, card.toward)) : null;
+function cardEl(card, attrs = {}, lv = level()) {
+  const sub = card.t === 'change' ? el('small', {}, headingOf(lv, card.line, card.toward)) : null;
   return el('button', { type: 'button', class: 'tr-card' + (card.line ? ' tr-line--' + card.line : ''), ...attrs },
     cardIcon(card), el('b', {}, cardLabel(card)), sub);
 }
@@ -257,7 +287,8 @@ function frame(lv) {
     minX = Math.min(minX, b[0], x - 16); maxX = Math.max(maxX, b[2], x + 16); minY = Math.min(minY, b[1], y - 16); maxY = Math.max(maxY, b[3], y + 16);
   }
   const toPx = ([x, y]) => [(x - x0) * k - minX + PAD / 2, (y - y0) * k - minY + PAD / 2];
-  const at = id => toPx([ST()[id].x, ST()[id].y]);
+  // The stations are this map's city's, kept here: the cover's demo and the game draw different cities
+  const stations = ST(), at = id => toPx([stations[id].x, stations[id].y]);
   const shift = ([x, y]) => [x - minX + PAD / 2, y - minY + PAD / 2];
   return { used, at, toPx, sides, tags: tags.map(t => ({ ...t, from: shift(t.from), tip: shift(t.tip), x: shift([t.x, t.y])[0], y: shift([t.x, t.y])[1] })), w: maxX - minX + PAD, h: maxY - minY + PAD };
 }
@@ -312,7 +343,8 @@ const tween = (ms, fn) => new Promise(done => {
   requestAnimationFrame(tick);
 });
 class Ride {
-  constructor(map) {
+  constructor(map, { quiet = false } = {}) {
+    this.quiet = quiet;
     this.map = map; this.geo = map.geo; this.mover = map.querySelector('#tr-mover'); this.arrow = this.mover.querySelector('.tr-arrow');
     this.at = this.geo.lv.start.station; this.p = this.geo.at(this.at); this.ang = +this.arrow.dataset.ang || 0;
     map.querySelector(`.tr-stop[data-station="${this.at}"]`)?.classList.add('is-lit');
@@ -351,7 +383,7 @@ class Ride {
     await tween(Math.min(380, 170 + total * 1.6), t => { const [p, a] = Ride.along(pts, total * easeInOut(t)); this.place(p); this.turnTo(a); });
     this.at = to;
     this.map.querySelector(`.tr-stop[data-station="${to}"]`)?.classList.add('is-lit');
-    SFX.tap?.();
+    if (!this.quiet) SFX.tap?.();
     await tween(140, t => this.place(this.p, 1 - 0.12 * Math.sin(Math.PI * t)));
   }
   /** After a card: the arrow turns to where the train heads now (the other platform, a transfer). */
@@ -572,6 +604,7 @@ function init() {
   renderModes();
   renderResumeSlot();
   showScreen('screen-intro');
+  demoNext();
 }
 
 // The hook for the end-to-end tests (C-14)
