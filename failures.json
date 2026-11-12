@@ -2393,7 +2393,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: public/assets/css/font-synthesis.test.mjs",
       "signature": "8039831680",
       "date": "2026-11-12T01:23:55.954Z",
-      "fix": null,
+      "fix": {
+        "commit": "16a2bd93e2b2ea1350721f710f60903209e1a4da",
+        "date": "2026-11-12T01:26:24.524Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
