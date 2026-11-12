@@ -116,9 +116,15 @@ assert.equal(await w.get('https://www.gstatic.com/firebasejs/12.18.0/firebase-ap
 
 // A new release replaces the old one
 w.net.up = true;
-site.list = { release: '0.2.0-def', urls: ['./', 'zip/'] };
+site.list = { release: '0.2.0-def', urls: ['./', 'zip/', 'assets/js/ui.js?h=aaaa1111', 'assets/js/new.js?h=cccc3333'] };
+site.files['/assets/js/new.js?h=cccc3333'] = 'new';
+w.net.asked.length = 0;
 await w.tell({ type: 'offline', on: true, release: '0.2.0-def' });
 assert.ok(w.store.has('jds-release-0.2.0-def') && !w.store.has('jds-release-0.1.0-abc'), 'the old release\'s cache goes');
+assert.ok(!w.net.asked.some(u => u.includes('ui.js')), 'differential: an unchanged ?h= file is copied from the old release, not downloaded');
+assert.ok(w.net.asked.some(u => u.includes('new.js?h=cccc3333')), 'only the new file is downloaded');
+assert.ok(w.net.asked.some(u => u.endsWith('/zip/')), 'pages are always fetched again');
+assert.equal(w.store.get('jds-release-0.2.0-def').get(ORIGIN + '/assets/js/ui.js?h=aaaa1111'), 'ui', 'the copied file is there');
 
 // A page seen online under the old release does not outlive it: offline, the new release's copy wins
 w.net.up = false;
