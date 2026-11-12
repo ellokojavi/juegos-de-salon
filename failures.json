@@ -2948,6 +2948,19 @@
         "stat": "6 file(s) +72 −44: README.md, changelog/transfer-lab.md, docs/facts.json, docs/games/transfer.md, public/labs/transfer/game.js, …"
       },
       "flaky": false
+    },
+    {
+      "run": 43256133422,
+      "check": "end-to-end",
+      "pr": 1420,
+      "branch": "transfer-lab",
+      "commit": "dd8228860b74c5669ec2275fb9b3f1c77e39cb4e",
+      "test": "transfer/game.mjs",
+      "error": "✗ no station name overlaps a name, a dot or a line: 2 montt × the train, 3 montt × the train",
+      "signature": "b43ef19823",
+      "date": "2026-11-12T16:29:49.160Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
