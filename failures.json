@@ -2742,7 +2742,11 @@
       "error": "❌ word-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part word; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "225c594e0b",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2755,7 +2759,11 @@
       "error": "❌ year-intro: 0.34 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part year; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "506b79fa8e",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2768,7 +2776,11 @@
       "error": "❌ agents-intro: 0.54 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part agents; the new and the diff images are in /home/runner/work/_temp",
       "signature": "7772ce4d4b",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2781,7 +2793,11 @@
       "error": "❌ plots-intro: 0.56 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part plots; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "3f65230712",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2794,7 +2810,11 @@
       "error": "❌ bridges-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges; the new and the diff images are in /home/runner/work/_te",
       "signature": "f65fa57cfe",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2807,7 +2827,11 @@
       "error": "❌ zip-intro: 0.46 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part zip; the new and the diff images are in /home/runner/work/_temp/e2e/v",
       "signature": "b235482f16",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2820,7 +2844,11 @@
       "error": "❌ routes-intro: 0.35 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part routes; the new and the diff images are in /home/runner/work/_temp",
       "signature": "4a2f4cf419",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2833,7 +2861,11 @@
       "error": "❌ connections-intro: 0.35 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part connections; the new and the diff images are in /home/runner/",
       "signature": "a458f37283",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2846,7 +2878,11 @@
       "error": "❌ shinobi-intro: 0.33 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part shinobi; the new and the diff images are in /home/runner/work/_te",
       "signature": "6e5e43b939",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2859,7 +2895,11 @@
       "error": "❌ case-intro: 0.55 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part case; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "bfec6a512e",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2872,7 +2912,11 @@
       "error": "❌ tango-intro: 0.53 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part tango; the new and the diff images are in /home/runner/work/_temp/e",
       "signature": "1527083167",
       "date": "2026-11-12T15:33:01.442Z",
-      "fix": null,
+      "fix": {
+        "commit": "479f9f63a6c813f95e26d393aa82344d5353e522",
+        "date": "2026-11-12T15:56:32.387Z",
+        "stat": "3 file(s) +21 −11: public/assets/js/game-icon.js, public/cup/create.js, public/cup/game.js"
+      },
       "flaky": false
     },
     {
@@ -2886,7 +2930,7 @@
       "signature": "fae0607940",
       "date": "2026-11-12T15:47:57.984Z",
       "fix": null,
-      "flaky": false
+      "flaky": true
     }
   ]
 }
