@@ -9,6 +9,7 @@
   --tr-a: #00aeef; --tr-b: #ee1c25; --tr-c: #2b7fd4; --tr-e: #9b4dca;
   --tr-central: #e32017; --tr-victoria: #0098d4; --tr-jubilee: #a0a5a9; --tr-piccadilly: #3b5fc0; --tr-bakerloo: #b36305;
   --tr-sp1: #1d6fd1; --tr-sp2: #00a07a; --tr-sp3: #ee372f; --tr-sp4: #ffd600;
+  --tr-m1: #30a3dc; --tr-m2: #e0292f; --tr-m3: #ffe114; --tr-m5: #96bf0d;
 }
 .tr-line--l1 { --tr: var(--tr-l1); }
 .tr-line--l2 { --tr: var(--tr-l2); }
@@ -27,6 +28,10 @@
 .tr-line--sp2 { --tr: var(--tr-sp2); }
 .tr-line--sp3 { --tr: var(--tr-sp3); }
 .tr-line--sp4 { --tr: var(--tr-sp4); }
+.tr-line--m1 { --tr: var(--tr-m1); }
+.tr-line--m2 { --tr: var(--tr-m2); }
+.tr-line--m3 { --tr: var(--tr-m3); }
+.tr-line--m5 { --tr: var(--tr-m5); }
 
 .how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
 
@@ -54,6 +59,9 @@
 .tr-train__window { fill: var(--bg1); }
 .tr-train__light { fill: var(--yellow); }
 .tr-train__feet { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.tr-dir__stub { stroke: var(--tr); stroke-width: 4; stroke-dasharray: 3 3; stroke-linecap: butt; }
+.tr-dir__head { fill: none; stroke: var(--tr); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tr-dir__name { fill: var(--tr); font: italic 800 12px var(--font-body); paint-order: stroke; stroke: var(--bg1); stroke-width: 3; }
 .tr-arrow { fill: var(--cyan); stroke: var(--bg1); stroke-width: 2; stroke-linejoin: round; }
 .tr-train-ring { fill: var(--bg1); stroke: var(--cyan); stroke-width: 3; }
 
@@ -67,6 +75,7 @@
 .tr-card__icon svg { display: block; width: 100%; height: 100%; }
 .tr-card:disabled { opacity: 0.3; cursor: default; }
 .tr-card--placed { background: var(--well-deep); border-color: var(--cyan); border-left-color: var(--tr, var(--cyan)); }
+.tr-card--placed.is-now { border-color: var(--yellow); background: var(--well); }
 .tr-card--placed.is-hinted { border-color: var(--yellow); border-left-color: var(--tr, var(--yellow)); }
 
 /* ---------- Verdict and result ---------- */

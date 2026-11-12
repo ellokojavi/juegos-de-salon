@@ -221,35 +221,68 @@ const SAO_LEVELS = [
   },
 ];
 
-/** The cities, in the order the cover offers them. */
+/* ---------------- Madrid ---------------- */
+const MAD_ST = {
+  tribunal: { name: 'Tribunal', x: 3, y: 0, label: 'r' }, granvia: { name: 'Gran Vía', x: 3, y: 1.5, label: 'tr' },
+  sol: { name: 'Sol', x: 3, y: 3, label: 'tr' }, tirso: { name: 'Tirso de Molina', x: 3, y: 4.5, label: 'r' },
+  anton: { name: 'Antón Martín', x: 4, y: 5.5, label: 'r' },
+  callao: { name: 'Callao', x: 1.5, y: 1.5, label: 'tl' }, opera: { name: 'Ópera', x: 1.5, y: 3, label: 'bl' },
+  latina: { name: 'La Latina', x: 0.5, y: 4, label: 'l' }, chueca: { name: 'Chueca', x: 4.5, y: 1.5, label: 't' },
+  domingo: { name: 'Santo Domingo', x: 0.5, y: 2, label: 'l' }, sevilla: { name: 'Sevilla', x: 4.25, y: 3, label: 'b' },
+  bancoespana: { name: 'Banco de España', x: 5.5, y: 3, label: 't' },
+  plazaespana: { name: 'Plaza de España', x: 0.5, y: 0.5, label: 'l' }, lavapies: { name: 'Lavapiés', x: 2, y: 5.25, label: 'l' },
+};
+const MAD = {
+  m1: { id: 'm1', n: 1, ends: ['Pinar de Chamartín', 'Valdecarros'], stops: ['tribunal', 'granvia', 'sol', 'tirso', 'anton'], bends: [] },
+  m2: { id: 'm2', n: 2, ends: ['Cuatro Caminos', 'Las Rosas'], stops: ['domingo', 'opera', 'sol', 'sevilla', 'bancoespana'], bends: [] },
+  m3: { id: 'm3', n: 3, ends: ['Moncloa', 'Villaverde Alto'], stops: ['plazaespana', 'callao', 'sol', 'lavapies'], bends: [{ after: 'sol', at: [2, 4] }] },
+  m5: { id: 'm5', n: 5, ends: ['Casa de Campo', 'Alameda de Osuna'], stops: ['latina', 'opera', 'callao', 'granvia', 'chueca'], bends: [] },
+};
+const MAD_LEVELS = [
+  { // 5 · passing through Callao, round the Puerta del Sol
+    lines: [MAD.m1, MAD.m2, MAD.m3, MAD.m5], via: 'callao', start: { station: 'tribunal', line: 'm1', toward: 'anton' }, goal: 'lavapies',
+    hand: [ride(1), change('m5', 'latina'), ride(1), change('m3', 'lavapies'), ride(2), ride(2), change('m3', 'plazaespana'), change('m5', 'chueca')],
+    slots: 5, solution: [0, 1, 2, 3, 4],
+  },
+];
+
+/** The cities, each with its pool of levels (only some are played, see TRIPS). */
 export const CITIES = {
   santiago: { emoji: '🇨🇱', name: { es: 'Metro de Santiago', en: 'Santiago Metro', pt: 'Metrô de Santiago' }, stations: SCL_ST, levels: SCL_LEVELS },
   'buenos-aires': { emoji: '🇦🇷', name: { es: 'Subte de Buenos Aires', en: 'Buenos Aires Subte', pt: 'Subte de Buenos Aires' }, stations: BUE_ST, levels: BUE_LEVELS },
   london: { emoji: '🇬🇧', name: { es: 'Metro de Londres', en: 'London Underground', pt: 'Metrô de Londres' }, stations: LON_ST, levels: LON_LEVELS },
   'sao-paulo': { emoji: '🇧🇷', name: { es: 'Metro de São Paulo', en: 'São Paulo Metro', pt: 'Metrô de São Paulo' }, stations: SAO_ST, levels: SAO_LEVELS },
+  madrid: { emoji: '🇪🇸', name: { es: 'Metro de Madrid', en: 'Madrid Metro', pt: 'Metrô de Madri' }, stations: MAD_ST, levels: MAD_LEVELS },
 };
-export const DEFAULT_CITY = 'santiago';
+// Every level knows its city (the map, the names and the colours come from there)
+for (const [id, c] of Object.entries(CITIES)) c.levels.forEach(l => { l.city = id; });
+
+/**
+ * The game: five trips, each harder and each on a different metro (the owner, 2026-11-12: the player does
+ * not pick a city). The other levels stay in each city's pool for later rounds.
+ */
+export const TRIPS = [CITIES.santiago.levels[0], CITIES['buenos-aires'].levels[1], CITIES['sao-paulo'].levels[2], CITIES.london.levels[3], CITIES.madrid.levels[0]];
 
 const ES = {
     comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendió, si fue fácil o difícil y qué le cambiarías.', ph: 'Por ejemplo: no me di cuenta de que se podía voltear una carta.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
   ui: {
     comentarAbrir: '💬 Sugerencias y comentarios',
     docTitle: 'Transbordo 🚉 · Juegos de Salón', gameChip: '🚉 Transbordo', menu: '‹ Laboratorio',
-    title: 'Transbordo', lead: 'Arma la ruta con tus cartas y viaja en metro por cuatro ciudades.',
+    title: 'Transbordo', lead: 'Arma la ruta con tus cartas y viaja en metro por cinco ciudades.',
     howTitle: '🚉 Cómo se juega',
     
     resumeTitle: '⏯ Hay un viaje a medias', resume: 'Continuar', delete: 'Borrar',
     levelOf: 'Viaje {n} de {total}', from: 'Sales de', to: 'Llegas a', via: 'Pasando por', closedLabel: 'Cerrada',
     heading: 'dirección {station}', plan: 'Tu ruta', hand: 'Tus cartas', go: '🚇 ¡Vamos!', clear: 'Vaciar', hintBtn: '💡 Pista (−❤️)',
     rideN: 'Avanza {n}', rideOne: 'Avanza 1', end: 'Hasta el final', turn: 'Otro andén', changeTo: 'Combina a {line}',
-    lineN: 'Línea {n}', modeHint: 'Cinco viajes, cada uno más difícil', mapCredit: 'Estaciones reales, plano simplificado.',
+    lineN: 'Línea {n}', modeSolo: 'Cinco viajes, cinco metros', modeHint: 'cada uno más difícil', shareContext: 'Cinco metros', mapCredit: 'Estaciones reales, plano simplificado.',
     okLevel: '¡Llegaste! {stars}', next: 'Siguiente viaje ›', retry: 'Probar otra ruta', lostLevel: 'Sin corazones: seguimos con el próximo viaje.',
     pastEnd: 'La línea se acabó antes.', closed: '{station} está cerrada: el tren no pasa.', noChange: '{line} no pasa por {station}.',
     atTerminal: 'Ya estabas al final de la línea.', notGoal: 'Terminaste en {station}, no en {goal}.', missedVia: 'Faltó pasar por {station}.',
     emptyPlan: 'Pon al menos una carta en tu ruta.',
-    resultTitle: '{stars} de {max} ⭐', resultLead: '{city}: cinco viajes.', again: '¡Otra vez!', shareRotulo: '📤 Compartir',
+    resultTitle: '{stars} de {max} ⭐', resultLead: 'Cinco viajes por cinco metros del mundo.', again: '¡Otra vez!', shareRotulo: '📤 Compartir',
   },
-  como: ['🎯 Llega a la estación de destino: toca tus cartas en orden y aprieta ¡Vamos!', '🃏 Avanza cuenta estaciones, Otro andén da la vuelta, Combina cambia de línea en esa estación.', '❤️ Cada ruta que falla y cada pista cuestan un corazón.'],
+  como: ['🎯 Llega a la estación de destino: toca tus cartas en orden y aprieta ¡Vamos!', '🃏 Avanza cuenta estaciones, Otro andén da la vuelta, Combina cambia de línea: la dirección es la estación final escrita al extremo de cada línea.', '❤️ Cada ruta que falla y cada pista cuestan un corazón.'],
 };
 
 const EN = {
@@ -257,21 +290,21 @@ const EN = {
   ui: {
     comentarAbrir: '💬 Suggestions and comments',
     docTitle: 'Transfer 🚉 · Parlor Games', gameChip: '🚉 Transfer', menu: '‹ Lab',
-    title: 'Transfer', lead: 'Build the route with your cards and ride the metro in four cities.',
+    title: 'Transfer', lead: 'Build the route with your cards and ride the metro in five cities.',
     howTitle: '🚉 How to play',
     
     resumeTitle: '⏯ There is a trip in progress', resume: 'Continue', delete: 'Delete',
     levelOf: 'Trip {n} of {total}', from: 'From', to: 'To', via: 'Via', closedLabel: 'Closed',
     heading: 'towards {station}', plan: 'Your route', hand: 'Your cards', go: '🚇 Go!', clear: 'Clear', hintBtn: '💡 Hint (−❤️)',
     rideN: 'Ride {n}', rideOne: 'Ride 1', end: 'To the end', turn: 'Other platform', changeTo: 'Change to {line}',
-    lineN: 'Line {n}', modeHint: 'Five trips, each one harder', mapCredit: 'Real stations, simplified map.',
+    lineN: 'Line {n}', modeSolo: 'Five trips, five metros', modeHint: 'each one harder', shareContext: 'Five metros', mapCredit: 'Real stations, simplified map.',
     okLevel: 'You made it! {stars}', next: 'Next trip ›', retry: 'Try another route', lostLevel: 'No hearts left: on to the next trip.',
     pastEnd: 'The line ended first.', closed: '{station} is closed: the train cannot pass.', noChange: '{line} does not stop at {station}.',
     atTerminal: 'You were already at the end of the line.', notGoal: 'You ended at {station}, not at {goal}.', missedVia: 'You did not pass {station}.',
     emptyPlan: 'Put at least one card in your route.',
-    resultTitle: '{stars} of {max} ⭐', resultLead: '{city}: five trips.', again: 'Again!', shareRotulo: '📤 Share',
+    resultTitle: '{stars} of {max} ⭐', resultLead: 'Five trips on five of the world’s metros.', again: 'Again!', shareRotulo: '📤 Share',
   },
-  como: ['🎯 Reach the destination: tap your cards in order and press Go!', '🃏 Ride counts stations, Other platform turns back, Change switches line at that station.', '❤️ Each failed route and each hint costs a heart.'],
+  como: ['🎯 Reach the destination: tap your cards in order and press Go!', '🃏 Ride counts stations, Other platform turns back, Change switches line: the direction is the last station written at each end of the line.', '❤️ Each failed route and each hint costs a heart.'],
 };
 
 const PT = {
@@ -279,21 +312,21 @@ const PT = {
   ui: {
     comentarAbrir: '💬 Sugestões e comentários',
     docTitle: 'Baldeação 🚉 · Jogos de Salão', gameChip: '🚉 Baldeação', menu: '‹ Laboratório',
-    title: 'Baldeação', lead: 'Monte a rota com suas cartas e viaje de metrô por quatro cidades.',
+    title: 'Baldeação', lead: 'Monte a rota com suas cartas e viaje de metrô por cinco cidades.',
     howTitle: '🚉 Como se joga',
     
     resumeTitle: '⏯ Há uma viagem pela metade', resume: 'Continuar', delete: 'Apagar',
     levelOf: 'Viagem {n} de {total}', from: 'Saída', to: 'Chegada', via: 'Passando por', closedLabel: 'Fechada',
     heading: 'sentido {station}', plan: 'Sua rota', hand: 'Suas cartas', go: '🚇 Vamos!', clear: 'Esvaziar', hintBtn: '💡 Dica (−❤️)',
     rideN: 'Avance {n}', rideOne: 'Avance 1', end: 'Até o fim', turn: 'Outra plataforma', changeTo: 'Baldeie para {line}',
-    lineN: 'Linha {n}', modeHint: 'Cinco viagens, cada uma mais difícil', mapCredit: 'Estações reais, mapa simplificado.',
+    lineN: 'Linha {n}', modeSolo: 'Cinco viagens, cinco metrôs', modeHint: 'cada uma mais difícil', shareContext: 'Cinco metrôs', mapCredit: 'Estações reais, mapa simplificado.',
     okLevel: 'Você chegou! {stars}', next: 'Próxima viagem ›', retry: 'Tentar outra rota', lostLevel: 'Sem corações: vamos para a próxima viagem.',
     pastEnd: 'A linha acabou antes.', closed: '{station} está fechada: o trem não passa.', noChange: '{line} não passa por {station}.',
     atTerminal: 'Você já estava no fim da linha.', notGoal: 'Você parou em {station}, não em {goal}.', missedVia: 'Faltou passar por {station}.',
     emptyPlan: 'Coloque pelo menos uma carta na sua rota.',
-    resultTitle: '{stars} de {max} ⭐', resultLead: '{city}: cinco viagens.', again: 'De novo!', shareRotulo: '📤 Compartilhar',
+    resultTitle: '{stars} de {max} ⭐', resultLead: 'Cinco viagens por cinco metrôs do mundo.', again: 'De novo!', shareRotulo: '📤 Compartilhar',
   },
-  como: ['🎯 Chegue ao destino: toque suas cartas em ordem e aperte Vamos!', '🃏 Avance conta estações, Outra plataforma volta, Baldeie troca de linha nessa estação.', '❤️ Cada rota que falha e cada dica custam um coração.'],
+  como: ['🎯 Chegue ao destino: toque suas cartas em ordem e aperte Vamos!', '🃏 Avance conta estações, Outra plataforma volta, Baldeie troca de linha: a direção é a estação final escrita na ponta de cada linha.', '❤️ Cada rota que falha e cada dica custam um coração.'],
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT };
