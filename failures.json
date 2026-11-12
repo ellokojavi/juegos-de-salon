@@ -2705,6 +2705,19 @@
         "stat": "19 file(s) +1 −1: changelog/claude-practical-brahmagupta-i9m6uc.md, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, tools/e2e/visual/ref/connections-intro.png, …"
       },
       "flaky": false
+    },
+    {
+      "run": 43220897163,
+      "check": "tests",
+      "pr": 1416,
+      "branch": "processes-2026-11-12",
+      "commit": "561767662c024265a84076c099ddfb7fbd43c558",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/e2e/pool-from-page.test.mjs\nERROR · appeared e2e: pool-from-page.test.mjs",
+      "signature": "109d0529d6",
+      "date": "2026-11-12T12:47:51.011Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
