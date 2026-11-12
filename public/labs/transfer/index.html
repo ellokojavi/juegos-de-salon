@@ -56,7 +56,8 @@
     <!-- ============ INTRO ============ -->
     <section class="screen stack active" id="screen-intro">
       <div class="intro-hero">
-        <span class="icon">🚉</span>
+        <!-- The demo: a trip's cards, and the train riding them on the map, one city after another -->
+        <div class="tr-demo" id="demo" aria-hidden="true"><div class="tr-demo__map" id="demo-map"></div><div class="tr-demo__plan" id="demo-plan"></div></div>
         <h1 class="display display--xl rainbow" data-i18n="title">Transbordo</h1>
         <p class="lead" data-i18n="lead"></p>
         <div id="lang-slot"></div>
@@ -64,11 +65,8 @@
       <div class="stack">
         <div id="resume-slot"></div>
         <div class="modes" id="modes"></div>
-        <!-- The rules go after the main action (U-39): the goal first and three points (U-18) -->
-        <div class="panel">
-          <p class="lead" data-i18n="howTitle"></p>
-          <ol class="how" id="how"></ol>
-        </div>
+        <!-- The rules go after the main action (U-39), folded (D-550): the goal first and three points (U-18) -->
+        <details class="panel"><summary data-i18n="howTitle"></summary><ol class="how" id="how"></ol></details>
       </div>
     </section>
 
