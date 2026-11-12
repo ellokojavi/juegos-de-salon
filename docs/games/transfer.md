@@ -8,7 +8,19 @@ station names, with their real geometry, diagonals and curves): Lines 1, 2, 3 an
 stations in their real order, on a schematic like the maps in the stations (the owner, same day: the
 real geometry looked deformed): straight runs at 0°, 45° and 90°, even spacing, rounded corners at the
 bends (`bends` in rules.js) and each name on a side chosen by hand; `tools/e2e/transfer/labels.js` fails the e2e run if any name touches another name, a dot, a line or the train on any trip (the owner: names must never overlap). Platforms are named after the real terminals (dirección Los Dominicos).
-Other cities can come as more trips. Names (C-3): Transbordo · Transfer · Baldeação.
+**Four cities** (the owner, 2026-11-12, with the networks' own schematics as reference): Santiago, the
+Buenos Aires Subte (Lines A, B, C and E; a transfer whose station has a name per line shows both, one per
+row, «C. Pellegrini / Diagonal Norte»), the London Underground (Central, Victoria, Jubilee, Piccadilly,
+Bakerloo) and the São Paulo Metro (Lines 1 to 4). The cover offers one button per city; each is five
+trips with the same steps (`CITIES` in rules.js). Stretches start and end at real stations, never skip one.
+
+**Names never overlap**: `placeNames` in game.js measures each name in the map's font and puts it on the
+first of eight sides (the station's `label` first) that touches no other name, dot, line or the train's
+ring; `tools/e2e/transfer/labels.js` checks every trip of every city in the browser, and that every line is
+drawn. **The train** is a drawn icon centred on its ring, with an arrow towards where it heads (the next
+station or bend on its line), so a player sees when the other platform is needed. **The cards** carry drawn
+icons in the line's colour: a track with stops (ride), an arrow to a bar (to the end), a U-turn (other
+platform), ⇄ (change). Names (C-3): Transbordo · Transfer · Baldeação.
 
 ## Resumen
 
@@ -30,13 +42,13 @@ cards. The player taps cards into the plan's slots (tapping a placed card takes 
 - **Hearts:** 3 per trip. A failed route costs one; with none left the trip scores 0 and the run moves on.
   💡 Pista costs a heart (never the last) and fills the solution up to the next slot.
 - **Score:** the hearts left on each trip are its stars; up to 15 ⭐.
-- **The five trips** (`LEVELS` in `rules.js`, each solution proved in `engine.test.mjs`): 1 count stations;
+- **The five trips** of each city (`CITIES` in `rules.js`, each solution proved in `engine.test.mjs`); Santiago's: 1 count stations;
   2 the other platform; 3 a transfer; 4 Universidad de Chile closed, so the way round goes by Line 2 and Santa Ana (or Line 3);
   5 a station to pass through (Bellas Artes), so the short way by Line 1 and Line 3 fails.
 
 ## Modos
 
-Solo (`solo`), five fixed trips. No daily seed yet.
+Solo (`solo`), five fixed trips per city (four cities). No daily seed yet.
 
 ## Flujo
 

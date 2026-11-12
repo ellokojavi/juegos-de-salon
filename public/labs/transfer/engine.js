@@ -19,7 +19,7 @@ export function run(level, plan) {
   let { station, line, toward } = level.start;
   const closed = new Set(level.closed || []);
   const visited = [station];
-  const steps = [];                     // one per card: { station, path: [stations ridden] }
+  const steps = [];                     // one per card: { station, path: [stations ridden], line, toward (after it) }
   const fail = (i, reason, extra = {}) => ({ ok: false, failAt: i, reason, steps, visited, at: station, ...extra });
 
   for (let i = 0; i < plan.length; i++) {
@@ -29,7 +29,7 @@ export function run(level, plan) {
     const dir = stops.indexOf(toward) > here ? 1 : -1;
     if (card.t === 'turn') {
       toward = dir > 0 ? stops[0] : stops[stops.length - 1];
-      steps.push({ station, path: [] });
+      steps.push({ station, path: [], line, toward });
       continue;
     }
     if (card.t === 'change') {
@@ -37,7 +37,7 @@ export function run(level, plan) {
       if (!next || !next.includes(station)) return fail(i, 'noChange', { line: card.line });
       if (next.indexOf(card.toward) === next.indexOf(station)) return fail(i, 'atTerminal', { line: card.line });
       line = card.line; toward = card.toward;
-      steps.push({ station, path: [] });
+      steps.push({ station, path: [], line, toward });
       continue;
     }
     // ride n, or ride to the end
@@ -46,11 +46,11 @@ export function run(level, plan) {
     const path = [];
     for (let k = 1; k <= n; k++) {
       const s = stops[here + dir * k];
-      if (s === undefined) { steps.push({ station, path }); return fail(i, 'pastEnd'); }
-      if (closed.has(s)) { steps.push({ station, path }); return fail(i, 'closed', { closed: s }); }
+      if (s === undefined) { steps.push({ station, path, line, toward }); return fail(i, 'pastEnd'); }
+      if (closed.has(s)) { steps.push({ station, path, line, toward }); return fail(i, 'closed', { closed: s }); }
       station = s; path.push(s); visited.push(s);
     }
-    steps.push({ station, path });
+    steps.push({ station, path, line, toward });
   }
   if (station !== level.goal) return fail(plan.length, 'notGoal');
   if (level.via && !visited.includes(level.via)) return fail(plan.length, 'missedVia', { via: level.via });

@@ -16,7 +16,7 @@ await b.evaluate("document.querySelector('.mode').click(); 1"); await sleep(300)
 ok(await b.active() === 'screen-play', 'the game starts');
 const clashes = await b.evaluate(readFileSync(new URL('./labels.js', import.meta.url), 'utf8'));
 ok(!clashes.length, 'no station name overlaps a name, a dot or a line' + (clashes.length ? ': ' + clashes.join(', ') : ''));
-await b.evaluate('__transfer.drawLevel(0); 1');
+await b.evaluate("__transfer.drawLevel(0, 'santiago'); 1");
 // Trip 1, a wrong route first: it costs a heart and offers another try
 await b.evaluate("document.querySelector('[data-card]').click(); document.getElementById('btn-go').click(); 1");
 await b.until("!!document.getElementById('btn-retry')", 5000);
@@ -24,7 +24,7 @@ await b.evaluate("document.getElementById('btn-retry').click(); 1"); await sleep
 ok(await b.evaluate('__transfer.state().hearts') === 2, 'a wrong route costs a heart');
 for (let lv = 0; lv < 5; lv++) {
   await b.evaluate("document.getElementById('btn-clear').click(); 1");
-  const sol = await b.evaluate('__transfer.levels[__transfer.state().level].solution');
+  const sol = await b.evaluate('__transfer.levels()[__transfer.state().level].solution');
   for (const c of sol) await b.evaluate(`document.querySelector('[data-card="${c}"]').click(); 1`);
   if (lv === 3) await b.shot('trip-4');
   await b.evaluate("document.getElementById('btn-go').click(); 1");
@@ -36,6 +36,20 @@ ok(await b.active() === 'screen-result', 'it reaches the result');
 ok(await b.evaluate("document.getElementById('result-title').textContent") === '14 de 15 ⭐', 'the stars add up');
 ok(await b.evaluate("!!document.querySelector('#fin-salidas a[href$=\"labs/\"]')"), 'the result goes back to the lab (C-19)');
 await b.shot('result');
+// The other cities, each played straight through from its cover button
+for (const city of ['buenos-aires', 'london', 'sao-paulo']) {
+  await b.go(SITE + '/labs/transfer/');
+  await b.evaluate(`document.querySelector('[data-city="${city}"]').click(); 1`); await sleep(300);
+  for (let lv = 0; lv < 5; lv++) {
+    const sol = await b.evaluate('__transfer.levels()[__transfer.state().level].solution');
+    for (const c of sol) await b.evaluate(`document.querySelector('[data-card="${c}"]').click(); 1`);
+    if (lv === 3) await b.shot(city + '-trip-4');
+    await b.evaluate("document.getElementById('btn-go').click(); 1");
+    if (!await b.until("!!document.getElementById('btn-next')", 8000)) { ok(false, city + ' trip ' + (lv + 1) + ' arrives'); break; }
+    await b.evaluate("document.getElementById('btn-next').click(); 1"); await sleep(300);
+  }
+  ok(await b.evaluate("document.getElementById('result-title').textContent") === '15 de 15 ⭐', city + ': five trips, 15 stars');
+}
 ok(!b.errors.length, 'no console errors' + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
 b.close();
 process.exit(failures ? 1 : 0);

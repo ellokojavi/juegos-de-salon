@@ -12,8 +12,13 @@ import { salidasFin } from '../../assets/js/fin.js';
 import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
-import { GAME_ID, HEARTS, LEVELS, STATIONS, LOCALES } from './rules.js';
-const LINES = Object.fromEntries(LEVELS.flatMap(l => l.lines).map(l => [l.id, l]));
+import { GAME_ID, HEARTS, CITIES, DEFAULT_CITY, LOCALES } from './rules.js';
+// The city being played: its stations and five levels (rules.js)
+let cityId = DEFAULT_CITY;
+const CITY = () => CITIES[cityId] || CITIES[DEFAULT_CITY];
+const LV = () => CITY().levels;
+const ST = () => CITY().stations;
+const lineOf = id => LV().flatMap(l => l.lines).find(l => l.id === id);
 import * as E from './engine.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/transfer.js';
@@ -29,14 +34,14 @@ const C = COMMON[lang] || COMMON.es;
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{' + k + '}'));
 const SVG = 'http://www.w3.org/2000/svg';
 const svg = (tag, attrs = {}) => { const n = document.createElementNS(SVG, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; };
-const name = id => STATIONS[id]?.name || id;
+const name = id => ST()[id]?.name || id;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let state = null;
 let busy = false;           // the train is running
 let verdict = null;         // the last run's result, shown under the board
 const save = () => store.save({ mode: 'solo', state, done: !!state && E.isOver(state) });
-const level = () => LEVELS[state.level];
+const level = () => LV()[state.level];
 
 function showScreen(id) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
@@ -64,23 +69,25 @@ function renderResumeSlot() {
   slot.append(el('div', { class: 'panel pop' },
     el('p', { class: 'lead' }, T.resumeTitle),
     el('div', { class: 'btn-row' },
-      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { state = saved.state; verdict = null; renderPlay(); } }, T.resume),
+      el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { state = saved.state; cityId = state.city || DEFAULT_CITY; verdict = null; renderPlay(); } }, T.resume),
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderResumeSlot(); } }, T.delete),
     ),
   ));
 }
 
 function renderModes() {
-  $('#modes').replaceChildren(el('button', { class: 'mode', 'data-mode': 'solo', onClick: () => { SFX.tap(); start(); } },
-    el('span', {}, el('b', {}, T.modeSolo), el('small', {}, T.modeSoloHint)), el('span', { class: 'go' }, '›')));
+  // One button per city: each is five trips on its own network
+  $('#modes').replaceChildren(...Object.entries(CITIES).map(([id, c]) => el('button', { class: 'mode', 'data-mode': 'solo', 'data-city': id, onClick: () => { SFX.tap(); start(id); } },
+    el('span', {}, el('b', {}, c.emoji + ' ' + (c.name[lang] || c.name.es)), el('small', {}, T.modeHint)), el('span', { class: 'go' }, '›'))));
   $('#how').replaceChildren(...L.como.map(step => el('li', {}, step)));
 }
 
-function start() {
-  state = E.newGame(LEVELS, { hearts: HEARTS });
+function start(city = cityId) {
+  cityId = CITIES[city] ? city : DEFAULT_CITY;
+  state = { ...E.newGame(LV(), { hearts: HEARTS }), city: cityId };
   verdict = null;
   save();
-  trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // usage signal (C-7, D-210)
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1, detalle: cityId }); // usage signal (C-7, D-210)
   renderPlay();
 }
 
@@ -91,17 +98,25 @@ function cardLabel(card) {
   if (card.t === 'turn') return T.turn;
   return fmt(T.changeTo, { line: lineName(card.line) });
 }
-const lineName = id => fmt(T.lineN, { n: LINES[id].n });
+const lineName = id => { const l = lineOf(id); return l.name || fmt(T.lineN, { n: l.n }); };
 /** The platform's name: the real terminal it heads to (a line's `ends`, by the stretch's end it points at). */
 const headingOf = (lv, lineId, toward) => {
   const l = lv.lines.find(x => x.id === lineId);
   return fmt(T.heading, { station: l.ends[toward === l.stops[0] ? 0 : 1] });
 };
-const cardIcon = card => ({ ride: '➡️', end: '⏭️', turn: '🔄', change: '🔀' })[card.t];
+// Drawn icons (no emoji): a track with stops for riding, a stop bar for the end of the line, a U-turn
+// for the other platform, the two opposite arrows of a transfer (⇄). currentColor is the line's colour.
+const ICON = {
+  ride: '<path d="M3 16h20"/><path d="M19 11l6 5-6 5"/><circle cx="7" cy="16" r="2.4" fill="currentColor"/><circle cx="14" cy="16" r="2.4" fill="currentColor"/>',
+  end: '<path d="M3 16h18"/><path d="M15 10l6 6-6 6"/><path d="M27 8v16"/>',
+  turn: '<path d="M22 25V12a6 6 0 0 0-12 0v13"/><path d="M5 20l5 6 5-6"/>',
+  change: '<path d="M5 11h21"/><path d="M21 6l5 5-5 5"/><path d="M27 21H6"/><path d="M11 16l-5 5 5 5"/>',
+};
+const cardIcon = card => el('span', { class: 'tr-card__icon', 'aria-hidden': 'true', html: `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${ICON[card.t]}</svg>` });
 function cardEl(card, attrs = {}) {
   const sub = card.t === 'change' ? el('small', {}, headingOf(level(), card.line, card.toward)) : null;
   return el('button', { type: 'button', class: 'tr-card' + (card.line ? ' tr-line--' + card.line : ''), ...attrs },
-    el('span', { class: 'tr-card__icon' }, cardIcon(card)), el('b', {}, cardLabel(card)), sub);
+    cardIcon(card), el('b', {}, cardLabel(card)), sub);
 }
 
 /* ---------------- The map ---------------- */
@@ -109,30 +124,82 @@ function cardEl(card, attrs = {}) {
 // (rules.js), each corner rounded, so the lines read cleanly and still show their shape.
 const UNIT = 50, PAD = 12;   // px per stretch between stations: even spacing
 // Far enough from the dot that the train's ring (r 15) never covers its own station's name
-const LABEL = { l: [-22, 4, 'end'], tl: [-15, -19, 'end'], tr: [15, -19, 'start'], br: [15, 30, 'start'], r: [22, 4, 'start'], t: [0, -23, 'middle'], b: [0, 33, 'middle'] };
-function labelBox(id, x, y) {
-  const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'], tw = STATIONS[id].name.length * 7.4;
+const LABEL = { l: [-22, 4, 'end'], tl: [-15, -19, 'end'], tr: [15, -19, 'start'], br: [15, 30, 'start'], bl: [-15, 30, 'end'], r: [22, 4, 'start'], t: [0, -23, 'middle'], b: [0, 33, 'middle'] };
+// Names are measured in the map's own font (.tr-name: 700 13px Nunito), so the placement matches the drawing
+const measure = (() => { const c = document.createElement('canvas').getContext('2d'); return t => { c.font = '700 13px Nunito, system-ui, sans-serif'; return c.measureText(t).width; }; })();
+/** A name's box placed on side `side` of a dot at (x, y): [x0, y0, x1, y1]. */
+// A station with a name per line (Buenos Aires: «C. Pellegrini / Diagonal Norte») shows one per row
+const rows = id => ST()[id].name.split(' / ');
+const ROW = 15;
+function nameBox(id, side, x, y) {
+  const [dx, dy0, anchor] = LABEL[side], r = rows(id), tw = Math.max(...r.map(measure));
+  // Above the dot the extra rows grow upwards, beside it they centre, below it they grow down
+  const dy = dy0 - (dy0 < -5 ? (r.length - 1) * ROW : Math.abs(dy0) < 10 ? (r.length - 1) * ROW / 2 : 0);
   const left = anchor === 'start' ? x + dx : anchor === 'end' ? x + dx - tw : x - tw / 2;
-  return [Math.min(x - 16, left), Math.min(y - 16, y + dy - 11), Math.max(x + 16, left + tw), Math.max(y + 16, y + dy + 3)];
+  return [left, y + dy - 13, left + tw, y + dy + 4 + (r.length - 1) * ROW];
+}
+const SIDES = ['r', 'l', 'b', 't', 'tr', 'tl', 'br', 'bl'];
+const meets = (a, b, gap = 0) => a[0] - gap < b[2] && b[0] - gap < a[2] && a[1] - gap < b[3] && b[1] - gap < a[3];
+function crosses(box, segs) {
+  for (const [p, q] of segs) {
+    const n = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 3);
+    for (let i = 0; i <= n; i++) {
+      const x = p[0] + (q[0] - p[0]) * i / n, y = p[1] + (q[1] - p[1]) * i / n;
+      if (x > box[0] - 5 && x < box[2] + 5 && y > box[1] - 5 && y < box[3] + 5) return true;
+    }
+  }
+  return false;
+}
+/**
+ * Where each name goes on this map: the station's own `label` first, then the other seven sides, the
+ * first one that touches no name placed before, no other dot, no line and stays clear of the train's
+ * ring on its own dot. The most crowded stations choose first. `labels.js` checks the result in the page.
+ */
+function placeNames(lv, used, pos) {
+  const segs = lv.lines.flatMap(l => { const p = shape(l, id => pos(id), pos.xy); return p.slice(1).map((q, i) => [p[i], q]); });
+  const crowd = id => used.filter(o => o !== id && Math.hypot(ST()[o].x - ST()[id].x, ST()[o].y - ST()[id].y) < 2).length;
+  const order = used.slice().sort((a, b) => crowd(b) - crowd(a));
+  const placed = {}, boxes = [];
+  for (const id of order) {
+    const [x, y] = pos(id);
+    const tries = [ST()[id].label, ...SIDES].filter((v, i, all) => v && all.indexOf(v) === i);
+    let best = null, bestCost = Infinity;
+    for (const side of tries) {
+      const box = nameBox(id, side, x, y);
+      let cost = 0;
+      for (const o of boxes) if (meets(box, o, 14)) cost += 10;
+      for (const o of used) if (o !== id) { const [ox, oy] = pos(o); if (meets(box, [ox - 10, oy - 10, ox + 10, oy + 10])) cost += 10; }
+      if (crosses(box, segs)) cost += 5;
+      if (cost < bestCost) { best = side; bestCost = cost; }
+      if (!cost) break;
+    }
+    placed[id] = best;
+    boxes.push(nameBox(id, best, x, y));
+  }
+  return placed;
 }
 function frame(lv) {
   const used = [...new Set(lv.lines.flatMap(l => l.stops))];
-  const xs = used.map(s => STATIONS[s].x), ys = used.map(s => STATIONS[s].y);
+  const xs = used.map(s => ST()[s].x), ys = used.map(s => ST()[s].y);
   const x0 = Math.min(...xs), y0 = Math.min(...ys);
   const k = UNIT;
-  // The frame grows to hold every name (about 7.4 units per letter at 13 px)
-  const place0 = id => [(STATIONS[id].x - x0) * k, (STATIONS[id].y - y0) * k];
-  let minX = 0, maxX = 0, minY = 0, maxY = 0;
+  const xy = ([x, y]) => [(x - x0) * k, (y - y0) * k];
+  const pos = id => xy([ST()[id].x, ST()[id].y]);
+  pos.xy = xy;
+  const sides = placeNames(lv, used, pos);
+  // The frame grows to hold every name
+  let minX = -16, maxX = 16, minY = -16, maxY = 16;
   for (const id of used) {
-    const [x, y] = place0(id), b = labelBox(id, x, y);
-    minX = Math.min(minX, b[0]); maxX = Math.max(maxX, b[2]); minY = Math.min(minY, b[1]); maxY = Math.max(maxY, b[3]);
+    const [x, y] = pos(id), b = nameBox(id, sides[id], x, y);
+    minX = Math.min(minX, b[0], x - 16); maxX = Math.max(maxX, b[2], x + 16); minY = Math.min(minY, b[1], y - 16); maxY = Math.max(maxY, b[3], y + 16);
   }
   const toPx = ([x, y]) => [(x - x0) * k - minX + PAD / 2, (y - y0) * k - minY + PAD / 2];
-  const at = id => toPx([STATIONS[id].x, STATIONS[id].y]);
-  return { used, at, toPx, w: maxX - minX + PAD, h: maxY - minY + PAD };
+  const at = id => toPx([ST()[id].x, ST()[id].y]);
+  return { used, at, toPx, sides, w: maxX - minX + PAD, h: maxY - minY + PAD };
 }
 /** Straight segments with every corner rounded (radius `r`, smaller when the segments are short). */
 function curve(points, r = 18) {
+  points = points.filter((p, i) => !i || Math.hypot(p[0] - points[i - 1][0], p[1] - points[i - 1][1]) > 0.5);
   let d = 'M' + points[0].map(Math.round).join(',');
   for (let i = 1; i < points.length - 1; i++) {
     const [p0, p1, p2] = [points[i - 1], points[i], points[i + 1]];
@@ -155,8 +222,25 @@ function shape(l, at, toPx) {
   return pts;
 }
 
+/** The point the train faces: the next station (or bend) towards `toward`; at the end, away from the one before. */
+function aheadOf(lv, train, at, toPx) {
+  const l = lv.lines.find(x => x.id === train.line);
+  if (!l) return null;
+  const pts = [], ids = [];
+  l.stops.forEach((id, i) => {
+    pts.push(at(id)); ids.push(id);
+    const bend = (l.bends || []).find(b => b.after === id);
+    if (bend && i + 1 < l.stops.length) { pts.push(toPx(bend.at)); ids.push(null); }
+  });
+  const i = ids.indexOf(train.at), dir = l.stops.indexOf(train.toward) > l.stops.indexOf(train.at) ? 1 : -1;
+  if (i < 0) return null;
+  if (pts[i + dir]) return pts[i + dir];
+  const back = pts[i - dir];
+  return back ? [2 * pts[i][0] - back[0], 2 * pts[i][1] - back[1]] : null;
+}
+
 function drawMap(lv, { train, lit = [] } = {}) {
-  const { used, at, toPx, w, h } = frame(lv);
+  const { used, at, toPx, sides, w, h } = frame(lv);
   const root = svg('svg', { viewBox: `0 0 ${Math.round(w)} ${Math.round(h)}`, class: 'tr-map', role: 'img' });
   for (const l of lv.lines) root.append(svg('path', { class: 'tr-track tr-line--' + l.id, d: curve(shape(l, at, toPx)) }));
   const closed = new Set(lv.closed || []);
@@ -167,19 +251,29 @@ function drawMap(lv, { train, lit = [] } = {}) {
     const g = svg('g', { class: cls, 'data-station': id });
     g.append(svg('circle', { cx, cy, r: hub ? 8 : 6 }));
     if (closed.has(id)) { const x = svg('text', { x: cx, y: cy + 4, class: 'tr-x' }); x.textContent = '✕'; g.append(x); }
-    // The name on its chosen side (rules.js)
-    const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'];
-    const t = svg('text', { x: cx + dx, y: cy + dy, class: 'tr-name', 'text-anchor': anchor });
-    t.textContent = name(id);
+    // The name on the side placeNames chose
+    const [dx, , anchor] = LABEL[sides[id]], box = nameBox(id, sides[id], cx, cy);
+    const t = svg('text', { x: cx + dx, y: box[1] + 13, class: 'tr-name', 'text-anchor': anchor });
+    rows(id).forEach((row, k) => { const span = svg('tspan', { x: cx + dx, dy: k ? ROW : 0 }); span.textContent = row; t.append(span); });
     g.append(t);
     root.append(g);
   }
   if (train) {
-    const [cx, cy] = at(train);
+    const [cx, cy] = at(train.at);
     root.append(svg('circle', { cx, cy, r: 15, class: 'tr-train-ring' }));
-    const t = svg('text', { x: cx, y: cy + 1, class: 'tr-train', id: 'tr-train' });
-    t.textContent = '🚇';
-    root.append(t);
+    // The arrow: which way the train heads, towards the next station (or the next bend) on its line
+    const ahead = aheadOf(lv, train, at, toPx);
+    if (ahead) {
+      const ang = Math.atan2(ahead[1] - cy, ahead[0] - cx) * 180 / Math.PI;
+      root.append(svg('path', { class: 'tr-arrow', d: 'M19,-7 L29,0 L19,7 Z', transform: `translate(${Math.round(cx)},${Math.round(cy)}) rotate(${Math.round(ang)})` }));
+    }
+    // The train, drawn (no emoji): a front with its window and two lights, centred on the ring
+    const g = svg('g', { class: 'tr-train', id: 'tr-train', transform: `translate(${Math.round(cx)},${Math.round(cy) - 1})` });
+    g.append(svg('rect', { x: -7, y: -8, width: 14, height: 15, rx: 4, class: 'tr-train__body' }),
+      svg('rect', { x: -4.5, y: -5.5, width: 9, height: 5, rx: 1.5, class: 'tr-train__window' }),
+      svg('circle', { cx: -3.5, cy: 3, r: 1.3, class: 'tr-train__light' }), svg('circle', { cx: 3.5, cy: 3, r: 1.3, class: 'tr-train__light' }),
+      svg('path', { d: 'M-5 7l-2 3M5 7l2 3', class: 'tr-train__feet' }));
+    root.append(g);
   }
   return root;
 }
@@ -188,7 +282,7 @@ function drawMap(lv, { train, lit = [] } = {}) {
 function renderPlay() {
   if (E.isOver(state)) return renderResult();
   const lv = level();
-  $('#level').textContent = fmt(T.levelOf, { n: state.level + 1, total: LEVELS.length });
+  $('#level').textContent = fmt(T.levelOf, { n: state.level + 1, total: LV().length });
   $('#hearts').textContent = '❤️'.repeat(state.hearts) + '🤍'.repeat(state.maxHearts - state.hearts);
   const startLine = lv.start.line;
   const info = [
@@ -199,8 +293,8 @@ function renderPlay() {
   if (lv.via) info.push(el('li', {}, el('span', { class: 'muted' }, T.via), ' ', el('b', {}, '⭐ ' + name(lv.via))));
   if (lv.closed) info.push(el('li', {}, el('span', { class: 'muted' }, T.closedLabel), ' ', el('b', {}, '⛔ ' + lv.closed.map(name).join(', '))));
   $('#trip').replaceChildren(...info);
-  $('#map-credit').textContent = T.city + ' · ' + T.mapCredit;
-  $('#map').replaceChildren(drawMap(lv, { train: lv.start.station }));
+  $('#map-credit').textContent = (CITY().name[lang] || CITY().name.es) + ' · ' + T.mapCredit;
+  $('#map').replaceChildren(drawMap(lv, { train: { at: lv.start.station, line: lv.start.line, toward: lv.start.toward } }));
   renderHand();
   renderVerdict();
   showScreen('screen-play');
@@ -230,16 +324,18 @@ async function sendTrain() {
   busy = true;
   SFX.tap();
   renderHand();
-  const { state: next, result } = E.go(LEVELS, state);
+  const { state: next, result } = E.go(LV(), state);
   // The ride: the train lights each station it passes
   const lit = [lv.start.station];
   for (let i = 0; i < result.steps.length; i++) {
     for (const s of result.steps[i].path) {
       lit.push(s);
-      $('#map').replaceChildren(drawMap(lv, { train: s, lit }));
+      $('#map').replaceChildren(drawMap(lv, { train: { at: s, line: result.steps[i].line, toward: result.steps[i].toward }, lit }));
       if (!reduced) await sleep(320);
     }
   }
+  const last = result.steps[result.steps.length - 1];
+  if (last) $('#map').replaceChildren(drawMap(lv, { train: { at: last.station, line: last.line, toward: last.toward }, lit }));
   verdict = { result, next, levelIndex: state.level };
   busy = false;
   if (result.ok) { SFX.win(); vibrate([30, 40, 30]); } else { vibrate(120); }
@@ -256,7 +352,7 @@ function renderVerdict() {
   const box = $('#verdict');
   if (!verdict) return box.replaceChildren();
   const { result, next } = verdict;
-  const lv = LEVELS[verdict.levelIndex];
+  const lv = LV()[verdict.levelIndex];
   const moveOn = () => { SFX.tap(); state = next; verdict = null; save(); if (E.isOver(state)) finish(); else renderPlay(); };
   if (result.ok) {
     const stars = next.stars[next.stars.length - 1];
@@ -272,22 +368,23 @@ function renderVerdict() {
 }
 
 function finish() {
-  trackFinish({ ganador: null, detalle: `${E.totalStars(state)}/${LEVELS.length * HEARTS} ⭐` });
+  trackFinish({ ganador: null, detalle: `${E.totalStars(state)}/${LV().length * HEARTS} ⭐` });
   renderResult();
 }
 
 /* ---------------- Result (C-19) ---------------- */
 function renderResult() {
-  const stars = E.totalStars(state), max = LEVELS.length * HEARTS;
+  const stars = E.totalStars(state), max = LV().length * HEARTS;
   const title = fmt(T.resultTitle, { stars, max });
   $('#result-title').textContent = title;
-  $('#result-trips').replaceChildren(...state.stars.map((s, i) => el('li', {}, el('span', {}, fmt(T.levelOf, { n: i + 1, total: LEVELS.length })), el('b', {}, s ? '⭐'.repeat(s) : '—'))));
+  $('#result-lead').textContent = fmt(T.resultLead, { city: (CITY().name[lang] || CITY().name.es) });
+  $('#result-trips').replaceChildren(...state.stars.map((s, i) => el('li', {}, el('span', {}, fmt(T.levelOf, { n: i + 1, total: LV().length })), el('b', {}, s ? '⭐'.repeat(s) : '—'))));
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); start(); } }, T.again),
     botonCompartir({
       rotulo: T.shareRotulo, id: 'btn-share', alTocar: () => SFX.tap(),
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
-      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), title, state.stars.map(s => s ? '⭐'.repeat(s) : '▫️').join(' · ')].join('\n\n') }),
+      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: (CITY().name[lang] || CITY().name.es) }), title, state.stars.map(s => s ? '⭐'.repeat(s) : '▫️').join(' · ')].join('\n\n') }),
     }));
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   if (stars) confetti();
@@ -304,12 +401,16 @@ function init() {
   initSound();
   $('#btn-go').addEventListener('click', sendTrain);
   $('#btn-clear').addEventListener('click', () => { SFX.tap(); state = { ...state, plan: state.plan.map((c, i) => (i < state.hinted ? c : null)) }; save(); renderHand(); });
-  $('#btn-hint').addEventListener('click', () => { SFX.tap(); state = E.hint(LEVELS, state); save(); renderPlay(); });
+  $('#btn-hint').addEventListener('click', () => { SFX.tap(); state = E.hint(LV(), state); save(); renderPlay(); });
   renderModes();
   renderResumeSlot();
   showScreen('screen-intro');
 }
 
 // The hook for the end-to-end tests (C-14)
-window.__transfer = { state: () => state, levels: LEVELS, drawLevel: i => $('#map').replaceChildren(drawMap(LEVELS[i])), start, send: sendTrain, place: i => { state = E.place(state, i); renderHand(); } };
+window.__transfer = {
+  state: () => state, cities: Object.keys(CITIES), levels: () => LV(),
+  // Draws one level's map of one city (the labels check walks them all)
+  drawLevel: (i, city = cityId) => { cityId = city; const lv = LV()[i]; $('#map').replaceChildren(drawMap(lv, { train: { at: lv.start.station, line: lv.start.line, toward: lv.start.toward } })); },
+  start, send: sendTrain, place: i => { state = E.place(state, i); renderHand(); } };
 init();
