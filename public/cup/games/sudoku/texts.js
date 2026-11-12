@@ -14,6 +14,7 @@ const ES = {
       'Toca una casilla y luego el número. Con Notas anotas los que podrían ir.',
     ],
     puntaje: 'Partes con 100 puntos. Cada número mal puesto resta 10 y cada pista, 15. Si te rindes, son 0 puntos.',
+    errores: '❌ Cada número mal puesto resta 10.',
     desempate: 'Si empatas, gana quien tardó menos.',
     variantes: {
       easy: { nombre: '🟢 Fácil', sub: '6×6, del 1 al 6' },
@@ -57,6 +58,7 @@ const EN = {
       'Tap a cell, then the number. With Notes you jot down the ones that might fit.',
     ],
     puntaje: 'You start with 100 points. Each wrong number takes off 10 and each hint, 15. If you give up, it is 0 points.',
+    errores: '❌ Each wrong number takes off 10.',
     desempate: 'On a tie, the faster player wins.',
     variantes: {
       easy: { nombre: '🟢 Easy', sub: '6×6, 1 to 6' },
@@ -100,6 +102,7 @@ const PT = {
       'Toque numa casa e depois no número. Com Notas você anota os que podem ir.',
     ],
     puntaje: 'Você começa com 100 pontos. Cada número errado tira 10 e cada dica, 15. Se desistir, são 0 pontos.',
+    errores: '❌ Cada número errado tira 10.',
     desempate: 'Se empatar, ganha quem levou menos tempo.',
     variantes: {
       easy: { nombre: '🟢 Fácil', sub: '6×6, de 1 a 6' },

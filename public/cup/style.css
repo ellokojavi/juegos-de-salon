@@ -622,6 +622,8 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .tips ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .tips summary { min-height: 44px; }
 .jugar-head .chip { margin-left: auto; margin-right: 8px; }
+/* What a mistake costs, under the play head (lab: #seccion-mistakes-rule) */
+.regla-errores { margin: 0 0 8px; font-size: var(--fs-90); }
 @keyframes pulse { 50% { opacity: 0.55; } }
 
 /* La cuenta regresiva antes de jugar (D-105) está en assets/css/base.css: la comparten los juegos del laboratorio */

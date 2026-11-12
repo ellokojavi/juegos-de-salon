@@ -160,3 +160,5 @@ with its link card `assets/og/sudoku.jpg`), La Copa and Uno al día. The id stay
 - **Tests:** `public/cup/games/sudoku/engine.test.mjs`; end to end `tools/e2e/sudoku/page.mjs` (the page:
   cover, lever, both levels played to the result, a wrong digit, a hint, giving up, the languages at 320 px).
   The prototype's `tools/e2e/sudoku/game.mjs` stays until the cleanup.
+
+- **What a mistake costs** (lab, flag `mistakes-rule`): while playing, one line under the title says it, from this game's `errores` text; see [cup.md](cup.md#reglas).

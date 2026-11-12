@@ -15,6 +15,7 @@ const ES = {
       'Elige «Pinta» o «No pinta» y toca una casilla. Nunca hay que adivinar.',
     ],
     puntaje: 'Partes con 100 puntos. Cada error resta 15 y cada ayuda, 10. Si te rindes, vale la parte que pintaste.',
+    errores: '❌ Cada error resta 15.',
     desempate: 'Si empatas, gana quien tardó menos.',
     variantes: {
       easy: { nombre: 'Fácil', sub: 'Un color' },
@@ -67,6 +68,7 @@ const EN = {
       'Pick “Paint” or “Don’t paint” and tap a square. You never have to guess.',
     ],
     puntaje: 'You start with 100 points. Each mistake takes off 15 and each hint, 10. If you give up, it’s worth the part you painted.',
+    errores: '❌ Each mistake takes off 15.',
     desempate: 'On a tie, the faster player wins.',
     variantes: {
       easy: { nombre: 'Easy', sub: 'One color' },
@@ -119,6 +121,7 @@ const PT = {
       'Escolha «Pinte» ou «Não pinte» e toque numa casa. Nunca precisa chutar.',
     ],
     puntaje: 'Você começa com 100 pontos. Cada erro tira 15 e cada ajuda, 10. Se desistir, vale a parte que você pintou.',
+    errores: '❌ Cada erro tira 15.',
     desempate: 'Se empatar, ganha quem levou menos tempo.',
     variantes: {
       easy: { nombre: 'Fácil', sub: 'Uma cor' },
