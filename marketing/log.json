@@ -563,7 +563,15 @@
       "juegos": [
         "sudoku"
       ],
-      "laboratorio": true
+      "laboratorio": [
+        "sudoku"
+      ],
+      "revision": {
+        "fecha": "2026-11-12",
+        "app": "1.9.1",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }
