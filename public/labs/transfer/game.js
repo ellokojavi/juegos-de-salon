@@ -12,11 +12,12 @@ import { salidasFin } from '../../assets/js/fin.js';
 import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
-import { GAME_ID, HEARTS, CITIES, TRIPS, LOCALES } from './rules.js';
+import { GAME_ID, HEARTS, CITIES, pickCities, tripsOf, LOCALES } from './rules.js';
 // The five trips, each on its own metro (rules.js). `mapCity` is the city of the level being drawn or read.
-let mapCity = TRIPS[0].city;
+let mapCity = Object.keys(CITIES)[0];
 const CITY = () => CITIES[mapCity];
-const LV = () => TRIPS;
+// The run's five cities are drawn when it starts and saved with it
+const LV = () => tripsOf(state?.cities || Object.keys(CITIES).slice(0, 5));
 const ST = () => CITY().stations;
 const lineOf = id => Object.values(CITIES).flatMap(c => c.levels).flatMap(l => l.lines).find(l => l.id === id);
 const cityName = id => CITIES[id].name[lang] || CITIES[id].name.es;
@@ -77,14 +78,15 @@ function renderResumeSlot() {
 }
 
 function renderModes() {
-  // One mode: five trips, each on a different metro (their flags tell which)
+  // One mode: five trips, each on a metro drawn from the nine (their flags)
   $('#modes').replaceChildren(el('button', { class: 'mode', 'data-mode': 'solo', onClick: () => { SFX.tap(); start(); } },
-    el('span', {}, el('b', {}, T.modeSolo), el('small', {}, TRIPS.map(l => CITIES[l.city].emoji).join(' ') + ' · ' + T.modeHint)), el('span', { class: 'go' }, '›')));
+    el('span', {}, el('b', {}, T.modeSolo), el('small', {}, Object.values(CITIES).map(c => c.emoji).filter((e, i, all) => all.indexOf(e) === i).join(' ') + ' · ' + T.modeHint)), el('span', { class: 'go' }, '›')));
   $('#how').replaceChildren(...L.como.map(step => el('li', {}, step)));
 }
 
 function start() {
-  state = E.newGame(LV(), { hearts: HEARTS });
+  const cities = pickCities();
+  state = { ...E.newGame(tripsOf(cities), { hearts: HEARTS }), cities };
   verdict = null;
   save();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // usage signal (C-7, D-210)
@@ -173,7 +175,8 @@ function dirTags(lv, pos, names = []) {
       const p = pts[e], q = pts[b], len = Math.hypot(p[0] - q[0], p[1] - q[1]) || 1, u = [(p[0] - q[0]) / len, (p[1] - q[1]) / len];
       const text = l.ends[k], tw = measure(text, DIR_FONT);
       // A stretch that ends at its terminal says it already: that station's own name is the direction
-      if (rows(l.stops[k ? l.stops.length - 1 : 0]).includes(text)) return;
+      // (also «Colosseo» for Colosseo-Fori Imperiali); a loop that comes back on itself (Chicago's Brown Line) has none
+      if (rows(l.stops[k ? l.stops.length - 1 : 0]).some(r => text.startsWith(r)) || l.untagged?.includes(k)) return;
       let best = null, bestCost = Infinity;
       for (const reach of [22, 36, 50, 64, 80]) for (const side of ['ahead', 'left', 'right']) {
         const tip = [p[0] + u[0] * reach, p[1] + u[1] * reach];

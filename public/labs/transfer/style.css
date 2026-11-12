@@ -7,8 +7,9 @@
   /* Each network's real line colours (its own maps), a touch lighter where the real one is too dark on the night background */
   --tr-l1: #cc0000; --tr-l2: #ffbe2e; --tr-l3: #a0582a; --tr-l5: #00995a;
   --tr-a: #00aeef; --tr-b: #ee1c25; --tr-c: #2b7fd4; --tr-e: #9b4dca;
-  --tr-central: #e32017; --tr-victoria: #0098d4; --tr-jubilee: #a0a5a9; --tr-piccadilly: #3b5fc0; --tr-bakerloo: #b36305;
+  --tr-central: #e32017; --tr-jubilee: #a0a5a9; --tr-piccadilly: #3b5fc0; --tr-bakerloo: #b36305;
   --tr-sp1: #1d6fd1; --tr-sp2: #00a07a; --tr-sp3: #ee372f; --tr-sp4: #ffd600;
+  --tr-red: #e0314b; --tr-green: #1fae4f; --tr-brown: #a8744f; --tr-ra: #f26b2a; --tr-rb: #3b6fd8; --tr-rc: #57b947; --tr-n1: #ee352e; --tr-n6: #00a34a; --tr-n7: #c04ec0; --tr-ns: #9a9b9d; --tr-nl: #b8babd; --tr-one: #2fa84f; --tr-two: #3a7fd0; --tr-mono: #e0457b;
   --tr-m1: #30a3dc; --tr-m2: #e0292f; --tr-m3: #ffe114; --tr-m5: #96bf0d;
 }
 .tr-line--l1 { --tr: var(--tr-l1); }
@@ -20,7 +21,6 @@
 .tr-line--c { --tr: var(--tr-c); }
 .tr-line--e { --tr: var(--tr-e); }
 .tr-line--central { --tr: var(--tr-central); }
-.tr-line--victoria { --tr: var(--tr-victoria); }
 .tr-line--jubilee { --tr: var(--tr-jubilee); }
 .tr-line--piccadilly { --tr: var(--tr-piccadilly); }
 .tr-line--bakerloo { --tr: var(--tr-bakerloo); }
@@ -28,6 +28,20 @@
 .tr-line--sp2 { --tr: var(--tr-sp2); }
 .tr-line--sp3 { --tr: var(--tr-sp3); }
 .tr-line--sp4 { --tr: var(--tr-sp4); }
+.tr-line--red { --tr: var(--tr-red); }
+.tr-line--green { --tr: var(--tr-green); }
+.tr-line--brown { --tr: var(--tr-brown); }
+.tr-line--ra { --tr: var(--tr-ra); }
+.tr-line--rb { --tr: var(--tr-rb); }
+.tr-line--rc { --tr: var(--tr-rc); }
+.tr-line--n1 { --tr: var(--tr-n1); }
+.tr-line--n6 { --tr: var(--tr-n6); }
+.tr-line--n7 { --tr: var(--tr-n7); }
+.tr-line--ns { --tr: var(--tr-ns); }
+.tr-line--nl { --tr: var(--tr-nl); }
+.tr-line--one { --tr: var(--tr-one); }
+.tr-line--two { --tr: var(--tr-two); }
+.tr-line--mono { --tr: var(--tr-mono); }
 .tr-line--m1 { --tr: var(--tr-m1); }
 .tr-line--m2 { --tr: var(--tr-m2); }
 .tr-line--m3 { --tr: var(--tr-m3); }

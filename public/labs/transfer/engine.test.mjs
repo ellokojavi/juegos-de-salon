@@ -1,7 +1,7 @@
 // node public/labs/transfer/engine.test.mjs: the rules (C-12)
 import assert from 'node:assert/strict';
 import { run, newGame, place, unplace, go, hint, planCards, isOver, totalStars } from './engine.js';
-import { CITIES, TRIPS, LOCALES, HEARTS } from './rules.js';
+import { CITIES, TRIPS, pickCities, tripsOf, LOCALES, HEARTS } from './rules.js';
 const LEVELS = CITIES.santiago.levels, STATIONS = CITIES.santiago.stations;
 
 // Every level of every city's pool: its solution arrives, every station and line it names exists, the steps grow
@@ -19,13 +19,24 @@ for (const [id, city] of Object.entries(CITIES)) {
   for (const level of city.levels) assert.equal(level.city, id, 'each level knows its city');
 }
 
-// The game: five trips, each on a different metro, each harder (count, other platform, transfer, closed, via)
-assert.equal(TRIPS.length, 5);
-assert.equal(new Set(TRIPS.map(l => l.city)).size, 5, 'five different metros');
-assert.deepEqual(TRIPS.map(l => l.slots), [1, 2, 3, 4, 5]);
-assert.ok(TRIPS[1].hand[TRIPS[1].solution[0]].t === 'turn', 'trip 2 needs the other platform');
-assert.ok(TRIPS[2].solution.some(c => TRIPS[2].hand[c].t === 'change'), 'trip 3 needs a transfer');
-assert.ok(TRIPS[3].closed?.length && TRIPS[4].via, 'trip 4 has a closed station, trip 5 a station to pass');
+// Every city: five levels, one rule more each (count, other platform, transfer, closed, via), on one map
+for (const [id, city] of Object.entries(CITIES)) {
+  assert.deepEqual(city.levels.map(l => l.slots), [1, 2, 3, 4, 5], id);
+  const [, two, three, four, five] = city.levels;
+  assert.ok(two.solution.some(c => two.hand[c].t === 'turn'), id + ': level 2 needs the other platform');
+  assert.ok(three.solution.some(c => three.hand[c].t === 'change'), id + ': level 3 needs a transfer');
+  assert.ok(four.closed?.length && five.via, id + ': level 4 has a closed station, level 5 a station to pass');
+  assert.ok(city.levels.every(l => l.lines === city.map), id + ': every level draws the whole map');
+}
+
+// A run: five different cities, trip k is level k of its city
+for (let seed = 1; seed < 50; seed++) {
+  let x = seed; const rand = () => ((x = (x * 16807) % 2147483647) / 2147483647);
+  const cities = pickCities(rand);
+  assert.equal(cities.length, TRIPS);
+  assert.equal(new Set(cities).size, TRIPS, 'five different metros');
+  assert.deepEqual(tripsOf(cities).map(l => l.slots), [1, 2, 3, 4, 5]);
+}
 
 // Santiago's levels, one by one: its solution arrives, fits its slots, and every station it names exists
 LEVELS.forEach((level, i) => {
