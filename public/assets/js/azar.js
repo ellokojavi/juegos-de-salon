@@ -14,7 +14,7 @@
  * aparece el emoji del elegido, grande, en vez del dado.
  */
 import { el } from './ui.js';
-import { gameIcon } from './game-icon.js';
+import { gameIcon, iconUrl } from './game-icon.js';
 import { crearDado } from './dado3d.js';
 import { pickLang } from './i18n.js';
 import { SFX } from './sound.js';
@@ -164,7 +164,9 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
 
   // Termina un poco ladeado, mostrando el canto de arriba y el de la derecha, para que se vea que es un cubo
   const FX = 18, FY = -20;
-  const creado = crearDado(lienzo, caras.map(g => g.emoji));
+  // A game with a drawn icon (game-icon.js) puts its drawing on the face, not its emoji stand-in
+  const cara = g => { const src = iconUrl(g); if (!src) return g.emoji; const im = new Image(); im.dataset.emoji = g.emoji; im.src = src; return im; };
+  const creado = crearDado(lienzo, caras.map(cara));
   // La foto para la página del juego: el lienzo se lee en el mismo momento en que se dibuja
   let pose = [FX, FY];
   const dado = creado && { dibujar: (x, y) => { pose = [x, y]; creado.dibujar(x, y); } };
