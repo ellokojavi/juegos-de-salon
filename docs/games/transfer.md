@@ -42,13 +42,13 @@ cards. The player taps cards into the plan's slots (tapping a placed card takes 
 - **Hearts:** 3 per trip. A failed route costs one; with none left the trip scores 0 and the run moves on.
   💡 Pista costs a heart (never the last) and fills the solution up to the next slot.
 - **Score:** the hearts left on each trip are its stars; up to 15 ⭐.
-- **The five trips** (`LEVELS` in `rules.js`, each solution proved in `engine.test.mjs`): 1 count stations;
+- **The five trips** of each city (`CITIES` in `rules.js`, each solution proved in `engine.test.mjs`); Santiago's: 1 count stations;
   2 the other platform; 3 a transfer; 4 Universidad de Chile closed, so the way round goes by Line 2 and Santa Ana (or Line 3);
   5 a station to pass through (Bellas Artes), so the short way by Line 1 and Line 3 fails.
 
 ## Modos
 
-Solo (`solo`), five fixed trips. No daily seed yet.
+Solo (`solo`), five fixed trips per city (four cities). No daily seed yet.
 
 ## Flujo
 
