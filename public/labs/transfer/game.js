@@ -105,9 +105,9 @@ function cardEl(card, attrs = {}) {
 }
 
 /* ---------------- The map ---------------- */
-// Real coordinates, scaled so every map is about as wide as the phone; the lines are drawn as smooth
-// curves through their stations (Catmull-Rom), so diagonals and bends follow the real layout.
-const W = 300, PAD = 16;
+// A schematic like a station's map: straight runs at 0°, 45° and 90° between stations and bends
+// (rules.js), each corner rounded, so the lines read cleanly and still show their shape.
+const UNIT = 52, PAD = 16;   // px per stretch between stations: even spacing
 const LABEL = { l: [-11, 4, 'end'], tl: [-8, -10, 'end'], r: [11, 4, 'start'], t: [0, -13, 'middle'], b: [0, 20, 'middle'] };
 function labelBox(id, x, y) {
   const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'], tw = STATIONS[id].name.length * 6.2;
@@ -118,7 +118,7 @@ function frame(lv) {
   const used = [...new Set(lv.lines.flatMap(l => l.stops))];
   const xs = used.map(s => STATIONS[s].x), ys = used.map(s => STATIONS[s].y);
   const x0 = Math.min(...xs), y0 = Math.min(...ys);
-  const k = Math.min(1.4, W / Math.max(1, Math.max(...xs) - x0), 420 / Math.max(1, Math.max(...ys) - y0));
+  const k = UNIT;
   // The frame grows to hold every name (about 6.2 units per letter at 11 px)
   const place0 = id => [(STATIONS[id].x - x0) * k, (STATIONS[id].y - y0) * k];
   let minX = 0, maxX = 0, minY = 0, maxY = 0;
@@ -126,25 +126,38 @@ function frame(lv) {
     const [x, y] = place0(id), b = labelBox(id, x, y);
     minX = Math.min(minX, b[0]); maxX = Math.max(maxX, b[2]); minY = Math.min(minY, b[1]); maxY = Math.max(maxY, b[3]);
   }
-  const at = id => { const [x, y] = place0(id); return [x - minX + PAD / 2, y - minY + PAD / 2]; };
-  return { used, at, w: maxX - minX + PAD, h: maxY - minY + PAD };
+  const toPx = ([x, y]) => [(x - x0) * k - minX + PAD / 2, (y - y0) * k - minY + PAD / 2];
+  const at = id => toPx([STATIONS[id].x, STATIONS[id].y]);
+  return { used, at, toPx, w: maxX - minX + PAD, h: maxY - minY + PAD };
 }
-function curve(points) {
-  if (points.length < 3) return 'M' + points.map(p => p.join(',')).join(' L');
-  let d = 'M' + points[0].join(',');
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i - 1] || points[i], p1 = points[i], p2 = points[i + 1], p3 = points[i + 2] || p2;
-    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-    d += ` C${c1.map(Math.round)} ${c2.map(Math.round)} ${p2.map(Math.round)}`;
+/** Straight segments with every corner rounded (radius `r`, smaller when the segments are short). */
+function curve(points, r = 18) {
+  let d = 'M' + points[0].map(Math.round).join(',');
+  for (let i = 1; i < points.length - 1; i++) {
+    const [p0, p1, p2] = [points[i - 1], points[i], points[i + 1]];
+    const l1 = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]), l2 = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+    const rr = Math.min(r, l1 / 2, l2 / 2);
+    const a = [p1[0] - (p1[0] - p0[0]) / l1 * rr, p1[1] - (p1[1] - p0[1]) / l1 * rr];
+    const c = [p1[0] + (p2[0] - p1[0]) / l2 * rr, p1[1] + (p2[1] - p1[1]) / l2 * rr];
+    d += ` L${a.map(Math.round)} Q${p1.map(Math.round)} ${c.map(Math.round)}`;
   }
-  return d;
+  return d + ' L' + points[points.length - 1].map(Math.round).join(',');
+}
+/** A line's drawn points: its stations with its bends between them, in the frame. */
+function shape(l, at, toPx) {
+  const pts = [];
+  l.stops.forEach((id, i) => {
+    pts.push(at(id));
+    const bend = (l.bends || []).find(b => b.after === id);
+    if (bend && i + 1 < l.stops.length) pts.push(toPx(bend.at));
+  });
+  return pts;
 }
 
 function drawMap(lv, { train, lit = [] } = {}) {
-  const { used, at, w, h } = frame(lv);
+  const { used, at, toPx, w, h } = frame(lv);
   const root = svg('svg', { viewBox: `0 0 ${Math.round(w)} ${Math.round(h)}`, class: 'tr-map', role: 'img' });
-  for (const l of lv.lines) root.append(svg('path', { class: 'tr-track tr-line--' + l.id, d: curve(l.stops.map(at)) }));
+  for (const l of lv.lines) root.append(svg('path', { class: 'tr-track tr-line--' + l.id, d: curve(shape(l, at, toPx)) }));
   const closed = new Set(lv.closed || []);
   for (const id of used) {
     const [cx, cy] = at(id);

@@ -5,8 +5,9 @@ invented map. Five trips, one new rule each. Its genre (a plan of transit moves 
 suggested by the ideas agent's look at *Mind the Route: Metro Puzzle* (GameLeap, Google Play); the cards
 and levels are our own. The map is the **real Santiago Metro** (the owner, 2026-11-12: real lines and
 station names, with their real geometry, diagonals and curves): Lines 1, 2, 3 and 5 around the centre,
-stations in their real order and at their real coordinates from OpenStreetMap (credited under the map,
-ODbL), drawn as smooth curves; platforms are named after the real terminals (dirección Los Dominicos).
+stations in their real order, on a schematic like the maps in the stations (the owner, same day: the
+real geometry looked deformed): straight runs at 0°, 45° and 90°, even spacing, rounded corners at the
+bends (`bends` in rules.js) and each name on a side chosen by hand. Platforms are named after the real terminals (dirección Los Dominicos).
 Other cities can come as more trips. Names (C-3): Transbordo · Transfer · Baldeação.
 
 ## Resumen

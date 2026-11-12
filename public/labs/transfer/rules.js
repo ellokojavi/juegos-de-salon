@@ -2,41 +2,43 @@
  * Transfer: the game's data, no logic (C-2). Texts in LOCALES = { es, en, pt } with the same keys (C-3);
  * the rules are in engine.js. See docs/games/transfer.md.
  *
- * The map is the real Santiago Metro, centre stretch. Each level uses some of its lines; `solution` holds hand indices (the engine test proves every one works).
+ * The map is the real Santiago Metro's centre, drawn as a schematic. Each level uses some of its lines; `solution` holds hand indices (the engine test proves every one works).
  */
 
 export const GAME_ID = 'transfer';
 export const HEARTS = 3;
 
 /**
- * The stations, real ones of Santiago's Metro, placed by their real coordinates (OpenStreetMap,
- * © OpenStreetMap contributors, ODbL): x grows east and y south, about 10 units per 100 m. `label` is
- * the side its name goes (l, r, t, b, or tl: above to the left), chosen by hand so the dense centre stays legible.
+ * The stations, real ones of Santiago's Metro, on a schematic map like the ones in the stations:
+ * straight runs at 0°, 45° and 90°, even spacing, the real order and the real shape simplified
+ * (x grows east and y south, one unit per stretch between neighbours). `label` is the side its name
+ * goes (l, r, t, b, or tl: above to the left), chosen by hand so the centre stays legible.
  */
 export const STATIONS = {
-  heroes: { name: 'Los Héroes', x: 166, y: 284, label: 'l' }, moneda: { name: 'La Moneda', x: 212, y: 272, label: 'b' },
-  uchile: { name: 'Universidad de Chile', x: 247, y: 262, label: 'tl' }, lucia: { name: 'Santa Lucía', x: 297, y: 248, label: 'b' },
-  catolica: { name: 'Universidad Católica', x: 337, y: 221, label: 'r' }, baquedano: { name: 'Baquedano', x: 393, y: 199, label: 't' },
-  salvador: { name: 'Salvador', x: 452, y: 150, label: 'r' }, montt: { name: 'Manuel Montt', x: 506, y: 109, label: 'r' },
-  patronato: { name: 'Patronato', x: 277, y: 121, label: 'r' }, calycanto: { name: 'Puente Cal y Canto', x: 226, y: 151, label: 'r' },
-  ana: { name: 'Santa Ana', x: 172, y: 205, label: 'l' }, toesca: { name: 'Toesca', x: 180, y: 347, label: 'l' },
-  ohiggins: { name: "Parque O'Higgins", x: 196, y: 440, label: 'r' }, hospitales: { name: 'Hospitales', x: 199, y: 0, label: 'r' },
-  armas: { name: 'Plaza de Armas', x: 250, y: 196, label: 'b' }, almagro: { name: 'Parque Almagro', x: 248, y: 337, label: 'r' },
-  matta: { name: 'Matta', x: 311, y: 406, label: 'b' }, irarrazaval: { name: 'Irarrázaval', x: 436, y: 373, label: 'b' },
-  quinta: { name: 'Quinta Normal', x: 0, y: 227, label: 't' }, cumming: { name: 'Cumming', x: 98, y: 215, label: 'b' },
-  bellas: { name: 'Bellas Artes', x: 302, y: 189, label: 't' }, bustamante: { name: 'Parque Bustamante', x: 404, y: 251, label: 'r' },
-  isabel: { name: 'Santa Isabel', x: 416, y: 294, label: 'r' },
+  heroes: { name: 'Los Héroes', x: 0, y: 6, label: 'l' }, moneda: { name: 'La Moneda', x: 1, y: 6, label: 't' },
+  uchile: { name: 'Universidad de Chile', x: 2, y: 6, label: 'b' }, lucia: { name: 'Santa Lucía', x: 3, y: 6, label: 'r' },
+  catolica: { name: 'Universidad Católica', x: 4, y: 5, label: 'r' }, baquedano: { name: 'Baquedano', x: 5, y: 4, label: 'r' },
+  salvador: { name: 'Salvador', x: 6, y: 3, label: 'r' }, montt: { name: 'Manuel Montt', x: 7, y: 2, label: 'l' },
+  patronato: { name: 'Patronato', x: 2, y: 1, label: 'r' }, calycanto: { name: 'Puente Cal y Canto', x: 1, y: 2, label: 'r' },
+  ana: { name: 'Santa Ana', x: 0, y: 4, label: 'tl' }, toesca: { name: 'Toesca', x: 0, y: 7.5, label: 'l' },
+  ohiggins: { name: "Parque O'Higgins", x: 0, y: 9, label: 'r' }, hospitales: { name: 'Hospitales', x: 1, y: 0.5, label: 'r' },
+  armas: { name: 'Plaza de Armas', x: 2, y: 4, label: 'b' }, almagro: { name: 'Parque Almagro', x: 2, y: 7.5, label: 'r' },
+  matta: { name: 'Matta', x: 3, y: 9, label: 'b' }, irarrazaval: { name: 'Irarrázaval', x: 5, y: 9, label: 'r' },
+  quinta: { name: 'Quinta Normal', x: -2, y: 4, label: 't' }, cumming: { name: 'Cumming', x: -1, y: 4, label: 'b' },
+  bellas: { name: 'Bellas Artes', x: 3.5, y: 4, label: 't' }, bustamante: { name: 'Parque Bustamante', x: 5, y: 5.5, label: 'r' },
+  isabel: { name: 'Santa Isabel', x: 5, y: 7, label: 'r' },
 };
 
 /**
  * The lines: the real number and colour (a class in style.css), the stretch the levels use in its real
- * order, and `ends`, the real terminals the platforms are named after (the first towards stops[0]).
+ * order, `ends`, the real terminals the platforms are named after (the first towards stops[0]), and
+ * `bends`, the corners between two stations ({ after: station, at: [x, y] }), drawn rounded.
  */
 const LINE = {
-  l1: { id: 'l1', n: 1, ends: ['San Pablo', 'Los Dominicos'], stops: ['heroes', 'moneda', 'uchile', 'lucia', 'catolica', 'baquedano', 'salvador', 'montt'] },
-  l2: { id: 'l2', n: 2, ends: ['Vespucio Norte', 'Hospital El Pino'], stops: ['patronato', 'calycanto', 'ana', 'heroes', 'toesca', 'ohiggins'] },
-  l3: { id: 'l3', n: 3, ends: ['Plaza Quilicura', 'Fernando Castillo Velasco'], stops: ['hospitales', 'calycanto', 'armas', 'uchile', 'almagro', 'matta', 'irarrazaval'] },
-  l5: { id: 'l5', n: 5, ends: ['Plaza de Maipú', 'Vicente Valdés'], stops: ['quinta', 'cumming', 'ana', 'armas', 'bellas', 'baquedano', 'bustamante', 'isabel', 'irarrazaval'] },
+  l1: { id: 'l1', n: 1, ends: ['San Pablo', 'Los Dominicos'], stops: ['heroes', 'moneda', 'uchile', 'lucia', 'catolica', 'baquedano', 'salvador', 'montt'], bends: [] },
+  l2: { id: 'l2', n: 2, ends: ['Vespucio Norte', 'Hospital El Pino'], stops: ['patronato', 'calycanto', 'ana', 'heroes', 'toesca', 'ohiggins'], bends: [{ after: 'calycanto', at: [0, 3] }] },
+  l3: { id: 'l3', n: 3, ends: ['Plaza Quilicura', 'Fernando Castillo Velasco'], stops: ['hospitales', 'calycanto', 'armas', 'uchile', 'almagro', 'matta', 'irarrazaval'], bends: [{ after: 'calycanto', at: [2, 3] }, { after: 'almagro', at: [2, 8] }] },
+  l5: { id: 'l5', n: 5, ends: ['Plaza de Maipú', 'Vicente Valdés'], stops: ['quinta', 'cumming', 'ana', 'armas', 'bellas', 'baquedano', 'bustamante', 'isabel', 'irarrazaval'], bends: [] },
 };
 const cut = (line, from, to) => ({ ...line, stops: line.stops.slice(line.stops.indexOf(from), line.stops.indexOf(to) + 1) });
 
@@ -85,7 +87,7 @@ const ES = {
     levelOf: 'Viaje {n} de {total}', from: 'Sales de', to: 'Llegas a', via: 'Pasando por', closedLabel: 'Cerrada',
     heading: 'dirección {station}', plan: 'Tu ruta', hand: 'Tus cartas', go: '🚇 ¡Vamos!', clear: 'Vaciar', hintBtn: '💡 Pista (−❤️)',
     rideN: 'Avanza {n}', rideOne: 'Avanza 1', end: 'Hasta el final', turn: 'Otro andén', changeTo: 'Combina a {line}',
-    lineN: 'Línea {n}', city: 'Metro de Santiago', mapCredit: 'Estaciones y trazados reales (© colaboradores de OpenStreetMap).',
+    lineN: 'Línea {n}', city: 'Metro de Santiago', mapCredit: 'Estaciones reales, plano simplificado.',
     okLevel: '¡Llegaste! {stars}', next: 'Siguiente viaje ›', retry: 'Probar otra ruta', lostLevel: 'Sin corazones: seguimos con el próximo viaje.',
     pastEnd: 'La línea se acabó antes.', closed: '{station} está cerrada: el tren no pasa.', noChange: '{line} no pasa por {station}.',
     atTerminal: 'Ya estabas al final de la línea.', notGoal: 'Terminaste en {station}, no en {goal}.', missedVia: 'Faltó pasar por {station}.',
@@ -107,7 +109,7 @@ const EN = {
     levelOf: 'Trip {n} of {total}', from: 'From', to: 'To', via: 'Via', closedLabel: 'Closed',
     heading: 'towards {station}', plan: 'Your route', hand: 'Your cards', go: '🚇 Go!', clear: 'Clear', hintBtn: '💡 Hint (−❤️)',
     rideN: 'Ride {n}', rideOne: 'Ride 1', end: 'To the end', turn: 'Other platform', changeTo: 'Change to {line}',
-    lineN: 'Line {n}', city: 'Santiago Metro', mapCredit: 'Real stations and track layouts (© OpenStreetMap contributors).',
+    lineN: 'Line {n}', city: 'Santiago Metro', mapCredit: 'Real stations, simplified map.',
     okLevel: 'You made it! {stars}', next: 'Next trip ›', retry: 'Try another route', lostLevel: 'No hearts left: on to the next trip.',
     pastEnd: 'The line ended first.', closed: '{station} is closed: the train cannot pass.', noChange: '{line} does not stop at {station}.',
     atTerminal: 'You were already at the end of the line.', notGoal: 'You ended at {station}, not at {goal}.', missedVia: 'You did not pass {station}.',
@@ -129,7 +131,7 @@ const PT = {
     levelOf: 'Viagem {n} de {total}', from: 'Saída', to: 'Chegada', via: 'Passando por', closedLabel: 'Fechada',
     heading: 'sentido {station}', plan: 'Sua rota', hand: 'Suas cartas', go: '🚇 Vamos!', clear: 'Esvaziar', hintBtn: '💡 Dica (−❤️)',
     rideN: 'Avance {n}', rideOne: 'Avance 1', end: 'Até o fim', turn: 'Outra plataforma', changeTo: 'Baldeie para {line}',
-    lineN: 'Linha {n}', city: 'Metrô de Santiago', mapCredit: 'Estações e traçados reais (© colaboradores do OpenStreetMap).',
+    lineN: 'Linha {n}', city: 'Metrô de Santiago', mapCredit: 'Estações reais, mapa simplificado.',
     okLevel: 'Você chegou! {stars}', next: 'Próxima viagem ›', retry: 'Tentar outra rota', lostLevel: 'Sem corações: vamos para a próxima viagem.',
     pastEnd: 'A linha acabou antes.', closed: '{station} está fechada: o trem não passa.', noChange: '{line} não passa por {station}.',
     atTerminal: 'Você já estava no fim da linha.', notGoal: 'Você parou em {station}, não em {goal}.', missedVia: 'Faltou passar por {station}.',

@@ -499,6 +499,7 @@ node public/labs/memory/engine.test.mjs
 node public/labs/microgames/engine.test.mjs
 node public/labs/stack/engine.test.mjs
 node public/labs/sudoku/engine.test.mjs
+node public/labs/transfer/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs
@@ -890,6 +891,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [#️⃣ Sudoku (La Copa game, launched by flag; the lab prototype stays until the cleanup)](docs/games/sudoku.md)
 - [☀️ Tango](docs/games/tango.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
+- [🚉 Transbordo (Transfer, lab, in Juegos en prueba)](docs/games/transfer.md)
 - [🧶 Untangle (Desenredo)](docs/games/untangle.md)
 - [📍 Where Is It? (¿Dónde queda?)](docs/games/where.md)
 - [🔤 Bulls and Cows: Word (Toque y Fama: Palabra)](docs/games/word.md)
