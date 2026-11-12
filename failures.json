@@ -3019,7 +3019,11 @@
       "error": "ERROR · appeared e2e: tango/mistakes-rule.mjs",
       "signature": "9438d71394",
       "date": "2026-11-12T20:39:40.008Z",
-      "fix": null,
+      "fix": {
+        "commit": "a75b0244464cf16f335c505e29e598c72cd2ea38",
+        "date": "2026-11-12T20:42:41.546Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
