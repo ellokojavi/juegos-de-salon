@@ -2978,6 +2978,19 @@
       "date": "2026-11-12T17:43:55.901Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43282738229,
+      "check": "end-to-end",
+      "pr": 1425,
+      "branch": "bodega-camaleon",
+      "commit": "51685f6119e86f7fa7bacbc842aed5284ca06177",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ the lab offers El Camaleón under Juegos en prueba",
+      "signature": "785d1a6884",
+      "date": "2026-11-12T18:52:33.168Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
