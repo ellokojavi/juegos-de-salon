@@ -576,7 +576,8 @@
 
   <script type="module">
     import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo, populares } from './assets/js/games.js';
-    import { sparkles, el, con, ICONO_COMPARTIR } from './assets/js/ui.js';
+    import { sparkles, el, ICONO_COMPARTIR } from './assets/js/ui.js';
+    import { gameIcon } from './assets/js/game-icon.js';
     import { botonCompartirPortada } from './assets/js/compartir-portada.js';
     import { markOrigin } from './assets/js/transport/stats.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
@@ -694,7 +695,7 @@
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
       const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon') + (g.torneo ? ' torneo' : ''), href: g.available ? g.path : null, 'aria-disabled': g.available ? null : 'true', 'data-id': g.id, style: `animation-delay:${i * 60}ms` },
         // A game drawn as an icon (`icon` in games.js, Sudoku's 3×3: there is no sudoku emoji) shows the drawing
-        el('div', { class: 'emoji' }, g.icon ? el('img', { class: 'game-icon', src: g.icon, alt: '', width: 40, height: 40, decoding: 'async' }) : el('span', { class: con('', g.emoji) }, g.emoji)),
+        el('div', { class: 'emoji' }, gameIcon(g, { size: 1.15 })),
         el('div', { class: 'texto' },
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
           el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),

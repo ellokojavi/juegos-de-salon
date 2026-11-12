@@ -1,0 +1,41 @@
+/**
+ * A game's icon on screen (docs/DESIGN.md, "Game icons"): its drawing when the game has one
+ * (`icon` in games.js, a path from the site's root, like Sudoku's), else its emoji in a span with
+ * the light outline the dark ones need (`con`). Every screen that shows a game's icon in the page
+ * uses this; text (share messages, `<title>`, notifications, images drawn on a canvas) keeps the
+ * emoji, which stands in for the drawing. `game-icons.test.mjs` keeps new screens on it.
+ */
+import { el, con } from './ui.js';
+import { gameById } from './games.js';
+
+/** The site's root, from this file (assets/js/), whatever the page's depth. */
+const ROOT = new URL('../../', import.meta.url);
+
+/** The drawing's path for a game (its entry, a La Copa `J` or an id), or null. */
+export function iconOf(game) {
+  if (!game) return null;
+  if (typeof game === 'string') return gameById(game)?.icon || null;
+  return game.icon || (game.id ? gameById(game.id)?.icon : null) || null;
+}
+
+/** The drawing's absolute URL, or null. */
+export const iconUrl = game => { const p = iconOf(game); return p ? new URL(p, ROOT).href : null; };
+
+/**
+ * The icon as a node. `size` is in em (1 = the text's size); the `<img>` carries width and height
+ * and an inline size in em, so it never shows at its natural size before the CSS loads. `class`
+ * goes on either node; `emoji` overrides the stand-in (a La Copa J carries its own).
+ */
+export function gameIcon(game, { size = 1, class: clase = '', emoji } = {}) {
+  const e = emoji ?? (typeof game === 'string' ? gameById(game)?.emoji : game?.emoji) ?? '';
+  const src = iconUrl(game);
+  if (!src) return el('span', { class: con(clase, e) }, e);
+  const px = Math.round(size * 24);
+  return el('img', {
+    class: ['game-icon', clase].filter(Boolean).join(' '), src, alt: '', width: px, height: px, decoding: 'async',
+    style: `width:${size}em;height:${size}em;vertical-align:-0.15em;object-fit:contain`,
+  });
+}
+
+/** "icon Name" as nodes, the drop-in for `conEmoji(g.emoji, name)`. */
+export const withIcon = (game, text, opts) => [gameIcon(game, opts), ` ${text}`];

@@ -5,6 +5,7 @@
  * word typed must start some word of the game ("dad" finds Dudo).
  */
 import { TIPOS, ALL_GAMES } from './games.js';
+import { gameIcon } from './game-icon.js';
 
 /**
  * What a player might type for each game, in every language of the app (es, en, pt, de; D-404): what it is, what it
@@ -214,7 +215,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     const found = ranked(q, games, lang);
     const kids = found.slice(0, SUGGESTIONS).map(g => {
       const por = matchedWord(q, g, lang);
-      const kidsOf = [el('span', { class: 'sug-emoji', 'aria-hidden': 'true' }, g.icon ? el('img', { src: new URL(`../../${g.icon}`, import.meta.url).href, alt: '', width: 20, height: 20, style: 'width:1em;height:1em;vertical-align:-0.15em' }) : g.emoji), el('span', { class: 'sug-nombre' }, pickName(g.name, lang)), (por || !g.available) ? el('span', { class: 'sug-por' }, `· ${g.available ? por : T.soon}`) : ''];
+      const kidsOf = [el('span', { class: 'sug-emoji', 'aria-hidden': 'true' }, gameIcon(g)), el('span', { class: 'sug-nombre' }, pickName(g.name, lang)), (por || !g.available) ? el('span', { class: 'sug-por' }, `· ${g.available ? por : T.soon}`) : ''];
       return g.available ? el('a', { class: 'sug', href: g.path, role: 'option', 'data-id': g.id }, ...kidsOf) : el('div', { class: 'sug soon', role: 'option', 'aria-disabled': 'true', 'data-id': g.id }, ...kidsOf);
     });
     if (found.length) kids.push(el('button', { type: 'button', class: 'buscar-todos', role: 'option', tabIndex: -1, onclick: () => verTodos(ids) }, (found.length === 1 ? T.one : T.all).replace('{n}', found.length).replace('{q}', q)));

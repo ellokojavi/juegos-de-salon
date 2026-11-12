@@ -90,6 +90,7 @@
 
   <script type="module">
     import { el, conEmoji } from '../assets/js/ui.js';
+    import { withIcon } from '../assets/js/game-icon.js';
     import '../assets/js/season.js'; // the seasonal touches (D-457)
     import { getLang, langToggle, applyStatic, pickLang, COMMON } from '../assets/js/i18n.js';
     import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
@@ -134,7 +135,7 @@
         const lista = el('ul', {});
         for (const [id, x] of filas) {
           const g = juegos.find(j => j.id === id) || gameById(id);
-          lista.append(el('li', {}, el('span', {}, g ? conEmoji(g.emoji, pickLang(g.name, lang)) : id), el('b', {}, x.n === 1 ? T.playsOne : fmt(T.plays, { n: x.n }))));
+          lista.append(el('li', {}, el('span', {}, g ? withIcon(g, pickLang(g.name, lang)) : id), el('b', {}, x.n === 1 ? T.playsOne : fmt(T.plays, { n: x.n }))));
         }
         // Folded with the total in its title, so the rankings show first (#783)
         const total = filas.reduce((s, [, x]) => s + x.n, 0);
@@ -151,7 +152,7 @@
      * dirección (#juegos/reinas, #copas), así un link lleva a la tabla que se quiere mostrar.
      */
     const marcarFichas = (caja, id) => caja.querySelectorAll('button').forEach(b => { const on = b.dataset.id === id; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-    const ficha = (o, alElegir) => el('button', { type: 'button', 'data-id': o.id, onClick: () => { tap(); alElegir(o.id); } }, conEmoji(o.emoji, o.nombre));
+    const ficha = (o, alElegir) => el('button', { type: 'button', 'data-id': o.id, onClick: () => { tap(); alElegir(o.id); } }, withIcon(o, o.nombre));
 
     // Juegos de a uno: los sueltos (récord de 0 a 100), Toque y Fama solo y Línea Relámpago por temática
     const relampago = (LINEA[lang] || LINEA.es).soloTitle.replace(/^\S+\s+/, '');
@@ -162,16 +163,16 @@
       ...juegos.flatMap(g => {
         const conV = v => `${pickLang(g.name, lang)} · ${juegosCopa(lang)[g.id]?.variantes?.[v]?.nombre || v}`;
         const vs = VARIANTES[g.id] || [];
-        return [{ id: g.id, emoji: g.emoji, nombre: vs.length ? conV(vs[0]) : pickLang(g.name, lang) },
-          ...vs.slice(1).map(v => ({ id: `${g.id}_${v}`, emoji: g.emoji, nombre: conV(v) }))];
+        return [{ id: g.id, emoji: g.emoji, icon: g.icon, nombre: vs.length ? conV(vs[0]) : pickLang(g.name, lang) },
+          ...vs.slice(1).map(v => ({ id: `${g.id}_${v}`, emoji: g.emoji, icon: g.icon, nombre: conV(v) }))];
       }),
-      ...conSolo.map(g => ({ id: `${g.id}_solo`, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
+      ...conSolo.map(g => ({ id: `${g.id}_solo`, emoji: g.emoji, icon: g.icon, nombre: pickLang(g.name, lang) })),
       // Línea Relámpago es una ficha; sus temáticas se eligen adentro (una tabla por temática)
       ...(DECKS.length ? [{ id: 'linea-de-tiempo_rel', emoji: '⏳', nombre: relampago, temas: true }] : []),
     ];
     // Juegos de grupo: sus victorias. Salen del registro: los que se juegan con sala (C-16)
     const enGrupo = GAMES.filter(g => g.available && g.jugadas)
-      .map(g => ({ id: `${g.id}_victorias`, emoji: g.emoji, nombre: pickLang(g.name, lang), victorias: true }));
+      .map(g => ({ id: `${g.id}_victorias`, emoji: g.emoji, icon: g.icon, nombre: pickLang(g.name, lang), victorias: true }));
     const todasJuegos = [...deUno, ...enGrupo];
 
     const ranuraJuego = el('div', { class: 'rk-seccion' }); // las temáticas de Relámpago y su tabla, con aire entre los dos paneles
@@ -193,7 +194,7 @@
       } else {
         juegoElegido = o.id;
         ranuraJuego.replaceChildren(bloqueRanking({
-          juego: o.id, titulo: conEmoji(o.emoji, fmt(o.victorias ? T.winsOf : T.titleOf, { game: o.nombre })),
+          juego: o.id, titulo: withIcon(o, fmt(o.victorias ? T.winsOf : T.titleOf, { game: o.nombre })),
           hint: o.victorias ? T.winsHint : null, alTocar: tap,
         }));
       }
@@ -211,7 +212,7 @@
     const elegirDia = id => {
       const o = deUno.find(x => x.id === id) || deUno[0];
       marcarFichas(fichasDia, o.id);
-      ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: conEmoji(o.emoji, `${T.cupBestDay}: ${o.nombre}`), pestanas: ['siempre', 'amigos'], alTocar: tap }));
+      ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: withIcon(o, `${T.cupBestDay}: ${o.nombre}`), pestanas: ['siempre', 'amigos'], alTocar: tap }));
     };
     const deCopa = deUno.filter(o => juegos.some(g => g.id === o.id));
     // (la ficha de Relámpago no tiene copa: sus temáticas no son juegos de La Copa)

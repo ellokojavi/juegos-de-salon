@@ -2,7 +2,8 @@
  * La Copa — the join screen (sign up or sit back down), loaded the first time it opens (#860).
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
-import { $, $$, con, el } from '../assets/js/ui.js';
+import { gameIcon } from '../assets/js/game-icon.js';
+import { $, $$, el } from '../assets/js/ui.js';
 import { MAX_JUGADORES, activos, calendario, claveNombre, diaActual, esPin, fuera, hashPin, inscripcionAbierta, limpiarNombre, pidAlAzar, terminada, tieneFinal } from './engine.js';
 import { SFX } from '../assets/js/sound.js';
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
@@ -201,7 +202,7 @@ function pantallaEntrar({ mantener = false, modo } = {}) {
       avisoPalabras(meta),
       avisoAudiencia(meta),
       el('div', { style: 'margin-top:6px' }, coverLangToggle())),
-    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: JUEGOS_COPA[j].nombre, class: con('', JUEGOS_COPA[j].emoji) }, JUEGOS_COPA[j].emoji))),
+    el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: JUEGOS_COPA[j].nombre }, gameIcon(JUEGOS_COPA[j])))),
     // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded
       : !inscripcionAbierta(meta, now) ? (tieneFinal(meta) ? T.errCerrada : T.errCerradaLast) : L().closed ? T.closedByAdmin : T.errLlena),

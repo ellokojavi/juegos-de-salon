@@ -226,6 +226,21 @@ its copy wins the cascade meanwhile, so nothing changes for it. Ahorcado was the
 8. **What a program can measure, a program checks** (D-520). The usability agent reviews what the
    lint cannot: whether a colour means what it should, whether a title took the right step,
    whether a new control should be a component.
+9. **Game icons: the drawing on screen, the emoji in text** (the owner, 2026-11-12). A game can be
+   drawn instead of having an emoji (`icon` in `games.js`, a path from the site's root: Sudoku's
+   `cup/games/sudoku/icon.svg`; its emoji, #️⃣, is the stand-in). Every place that shows a game's
+   icon **in the page** builds it with `gameIcon(game, { size, class })` or `withIcon(game, text)`
+   from `public/assets/js/game-icon.js`: the `<img>` when the game has a drawing (width, height and
+   an inline size in em, so it never shows at its natural size), else the emoji span with its light
+   outline (`con`). It takes a `games.js` entry, a La Copa `J` (it carries its `id`) or an id. The
+   places today: the home page's cards, the search suggestions, a game page's top-bar chip, its
+   cover hero, its result heading and Play/Start/Resume buttons, La Copa's day screens, game picker,
+   calendar (create and join) and day result, Rankings (`/records/`), Uno al día's page (`/today/`)
+   and the dice's no-3D fallback. **Text keeps the emoji**: share messages and invitations,
+   `<title>`, notifications, images drawn on a canvas (share cards, the 3D dice's faces), the
+   owner's panel, and a sentence formatted as text. The splash has its own `icon` per campaign.
+   `public/assets/js/game-icons.test.mjs` fails when a screen writes a game's `.emoji` into the page
+   without the helper; a text-only place joins its `ALLOWED` list with its reason.
 
 ## 4. Escapes
 

@@ -2,7 +2,8 @@
  * La Copa — the day's result screen, loaded the first time it opens (#860).
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
-import { $, con, el } from '../assets/js/ui.js';
+import { gameIcon } from '../assets/js/game-icon.js';
+import { $, el } from '../assets/js/ui.js';
 import { SFX } from '../assets/js/sound.js';
 import { abierto, activos, cerrado, comodinEfectivo, diaActual, esFinal, juegoDelDia, mmss, multiplicador, posicionesDelDia, tabla, terminada, tieneFinal } from './engine.js';
 import { cabecera, laminaResultado, nombreArchivo, puntajeYTiempo } from '../assets/js/compartir.js';
@@ -37,7 +38,7 @@ function pantallaResultado(d, { recien = false, det = null } = {}) {
   const ranking = jug.filter(j => pos[j.pid]).sort((a, b) => pos[a.pid].pos - pos[b.pid].pos);
   poner(body, 
     el('div', { class: 'result-hero' },
-      el('span', { class: con('trophy' + (recien ? ' pop' : ''), J.emoji) }, J.emoji),
+      gameIcon(J, { class: 'trophy' + (recien ? ' pop' : '') }),
       el('h2', { class: 'display display--md' }, fmt(T.resultTitle, { d, juego: J.nombre })),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, mio.r || String(mio.s)),
