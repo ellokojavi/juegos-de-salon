@@ -1,5 +1,5 @@
 // The lab's El Camaleón (#898) end to end, at /labs/chameleon/ and 320 px: the lab offers it under
-// Juegos en prueba with the credit to Big Potato Games' The Chameleon, which the cover gives too;
+// La Bodega with the credit to Big Potato Games' The Chameleon, which the cover gives too;
 // four players, a topic, the phone goes around (each card covered until its player taps, only the
 // chameleon without the word), the clues, a wrong vote (the chameleon escapes, +2), a round where
 // the chameleon is caught and misses (+1 for the rest), the game resumes after a reload, and rounds
@@ -20,7 +20,7 @@ const noScroll = async where => ok(await ev(`document.documentElement.scrollWidt
 const click = sel => ev(`document.querySelector(${JSON.stringify(sel)}).click(); 1`);
 
 await b.go(`${SITE}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-camaleon #btn-camaleon')?.getAttribute('href')`) === 'chameleon/', 'the lab offers El Camaleón under Juegos en prueba');
+ok(await ev(`document.querySelector('#bodega #seccion-camaleon #btn-camaleon')?.getAttribute('href')`) === 'chameleon/', 'the lab offers El Camaleón in La Bodega (D-480)');
 ok(await ev(`/The Chameleon/.test(document.querySelector('#seccion-camaleon a[href*="bigpotato"]')?.textContent || '')`), 'and credits The Chameleon, with its link');
 
 await b.go(`${SITE}/labs/chameleon/?test`, 1200);
