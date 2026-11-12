@@ -92,7 +92,7 @@ const ES = {
     emptyPlan: 'Pon al menos una carta en tu ruta.',
     resultTitle: '{stars} de {max} ⭐', resultLead: 'Cinco viajes por el Metro de Santiago.', again: '¡Otra vez!', shareRotulo: '📤 Compartir', shareContext: 'Cinco viajes',
   },
-  como: ['🎯 Llega a la estación de destino.', '🃏 Toca tus cartas en orden y aprieta ¡Vamos!: el tren sigue tu ruta.', '❤️ Cada ruta que falla cuesta un corazón.'],
+  como: ['🎯 Llega a la estación de destino: toca tus cartas en orden y aprieta ¡Vamos!', '🃏 Avanza cuenta estaciones, Otro andén da la vuelta, Combina cambia de línea en esa estación.', '❤️ Cada ruta que falla y cada pista cuestan un corazón.'],
 };
 
 const EN = {
@@ -114,7 +114,7 @@ const EN = {
     emptyPlan: 'Put at least one card in your route.',
     resultTitle: '{stars} of {max} ⭐', resultLead: 'Five trips on the Santiago Metro.', again: 'Again!', shareRotulo: '📤 Share', shareContext: 'Five trips',
   },
-  como: ['🎯 Reach the destination station.', '🃏 Tap your cards in order and press Go!: the train follows your route.', '❤️ Each route that fails costs a heart.'],
+  como: ['🎯 Reach the destination: tap your cards in order and press Go!', '🃏 Ride counts stations, Other platform turns back, Change switches line at that station.', '❤️ Each failed route and each hint costs a heart.'],
 };
 
 const PT = {
@@ -136,7 +136,7 @@ const PT = {
     emptyPlan: 'Coloque pelo menos uma carta na sua rota.',
     resultTitle: '{stars} de {max} ⭐', resultLead: 'Cinco viagens pelo Metrô de Santiago.', again: 'De novo!', shareRotulo: '📤 Compartilhar', shareContext: 'Cinco viagens',
   },
-  como: ['🎯 Chegue à estação de destino.', '🃏 Toque suas cartas em ordem e aperte Vamos!: o trem segue sua rota.', '❤️ Cada rota que falha custa um coração.'],
+  como: ['🎯 Chegue ao destino: toque suas cartas em ordem e aperte Vamos!', '🃏 Avance conta estações, Outra plataforma volta, Baldeie troca de linha nessa estação.', '❤️ Cada rota que falha e cada dica custam um coração.'],
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT };
