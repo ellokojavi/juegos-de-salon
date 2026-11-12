@@ -11,10 +11,12 @@
 // count; a game resumes from its moves (a reloaded cup day), also past its time; La Copa's practice
 // plays it too, and its trial session is 2 stages in 2 minutes; and at 320 × 568, in the four languages, nothing scrolls sideways, the drawings sit
 // side by side and the three buttons fit in one row in view; with reduced motion a turn lands at
-// once and the cover stays solved. Prints ✗ if anything fails.
+// once and the cover stays solved. The 💡 hint (#1381, flag routes-hint, on for the lab and so on
+// localhost): it marks a rectangle that leaves one turn less, costs 3 points in the score and the
+// breakdown, and the trial session has none. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-import { girar, resuelto, generarEtapa, puntajePartida, ETAPAS, PUNTOS_ETAPA, TIEMPO_S, RECTANGULOS } from '../../../public/cup/games/routes/engine.js';
+import { girar, resuelto, minimo, generarEtapa, puntajePartida, ETAPAS, PUNTOS_ETAPA, TIEMPO_S, RECTANGULOS } from '../../../public/cup/games/routes/engine.js';
 
 const OUT = output('/tmp/routes-game');
 const SITE = process.env.SITE || 'http://localhost:8765';
@@ -120,7 +122,20 @@ try {
 
   // ——— Giving up: a second tap, and the stages done count ———
   ok(await start(`${SITE}/routes/?test&seed=${SEED}`), 'a second game starts');
-  await solveStage(await board());
+  // ——— 💡 Hint: one rectangle of a shortest solution, −3 points ———
+  ok(await b.until(`document.querySelector('.rr-fila #btn-pista')`, 4000) && /💡 Pista \(−3\)/.test(await text('#btn-pista')), 'on its own page, «💡 Pista (−3)» beside the clock');
+  {
+    const th = await board();
+    const st = await ev(`JSON.stringify(window.__rutas.estado)`).then(JSON.parse);
+    await ev(`document.getElementById('btn-pista').click(); 1`); await sleep(150);
+    const m = await ev(`(()=>{const s=document.querySelector('#rr-tablero .rr-seleccion');return s.classList.contains('ve')?{l:s.style.left,t:s.style.top,w:s.style.width,h:s.style.height}:null})()`);
+    const pc = x => Math.round(parseFloat(x) * 3 / 100);
+    const r = m && { f1: pc(m.t), c1: pc(m.l), f2: pc(m.t) + pc(m.h) - 1, c2: pc(m.l) + pc(m.w) - 1 };
+    ok(r && minimo(girar(st, r)) === minimo(st) - 1, `the hint marks a rectangle that leaves one turn less (${JSON.stringify(r)})`);
+    ok(/camino más corto/.test(await text('.rr-aviso')) && await ev(`window.__rutas.J.pistas`) === 1, 'it says so, and the hint is counted');
+    await b.shot('05b-hint');
+    await solveStage(th);
+  }
   ok(await b.until(`document.getElementById('rr-etapa')?.textContent.includes('Etapa 2 de 5')`, 5000), 'stage 1 done, stage 2 arrives');
   await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(150);
   ok(/Seguro/.test(await text('#btn-rendirse')) && !await ev(`!!document.getElementById('btn-fin')`), 'giving up asks for a second tap');
@@ -129,10 +144,12 @@ try {
   ok(await b.until(`document.getElementById('btn-fin')`, 3000) && /Te rendiste/.test(await text('#rr-sello')), 'and with the second the game ends: «Te rendiste»');
   const Jg = await ev(`JSON.stringify(window.__rutas.J)`).then(JSON.parse);
   await ev(`document.getElementById('btn-fin').click(); 1`);
-  const gaveUp = puntajePartida(Jg.hechas, Jg.seg).total;
+  const gaveUp = puntajePartida(Jg.hechas, Jg.seg, { pistas: Jg.pistas }).total;
+  ok(Jg.pistas === 1 && gaveUp === puntajePartida(Jg.hechas, Jg.seg).total - 3, 'the hint takes 3 points off');
   ok(await b.until(`document.querySelector('#resultado-body .score-big')`, 4000) && await text('#resultado-body .score-big') === `${gaveUp}/100` && Jg.hechas.length === 1,
     `the stage done counts: ${gaveUp}/100 (${PUNTOS_ETAPA} + its turns, no speed)`);
   ok(/Rapidez: \+0 \(faltaron etapas\)/.test(await text('#explicacion')), 'the breakdown says there is no speed bonus');
+  ok(/💡 1 pista: −3/.test(await text('#explicacion')), 'and the hint: «💡 1 pista: −3.»');
   ok(/⬛ 5: —/.test(await text('#resultado-body pre.tarjeta')), 'the share card marks the missing stages with ⬛');
 
   // ——— Out of time: the page clock jumps 7 minutes ahead ———
@@ -178,6 +195,8 @@ try {
   await ev(`document.getElementById('btn-ensayo').click(); 1`);
   ok(await b.until(`document.querySelectorAll('#rr-tablero .rr-pieza').length === 9 && !document.getElementById('cuenta')`, 9000)
     && /Etapa 1 de 2/.test(await text('#rr-etapa')) && /⏳ [12]:\d\d/.test(await text('#rr-reloj')), 'the trial is 2 stages in 2 minutes');
+  await sleep(1500);
+  ok(!await ev(`!!document.getElementById('btn-pista')`), 'the trial session (La Copa) has no 💡 hint');
   for (let k = 0; k < 2; k++) { await b.until(`document.getElementById('rr-etapa')?.textContent.includes('Etapa ${k + 1} de 2')`, 5000); await solveStage(await board()); }
   ok(await b.until(`document.getElementById('btn-fin')`, 4000) && /Terminar la prueba/.test(await text('#btn-fin')), 'and it ends with «Terminar la prueba»');
   ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
@@ -197,6 +216,7 @@ try {
     const row = await ev(`JSON.stringify([...document.querySelectorAll('.rr-acciones .btn')].map(b=>{const r=b.getBoundingClientRect();return {top:Math.round(r.top),h:r.height,bottom:r.bottom,fits:b.scrollWidth<=b.clientWidth+1}}))`).then(JSON.parse);
     ok(row.length === 3 && row.every(x => x.top === row[0].top && x.h >= 44 && x.fits), `${lang} 320 px: the three buttons in one row, 44 px high, their text inside`);
     ok(row.every(x => x.bottom <= 568), `${lang} 320×568: the buttons are seen without scrolling`);
+    ok(await ev(`(()=>{const b=document.getElementById('btn-pista');if(!b)return false;const r=b.getBoundingClientRect();return r.bottom<=568&&r.height>=44&&b.scrollWidth<=b.clientWidth+1})()`), `${lang} 320×568: the 💡 hint is in view, its text inside`);
     ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), `${lang} 320 px: no sideways scroll in the game`);
     await b.shot(`09-game-320-${lang}`);
   }
