@@ -109,7 +109,7 @@ function cardEl(card, attrs = {}) {
 // (rules.js), each corner rounded, so the lines read cleanly and still show their shape.
 const UNIT = 50, PAD = 12;   // px per stretch between stations: even spacing
 // Far enough from the dot that the train's ring (r 15) never covers its own station's name
-const LABEL = { l: [-19, 4, 'end'], tl: [-15, -19, 'end'], tr: [15, -19, 'start'], br: [15, 30, 'start'], r: [19, 4, 'start'], t: [0, -23, 'middle'], b: [0, 33, 'middle'] };
+const LABEL = { l: [-22, 4, 'end'], tl: [-15, -19, 'end'], tr: [15, -19, 'start'], br: [15, 30, 'start'], r: [22, 4, 'start'], t: [0, -23, 'middle'], b: [0, 33, 'middle'] };
 function labelBox(id, x, y) {
   const [dx, dy, anchor] = LABEL[STATIONS[id].label || 'r'], tw = STATIONS[id].name.length * 7.4;
   const left = anchor === 'start' ? x + dx : anchor === 'end' ? x + dx - tw : x - tw / 2;
