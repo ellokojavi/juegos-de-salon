@@ -1761,6 +1761,7 @@
     "sudoku/game.mjs",
     "sudoku/page.mjs",
     "tango/give-up.mjs",
+    "tango/mistakes-rule.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",
