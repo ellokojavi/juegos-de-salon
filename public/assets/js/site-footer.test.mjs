@@ -17,6 +17,7 @@ const ALLOWED = {
   'assets/js/uno-al-dia-ui.js': 'repeat today\'s game, on the result',
   'labs/artifacts/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/code/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
+  'labs/transfer/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/dominorama/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/exploding-numbers/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/flap/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',

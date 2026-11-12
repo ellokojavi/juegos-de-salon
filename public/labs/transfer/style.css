@@ -1,0 +1,55 @@
+/* ==========================================================
+   Transbordo: the game's own styles (lab). The shell lives in base.css (DESIGN.md §2);
+   this file keeps only the map, the cards and the plan, on the tokens (DESIGN.md §1).
+   The line colours are the game's own, declared once here.
+   ========================================================== */
+:root {
+  /* Santiago Metro's real line colours (OpenStreetMap's colour tags) */
+  --tr-l1: #cc0000; --tr-l2: #ffbe2e; --tr-l3: #a0582a; --tr-l5: #00995a;
+}
+.tr-line--l1 { --tr: var(--tr-l1); }
+.tr-line--l2 { --tr: var(--tr-l2); }
+.tr-line--l3 { --tr: var(--tr-l3); }
+.tr-line--l5 { --tr: var(--tr-l5); }
+
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
+
+/* ---------- The trip ---------- */
+.tr-head { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-120); }
+.tr-trip { list-style: none; margin: 0; padding: var(--s-10) var(--s-14); border-radius: var(--r-12); background: var(--well); display: grid; gap: var(--s-4); }
+.tr-pill { display: inline-block; padding: 0 var(--s-8); border-radius: var(--r-pill); background: var(--tr); color: var(--ink); font-weight: 800; }
+.tr-credit { margin: 0; font-size: var(--fs-75); color: var(--muted); text-align: center; }
+.tr-label { margin: 0; font-weight: 800; color: var(--muted); }
+
+/* ---------- The map ---------- */
+.tr-board { border-radius: var(--r-16); background: var(--well); padding: var(--s-8); }
+.tr-map { display: block; width: 100%; height: auto; }
+.tr-track { fill: none; stroke: var(--tr); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+.tr-stop circle { fill: var(--ink); stroke: var(--bg1); stroke-width: 3; }
+.tr-stop.is-hub circle { fill: var(--ink); stroke: var(--ink); stroke-width: 4; }
+.tr-stop.is-goal circle { fill: var(--yellow); }
+.tr-stop.is-via circle { fill: var(--orange); }
+.tr-stop.is-closed circle { fill: var(--red); }
+.tr-stop.is-lit circle { fill: var(--cyan); }
+.tr-name { fill: var(--ink); font: 700 13px var(--font-body); paint-order: stroke; stroke: var(--bg1); stroke-width: 3; }
+.tr-stop.is-goal .tr-name { fill: var(--yellow); }
+.tr-x { fill: var(--ink); font: 900 10px sans-serif; text-anchor: middle; }
+.tr-train { font-size: 22px; text-anchor: middle; dominant-baseline: central; }
+.tr-train-ring { fill: var(--bg1); stroke: var(--cyan); stroke-width: 3; }
+
+/* ---------- Cards ---------- */
+.tr-plan, .tr-hand { display: flex; flex-wrap: wrap; gap: var(--s-8); }
+.tr-slot, .tr-card { min-width: 92px; min-height: 64px; border-radius: var(--r-12); display: grid; place-items: center; text-align: center; padding: var(--s-6) var(--s-8); }
+.tr-slot { border: 2px dashed var(--line-faint); color: var(--muted); font-weight: 800; }
+.tr-card { border: 2px solid var(--glass-border); border-left: 6px solid var(--tr, var(--glass-border)); background: var(--glass); color: var(--ink); font: inherit; cursor: pointer; gap: var(--s-2); }
+.tr-card small { color: var(--muted); font-size: var(--fs-75); }
+.tr-card__icon { font-size: var(--fs-120); line-height: 1; }
+.tr-card:disabled { opacity: 0.3; cursor: default; }
+.tr-card--placed { background: var(--well-deep); border-color: var(--cyan); border-left-color: var(--tr, var(--cyan)); }
+.tr-card--placed.is-hinted { border-color: var(--yellow); border-left-color: var(--tr, var(--yellow)); }
+
+/* ---------- Verdict and result ---------- */
+.tr-verdict.is-ok { border-color: var(--lime); }
+.tr-verdict.is-bad { border-color: var(--red); }
+.tr-trips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-6); }
+.tr-trips li { display: flex; justify-content: space-between; padding: var(--s-8) var(--s-14); border-radius: var(--r-12); background: var(--well); }
