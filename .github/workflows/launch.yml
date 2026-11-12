@@ -16,7 +16,8 @@ on:
         description: 'Splash campaigns to turn on, space-separated'
         type: string
         default: ''
-      off:
+      # Not `off`: YAML reads a bare off/on/yes/no as a boolean, and GitHub then rejected the input (Sudoku's launch)
+      turn_off:
         description: 'Splash campaigns to turn off, space-separated'
         type: string
         default: ''
@@ -58,7 +59,7 @@ jobs:
           KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
           FLAGS: ${{ inputs.flags }}
           SPLASH: ${{ inputs.splash }}
-          OFF: ${{ inputs.off }}
+          OFF: ${{ inputs.turn_off }}
           NOT_BEFORE: ${{ inputs.not_before }}
           UNTIL: ${{ inputs.until }}
           FIRST: ${{ inputs.first }}
