@@ -70,6 +70,7 @@ const ES = {
         'Escribe 4 cifras distintas y toca Probar. Te decimos cuántas están en su lugar (famas) y cuántas en otro lugar (toques).',
       ],
       puntaje: 'Partes con 100 puntos. Cada intento que las pistas ya descartaban resta 15; el mínimo es 10. Si no lo sacas, son 0 puntos.',
+      errores: '❌ Cada intento que las pistas ya descartaban resta 15.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     conexiones: {
@@ -80,6 +81,7 @@ const ES = {
         'Tienes 4 errores disponibles: al cuarto se termina.',
       ],
       puntaje: 'Cada grupo vale 25 puntos y cada error resta 5.',
+      errores: '❌ Cada error resta 5, y al cuarto se termina.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     reinas: {
@@ -89,6 +91,7 @@ const ES = {
         'Toca una casilla para poner una reina, otra vez para cambiarla por una X y otra vez para dejarla vacía.',
       ],
       puntaje: 'Puntúa el tiempo: hasta 30 segundos son 100 puntos y después baja parejo hasta 10 a los 5 minutos. Equivocarse no resta. Si te rindes, son 0 puntos.',
+      errores: '✅ Equivocarte no resta: solo cuenta el tiempo.',
     },
     letras: {
       nombre: 'Toque y Fama: Palabra', habilidad: 'deducir',
@@ -136,6 +139,7 @@ const ES = {
         'Toca una casilla para poner un sol, otra vez para una luna y otra vez para dejarla vacía.',
       ],
       puntaje: 'Partes con 100. Cada error, que es dejar una casilla rompiendo una regla, resta 10, y cada pista 15, aunque deshagas. El mínimo es 10; rendirse da 0.',
+      errores: '❌ Cada error resta 10, aunque lo deshagas.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     caso: {
@@ -146,6 +150,7 @@ const ES = {
         'Nunca hay que adivinar. Marcar a alguien que todavía no se puede deducir cuenta como error.',
       ],
       puntaje: 'Resolverlo vale 100 puntos. Cada error resta 10 y cada ayuda, 15. El mínimo es 10.',
+      errores: '❌ Cada error resta 10.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     donde: {
@@ -970,6 +975,7 @@ const EN = {
         'Type 4 different digits and tap Guess. We tell you how many are in the right spot (bulls) and how many are in the wrong spot (cows).',
       ],
       puntaje: 'You start with 100 points. Each guess the clues had already ruled out takes off 15; the minimum is 10. If you don\'t crack it, it\'s 0 points.',
+      errores: '❌ Each guess the clues had already ruled out takes off 15.',
       desempate: 'On a tie, the faster player wins.',
     },
     conexiones: {
@@ -980,6 +986,7 @@ const EN = {
         'You can make 4 mistakes: on the fourth, it\'s over.',
       ],
       puntaje: 'Each group is worth 25 points and each mistake takes off 5.',
+      errores: '❌ Each mistake takes off 5, and the fourth one ends it.',
       desempate: 'On a tie, the faster player wins.',
     },
     reinas: {
@@ -989,6 +996,7 @@ const EN = {
         'Tap a square to place a queen, again to swap it for an X and again to clear it.',
       ],
       puntaje: 'Your time is what scores: up to 30 seconds is 100 points and then it goes down steadily to 10 at 5 minutes. Mistakes cost nothing. If you give up, it\'s 0 points.',
+      errores: '✅ Mistakes cost nothing: only time counts.',
     },
     letras: {
       nombre: 'Bulls and Cows: Word', habilidad: 'deduction',
@@ -1036,6 +1044,7 @@ const EN = {
         'Tap a square to place a sun, again for a moon and again to clear it.',
       ],
       puntaje: 'You start with 100. Each mistake, leaving a square that breaks a rule, takes off 10, and each hint 15, even if you undo. The minimum is 10; giving up is 0.',
+      errores: '❌ Each mistake takes off 10, even if you undo it.',
       desempate: 'On a tie, the faster player wins.',
     },
     caso: {
@@ -1046,6 +1055,7 @@ const EN = {
         'You never have to guess. Marking someone who can\'t be worked out yet counts as a mistake.',
       ],
       puntaje: 'Solving it is worth 100 points. Each mistake takes off 10 and each hint, 15. The minimum is 10.',
+      errores: '❌ Each mistake takes off 10.',
       desempate: 'On a tie, the faster player wins.',
     },
     donde: {
@@ -1852,6 +1862,7 @@ const PT = {
         'Escreva 4 algarismos diferentes e toque em Tentar. A gente diz quantos estão no lugar certo (famas) e quantos em outro lugar (toques).',
       ],
       puntaje: 'Você começa com 100 pontos. Cada tentativa que as pistas já descartavam tira 15; o mínimo é 10. Se não acertar, são 0 pontos.',
+      errores: '❌ Cada tentativa que as pistas já descartavam tira 15.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     conexiones: {
@@ -1862,6 +1873,7 @@ const PT = {
         'Você pode errar 4 vezes: no quarto erro, acabou.',
       ],
       puntaje: 'Cada grupo vale 25 pontos e cada erro tira 5.',
+      errores: '❌ Cada erro tira 5, e no quarto acaba.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     reinas: {
@@ -1871,6 +1883,7 @@ const PT = {
         'Toque numa casa para colocar uma rainha, de novo para trocá-la por um X e de novo para deixá-la vazia.',
       ],
       puntaje: 'O que pontua é o tempo: até 30 segundos são 100 pontos e depois cai por igual até 10 aos 5 minutos. Errar não tira pontos. Se desistir, são 0 pontos.',
+      errores: '✅ Errar não tira pontos: só conta o tempo.',
     },
     letras: {
       nombre: 'Toque e Fama: Palavra', habilidad: 'dedução',
@@ -1918,6 +1931,7 @@ const PT = {
         'Toque numa casa para colocar um sol, de novo para uma lua e de novo para deixá-la vazia.',
       ],
       puntaje: 'Você começa com 100. Cada erro, que é deixar uma casa quebrando uma regra, tira 10, e cada pista 15, mesmo se desfizer. O mínimo é 10; desistir dá 0.',
+      errores: '❌ Cada erro tira 10, mesmo se você desfizer.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     caso: {
@@ -1928,6 +1942,7 @@ const PT = {
         'Nunca precisa chutar. Marcar alguém que ainda não dá para deduzir conta como erro.',
       ],
       puntaje: 'Resolver vale 100 pontos. Cada erro tira 10 e cada ajuda, 15. O mínimo é 10.',
+      errores: '❌ Cada erro tira 10.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     donde: {

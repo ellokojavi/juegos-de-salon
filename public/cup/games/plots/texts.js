@@ -13,6 +13,7 @@ const ES = {
       'Arrastra de una esquina a otra para dibujar un lote y tócalo para borrarlo. Son 5 tableros contra el reloj.',
     ],
     puntaje: 'Cada tablero vale 12 puntos. Con los 5, la rapidez suma hasta 40: 40 en 5 minutos o menos y 0 en 15. Cada ayuda resta 10.',
+    errores: '✅ Equivocarte no resta: cuenta la rapidez.',
     desempate: 'Si empatas, gana quien tardó menos.',
     variantes: {
       numbers: { nombre: '🔢 Números', sub: 'Cada número, su lote' },
@@ -74,6 +75,7 @@ const EN = {
       'Drag from corner to corner to draw a plot and tap it to erase it. Solve 5 boards against the clock.',
     ],
     puntaje: 'Each board is worth 12 points. With all 5, speed adds up to 40: 40 in 5 minutes or less and 0 at 15. Each hint takes 10.',
+    errores: '✅ Mistakes cost nothing: speed counts.',
     desempate: 'If you tie, whoever was faster wins.',
     variantes: {
       numbers: { nombre: '🔢 Numbers', sub: 'Each number, its plot' },
@@ -135,6 +137,7 @@ const PT = {
       'Arraste de um canto ao outro para desenhar um lote e toque nele para apagá-lo. São 5 tabuleiros contra o relógio.',
     ],
     puntaje: 'Cada tabuleiro vale 12 pontos. Com os 5, a rapidez soma até 40: 40 em 5 minutos ou menos e 0 em 15. Cada ajuda tira 10.',
+    errores: '✅ Errar não tira pontos: conta a rapidez.',
     desempate: 'Se empatar, ganha quem levou menos tempo.',
     variantes: {
       numbers: { nombre: '🔢 Números', sub: 'Cada número, seu lote' },

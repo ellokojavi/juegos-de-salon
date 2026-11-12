@@ -1553,7 +1553,17 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
   const J = reglasDe(id, conVariante(JUEGOS_COPA[id], variante));
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
+  document.getElementById('regla-errores')?.remove();
   if (!J) return;
+  // What a mistake costs in this game, in sight while playing: it differs between the logic
+  // puzzles and was hard to keep in mind (player feedback, 2026-11-12). lab: #seccion-mistakes-rule
+  if (J.errores) {
+    const juego = S.juego;
+    flag('mistakes-rule').then(on => {
+      if (!on || S.juego !== juego || document.getElementById('regla-errores')) return;
+      $('#jugar-head').after(el('p', { class: 'muted regla-errores', id: 'regla-errores' }, J.errores));
+    });
+  }
   poner(caja, el('details', { class: 'panel reglas', id: 'reglas' },
     el('summary', {}, `📖 ${fmt(T.rulesOf, { juego: J.nombre })}`),
     // En la sesión de prueba de un día, que es más corta y no cuenta
@@ -1648,8 +1658,8 @@ async function jugar(d, { nuevo = false } = {}) {
 
   const body = $('#jugar-body');
   body.innerHTML = '';
-  panelReglas(id, { variante });
   S.juego = { d, id };
+  panelReglas(id, { variante });
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
     p, jugadas, T, fmt, el, SFX, vibrate, lang: LANG, pantallaCompleta,
@@ -1888,6 +1898,7 @@ function practica(id, varianteElegida = null) {
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   $('#jugar-reglas').innerHTML = ''; // en la antesala las reglas ya están a la vista
+  document.getElementById('regla-errores')?.remove();
   // On a game's own page, its one "Cómo se juega" opens with who plays, how long and what it
   // costs, as the party games' covers do (D-488). lab: #seccion-cover-facts
   if (SUELTO) flag('cover-facts').then(on => {
