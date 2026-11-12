@@ -1,5 +1,75 @@
 # Changelog
 
+## 1.9.1 — 2026-11-11
+- **The countdown's last digit is no longer cut off on Safari (iPad, iPhone).** The big number asked Bangers for a bold it does not have, and Safari faked it by thickening each letter to the right, past its box. Now no browser fakes a weight or slant (`font-synthesis: none`), the big display text keeps room for the letters' lean (`--ink-overhang`), and `font-synthesis.test.mjs` fails if a rule asks Bangers for a weight it is not loaded in. Titles that were also faked bold (the mode buttons on every game's intro) now show Bangers' real, slightly lighter weight; the 18 visual references were renewed from the runner.
+
+## 1.9.0 — 2026-11-11
+- 📤 **Share a game from its cover** (lab, flag `cover-share`): each game's cover gets a share button in the top bar, beside the language and sound. It sends the game's name, one line inviting to play and its link (without room codes); on a computer the message is copied. It hides once the game starts.
+  The game covers' visual references now show it (the test page holds a lab key).
+
+## 1.8.1 — 2026-11-11
+- **Offline mode**: the ☁️'s shimmer while storing is faster (one pass in 2.4 s instead of 6) and smooth: the cloud is no longer drawn again on each step of progress, only its ring moves, so the colours never jump.
+
+## 1.8.0 — 2026-11-11
+- **Sudoku (lab): el modo 🟢 Fácil ahora es un mini sudoku de 6×6**, con cuadros de 2 filas × 3 columnas y números del 1 al 6, para que una partida quepa en una juntada. 🔴 Difícil sigue siendo el sudoku clásico de 9×9.
+- **Sudoku: la portada muestra el tablero del nivel elegido**: la demostración que se resuelve sola es de 6×6 en Fácil y de 9×9 en Difícil, y los textos ya no dicen "del 1 al 9" para los dos.
+- **Sudoku: el switch dice qué cambia**: Fácil es «6×6: menos celdas y dígitos, más rápido» y Difícil «9×9 y pocas pistas: hay que pensar con notas».
+- **Sudoku tiene su propio ícono**: un cuadro de 3×3 con números, en el rojo oscuro del modo difícil, en vez del ábaco 🧮. Se ve en la portada, en el juego y en el laboratorio; donde solo cabe texto, el juego usa #️⃣.
+- **Sudoku fácil: números más grandes** en el tablero de 6×6.
+
+## 1.7.33 — 2026-11-11
+- **¡Al toque!**: the ✓ or ✗ at the end of each game now sits small in the middle of the top bar, next to the points, instead of over the game, so it no longer hides what you just did.
+
+## 1.7.32 — 2026-11-11
+- **Artefactos (lab)**: while you build, the red ball waits up in its tube, barely seen; on ▶ Probar it lights up, slides down and falls out.
+- **Artefactos (lab)**: "💬 Sugerencias y comentarios" under the board is now the same violet chip as on the cover, not an underlined link (`.footer-links.tiles.chips` in `base.css`).
+
+## 1.7.31 — 2026-11-11
+- **Launch workflow**: its input to turn a splash campaign off is now `turn_off`. A bare `off` is a YAML boolean, so GitHub rejected it at Sudoku's launch (Aletazo's promotion was ended by its end time instead); a test stops input names that YAML reads as booleans.
+- **Sudoku's icon on the home page**: its card and the search show the game's drawn 3×3 icon instead of #️⃣.
+
+## 1.7.30 — 2026-11-11
+- **Artefactos (lab)**: a bigger board. The stage and its difficulty now sit between the dots and the clock, so the board takes the height that frees up (the full width on most phones). Each stage is announced big over the board for a moment as it starts, and the ball waits hidden inside the cyan pipe until Probar drops it out.
+
+## 1.7.29 — 2026-11-11
+- **Weekly popularity merges again**: the workflow waits on the commit's `tests` and `end-to-end` check runs through REST instead of `gh pr checks`, which with the workflow token never saw them; the 2026-11-09 PR waited an hour and stayed open with both checks green.
+
+## 1.7.28 — 2026-11-11
+- 📊 Panel: the footer note is down to one line, what is kept and the time zone.
+
+## 1.7.27 — 2026-11-11
+- 📊 Panel (lab ☰ More): the bottom bar on a phone stays pinned to the screen as you scroll (the screen's entrance slide kept a transform that tied it to the page's end), with rounded top corners, a shadow and the open section in yellow.
+
+## 1.7.26 — 2026-11-11
+- **🧮 Sudoku (lab): 💡 hints and a little celebration.** A hint fills the selected cell (or the easiest one left) and says why the number goes there; it costs 15 points and asks first. A right number pops with a soft ring, and completing a row, column or box sends a light along it.
+
+## 1.7.25 — 2026-11-11
+- **Uno al día: a cleaner points box, in the lab** (flag `uad-clean-hero`, the owner's pick of three mockups). Your place goes big (#3 del mes), with your points and the days left under it in plain text; while there is no place yet, the points stay big. Last month's 👑 champion chip has a row of its own. The streak, the wildcards and what today added are one line (🔥 9 días · 🧊 1 · ✅ +125 hoy), instead of the "Hoy sumaste…" sentence, the place sentence and the four numbers. A failed ranking read keeps the last place this phone saw, as the points already did.
+
+## 1.7.24 — 2026-11-11
+- **Panel, in the lab: a bottom menu of one row on a phone.** Behind `panel-nav-more`: Summary, Timeline, Health, Feedback and ☰ More; More opens a sheet with the other sections by group (Players, Games, Owner) and stands for the section it holds when that one is open. A computer keeps the whole column.
+
+## 1.7.23 — 2026-11-11
+- **Home page**: with a filter on, "Show all" sits right after "Showing 4 of 21 games." instead of floating apart.
+
+## 1.7.22 — 2026-11-11
+- **Uno al día**: the ranking at the end of the game is read again once today's points are in, so it shows the same total and place as /today/ instead of the month without today.
+
+## 1.7.21 — 2026-11-11
+- **Panel: the last lines are no longer hidden under the bottom menu on a phone.** The menu grew to four rows but the page kept room for two; the room below the page now follows the menu's measured height.
+
+## 1.7.20 — 2026-11-11
+- **Panel: a browser that cannot remember no longer fills the timeline.** A splash counted as a first reach even when the browser had no storage to remember it, so such a browser wrote one "saw the campaign" row per page (four in seven seconds on Nov 11, all visible, no name, US). Now a browser with no storage is never a first reach: no timeline row and no reach count from it.
+
+## 1.7.19 — 2026-11-11
+- **Panel: a burst of identical "saw the campaign" rows is one row.** The Nov 9–10 fix stopped a phone from writing one row per view only when it can remember what it saw; a browser with no storage still wrote four rows in a second (Nov 11, 02:34). The timeline now joins rows with the same campaign, name and country within two minutes into one, marked "N times in a row".
+
+## 1.7.18 — 2026-11-11
+- **¡Al toque!: a cleaner points breakdown** (lab): the stars line starts with ⭐ («⭐ 21 estrellas × 10 puntos»), the speed line just reads «⚡ Bono de velocidad» in the same neutral colour as the others, and ¡Calcula!'s icon is 🧮 (its ➕ read as a cross in the run's summary).
+
+## 1.7.17 — 2026-11-11
+- **The 🔥 Popular label** follows this week's most finished games.
+
 ## 1.7.16 — 2026-11-10
 - **Artefactos (lab), lighter screens**: the cover drops the «5 etapas · 6:00» chip and its tagline fits one line («Lleva la pelota a la canasta.»). On the board, a chosen part shows two small flat icons, turn and trash, floating just above it, fading out after 5 s without a touch or on a drag (and the part's outline fades when it is let go); Limpiar is gone, Deshacer · Pista · Rendirse share one row above Probar, and every help line under the board is one short line.
 

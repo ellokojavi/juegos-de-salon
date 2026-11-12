@@ -503,6 +503,11 @@
           "date": "2026-11-11T06:18:32.642Z",
           "what": "#1377 end-to-end: cup/tournament.mjs:cup",
           "commit": "1dfd3c9dec1db607ba70a7c2f3288f3c84ed7cd4"
+        },
+        {
+          "date": "2026-11-11T19:37:53.437Z",
+          "what": "#1401 end-to-end: cup/tournament.mjs:cup",
+          "commit": "d0047ebcacef24c28798bf46a6f80f46e4a1874e"
         }
       ],
       "mechanism": null,
@@ -679,12 +684,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-11",
-      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
+      "date": "2026-11-12",
+      "to": "044b688806aed7aaf35f8ada8a952daa01dd9078"
     },
     "usability": {
-      "date": "2026-11-11",
-      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
+      "date": "2026-11-12",
+      "to": "044b688806aed7aaf35f8ada8a952daa01dd9078"
     },
     "ideas": {
       "date": "2026-11-11",
