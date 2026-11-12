@@ -104,7 +104,7 @@ const EN = {
     howTitle: '🚉 How to play',
     modeSolo: 'Five trips', modeSoloHint: 'Solo, each one harder',
     resumeTitle: '⏯ There is a trip in progress', resume: 'Continue', delete: 'Delete',
-    levelOf: 'Trip {n} of {total}', from: 'From', to: 'To', via: 'Passing', closedLabel: 'Closed',
+    levelOf: 'Trip {n} of {total}', from: 'From', to: 'To', via: 'Via', closedLabel: 'Closed',
     heading: 'towards {station}', plan: 'Your route', hand: 'Your cards', go: '🚇 Go!', clear: 'Clear', hintBtn: '💡 Hint (−❤️)',
     rideN: 'Ride {n}', rideOne: 'Ride 1', end: 'To the end', turn: 'Other platform', changeTo: 'Change to {line}',
     lineN: 'Line {n}', city: 'Santiago Metro', mapCredit: 'Real stations and track layouts (© OpenStreetMap contributors).',
