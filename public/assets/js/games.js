@@ -437,6 +437,8 @@ export const SUELTOS = [
     // the lab prototype /labs/sudoku/ stays until the cleanup PR. There is no sudoku emoji: #️⃣ stands in
     // where only text fits, and the cover shows the drawn icon (cup/games/sudoku/icon.svg)
     id: 'sudoku',
+    // Its drawn icon, from the site's root: the home page's card and the search show it in place of the emoji
+    icon: 'cup/games/sudoku/icon.svg',
     lanza: 'sudoku',
     copa: { pozo: 17 },
     // Uno al día: by date, never by flag: from the day after the launch, joining the next deck
