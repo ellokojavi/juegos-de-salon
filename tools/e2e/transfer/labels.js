@@ -3,8 +3,8 @@
 // game.mjs; returns the clashes as "trip station × what".
 (() => {
   const out = [];
-  // The five trips, the maps a player sees (the other levels in each city's pool are not played)
-  const maps = [0, 1, 2, 3, 4].map(i => [i, undefined]);
+  // Every level of every city: a run can draw any of them
+  const maps = __transfer.cities.flatMap(c => [0, 1, 2, 3, 4].map(i => [i, c]));
   for (const [i, city] of maps) {
     if (!__transfer.drawLevel(i, city)) continue;
     const svg = document.querySelector('#map svg');
