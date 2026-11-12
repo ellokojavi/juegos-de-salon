@@ -45,6 +45,8 @@ const START = {
   ],
   // The lever picks the level; ¡A jugar! opens the board, which is already saved
   'labs/sudoku': [`document.getElementById('btn-play').click()`],
+  // Its one mode starts the first trip, already saved
+  'labs/transfer': [`document.querySelector('.mode').click()`],
 };
 
 const b = await launch({ port: 0, dir: `${OUT}/p`, out: OUT });
