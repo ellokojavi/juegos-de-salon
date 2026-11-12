@@ -169,7 +169,6 @@ async function keep(req) {
   return r;
 }
 
-/** What an uncut worker does with a request, once it knows whether offline mode is on. */
 /**
  * A code or style file of this site asked without its ?h= (a stylesheet a module adds with loadCss, a
  * JSON): its name does not change when its content does, so the cache cannot be trusted with it.
@@ -188,6 +187,7 @@ async function fresh(req) {
   return r || (await fromCache(req)) || (await fromCache(req, { ignoreSearch: true })) || net;
 }
 
+/** What an uncut worker does with a request, once it knows whether offline mode is on. */
 function normal(req) {
   const url = new URL(req.url);
   const mine = url.origin === self.location.origin;
