@@ -48,10 +48,24 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-flow span { font-size: var(--fs-200); }
 .mo-flow b { font-size: var(--fs-120); color: var(--yellow); }
 .mo-flow small { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
-.mo-agents { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-12); }
-.mo-agents div { display: flex; flex-direction: column; gap: var(--s-4); border-left: 3px solid var(--pink); padding: var(--s-4) var(--s-12); }
-.mo-agents b { font-size: var(--fs-100); }
-.mo-agents span { color: var(--muted); font-size: var(--fs-85); line-height: 1.4; }
+
+/* The agents: the owner above, the boss first, each agent as a job description */
+.mo-owner { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-4) var(--s-12); border: 2px dashed var(--yellow); border-radius: var(--r-16); padding: var(--s-10) var(--s-16); }
+.mo-owner b { color: var(--yellow); font-size: var(--fs-110); }
+.mo-owner span { color: var(--muted); font-size: var(--fs-90); }
+.mo-team { display: grid; grid-template-columns: 1.3fr repeat(4, 1fr); gap: var(--s-12); }
+.mo-team article { display: flex; flex-direction: column; gap: var(--s-8); background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-14); }
+.mo-team .mo-boss { border-color: rgb(var(--pink-rgb) / 0.7); }
+.mo-team header { display: flex; align-items: center; gap: var(--s-8); }
+.mo-team header span { font-size: var(--fs-160); }
+.mo-team header b { display: block; font-size: var(--fs-110); }
+.mo-team header small { color: var(--cyan); font-weight: 700; font-size: var(--fs-85); }
+.mo-team ul { margin: 0; padding-left: var(--s-16); display: grid; gap: var(--s-4); font-size: var(--fs-85); line-height: 1.35; }
+.mo-team p { margin: 0; font-size: var(--fs-85); line-height: 1.35; }
+.mo-team .mo-when { color: var(--muted); font-style: italic; }
+.mo-team .mo-hands { color: var(--yellow); margin-top: auto; }
+.mo-team .mo-limit { color: var(--danger-soft); }
+.mo-small { font-size: var(--fs-90); }
 
 /* Nine weeks: a horizontal line of milestones */
 .mo-timeline { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-20) var(--s-16); }
@@ -66,10 +80,19 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
   counter-increment: learning; position: relative;
   background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18) var(--s-16) var(--s-32);
 }
-.mo-learnings li::before { content: counter(learning); position: absolute; left: var(--s-12); top: var(--s-14); font-family: var(--font-num); font-weight: 900; color: var(--pink); font-size: var(--fs-110); }
+.mo-learnings li::before { content: counter(learning); position: absolute; left: var(--s-8); top: var(--s-14); font-family: var(--font-num); font-weight: 900; color: var(--pink); font-size: var(--fs-110); }
 .mo-learnings h3 { margin: 0 0 var(--s-6); font-size: var(--fs-120); color: var(--ink); }
 .mo-learnings p { margin: 0; color: var(--muted); font-size: var(--fs-100); line-height: 1.45; }
-.mo-learnings .mo-proof { margin-top: var(--s-8); color: var(--yellow); font-style: italic; font-size: var(--fs-90); }
+.mo-learnings[start="6"] { counter-reset: learning 5; }
+/* The presenter's line under each learning: hidden from the room until N or the Notes button shows it */
+.mo-learnings .mo-proof { display: none; margin-top: var(--s-8); color: var(--yellow); font-style: italic; font-size: var(--fs-90); }
+.mo-learnings .mo-proof::before { content: '🗣 '; font-style: normal; }
+.mo-notes-on .mo-learnings .mo-proof { display: block; }
+.mo-notes-btn {
+  font: inherit; font-weight: 700; color: var(--muted); background: transparent; cursor: pointer;
+  border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10);
+}
+.mo-notes-btn[aria-pressed="true"] { color: var(--ink-on-yellow); background: var(--yellow); border-color: var(--yellow); }
 
 /* The end: the QR to play */
 .mo-end { align-items: center; text-align: center; }
@@ -80,12 +103,13 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 /* A narrow window (or a phone): everything in one column */
 @media (max-width: 900px) {
   .mo-split, .mo-learnings { grid-template-columns: 1fr; }
-  .mo-flow, .mo-agents { grid-template-columns: 1fr 1fr; }
+  .mo-team { grid-template-columns: 1fr 1fr; }
+  .mo-team .mo-boss { grid-column: 1 / -1; }
+  .mo-flow, .mo-timeline { grid-template-columns: 1fr 1fr; }
   .mo-flow li::after { display: none; }
-  .mo-timeline { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
-  .mo-stats, .mo-flow, .mo-agents, .mo-timeline { grid-template-columns: 1fr; }
+  .mo-stats, .mo-flow, .mo-team, .mo-timeline { grid-template-columns: 1fr; }
   .mo-section { min-height: auto; }
   html { scroll-padding-top: calc(var(--s-32) * 3); }
   .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
