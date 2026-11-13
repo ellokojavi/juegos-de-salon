@@ -3,7 +3,7 @@
 // the sound button and the site footer; Jugar starts a run of 10
 // different microgames, with the HUD, a mark per game and the first intro wearing its type's gesture; a single
 // game (¡Calcula!, answered right) ends on the run's summary with points, stars, Otra corrida and the way back to
-// the lab, and the best is kept; a seed gives the same run twice; the 28 start without errors; a hidden page
+// the lab, and the best is kept; a seed gives the same run twice; the 29 start without errors; a hidden page
 // pauses and Seguir replays the game; the end offers Reta a alguien; the cover and games in English; at 320 px no sideways scroll. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { coverGapsOff } from '../cover-gaps.mjs';
@@ -27,7 +27,7 @@ ok(await ev(`(() => { const k = document.querySelector('#screen .kinds').getBoun
 ok(await ev(`document.getElementById('demo').getBoundingClientRect().bottom - document.querySelector('.credit').getBoundingClientRect().bottom < 48`), 'the cover ends where its content ends: no empty band');
 ok(/WarioWare/.test(await ev(`document.getElementById('link-warioware')?.textContent || ''`)), 'the cover credits WarioWare');
 ok(await ev(`!!document.querySelector('#pie #btn-comentario')`), 'the cover ends with the site footer and its comment');
-ok(await ev(`__microgames.ids.length`) === 28, "twenty-eight microgames");
+ok(await ev(`__microgames.ids.length`) === 29, "twenty-nine microgames");
 await b.shot('01-cover');
 
 ok(await ev(`document.querySelectorAll('.kinds .kind').length === 3 && document.querySelectorAll('.kinds .gstage .hand').length === 3`), 'the cover shows the three ways to play, each with its finger (instead of folded rules)');
@@ -65,7 +65,7 @@ await b.go(`${SITE}/labs/microgames/?test`, 800);
 await ev(`window.__errs = []; addEventListener('error', e => __errs.push(__microgames.game + ': ' + e.message)); 1`);
 for (const id of await ev(`__microgames.ids`)) { await ev(`__microgames.only('${id}'); 1`); await sleep(2600); }
 const errs = await ev(`__errs`);
-ok(!errs.length, `the 28 microgames start without errors${errs.length ? `: ${errs.join(' · ')}` : ''}`);
+ok(!errs.length, `the 29 microgames start without errors${errs.length ? `: ${errs.join(' · ')}` : ''}`);
 
 // The phone locks mid-game: the game stops and waits for Seguir, then the same game starts again
 await ev(`__microgames.only('calcula'); 1`); await sleep(2600);
@@ -84,6 +84,30 @@ await b.go(`${SITE}/labs/microgames/?test&lang=en`, 800);
 ok(/microgames in a row/.test(await ev(`document.getElementById('screen').textContent`)) && /SWIPE/.test(await ev(`document.querySelector('.kinds').textContent`)), 'in English, the cover and its three ways');
 await ev(`__microgames.only('cuenta'); 1`); await sleep(300);
 ok(/COUNT!/.test(await ev(`document.getElementById('screen').textContent`)), 'and the microgames');
+// ¡Pinball! (the owner, 2026-11-13): no taps saves none, holding a side down saves none, and tapping when a ball
+// reaches its flipper saves at least one; a ball counts once a flipper has hit it
+const pinball = async mode => {
+  await b.go(`${SITE}/labs/microgames/?test`, 800);
+  await ev(`__microgames.only('pinball'); 1`);
+  await waitFor(`__microgames.active && !!window.__pinball`, 6000);
+  await ev(`(() => { const demo = document.getElementById('demo'), r = demo.getBoundingClientRect(), held = [0, 0];
+    const at = side => ({ bubbles: true, pointerId: side + 5, clientX: r.x + r.width * (side ? 0.75 : 0.25), clientY: r.y + r.height * 0.9 });
+    if ('${mode}' === 'hold') { demo.dispatchEvent(new PointerEvent('pointerdown', at(0))); return 1; }
+    if ('${mode}' !== 'bot') return 1;
+    const iv = setInterval(() => { const P = window.__pinball; if (!P || !__microgames.active) { clearInterval(iv); return; }
+      for (const side of [0, 1]) if (!held[side] && P.balls.some(q => q.live && q.trail.length && q.vy > 0 && q.y > P.fy - P.H * 0.07 && q.y < P.fy + 10 && (side ? q.x > P.W / 2 : q.x < P.W / 2))) {
+        demo.dispatchEvent(new PointerEvent('pointerdown', at(side))); held[side] = 1;
+        setTimeout(() => dispatchEvent(new PointerEvent('pointerup', at(side))), 140); setTimeout(() => { held[side] = 0; }, 420); } }, 16);
+    return 1; })()`);
+  let saved = 0; for (let k = 0; k < 80 && await ev(`__microgames.active`); k++) { saved = await ev(`window.__pinball.saved`); await sleep(100); }
+  return { saved, taps: await ev(`window.__pinball.taps`) };
+};
+const p0 = await pinball('none'), ph = await pinball('hold');
+let best = 0, tapsUsed = 0; for (let k = 0; k < 3 && best < 1; k++) { const r = await pinball('bot'); best = Math.max(best, r.saved); tapsUsed = r.taps; }
+ok(p0.saved === 0 && ph.saved === 0, `¡Pinball!: no taps saves none, nor holding a side down (${p0.saved}, ${ph.saved})`);
+ok(best >= 1 && tapsUsed >= 3, `¡Pinball!: tapping when a ball reaches its flipper saves some (${best} with ${tapsUsed} taps)`);
+await b.shot('pinball');
+
 b.close();
 const s = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 640 });
 await s.go(`${SITE}/labs/microgames/?test`, 1000);

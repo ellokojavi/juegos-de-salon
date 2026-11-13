@@ -818,3 +818,9 @@
 .tr-mg-b:hover, .tr-mg-b:focus-visible { background: rgb(var(--ink-rgb) / 0.16); outline: none; }
 .tr-mg-b:active { scale: 0.9; }
 .tr-mg-today { align-self: flex-start; color: var(--cyan); font-weight: 800; font-size: var(--fs-90); text-decoration: none; }
+
+/* ¡PINBALL!: the table is a canvas over the whole stage; the hint sits low, over the flippers, and fades */
+.demo .pb-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: inherit; }
+.demo .pb-note { position: absolute; left: 0; right: 0; bottom: var(--s-6); text-align: center; pointer-events: none; animation: pb-note 2.2s ease-out forwards; }
+@keyframes pb-note { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .demo .pb-note { animation: none; } }
