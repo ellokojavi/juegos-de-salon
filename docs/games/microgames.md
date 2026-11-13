@@ -33,7 +33,7 @@ in `game.js`.
 
 ## How a run goes
 
-1. **Cover:** the cover is as tall as its content (no empty band) and fits above the fold at 390×812, the house rule; the ⚡ in the title jolts now and then. ⚡ and the name, one line, the three ways to play laid out at once (Toca, Arrastra, Desliza, each a card in its color with a finger doing its gesture), **Jugar**, the best run and the credit to WarioWare; under the stage,
+1. **Cover:** the cover is as tall as its content (no empty band) and fits above the fold at 390×812, the house rule, and at 320×568 (U-39: below 420 px wide the three ways to play sit side by side, the gesture over its name and line); the ⚡ in the title jolts now and then. ⚡ and the name, one line, the three ways to play laid out at once (Toca, Arrastra, Desliza, each a card in its color with a finger doing its gesture), **Jugar**, the best run and the credit to WarioWare; under the stage,
    **Cómo se juega** folded (C-8, D-550): the goal, the three ways to play each with its finger doing the
    gesture (**Toca** turquoise, **Arrastra** orange, **Desliza** purple) and the scoring in one sentence;
    the site footer last. Jugar goes straight into the run (the separate how-to screen is gone).
