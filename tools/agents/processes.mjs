@@ -32,7 +32,7 @@
  *   - the rules round (#1249 step 16, rules.mjs report): debt per 📈 rule and its trend, 👁 without a
  *     reviewer, and the repeated fixes of a rule that has no test.
  *
- * `decide` takes `{ title, summary, decisions: [{ question, context?, yes: [actions], no?: [actions] }] }`
+ * `decide` takes `{ title, summary, decisions: [{ question, context?, origin, yes: [actions], no?: [actions] }] }`
  * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
  * (tools/agents/approve.mjs, .github/workflows/approve.yml). The actions are those of approve.mjs's
  * closed list (`{ type: 'merge', pr }`, `close-pr`, `close-issue`, `comment`, `run`, `queue`,
@@ -127,6 +127,7 @@ export function decisionsBody({ summary = '', decisions }) {
     }
     parts.push(`### ${n}. ${d.question}`);
     if (d.context) parts.push(d.context.trim());
+    if (d.origin) parts.push(`**Where it came from:** ${d.origin.trim()}`);
     const box = (op, name) => { const q = describeActions(actions[`${n}:${op}`]); return `- [ ] ${name}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
     parts.push(...(lists.publish ? [box('si', 'Yes, in Labs'), box('pub', 'Yes, and publish')] : [box('si', 'Yes')]), box('no', 'No'), '');
   });
@@ -392,9 +393,23 @@ export function settleIssue(issue, decision, note) {
   return { changed: true, closed: !left.length };
 }
 
+/**
+ * Every decision the owner reads says where it came from (#1435, the owner's request): who or what
+ * started the idea (their request, a player's report, an agent's round, a session), when, and the
+ * link to it (issue, PR, commit, feedback). A branch's origin is the session or PR that pushed it,
+ * read from its commits. Without it the owner cannot tell an idea of theirs from an agent's.
+ */
+export function requireOrigins(decisions = []) {
+  decisions.forEach((d, i) => {
+    const o = (d.origin || '').trim();
+    if (o.length < 15) throw new Error(`Decision ${i + 1}: no "origin". Say who or what started it, when, and link it (issue, PR, commit)`);
+  });
+}
+
 function decide(file) {
   if (!file) throw new Error('Usage: node tools/agents/processes.mjs decide <file.json>');
   const d = JSON.parse(readFileSync(file, 'utf8'));
+  requireOrigins(d.decisions);
   const body = decisionsBody(d);
   const exists = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === LABEL);
   if (!exists) sh('gh', ['label', 'create', LABEL, '-R', REPO, '--color', '5319e7', '--description', 'One-tap decisions from the processes agent (D-273)']);
