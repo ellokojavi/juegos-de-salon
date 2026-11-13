@@ -3109,7 +3109,11 @@
       "error": "✗ labs/microgames 320×568 es: «▶ Jugar» ends at 871 px, 303 px below the fold",
       "signature": "98b6c18ec9",
       "date": "2026-11-13T18:53:12.522Z",
-      "fix": null,
+      "fix": {
+        "commit": "e1be0ee57a80a7c5ff8c3366313a7e10ff86221e",
+        "date": "2026-11-13T19:10:49.883Z",
+        "stat": "3 file(s) +11 −1: changelog/landing-fold-flake.md, docs/games/microgames.md, public/labs/microgames/style.css"
+      },
       "flaky": false
     }
   ]
