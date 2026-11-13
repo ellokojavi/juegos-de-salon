@@ -1932,7 +1932,8 @@ function vistazo(id, nombre, playing) {
   const play = () => { S.campPeek.add(id); render(); };
   // The preview checks itself (splashHealth, the owner's request): ✓ when the window looks right, ⚠️ with
   // what is wrong otherwise, so a campaign is not switched on looking broken
-  const salud = el('p', { class: 'vistazo-salud muted small', role: 'status' }, 'Checking the preview…');
+  // Silent while it checks and when all is right (the owner's request): it speaks only to warn
+  const salud = el('p', { class: 'vistazo-salud muted small', role: 'status', hidden: true });
   const frame = el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' });
   frame.addEventListener('load', () => revisarVistazo(frame, salud));
   return el('div', { class: 'vistazo' },
@@ -1957,7 +1958,8 @@ function revisarVistazo(frame, salud) {
       try { now = frame.contentDocument; } catch { /* another origin */ }
       if (!now?.defaultView) return;
       const issues = splashHealth(now);
-      salud.textContent = issues.length ? `⚠️ ${issues.join(' · ')}` : '✓ Looks right on a phone';
+      salud.textContent = issues.length ? `⚠️ ${issues.join(' · ')}` : '';
+      salud.hidden = !issues.length;
       salud.classList.toggle('vistazo-salud--mal', issues.length > 0);
     }, 900);
   };
