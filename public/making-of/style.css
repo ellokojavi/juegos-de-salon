@@ -48,17 +48,17 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-diagram { overflow-x: auto; }
 .mo-diagram-svg { width: 100%; height: auto; display: block; font-family: var(--font-body); }
 .dg-lane { fill: rgb(var(--ink-rgb) / 0.03); stroke: var(--glass-border); stroke-dasharray: 4 6; }
-.dg-lane-t { fill: var(--cyan); font-weight: 900; letter-spacing: 0.12em; font-size: var(--fs-75); }
+.dg-lane-t { fill: var(--cyan); font-weight: 900; letter-spacing: 0.12em; font-size: var(--fs-85); }
 .dg-box rect { fill: rgb(var(--bg2-rgb) / 0.9); stroke: var(--glass-border); stroke-width: 2; }
 .dg-me rect { stroke: var(--yellow); }
 .dg-agents rect { stroke: var(--pink); }
 .dg-site rect, .dg-players rect { stroke: var(--cyan); }
 .dg-t1 { fill: var(--ink); font-weight: 900; font-size: var(--fs-110); }
-.dg-t2 { fill: var(--muted); font-size: var(--fs-85); }
+.dg-t2 { fill: var(--muted); font-size: var(--fs-90); }
 .dg-arrow { fill: none; stroke: var(--pink); stroke-width: 2.5; }
 .dg-back { stroke: var(--yellow); stroke-dasharray: 6 5; }
 .dg-head { fill: var(--pink); }
-.dg-lbl { fill: var(--ink); font-weight: 700; font-size: var(--fs-75); paint-order: stroke; stroke: var(--bg1); stroke-width: 4px; }
+.dg-lbl { fill: var(--ink); font-weight: 700; font-size: var(--fs-90); paint-order: stroke; stroke: var(--bg1); stroke-width: 4px; }
 
 /* The product: points beside three screenshots */
 .mo-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: var(--s-32); align-items: center; }
