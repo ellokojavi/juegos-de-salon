@@ -3051,6 +3051,19 @@
       "date": "2026-11-13T12:46:21.082Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43428036282,
+      "check": "tests",
+      "pr": 1436,
+      "branch": "processes-2026-11-13",
+      "commit": "8140f95ed7c29a97544e66a0bcf7da19f27e0e39",
+      "test": "README up to date",
+      "error": "ERROR · appeared tests: tools/e2e/pool-from-page.test.mjs\nERROR · appeared e2e: pool-from-page.test.mjs",
+      "signature": "8ef21a8fb6",
+      "date": "2026-11-13T12:48:47.475Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
