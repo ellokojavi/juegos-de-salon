@@ -85,7 +85,7 @@ public/<carpeta>/
 - **The game's name is translated too (D-549):** a name the same as the Spanish one in another language needs a reason a player would accept (a proper name, a word already the same), listed in `SAME_NAME` in `game-names.test.mjs`; the test also checks La Copa's `texts.js` names match `games.js`. Moving a game to production includes reviewing its name in every language.
 - Every visible text lives in `LOCALES.es`, `LOCALES.en` and `LOCALES.pt` in `rules.js`. No string literals in `game.js`.
 - Fixed HTML texts are marked with `data-i18n="clave"` (or `data-i18n-html`) and applied with `applyStatic(T)`.
-- The language is read with `getLang()` and the `langToggle()` toggle goes in each game's intro, with `coverLangToggle()`: behind the flag `compact-lang` it becomes one flag button in the top bar instead (D-537).
+- The language is read with `getLang()` and the `langToggle()` toggle goes in each game's intro, with `coverLangToggle()`, which makes it one flag button in the top bar instead, before the first paint (D-537).
 - Behind the flag `cover-share`, `coverLangToggle()` also mounts a share button in the cover's top bar (`public/assets/js/cover-share.js`): it sends the game's name, one inviting line and the page's link without its search or hash (no room code or seed, U-30), copies it where there is no share menu, and hides once the game starts.
 - **There is a single language selector, `langToggle()`, and it looks the same across the app** (D-231).
   No screen builds its own. Its standard:
