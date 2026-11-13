@@ -3072,6 +3072,19 @@
         "stat": "2 file(s) +3 −0: docs/facts.json, tools/e2e/README.md"
       },
       "flaky": false
+    },
+    {
+      "run": 43463502277,
+      "check": "end-to-end",
+      "pr": 1438,
+      "branch": "claude/sudoku-salon-generator-ddzciw",
+      "commit": "14c4f306b627845300ee6ada74f6521b6d9b01ae",
+      "test": "landing-fold.mjs",
+      "error": "✗ batalla-naval today 320×568 es: «🖌️ Empezar» ends at 579 px, 11 px below the fold",
+      "signature": "4f395b6c20",
+      "date": "2026-11-13T16:50:26.025Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
