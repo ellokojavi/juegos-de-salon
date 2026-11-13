@@ -52,7 +52,7 @@ const MEASURE = `(()=>{
   const root = document.querySelector('.screen.active') || document.body;
   // getClientRects, not offsetParent: a fixed button has no offsetParent and is still on screen
   const visible = x => x.getClientRects().length > 0 && x.getBoundingClientRect().height > 0 && getComputedStyle(x).visibility !== 'hidden';
-  const outside = x => !x.closest('header, nav, footer, details, dialog, .confirm, .lang-toggle, .sound-toggle, .back');
+  const outside = x => !x.closest('header, .topbar, nav, footer, details, dialog, .confirm, .lang-toggle, .lang-btn, .sound-toggle, .back');
   const mode = [...root.querySelectorAll('.mode, .opcion-modo')].filter(visible).filter(outside)[0];
   const start = [...root.querySelectorAll('#btn-empezar')].filter(visible)[0];
   const main = start || mode || [...root.querySelectorAll('#btn-crear, #btn-go-setup, .btn--yellow, .btn, button')].filter(visible).filter(outside)[0];
