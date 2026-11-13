@@ -3038,6 +3038,19 @@
       "date": "2026-11-13T08:33:58.947Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43427658354,
+      "check": "tests",
+      "pr": 1436,
+      "branch": "processes-2026-11-13",
+      "commit": "828e02421e5864bbe900a1b759fac5233fc6f793",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/e2e/pool-from-page.test.mjs\nERROR · appeared e2e: pool-from-page.test.mjs",
+      "signature": "109d0529d6",
+      "date": "2026-11-13T12:46:21.082Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
