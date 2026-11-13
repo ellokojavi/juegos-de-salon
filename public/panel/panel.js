@@ -1860,7 +1860,11 @@ function vistaSplash(today) {
         // Saved when the field is left (or on Enter), not on every change: Safari fires one per part typed,
         // and the redraw after a save dropped the focus after the first one
         onClick: e => { try { e.target.showPicker(); } catch { /* no picker here: the field is edited in place */ } },
-        onKeydown: e => { if (e.key === 'Enter') e.target.blur(); },
+        // Enter saves; Escape puts the saved day back first, so leaving the field saves nothing
+        onKeydown: e => {
+          if (e.key === 'Escape') e.target.value = toLocalInput(s[campo], campo === 'until');
+          if (e.key === 'Enter' || e.key === 'Escape') e.target.blur();
+        },
         onBlur: e => {
           if (e.target.value === toLocalInput(s[campo], campo === 'until')) return;
           const r = checkPick(s, campo, e.target.value);
