@@ -3025,6 +3025,19 @@
         "stat": "1 file(s) +1 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 43391688408,
+      "check": "end-to-end",
+      "pr": 1433,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "4251130638f09d452ef694f1fd335870fda3f0c4",
+      "test": "landing-fold.mjs",
+      "error": "✗ rutas today 320×568 pt: «🖌️ Começar» ends at 579 px, 11 px below the fold",
+      "signature": "ee2715f0b6",
+      "date": "2026-11-13T08:33:58.947Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
