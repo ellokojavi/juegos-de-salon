@@ -202,6 +202,8 @@ export const PATHS = {
     intro: [PM_VARIANT('easy'), `1`, `1`],
     'intro-hard': [PM_VARIANT('easy'), `1`, `1`, `document.getElementById('btn-dificil').click()`, `1`, `1`],
     game: [PM_VARIANT('easy'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
+    // No brush yet (flag pm-pick-brush): a tap on the board asks to pick one, the line in yellow
+    pick: [PM_VARIANT('easy'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `document.querySelector('#pm-tablero .pm-casilla:not(:disabled)').click()`],
     hint: [PM_VARIANT('easy'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `document.getElementById('btn-ayuda').click()`, `document.getElementById('btn-ayuda').click()`],
     'game-hard': [PM_VARIANT('hard'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
     revealed: [PM_VARIANT('hard'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, PM_SOLVE, `1`, `1`, `1`],
