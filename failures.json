@@ -3049,7 +3049,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/e2e/pool-from-page.test.mjs\nERROR · appeared e2e: pool-from-page.test.mjs",
       "signature": "109d0529d6",
       "date": "2026-11-13T12:46:21.082Z",
-      "fix": null,
+      "fix": {
+        "commit": "5a1a1388bcc36a97acfad5670ac3b5389e5fc3fe",
+        "date": "2026-11-13T12:49:24.821Z",
+        "stat": "3 file(s) +4 −0: README.md, docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     },
     {
@@ -3062,7 +3066,11 @@
       "error": "ERROR · appeared tests: tools/e2e/pool-from-page.test.mjs\nERROR · appeared e2e: pool-from-page.test.mjs",
       "signature": "8ef21a8fb6",
       "date": "2026-11-13T12:48:47.475Z",
-      "fix": null,
+      "fix": {
+        "commit": "5a1a1388bcc36a97acfad5670ac3b5389e5fc3fe",
+        "date": "2026-11-13T12:49:24.821Z",
+        "stat": "2 file(s) +3 −0: docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     }
   ]
