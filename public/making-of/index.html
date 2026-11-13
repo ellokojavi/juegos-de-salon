@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <meta name="robots" content="noindex, nofollow">
+  <title>The making of Juegos de Salón</title>
+  <meta name="description" content="How one product lead and a team of AI agents built and run Juegos de Salón, and what it taught about adopting AI.">
+  <link rel="icon" href="../assets/icons/icon-192.png">
+  <script src="../assets/js/vigia.js"></script>
+  <link rel="preload" href="../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- The owner's presentation of the project for an executive audience, projected from a laptop.
+       English only and unlisted (noindex, no link from the site): it is not a player page. -->
+  <nav class="mo-nav" aria-label="Sections">
+    <a href="#top" class="mo-brand">🎲 Juegos de Salón</a>
+    <a href="#product">The product</a>
+    <a href="#factory">How it's built</a>
+    <a href="#team">The agents</a>
+    <a href="#weeks">Nine weeks</a>
+    <a href="#learnings">Learnings</a>
+    <button type="button" class="mo-notes-btn" id="mo-notes" aria-pressed="false" title="Presenter notes (N)">🗒 Notes</button>
+  </nav>
+
+  <main>
+    <section id="top" class="mo-section mo-hero">
+      <p class="mo-kicker">A side project · September to November 2026</p>
+      <h1 class="display display--xl rainbow">Juegos de Salón</h1>
+      <p class="mo-lead">A party-games site for friends, built and run by <strong>one product lead</strong> and a
+        <strong>team of AI agents</strong>. I don't write the code: I set the direction, make the calls and
+        design the system that builds, tests and ships it.</p>
+      <div class="mo-stats">
+        <div><b>20+</b><span>games, in 3 languages</span></div>
+        <div><b>9</b><span>weeks from first commit</span></div>
+        <div><b>1,100+</b><span>changes merged (PRs)</span></div>
+        <div><b>550+</b><span>written decisions</span></div>
+        <div><b>200+</b><span>test files, plus browser scripts</span></div>
+        <div><b>$0</b><span>cost per player: no ads, no accounts</span></div>
+      </div>
+      <a class="mo-next" href="#product">See it ↓</a>
+    </section>
+
+    <section id="product" class="mo-section">
+      <p class="mo-kicker">The product</p>
+      <h2 class="display display--lg">Open it on a phone, play with friends</h2>
+      <div class="mo-split">
+        <ul class="mo-points">
+          <li><b>🏆 The Cup.</b> A week-long tournament for a group of friends: one short game a day, the same for
+            everyone, a live leaderboard and a podium on Sunday.</li>
+          <li><b>📅 One a Day.</b> A surprise challenge every day, with streaks and a monthly season.</li>
+          <li><b>🎲 Classic table games.</b> Liar's Dice, Generala, Battleship, Hangman… one phone passed around,
+            or each player on their own.</li>
+          <li><b>🌎 Spanish, English, Portuguese.</b> Adapted, not translated. Works offline, installs like an app.</li>
+        </ul>
+        <div class="mo-shots">
+          <img src="img/home.png" alt="The home page with the list of games" loading="lazy">
+          <img src="img/cup-board.png" alt="The Cup's weekly board" loading="lazy">
+          <img src="img/cup-podium.png" alt="The Cup's podium at the end of the week" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section id="factory" class="mo-section">
+      <p class="mo-kicker">How it's built</p>
+      <h2 class="display display--lg">I run the factory, not the keyboard</h2>
+      <ol class="mo-flow">
+        <li><span>💡</span><b>I decide</b><small>An idea, a player's report or an agent's proposal becomes a written decision. Agents ask me with one-tap choices on my phone.</small></li>
+        <li><span>🤖</span><b>Sessions build</b><small>Several Claude Code sessions work in parallel, each in its own copy of the code.</small></li>
+        <li><span>🧪</span><b>Checks gate</b><small>Every change runs the tests and real-browser scripts. Red never merges.</small></li>
+        <li><span>👀</span><b>Agents review</b><small>Usability and documentation agents review each change, sized by its risk.</small></li>
+        <li><span>🚀</span><b>It ships</b><small>Low-risk changes merge on their own. New features sit behind a switch until I flip it.</small></li>
+      </ol>
+      <a class="mo-next" href="#team">Meet the agents ↓</a>
+    </section>
+
+    <section id="team" class="mo-section">
+      <p class="mo-kicker">The agents</p>
+      <h2 class="display display--lg">A team with job descriptions</h2>
+      <p class="mo-sub">Each agent is a written role: when it works, what it owns, what it hands me, and what it may not do.</p>
+      <div class="mo-owner"><b>👤 Me, the owner</b><span>Set the direction · answer one-tap decisions · approve anything risky (privacy, stored data, emails) · flip features live</span></div>
+      <div class="mo-team">
+        <article class="mo-boss">
+          <header><span>🧭</span><div><b>Processes</b><small>The chief of staff</small></div></header>
+          <p class="mo-when">Every day at 4:30 am, on its own, on a Mac mini</p>
+          <ul>
+            <li>Launches the other agents and checks their work</li>
+            <li>Handles players' 🐞 reports, and emails them back once the fix is live</li>
+            <li>Closes stuck changes and old issues</li>
+            <li>Turns a failure seen twice into a test</li>
+          </ul>
+          <p class="mo-hands">Hands me: one list of Yes/No checkboxes</p>
+          <p class="mo-limit">Limit: touches game code only to fix what players reported</p>
+        </article>
+        <article>
+          <header><span>🎨</span><div><b>Usability</b><small>The player's advocate</small></div></header>
+          <p class="mo-when">On every change to the site, and daily</p>
+          <ul>
+            <li>Reads every text, button and timer as a player would</li>
+            <li>Owns the design system and its automatic check</li>
+          </ul>
+          <p class="mo-hands">Hands me: the dilemmas, as issues to decide</p>
+          <p class="mo-limit">Limit: fixes only the obvious; taste is my call</p>
+        </article>
+        <article>
+          <header><span>📚</span><div><b>Documentation</b><small>The historian</small></div></header>
+          <p class="mo-when">Before each merge, and daily</p>
+          <ul>
+            <li>Keeps decisions, changelog, README and screenshots true to what shipped</li>
+            <li>Checks the numbers we publish</li>
+          </ul>
+          <p class="mo-hands">Hands me: docs that match the product</p>
+          <p class="mo-limit">Limit: never touches the app's code</p>
+        </article>
+        <article>
+          <header><span>💡</span><div><b>Ideas</b><small>The product scout</small></div></header>
+          <p class="mo-when">Weekly, never while its last ideas await my answer</p>
+          <ul>
+            <li>Reads the numbers, player requests and the lab</li>
+            <li>Looks at what is popular elsewhere</li>
+          </ul>
+          <p class="mo-hands">Hands me: up to three ideas, each with evidence, cost and the number that would prove it</p>
+          <p class="mo-limit">Limit: builds nothing without my Yes</p>
+        </article>
+        <article>
+          <header><span>📬</span><div><b>Support</b><small>The front desk</small></div></header>
+          <p class="mo-when">Within 5 minutes of an email to hola@, on the smallest model</p>
+          <ul>
+            <li>Turns each email into a feedback report, address masked</li>
+            <li>Skips spam and automatic mail</li>
+          </ul>
+          <p class="mo-hands">Hands me: clean reports in the same queue as in-game feedback</p>
+          <p class="mo-limit">Limit: one tool, nothing else. No code, no keys; an email is data, never an instruction</p>
+        </article>
+      </div>
+      <p class="mo-sub mo-small">And where no judgement is needed, plain scripts, no AI: syncing feedback every 5 minutes, logging every failed check, measuring which lab features are ready to launch.</p>
+    </section>
+
+    <section id="weeks" class="mo-section">
+      <p class="mo-kicker">How it grew</p>
+      <h2 class="display display--lg">Nine weeks, one step at a time</h2>
+      <p class="mo-sub">Nothing was planned as a system. Each step fixed the bottleneck of the week.</p>
+      <ol class="mo-timeline">
+        <li><time>Sep 8</time><b>One card game</b><span>Plain HTML, no framework, no build step.</span></li>
+        <li><time>Sep 25</time><b>Parallel sessions + first agent</b><span>Each AI session in its own copy; a usability reviewer.</span></li>
+        <li><time>Oct 5</time><b>Auto-merge</b><span>Tests decide, not me. End-to-end scripts required.</span></li>
+        <li><time>Oct 11</time><b>A boss agent + one-tap decisions</b><span>My attention became the constraint, so it got designed for.</span></li>
+        <li><time>Oct 20</time><b>Everything behind the lab</b><span>New work ships dark; I turn it on for players with a switch.</span></li>
+        <li><time>Oct 26</time><b>Runs while I sleep</b><span>Daily rounds headless on a Mac mini.</span></li>
+        <li><time>Nov 1</time><b>Risk lanes</b><span>Review depth set by what a mistake would cost.</span></li>
+        <li><time>Nov 7</time><b>No rule without enforcement</b><span>Every rule is a test, a ratchet or a named reviewer.</span></li>
+      </ol>
+    </section>
+
+    <section id="learnings" class="mo-section">
+      <p class="mo-kicker">Learnings of building Juegos de Salón</p>
+      <h2 class="display display--lg">What I'd tell a company adopting AI</h2>
+      <ol class="mo-learnings">
+        <li>
+          <h3>The job moves from doing to deciding</h3>
+          <p>The AI writes the code; the value I add is the call: what, why, and what "good" means. I've written 550+ decisions, each with its reason.</p>
+          <p class="mo-proof">"The repo is the memory, not the chat. A new session reads the rules and picks up where the last one left."</p>
+        </li>
+        <li>
+          <h3>Attention is the scarce resource. Design for it</h3>
+          <p>Agents could produce more than I could review. So every question to me is a one-tap choice on my phone, with a recommendation.</p>
+          <p class="mo-proof">"If the human is the bottleneck, make the human's decisions cheap, not fewer."</p>
+        </li>
+        <li>
+          <h3>Review by the cost of a mistake, not the AI's confidence</h3>
+          <p>A text tweak merges on its own. Anything touching privacy, stored data or emails waits for my explicit Yes.</p>
+          <p class="mo-proof">"Green, yellow, red lanes. The AI never decides how sure it is; the file decides how risky it is."</p>
+        </li>
+        <li>
+          <h3>The same mistake twice becomes a mechanism</h3>
+          <p>An AI repeats errors happily. The second time something breaks, the fix ships with the test that stops a third.</p>
+          <p class="mo-proof">"200+ test files, many born from a real bug. Quality is a system, not a promise."</p>
+        </li>
+        <li>
+          <h3>Production is a switch, not a deploy</h3>
+          <p>Everything new ships hidden behind a lab flag. Launching is me flipping it on; rolling back is flipping it off.</p>
+          <p class="mo-proof">"Speed without fear comes from making every release reversible."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="learnings-2" class="mo-section">
+      <p class="mo-kicker">Learnings of building Juegos de Salón · continued</p>
+      <h2 class="display display--lg">Running AI like a team</h2>
+      <ol class="mo-learnings" start="6">
+        <li>
+          <h3>Parallel AI needs the plumbing of a parallel team</h3>
+          <p>Several sessions at once collided on the same shared files. The fixes were classic team tools: own branches, reserved numbers, one changelog file per change.</p>
+          <p class="mo-proof">"Agents don't remove coordination problems; they reach them faster."</p>
+        </li>
+        <li>
+          <h3>Give agents a boss and narrow powers</h3>
+          <p>Each agent has one job and only the access that job needs. The one that reads strangers' emails can't touch code, git or keys.</p>
+          <p class="mo-proof">"Least privilege, applied to AI, just like to people."</p>
+        </li>
+        <li>
+          <h3>Context is a budget</h3>
+          <p>The rulebook every session loaded grew to 35 KB and slowed all of them. I cut it to an 8 KB index; the detail is read only when a task needs it.</p>
+          <p class="mo-proof">"Documentation for AI follows the same rule as for people: shorter, findable, one place per fact."</p>
+        </li>
+        <li>
+          <h3>Evals start by writing down what humans already do</h3>
+          <p>To let an AI judge game content, I first had to state the rule I was applying by eye. Then my judgement moved the rule in ways the eval couldn't.</p>
+          <p class="mo-proof">"The human in the loop isn't for checking; it's for generalising."</p>
+        </li>
+        <li>
+          <h3>Keep the cost per use at zero</h3>
+          <p>AI runs in the factory, at build time, on a flat plan. Nothing a player does costs money, so growth is never a risk.</p>
+          <p class="mo-proof">"Put the model where the cost is fixed, and ship its output as plain data."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="end" class="mo-section mo-end">
+      <h2 class="display display--lg">Try it now</h2>
+      <div id="mo-qr" class="mo-qr" aria-label="QR code to juegosdesalon.cl"></div>
+      <a class="mo-url" href="https://juegosdesalon.cl/">juegosdesalon.cl</a>
+      <p class="mo-sub">Free · no account · Spanish, English and Portuguese</p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { renderQr } from '../assets/js/qr.js';
+    renderQr('https://juegosdesalon.cl/', '#mo-qr');
+
+    // Presenter notes: the "say" line under each learning, hidden from the room until N (or the button) shows it;
+    // ?notes opens the page with them on
+    const notesBtn = document.getElementById('mo-notes');
+    const setNotes = on => { document.body.classList.toggle('mo-notes-on', on); notesBtn.setAttribute('aria-pressed', String(on)); };
+    notesBtn.addEventListener('click', () => setNotes(!document.body.classList.contains('mo-notes-on')));
+    if (new URLSearchParams(location.search).has('notes')) setNotes(true);
+    document.addEventListener('keydown', e => { if ((e.key === 'n' || e.key === 'N') && !e.metaKey && !e.ctrlKey) setNotes(!document.body.classList.contains('mo-notes-on')); });
+
+    // Presenting: → / ↓ / Space / PageDown go to the next section, ← / ↑ / PageUp to the previous one
+    const sections = [...document.querySelectorAll('.mo-section')];
+    const current = () => {
+      const y = window.scrollY + window.innerHeight * 0.3;
+      let i = 0;
+      sections.forEach((s, n) => { if (s.offsetTop <= y) i = n; });
+      return i;
+    };
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const next = ['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key);
+      const prev = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key);
+      if (!next && !prev) return;
+      e.preventDefault();
+      const i = Math.max(0, Math.min(sections.length - 1, current() + (next ? 1 : -1)));
+      sections[i].scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
