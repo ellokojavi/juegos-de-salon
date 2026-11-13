@@ -12,6 +12,8 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-nav a { color: var(--muted); text-decoration: none; font-weight: 700; }
 .mo-nav a:hover { color: var(--ink); }
 .mo-nav .mo-brand { color: var(--ink); margin-right: auto; font-weight: 900; }
+/* Projected, the lab key holder's tester tab (vigia.js puts it on every page) would cover the last link */
+#tester-ribbon { display: none; }
 
 /* One section per screen when projected */
 .mo-section { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; gap: var(--s-20); padding: var(--s-32) 0; }
