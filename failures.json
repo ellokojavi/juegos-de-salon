@@ -3098,6 +3098,19 @@
       "date": "2026-11-13T17:08:34.354Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 43484067740,
+      "check": "end-to-end",
+      "pr": 1445,
+      "branch": "landing-fold-flake",
+      "commit": "526cc2a334059e796919436936d582664acc48a8",
+      "test": "landing-fold.mjs",
+      "error": "✗ labs/microgames 320×568 es: «▶ Jugar» ends at 871 px, 303 px below the fold",
+      "signature": "98b6c18ec9",
+      "date": "2026-11-13T18:53:12.522Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
