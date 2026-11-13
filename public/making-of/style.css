@@ -31,6 +31,35 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-stats span { color: var(--muted); font-size: var(--fs-100); }
 .mo-next { align-self: flex-start; color: var(--cyan); font-weight: 900; text-decoration: none; font-size: var(--fs-110); }
 
+.mo-aka { margin: calc(-1 * var(--s-12)) 0 0; color: var(--muted); font-weight: 700; font-size: var(--fs-140); }
+
+/* See it played: two phone clips, then the two skill games stacked */
+.mo-play { display: grid; grid-template-columns: 1fr 1fr 1.7fr; gap: var(--s-16); align-items: start; }
+.mo-play-wide { display: grid; gap: var(--s-16); }
+.mo-clip { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); }
+.mo-clip video { width: 100%; height: auto; display: block; border-radius: var(--r-16); border: 2px solid var(--glass-border); background: var(--well); box-shadow: var(--shadow-panel); }
+.mo-play-wide .mo-clip video { max-height: 27vh; width: auto; max-width: 100%; }
+.mo-clip--tall video { max-height: 62vh; width: auto; max-width: 100%; align-self: center; }
+.mo-clip figcaption { display: flex; flex-direction: column; gap: var(--s-2); }
+.mo-clip figcaption b { color: var(--yellow); font-size: var(--fs-110); }
+.mo-clip figcaption span { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
+
+/* The setup: one SVG drawn on the tokens; on a phone it keeps its width and scrolls inside its box */
+.mo-diagram { overflow-x: auto; }
+.mo-diagram-svg { width: 100%; height: auto; display: block; font-family: var(--font-body); }
+.dg-lane { fill: rgb(var(--ink-rgb) / 0.03); stroke: var(--glass-border); stroke-dasharray: 4 6; }
+.dg-lane-t { fill: var(--cyan); font-weight: 900; letter-spacing: 0.12em; font-size: var(--fs-75); }
+.dg-box rect { fill: rgb(var(--bg2-rgb) / 0.9); stroke: var(--glass-border); stroke-width: 2; }
+.dg-me rect { stroke: var(--yellow); }
+.dg-agents rect { stroke: var(--pink); }
+.dg-site rect, .dg-players rect { stroke: var(--cyan); }
+.dg-t1 { fill: var(--ink); font-weight: 900; font-size: var(--fs-110); }
+.dg-t2 { fill: var(--muted); font-size: var(--fs-85); }
+.dg-arrow { fill: none; stroke: var(--pink); stroke-width: 2.5; }
+.dg-back { stroke: var(--yellow); stroke-dasharray: 6 5; }
+.dg-head { fill: var(--pink); }
+.dg-lbl { fill: var(--ink); font-weight: 700; font-size: var(--fs-75); paint-order: stroke; stroke: var(--bg1); stroke-width: 4px; }
+
 /* The product: points beside three screenshots */
 .mo-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: var(--s-32); align-items: center; }
 .mo-points { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-16); font-size: var(--fs-120); line-height: 1.4; }
@@ -77,10 +106,11 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 /* The learnings: numbered cards, the line to say in yellow */
 .mo-learnings { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-12); counter-reset: learning; }
 .mo-learnings li {
-  counter-increment: learning; position: relative;
-  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18) var(--s-16) var(--s-32);
+  counter-increment: learning; display: grid; grid-template-columns: var(--s-28) 1fr; align-items: baseline; align-content: start; column-gap: var(--s-4);
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18);
 }
-.mo-learnings li::before { content: counter(learning); position: absolute; left: var(--s-8); top: var(--s-14); font-family: var(--font-num); font-weight: 900; color: var(--pink); font-size: var(--fs-110); }
+.mo-learnings li > * { grid-column: 2; }
+.mo-learnings li::before { content: counter(learning); grid-column: 1; grid-row: 1; font-family: var(--font-body); font-weight: 900; color: var(--pink); font-size: var(--fs-120); }
 .mo-learnings h3 { margin: 0 0 var(--s-6); font-size: var(--fs-120); color: var(--ink); }
 .mo-learnings p { margin: 0; color: var(--muted); font-size: var(--fs-100); line-height: 1.45; }
 .mo-learnings[start="6"] { counter-reset: learning 5; }
@@ -103,13 +133,16 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 /* A narrow window (or a phone): everything in one column */
 @media (max-width: 900px) {
   .mo-split, .mo-learnings { grid-template-columns: 1fr; }
+  .mo-play { grid-template-columns: 1fr 1fr; }
+  .mo-play-wide { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
   .mo-team { grid-template-columns: 1fr 1fr; }
   .mo-team .mo-boss { grid-column: 1 / -1; }
   .mo-flow, .mo-timeline { grid-template-columns: 1fr 1fr; }
   .mo-flow li::after { display: none; }
 }
 @media (max-width: 560px) {
-  .mo-stats, .mo-flow, .mo-team, .mo-timeline { grid-template-columns: 1fr; }
+  .mo-stats, .mo-flow, .mo-team, .mo-timeline, .mo-play-wide { grid-template-columns: 1fr; }
+  .mo-diagram-svg { min-width: 720px; }
   .mo-section { min-height: auto; }
   html { scroll-padding-top: calc(var(--s-32) * 3); }
   .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
