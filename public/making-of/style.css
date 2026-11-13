@@ -142,7 +142,7 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 }
 @media (max-width: 560px) {
   .mo-stats, .mo-flow, .mo-team, .mo-timeline, .mo-play-wide { grid-template-columns: 1fr; }
-  .mo-diagram-svg { min-width: 720px; }
+  .mo-diagram-svg { min-width: 860px; }
   .mo-section { min-height: auto; }
   html { scroll-padding-top: calc(var(--s-32) * 3); }
   .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
