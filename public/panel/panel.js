@@ -1857,7 +1857,16 @@ function vistaSplash(today) {
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
       el('input', { type: 'datetime-local', value: toLocalInput(s[campo], campo === 'until'), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
         min: campo === 'until' ? (toLocalInput(s.from) || null) : null, max: campo === 'from' ? (toLocalInput(s.until, true) || null) : null,
-        onChange: e => {
+        // Saved when the field is left (or on Enter), not on every change: Safari fires one per part typed,
+        // and the redraw after a save dropped the focus after the first one
+        onClick: e => { try { e.target.showPicker(); } catch { /* no picker here: the field is edited in place */ } },
+        // Enter saves; Escape puts the saved day back first, so leaving the field saves nothing
+        onKeydown: e => {
+          if (e.key === 'Escape') e.target.value = toLocalInput(s[campo], campo === 'until');
+          if (e.key === 'Enter' || e.key === 'Escape') e.target.blur();
+        },
+        onBlur: e => {
+          if (e.target.value === toLocalInput(s[campo], campo === 'until')) return;
           const r = checkPick(s, campo, e.target.value);
           if (r.error) { S.splashMsg = `Not saved: ${r.error}`; e.target.value = toLocalInput(s[campo], campo === 'until'); render(); return; }
           cambiar(s.id, { [campo]: r.value });
@@ -2259,19 +2268,21 @@ function render() {
  */
 function pintarVista(nodos) {
   const vista = $('#vista');
-  const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(':scope > .vistazo-marco')).map(a => [a.id, a]));
+  // The preview is the card's `.vistazo` (the frame and its health line); its play state is on the frame
+  const VISTA = ':scope > .vistazo', juega = a => a.querySelector(`${VISTA} > .vistazo-marco`)?.dataset.play;
+  const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(VISTA)).map(a => [a.id, a]));
   // A card is kept only if its preview did not change from still to playing
-  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco')?.dataset.play === viejos.get(n.id).querySelector(':scope > .vistazo-marco').dataset.play);
+  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(VISTA) && juega(n) === juega(viejos.get(n.id)));
   const enOrden = quedan.map(n => n.id).join() === [...viejos.keys()].filter(id => quedan.some(n => n.id === id)).join();
   if (!quedan.length || !enOrden) { vista.replaceChildren(...nodos); return; }
   const fijos = new Set();
   const lista = nodos.map(n => {
     const viejo = quedan.includes(n) ? viejos.get(n.id) : null;
     if (!viejo) return n;
-    const marco = viejo.querySelector(':scope > .vistazo-marco');
+    const marco = viejo.querySelector(VISTA);
     [...viejo.childNodes].forEach(c => { if (c !== marco) c.remove(); });
     const hijos = [...n.childNodes];
-    const k = hijos.findIndex(c => c.classList?.contains('vistazo-marco'));
+    const k = hijos.findIndex(c => c.classList?.contains('vistazo'));
     marco.before(...hijos.slice(0, k));
     marco.after(...hijos.slice(k + 1));
     viejo.className = n.className;
