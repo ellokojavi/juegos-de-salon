@@ -348,7 +348,10 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-dia input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; color-scheme: dark; }
 .campana-dia input::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
 /* While it has the focus the field shows itself: Safari on a Mac edits the day and time in place, with no calendar, so a hidden field took the typing unseen */
-.campana-dia:focus-within input { z-index: 2; opacity: 1; padding: 0 var(--s-12); border-radius: var(--r-14); background: var(--pn-fila); color: var(--ink); font: inherit; font-weight: 800; }
+.campana-dia:focus-within input { z-index: 2; opacity: 1; padding: var(--s-18) var(--s-12) 0; border-radius: var(--r-14); background: transparent; color: var(--ink); font: inherit; font-weight: 800; }
+/* the field's own text takes the value's place, under the label: the value hides while it is edited */
+.campana-dia:focus-within .campana-dia-valor { visibility: hidden; }
+.campana-dia:focus-within input::-webkit-calendar-picker-indicator { position: static; width: auto; height: auto; }
 .campana-dia-x { position: absolute; top: 50%; right: 4px; transform: translateY(-50%); z-index: 1; width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--muted); font: inherit; cursor: pointer; }
 .campana-dia-x:hover, .campana-dia-x:focus-visible { background: var(--glass); color: var(--ink); outline: none; }
 .campana-segmento { display: grid; grid-template-columns: repeat(4, 1fr); padding: var(--s-4); border-radius: var(--r-14); background: var(--pn-fila); }
