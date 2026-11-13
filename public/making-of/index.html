@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#150726">
   <meta name="robots" content="noindex, nofollow">
-  <title>The making of Juegos de Salón</title>
-  <meta name="description" content="How one product lead and a team of AI agents built and run Juegos de Salón, and what it taught about adopting AI.">
+  <title>The making of Parlor Games</title>
+  <meta name="description" content="How one product lead and a team of AI agents built and run Parlor Games (Juegos de Salón), and what it taught about adopting AI.">
   <link rel="icon" href="../assets/icons/icon-192.png">
   <script src="../assets/js/vigia.js"></script>
   <link rel="preload" href="../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -18,9 +18,11 @@
   <!-- The owner's presentation of the project for an executive audience, projected from a laptop.
        English only and unlisted (noindex, no link from the site): it is not a player page. -->
   <nav class="mo-nav" aria-label="Sections">
-    <a href="#top" class="mo-brand">🎲 Juegos de Salón</a>
+    <a href="#top" class="mo-brand">🎲 Parlor Games</a>
     <a href="#product">The product</a>
+    <a href="#play">See it played</a>
     <a href="#factory">How it's built</a>
+    <a href="#setup">The setup</a>
     <a href="#team">The agents</a>
     <a href="#weeks">Nine weeks</a>
     <a href="#learnings">Learnings</a>
@@ -30,7 +32,8 @@
   <main>
     <section id="top" class="mo-section mo-hero">
       <p class="mo-kicker">A side project · September to November 2026</p>
-      <h1 class="display display--xl rainbow">Juegos de Salón</h1>
+      <h1 class="display display--xl rainbow">Parlor Games</h1>
+      <p class="mo-aka">(Juegos de Salón)</p>
       <p class="mo-lead">A party-games site for friends, built and run by <strong>one product lead</strong> and a
         <strong>team of AI agents</strong>. I don't write the code: I set the direction, make the calls and
         design the system that builds, tests and ships it.</p>
@@ -40,7 +43,7 @@
         <div><b>1,100+</b><span>changes merged (PRs)</span></div>
         <div><b>550+</b><span>written decisions</span></div>
         <div><b>200+</b><span>test files, plus browser scripts</span></div>
-        <div><b>$0</b><span>cost per player: no ads, no accounts</span></div>
+        <div><b>Free</b><span>for players: no ads, no accounts</span></div>
       </div>
       <a class="mo-next" href="#product">See it ↓</a>
     </section>
@@ -58,9 +61,34 @@
           <li><b>🌎 Spanish, English, Portuguese.</b> Adapted, not translated. Works offline, installs like an app.</li>
         </ul>
         <div class="mo-shots">
-          <img src="img/home.png" alt="The home page with the list of games" loading="lazy">
-          <img src="img/cup-board.png" alt="The Cup's weekly board" loading="lazy">
-          <img src="img/cup-podium.png" alt="The Cup's podium at the end of the week" loading="lazy">
+          <img src="img/home.jpg" alt="The home page with the list of games" loading="lazy">
+          <img src="img/cup-board.jpg" alt="The Cup's weekly board" loading="lazy">
+          <img src="img/cup-podium.jpg" alt="The Cup's podium at the end of the week" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section id="play" class="mo-section">
+      <p class="mo-kicker">See it played</p>
+      <h2 class="display display--lg">Four games, real play</h2>
+      <div class="mo-play">
+        <figure class="mo-clip mo-clip--tall">
+          <video src="clips/where.mp4" poster="clips/where.jpg" autoplay muted loop playsinline aria-label="Where Is It?: the globe spins to the city, a pin drops, the distance is scored"></video>
+          <figcaption><b>📍 Where Is It?</b><span>Spin the globe, drop a pin on the city. The closer, the more points.</span></figcaption>
+        </figure>
+        <figure class="mo-clip mo-clip--tall">
+          <video src="clips/liars-dice.mp4" poster="clips/liars-dice.jpg" autoplay muted loop playsinline aria-label="Liar's Dice against the phone: bids, a call of liar, the dice revealed"></video>
+          <figcaption><b>🎲 Liar's Dice</b><span>Everyone sees only their own dice. Bid how many of a face are on the whole table, or call "Liar!". Here, against the phone.</span></figcaption>
+        </figure>
+        <div class="mo-play-wide">
+          <figure class="mo-clip">
+            <video src="clips/shinobi.mp4" poster="clips/shinobi.jpg" autoplay muted loop playsinline aria-label="Shinobi: the ninja's stick stretches to reach the next pillar"></video>
+            <figcaption><b>🥷 Shinobi</b><span>Hold to stretch the stick, let go to drop it across the gap. If it reaches the next pillar, the ninja crosses.</span></figcaption>
+          </figure>
+          <figure class="mo-clip">
+            <video src="clips/babel.mp4" poster="clips/babel.jpg" autoplay muted loop playsinline aria-label="Babel: each sliding block is cut to what overlaps the tower"></video>
+            <figcaption><b>🗼 Babel</b><span>Tap to drop the block sliding over the tower. Whatever hangs over the edge is cut off, and the next block is smaller.</span></figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -76,6 +104,14 @@
         <li><span>🚀</span><b>It ships</b><small>Low-risk changes merge on their own. New features sit behind a switch until I flip it.</small></li>
       </ol>
       <a class="mo-next" href="#team">Meet the agents ↓</a>
+    </section>
+
+    <section id="setup" class="mo-section">
+      <p class="mo-kicker">The setup</p>
+      <h2 class="display display--lg">Who does what, and where</h2>
+      <div class="mo-diagram">
+        <svg class="mo-diagram-svg" viewBox="0 0 1040 650" role="img" aria-labelledby="dg-title"><title id="dg-title">The setup: the owner and a contributor work through Claude Code and GitHub; agents run on a Mac mini; the owner watches /panel/ and flips features live in /labs/; the site on GitHub Pages and Firebase serves players.</title><defs><marker id="dg-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="dg-lane" x="10" y="8" width="210" height="634" rx="18"/><text class="dg-lane-t" x="26" y="30">PEOPLE</text><rect class="dg-lane" x="280" y="8" width="380" height="634" rx="18"/><text class="dg-lane-t" x="296" y="30">THE FACTORY</text><rect class="dg-lane" x="720" y="8" width="270" height="634" rx="18"/><text class="dg-lane-t" x="736" y="30">THE PRODUCT</text><g class="dg-box dg-me"><rect x="24" y="60" width="182" height="112" rx="14"/><text class="dg-t1" x="40" y="90">👤 Me, the owner</text><text class="dg-t2" x="40" y="114">laptop and phone</text><text class="dg-t2" x="40" y="134">direction · decisions</text><text class="dg-t2" x="40" y="154">approvals</text></g><g class="dg-box "><rect x="24" y="262" width="182" height="92" rx="14"/><text class="dg-t1" x="40" y="292">🤝 A contributor</text><text class="dg-t2" x="40" y="316">a fork or an invite</text><text class="dg-t2" x="40" y="336">opens pull requests</text></g><g class="dg-box "><rect x="296" y="60" width="348" height="92" rx="14"/><text class="dg-t1" x="312" y="90">💬 Claude Code</text><text class="dg-t2" x="312" y="114">in the Claude app: desktop, web, phone</text><text class="dg-t2" x="312" y="134">several sessions, each in its own copy</text></g><g class="dg-box "><rect x="296" y="206" width="348" height="132" rx="14"/><text class="dg-t1" x="312" y="236">🐙 GitHub</text><text class="dg-t2" x="312" y="260">the code · every change is a pull request</text><text class="dg-t2" x="312" y="280">checks: tests, browser scripts, risk lane</text><text class="dg-t2" x="312" y="300">issues: my one-tap decisions</text><text class="dg-t2" x="312" y="320">9 scheduled jobs · publishing</text></g><g class="dg-box dg-agents"><rect x="296" y="400" width="166" height="132" rx="14"/><text class="dg-t1" x="312" y="430">🤖 5 agents</text><text class="dg-t2" x="312" y="454">processes</text><text class="dg-t2" x="312" y="474">usability · docs</text><text class="dg-t2" x="312" y="494">ideas · support</text></g><g class="dg-box "><rect x="478" y="400" width="166" height="132" rx="14"/><text class="dg-t1" x="494" y="430">🖥 Mac mini</text><text class="dg-t2" x="494" y="454">7 scheduled jobs</text><text class="dg-t2" x="494" y="474">the 4:30 am round</text><text class="dg-t2" x="494" y="494">watches the inbox</text></g><g class="dg-box dg-me"><rect x="734" y="52" width="118" height="112" rx="14"/><text class="dg-t1" x="746" y="82">🧪 /labs/</text><text class="dg-t2" x="746" y="106">new work</text><text class="dg-t2" x="746" y="126">live switches</text><text class="dg-t2" x="746" y="146">lab keys</text></g><g class="dg-box dg-me"><rect x="858" y="52" width="118" height="112" rx="14"/><text class="dg-t1" x="870" y="82">📊 /panel/</text><text class="dg-t2" x="870" y="106">usage · Cups</text><text class="dg-t2" x="870" y="126">feedback</text><text class="dg-t2" x="870" y="146">health</text></g><g class="dg-box dg-site"><rect x="734" y="190" width="242" height="88" rx="14"/><text class="dg-t1" x="750" y="220">🌐 The site</text><text class="dg-t2" x="750" y="244">HTML, CSS, JS · GitHub Pages</text><text class="dg-t2" x="750" y="264">parlorgames.app</text></g><g class="dg-box "><rect x="734" y="318" width="242" height="88" rx="14"/><text class="dg-t1" x="750" y="348">🔥 Firebase</text><text class="dg-t2" x="750" y="372">live rooms, Cups, rankings</text><text class="dg-t2" x="750" y="392">switches, feedback, usage</text></g><g class="dg-box "><rect x="734" y="440" width="242" height="66" rx="14"/><text class="dg-t1" x="750" y="470">✉️ hola@ inbox</text><text class="dg-t2" x="750" y="494">a Cloudflare Worker</text></g><g class="dg-box dg-players"><rect x="734" y="540" width="242" height="88" rx="14"/><text class="dg-t1" x="750" y="570">🎮 Players</text><text class="dg-t2" x="750" y="594">any phone, no account</text><text class="dg-t2" x="750" y="614">Spanish · English · Portuguese</text></g><path class="dg-arrow " d="M206,100 L294,100" marker-end="url(#dg-head)"/><text class="dg-lbl" x="250" y="90" text-anchor="middle">asks</text><path class="dg-arrow dg-back" d="M296,250 C250,250 250,150 208,150" marker-end="url(#dg-head)"/><text class="dg-lbl" x="248" y="206" text-anchor="middle">decides</text><path class="dg-arrow " d="M206,308 L294,308" marker-end="url(#dg-head)"/><text class="dg-lbl" x="250" y="298" text-anchor="middle">PRs</text><path class="dg-arrow " d="M470,152 L470,204" marker-end="url(#dg-head)"/><text class="dg-lbl" x="480" y="184" text-anchor="start">PRs</text><path class="dg-arrow " d="M380,400 L380,340" marker-end="url(#dg-head)"/><text class="dg-lbl" x="390" y="376" text-anchor="start">review</text><path class="dg-arrow " d="M478,466 L464,466" marker-end="url(#dg-head)"/><path class="dg-arrow " d="M644,272 C690,272 690,234 732,234" marker-end="url(#dg-head)"/><text class="dg-lbl" x="688" y="290" text-anchor="middle">merge = live</text><path class="dg-arrow dg-back" d="M115,60 L115,44 L917,44 L917,50" marker-end="url(#dg-head)"/><path class="dg-arrow dg-back" d="M793,44 L793,50" marker-end="url(#dg-head)"/><text class="dg-lbl" x="560" y="40" text-anchor="middle">watches · flips live</text><path class="dg-arrow dg-back" d="M734,108 L646,108" marker-end="url(#dg-head)"/><text class="dg-lbl" x="690" y="100" text-anchor="middle">🚀 publish</text><path class="dg-arrow " d="M793,164 L793,188" marker-end="url(#dg-head)"/><text class="dg-lbl" x="803" y="180" text-anchor="start">go live</text><path class="dg-arrow " d="M855,278 L855,316" marker-end="url(#dg-head)"/><text class="dg-lbl" x="865" y="302" text-anchor="start">real time</text><path class="dg-arrow " d="M976,350 C1006,350 1006,100 978,100" marker-end="url(#dg-head)"/><text class="dg-lbl" x="1004" y="226" text-anchor="middle">usage</text><path class="dg-arrow " d="M976,584 C1024,584 1024,240 978,240" marker-end="url(#dg-head)"/><text class="dg-lbl" x="1022" y="430" text-anchor="middle">play</text><path class="dg-arrow " d="M820,540 L820,508" marker-end="url(#dg-head)"/><text class="dg-lbl" x="830" y="528" text-anchor="start">feedback</text><path class="dg-arrow " d="M734,473 L646,473" marker-end="url(#dg-head)"/><text class="dg-lbl" x="690" y="463" text-anchor="middle">emails</text></svg>
+      </div>
     </section>
 
     <section id="team" class="mo-section">
@@ -157,7 +193,7 @@
     </section>
 
     <section id="learnings" class="mo-section">
-      <p class="mo-kicker">Learnings of building Juegos de Salón</p>
+      <p class="mo-kicker">Learnings of building Parlor Games</p>
       <h2 class="display display--lg">What I'd tell a company adopting AI</h2>
       <ol class="mo-learnings">
         <li>
@@ -189,7 +225,7 @@
     </section>
 
     <section id="learnings-2" class="mo-section">
-      <p class="mo-kicker">Learnings of building Juegos de Salón · continued</p>
+      <p class="mo-kicker">Learnings of building Parlor Games · continued</p>
       <h2 class="display display--lg">Running AI like a team</h2>
       <ol class="mo-learnings" start="6">
         <li>
@@ -222,15 +258,15 @@
 
     <section id="end" class="mo-section mo-end">
       <h2 class="display display--lg">Try it now</h2>
-      <div id="mo-qr" class="mo-qr" aria-label="QR code to juegosdesalon.cl"></div>
-      <a class="mo-url" href="https://juegosdesalon.cl/">juegosdesalon.cl</a>
+      <div id="mo-qr" class="mo-qr" aria-label="QR code to parlorgames.app"></div>
+      <a class="mo-url" href="https://parlorgames.app/">parlorgames.app</a>
       <p class="mo-sub">Free · no account · Spanish, English and Portuguese</p>
     </section>
   </main>
 
   <script type="module">
     import { renderQr } from '../assets/js/qr.js';
-    renderQr('https://juegosdesalon.cl/', '#mo-qr');
+    renderQr('https://parlorgames.app/', '#mo-qr');
 
     // Presenter notes: the "say" line under each learning, hidden from the room until N (or the button) shows it;
     // ?notes opens the page with them on
