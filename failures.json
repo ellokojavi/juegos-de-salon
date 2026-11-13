@@ -3085,6 +3085,19 @@
       "date": "2026-11-13T16:50:26.025Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43466751982,
+      "check": "end-to-end",
+      "pr": 1440,
+      "branch": "panel-date-field-overlap",
+      "commit": "fd12953d0a4d813bbf8a4327b130696ed99e57e0",
+      "test": "landing-fold.mjs",
+      "error": "✗ ahorcado today 320×568 pt: «🖌️ Começar» ends at 579 px, 11 px below the fold",
+      "signature": "f67e70bcfd",
+      "date": "2026-11-13T17:08:34.354Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
