@@ -14,7 +14,7 @@
     "en": 150,
     "pt": 150
   },
-  "commonKeys": 51,
+  "commonKeys": 53,
   "games": [
     {
       "id": "copa",
@@ -1133,6 +1133,7 @@
     "public/assets/js/frases.js",
     "public/assets/js/game-icon.js",
     "public/assets/js/game-manifest.js",
+    "public/assets/js/game-swipe.js",
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
     "public/assets/js/hidden-match.js",
@@ -1443,6 +1444,7 @@
     "public/assets/js/game-labels.test.mjs",
     "public/assets/js/game-manifest.test.mjs",
     "public/assets/js/game-names.test.mjs",
+    "public/assets/js/game-swipe.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/hidden-match.test.mjs",
     "public/assets/js/home-windows.test.mjs",

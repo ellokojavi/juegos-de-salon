@@ -536,6 +536,7 @@ node public/assets/js/game-icons.test.mjs
 node public/assets/js/game-labels.test.mjs
 node public/assets/js/game-manifest.test.mjs
 node public/assets/js/game-names.test.mjs
+node public/assets/js/game-swipe.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/hidden-match.test.mjs
 node public/assets/js/home-windows.test.mjs
