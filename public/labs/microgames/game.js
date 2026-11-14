@@ -108,8 +108,9 @@ trackVisit();   // the site's traffic (D-208)
   // During the intro the stage wears its type's color (frame and name); it comes off when the game starts
   const dress = id => { const k = KIND[id]; if (k) { demo.dataset.kind = k; demo.style.setProperty('--kind', KINDS[k][2]); } };
   const undress = () => { delete demo.dataset.kind; };
-  function command(word, then, icon, hint, top) {
-    const gx = gesture(curGame), extra = gx ? 500 : 0; dress(curGame); const go = then; then = () => { undress(); go(); };
+  // `ms` holds the intro longer, for a game whose intro has more to show (¡Pinball!'s table)
+  function command(word, then, icon, hint, top, ms) {
+    const gx = gesture(curGame), extra = (gx ? 500 : 0) + (ms || 0); dress(curGame); const go = then; then = () => { undress(); go(); };
     set(`${gx}${top || ''}<div class="cmd">${word}</div>${icon ? `<div class="target" aria-hidden="true">${icon}</div>` : ''}${hint ? `<div class="sub">${hint}</div>` : ''}`);
     later(then, (reduce ? 900 : top ? 1800 : hint ? 1600 : icon ? 1200 : 800) + extra);
   }
@@ -849,6 +850,19 @@ trackVisit();   // the site's traffic (D-208)
     // 29 ¡PINBALL! (the owner's idea, 2026-11-13): three balls drop onto a little neon table; tap the left or
     // right half to flip that flipper and keep them up. Each ball still on the table when time runs out is a star
     pinball() {
+      // The intro shows the table itself (the owner's request, 2026-11-14): the neon outline, the bumpers and the two
+      // flippers, each half tinted, with a thumb pressing each side in turn and its flipper swinging up, so it is plain
+      // before the clock starts that one finger on each side moves that flipper
+      const PB_INTRO = () => `<div class="pb-intro" aria-hidden="true"><svg viewBox="0 0 200 250">
+        <rect class="pb-half l" x="8" y="120" width="92" height="122" rx="10"/><rect class="pb-half r" x="100" y="120" width="92" height="122" rx="10"/>
+        <path class="pb-wall" d="M60 196 L8 160 L8 40 L40 8 L160 8 L192 40 L192 160 L140 196"/>
+        <circle class="pb-bump" cx="80" cy="62" r="17"/><circle class="pb-bump in" cx="80" cy="62" r="9"/>
+        <circle class="pb-bump" cx="128" cy="100" r="17"/><circle class="pb-bump in" cx="128" cy="100" r="9"/>
+        <circle class="pb-ball" cx="46" cy="96" r="6"/>
+        <g class="pb-flip l"><line x1="60" y1="196" x2="94" y2="214"/><circle cx="60" cy="196" r="4"/></g>
+        <g class="pb-flip r"><line x1="140" y1="196" x2="106" y2="214"/><circle cx="140" cy="196" r="4"/></g>
+        </svg><span class="pb-thumb l">👆<i></i></span><span class="pb-thumb r">👆<i></i></span>
+        <b class="pb-tap l">${t('TOCA')}</b><b class="pb-tap r">${t('TOCA')}</b></div>`;
       command(t('¡PINBALL!'), () => {
         const { lay, W, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('un dedo a cada lado')}</span>`);
         // A big table (the owner's request, after trying smaller ones): the stage's full width, up to 1.6 times as tall as
@@ -1101,7 +1115,7 @@ trackVisit();   // the site's traffic (D-208)
           for (let k = 0; k < 40; k++) { const an = rand() * Math.PI * 2, v = 60 + rand() * 160; sparks.push({ x: W / 2, y: H * 0.36, vx: Math.cos(an) * v, vy: Math.sin(an) * v, l: 1.5, c: HATS[k % 3] }); }
           later(() => finish(3, t('¡Las tres arriba!')), reduce ? 700 : 1700);
         });
-      }, '👆🕹️👆', t('un dedo a cada lado: cada uno mueve su paleta'));
+      }, '', t('un dedo a cada lado: cada uno mueve su paleta'), PB_INTRO(), 1600);
     },
     rebota() {
       // Three little pixel aliens (our own 8-bit drawings), each in its own color: '#' body, 'w' white, 'k' black

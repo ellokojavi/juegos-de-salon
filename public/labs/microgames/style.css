@@ -834,3 +834,28 @@
 .demo .pb-note { position: absolute; left: 0; right: 0; bottom: var(--s-6); text-align: center; pointer-events: none; animation: pb-note 2.2s ease-out forwards; }
 @keyframes pb-note { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .demo .pb-note { animation: none; } }
+
+/* ¡Pinball!'s intro: the table, and a thumb pressing each side in turn (its flipper swings up) */
+.demo .pb-intro { position: relative; width: min(72%, 17rem); margin: 0 auto var(--s-3); }
+.demo .pb-intro svg { display: block; width: 100%; overflow: visible; }
+.demo .pb-half { fill: rgb(var(--yellow-rgb) / 0.06); stroke: rgb(var(--yellow-rgb) / 0.35); stroke-dasharray: 4 4; animation: pb-half 1.6s infinite; }
+.demo .pb-half.r { animation-delay: 0.8s; }
+.demo .pb-wall { fill: none; stroke: var(--cyan); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--cyan)); }
+.demo .pb-bump { fill: none; stroke: var(--pink); stroke-width: 2.5; filter: drop-shadow(0 0 3px var(--pink)); }
+.demo .pb-bump.in { stroke: var(--yellow); stroke-width: 1.5; }
+.demo .pb-ball { fill: var(--ink); filter: drop-shadow(0 0 4px var(--ink)); }
+.demo .pb-flip line { stroke: var(--yellow); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--yellow)); }
+.demo .pb-flip circle { fill: var(--ink); }
+.demo .pb-flip.l { transform-origin: 60px 196px; animation: pb-flip-l 1.6s infinite; }
+.demo .pb-flip.r { transform-origin: 140px 196px; animation: pb-flip-r 1.6s 0.8s infinite; }
+.demo .pb-thumb { position: absolute; bottom: -2%; font-size: var(--mg-fs-240); line-height: 1; transform: translateX(-50%); animation: pb-thumb 1.6s infinite; }
+.demo .pb-thumb.l { left: 30%; } .demo .pb-thumb.r { left: 70%; animation-delay: 0.8s; }
+.demo .pb-thumb i { position: absolute; left: 50%; top: 0; width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; border: 2px solid var(--ink); border-radius: 50%; opacity: 0; animation: inherit; animation-name: pb-rip; }
+.demo .pb-tap { position: absolute; top: 58%; font: 400 var(--fs-140)/1 var(--display); letter-spacing: 0.06em; color: var(--yellow); transform: translateX(-50%); }
+.demo .pb-tap.l { left: 30%; } .demo .pb-tap.r { left: 70%; }
+@keyframes pb-flip-l { 0%, 45%, 100% { transform: rotate(0); } 8%, 30% { transform: rotate(-52deg); } }
+@keyframes pb-flip-r { 0%, 45%, 100% { transform: rotate(0); } 8%, 30% { transform: rotate(52deg); } }
+@keyframes pb-thumb { 0%, 45%, 100% { transform: translate(-50%, 0); } 8%, 30% { transform: translate(-50%, -14%); } }
+@keyframes pb-rip { 0% { opacity: 0.8; transform: scale(0.4); } 40% { opacity: 0; transform: scale(1.3); } 100% { opacity: 0; } }
+@keyframes pb-half { 0%, 45%, 100% { fill: rgb(var(--yellow-rgb) / 0.06); } 8%, 30% { fill: rgb(var(--yellow-rgb) / 0.22); } }
+@media (prefers-reduced-motion: reduce) { .demo .pb-flip, .demo .pb-thumb, .demo .pb-thumb i, .demo .pb-half { animation: none; } }
