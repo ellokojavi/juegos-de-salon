@@ -924,38 +924,54 @@ trackVisit();   // the site's traffic (D-208)
         const glow = (col, blur) => { g.shadowColor = col; g.shadowBlur = reduce ? 0 : blur; };
         const line = (a, c, col, w) => { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...c); g.stroke(); };
         // A neon tube (the owner asked for better neon): a wide faint halo, a glowing coloured body and a thin white-hot
-        // core, added on top of each other; it hums, flickering a little on its own phase
-        const tube = (trace, col, w, now, phase = 0) => {
-          const hum = reduce ? 1 : 0.9 + 0.1 * Math.sin(now / 53 + phase) * Math.sin(now / 97 + phase * 2);
-          g.save(); g.globalCompositeOperation = 'lighter'; g.lineCap = 'round'; g.lineJoin = 'round';
-          for (const [lw, alpha, blur, c] of [[w * 3.4, 0.12, 0, col], [w * 1.7, 0.55, 16, col], [w * 0.55, 0.9, 6, '#ffffff']]) {
-            g.globalAlpha = alpha * hum; g.lineWidth = lw; g.strokeStyle = c; glow(col, blur); g.beginPath(); trace(); g.stroke();
+        // core, added on top of each other. A blurred glow costs a lot every frame (the game dropped to ~11 fps on a
+        // phone), so only the still tubes get it, drawn once into a layer; the moving ones fake it with stacked strokes
+        const hum = (now, phase) => reduce ? 1 : 0.9 + 0.1 * Math.sin(now / 53 + phase) * Math.sin(now / 97 + phase * 2);
+        const tube = (trace, col, w, now, phase = 0, c = g, blurred = false) => {
+          const k = blurred ? 1 : hum(now, phase);
+          c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round'; c.lineJoin = 'round';
+          const layers = blurred ? [[w * 3.4, 0.12, 0, col], [w * 1.7, 0.55, 16, col], [w * 0.55, 0.9, 6, '#ffffff']]
+            : [[w * 3.4, 0.12, 0, col], [w * 2.3, 0.22, 0, col], [w * 1.5, 0.5, 0, col], [w * 0.55, 0.9, 0, '#ffffff']];
+          for (const [lw, alpha, blur, cc] of layers) {
+            c.globalAlpha = alpha * k; c.lineWidth = lw; c.strokeStyle = cc; c.shadowColor = col; c.shadowBlur = reduce ? 0 : blur; c.beginPath(); trace(c); c.stroke();
           }
-          g.restore();
+          c.restore();
         };
-        const seg = (a, c) => () => { g.moveTo(...a); g.lineTo(...c); };
-        const ring = (x, y, r) => () => { g.arc(x, y, r, 0, Math.PI * 2); };
+        const seg = (a, c) => (x = g) => { x.moveTo(...a); x.lineTo(...c); };
+        const ring = (x, y, r) => (c = g) => { c.arc(x, y, r, 0, Math.PI * 2); };
         // The outline of the table, walls and guides as one tube each side
-        const outline = () => { g.moveTo(...pivL); g.lineTo(6, H * 0.66); g.lineTo(6, H * 0.14); g.lineTo(W * 0.18, 6); g.lineTo(W * 0.82, 6); g.lineTo(W - 6, H * 0.14); g.lineTo(W - 6, H * 0.66); g.lineTo(...pivR); };
+        const outline = c => { c.moveTo(...pivL); c.lineTo(6, H * 0.66); c.lineTo(6, H * 0.14); c.lineTo(W * 0.18, 6); c.lineTo(W * 0.82, 6); c.lineTo(W - 6, H * 0.14); c.lineTo(W - 6, H * 0.66); c.lineTo(...pivR); };
         // Two lane arrows on the glass, pointing up, and a few stars, drawn once
         const deco = [[W * 0.32, H * 0.62], [W * 0.68, H * 0.62]], stars = Array.from({ length: 22 }, () => [rand() * W, rand() * H * 0.8, 0.4 + rand() * 1.1, rand() * 6]);
+        const layer = paint => { const cv2 = document.createElement('canvas'); cv2.width = W * dpr; cv2.height = H * dpr; const c = cv2.getContext('2d'); c.scale(dpr, dpr); paint(c); return cv2; };
+        // The glass, drawn once: a deep violet night, darker at the edges, with a magenta grid going away, and the drain
+        // glowing red between the flippers
+        const glass = layer(c => {
+          const bg = c.createRadialGradient(W / 2, H * 0.45, W * 0.1, W / 2, H * 0.45, H * 0.75); bg.addColorStop(0, '#1d0838'); bg.addColorStop(1, '#05030f'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
+          c.lineWidth = 1;
+          for (let k = 0; k <= 10; k++) { const x = W * k / 10; c.strokeStyle = 'rgba(255,46,136,0.07)'; c.beginPath(); c.moveTo(W / 2 + (x - W / 2) * 0.35, 0); c.lineTo(x, H); c.stroke(); }
+          for (let k = 1; k < 12; k++) { const y = H * (k / 12) ** 1.6; c.strokeStyle = `rgba(143,247,238,${0.03 + 0.05 * k / 12})`; c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+          const dr = c.createRadialGradient(W / 2, H, 4, W / 2, H, W * 0.26); dr.addColorStop(0, 'rgba(255,46,136,0.55)'); dr.addColorStop(1, 'rgba(255,46,136,0)'); c.fillStyle = dr; c.fillRect(0, H * 0.7, W, H * 0.3);
+        });
+        // The still neon, drawn once with its real glow: the outline, the lane arrows and the bumpers at rest
+        const unlit = (c, bp) => { const fill = c.createRadialGradient(bp.x, bp.y, 1, bp.x, bp.y, bp.r); fill.addColorStop(0, 'rgba(255,46,136,0.25)'); fill.addColorStop(1, 'rgba(58,12,46,0.6)');
+          c.fillStyle = fill; c.beginPath(); c.arc(bp.x, bp.y, bp.r, 0, Math.PI * 2); c.fill(); };
+        const neon = layer(c => {
+          for (const [x, y] of deco) tube(cc => { cc.moveTo(x - 9, y + 6); cc.lineTo(x, y - 4); cc.lineTo(x + 9, y + 6); }, '#8a4dff', 2, 0, 0, c, true);
+          tube(outline, '#2ee6d6', 3, 0, 0, c, true);
+          for (const bp of bumpers) { unlit(c, bp); tube(ring(bp.x, bp.y, bp.r), '#ff2e88', 2.6, 0, 0, c, true); tube(ring(bp.x, bp.y, bp.r * 0.55), '#ffd23f', 1.4, 0, 0, c, true); }
+        });
         const draw = now => {
           g.save(); g.clearRect(0, 0, W, H);
           if (shake > 0) g.translate((rand() - 0.5) * shake, (rand() - 0.5) * shake);
-          // The glass: a deep violet night, darker at the edges, with a magenta grid going away and faint stars
-          const bg = g.createRadialGradient(W / 2, H * 0.45, W * 0.1, W / 2, H * 0.45, H * 0.75); bg.addColorStop(0, '#1d0838'); bg.addColorStop(1, '#05030f'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
-          g.shadowBlur = 0; g.lineWidth = 1;
-          for (let k = 0; k <= 10; k++) { const x = W * k / 10; g.strokeStyle = 'rgba(255,46,136,0.07)'; g.beginPath(); g.moveTo(W / 2 + (x - W / 2) * 0.35, 0); g.lineTo(x, H); g.stroke(); }
-          for (let k = 1; k < 12; k++) { const y = H * (k / 12) ** 1.6; g.strokeStyle = `rgba(143,247,238,${0.03 + 0.05 * k / 12})`; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+          g.shadowBlur = 0; g.drawImage(glass, 0, 0, W, H);
           for (const [x, y, r, ph] of stars) { g.globalAlpha = 0.25 + 0.25 * Math.sin(now / 400 + ph); g.fillStyle = '#ffffff'; g.fillRect(x, y, r, r); } g.globalAlpha = 1;
-          // The drain glows red between the flippers
-          const dr = g.createRadialGradient(W / 2, H, 4, W / 2, H, W * 0.26); dr.addColorStop(0, 'rgba(255,46,136,0.55)'); dr.addColorStop(1, 'rgba(255,46,136,0)'); g.fillStyle = dr; g.fillRect(0, H * 0.7, W, H * 0.3);
-          for (const [x, y] of deco) tube(() => { g.moveTo(x - 9, y + 6); g.lineTo(x, y - 4); g.lineTo(x + 9, y + 6); }, '#8a4dff', 2, now, x);
-          tube(outline, '#2ee6d6', 3, now, 1);
-          for (const bp of bumpers) { const k = Math.max(0, bp.lit), r = bp.r * (1 + 0.12 * k);
-            // Lit: it fills white-pink from the middle
-            const fill = g.createRadialGradient(bp.x, bp.y, 1, bp.x, bp.y, r); fill.addColorStop(0, k > 0 ? `rgba(255,255,255,${0.5 + 0.5 * k})` : 'rgba(255,46,136,0.25)'); fill.addColorStop(1, k > 0 ? `rgba(255,46,136,${0.3 + 0.5 * k})` : 'rgba(58,12,46,0.6)');
-            g.shadowBlur = 0; g.fillStyle = fill; g.beginPath(); g.arc(bp.x, bp.y, r, 0, Math.PI * 2); g.fill();
+          // The still neon hums, flickering a little
+          g.globalAlpha = hum(now, 1); g.drawImage(neon, 0, 0, W, H); g.globalAlpha = 1;
+          for (const bp of bumpers) { const k = Math.max(0, bp.lit); if (!k) continue; const r = bp.r * (1 + 0.12 * k);
+            // Lit: it fills white-pink from the middle and its rings swell
+            const fill = g.createRadialGradient(bp.x, bp.y, 1, bp.x, bp.y, r); fill.addColorStop(0, `rgba(255,255,255,${0.5 + 0.5 * k})`); fill.addColorStop(1, `rgba(255,46,136,${0.3 + 0.5 * k})`);
+            g.fillStyle = fill; g.beginPath(); g.arc(bp.x, bp.y, r, 0, Math.PI * 2); g.fill();
             tube(ring(bp.x, bp.y, r), '#ff2e88', 2.6 + 1.5 * k, now, bp.x);
             tube(ring(bp.x, bp.y, r * 0.55), '#ffd23f', 1.4, now, bp.y); }
           fl.forEach(f => tube(seg(f.piv, tip(f)), '#ffd23f', 6, now, f.dir));
@@ -963,13 +979,17 @@ trackVisit();   // the site's traffic (D-208)
           g.globalCompositeOperation = 'lighter';
           // Sparks: tiny glowing dots that fade (soft ones, from a hit) or the party's confetti squares
           for (const sp2 of sparks) { g.globalAlpha = Math.max(0, Math.min(1, sp2.l * (sp2.soft ? 1.6 : 1))); g.fillStyle = sp2.c;
-            if (sp2.soft) { glow(sp2.c, 8); g.beginPath(); g.arc(sp2.x, sp2.y, 1.4 + sp2.l, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0; } else g.fillRect(sp2.x, sp2.y, 3, 3); } g.globalAlpha = 1;
+            if (sp2.soft) { const a = g.globalAlpha; g.globalAlpha = a * 0.3; g.beginPath(); g.arc(sp2.x, sp2.y, 4 + sp2.l * 2, 0, Math.PI * 2); g.fill();
+              g.globalAlpha = a; g.beginPath(); g.arc(sp2.x, sp2.y, 1.4 + sp2.l, 0, Math.PI * 2); g.fill(); } else g.fillRect(sp2.x, sp2.y, 3, 3); } g.globalAlpha = 1;
           g.globalCompositeOperation = 'source-over';
           for (const b of balls) { if (!b.live || b.trail.length === 0 || party) continue;
             g.globalCompositeOperation = 'lighter';
             b.trail.forEach(([x, y], i) => { g.globalAlpha = (i + 1) / b.trail.length * 0.3; g.fillStyle = b.c; g.beginPath(); g.arc(x, y, R * (0.5 + i / b.trail.length * 0.5), 0, Math.PI * 2); g.fill(); }); g.globalAlpha = 1;
             g.globalCompositeOperation = 'source-over';
-            glow(b.c, 18); const bl = g.createRadialGradient(b.x - R * 0.35, b.y - R * 0.35, 1, b.x, b.y, R); bl.addColorStop(0, '#ffffff'); bl.addColorStop(1, b.c);
+            // Its glow: a soft halo, not a blur (cheap every frame)
+            g.globalCompositeOperation = 'lighter'; const hl = g.createRadialGradient(b.x, b.y, R * 0.6, b.x, b.y, R * 2.4); hl.addColorStop(0, b.c); hl.addColorStop(1, 'rgba(0,0,0,0)');
+            g.globalAlpha = 0.45; g.fillStyle = hl; g.beginPath(); g.arc(b.x, b.y, R * 2.4, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+            const bl = g.createRadialGradient(b.x - R * 0.35, b.y - R * 0.35, 1, b.x, b.y, R); bl.addColorStop(0, '#ffffff'); bl.addColorStop(1, b.c);
             g.fillStyle = bl; g.beginPath(); g.arc(b.x, b.y, R, 0, Math.PI * 2); g.fill();
             if (b.saved) { g.shadowBlur = 0; g.strokeStyle = 'rgba(157,255,58,0.85)'; g.lineWidth = 2; g.beginPath(); g.arc(b.x, b.y, R + 3.5, 0, Math.PI * 2); g.stroke(); } }
           // The balls still waiting: see-through where they will drop, with a ring that fills up until they fall, and a
