@@ -308,6 +308,14 @@ and any other field is rejected. While the node is empty, the home page uses `AC
 visit and keeps a copy on the device, `public/assets/js/controls.js`); only the owner's UID writes it.
 Empty, the site is as the code says. Checked by `firebase/controls.test.mjs`.
 
+`controls/traction` = `{ total, week, best, bestDay?, phones7, phones30, bestWeek, peak7, peak30, asOf, at }` (D-554): the
+making-of page's Traction totals (games finished in all, in the last 7 days and on the best day;
+different browsers in 7 and 30 days; and the records the page shows: the best 7 days of games, the most
+browsers in any 7 and 30 days), counted up to `asOf` (yesterday's UTC day). Not written from
+the panel: the daily `traction` workflow writes it as administrator with
+`tools/firebase/traction.mjs --write`. Public read, like the rest of `controls`; only these
+aggregate numbers, never an id, game, country or time, and any other field is rejected.
+
 ## Lab flags (`flags`, D-498)
 
 `flags/<id>` = `{ state: 'lab'|'all'|'off', at }`: a runtime gate for something still in the lab,

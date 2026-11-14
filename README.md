@@ -670,6 +670,7 @@ node tools/firebase/rankings-history.test.mjs
 node tools/firebase/rename-player.test.mjs
 node tools/firebase/room-sweep.test.mjs
 node tools/firebase/stats-retention.test.mjs
+node tools/firebase/traction.test.mjs
 node tools/firebase/uad-index.test.mjs
 node tools/firebase/uad-points-backfill.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
