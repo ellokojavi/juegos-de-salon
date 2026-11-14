@@ -1,0 +1,9 @@
+{
+  "_": "Lab game owners (D-553, docs/LANES.md): a contributor whose PR brought a game into the lab owns it while it is in the lab. A later PR of theirs that touches only their own games (see GAME_PATHS in lanes.mjs) takes the lane of its files instead of 🔴, so it merges without the owner's tick. Adding an owner here is itself 🔴: the owner approves it, normally in the PR that brings the game in.",
+  "owners": {
+    "flap": "Chanicua",
+    "memory": "Chanicua",
+    "sudoku": "Chanicua",
+    "microgames": "Chanicua"
+  }
+}

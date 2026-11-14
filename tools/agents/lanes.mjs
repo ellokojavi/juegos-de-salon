@@ -11,7 +11,8 @@
  * the stage of covers.mjs (D-304: lab only, a game leaving the lab, the site). The rules are in
  * lanes.json: the first glob that matches a file gives its lane, no match is yellow.
  *
- * A PR from a fork or by anyone but the owner is 🔴 whatever its files (#1249 step 4).
+ * A PR from a fork or by anyone but the owner is 🔴 whatever its files (#1249 step 4), except a
+ * lab game owner's PR that touches only their own games (lab-owners.json, D-553).
  *
  * In CI, a 🔴 PR gets the `needs-owner` label, a red `owner-approval` status on its head commit and
  * a one-tap decision at the top of its own description (D-531) whose Yes is `approve-pr` (approve.mjs) for that commit; 🟢/🟡 get a
@@ -42,17 +43,33 @@ export function laneOf(file, rules = RULES) {
 /** The authors whose PRs take the lane of their files: the owner (sessions act as the owner). */
 export const INSIDERS = ['ellokojavi'];
 
+/** Lab game owners (D-553): game folder → GitHub login of the contributor who brought it in. */
+export const LAB_OWNERS = JSON.parse(readFileSync(join(ROOT, 'tools/agents/lab-owners.json'), 'utf8')).owners;
+
+/** The files of a lab game its owner may change alone (D-553): the game, its doc, its e2e script. */
+export const GAME_PATHS = g => [`public/labs/${g}/**`, `docs/games/${g}.md`, `tools/e2e/${g}/**`, 'changelog/*.md'];
+
+/** The games `login` owns, and whether every file is inside them. */
+export function ownsAll(login, files, owners = LAB_OWNERS) {
+  const games = Object.keys(owners).filter(g => owners[g]?.toLowerCase() === login?.toLowerCase());
+  if (!games.length || !files.length) return false;
+  const res = games.flatMap(GAME_PATHS).map(globRe);
+  return files.every(f => res.some(re => re.test(f)));
+}
+
 /**
  * Why a PR comes from outside (#1249 step 4), or null: from a fork, or by an author who is not the
- * owner. An outside PR is always 🔴, whatever its files, so it never auto-merges.
+ * owner. An outside PR is always 🔴, whatever its files, so it never auto-merges, unless its author
+ * owns a lab game and every file is inside their games (D-553): then it takes the lane of its files.
  */
-export function outsideReason(pr) {
+export function outsideReason(pr, files = null, owners = LAB_OWNERS) {
   if (!pr) return null;
   const head = pr.head?.repo?.full_name, base = pr.base?.repo?.full_name;
   if (head !== base) return `from a fork (${head || 'a deleted repository'})`;
   const author = pr.user?.login;
-  if (!INSIDERS.includes(author)) return `by ${author || 'an unknown author'}, not the owner`;
-  return null;
+  if (INSIDERS.includes(author)) return null;
+  if (files && ownsAll(author, files, owners)) return null;
+  return `by ${author || 'an unknown author'}, not the owner${Object.values(owners).some(o => o?.toLowerCase() === author?.toLowerCase()) ? ', and it touches files outside their lab games (D-553)' : ''}`;
 }
 
 /** A PR's lane: the highest of its files, with the files that set it. No files is green; an outside PR is red. */
@@ -123,7 +140,8 @@ async function ci() {
   const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
   const repo = process.env.GITHUB_REPOSITORY, pr = event.pull_request;
   const n = pr.number, sha = pr.head.sha;
-  const result = laneOfPr(prFiles(n), { outside: outsideReason(pr) });
+  const files = prFiles(n);
+  const result = laneOfPr(files, { outside: outsideReason(pr, files) });
   console.log(report(result));
   const status = (state, description) => gh('api', '-X', 'POST', `repos/${repo}/statuses/${sha}`, '-f', `state=${state}`, '-f', `context=${STATUS}`, '-f', `description=${description}`);
   if (result.lane !== 'red') {
@@ -164,11 +182,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, ...args] = process.argv.slice(2);
   try {
     if (cmd === 'ci') await ci();
-    else if (cmd === 'check' && args[0] === '--pr') console.log(report(laneOfPr(prFiles(Number(args[1])), { outside: outsideReason(prOf(Number(args[1]))) })));
+    else if (cmd === 'check' && args[0] === '--pr') { const files = prFiles(Number(args[1])); console.log(report(laneOfPr(files, { outside: outsideReason(prOf(Number(args[1])), files) }))); }
     else if (cmd === 'check') {
       const base = args[0] || 'origin/main';
       const files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
       console.log(report(laneOfPr(files), await stageOf(base)));
+      // D-553: a session warns before stepping on a contributor's lab game
+      const theirs = [...new Set(files.map(f => Object.keys(LAB_OWNERS).find(g => GAME_PATHS(g).slice(0, 3).some(x => globRe(x).test(f)))).filter(Boolean))];
+      for (const g of theirs) console.log(`⚠️  ${g} is owned by @${LAB_OWNERS[g]} (lab-owners.json, D-553): coordinate with them before merging.`);
     } else { console.error('Usage: node tools/agents/lanes.mjs check [base] | check --pr <n> | ci'); process.exit(2); }
   } catch (e) { console.error(String(e.stderr || e.message || e)); process.exit(1); }
 }

@@ -44,6 +44,16 @@ the owner (`INSIDERS` in `lanes.mjs`; sessions act as the owner), never takes th
 so it never auto-merges. `lanes.test.mjs` simulates both. On a fork the `lane` job's token cannot
 write the status, so `owner-approval` stays missing and the PR cannot merge without the owner either way.
 
+**A lab game's owner merges alone inside their game** (D-553). The contributor whose PR brought a
+game into the lab owns it while it is there: `tools/agents/lab-owners.json` maps the game folder to
+their GitHub login. A later PR of theirs (from a branch of this repo, not a fork) whose every file is
+inside their games (`public/labs/<game>/**`, `docs/games/<game>.md`, `tools/e2e/<game>/**`,
+`changelog/*.md`) takes the lane of its files and merges on green `tests` and `end-to-end`; one file
+outside makes it 🔴 as before. The PR that brings a new game in adds its line to `lab-owners.json`,
+which is 🔴, so the owner's tick on that PR is the one approval. `lanes.mjs check` warns a session
+whose branch touches a contributor's game, so the owner's sessions coordinate instead of colliding.
+When the game leaves the lab its folder moves, so the ownership ends with it unless renewed.
+
 **What the owner reads before deciding.** The owner approves or rejects a 🔴 PR in one tap, so the
 session gives them the decision ready to take, in plain Spanish with no jargon, in the PR
 description (right under the approval block) and in its chat reply:
