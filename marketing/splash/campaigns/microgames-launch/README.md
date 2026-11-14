@@ -1,4 +1,4 @@
-# ⚡ No es rápido; ¡es al toque! (`al-toque-ya`)
+# ⚡ No es rápido; ¡es al toque! (`microgames-launch`)
 
 The launch of ⚡ ¡Al toque! (microgames) out of the lab, made ahead of time (the owner's request,
 2026-11-14: "prepare the campaign, don't launch anything yet"). **Off**: nothing here is switched on.
@@ -7,7 +7,7 @@ The launch of ⚡ ¡Al toque! (microgames) out of the lab, made ahead of time (t
 |---|---|
 | Texts | kicker "¡Nuevo juego!" · title "No es rápido; ¡es al toque! ⚡" (en "It’s not fast; it’s in a flash! ⚡", pt "Não é rápido; é na hora! ⚡"), the owner's line; the card says what it is (tap, drag, swipe; one order, 3 seconds; ten in a row, faster and faster; the perfect run) and ▶ Jugar; in es, en and pt |
 | Layout | `hero`: the clip as wide as the window, the card under it |
-| Clip | `public/assets/splash/al-toque-teaser.mp4` (512×320, 10 s loop at 30 fps, ~400 KB), drawn by [`teaser/al-toque.html`](../../teaser/al-toque.html) on the teaser engine and recorded with `node marketing/splash/teaser.mjs al-toque` |
+| Clip | `public/assets/splash/microgames-teaser.mp4` (512×320, 10 s loop at 30 fps, ~400 KB), drawn by [`teaser/microgames.html`](../../teaser/microgames.html) on the teaser engine and recorded with `node marketing/splash/teaser.mjs microgames` |
 | Item | ⚡ ¡Al toque!, its own texts and link (`labs/microgames/` today) since the game is not in `games.js` while in the lab |
 | Waits for | `requires: ['microgames']`: unseen until flags/microgames exists and is on for the visitor (D-517) |
 | On | **off**: not in `ACTIVE` |
@@ -35,7 +35,7 @@ Not a teaser (it is a launch, so it shows the play) but drawn on the same engine
 1. **Launch PR** (D-517's way): the game leaves the lab, `games.js` entry, flag `microgames`, and this
    campaign's `href` points at the game's new folder (`?play`).
 2. **Switch on** at a set hour with the `launch` workflow (D-529): flag `microgames` and splash
-   `al-toque-ya`, `--off` whatever launch campaign is running then; 7 days, first in the queue.
+   `microgames-launch`, `--off` whatever launch campaign is running then; 7 days, first in the queue.
 3. **Usability full pass** of this campaign in es/en/pt at 390 and 320 px (D-355).
 4. **Outside the site** (drafts only, nothing posted):
    - *Share line (es)*: «⚡ ¡Al toque! 10 microjuegos seguidos, 3 segundos cada uno, cada vez más rápido. ¿Haces la corrida perfecta? juegosdesalon.cl»
@@ -46,7 +46,7 @@ Not a teaser (it is a launch, so it shows the play) but drawn on the same engine
 5. **Measure**: the panel's 📊 How they did (reach, % tapped, % closed); what proves the game is
    players who start a second run (docs/games/microgames.md).
 
-Screenshots, as `node tools/e2e/look.mjs splash al-toque-ya --lang <xx>` shows it:
+Screenshots, as `node tools/e2e/look.mjs splash microgames-launch --lang <xx>` shows it:
 [es](es-390.jpg) · [en](en-390.jpg) · [pt](pt-390.jpg) · [es at 1280](es-1280.jpg).
 
 ## History

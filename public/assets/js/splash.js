@@ -200,18 +200,18 @@ export const CAMPAIGNS = {
     }],
   },
   // ⚡ ¡Al toque! leaves the lab (the owner's request, 2026-11-14: made now, not launched): a whole run
-  // in 10 s, drawn by marketing/splash/teaser/al-toque.html with the game's own speed ramp and scoring
+  // in 10 s, drawn by marketing/splash/teaser/microgames.html with the game's own speed ramp and scoring
   // (engine.js), each microgame cut by a lightning strike in its gesture's color, a loop with no seam.
   // `requires` keeps it unseen until flags/microgames exists and is on; the launch PR points `href`
   // at the game's folder out of the lab
-  'al-toque-ya': {
+  'microgames-launch': {
     emoji: '⚡',
     requires: ['microgames'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
     title: { es: 'No es rápido; ¡es al toque! ⚡', en: 'It’s not fast; it’s in a flash! ⚡', pt: 'Não é rápido; é na hora! ⚡' },
     hero: true,
     items: [{
-      emoji: '⚡', href: 'labs/microgames/', video: 'assets/splash/al-toque-teaser.mp4', img: 'assets/splash/al-toque-teaser-start.png', still: 'assets/splash/al-toque-teaser.png', ratio: '8 / 5', smooth: true,
+      emoji: '⚡', href: 'labs/microgames/', video: 'assets/splash/microgames-teaser.mp4', img: 'assets/splash/microgames-teaser-start.png', still: 'assets/splash/microgames-teaser.png', ratio: '8 / 5', smooth: true,
       title: { es: '¡Al toque!', en: 'In a Flash!', pt: 'Na Hora!' },
       text: {
         es: 'Toca, arrastra, desliza: una orden y 3 segundos para cumplirla. Diez seguidos, cada vez más rápido. ¿Haces la corrida perfecta?',
