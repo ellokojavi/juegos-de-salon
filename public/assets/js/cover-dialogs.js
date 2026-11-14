@@ -40,17 +40,31 @@ function ventana({ id, titulo, cuerpo, T }) {
     el('div', { class: 'hoja-cabeza' }, h2, cerrarBtn), cuerpo);
   const capa = el('div', { class: 'hoja-capa portada-ventana', 'data-v': id, hidden: true }, el('div', { class: 'hoja-fondo' }), panel);
   document.body.append(capa);
-  let antes = null;
+  let antes = null, fijo = null;
   const onKey = e => { if (e.key === 'Escape') cerrar(); };
+  // The page behind does not scroll while the dialog is open: <body> is pinned where it was, as the
+  // support sheet does (support.js), and put back on closing
+  const fijar = () => {
+    const y = scrollY;
+    fijo = { y, style: document.body.getAttribute('style') };
+    Object.assign(document.body.style, { position: 'fixed', top: `-${y}px`, left: '0', right: '0', overflow: 'hidden' });
+  };
+  const soltar = () => {
+    if (!fijo) return;
+    if (fijo.style === null) document.body.removeAttribute('style'); else document.body.setAttribute('style', fijo.style);
+    scrollTo(0, fijo.y); fijo = null;
+  };
   const cerrar = () => {
     if (capa.hidden) return;
-    capa.hidden = true; document.removeEventListener('keydown', onKey); antes?.focus?.();
+    capa.hidden = true; soltar(); document.removeEventListener('keydown', onKey); antes?.focus?.();
   };
-  capa.querySelector('.hoja-fondo').addEventListener('click', cerrar);
+  // Any tap outside the dialog's panel closes it, the ✕ too
+  capa.addEventListener('click', e => { if (!panel.contains(e.target)) cerrar(); });
   cerrarBtn.addEventListener('click', cerrar);
   const abrir = texto => {
     h2.textContent = texto;
     antes = document.activeElement;
+    fijar();
     capa.hidden = false; document.addEventListener('keydown', onKey);
     cerrarBtn.focus();
   };
@@ -77,10 +91,8 @@ export async function coverWithDialogs(raiz, { lang = getLang(), alTocar = () =>
 
   if (como) {
     const pasos = el('div', { class: 'stack portada-pasos' }, ...[...como.childNodes].filter(n => n.nodeName !== 'SUMMARY'));
-    const empezar = raiz.querySelector('#btn-empezar');
-    const v = ventana({ id: 'portada-instrucciones', titulo: T.instrucciones, T, cuerpo: el('div', { class: 'stack' }, pasos,
-      // A cover with one start button repeats it under the steps: read, then play
-      empezar ? el('button', { type: 'button', class: 'btn btn--yellow', id: 'portada-empezar', onClick: () => { v.cerrar(); empezar.click(); } }, ...[...empezar.childNodes].map(n => n.cloneNode(true))) : null) });
+    // Only the steps: the start button stays on the cover (the owner, 2026-11-14)
+    const v = ventana({ id: 'portada-instrucciones', titulo: T.instrucciones, T, cuerpo: pasos });
     fila.append(el('button', { type: 'button', class: 'opcion', id: 'btn-instrucciones', 'aria-haspopup': 'dialog', onClick: () => { alTocar(); v.abrir(T.instrucciones); } }, el('b', {}, T.instrucciones)));
     como.remove();
   }
