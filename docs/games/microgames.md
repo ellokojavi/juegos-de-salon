@@ -121,6 +121,10 @@ falling does nothing, and it shows dimmer until it is ready, so mashing does not
   see-through, where they will drop (the upper half, clear of the bumpers), each with a ring that fills up and a
   last quick blink; they fall from there about 1.1 and 2.1 s in, not from the roof, so you see them coming and
   they do not all arrive together.
+- **Its intro is the table** (the owner, 2026-11-14): instead of the plain card, the intro draws the table (the neon
+  outline, two bumpers, a ball and both flippers) with each half tinted and marked «TOCA», and a thumb pressing each side
+  in turn while its flipper swings up; it stays 1.6 s longer than other intros (`command`'s `ms`), so the player knows
+  where to put their fingers before the clock starts.
 - **One finger on each side** (the owner, 2026-11-14): until a side is first tapped, a 👆 pulses under its flipper with
   «TOCA», and the side being pressed glows; the intro says «un dedo a cada lado: cada uno mueve su paleta».
 - **Smooth motion** (the owner saw it choppy, 2026-11-14): the physics runs in steps of about 3 ms however long a frame
