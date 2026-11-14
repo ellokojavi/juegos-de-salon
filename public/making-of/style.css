@@ -49,6 +49,9 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-clip video { width: 100%; height: auto; display: block; border-radius: var(--r-16); border: 2px solid var(--glass-border); background: var(--well); box-shadow: var(--shadow-panel); }
 .mo-play-wide .mo-clip video { max-height: 24vh; width: auto; max-width: 100%; }
 .mo-clip--tall video { max-height: 56vh; width: auto; max-width: 100%; align-self: center; }
+/* The phone clips: the figure as wide as its video, the caption wrapping inside that width (it adds no width of its own) */
+.mo-clip--tall { width: fit-content; max-width: 100%; justify-self: center; }
+.mo-clip--tall figcaption { width: 0; min-width: 100%; }
 .mo-clip figcaption { display: flex; flex-direction: column; gap: var(--s-2); }
 .mo-clip figcaption b { color: var(--yellow); font-size: var(--fs-110); }
 .mo-clip figcaption span { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
