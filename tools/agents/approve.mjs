@@ -127,6 +127,9 @@ export function invalidAction(action) {
     case 'queue': return typeof a.task === 'string' && a.task.trim() ? null : 'queue without a task';
     // The owner's tick on a 🔴 PR (docs/LANES.md): green owner-approval status on that exact commit
     case 'approve-pr': return n(a.pr) && /^[0-9a-f]{40}$/.test(a.sha || '') ? null : 'approve-pr without a PR number and a full commit sha';
+    // A stranded branch (pending.mjs) deleted on the tick, not queued for a round that may lack the
+    // permission (#1435, D-555). Never main, gh-pages or a reserve branch
+    case 'delete-branch': return typeof a.branch === 'string' && /^[\w.\-\/]+$/.test(a.branch) && !/^(main|gh-pages|failure-log)$|^(reserve|reserva)\//.test(a.branch) ? null : 'delete-branch without a deletable branch name';
     case 'nothing': return null;
     default: return `unknown action: ${a.type}`;
   }
@@ -271,6 +274,13 @@ function perform(action, repo) {
       if (pr.headRefOid !== a.sha) throw new Error(`#${a.pr} changed since the question (${a.sha.slice(0, 7)} → ${pr.headRefOid.slice(0, 7)}): its lane job asks again`);
       gh('api', '-X', 'POST', `repos/${repo}/statuses/${a.sha}`, '-f', 'state=success', '-f', `context=${APPROVAL}`, '-f', 'description=Approved by the owner');
       return `#${a.pr} approved by the owner`;
+    }
+    case 'delete-branch': {
+      const open = JSON.parse(gh('pr', 'list', ...R, '--head', a.branch, '--state', 'open', '--json', 'number'));
+      if (open.length) throw new Error(`${a.branch} has an open PR (#${open[0].number}): not deleted`);
+      try { gh('api', '-X', 'DELETE', `repos/${repo}/git/refs/heads/${a.branch}`); }
+      catch (e) { if (/Reference does not exist|404/.test(String(e.stderr || e.message))) return `${a.branch} was already gone`; throw e; }
+      return `branch ${a.branch} deleted`;
     }
     case 'queue':
       return `queued for the next round: ${a.task}`;

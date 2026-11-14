@@ -2,7 +2,8 @@
 # tools/agents/pending.mjs lists the open PRs that are stuck (red or in conflict for hours, a day
 # without auto-merge, two days open) and the branches whose commits never reached main and have no
 # open PR. If there is any, it keeps one "Pending work" issue current (GitHub emails the owner when it
-# opens); when nothing is left, it closes it. It needs nothing from the Mac mini or from any session.
+# opens); when nothing is left, it closes it. First the decisions sweep (D-555, tools/agents/sweep.mjs)
+# closes the decision issues already answered and done, and settles questions asked again in a newer one. It needs nothing from the Mac mini or from any session.
 
 name: Pending work watch
 
@@ -30,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Stuck PRs and stranded branches
+      - name: Decisions sweep, stuck PRs and stranded branches
         env:
           GH_TOKEN: ${{ github.token }}
         run: node tools/agents/pending.mjs notify

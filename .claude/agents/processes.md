@@ -263,7 +263,7 @@ that (after a new game, after a big text change), saying why.
    another way, or replaced by a later decision** → delete it (`git push origin --delete <branch>`)
    and name it in your report; **still wanted** → open its PR from a fresh branch on `origin/main`
    with the usual reviews and auto-merge; **only the owner can say** → a one-tap decision whose Yes
-   queues "open a PR from <branch>". The issue is not part of the owner's backlog, and it closes itself
+   queues "open a PR from <branch>" and whose No is `delete-branch`. The issue is not part of the owner's backlog, and it closes itself
    once nothing is left.
    **The owner's backlog** (D-339, owner's request): `check` lists the open issues with no label
    **opened by the owner**, the to-dos they write, oldest first. The repo is public: an issue anyone
@@ -322,7 +322,8 @@ that (after a new game, after a big text change), saying why.
    - `yes` and `no`: the actions for each answer (`{ "type": "merge", "pr": 300 }`), from the
      closed list in `tools/agents/approve.mjs`: `merge` (pr), `close-pr` (pr, reason),
      `close-issue` (issue, reason), `comment` (on, text), `run` (workflow: `e2e.yml` or
-     `publish.yml`), `queue` (task: for your next round) and `nothing`. Without `no`, the No is only
+     `publish.yml`), `delete-branch` (branch: deleted on the tick, never queued, D-555), `queue` (task: for
+     your next round) and `nothing`. Without `no`, the No is only
      recorded. Issues opened before D-316 carry Spanish actions (`fusionar`…); approve.mjs still reads them.
    **What follows the answer is yours** (D-276, the owner's request): in every round, and as soon
    as you know the owner answered, look at the open decision issues. If a Yes or a No ended with
@@ -331,6 +332,12 @@ that (after a new game, after a big text change), saying why.
    permission to do what the checkbox said, and nothing more. You report it in a comment on the
    issue, and if it was a failure of `approve.mjs`, you fix it with its test. When all the
    decisions in an issue are fulfilled, you close it. Never ask the owner to uncheck and recheck.
+   **The sweep closes what you forget** (D-555): `sweep.mjs`, daily in `pending-watch.yml`, closes an
+   issue whose decisions are all made and whose queued tasks are done (`record --queue`, or a merged
+   PR you link in a comment: "built in #n"), and settles a question a newer issue asks again. So
+   record every queued task the moment it is done, and link its PR on the issue. `decide` refuses a
+   question already open in another issue: answer it there, never ask twice. A queued task undone
+   for two days shows up in "Pending work": it is this round's first job.
    **Leave the work done before asking**: if the answer is a change, open it as a PR and make the
    Yes `merge`. `queue` is for what shouldn't be done before knowing the answer.
    An owner who answers from their phone: few decisions (up to five) that can be understood
