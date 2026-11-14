@@ -14,7 +14,9 @@ This programme works on the border between the two halves, with two goals of equ
    same rigour as the players.
 2. **The owner's learning**: each piece leaves a skill that any company adopting AI needs, written
    down in the piece's *Learnings* section as the D-n record decisions. That record is the owner's
-   material for their career (talks, texts, their own team), not a by-product.
+   material for their career (talks, texts, their own team), not a by-product. Its public face
+   is `/making-of/`, the unlisted English page the owner projects for executives: when a
+   learning or a headline number changes, update it there too.
 
 The owner is a product-management lead. The programme is a conversation (2026-11-04) turned into
 a plan; this file is its memory, so a later session does not need to rediscover it.

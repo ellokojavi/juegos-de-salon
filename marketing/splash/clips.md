@@ -20,6 +20,10 @@ A new game: one entry in `GAMES` in `capture.mjs` (its page, its board's selecto
 ready, and how to play its solution through the game's test hook), then its item in the campaign
 (`video` and `img` in `public/assets/js/splash.js`).
 
+The making-of page (`/making-of/`) has its own clips (Where Is It?, Liar's Dice, Shinobi, Babel: 2x,
+in English, for projecting), recorded by [`tools/generators/making-of-clips.mjs`](../../tools/generators/making-of-clips.mjs)
+into `public/making-of/clips/`; its header says how to run it.
+
 ## Teasers
 
 A game that is still coming gets a drawn scene instead of its play (D-430): a page in

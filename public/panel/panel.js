@@ -1857,7 +1857,16 @@ function vistaSplash(today) {
       el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
       el('input', { type: 'datetime-local', value: toLocalInput(s[campo], campo === 'until'), 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
         min: campo === 'until' ? (toLocalInput(s.from) || null) : null, max: campo === 'from' ? (toLocalInput(s.until, true) || null) : null,
-        onChange: e => {
+        // Saved when the field is left (or on Enter), not on every change: Safari fires one per part typed,
+        // and the redraw after a save dropped the focus after the first one
+        onClick: e => { try { e.target.showPicker(); } catch { /* no picker here: the field is edited in place */ } },
+        // Enter saves; Escape puts the saved day back first, so leaving the field saves nothing
+        onKeydown: e => {
+          if (e.key === 'Escape') e.target.value = toLocalInput(s[campo], campo === 'until');
+          if (e.key === 'Enter' || e.key === 'Escape') e.target.blur();
+        },
+        onBlur: e => {
+          if (e.target.value === toLocalInput(s[campo], campo === 'until')) return;
           const r = checkPick(s, campo, e.target.value);
           if (r.error) { S.splashMsg = `Not saved: ${r.error}`; e.target.value = toLocalInput(s[campo], campo === 'until'); render(); return; }
           cambiar(s.id, { [campo]: r.value });
@@ -1923,7 +1932,8 @@ function vistazo(id, nombre, playing) {
   const play = () => { S.campPeek.add(id); render(); };
   // The preview checks itself (splashHealth, the owner's request): ✓ when the window looks right, ⚠️ with
   // what is wrong otherwise, so a campaign is not switched on looking broken
-  const salud = el('p', { class: 'vistazo-salud muted small', role: 'status' }, 'Checking the preview…');
+  // Silent while it checks and when all is right (the owner's request): it speaks only to warn
+  const salud = el('p', { class: 'vistazo-salud muted small', role: 'status', hidden: true });
   const frame = el('iframe', { src: `../?splash=${encodeURIComponent(id)}${playing ? '' : '&paused'}`, title: `${nombre}: splash preview`, tabindex: '-1', loading: 'lazy' });
   frame.addEventListener('load', () => revisarVistazo(frame, salud));
   return el('div', { class: 'vistazo' },
@@ -1948,7 +1958,8 @@ function revisarVistazo(frame, salud) {
       try { now = frame.contentDocument; } catch { /* another origin */ }
       if (!now?.defaultView) return;
       const issues = splashHealth(now);
-      salud.textContent = issues.length ? `⚠️ ${issues.join(' · ')}` : '✓ Looks right on a phone';
+      salud.textContent = issues.length ? `⚠️ ${issues.join(' · ')}` : '';
+      salud.hidden = !issues.length;
       salud.classList.toggle('vistazo-salud--mal', issues.length > 0);
     }, 900);
   };
@@ -2259,19 +2270,21 @@ function render() {
  */
 function pintarVista(nodos) {
   const vista = $('#vista');
-  const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(':scope > .vistazo-marco')).map(a => [a.id, a]));
+  // The preview is the card's `.vistazo` (the frame and its health line); its play state is on the frame
+  const VISTA = ':scope > .vistazo', juega = a => a.querySelector(`${VISTA} > .vistazo-marco`)?.dataset.play;
+  const viejos = new Map([...vista.querySelectorAll(':scope > article.campana')].filter(a => a.querySelector(VISTA)).map(a => [a.id, a]));
   // A card is kept only if its preview did not change from still to playing
-  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(':scope > .vistazo-marco')?.dataset.play === viejos.get(n.id).querySelector(':scope > .vistazo-marco').dataset.play);
+  const quedan = nodos.filter(n => n.id && viejos.has(n.id) && n.querySelector?.(VISTA) && juega(n) === juega(viejos.get(n.id)));
   const enOrden = quedan.map(n => n.id).join() === [...viejos.keys()].filter(id => quedan.some(n => n.id === id)).join();
   if (!quedan.length || !enOrden) { vista.replaceChildren(...nodos); return; }
   const fijos = new Set();
   const lista = nodos.map(n => {
     const viejo = quedan.includes(n) ? viejos.get(n.id) : null;
     if (!viejo) return n;
-    const marco = viejo.querySelector(':scope > .vistazo-marco');
+    const marco = viejo.querySelector(VISTA);
     [...viejo.childNodes].forEach(c => { if (c !== marco) c.remove(); });
     const hijos = [...n.childNodes];
-    const k = hijos.findIndex(c => c.classList?.contains('vistazo-marco'));
+    const k = hijos.findIndex(c => c.classList?.contains('vistazo'));
     marco.before(...hijos.slice(0, k));
     marco.after(...hijos.slice(k + 1));
     viejo.className = n.className;

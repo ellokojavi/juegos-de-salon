@@ -1,7 +1,7 @@
 // The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS, resolveCommit, rulesSection } from './processes.mjs';
+import { requireOrigins, waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS, resolveCommit, rulesSection } from './processes.mjs';
 import { recordDone } from './approve.mjs';
 
 const now = Date.parse('2026-10-11T12:00:00Z');
@@ -125,3 +125,8 @@ assert.throws(() => resolveCommit('aaaa', a => { if (a[0] === 'merge-base') thro
   const quiet = rulesSection({ ...rep, repeated: [], debt: [{ ...rep.debt[0], count: 202, delta: 0 }] }).join('\n');
   assert.doesNotMatch(quiet, /→/, 'nothing moved, nothing to do');
 }
+
+// Every decision says where it came from (#1435)
+assert.throws(() => requireOrigins([{ question: 'Open a PR?', yes: [{ type: 'nothing' }] }]), /origin/);
+requireOrigins([{ question: 'Open a PR?', origin: 'Owner request in issue #1371, Nov 10', yes: [{ type: 'nothing' }] }]);
+assert.match(decisionsBody({ decisions: [{ question: 'x', origin: 'Player report #1400', yes: [{ type: 'nothing' }] }] }), /\*\*Where it came from:\*\* Player report #1400/);
