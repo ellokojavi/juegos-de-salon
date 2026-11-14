@@ -50,7 +50,7 @@
 .splash-kicker { margin: 0; font-weight: 900; font-size: var(--fs-75); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
 .splash-titulo {
   margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.04em;
-  font-size: clamp(2rem, 7vw, 3rem); line-height: 1.05; color: var(--yellow);
+  font-size: clamp(2rem, 7vw, 3rem); line-height: 1.05; white-space: pre-line; /* a "\n" in a title breaks the line where the owner wants it */ color: var(--yellow);
   text-shadow: 3px 3px 0 var(--pink-deep);
 }
 .splash-lead { margin: 4px 0 0; max-width: 52ch; line-height: 1.45; color: var(--muted); }

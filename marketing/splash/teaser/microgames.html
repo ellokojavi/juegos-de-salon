@@ -1,0 +1,347 @@
+<!doctype html>
+<!--
+  The launch clip of ⚡ ¡Al toque! (microgames) for the splash campaign `microgames-launch` (D-351), on the
+  teaser engine (_teaser.js) in its loop mode. Not a teaser (it is for the launch, so it shows the play):
+  a whole run of 10 microgames in 10 seconds, each cut by a lightning strike in its gesture's color
+  (Toca turquoise, Arrastra orange, Desliza purple), each shorter than the last by the game's own speed
+  ramp (engine.js speedAt: ×1.0, ×1.1, ×1.2, ×1.3), the HUD's marks filling as in the game and the
+  streak flame lit by the engine's own score(). The run ends in a strike that whites out the frame, and
+  the first frame comes out of that white: the loop has no seam. No words: the splash carries them;
+  the emoji are drawn as pictures (an SVG image), never with fillText.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Clip · ¡Al toque!</title>
+<style>
+  body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
+  .marco { position: relative; width: 512px; height: 320px; }
+  .marco canvas { position: absolute; inset: 0; width: 512px; height: 320px; }
+</style>
+</head>
+<body>
+<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
+<script type="module">
+import { teaser, ease, noise, W, H } from './_teaser.js';
+// The game's own rules: the speed of each game in a run and how a run scores (its streaks)
+import { speedAt, score } from '../../../public/labs/microgames/engine.js';
+
+// The gesture colors of the game (game.js KINDS)
+const KIND = { toca: '#2ee6d6', arrastra: '#ff9a1f', desliza: '#c45cff' };
+// The run: ten of the 28 microgames, each with the stars it earns (a near-perfect run, one slip)
+const RUN = [
+  ['toca', 'toca', 3], ['corta', 'desliza', 3], ['atrapa', 'arrastra', 2], ['espera', 'toca', 3], ['aplasta', 'toca', 3],
+  ['dibuja', 'desliza', 1], ['para', 'toca', 3], ['ordena', 'arrastra', 3], ['revienta', 'toca', 3], ['rebota', 'arrastra', 3],
+];
+const RESULT = score(RUN.map(r => r[2])).games;
+const BASE = 1.0, FINALE = 1.0;
+// Each game lasts less as the run speeds up (the game's own ramp)
+const SLOTS = []; { let at = 0; RUN.forEach((r, i) => { const d = BASE / speedAt(i); SLOTS.push({ from: at, d, id: r[0], kind: r[1], stars: r[2], streak: RESULT[i].streak }); at += d; }); }
+const PLAY = SLOTS.at(-1).from + SLOTS.at(-1).d;
+const SECONDS = Math.round((PLAY + FINALE) * 10) / 10;
+
+// The emoji as pictures (an SVG image with the color emoji font): no words are drawn
+const EMOJI = '🎈💥🥪🧺🪙💣🪰👆✊💨🐘🐕🐈🐭👾🔥⚡';
+const pics = {};
+await Promise.all([...new Intl.Segmenter().segment(EMOJI)].map(({ segment: e }) => new Promise(ok => {
+  const img = new Image();
+  img.onload = img.onerror = ok;
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><text x="64" y="108" font-size="104" text-anchor="middle" font-family="Noto Color Emoji, Apple Color Emoji, Segoe UI Emoji">${e}</text></svg>`);
+  pics[e] = img;
+})));
+
+const SX = 136, SY = 46, SW = 240, SH = 258, CX = SX + SW / 2, CY = SY + SH / 2;
+const lerp = (a, b, k) => a + (b - a) * k;
+const clamp = k => Math.min(1, Math.max(0, k));
+const seg = (k, a, b) => clamp((k - a) / (b - a));
+
+teaser({
+  seconds: SECONDS, fps: 30, loop: true,
+  setup(canvas) { canvas.width = W; canvas.height = H; return { c: canvas.getContext('2d') }; },
+  background(ctx, t) {
+    const i = slotAt(t), sp = speedAt(Math.min(i, 9)), col = KIND[SLOTS[Math.min(i, 9)].kind];
+    ctx.fillStyle = '#1f0c3c'; ctx.fillRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(CX, CY, 20, CX, CY, 320);
+    g.addColorStop(0, col + '55'); g.addColorStop(1, '#1f0c3c00');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // Speed lines out of the stage: more and longer as the run speeds up; whole turns over the loop
+    const n = Math.round(18 + (sp - 1) * 80);
+    ctx.lineCap = 'round';
+    for (let k = 0; k < 42; k++) {
+      if (k >= n) break;
+      const ang = noise(k, 1) * Math.PI * 2, ph = (noise(k, 2) + t / SECONDS * 6) % 1;
+      const r0 = 140 + ph * 260, len = 18 + (sp - 1) * 120 * (0.5 + noise(k, 3));
+      ctx.strokeStyle = `rgba(255,255,255,${(0.1 + 0.25 * (sp - 1) / 0.3) * Math.sin(ph * Math.PI)})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(CX + Math.cos(ang) * r0, CY + Math.sin(ang) * r0 * 0.7);
+      ctx.lineTo(CX + Math.cos(ang) * (r0 + len), CY + Math.sin(ang) * (r0 + len) * 0.7); ctx.stroke();
+    }
+  },
+  draw({ c }, t) {
+    c.clearRect(0, 0, W, H);
+    const i = slotAt(t);
+    if (i < SLOTS.length) {
+      const s = SLOTS[i], k = (t - s.from) / s.d;
+      stage(c, s, k, i);
+      hud(c, t, i, k);
+      gauge(c, i);
+      // The strike that opens each game, in its color
+      if (k < 0.2) strike(c, KIND[s.kind], 1 - k / 0.2, i);
+    } else {
+      // The finale: every mark lit, the stage spins up into the white strike that starts the loop again
+      const f = (t - PLAY) / FINALE;
+      stage(c, SLOTS[9], 1, 9, f);
+      hud(c, t, 10, 0, f);
+      gauge(c, 9, f);
+      bigBolt(c, f);
+    }
+    // The white the loop starts from, fading in the first instant (and reached at the end)
+    const wOut = 1 - t / 0.3, wIn = (t - (SECONDS - 0.12)) / 0.12;
+    const w = Math.max(0, wOut, wIn);
+    if (w > 0) { c.fillStyle = `rgba(255,255,240,${Math.min(1, w)})`; c.fillRect(0, 0, W, H); }
+  },
+});
+
+function slotAt(t) { let i = 0; while (i < SLOTS.length && t >= SLOTS[i].from + SLOTS[i].d) i++; return i; }
+
+function emo(c, e, x, y, size, rot = 0, alpha = 1) {
+  const img = pics[e]; if (!img?.width) return;
+  c.save(); c.globalAlpha *= alpha; c.translate(x, y); c.rotate(rot); c.drawImage(img, -size / 2, -size / 2, size, size); c.restore();
+}
+function rrect(c, x, y, w, h, r) { c.beginPath(); c.roundRect(x, y, w, h, r); }
+function star(c, x, y, r, fill) {
+  c.beginPath();
+  for (let p = 0; p < 10; p++) { const a = -Math.PI / 2 + p * Math.PI / 5, rr = p % 2 ? r * 0.45 : r; c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  c.closePath(); c.fillStyle = fill; c.fill();
+}
+function ripple(c, x, y, k, col) {
+  if (k <= 0 || k >= 1) return;
+  c.strokeStyle = col; c.globalAlpha = 1 - k; c.lineWidth = 4;
+  c.beginPath(); c.arc(x, y, 8 + 34 * k, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+}
+
+// The stage: the game's framed card in its gesture's color, the microgame playing inside, then its stars
+function stage(c, s, k, i, finale = 0) {
+  const col = KIND[s.kind];
+  c.save();
+  // A punch in as each game starts
+  const z = 1 + 0.08 * Math.max(0, 1 - k / 0.15) + finale * 0.05 * Math.sin(finale * 30);
+  c.translate(CX, CY); c.scale(z, z); c.translate(-CX, -CY);
+  c.shadowColor = col; c.shadowBlur = 24;
+  rrect(c, SX, SY, SW, SH, 26); c.fillStyle = '#2a1252'; c.fill();
+  c.shadowBlur = 0; c.lineWidth = 5; c.strokeStyle = col; c.stroke();
+  c.save(); rrect(c, SX + 4, SY + 4, SW - 8, SH - 8, 22); c.clip();
+  const a = clamp(k / 0.72);
+  GAMES[s.id](c, a, col);
+  // Its stars, one by one, golden
+  const sk = seg(k, 0.72, 1);
+  if (sk > 0 || finale) {
+    c.fillStyle = `rgba(20,8,31,${0.55 * Math.min(1, sk * 4 || 1)})`; c.fillRect(SX, SY, SW, SH);
+    for (let n = 0; n < 3; n++) {
+      const p = finale ? 1 : ease(seg(sk, n * 0.18, n * 0.18 + 0.3));
+      const got = n < s.stars;
+      star(c, CX + (n - 1) * 62, CY - (n === 1 ? 10 : 0), 26 * (got ? 0.6 + 0.4 * p + 0.15 * Math.sin(p * Math.PI) : 0.8), got ? (p ? '#ffd23f' : '#ffffff22') : '#ffffff22');
+    }
+    if (s.streak) emo(c, '🔥', CX, CY + 66, 44 * ease(seg(sk, 0.4, 0.7)));
+  }
+  c.restore(); c.restore();
+}
+
+// The HUD: a mark per game, red with no star, pale ★, green ★★, bright ★★★ with a glow; a flame ring on a streak
+function hud(c, t, i, k, finale = 0) {
+  const w = 30, gap = 8, x0 = CX - (10 * w + 9 * gap) / 2, y = 16;
+  for (let n = 0; n < 10; n++) {
+    const s = SLOTS[n], done = n < i || (n === i && k >= 0.78);
+    let fill = '#ffffff22', glow = 0;
+    if (done) fill = s.stars === 0 ? '#ff4d5e' : s.stars === 1 ? '#a7e8b9' : s.stars === 2 ? '#3ddc84' : '#5dff9e', glow = s.stars === 3 ? 14 : 0;
+    if (n === i && !done) fill = KIND[s.kind];
+    const pulse = finale ? 1 + 0.25 * Math.max(0, Math.sin(finale * Math.PI * 4 - n * 0.6)) : 1;
+    c.save(); c.translate(x0 + n * (w + gap) + w / 2, y + 6); c.scale(pulse, pulse);
+    c.shadowColor = fill; c.shadowBlur = glow + (finale ? 12 : 0);
+    rrect(c, -w / 2, -6, w, 12, 6); c.fillStyle = fill; c.fill();
+    if (done && s.streak) { c.shadowBlur = 0; c.strokeStyle = '#ff9a1f'; c.lineWidth = 2; c.stroke(); }
+    c.restore();
+  }
+}
+
+// The speed, left and right of the stage: a chevron lights for each step of the ramp (×1.0 → ×1.3)
+function gauge(c, i, finale = 0) {
+  const lit = Math.round((speedAt(i) - 1) * 10) + 1;
+  for (const side of [-1, 1]) for (let n = 0; n < 4; n++) {
+    const x = CX + side * (SW / 2 + 34 + n * 16), y = CY;
+    const on = n < lit;
+    c.strokeStyle = on ? (finale ? '#fff' : '#ffd23f') : '#ffffff1f'; c.lineWidth = 6; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.shadowColor = '#ffd23f'; c.shadowBlur = on ? 10 : 0;
+    c.beginPath(); c.moveTo(x - side * 6, y - 16); c.lineTo(x + side * 6, y); c.lineTo(x - side * 6, y + 16); c.stroke();
+    c.shadowBlur = 0;
+  }
+  emo(c, '⚡', CX - SW / 2 - 92, CY + 62, 34 + lit * 3);
+  emo(c, '⚡', CX + SW / 2 + 92, CY + 62, 34 + lit * 3);
+}
+
+// A lightning bolt across the stage, then gone: the cut between games
+function bolt(c, x0, y0, x1, y1, seed, width, col) {
+  const pts = [[x0, y0]];
+  for (let p = 1; p < 9; p++) { const q = p / 9; pts.push([lerp(x0, x1, q) + (noise(seed, p) - 0.5) * 46, lerp(y0, y1, q) + (noise(p, seed) - 0.5) * 12]); }
+  pts.push([x1, y1]);
+  c.lineJoin = 'miter'; c.lineCap = 'round';
+  for (const [lw, st] of [[width * 3, col], [width, '#ffffff']]) {
+    c.strokeStyle = st; c.lineWidth = lw; c.shadowColor = col; c.shadowBlur = 20;
+    c.beginPath(); pts.forEach(([x, y], n) => (n ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
+  }
+  c.shadowBlur = 0;
+}
+function strike(c, col, p, i) {
+  c.save(); c.globalAlpha = p;
+  const x = CX + (noise(i, 9) - 0.5) * 120;
+  bolt(c, x - 20, -10, x + 20, H + 10, i + 3, 3, col);
+  c.fillStyle = col; c.globalAlpha = p * 0.35; c.fillRect(0, 0, W, H);
+  c.restore();
+}
+function bigBolt(c, f) {
+  const p = seg(f, 0.45, 0.9);
+  if (p <= 0) return;
+  c.save();
+  const head = lerp(-10, H + 10, ease(p));
+  c.beginPath(); c.rect(0, -20, W, head + 20); c.clip();
+  bolt(c, CX - 30, -10, CX + 30, H + 10, 77, 6, '#ffd23f');
+  c.restore();
+}
+
+// ---- The ten microgames, each drawn at `a` (0 → 1, its play) ----
+const GAMES = {
+  // ¡TOCA RÁPIDO!: the balloon fills tap by tap and bursts (★★★)
+  toca(c, a, col) {
+    const taps = 7, tp = a * taps, tap = Math.floor(tp), frac = tp - tap;
+    const popped = a > 0.86;
+    if (!popped) emo(c, '🎈', CX, CY - 24, 54 + 90 * ease(a / 0.86) + 6 * Math.sin(frac * Math.PI));
+    else {
+      const q = seg(a, 0.86, 1);
+      emo(c, '💥', CX, CY - 24, 120 + 40 * q, 0, 1 - q * 0.6);
+      for (let n = 0; n < 12; n++) { const an = n / 12 * Math.PI * 2; c.fillStyle = n % 2 ? '#ff4d5e' : '#ffd23f'; c.fillRect(CX + Math.cos(an) * 90 * q - 3, CY - 24 + Math.sin(an) * 90 * q - 3, 6, 6); }
+    }
+    rrect(c, CX - 44, SY + SH - 62, 88, 34, 17); c.fillStyle = col; c.fill();
+    if (!popped) { emo(c, '👆', CX + 10, SY + SH - 22 + 10 * Math.abs(Math.sin(frac * Math.PI)), 44); ripple(c, CX, SY + SH - 45, frac, '#fff'); }
+  },
+  // ¡CORTA!: one swipe down the dotted line, the sandwich falls in two
+  corta(c, a, col) {
+    const cut = seg(a, 0.15, 0.6), apart = ease(seg(a, 0.6, 1)) * 26;
+    const ax = CX - 70, ay = CY - 70, bx = CX + 70, by = CY + 70;
+    for (const side of [-1, 1]) {
+      c.save(); c.beginPath();
+      if (side < 0) { c.moveTo(ax - 200, ay - 200 + 400); c.lineTo(ax - 200, ay - 200); c.lineTo(bx + 200, by + 200 - 400); }
+      else { c.moveTo(ax - 200, ay - 200 + 400); c.lineTo(bx + 200, by + 200); c.lineTo(bx + 200, by + 200 - 400); }
+      c.closePath(); c.clip();
+      emo(c, '🥪', CX + side * apart * 0.7, CY - side * apart * 0.7 + apart * 0.4, 150, side * apart * 0.004);
+      c.restore();
+    }
+    c.setLineDash([8, 9]); c.strokeStyle = '#ffffffaa'; c.lineWidth = 3;
+    if (cut < 1) { c.beginPath(); c.moveTo(lerp(ax, bx, cut), lerp(ay, by, cut)); c.lineTo(bx, by); c.stroke(); }
+    c.setLineDash([]);
+    if (cut > 0) {
+      c.strokeStyle = col; c.lineWidth = 8; c.lineCap = 'round'; c.shadowColor = col; c.shadowBlur = 16; c.globalAlpha = 1 - seg(a, 0.6, 0.9);
+      c.beginPath(); c.moveTo(ax, ay); c.lineTo(lerp(ax, bx, cut), lerp(ay, by, cut)); c.stroke(); c.shadowBlur = 0; c.globalAlpha = 1;
+      if (cut < 1) emo(c, '👆', lerp(ax, bx, cut) + 14, lerp(ay, by, cut) + 20, 44);
+    }
+  },
+  // ¡ATRAPA!: the basket slides under the coins and away from the bomb (★★: one coin gets by)
+  atrapa(c, a) {
+    const coins = [[0.0, -60, true], [0.25, 50, true], [0.42, -10, false], [0.55, 70, true]];
+    const bx = CX + 70 * Math.sin(a * 7.5) * (1 - a * 0.3), by = SY + SH - 40;
+    for (const [s, dx, caught] of coins) {
+      const q = (a - s) / 0.4; if (q < 0 || q > 1.15) continue;
+      const y = lerp(SY - 20, by, q), x = CX + dx;
+      if (caught && q >= 1) { emo(c, '🪙', x, by - 20, 30, 0, 1 - (q - 1) / 0.15); continue; }
+      emo(c, dx === -10 ? '💣' : '🪙', x, y, 34, q * 4);
+    }
+    emo(c, '🧺', bx, by, 62);
+    emo(c, '✊', bx + 20, by + 28, 38);
+  },
+  // ¡ESPERA… YA!: red, red… green, tap
+  espera(c, a, col) {
+    const go = a > 0.55, r = 70 + (go ? 6 * Math.sin(seg(a, 0.55, 0.7) * Math.PI) : 0);
+    c.shadowColor = go ? '#3ddc84' : '#ff4d5e'; c.shadowBlur = 30;
+    c.beginPath(); c.arc(CX, CY - 10, r, 0, Math.PI * 2); c.fillStyle = go ? '#3ddc84' : '#ff4d5e'; c.fill(); c.shadowBlur = 0;
+    const tp = seg(a, 0.62, 0.95);
+    if (a > 0.5) emo(c, '👆', CX + 16, CY + 30 + 30 * (1 - ease(seg(a, 0.5, 0.62))), 52);
+    ripple(c, CX, CY - 4, tp, col);
+  },
+  // ¡APLASTA!: three flies circling, one slap takes two (a combo)
+  aplasta(c, a) {
+    const hit = a > 0.55;
+    for (let n = 0; n < 3; n++) {
+      const an = a * 14 + n * 2.1, rx = 60 + n * 14;
+      const x = CX + Math.cos(an) * rx, y = CY + Math.sin(an * 1.3) * 50;
+      if (hit && n < 2) { c.fillStyle = '#14081f'; c.beginPath(); c.arc(CX - 20 + n * 40, CY, 9, 0, Math.PI * 2); c.fill(); }
+      else emo(c, '🪰', hit ? x + 40 * seg(a, 0.55, 1) : x, y, 34, Math.sin(an) * 0.6);
+    }
+    const slam = seg(a, 0.4, 0.55);
+    c.save(); c.translate(CX, CY + 110 - slam * 110); c.rotate(-0.2 + slam * 0.2);
+    c.fillStyle = '#ff9a1f'; rrect(c, -36, -36, 72, 72, 10); c.fill();
+    c.strokeStyle = '#14081f55'; c.lineWidth = 2; for (let g = -24; g <= 24; g += 12) { c.beginPath(); c.moveTo(g, -32); c.lineTo(g, 32); c.moveTo(-32, g); c.lineTo(32, g); c.stroke(); }
+    c.fillStyle = '#7a3d00'; c.fillRect(-5, 36, 10, 90);
+    c.restore();
+    if (hit) emo(c, '💥', CX, CY, 70 + 40 * seg(a, 0.55, 0.8), 0, 1 - seg(a, 0.75, 1));
+  },
+  // ¡DIBUJA!: trace the dotted star (★: the line wanders off)
+  dibuja(c, a, col) {
+    const pt = q => { const p = q * 5, n = Math.floor(p) % 5, f = p - Math.floor(p);
+      const at = m => { const an = -Math.PI / 2 + m * 4 * Math.PI / 5; return [CX + Math.cos(an) * 84, CY + Math.sin(an) * 84]; };
+      const [x0, y0] = at(n), [x1, y1] = at(n + 1); return [lerp(x0, x1, f), lerp(y0, y1, f)]; };
+    c.setLineDash([6, 8]); c.strokeStyle = '#ffffff88'; c.lineWidth = 3; c.beginPath();
+    for (let q = 0; q <= 1.0001; q += 0.01) { const [x, y] = pt(q); q ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); c.setLineDash([]);
+    const upto = 0.85 * a;
+    c.strokeStyle = col; c.lineWidth = 8; c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = col; c.shadowBlur = 14; c.beginPath();
+    let last = [CX, CY];
+    for (let q = 0; q <= upto; q += 0.005) { let [x, y] = pt(q); const off = Math.max(0, q - 0.5) * 70 * Math.sin(q * 40); x += off; y += off * 0.5; last = [x, y]; q ? c.lineTo(x, y) : c.moveTo(x, y); }
+    c.stroke(); c.shadowBlur = 0;
+    if (a < 1) emo(c, '👆', last[0] + 14, last[1] + 22, 44);
+  },
+  // ¡PARA!: the radar sweeps and stops dead in the narrow band
+  para(c, a, col) {
+    const R = 90, band = -Math.PI / 2 + 0.9;
+    c.beginPath(); c.arc(CX, CY, R, 0, Math.PI * 2); c.fillStyle = '#14081f'; c.fill();
+    for (const [w, f] of [[0.7, '#3ddc8433'], [0.4, '#3ddc8477'], [0.14, '#3ddc84']]) { c.beginPath(); c.moveTo(CX, CY); c.arc(CX, CY, R, band - w / 2, band + w / 2); c.closePath(); c.fillStyle = f; c.fill(); }
+    const stop = 0.7;
+    const ang = a < stop ? -Math.PI / 2 + ease(a / stop) * (Math.PI * 4 + 0.9) : band;
+    c.strokeStyle = '#ffd23f'; c.lineWidth = 6; c.lineCap = 'round'; c.shadowColor = '#ffd23f'; c.shadowBlur = 14;
+    c.beginPath(); c.moveTo(CX, CY); c.lineTo(CX + Math.cos(ang) * R, CY + Math.sin(ang) * R); c.stroke(); c.shadowBlur = 0;
+    c.strokeStyle = col; c.lineWidth = 4; c.beginPath(); c.arc(CX, CY, R, 0, Math.PI * 2); c.stroke();
+    ripple(c, CX, CY, seg(a, stop, 1), '#fff');
+  },
+  // ¡ORDENA!: the four drop into place, biggest on top
+  ordena(c, a) {
+    const animals = ['🐘', '🐕', '🐈', '🐭'], from = [2, 0, 3, 1];
+    animals.forEach((e, n) => {
+      const q = ease(seg(a, 0.1 + n * 0.15, 0.35 + n * 0.15));
+      const y = SY + 46 + lerp(from[n], n, q) * 56, size = lerp(54 - from[n] * 8, 54 - n * 8, q);
+      emo(c, e, CX, y, size);
+      if (q > 0 && q < 1) emo(c, '✊', CX + 30, y + 16, 34);
+    });
+  },
+  // ¡REVIENTA!: rising bubbles; only the blue ones pop
+  revienta(c, a, col) {
+    for (let n = 0; n < 9; n++) {
+      const blue = n % 3 === 0, x = SX + 30 + (n * 53) % (SW - 60), y = SY + SH + 30 - ((a * 1.3 + n * 0.17) % 1.3) * (SH + 60);
+      const r = 16 + (n % 4) * 5, popAt = 0.2 + n * 0.06;
+      if (blue && a > popAt) { ripple(c, x, y + (a - popAt) * 100, seg(a, popAt, popAt + 0.15), col); continue; }
+      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = blue ? '#4d8bffcc' : ['#5c7cffaa', '#3fa0ffaa', '#7a6bffaa'][n % 3]; c.fill();
+      c.strokeStyle = '#ffffff99'; c.lineWidth = 2; c.stroke();
+    }
+  },
+  // ¡REBOTA!: the paddle keeps the ball up; the three invaders go
+  rebota(c, a, col) {
+    const bounces = 3, p = a * bounces, b = Math.floor(p), f = p - b;
+    const targets = [-60, 0, 60];
+    targets.forEach((dx, n) => { if (b <= n) emo(c, '👾', CX + dx, SY + 40, 40, 0); else emo(c, '💥', CX + dx, SY + 40, 40, 0, Math.max(0, 1 - (p - n - 1) * 2)); });
+    const tx = targets[Math.min(b, 2)], up = f < 0.5 ? f * 2 : 2 - f * 2;
+    const x = CX + lerp(tx * 0.3, tx, up), y = lerp(SY + SH - 52, SY + 64, up);
+    const px = CX + tx * 0.3;
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 9, 0, Math.PI * 2); c.fill();
+    rrect(c, px - 40, SY + SH - 40, 80, 14, 7); c.fillStyle = col; c.fill();
+    emo(c, '✊', px + 10, SY + SH - 10, 36);
+  },
+};
+</script>
+</body>
+</html>
