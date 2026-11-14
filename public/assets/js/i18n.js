@@ -205,6 +205,8 @@ export const COMMON = {
     // A game's cover shares its own link (cover-share.js), behind the flag `cover-share`
     shareGameCta: '👉 ¿Jugamos? Es gratis y se juega desde el celular:',
     shareGame: 'Compartir este juego',
+    // Swiping between games on a cover (game-swipe.js), behind the flag `game-swipe`
+    swipePrev: 'Juego anterior: {game}', swipeNext: 'Siguiente juego: {game}',
     shareSoloImage: '🤔 ¿Me ganas?',
     shareCopied: '¡Copiado! Pégalo en el chat.',
     shareDownloaded: 'La imagen se descargó y el texto quedó copiado.',
@@ -460,6 +462,7 @@ export const COMMON = {
     shareSoloCta: '🤔 Can you beat me? It\'s free to play on your phone:',
     shareGameCta: '👉 Let\'s play this. It\'s free and you play it on your phone:',
     shareGame: 'Share this game',
+    swipePrev: 'Previous game: {game}', swipeNext: 'Next game: {game}',
     shareSoloImage: '🤔 Can you beat me?',
     shareCopied: 'Copied! Paste it in the chat.',
     shareDownloaded: 'The image was downloaded and the text was copied.',
@@ -712,6 +715,7 @@ export const COMMON = {
     shareSoloCta: '🤔 Consegue me vencer? É grátis e se joga pelo celular:',
     shareGameCta: '👉 Bora jogar isso? É grátis e se joga pelo celular:',
     shareGame: 'Compartilhar este jogo',
+    swipePrev: 'Jogo anterior: {game}', swipeNext: 'Próximo jogo: {game}',
     shareSoloImage: '🤔 Consegue me vencer?',
     shareCopied: 'Copiado! Cole no chat.',
     shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
@@ -970,6 +974,9 @@ export function coverLangToggle(onChange) {
   // The cover's share button, in the top bar beside the language (cover-share.js)
   // lab: #seccion-cover-share
   flag('cover-share').then(on => { if (on) import('./cover-share.js').then(m => m.mountCoverShare({ cover: slot })); }).catch(() => {});
+  // Swiping left or right to the next or previous game of the list the player came from (game-swipe.js)
+  // lab: #seccion-game-swipe
+  flag('game-swipe').then(on => { if (on) import('./game-swipe.js').then(m => m.mountGameSwipe({ cover: slot })); }).catch(() => {});
   // Before the first paint, never after a read of flags/ (D-537, published 2026-11-07): waiting for
   // it showed the full toggle first and pushed Empezar 51 px down on a slow network, below the fold at 320 px
   queueMicrotask(compact);

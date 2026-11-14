@@ -105,14 +105,18 @@ Tapping the left or right half swings that flipper (both at once with two finger
 it drops back on its own after 0.35 s, so every save is a new tap and holding it up does not cradle the balls.
 
 - **The bumpers move** (the owner, 2026-11-14): three, drawn anew each game in the upper half, clear of the
-  walls and of each other by more than a ball. A bumper kicks a ball hard once; after that it only bounces it
-  back softer, so no ball stays up there all game.
+  walls and of each other by more than a ball. A bumper kicks a ball hard once, at two thirds of the speed when it sends it
+  down toward the flippers; after that it only bounces it back softer, so no ball stays up there all game.
+- **The balls' size** (the owner, 2026-11-14): 2.2 % of the table's width, at least 6.5 px (tried smaller, then a bit bigger again).
+- **A shorter table** (the owner, 2026-11-14): at most 1.4 times as tall as wide, at the bottom of the stage by the thumbs, with rounded corners and a soft cyan glow.
+- **The neon** (the owner, 2026-11-14): every line is a neon tube, a faint halo, a glowing body and a white-hot core added on top of each other, that hums with a slight flicker; the bumpers have a pink ring and a yellow one inside and fill white-pink when hit; two violet lane arrows; the glass is a violet night darker at the edges with a magenta grid going away and faint twinkling stars. Nothing flickers with reduced motion.
 - **The balls come in turns** (the owner, 2026-11-14): the first drops straight onto a flipper at once (it
-  reaches it in about 0.4 s), so you react from the start; the other two come in from the roof about 0.8 and
-  1.5 s later, through the bumpers, so they do not all arrive together. A ring blinks where the next one will
-  drop, half a second before it does.
+  reaches it in about 0.4 s), so you react from the start. The other two wait on the table from the start,
+  see-through, where they will drop (the upper half, clear of the bumpers), each with a ring that fills up and a
+  last quick blink; they fall from there about 1.1 and 2.1 s in, not from the roof, so you see them coming and
+  they do not all arrive together.
 - **A ball counts once a flipper has hit it** (a green ring, and its dot in the corner turns green): each ball
-  hit and still on the table after 5 s is a ★; all three down ends it at once with none. Without a tap it
+  hit and still on the table after 6.5 s (longer since 2026-11-14) is a ★; all three down ends it at once with none. Without a tap it
   scores 0, and holding a side down too. A ball wedged between a guide and a flipper's base gets a nudge after
   0.3 s. Gravity grows with the run's `sp`.
 - **All three saved: ¡JACKPOT!** (the owner asked for something silly): the table stops, the three balls line
@@ -120,8 +124,8 @@ it drops back on its own after 0.35 s, so every save is a new tap and holding it
   and «¡JACKPOT!» pulses, for about 1.7 s before the stars.
 
 In tests `window.__pinball` exposes the table (balls, flippers, saved). A bot that taps when a ball reaches its
-flipper saves 1 to 3 (about 2) with 6 to 10 taps; the first ball reaches a flipper at about 0.4 s and the
-others at 1.8 to 4.6 s.
+flipper saves 1 to 3 (about 2.3) with 4 to 8 taps; the first ball reaches a flipper at about 0.7 s and the
+others at 2 to 6.2 s.
 
 ## Usability rules of the microgames
 
