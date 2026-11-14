@@ -833,7 +833,8 @@ if (runs('labs')) {
   await b.go(`${BASE}?practica=conexiones&prueba`, 1500); await prepare();
   ok(await ev(`location.pathname + location.search`) === '/connections/?test', 'standalone game: the old cup link leads to /connections/');
   ok(!await ev(`document.getElementById('btn-ensayo')`) && await ev(`document.getElementById('btn-menu').href`) === `${SITE}/`
-    && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITE}/')`), 'standalone game: no trial and back to the menu');
+    // the cover's own «Volver al menú», or behind the flag cover-dialogs only the top bar's ‹ Menú (lab: #seccion-cover-dialogs)
+    && await ev(`[...document.querySelectorAll('#jugar-body a')].some(a => a.href === '${SITE}/') || !!document.querySelector('#jugar-body .portada-acciones')`), 'standalone game: no trial and back to the menu');
   // Its page brings its own social card: a shared link shows the game, not La Copa (D-162)
   ok(/\/assets\/og\/conexiones\.jpg/.test(await ev(`document.querySelector('meta[property="og:image"]')?.content || ''`)), 'standalone game: its page brings its own social card');
   ok(!/copa/i.test(await ev(`location.href + ' ' + document.title`)), 'standalone game: neither the link nor the title says copa');
