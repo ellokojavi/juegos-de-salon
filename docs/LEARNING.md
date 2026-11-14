@@ -19,7 +19,10 @@ This programme works on the border between the two halves, with two goals of equ
    learning changes, update it there too. Its headline numbers (games, weeks, PRs, decisions,
    test files) count themselves when the page opens, from `ALL_GAMES` and GitHub's public API
    (unauthenticated, from the viewer's browser); the written numbers are only the fallback if a
-   source does not answer, so refresh them now and then. Its gameplay clips
+   source does not answer, so refresh them now and then. The *Traction* numbers (games finished,
+   different phones) are the exception: usage needs the owner's access, so they are written by
+   hand with their date, counted with the panel's own functions (`/panel/`) from Firebase; refresh
+   them, and the date under them, when the owner presents. Its gameplay clips
    (`public/making-of/clips/`) are recorded by `node tools/generators/making-of-clips.mjs`.
 
 The owner is a product-management lead. The programme is a conversation (2026-11-04) turned into
