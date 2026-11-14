@@ -580,6 +580,7 @@
     import { gameIcon } from './assets/js/game-icon.js';
     import { botonCompartirPortada } from './assets/js/compartir-portada.js';
     import { markOrigin } from './assets/js/transport/stats.js';
+    import { rememberList } from './assets/js/game-swipe.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
     import { getLang, langToggle, applyStatic, pickLang, COMMON, homeUrl } from './assets/js/i18n.js';
     import { FRASES } from './assets/js/frases.js';
@@ -715,6 +716,9 @@
       );
       // Where the game came from, for the panel's timeline: a card tapped on the home page
       if (g.available && !g.torneo) card.addEventListener('click', () => markOrigin('card', card.href));
+      // The cards on screen right now, in order, for swiping between games on a cover (game-swipe.js, flag game-swipe)
+      if (g.available && !g.torneo) card.addEventListener('click', () => rememberList(
+        [...document.querySelectorAll('.game-card[href]:not(.torneo)')].filter(c => c.offsetParent && !c.closest('[hidden]')).map(c => c.href)));
       // La ⭐ de favorito (D-238) va al lado de la tarjeta y no adentro: un botón dentro de un link
       // no se puede tocar sin abrir el juego. La Copa no lleva: es una semana con amigos, no una partida
       if (!g.available || g.torneo) { list.append(card); return { g, card, caja: card }; }
