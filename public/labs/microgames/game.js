@@ -850,7 +850,7 @@ trackVisit();   // the site's traffic (D-208)
     // right half to flip that flipper and keep them up. Each ball still on the table when time runs out is a star
     pinball() {
       command(t('¡PINBALL!'), () => {
-        const { lay, W, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
+        const { lay, W, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('un dedo a cada lado')}</span>`);
         // A big table (the owner's request, after trying smaller ones): the stage's full width, up to 1.6 times as tall as
         // wide, centred up and down in the stage (at the bottom it sat too low)
         const H = Math.min(HL, Math.round(W * 1.6)), OY = Math.round((HL - H) / 2), cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
@@ -893,6 +893,13 @@ trackVisit();   // the site's traffic (D-208)
           for (let a = 0; a < 80; a++) { const x = W * (0.24 + rand() * 0.52), y = H * (0.16 + rand() * 0.32);
             if (bumpers.every(o => Math.hypot(o.x - x, o.y - y) > o.r + R * 3) && spots.every(([sx, sy]) => Math.hypot(sx - x, sy - y) > W * 0.2)) { best = [x, y]; break; } }
           spots.push(best); return best; };
+        // Each ball's halo and body drawn once into a sprite: a gradient made every frame for every ball cost the phone
+        // more than the physics
+        const sprite = c => { const S = Math.ceil(R * 2.4), cv3 = document.createElement('canvas'); cv3.width = cv3.height = 2 * S * dpr; const x = cv3.getContext('2d'); x.scale(dpr, dpr);
+          const hl = x.createRadialGradient(S, S, R * 0.6, S, S, S); hl.addColorStop(0, c); hl.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = 0.45; x.fillStyle = hl; x.fillRect(0, 0, 2 * S, 2 * S); x.globalAlpha = 1;
+          const bl = x.createRadialGradient(S - R * 0.35, S - R * 0.35, 1, S, S, R); bl.addColorStop(0, '#ffffff'); bl.addColorStop(1, c); x.fillStyle = bl; x.beginPath(); x.arc(S, S, R, 0, Math.PI * 2); x.fill();
+          return { cv: cv3, S }; };
+        const SPR = Object.fromEntries(COLORS.map(c => [c, sprite(c)]));
         const ball = (k, x, y, vx, vy, at) => ({ x, y, vx, vy, live: true, c: COLORS[k], trail: [], at, saved: false, still: 0 });
         const balls = [
           ball(0, firstX, H * 0.63, (side ? 1 : -1) * W * 0.05, H * 0.15, 650),
@@ -901,7 +908,7 @@ trackVisit();   // the site's traffic (D-208)
         let alive = 3, taps = 0, last = performance.now(), shake = 0, sparks = [], party = 0;
         // The end-to-end tests read the table to play it (C-14)
         window.__pinball = { balls, fl, W, H, fy, get alive() { return alive; }, get taps() { return taps; }, get saved() { return balls.filter(b => b.live && b.saved).length; } };
-        const press = (side, on) => { if (party) return; const f = fl[side]; if (on && !f.held) { if (!armed(f)) return; f.held = true; f.since = performance.now(); taps++; SFX.tap(); } if (!on) f.held = false; };
+        const press = (side, on) => { if (party) return; const f = fl[side]; if (on && !f.held) { if (!armed(f)) return; f.held = true; f.since = performance.now(); f.used = true; taps++; SFX.tap(); } if (!on) f.held = false; };
         const sideOf = e => (ptIn(lay, e)[0] < W / 2 ? 0 : 1), down = new Map();
         listen({ down: e => { const s = sideOf(e); down.set(e.pointerId, s); press(s, true); }, up: e => { const s = down.get(e.pointerId); down.delete(e.pointerId); if (s !== undefined && ![...down.values()].includes(s)) press(s, false); } });
         const key = e => { const s = { ArrowLeft: 0, KeyZ: 0, ArrowRight: 1, KeyM: 1 }[e.code]; if (s === undefined || !active) return; e.preventDefault(); press(s, e.type === 'keydown'); };
@@ -989,6 +996,15 @@ trackVisit();   // the site's traffic (D-208)
             g.fillStyle = fill; g.beginPath(); g.arc(bp.x, bp.y, r, 0, Math.PI * 2); g.fill();
             tube(ring(bp.x, bp.y, r), '#ff2e88', 2.6 + 1.5 * k, now, bp.x);
             tube(ring(bp.x, bp.y, r * 0.55), '#ffd23f', 1.4, now, bp.y); }
+          // Each half is a button: a soft glow over the side being pressed, and until a side is first tapped, a thumb pulsing
+          // over it with TOCA, so it is plain that one finger on each side moves that flipper (the owner's request)
+          fl.forEach((f, k) => { const x0 = k ? W / 2 : 0;
+            if (f.held && !reduce) { const gl = g.createLinearGradient(0, H, 0, fy - H * 0.2); gl.addColorStop(0, 'rgba(255,210,63,0.22)'); gl.addColorStop(1, 'rgba(255,210,63,0)'); g.fillStyle = gl; g.fillRect(x0, fy - H * 0.2, W / 2, H); }
+            if (f.used || party) return;
+            const cx = x0 + W / 4, cy = fy + (H - fy) * 0.55, p = reduce ? 0.5 : ((now - t0Pin) / 900) % 1;
+            g.strokeStyle = `rgba(255,255,255,${0.6 * (1 - p)})`; g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, 10 + p * 22, 0, Math.PI * 2); g.stroke();
+            g.globalAlpha = 0.9; g.font = `${Math.round(W * 0.07)}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('👆', cx, cy + 4);
+            g.font = `400 ${Math.round(W * 0.045)}px Bangers, Impact, sans-serif`; g.fillStyle = '#ffffff'; g.fillText(t('TOCA'), cx, fy - H * 0.06); g.globalAlpha = 1; });
           fl.forEach(f => paddle(f, now));
           g.globalCompositeOperation = 'lighter';
           // Sparks: tiny glowing dots that fade (soft ones, from a hit) or the party's confetti squares
@@ -998,13 +1014,12 @@ trackVisit();   // the site's traffic (D-208)
           g.globalCompositeOperation = 'source-over';
           for (const b of balls) { if (!b.live || b.trail.length === 0 || party) continue;
             g.globalCompositeOperation = 'lighter';
-            b.trail.forEach(([x, y], i) => { g.globalAlpha = (i + 1) / b.trail.length * 0.3; g.fillStyle = b.c; g.beginPath(); g.arc(x, y, R * (0.5 + i / b.trail.length * 0.5), 0, Math.PI * 2); g.fill(); }); g.globalAlpha = 1;
-            g.globalCompositeOperation = 'source-over';
-            // Its glow: a soft halo, not a blur (cheap every frame)
-            g.globalCompositeOperation = 'lighter'; const hl = g.createRadialGradient(b.x, b.y, R * 0.6, b.x, b.y, R * 2.4); hl.addColorStop(0, b.c); hl.addColorStop(1, 'rgba(0,0,0,0)');
-            g.globalAlpha = 0.45; g.fillStyle = hl; g.beginPath(); g.arc(b.x, b.y, R * 2.4, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
-            const bl = g.createRadialGradient(b.x - R * 0.35, b.y - R * 0.35, 1, b.x, b.y, R); bl.addColorStop(0, '#ffffff'); bl.addColorStop(1, b.c);
-            g.fillStyle = bl; g.beginPath(); g.arc(b.x, b.y, R, 0, Math.PI * 2); g.fill();
+            // Its streak: every physics step's position, joined into a tapering line, so a fast ball reads as one smooth
+            // motion instead of a ball jumping from frame to frame (the owner saw it choppy)
+            const tr = b.trail; g.lineCap = 'round'; g.strokeStyle = b.c;
+            for (let i = 1; i < tr.length; i++) { const k = i / tr.length; g.globalAlpha = 0.35 * k; g.lineWidth = R * 2 * (0.35 + 0.6 * k); g.beginPath(); g.moveTo(tr[i - 1][0], tr[i - 1][1]); g.lineTo(tr[i][0], tr[i][1]); g.stroke(); }
+            g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+            const sp4 = SPR[b.c]; g.drawImage(sp4.cv, b.x - sp4.S, b.y - sp4.S, sp4.S * 2, sp4.S * 2);
             if (b.saved) { g.shadowBlur = 0; g.strokeStyle = 'rgba(157,255,58,0.85)'; g.lineWidth = 2; g.beginPath(); g.arc(b.x, b.y, R + 3.5, 0, Math.PI * 2); g.stroke(); } }
           // The balls still waiting: see-through where they will drop, with a ring that fills up until they fall, and a
           // last quick blink
@@ -1046,17 +1061,17 @@ trackVisit();   // the site's traffic (D-208)
           g.fillText(t('¡JACKPOT!'), 0, 0); g.restore(); g.shadowBlur = 0;
         };
         animate((tm, now) => {
-          const dt = Math.min(0.033, (now - last) / 1000); last = now;
+          const dt = Math.min(0.05, (now - last) / 1000); last = now;
           if (party) { sparks = sparks.filter(q => (q.l -= dt * 1.2) > 0); sparks.forEach(q => { q.x += q.vx * dt; q.y += q.vy * dt; }); draw(now); return; }
           shake = Math.max(0, shake - dt * 40); bumpers.forEach(bp => { bp.lit -= dt * 3; });
           sparks = sparks.filter(q => (q.l -= dt * 2.5) > 0); sparks.forEach(q => { q.x += q.vx * dt; q.y += q.vy * dt; });
-          const N = 5, h = dt / N;
+          const N = Math.max(4, Math.ceil(dt / 0.003)), h = dt / N;
           for (let s2 = 0; s2 < N; s2++) {
             // Flippers swing fast up and fall back; after 0.35 s held it drops anyway
             for (const f of fl) { const want = f.held && now - f.since < 350 ? UP : REST, a0 = f.a, spd = want < f.a ? 26 : 9;
               f.a = want < f.a ? Math.max(want, f.a - spd * h) : Math.min(want, f.a + spd * h); f.w = (f.a - a0) / h; }
             for (const b of balls) { if (!b.live || tm < b.at / sp) continue;
-              b.vy += G * h; b.x += b.vx * h; b.y += b.vy * h;
+              b.vy += G * h; b.x += b.vx * h; b.y += b.vy * h; b.trail.push([b.x, b.y]); if (b.trail.length > Math.ceil(0.07 / h)) b.trail.shift();
               walls.forEach(([a, c]) => hit(b, a, c, 2, 0.45, null, '#8ff7ee'));
               for (const f of fl) { // a point on the flipper moves at ω × r, with the angle mirrored on the right one
                 const vel = (px, py) => { const rx = px - f.piv[0], ry = py - f.piv[1]; return [-f.dir * f.w * ry, f.dir * f.w * rx]; };
@@ -1076,7 +1091,6 @@ trackVisit();   // the site's traffic (D-208)
                 demo.classList.remove('red'); void demo.offsetWidth; demo.classList.add('red'); later(() => demo.classList.remove('red'), 300);
                 if (!alive) { finish(0, t('¡Se cayeron las tres!')); return false; } } }
           }
-          for (const b of balls) if (b.live && tm >= b.at / sp) { b.trail.push([b.x, b.y]); if (b.trail.length > 6) b.trail.shift(); }
           draw(now);
         });
         const savedN = () => balls.filter(b => b.live && b.saved).length;
@@ -1087,7 +1101,7 @@ trackVisit();   // the site's traffic (D-208)
           for (let k = 0; k < 40; k++) { const an = rand() * Math.PI * 2, v = 60 + rand() * 160; sparks.push({ x: W / 2, y: H * 0.36, vx: Math.cos(an) * v, vy: Math.sin(an) * v, l: 1.5, c: HATS[k % 3] }); }
           later(() => finish(3, t('¡Las tres arriba!')), reduce ? 700 : 1700);
         });
-      }, '🕹️ ⚪⚪⚪', t('toca a cada lado para mover las paletas'));
+      }, '👆🕹️👆', t('un dedo a cada lado: cada uno mueve su paleta'));
     },
     rebota() {
       // Three little pixel aliens (our own 8-bit drawings), each in its own color: '#' body, 'w' white, 'k' black
