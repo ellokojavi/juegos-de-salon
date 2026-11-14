@@ -3134,7 +3134,11 @@
       "error": "✗ standalone game: no trial and back to the menu",
       "signature": "6b4319919d",
       "date": "2026-11-14T08:13:12.875Z",
-      "fix": null,
+      "fix": {
+        "commit": "561f78ee8da45fb40127ff977260ba6e7c02e465",
+        "date": "2026-11-14T08:28:14.217Z",
+        "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
+      },
       "flaky": false
     },
     {
@@ -3147,7 +3151,11 @@
       "error": "✗ the steps change ()",
       "signature": "503b03cfc0",
       "date": "2026-11-14T08:13:12.875Z",
-      "fix": null,
+      "fix": {
+        "commit": "561f78ee8da45fb40127ff977260ba6e7c02e465",
+        "date": "2026-11-14T08:28:14.217Z",
+        "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
+      },
       "flaky": false
     },
     {
@@ -3160,7 +3168,11 @@
       "error": "✗ rules · es: a step of the path failed (Uncaught TypeError: Cannot set properties of null (setting 'open'))",
       "signature": "cdbb977b5c",
       "date": "2026-11-14T08:13:12.875Z",
-      "fix": null,
+      "fix": {
+        "commit": "561f78ee8da45fb40127ff977260ba6e7c02e465",
+        "date": "2026-11-14T08:28:14.217Z",
+        "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
+      },
       "flaky": false
     },
     {
@@ -3173,7 +3185,11 @@
       "error": "✗ three steps, the numbers ones",
       "signature": "86eb23b8cb",
       "date": "2026-11-14T08:13:12.875Z",
-      "fix": null,
+      "fix": {
+        "commit": "561f78ee8da45fb40127ff977260ba6e7c02e465",
+        "date": "2026-11-14T08:28:14.217Z",
+        "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
+      },
       "flaky": false
     },
     {
@@ -3186,7 +3202,11 @@
       "error": "✗ rules · es: a step of the path failed (Uncaught TypeError: Cannot set properties of null (setting 'open'))",
       "signature": "60703ca9f7",
       "date": "2026-11-14T08:13:12.875Z",
-      "fix": null,
+      "fix": {
+        "commit": "561f78ee8da45fb40127ff977260ba6e7c02e465",
+        "date": "2026-11-14T08:28:14.217Z",
+        "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
+      },
       "flaky": false
     }
   ]
