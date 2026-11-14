@@ -3270,7 +3270,11 @@
       "error": "✗ /untangle/: the FAQPage says what «Cómo se juega» does not show (or not in that order): «Un jugador, 4 minutos. Gratis, sin instalar nada y sin cuenta.»",
       "signature": "7b326d389c",
       "date": "2026-11-14T19:00:37.465Z",
-      "fix": null,
+      "fix": {
+        "commit": "f39e4473a6c9d233d40fbeffd0593adf27a2b433",
+        "date": "2026-11-14T19:17:22.831Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
