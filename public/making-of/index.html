@@ -287,6 +287,8 @@
     // Presenting: → / ↓ / Space / PageDown go to the next section, ← / ↑ / PageUp to the previous one
     const sections = [...document.querySelectorAll('.mo-section')];
     const current = () => {
+      // At the foot of the page the last section is the one on screen, even when it is too short to reach the top
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) return sections.length - 1;
       const y = window.scrollY + window.innerHeight * 0.3;
       let i = 0;
       sections.forEach((s, n) => { if (s.offsetTop <= y) i = n; });

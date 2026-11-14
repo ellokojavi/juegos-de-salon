@@ -152,4 +152,5 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
   .mo-section { min-height: auto; }
   html { scroll-padding-top: calc(var(--s-32) * 3); }
   .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
+  .mo-count { display: none; } /* a presenting aid: on a phone it would sit on the text */
 }
