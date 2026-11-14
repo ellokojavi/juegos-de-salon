@@ -107,14 +107,14 @@ it drops back on its own after 0.35 s, so every save is a new tap and holding it
 - **The bumpers move** (the owner, 2026-11-14): two (three until the owner tried two), drawn anew each game in the upper half, clear of the
   walls and of each other by more than a ball. A bumper kicks a ball hard once, at two thirds of the speed when it sends it
   down toward the flippers; after that it only bounces it back softer, so no ball stays up there all game.
-- **Big balls at 90 % of the earlier speed** (the owner, 2026-11-14): 2.6 % of the table's width, at least 8 px; every speed is 90 % of the first tuning's, so gravity is H × 1.09 (was × 1.35, then × 1.0 for a round), the top speed H × 2.34 and a bumper's first kick at least H × 0.77.
-- **A shorter table** (the owner, 2026-11-14): the stage's full width and at most 1.4 times as tall as wide, at the bottom of the stage by the thumbs, with rounded corners and a soft cyan glow. A smaller one (86 % wide, 1.3 tall) was tried for a round and dropped.
+- **Big, fast balls** (the owner, 2026-11-14): 2.6 % of the table's width, at least 8 px, with gravity H × 1.35, a top speed of H × 2.6 and a bumper's first kick of at least H × 0.85. Slower rounds (gravity × 1.0, then × 1.09) felt dull and were dropped.
+- **A big table** (the owner, 2026-11-14): the stage's full width and up to 1.6 times as tall as wide, at the bottom of the stage by the thumbs, with rounded corners and a soft cyan glow. Smaller ones (1.4 tall; 86 % wide and 1.3 tall) felt cramped and were dropped.
 - **Neon sparkles** on every strike: a few tiny glowing dots in the colour of what the ball hit (cyan wall, yellow flipper, pink bumper), at most one burst per ball every 90 ms.
 - **The neon** (the owner, 2026-11-14): every line is a neon tube, a faint halo, a glowing body and a white-hot core added on top of each other, that hums with a slight flicker; the bumpers have a pink ring and a yellow one inside and fill white-pink when hit; two violet lane arrows; the glass is a violet night darker at the edges with a magenta grid going away and faint twinkling stars. Nothing flickers with reduced motion.
 - **The balls come in turns** (the owner, 2026-11-14): the first drops straight onto a flipper at once (it
   reaches it in about 0.4 s), so you react from the start. The other two wait on the table from the start,
   see-through, where they will drop (the upper half, clear of the bumpers), each with a ring that fills up and a
-  last quick blink; they fall from there about 0.9 and 1.7 s in, not from the roof, so you see them coming and
+  last quick blink; they fall from there about 1.1 and 2.1 s in, not from the roof, so you see them coming and
   they do not all arrive together.
 - **A ball counts once a flipper has hit it** (a green ring, and its dot in the corner turns green): each ball
   hit and still on the table after 6.5 s (longer since 2026-11-14) is a ★; all three down ends it at once with none. Without a tap it
