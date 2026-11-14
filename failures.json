@@ -3247,6 +3247,19 @@
       "date": "2026-11-14T18:58:55.532Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43629392078,
+      "check": "end-to-end",
+      "pr": 1460,
+      "branch": "making-of-traction-live",
+      "commit": "6477a20ce143f0babb3751bf1afa4c97dbaf6b4b",
+      "test": "structured-data.mjs",
+      "error": "✗ /untangle/: the FAQPage says what «Cómo se juega» does not show (or not in that order): «Un jugador, 4 minutos. Gratis, sin instalar nada y sin cuenta.»",
+      "signature": "7b326d389c",
+      "date": "2026-11-14T19:00:37.465Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
