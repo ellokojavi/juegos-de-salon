@@ -199,6 +199,27 @@ export const CAMPAIGNS = {
       },
     }],
   },
+  // ⚡ ¡Al toque! leaves the lab (the owner's request, 2026-11-14: made now, not launched): a whole run
+  // in 10 s, drawn by marketing/splash/teaser/al-toque.html with the game's own speed ramp and scoring
+  // (engine.js), each microgame cut by a lightning strike in its gesture's color, a loop with no seam.
+  // `requires` keeps it unseen until flags/microgames exists and is on; the launch PR points `href`
+  // at the game's folder out of the lab
+  'al-toque-ya': {
+    emoji: '⚡',
+    requires: ['microgames'],
+    kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
+    title: { es: '¡Juega al toque!', en: 'Play in a flash!', pt: 'Jogue na hora!' },
+    hero: true,
+    items: [{
+      emoji: '⚡', href: 'labs/microgames/', video: 'assets/splash/al-toque-teaser.mp4', img: 'assets/splash/al-toque-teaser-start.png', still: 'assets/splash/al-toque-teaser.png', ratio: '8 / 5', smooth: true,
+      title: { es: '¡Al toque!', en: 'In a Flash!', pt: 'Na Hora!' },
+      text: {
+        es: 'Toca, arrastra, desliza: una orden y 3 segundos para cumplirla. Diez seguidos, cada vez más rápido. ¿Haces la corrida perfecta?',
+        en: 'Tap, drag, swipe: one order and 3 seconds to do it. Ten in a row, faster and faster. Can you make the perfect run?',
+        pt: 'Toque, arraste, deslize: uma ordem e 3 segundos para cumprir. Dez seguidos, cada vez mais rápido. Você faz a corrida perfeita?',
+      },
+    }],
+  },
   // 🐤 Aletazo leaves the lab (D-517's way) and the bird the teaser `flap-soon` showed now plays: one game,
   // big, as Tren en Vilo's launch (`hero`), its clip a 24 s loop seamless to the pixel through day,
   // afternoon, night and day again (marketing/splash/teaser/flap-play.html, the owner's request).
