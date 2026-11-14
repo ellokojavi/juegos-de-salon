@@ -3083,7 +3083,11 @@
       "error": "✗ batalla-naval today 320×568 es: «🖌️ Empezar» ends at 579 px, 11 px below the fold",
       "signature": "4f395b6c20",
       "date": "2026-11-13T16:50:26.025Z",
-      "fix": null,
+      "fix": {
+        "commit": "d5b21d6a6664be892f58894ce86280f533c4839a",
+        "date": "2026-11-14T00:43:11.778Z",
+        "stat": "41 file(s) +764 −32: .claude/agents/processes.md, changelog/about-the-build.md, changelog/claude-sudoku-salon-generator-ddzciw.md, changelog/decision-origins.md, changelog/landing-fold-flake.md, …"
+      },
       "flaky": false
     },
     {
