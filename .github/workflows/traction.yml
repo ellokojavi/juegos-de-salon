@@ -1,0 +1,45 @@
+# The making-of page's Traction numbers, refreshed every day on their own: tools/firebase/traction.mjs
+# counts the games finished and the different browsers up to yesterday with the panel's own functions
+# and writes only the five totals and their date to controls/traction, which anyone may read. The
+# page (/making-of/#traction) reads them when it opens; its written numbers stay if it can't.
+#
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
+# and ends green.
+
+name: Traction numbers
+
+on:
+  schedule:
+    # Every day at 08:37 UTC (00:37 Pacific): yesterday's UTC day is closed
+    - cron: '37 8 * * *'
+  # To refresh now (Actions → Traction numbers → Run workflow)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: traction
+  cancel-in-progress: false
+
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Count and write the totals
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: the Traction numbers are not refreshed"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          node tools/firebase/traction.mjs --write

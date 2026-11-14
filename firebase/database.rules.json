@@ -1480,6 +1480,18 @@
           }
         }
       },
+      "traction": {
+        ".validate": "newData.hasChildren(['total', 'week', 'best', 'phones7', 'phones30', 'asOf', 'at'])",
+        "total": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "week": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "best": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "phones7": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "phones30": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "bestDay": { ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)" },
+        "asOf": { ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)" },
+        "at": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      },
       "features": {
         "$id": {
           ".validate": "$id.matches(/^[a-z0-9-]{1,40}$/)",

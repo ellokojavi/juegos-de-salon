@@ -101,14 +101,14 @@
       <h2 class="display display--lg">No ads. It spreads by word of mouth</h2>
       <p class="mo-lead">Not one cent on paid marketing: people arrive because a friend sent them the link.</p>
       <div class="mo-stats">
-        <div><b>2,000+</b><span>games finished since September</span></div>
-        <div><b>580+</b><span>games finished in the last 7 days</span></div>
-        <div><b>126</b><span>games finished on the best day so far</span></div>
-        <div><b>220+</b><span>different phones in the last 7 days</span></div>
-        <div><b>680+</b><span>different phones in the last 30 days</span></div>
+        <div><b data-traction="total">2,000+</b><span>games finished since September</span></div>
+        <div><b data-traction="week">600+</b><span>games finished in the last 7 days</span></div>
+        <div><b data-traction="best">126</b><span>games finished on the best day so far</span></div>
+        <div><b data-traction="phones7">250+</b><span>different phones in the last 7 days</span></div>
+        <div><b data-traction="phones30">650+</b><span>different phones in the last 30 days</span></div>
         <div><b>$0</b><span>spent on ads</span></div>
       </div>
-      <p class="mo-sub mo-small">Counted by the site itself, as of 14 November 2026. A phone is one browser. Games played on a single phone, without an online room, are counted only since 18 October, so the real total is higher.</p>
+      <p class="mo-sub mo-small">Counted by the site itself every day, up to <span data-traction="asOf">13 November 2026</span>. A phone is one browser. Games played on a single phone, without an online room, are counted only since 18 October, so the real total is higher.</p>
       <a class="mo-next" href="#factory">Next: How it's built <span aria-hidden="true">↓</span></a>
     </section>
 
@@ -294,6 +294,17 @@
       .then(({ ALL_GAMES }) => put('games', plus(ALL_GAMES.filter(g => g.available !== false && !g.oculto).length)))
       .catch(() => {});
     const REPO = 'ellokojavi/juegos-de-salon';
+    // Traction: the five totals the daily `traction` workflow writes to controls/traction (D-554)
+    import('../assets/js/firebase-config.js')
+      .then(({ firebaseConfig }) => json(`${firebaseConfig.databaseURL}/controls/traction.json`))
+      .then(t => {
+        if (!t?.asOf) return;
+        const day = new Date(`${t.asOf}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+        const set = (k, v) => document.querySelectorAll(`[data-traction="${k}"]`).forEach(e => { e.textContent = v; });
+        ['total', 'week', 'phones7', 'phones30'].forEach(k => { if (t[k] > 0) set(k, plus(t[k])); });
+        if (t.best > 0) set('best', t.best.toLocaleString('en-US'));
+        set('asOf', day);
+      }).catch(() => {});
     json(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`).then(({ tree }) => {
       put('decisions', plus(tree.filter(t => /^docs\/decisions\/D-\d+\.md$/.test(t.path)).length));
       put('tests', plus(tree.filter(t => /\.test\.(mjs|py)$/.test(t.path)).length));
