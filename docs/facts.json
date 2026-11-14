@@ -1604,6 +1604,7 @@
     "tools/firebase/rename-player.test.mjs",
     "tools/firebase/room-sweep.test.mjs",
     "tools/firebase/stats-retention.test.mjs",
+    "tools/firebase/traction.test.mjs",
     "tools/firebase/uad-index.test.mjs",
     "tools/firebase/uad-points-backfill.test.mjs",
     "tools/firebase/unnoted-rooms.test.mjs",

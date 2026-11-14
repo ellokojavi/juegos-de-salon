@@ -97,6 +97,14 @@
       ]
     },
     {
+      "id": "traction",
+      "where": "github",
+      "workflow": "traction.yml",
+      "cron": "37 8 * * *",
+      "what": "Every day: counts the games finished and the different browsers up to yesterday with the panel's functions and writes only those five totals and their date to controls/traction, which the making-of page reads (tools/firebase/traction.mjs).",
+      "decisions": ["D-554"]
+    },
+    {
       "id": "firebase-archive",
       "where": "github",
       "workflow": "firebase-archive.yml",
