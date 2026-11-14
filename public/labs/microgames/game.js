@@ -850,14 +850,14 @@ trackVisit();   // the site's traffic (D-208)
     // right half to flip that flipper and keep them up. Each ball still on the table when time runs out is a star
     pinball() {
       command(t('¡PINBALL!'), () => {
-        const { lay, W: WL, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
-        // A small table (the owner's requests): 86 % of the stage's width, at most 1.3 times as tall as wide, at the bottom
-        // by the thumbs; a tap anywhere on either half of the stage still swings that side's flipper
-        const W = Math.round(WL * 0.86), H = Math.min(HL, Math.round(W * 1.3)), cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
-        Object.assign(cv.style, { width: W + 'px', height: H + 'px', top: 'auto', left: Math.round((WL - W) / 2) + 'px', right: 'auto' });
+        const { lay, W, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
+        // A shorter table than the stage (the owner's request; back to this shape after trying a smaller one): the stage's
+        // full width, at most 1.4 times as tall as wide, at the bottom, by the thumbs
+        const H = Math.min(HL, Math.round(W * 1.4)), cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
+        cv.style.height = H + 'px'; cv.style.top = 'auto';
         cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.scale(dpr, dpr);
-        // Big, slow balls (the owner's requests): a gentler pull and a lower top speed
-        const R = Math.max(8, W * 0.03), G = H * 1.0 * sp * sp, MAXV = H * 2.0;
+        // Big balls at 90 % of the earlier speed (the owner's requests): speeds × 0.9, so the pull × 0.81
+        const R = Math.max(8, W * 0.026), G = H * 1.09 * sp * sp, MAXV = H * 2.34;
         // The table: side walls, a roof with its corners cut, inlanes that lead onto each flipper, and the drain between them
         const fy = H * 0.84, FL = W * 0.25, pivL = [W * 0.2, fy], pivR = [W * 0.8, fy];
         const walls = [[[6, H * 0.14], [W * 0.18, 6]], [[W * 0.18, 6], [W * 0.82, 6]], [[W * 0.82, 6], [W - 6, H * 0.14]],
@@ -900,7 +900,7 @@ trackVisit();   // the site's traffic (D-208)
         // The end-to-end tests read the table to play it (C-14)
         window.__pinball = { balls, fl, W, H, fy, get alive() { return alive; }, get taps() { return taps; }, get saved() { return balls.filter(b => b.live && b.saved).length; } };
         const press = (side, on) => { if (party) return; const f = fl[side]; if (on && !f.held) { f.held = true; f.since = performance.now(); taps++; SFX.tap(); } if (!on) f.held = false; };
-        const sideOf = e => (ptIn(lay, e)[0] < WL / 2 ? 0 : 1), down = new Map();
+        const sideOf = e => (ptIn(lay, e)[0] < W / 2 ? 0 : 1), down = new Map();
         listen({ down: e => { const s = sideOf(e); down.set(e.pointerId, s); press(s, true); }, up: e => { const s = down.get(e.pointerId); down.delete(e.pointerId); if (s !== undefined && ![...down.values()].includes(s)) press(s, false); } });
         const key = e => { const s = { ArrowLeft: 0, KeyZ: 0, ArrowRight: 1, KeyM: 1 }[e.code]; if (s === undefined || !active) return; e.preventDefault(); press(s, e.type === 'keydown'); };
         addEventListener('keydown', key); addEventListener('keyup', key);
@@ -1030,7 +1030,7 @@ trackVisit();   // the site's traffic (D-208)
                 if (hit(b, f.piv, tip(f), 5, 0.35, vel, '#ffe27a') && f.w < 0) { if (!b.saved) { b.saved = true; pop(lay, '✓', b.x, b.y - R * 2); } shake = Math.min(4, shake + 2); try { navigator.vibrate?.(12); } catch (_) { /* none */ } } }
               // A bumper kicks a ball hard once, softer when it sends it down toward the flippers (the owner's request); after that it only bounces it back softer, so no ball stays up there all game
               for (const bp of bumpers) { const dx = b.x - bp.x, dy = b.y - bp.y, d = Math.hypot(dx, dy), min = R + bp.r;
-                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = ((b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.7, Math.hypot(b.vx, b.vy) * 0.9) : Math.hypot(b.vx, b.vy) * 0.6) * (ny > 0.3 ? 0.65 : 1);
+                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = ((b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.77, Math.hypot(b.vx, b.vy) * 0.9) : Math.hypot(b.vx, b.vy) * 0.6) * (ny > 0.3 ? 0.65 : 1);
                   b.x = bp.x + nx * min; b.y = bp.y + ny * min; b.vx = nx * sp3; b.vy = ny * sp3; bp.lit = 1; SFX.reveal();
                   b.spk = 0; sparkle(b, bp.x + nx * bp.r, bp.y + ny * bp.r, '#ff7ab8', 8); } }
               const v = Math.hypot(b.vx, b.vy); if (v > MAXV) { b.vx *= MAXV / v; b.vy *= MAXV / v; }

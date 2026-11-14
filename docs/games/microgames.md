@@ -107,8 +107,8 @@ it drops back on its own after 0.35 s, so every save is a new tap and holding it
 - **The bumpers move** (the owner, 2026-11-14): two (three until the owner tried two), drawn anew each game in the upper half, clear of the
   walls and of each other by more than a ball. A bumper kicks a ball hard once, at two thirds of the speed when it sends it
   down toward the flippers; after that it only bounces it back softer, so no ball stays up there all game.
-- **Big, slow balls** (the owner, 2026-11-14): 3 % of the table's width, at least 8 px, with a gentler pull (gravity H × 1.0, was × 1.35) and a lower top speed.
-- **A small table** (the owner, 2026-11-14): 86 % of the stage's width and at most 1.3 times as tall as wide, at the bottom of the stage by the thumbs, with rounded corners and a soft cyan glow. A tap anywhere on either half of the stage still swings that side's flipper.
+- **Big balls at 90 % of the earlier speed** (the owner, 2026-11-14): 2.6 % of the table's width, at least 8 px; every speed is 90 % of the first tuning's, so gravity is H × 1.09 (was × 1.35, then × 1.0 for a round), the top speed H × 2.34 and a bumper's first kick at least H × 0.77.
+- **A shorter table** (the owner, 2026-11-14): the stage's full width and at most 1.4 times as tall as wide, at the bottom of the stage by the thumbs, with rounded corners and a soft cyan glow. A smaller one (86 % wide, 1.3 tall) was tried for a round and dropped.
 - **Neon sparkles** on every strike: a few tiny glowing dots in the colour of what the ball hit (cyan wall, yellow flipper, pink bumper), at most one burst per ball every 90 ms.
 - **The neon** (the owner, 2026-11-14): every line is a neon tube, a faint halo, a glowing body and a white-hot core added on top of each other, that hums with a slight flicker; the bumpers have a pink ring and a yellow one inside and fill white-pink when hit; two violet lane arrows; the glass is a violet night darker at the edges with a magenta grid going away and faint twinkling stars. Nothing flickers with reduced motion.
 - **The balls come in turns** (the owner, 2026-11-14): the first drops straight onto a flipper at once (it
