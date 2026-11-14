@@ -29,7 +29,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   time on the owner's Mac mini (a launchd job that runs a headless Claude session, D-451, its instructions in
   `tools/jobs/prompts/processes-round.md`; `round-watch.yml` opens the "Processes round missed" issue
   when `main` goes more than a day unreviewed, `node tools/agents/round-watch.mjs check | notify`, D-440; `pending-watch.yml` keeps the "Pending work" issue with the stuck PRs and
-  the branches whose commits have no PR, `node tools/agents/pending.mjs check | notify`, D-441): it launches the documentation
+  the branches whose commits have no PR, `node tools/agents/pending.mjs check | notify`, D-441, and first sweeps the answered `processes` issues: closes the done ones, settles a question asked again, lists answered tasks nobody carried out, `node tools/agents/sweep.mjs`, D-555): it launches the documentation
   and usability agents when there is something to review, and the game-ideas agent once a week, not while its last issue still waits for the owner's answers
   (D-360, D-440; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
@@ -45,7 +45,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   touches that file anyway (`node tools/agents/english.mjs touched`, D-354, D-497). What
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
-  (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
+  (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions, among them `delete-branch`, D-555).
   Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | settle <issue> <n> "why" | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
   **Rules round** (#1249 step 16): `check` includes `node tools/agents/rules.mjs report` (`--json`, `--record`): each 📈

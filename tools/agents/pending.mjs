@@ -14,6 +14,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { run as sweep } from './sweep.mjs';
 
 export const REPO = 'ellokojavi/juegos-de-salon';
 export const TITLE = 'Pending work';
@@ -53,7 +54,7 @@ export function stranded({ name, ahead, openPr, lastDate, mergedPr = null }, now
 }
 
 /** The issue's text: each item one line with its link, and what to do with it. */
-export function issueBody({ prs, branches }) {
+export function issueBody({ prs, branches, stale = [] }) {
   const lines = [];
   if (prs.length) {
     lines.push('**Stuck PRs**', ...prs.map(p => `- #${p.number} ${p.title}: ${p.why.join('; ')}`), '');
@@ -63,6 +64,11 @@ export function issueBody({ prs, branches }) {
     lines.push('**Branches with work that is not on main**',
       ...branches.map(b => `- [\`${b.name}\`](https://github.com/${REPO}/compare/main...${encodeURIComponent(b.name)}): ${b.why}`), '');
     lines.push('For each: open a PR if the work is still wanted, or delete the branch if main already has it another way.', '');
+  }
+  if (stale.length) {
+    lines.push('**Answered decisions nobody carried out**',
+      ...stale.map(t => `- #${t.issue} (${t.id}, ${t.days} days): ${t.task}`), '');
+    lines.push('The processes round does these; the sweep closes their issue once they are done (D-555).', '');
   }
   lines.push('Kept current every day by `pending-watch.yml` (D-441); it closes itself when nothing is left. The processes round works this list too.');
   return lines.join('\n');
@@ -114,10 +120,12 @@ function print({ prs, branches }) {
 }
 
 function notify() {
-  const found = gather();
+  // The decisions sweep (D-555) runs first: it closes answered issues and lists what is left undone
+  const { stale } = sweep(true);
+  const found = { ...gather(), stale };
   const issues = api(`repos/${REPO}/issues?state=open&per_page=100`).filter(i => !i.pull_request && i.title === TITLE);
   print(found);
-  if (found.prs.length || found.branches.length) {
+  if (found.prs.length || found.branches.length || stale.length) {
     // One issue; while it stays open its body is kept current, without a new email each day
     const body = issueBody(found);
     if (issues.length) execFileSync('gh', ['issue', 'edit', String(issues[0].number), '-R', REPO, '--body', body]);

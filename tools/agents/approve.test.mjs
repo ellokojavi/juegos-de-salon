@@ -83,7 +83,7 @@ assert.match(invalidAction({ type: 'approve-pr', pr: 5 }), /sha/);
 assert.match(invalidAction({ type: 'approve-pr', pr: 5, sha: 'abc' }), /sha/);
 assert.equal(invalidAction({ tipo: 'comentar', en: 4, texto: 'hi' }), null);
 assert.match(invalidAction({ type: 'run', workflow: 'other.yml' }), /only/);
-assert.match(invalidAction({ type: 'delete-branch', branch: 'main' }), /unknown/);
+assert.match(invalidAction({ type: 'delete-branch', branch: 'main' }), /deletable/, 'main is never deleted (D-555)');
 assert.match(invalidAction({ type: 'merge', pr: '3' }), /without a PR number/);
 assert.throws(() => decisionsBody({ title: 'x', decisions: [{ question: 'y', yes: [{ type: 'shell', cmd: 'rm' }] }] }), /unknown/);
 assert.deepEqual(normalizeAction({ tipo: 'cerrar-pr', pr: 2, motivo: 'old' }), { type: 'close-pr', pr: 2, reason: 'old' });

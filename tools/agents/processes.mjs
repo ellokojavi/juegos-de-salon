@@ -45,6 +45,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, LABELS, settle, undecided, question, decisionQueuing } from './approve.mjs';
 import { wantsEmail, handled } from './feedback.mjs';
+import { same } from './sweep.mjs';
 import { report as rulesReport, formatReport } from './rules.mjs';
 
 /** The rules round's section of `check` (#1249 step 16): the report and what the round does with it. */
@@ -81,6 +82,7 @@ export function describeActions(list = []) {
       case 'close-issue': return `closes #${a.issue}`;
       case 'comment': return `comments on #${a.on}`;
       case 'run': return a.workflow === 'publish.yml' ? 'publishes the site' : 'runs the end-to-end tests';
+      case 'delete-branch': return `deletes branch ${a.branch}`;
       case 'queue': return a.task.startsWith('[publish]') ? 'queues it for the next round, for everyone' : a.task.startsWith('[labs]') ? 'queues it for the next round, in Labs' : 'queues it for the next round';
       default: return '';
     }
@@ -411,6 +413,10 @@ function decide(file) {
   const d = JSON.parse(readFileSync(file, 'utf8'));
   requireOrigins(d.decisions);
   const body = decisionsBody(d);
+  // A question already open in another issue is not asked again (D-555): #1415 and #1435 asked the same three
+  const open = gh('issue', 'list', '--label', LABEL, '--state', 'open', '--limit', '100', '--json', 'number,body');
+  const again = repeatedIn(body, open);
+  if (again.length) throw new Error(`Already asked and still open, take them out of ${file}:\n${again.map(r => `- decision ${r.decision} is #${r.issue}'s decision ${r.as}`).join('\n')}`);
   const exists = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === LABEL);
   if (!exists) sh('gh', ['label', 'create', LABEL, '-R', REPO, '--color', '5319e7', '--description', 'One-tap decisions from the processes agent (D-273)']);
   // The bot opens it (decide.yml): GitHub notifies no one of what their own account does, and
@@ -424,6 +430,18 @@ function decide(file) {
     if (created) return console.log(created.url);
   }
   throw new Error('decide.yml did not open the issue within two minutes: check Actions → Decide.');
+}
+
+/** The decisions of `body` that an open issue already asks and the owner has not answered: `[{ decision, issue, as }]`. */
+export function repeatedIn(body, openIssues) {
+  const res = [];
+  for (const d of Object.keys(readActions(body) || {}).map(op => op.split(':')[0]).filter((x, i, a) => a.indexOf(x) === i)) {
+    for (const o of openIssues) {
+      const as = undecided(o.body || '').find(e => same(body, d, o.body, e));
+      if (as) { res.push({ decision: d, issue: o.number, as }); break; }
+    }
+  }
+  return res;
 }
 
 const flag = (args, name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; };
