@@ -850,28 +850,30 @@ trackVisit();   // the site's traffic (D-208)
     // right half to flip that flipper and keep them up. Each ball still on the table when time runs out is a star
     pinball() {
       command(t('¡PINBALL!'), () => {
-        const { lay, W, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
-        // A shorter table than the stage (the owner's request): at most 1.4 times as tall as wide, at the bottom, by the thumbs
-        const H = Math.min(HL, Math.round(W * 1.4)), cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
-        cv.style.height = H + 'px'; cv.style.top = 'auto';
+        const { lay, W: WL, H: HL } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
+        // A small table (the owner's requests): 86 % of the stage's width, at most 1.3 times as tall as wide, at the bottom
+        // by the thumbs; a tap anywhere on either half of the stage still swings that side's flipper
+        const W = Math.round(WL * 0.86), H = Math.min(HL, Math.round(W * 1.3)), cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
+        Object.assign(cv.style, { width: W + 'px', height: H + 'px', top: 'auto', left: Math.round((WL - W) / 2) + 'px', right: 'auto' });
         cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.scale(dpr, dpr);
-        const R = Math.max(6.5, W * 0.022), G = H * 1.35 * sp * sp, MAXV = H * 2.6;
+        // Big, slow balls (the owner's requests): a gentler pull and a lower top speed
+        const R = Math.max(8, W * 0.03), G = H * 1.0 * sp * sp, MAXV = H * 2.0;
         // The table: side walls, a roof with its corners cut, inlanes that lead onto each flipper, and the drain between them
         const fy = H * 0.84, FL = W * 0.25, pivL = [W * 0.2, fy], pivR = [W * 0.8, fy];
         const walls = [[[6, H * 0.14], [W * 0.18, 6]], [[W * 0.18, 6], [W * 0.82, 6]], [[W * 0.82, 6], [W - 6, H * 0.14]],
           [[6, H * 0.14], [6, H * 0.66]], [[W - 6, H * 0.14], [W - 6, H * 0.66]], [[6, H * 0.66], pivL], [[W - 6, H * 0.66], pivR]];
-        // Three bumpers, somewhere new every time (the owner's request): in the upper half, clear of the walls and of each
-        // other by more than a ball, so nothing gets trapped; the old fixed layout if no draw fits
+        // Two bumpers (the owner tried two, 2026-11-14), somewhere new every time: in the upper half, clear of the walls and
+        // of each other by more than a ball, so nothing gets trapped; a fixed pair if no draw fits
         const bumpers = (() => {
           for (let tries = 0; tries < 60; tries++) {
             const bs = [];
-            for (let k = 0; k < 3 && bs.length === k; k++) for (let a = 0; a < 40; a++) {
-              const r = W * (0.055 + rand() * 0.03), x = W * 0.2 + r + rand() * (W * 0.6 - 2 * r), y = H * 0.2 + rand() * H * 0.33;
+            for (let k = 0; k < 2 && bs.length === k; k++) for (let a = 0; a < 40; a++) {
+              const r = W * (0.07 + rand() * 0.03), x = W * 0.2 + r + rand() * (W * 0.6 - 2 * r), y = H * 0.2 + rand() * H * 0.33;
               if (bs.every(o => Math.hypot(o.x - x, o.y - y) > o.r + r + R * 3.2)) { bs.push({ x, y, r, lit: 0 }); break; }
             }
-            if (bs.length === 3) return bs;
+            if (bs.length === 2) return bs;
           }
-          return [[W * 0.3, H * 0.27, W * 0.07], [W * 0.7, H * 0.27, W * 0.07], [W * 0.5, H * 0.43, W * 0.08]].map(([x, y, r]) => ({ x, y, r, lit: 0 }));
+          return [[W * 0.32, H * 0.3, W * 0.08], [W * 0.66, H * 0.42, W * 0.08]].map(([x, y, r]) => ({ x, y, r, lit: 0 }));
         })();
         // A flipper rests pointing down to the drain and swings up while its side is held; it drops on its own after a
         // moment, so each save takes a new tap
@@ -880,7 +882,7 @@ trackVisit();   // the site's traffic (D-208)
         const tip = f => [f.piv[0] + f.dir * FL * Math.cos(f.a), f.piv[1] + FL * Math.sin(f.a)];
         const COLORS = ['#ffffff', '#ffe27a', '#8ff7ee'];
         // The first ball drops straight onto a flipper at once, so you react from the start; the other two wait on the table
-        // where they will drop, as see-through balls with a ring that fills up, and fall from there about 1.1 and 2.1 s in, so
+        // where they will drop, as see-through balls with a ring that fills up, and fall from there about 0.9 and 1.7 s in, so
         // they never all arrive together and you see them coming (the owner's requests, 2026-11-14)
         const side = rand() < 0.5 ? 0 : 1, firstX = side ? W * (0.68 + rand() * 0.06) : W * (0.26 + rand() * 0.06);
         // Where a waiting ball sits: on the table's upper half, clear of the bumpers, the walls and the other one
@@ -892,26 +894,31 @@ trackVisit();   // the site's traffic (D-208)
         const ball = (k, x, y, vx, vy, at) => ({ x, y, vx, vy, live: true, c: COLORS[k], trail: [], at, saved: false, still: 0 });
         const balls = [
           ball(0, firstX, H * 0.63, (side ? 1 : -1) * W * 0.05, H * 0.15, 150),
-          ...[1, 2].map(k => { const [x, y] = spot(k); return ball(k, x, y, (rand() - 0.5) * W * 0.2, 0, k === 1 ? 1000 + rand() * 200 : 2000 + rand() * 200); }),
+          ...[1, 2].map(k => { const [x, y] = spot(k); return ball(k, x, y, (rand() - 0.5) * W * 0.2, 0, k === 1 ? 800 + rand() * 200 : 1600 + rand() * 200); }),
         ];
         let alive = 3, taps = 0, last = performance.now(), shake = 0, sparks = [], party = 0;
         // The end-to-end tests read the table to play it (C-14)
         window.__pinball = { balls, fl, W, H, fy, get alive() { return alive; }, get taps() { return taps; }, get saved() { return balls.filter(b => b.live && b.saved).length; } };
         const press = (side, on) => { if (party) return; const f = fl[side]; if (on && !f.held) { f.held = true; f.since = performance.now(); taps++; SFX.tap(); } if (!on) f.held = false; };
-        const sideOf = e => (ptIn(lay, e)[0] < W / 2 ? 0 : 1), down = new Map();
+        const sideOf = e => (ptIn(lay, e)[0] < WL / 2 ? 0 : 1), down = new Map();
         listen({ down: e => { const s = sideOf(e); down.set(e.pointerId, s); press(s, true); }, up: e => { const s = down.get(e.pointerId); down.delete(e.pointerId); if (s !== undefined && ![...down.values()].includes(s)) press(s, false); } });
         const key = e => { const s = { ArrowLeft: 0, KeyZ: 0, ArrowRight: 1, KeyM: 1 }[e.code]; if (s === undefined || !active) return; e.preventDefault(); press(s, e.type === 'keydown'); };
         addEventListener('keydown', key); addEventListener('keyup', key);
         const prev = cleanup; cleanup = () => { prev?.(); removeEventListener('keydown', key); removeEventListener('keyup', key); };
         // A ball against a segment (a capsule `th` thick): pushed out, and bounced off it with the segment's own speed at
         // that point (a flipper's swing is what launches it)
-        const hit = (b, a, c, th, e, vel) => {
+        // A soft neon sparkle where a ball strikes something (the owner's request): a few tiny glowing dots in that
+        // thing's colour, at most one burst per ball every 90 ms so rolling along a wall does not fizz
+        const sparkle = (b, x, y, col, n = 5) => { const now = performance.now(); if (now - (b.spk || 0) < 90) return; b.spk = now;
+          for (let k = 0; k < n; k++) { const an = rand() * Math.PI * 2, v = 30 + rand() * 60; sparks.push({ x, y, vx: Math.cos(an) * v, vy: Math.sin(an) * v, l: 0.6, c: col, soft: true }); } };
+        const hit = (b, a, c, th, e, vel, col) => {
           const dx = c[0] - a[0], dy = c[1] - a[1], L2 = dx * dx + dy * dy, u = Math.max(0, Math.min(1, ((b.x - a[0]) * dx + (b.y - a[1]) * dy) / L2));
           const px = a[0] + dx * u, py = a[1] + dy * u, ex = b.x - px, ey = b.y - py, d = Math.hypot(ex, ey), min = R + th;
           if (d >= min || d === 0) return false;
           const nx = ex / d, ny = ey / d; b.x = px + nx * min; b.y = py + ny * min;
           const [sx, sy] = vel ? vel(px, py) : [0, 0], vn = (b.vx - sx) * nx + (b.vy - sy) * ny;
           if (vn < 0) { b.vx -= (1 + e) * vn * nx; b.vy -= (1 + e) * vn * ny; }
+          if (col && vn < -H * 0.25) sparkle(b, px + nx * th, py + ny * th, col);
           return vn < -H * 0.6;
         };
         const glow = (col, blur) => { g.shadowColor = col; g.shadowBlur = reduce ? 0 : blur; };
@@ -954,7 +961,9 @@ trackVisit();   // the site's traffic (D-208)
           fl.forEach(f => tube(seg(f.piv, tip(f)), '#ffd23f', 6, now, f.dir));
           g.shadowBlur = 0; fl.forEach(f => { g.fillStyle = '#fff6c8'; g.beginPath(); g.arc(...f.piv, 4, 0, Math.PI * 2); g.fill(); });
           g.globalCompositeOperation = 'lighter';
-          for (const sp2 of sparks) { g.globalAlpha = Math.max(0, sp2.l); g.fillStyle = sp2.c; g.fillRect(sp2.x, sp2.y, 3, 3); } g.globalAlpha = 1;
+          // Sparks: tiny glowing dots that fade (soft ones, from a hit) or the party's confetti squares
+          for (const sp2 of sparks) { g.globalAlpha = Math.max(0, Math.min(1, sp2.l * (sp2.soft ? 1.6 : 1))); g.fillStyle = sp2.c;
+            if (sp2.soft) { glow(sp2.c, 8); g.beginPath(); g.arc(sp2.x, sp2.y, 1.4 + sp2.l, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0; } else g.fillRect(sp2.x, sp2.y, 3, 3); } g.globalAlpha = 1;
           g.globalCompositeOperation = 'source-over';
           for (const b of balls) { if (!b.live || b.trail.length === 0 || party) continue;
             g.globalCompositeOperation = 'lighter';
@@ -1014,16 +1023,16 @@ trackVisit();   // the site's traffic (D-208)
               f.a = want < f.a ? Math.max(want, f.a - spd * h) : Math.min(want, f.a + spd * h); f.w = (f.a - a0) / h; }
             for (const b of balls) { if (!b.live || tm < b.at / sp) continue;
               b.vy += G * h; b.x += b.vx * h; b.y += b.vy * h;
-              walls.forEach(([a, c]) => hit(b, a, c, 2, 0.45));
+              walls.forEach(([a, c]) => hit(b, a, c, 2, 0.45, null, '#8ff7ee'));
               for (const f of fl) { // a point on the flipper moves at ω × r, with the angle mirrored on the right one
                 const vel = (px, py) => { const rx = px - f.piv[0], ry = py - f.piv[1]; return [-f.dir * f.w * ry, f.dir * f.w * rx]; };
                 // A ball the flipper swings into counts as saved: only those score, so every star takes a tap
-                if (hit(b, f.piv, tip(f), 5, 0.35, vel) && f.w < 0) { if (!b.saved) { b.saved = true; pop(lay, '✓', b.x, b.y - R * 2); } shake = Math.min(4, shake + 2); try { navigator.vibrate?.(12); } catch (_) { /* none */ } } }
+                if (hit(b, f.piv, tip(f), 5, 0.35, vel, '#ffe27a') && f.w < 0) { if (!b.saved) { b.saved = true; pop(lay, '✓', b.x, b.y - R * 2); } shake = Math.min(4, shake + 2); try { navigator.vibrate?.(12); } catch (_) { /* none */ } } }
               // A bumper kicks a ball hard once, softer when it sends it down toward the flippers (the owner's request); after that it only bounces it back softer, so no ball stays up there all game
               for (const bp of bumpers) { const dx = b.x - bp.x, dy = b.y - bp.y, d = Math.hypot(dx, dy), min = R + bp.r;
-                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = ((b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.85, Math.hypot(b.vx, b.vy) * 0.95) : Math.hypot(b.vx, b.vy) * 0.6) * (ny > 0.3 ? 0.65 : 1);
+                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = ((b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.7, Math.hypot(b.vx, b.vy) * 0.9) : Math.hypot(b.vx, b.vy) * 0.6) * (ny > 0.3 ? 0.65 : 1);
                   b.x = bp.x + nx * min; b.y = bp.y + ny * min; b.vx = nx * sp3; b.vy = ny * sp3; bp.lit = 1; SFX.reveal();
-                  for (let k = 0; k < 8; k++) { const an = rand() * Math.PI * 2; sparks.push({ x: bp.x + nx * bp.r, y: bp.y + ny * bp.r, vx: Math.cos(an) * 90, vy: Math.sin(an) * 90, l: 1, c: k % 2 ? '#ff2e88' : '#ffd23f' }); } } }
+                  b.spk = 0; sparkle(b, bp.x + nx * bp.r, bp.y + ny * bp.r, '#ff7ab8', 8); } }
               const v = Math.hypot(b.vx, b.vy); if (v > MAXV) { b.vx *= MAXV / v; b.vy *= MAXV / v; }
               // Wedged where a guide meets a flipper's base: after a moment still, a nudge sends it down the flipper
               b.still = v < H * 0.05 ? b.still + h : 0;
