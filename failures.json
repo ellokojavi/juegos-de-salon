@@ -3260,6 +3260,19 @@
       "date": "2026-11-14T19:00:37.465Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43629542968,
+      "check": "tests",
+      "pr": 1461,
+      "branch": "processes-sweep",
+      "commit": "33b8f0e80d591df6b8eb61b167e05977349cf7a2",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/sweep.test.mjs",
+      "signature": "07070fafa9",
+      "date": "2026-11-14T19:01:26.421Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
