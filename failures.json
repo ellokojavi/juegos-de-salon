@@ -3271,7 +3271,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/sweep.test.mjs",
       "signature": "07070fafa9",
       "date": "2026-11-14T19:01:26.421Z",
-      "fix": null,
+      "fix": {
+        "commit": "5d2ee7d16f15b8db7722561ae9ee5f607fcf405a",
+        "date": "2026-11-14T19:07:17.086Z",
+        "stat": "3 file(s) +4 −2: README.md, docs/AGENTS.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
@@ -3284,7 +3288,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/sweep.test.mjs",
       "signature": "07070fafa9",
       "date": "2026-11-14T19:01:43.105Z",
-      "fix": null,
+      "fix": {
+        "commit": "5d2ee7d16f15b8db7722561ae9ee5f607fcf405a",
+        "date": "2026-11-14T19:07:17.086Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
@@ -3297,7 +3305,11 @@
       "error": "ERROR · appeared tests: tools/agents/sweep.test.mjs",
       "signature": "eb4ad68f3e",
       "date": "2026-11-14T19:04:24.982Z",
-      "fix": null,
+      "fix": {
+        "commit": "5d2ee7d16f15b8db7722561ae9ee5f607fcf405a",
+        "date": "2026-11-14T19:07:17.086Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
