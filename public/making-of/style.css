@@ -29,7 +29,16 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-stats div { background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18); }
 .mo-stats b { display: block; font-family: var(--font-num); font-weight: 900; font-size: var(--fs-200); color: var(--yellow); line-height: 1.1; }
 .mo-stats span { color: var(--muted); font-size: var(--fs-100); }
-.mo-next { align-self: flex-start; color: var(--cyan); font-weight: 900; text-decoration: none; font-size: var(--fs-110); }
+/* The way on: a yellow button at the foot of every section, its arrow nudging down */
+.mo-next {
+  align-self: center; display: inline-flex; align-items: center; gap: var(--s-8); margin-top: var(--s-12);
+  padding: var(--s-10) var(--s-24); border-radius: var(--r-pill); background: var(--yellow); color: var(--ink-on-yellow);
+  font-weight: 900; font-size: var(--fs-110); text-decoration: none; box-shadow: var(--shadow-panel);
+}
+.mo-next:hover { filter: brightness(1.08); }
+.mo-next span { display: inline-block; animation: mo-nudge 1.6s ease-in-out infinite; }
+@keyframes mo-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(var(--s-4)); } }
+@media (prefers-reduced-motion: reduce) { .mo-next span { animation: none; } }
 
 .mo-aka { margin: calc(-1 * var(--s-12)) 0 0; color: var(--muted); font-weight: 700; font-size: var(--fs-140); }
 
@@ -38,8 +47,8 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-play-wide { display: grid; gap: var(--s-16); }
 .mo-clip { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); }
 .mo-clip video { width: 100%; height: auto; display: block; border-radius: var(--r-16); border: 2px solid var(--glass-border); background: var(--well); box-shadow: var(--shadow-panel); }
-.mo-play-wide .mo-clip video { max-height: 27vh; width: auto; max-width: 100%; }
-.mo-clip--tall video { max-height: 62vh; width: auto; max-width: 100%; align-self: center; }
+.mo-play-wide .mo-clip video { max-height: 24vh; width: auto; max-width: 100%; }
+.mo-clip--tall video { max-height: 56vh; width: auto; max-width: 100%; align-self: center; }
 .mo-clip figcaption { display: flex; flex-direction: column; gap: var(--s-2); }
 .mo-clip figcaption b { color: var(--yellow); font-size: var(--fs-110); }
 .mo-clip figcaption span { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
@@ -114,15 +123,6 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-learnings h3 { margin: 0 0 var(--s-6); font-size: var(--fs-120); color: var(--ink); }
 .mo-learnings p { margin: 0; color: var(--muted); font-size: var(--fs-100); line-height: 1.45; }
 .mo-learnings[start="6"] { counter-reset: learning 5; }
-/* The presenter's line under each learning: hidden from the room until N or the Notes button shows it */
-.mo-learnings .mo-proof { display: none; margin-top: var(--s-8); color: var(--yellow); font-style: italic; font-size: var(--fs-90); }
-.mo-learnings .mo-proof::before { content: '🗣 '; font-style: normal; }
-.mo-notes-on .mo-learnings .mo-proof { display: block; }
-.mo-notes-btn {
-  font: inherit; font-weight: 700; color: var(--muted); background: transparent; cursor: pointer;
-  border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10);
-}
-.mo-notes-btn[aria-pressed="true"] { color: var(--ink-on-yellow); background: var(--yellow); border-color: var(--yellow); }
 
 /* The end: the QR to play */
 .mo-end { align-items: center; text-align: center; }
