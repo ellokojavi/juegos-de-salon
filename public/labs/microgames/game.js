@@ -1112,22 +1112,32 @@ trackVisit();   // the site's traffic (D-208)
         ['#ffd23f', ['..##.##..', '.#######.', '##k###k##', '#########', '#.#####.#', '..#...#..', '.##...##.']],
         ['#9d7bff', ['...###...', '.#######.', '##wk#wk##', '#########', '.#.#.#.#.', '#.#.#.#.#']],
       ];
-      const pix = ([c, rows]) => { const w = rows[0].length, h = rows.length; let r = '';
+      const pix = ([c, rows], z = 5.2) => { const w = rows[0].length, h = rows.length; let r = '';
         rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${ch === '#' ? c : ch === 'w' ? '#fff' : '#111'}"/>`; }));
-        return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" style="width:${w * 5.2}px;height:${h * 5.2}px" data-c="${c}">${r}</svg>`; };
+        return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" style="width:${w * z}px;height:${h * z}px" data-c="${c}">${r}</svg>`; };
       // When hit: it bursts into square pixels of its color
       const blast = (lay, x, y, c, n = 12) => { for (let i = 0; i < n; i++) { const q = mk(lay, 'span', 'obj pix'); q.style.background = c; q.style.color = c; place(q, x, y);
         const an = i / n * Math.PI * 2, d = 30 + rand() * 40; q.style.setProperty('--dx', `${Math.round(Math.cos(an) * d / 6) * 6}px`); q.style.setProperty('--dy', `${Math.round(Math.sin(an) * d / 6) * 6}px`); later(() => q.remove(), 500); } };
       command(t('¡REBOTA!'), () => {
         // A neon court (the owner's request, 2026-11-14), about 16 % shorter than the stage, so the ball goes up and comes
-        // back more often in the same time; its roof is the court's top edge
+        // back more often in the same time; its roof is the court's top edge. It sits high in the stage, 6 % from the top
+        // and 10 % from the bottom
         const { lay, W, H } = lay0('<div class="rb-court" id="rc"></div><span class="obj rb-trail"></span><span class="obj rb-trail"></span><span class="obj rb-trail"></span><div class="paddle" id="pd"></div><span class="obj pball" id="pb"></span>');
-        const CT = Math.round(H * 0.16), CH = H - CT, pd = $id('pd'), pb = $id('pb'), PW = W * 0.3, py = CT + CH * 0.9, R = 11;
-        $id('rc').style.top = (CT - 4) + 'px';
+        const CT = Math.round(H * 0.06), CH = Math.round(H * 0.84), pd = $id('pd'), pb = $id('pb'), PW = W * 0.3, py = CT + CH * 0.9, R = 11;
+        Object.assign($id('rc').style, { top: (CT - 4) + 'px', bottom: 'auto', height: (CH + 8) + 'px' });
         // A short glowing trail behind the ball
         const trail = [...lay.querySelectorAll('.rb-trail')], hist = [];
         pd.style.width = PW + 'px'; let px = W / 2;
-        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); el.style.setProperty('--c', al[0]); const x = W * (0.22 + 0.28 * i) + (rand() - 0.5) * W * 0.08, y = CT + CH * (0.14 + rand() * 0.12); place(el, x, y); return { el, x, y, hit: false }; });
+        const targets = shuffle(ALIENS.slice()).slice(0, 3).map((al, i) => { const el = mk(lay, 'span', 'obj invader', pix(al)); el.style.setProperty('--d', `${-i * 0.23}s`); el.style.setProperty('--c', al[0]); const x = W * (0.22 + 0.28 * i) + (rand() - 0.5) * W * 0.08, y = CT + CH * (0.14 + rand() * 0.12); place(el, x, y); return { el, x, y, al, hit: false }; });
+        // All three hit: they come back, line up in the middle with party hats and dance a silly kick line under a neon
+        // ¡FIESTA MARCIANA! (the owner asked for a surprise), then the stars
+        const party = () => {
+          cancelAnimationFrame(raf); timer.hidden = true; pb.hidden = true; trail.forEach(q => { q.hidden = true; }); SFX.win?.();
+          const tx = mk(lay, 'span', 'obj rb-party', t('¡FIESTA MARCIANA!')); place(tx, W / 2, CT + CH * 0.2);
+          targets.forEach((g, i) => { const d = mk(lay, 'span', 'obj rb-dancer', pix(g.al, 6)); d.style.setProperty('--c', g.al[0]); d.style.setProperty('--d', `${i * 0.12}s`);
+            d.style.setProperty('--k', i % 2 ? '-1' : '1'); place(d, W * (0.2 + 0.3 * i), CT + CH * 0.5); });
+          later(() => finish(3, t('¡Le diste a los tres!')), reduce ? 700 : 1900);
+        };
         let bx = W / 2, by = CT + CH * 0.6, an = (-60 - rand() * 60) * Math.PI / 180, V = H * 0.75 * sp, vx = V * Math.cos(an), vy = V * Math.sin(an), broken = 0, last = performance.now();
         const mv = e => { px = Math.max(PW / 2 + W * 0.04, Math.min(W - PW / 2 - W * 0.04, ptIn(lay, e)[0])); };
         listen({ down: mv, move: mv });
@@ -1139,7 +1149,7 @@ trackVisit();   // the site's traffic (D-208)
           if (vy > 0 && by + R >= py && by + R <= py + 18 && Math.abs(bx - px) <= PW / 2 + R) {
             const off = (bx - px) / (PW / 2), a = (-90 + off * 60) * Math.PI / 180, s = Math.hypot(vx, vy) * 1.04; vx = s * Math.cos(a); vy = s * Math.sin(a); by = py - R; pd.classList.remove('hit'); void pd.offsetWidth; pd.classList.add('hit'); blast(lay, bx, py, '#9ff6ee', 5); }
           for (const g of targets) if (!g.hit && near([bx, by], [g.x, g.y], 30)) { g.hit = true; broken++; g.el.remove(); blast(lay, g.x, g.y, g.el.firstElementChild.dataset.c); vy = Math.abs(vy); pop(lay, '+1', g.x, g.y);
-            if (broken === 3) { finish(3, t('¡Le diste a los tres!')); return false; } }
+            if (broken === 3) { party(); return false; } }
           place(pb, bx, by);
           hist.unshift([bx, by]); if (hist.length > 9) hist.pop();
           trail.forEach((q, k) => { const p = hist[(k + 1) * 3 - 1] || hist.at(-1); place(q, p[0], p[1]); q.style.opacity = 0.35 - k * 0.1; q.style.scale = 1 - k * 0.2; });

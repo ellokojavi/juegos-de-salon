@@ -146,8 +146,12 @@ paddle sets its angle, like Pong. The owner's tuning (2026-11-14):
 - **Neon**: a court with a cyan neon frame over a violet night with a faint grid; the paddle a cyan neon tube, the
   ball a warm white-yellow glow with a short trail, the aliens glowing in their own colour, and every burst (an
   alien hit, a small cyan one on each paddle hit) of glowing pixels.
-- **A shorter court**: it starts 16 % of the stage down, so the ball, at the same speed, goes up and comes back more
-  often in the same 9 s; the roof is the court's top edge.
+- **A shorter court**: 84 % of the stage's height, so the ball, at the same speed, goes up and comes back more
+  often in the same 9 s; the roof is the court's top edge. It sits high in the stage (6 % from the top, 10 % from
+  the bottom).
+- **All three hit: ¡FIESTA MARCIANA!** (the owner asked for a silly surprise): the three aliens come back, bigger,
+  line up with crooked party hats in their colour and dance a kick line under a flickering neon sign for about
+  1.9 s, then the stars. Nothing dances with reduced motion.
 
 ## Usability rules of the microgames
 

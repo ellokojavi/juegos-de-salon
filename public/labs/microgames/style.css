@@ -473,6 +473,17 @@
   border: 2px solid var(--cyan); box-shadow: 0 0 8px var(--cyan), 0 0 22px rgb(var(--cyan-rgb) / 0.5), inset 0 0 18px rgb(var(--cyan-rgb) / 0.35);
   background: linear-gradient(rgb(var(--pink-rgb) / 0.08) 1px, transparent 1px) 0 0 / 100% 28px, linear-gradient(90deg, rgb(var(--cyan-rgb) / 0.06) 1px, transparent 1px) 0 0 / 28px 100%,
     radial-gradient(ellipse at 50% 40%, var(--mg-1d0838), var(--mg-05030f)); }
+.demo .rb-dancer { z-index: 4; line-height: 0; pointer-events: none; animation: rbin 0.4s cubic-bezier(0.3, 1.8, 0.5, 1) var(--d) both, rbdance 0.42s ease-in-out calc(var(--d) + 0.4s) infinite alternate; }
+.demo .rb-dancer svg { position: static; display: block; filter: drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 12px var(--c)); }
+/* A crooked party hat in the alien's own colour */
+.demo .rb-dancer::before { content: ''; position: absolute; left: 50%; top: -20px; width: 0; height: 0; translate: -50% 0; rotate: calc(var(--k) * 14deg);
+  border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 22px solid var(--c); filter: drop-shadow(0 0 6px var(--c)); }
+@keyframes rbin { from { scale: 0; opacity: 0; } }
+@keyframes rbdance { from { translate: 0 0; rotate: calc(var(--k) * -14deg); } to { translate: 0 -22px; rotate: calc(var(--k) * 14deg); } }
+.demo .rb-party { z-index: 5; white-space: nowrap; font-family: var(--display); font-size: var(--mg-fs-240); color: var(--mg-fff3b0); pointer-events: none;
+  text-shadow: 0 0 6px var(--pink), 0 0 18px var(--pink), 0 0 36px rgb(var(--pink-rgb) / 0.6); animation: rbin 0.4s cubic-bezier(0.3, 1.8, 0.5, 1) both, rbglow 0.3s steps(2) 0.4s infinite; }
+@keyframes rbglow { 50% { opacity: 0.75; } }
+@media (prefers-reduced-motion: reduce) { .demo .rb-dancer, .demo .rb-party { animation: none; } }
 .demo .rb-trail { width: 16px; height: 16px; border-radius: 50%; pointer-events: none; background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
 .demo .invader { pointer-events: none; animation: invbob 0.9s steps(2) infinite; animation-delay: var(--d, 0s); line-height: 0; }
 .demo .invader svg { position: static; display: block; filter: drop-shadow(0 0 2px var(--c, var(--ink))) drop-shadow(0 0 9px var(--c, var(--ink))); }
