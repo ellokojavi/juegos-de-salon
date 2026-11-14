@@ -3221,6 +3221,19 @@
       "date": "2026-11-14T18:52:19.965Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43629282160,
+      "check": "tests",
+      "pr": 1460,
+      "branch": "making-of-traction-live",
+      "commit": "859395b32a0d4069d7d59bc8c1dd379ba17d0eeb",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/firebase/traction.test.mjs",
+      "signature": "37be243b46",
+      "date": "2026-11-14T18:58:06.058Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
