@@ -3219,7 +3219,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/firebase/traction.test.mjs",
       "signature": "37be243b46",
       "date": "2026-11-14T18:52:19.965Z",
-      "fix": null,
+      "fix": {
+        "commit": "f39e4473a6c9d233d40fbeffd0593adf27a2b433",
+        "date": "2026-11-14T19:15:42.248Z",
+        "stat": "15 file(s) +233 −5: .github/workflows/traction.yml, README.md, changelog/making-of-traction-live.md, changelog/making-of-traction.md, docs/DECISIONS.md, …"
+      },
       "flaky": false
     },
     {
@@ -3232,7 +3236,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/firebase/traction.test.mjs",
       "signature": "37be243b46",
       "date": "2026-11-14T18:58:06.058Z",
-      "fix": null,
+      "fix": {
+        "commit": "f39e4473a6c9d233d40fbeffd0593adf27a2b433",
+        "date": "2026-11-14T19:15:42.248Z",
+        "stat": "3 file(s) +3 −1: README.md, docs/facts.json, public/making-of/index.html"
+      },
       "flaky": false
     },
     {
@@ -3245,7 +3253,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/firebase/traction.test.mjs",
       "signature": "37be243b46",
       "date": "2026-11-14T18:58:55.532Z",
-      "fix": null,
+      "fix": {
+        "commit": "f39e4473a6c9d233d40fbeffd0593adf27a2b433",
+        "date": "2026-11-14T19:15:42.248Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
@@ -3322,7 +3334,11 @@
       "error": "ERROR · appeared tests: tools/firebase/traction.test.mjs",
       "signature": "d0831df0b8",
       "date": "2026-11-14T19:15:30.936Z",
-      "fix": null,
+      "fix": {
+        "commit": "f39e4473a6c9d233d40fbeffd0593adf27a2b433",
+        "date": "2026-11-14T19:15:42.248Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
