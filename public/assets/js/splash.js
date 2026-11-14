@@ -211,8 +211,8 @@ export const CAMPAIGNS = {
     title: { es: 'No es rápido…\n¡Es al toque!', en: 'It’s not fast…\nIt’s in a flash!', pt: 'Não é rápido…\nÉ na hora!' },
     hero: true,
     items: [{
-      emoji: '⚡', href: 'labs/microgames/', video: 'assets/splash/microgames-teaser.mp4', img: 'assets/splash/microgames-teaser-start.png', still: 'assets/splash/microgames-teaser.png', ratio: '8 / 5', smooth: true,
-      title: { es: '¡Al toque!', en: 'In a Flash!', pt: 'Na Hora!' },
+      href: 'labs/microgames/', video: 'assets/splash/microgames-teaser.mp4', img: 'assets/splash/microgames-teaser-start.png', still: 'assets/splash/microgames-teaser.png', ratio: '8 / 5', smooth: true,
+      // No title: the clip and the text are enough (the owner, 2026-11-14)
       text: {
         es: 'Toca, arrastra, desliza: una orden y 3 segundos para cumplirla. Diez seguidos, cada vez más rápido. ¿Haces la corrida perfecta?',
         en: 'Tap, drag, swipe: one order and 3 seconds to do it. Ten in a row, faster and faster. Can you make the perfect run?',
@@ -677,7 +677,8 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
     const body = node('div', 'splash-item-cuerpo');
     const h3 = node('h3', null, it.icon ? it.name : `${it.emoji} ${it.name}`.trim());
     if (it.icon) { const img = node('img', 'splash-icon-inline'); Object.assign(img, { src: it.icon, alt: '', decoding: 'async', width: 24, height: 24 }); Object.assign(img.style, { width: '1.1em', height: '1.1em' }); h3.prepend(img); }
-    body.append(h3);
+    // An item with no name (the owner's call for ¡Al toque!'s launch: the clip and the text are enough) has no heading
+    if (it.name) body.append(h3);
     if (it.text) body.append(node('p', null, it.text));
     if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', it.cta ?? `▶ ${pick(UI.play, lang)}`));
     a.append(body);

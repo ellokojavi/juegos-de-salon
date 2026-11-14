@@ -96,7 +96,8 @@ for (const [id, c] of Object.entries(CAMPAIGNS)) {
     }
     if (it.cta) for (const l of langs) assert.ok(it.cta[l], `${id}: a button without its text in ${l}`);
     if (it.game) assert.ok(ids.has(it.game), `${id}: game ${it.game} does not exist`);
-    else if (it.title || it.text || it.href) for (const l of langs) assert.ok(it.title?.[l] && it.text?.[l], `${id}: an item without its texts in ${l}`);
+    // A title is optional (microgames-launch has none: the clip and the text are enough); a text is not
+    else if (it.title || it.text || it.href) for (const l of langs) assert.ok((!it.title || it.title[l]) && it.text?.[l], `${id}: an item without its texts in ${l}`);
     else assert.ok(it.img, `${id}: a teaser (an item with no texts) without its picture`);
   }
 }

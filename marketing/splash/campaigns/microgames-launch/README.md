@@ -5,7 +5,7 @@ The launch of ⚡ ¡Al toque! (microgames) out of the lab, made ahead of time (t
 
 | | |
 |---|---|
-| Texts | kicker "¡Nuevo juego!" · title in two lines, "No es rápido…" / "¡Es al toque!" (en "It’s not fast…" / "It’s in a flash!", pt "Não é rápido…" / "É na hora!"); the ⚡ is the icon above it, so the title stays two lines at 320 px, the owner's line; the card says what it is (tap, drag, swipe; one order, 3 seconds; ten in a row, faster and faster; the perfect run) and ▶ Jugar; in es, en and pt |
+| Texts | kicker "¡Nuevo juego!" · title in two lines, "No es rápido…" / "¡Es al toque!" (en "It’s not fast…" / "It’s in a flash!", pt "Não é rápido…" / "É na hora!"); the ⚡ is the icon above it, so the title stays two lines at 320 px, the owner's line; the card, with no heading (the owner: the clip and the text are enough), says what it is (tap, drag, swipe; one order, 3 seconds; ten in a row, faster and faster; the perfect run) and ▶ Jugar; in es, en and pt |
 | Layout | `hero`: the clip as wide as the window, the card under it |
 | Clip | `public/assets/splash/microgames-teaser.mp4` (512×320, 10 s loop at 30 fps, ~400 KB), drawn by [`teaser/microgames.html`](../../teaser/microgames.html) on the teaser engine and recorded with `node marketing/splash/teaser.mjs microgames` |
 | Item | ⚡ ¡Al toque!, its own texts and link (`labs/microgames/` today) since the game is not in `games.js` while in the lab |
