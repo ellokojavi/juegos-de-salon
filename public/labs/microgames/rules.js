@@ -114,6 +114,7 @@ const ROWS = [
   ['Salvaste {n} de 3', 'You saved {n} of 3', 'Você salvou {n} de 3'],
   ['¡REBOTA!', 'BOUNCE!', 'REBATA!'],
   ['¡Le diste a los tres!', 'You hit all three!', 'Acertou os três!'],
+  ['¡FIESTA MARCIANA!', 'ALIEN PARTY!', 'FESTA MARCIANA!'],
   ['Le diste a {n} de 3', 'You hit {n} of 3', 'Acertou {n} de 3'],
   ['¡Se te cayó!', 'You dropped it!', 'Deixou cair!'],
   ['mueve la paleta y dale a los tres marcianos', 'move the paddle and hit the three aliens', 'mova a raquete e acerte os três marcianos'],

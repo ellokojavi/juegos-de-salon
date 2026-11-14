@@ -75,6 +75,8 @@
   --mg-7fe08a: #7fe08a;
   --mg-888888: #888888;
   --mg-8a5a2b: #8a5a2b;
+  --mg-1d0838: #1d0838;
+  --mg-05030f: #05030f;
   --mg-8a6a3a: #8a6a3a;
   --mg-8f5f31: #8f5f31;
   --mg-9b6633: #9b6633;
@@ -464,14 +466,32 @@
 @keyframes startring { 50% { scale: 1.25; opacity: 0.6; } }
 .demo .chev { fill: rgb(var(--ink-rgb) / 0.85); animation: chev 1.1s ease-in-out infinite; }
 @keyframes chev { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
-.demo .paddle { position: absolute; height: 14px; border-radius: 8px; background: linear-gradient(90deg, var(--cyan), var(--mg-9ff6ee), var(--cyan)); box-shadow: 0 0 14px rgb(var(--cyan-rgb) / 0.60); }
+.demo .paddle { position: absolute; height: 12px; border-radius: 8px; z-index: 2; background: linear-gradient(180deg, var(--mg-9ff6ee), var(--ink) 45%, var(--mg-9ff6ee));
+  border: 2px solid var(--cyan); box-shadow: 0 0 6px var(--cyan), 0 0 18px rgb(var(--cyan-rgb) / 0.8), 0 0 36px rgb(var(--cyan-rgb) / 0.45); }
+/* ¡Rebota!'s court (the owner asked for neon, 2026-11-14): a violet night behind a cyan neon frame, with a faint grid */
+.demo .rb-court { position: absolute; left: 4px; right: 4px; bottom: 4px; border-radius: var(--r-16); pointer-events: none;
+  border: 2px solid var(--cyan); box-shadow: 0 0 8px var(--cyan), 0 0 22px rgb(var(--cyan-rgb) / 0.5), inset 0 0 18px rgb(var(--cyan-rgb) / 0.35);
+  background: linear-gradient(rgb(var(--pink-rgb) / 0.08) 1px, transparent 1px) 0 0 / 100% 28px, linear-gradient(90deg, rgb(var(--cyan-rgb) / 0.06) 1px, transparent 1px) 0 0 / 28px 100%,
+    radial-gradient(ellipse at 50% 40%, var(--mg-1d0838), var(--mg-05030f)); }
+.demo .rb-dancer { z-index: 4; line-height: 0; pointer-events: none; animation: rbin 0.4s cubic-bezier(0.3, 1.8, 0.5, 1) var(--d) both, rbdance 0.42s ease-in-out calc(var(--d) + 0.4s) infinite alternate; }
+.demo .rb-dancer svg { position: static; display: block; filter: drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 12px var(--c)); }
+/* A crooked party hat in the alien's own colour */
+.demo .rb-dancer::before { content: ''; position: absolute; left: 50%; top: -20px; width: 0; height: 0; translate: -50% 0; rotate: calc(var(--k) * 14deg);
+  border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 22px solid var(--c); filter: drop-shadow(0 0 6px var(--c)); }
+@keyframes rbin { from { scale: 0; opacity: 0; } }
+@keyframes rbdance { from { translate: 0 0; rotate: calc(var(--k) * -14deg); } to { translate: 0 -22px; rotate: calc(var(--k) * 14deg); } }
+.demo .rb-party { z-index: 5; white-space: nowrap; font-family: var(--display); font-size: var(--mg-fs-240); color: var(--mg-fff3b0); pointer-events: none;
+  text-shadow: 0 0 6px var(--pink), 0 0 18px var(--pink), 0 0 36px rgb(var(--pink-rgb) / 0.6); animation: rbin 0.4s cubic-bezier(0.3, 1.8, 0.5, 1) both, rbglow 0.3s steps(2) 0.4s infinite; }
+@keyframes rbglow { 50% { opacity: 0.75; } }
+@media (prefers-reduced-motion: reduce) { .demo .rb-dancer, .demo .rb-party { animation: none; } }
+.demo .rb-trail { width: 16px; height: 16px; border-radius: 50%; pointer-events: none; background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
 .demo .invader { pointer-events: none; animation: invbob 0.9s steps(2) infinite; animation-delay: var(--d, 0s); line-height: 0; }
-.demo .invader svg { position: static; display: block; filter: drop-shadow(0 0 6px rgb(var(--ink-rgb) / 0.25)); }
+.demo .invader svg { position: static; display: block; filter: drop-shadow(0 0 2px var(--c, var(--ink))) drop-shadow(0 0 9px var(--c, var(--ink))); }
 @keyframes invbob { 50% { translate: 0 -4px; } }
-.demo .pix { width: 6px; height: 6px; pointer-events: none; z-index: 5; animation: pixfly 0.45s steps(5) forwards; }
+.demo .pix { width: 6px; height: 6px; pointer-events: none; z-index: 5; animation: pixfly 0.45s steps(5) forwards; box-shadow: 0 0 6px currentColor; }
 @keyframes pixfly { to { translate: var(--dx) var(--dy); opacity: 0; } }
 .demo .paddle.hit { animation: phit 0.15s; } @keyframes phit { 50% { scale: 1.08 0.8; } }
-.demo .pball { width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 32% 26%, var(--ink) 0 7%, rgb(var(--ink-rgb) / 0.75) 11%, transparent 22%), radial-gradient(ellipse 70% 30% at 50% 82%, rgb(var(--mg-dcebff-rgb) / 0.75), transparent 70%), radial-gradient(circle at 42% 38%, var(--mg-f4f7fb) 0%, var(--mg-c3cad6) 22%, var(--mg-7d8798) 45%, var(--mg-3a414d) 68%, var(--mg-1c2027) 82%, var(--mg-5b6576) 94%, var(--mg-aab4c4) 100%); box-shadow: 0 0 12px rgb(var(--mg-a0dcff-rgb) / 0.55), 0 4px 6px rgb(var(--mg-000000-rgb) / 0.45); }
+.demo .pball { width: 24px; height: 24px; border-radius: 50%; z-index: 3; background: radial-gradient(circle at 40% 36%, var(--ink) 0 30%, var(--mg-fff3b0) 50%, var(--yellow) 78%, var(--mg-ff9a1f)); box-shadow: 0 0 8px var(--yellow), 0 0 22px rgb(var(--yellow-rgb) / 0.7), 0 0 40px rgb(var(--yellow-rgb) / 0.35); }
 .demo .target { font-size: var(--mg-fs-240); }
 .demo .rat { width: 64px; height: 40px; pointer-events: none; transition: none; }
 .demo .rat.front { width: 84px; height: 92px; z-index: 5; }
