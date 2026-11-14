@@ -611,6 +611,8 @@ export const PATHS = {
     'campaigns-peek': [SEED_PANEL('/campaigns'), ...Array(6).fill(PEEK), `1`, `1`],
     // Where an owner's release notification lands (D-504): that campaign open, ringed and in view
     'campaigns-link': [SEED_PANEL('/campaigns/splash/stack-pronto')],
+    // A campaign's end day being edited: the field sits under its label, the old value hidden
+    'campaigns-date-focus': [SEED_PANEL('/campaigns'), `1`, `1`, `const i = document.querySelector('.campana-dia:last-of-type input'); i.scrollIntoView({block:'center'}); i.focus(); 1`],
     // The other two tabs of a cup's card (D-207)
     'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'cup-history': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],

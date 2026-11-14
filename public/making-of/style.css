@@ -1,0 +1,149 @@
+/* The making-of page: the project presented to an executive audience, projected from a laptop.
+   On the site's tokens (base.css); wide like a slide, one section per screen. */
+html { scroll-behavior: smooth; scroll-padding-top: var(--s-32); }
+main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 var(--s-16); }
+
+/* The section bar: fixed at the top, one link per section */
+.mo-nav {
+  position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-20);
+  padding: var(--s-10) var(--s-20); background: rgb(var(--bg1-rgb) / 0.85); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--glass-border); font-size: var(--fs-90);
+}
+.mo-nav a { color: var(--muted); text-decoration: none; font-weight: 700; }
+.mo-nav a:hover { color: var(--ink); }
+.mo-nav .mo-brand { color: var(--ink); margin-right: auto; font-weight: 900; }
+/* Projected, the lab key holder's tester tab (vigia.js puts it on every page) would cover the last link */
+#tester-ribbon { display: none; }
+
+/* One section per screen when projected */
+.mo-section { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; gap: var(--s-20); padding: var(--s-32) 0; }
+.mo-section h2 { margin-bottom: var(--s-4); }
+.mo-kicker { margin: 0; color: var(--cyan); font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; font-size: var(--fs-85); }
+.mo-lead { margin: 0; max-width: 46rem; font-size: var(--fs-140); line-height: 1.45; }
+.mo-lead strong { color: var(--yellow); }
+.mo-sub { margin: 0; color: var(--muted); font-size: var(--fs-120); }
+
+/* The hero's numbers */
+.mo-hero { text-align: left; }
+.mo-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-12); margin-top: var(--s-12); }
+.mo-stats div { background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18); }
+.mo-stats b { display: block; font-family: var(--font-num); font-weight: 900; font-size: var(--fs-200); color: var(--yellow); line-height: 1.1; }
+.mo-stats span { color: var(--muted); font-size: var(--fs-100); }
+.mo-next { align-self: flex-start; color: var(--cyan); font-weight: 900; text-decoration: none; font-size: var(--fs-110); }
+
+.mo-aka { margin: calc(-1 * var(--s-12)) 0 0; color: var(--muted); font-weight: 700; font-size: var(--fs-140); }
+
+/* See it played: two phone clips, then the two skill games stacked */
+.mo-play { display: grid; grid-template-columns: 1fr 1fr 1.7fr; gap: var(--s-16); align-items: start; }
+.mo-play-wide { display: grid; gap: var(--s-16); }
+.mo-clip { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); }
+.mo-clip video { width: 100%; height: auto; display: block; border-radius: var(--r-16); border: 2px solid var(--glass-border); background: var(--well); box-shadow: var(--shadow-panel); }
+.mo-play-wide .mo-clip video { max-height: 27vh; width: auto; max-width: 100%; }
+.mo-clip--tall video { max-height: 62vh; width: auto; max-width: 100%; align-self: center; }
+.mo-clip figcaption { display: flex; flex-direction: column; gap: var(--s-2); }
+.mo-clip figcaption b { color: var(--yellow); font-size: var(--fs-110); }
+.mo-clip figcaption span { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
+
+/* The setup: one SVG drawn on the tokens; on a phone it keeps its width and scrolls inside its box */
+.mo-diagram { overflow-x: auto; }
+.mo-diagram-svg { width: 100%; height: auto; display: block; font-family: var(--font-body); }
+.dg-lane { fill: rgb(var(--ink-rgb) / 0.03); stroke: var(--glass-border); stroke-dasharray: 4 6; }
+.dg-lane-t { fill: var(--cyan); font-weight: 900; letter-spacing: 0.12em; font-size: var(--fs-85); }
+.dg-box rect { fill: rgb(var(--bg2-rgb) / 0.9); stroke: var(--glass-border); stroke-width: 2; }
+.dg-me rect { stroke: var(--yellow); }
+.dg-agents rect { stroke: var(--pink); }
+.dg-site rect, .dg-players rect { stroke: var(--cyan); }
+.dg-t1 { fill: var(--ink); font-weight: 900; font-size: var(--fs-110); }
+.dg-t2 { fill: var(--muted); font-size: var(--fs-90); }
+.dg-arrow { fill: none; stroke: var(--pink); stroke-width: 2.5; }
+.dg-back { stroke: var(--yellow); stroke-dasharray: 6 5; }
+.dg-head { fill: var(--pink); }
+.dg-lbl { fill: var(--ink); font-weight: 700; font-size: var(--fs-90); paint-order: stroke; stroke: var(--bg1); stroke-width: 4px; }
+
+/* The product: points beside three screenshots */
+.mo-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: var(--s-32); align-items: center; }
+.mo-points { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-16); font-size: var(--fs-120); line-height: 1.4; }
+.mo-points b { color: var(--yellow); }
+.mo-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-12); }
+.mo-shots img { width: 100%; height: auto; border-radius: var(--r-16); border: 2px solid var(--glass-border); box-shadow: var(--shadow-panel); }
+
+/* The factory: five steps in a row, then the agents */
+.mo-flow { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-12); counter-reset: step; }
+.mo-flow li {
+  position: relative; display: flex; flex-direction: column; gap: var(--s-6);
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16);
+}
+.mo-flow li:not(:last-child)::after { content: '→'; position: absolute; right: calc(-1 * var(--s-12)); top: 50%; transform: translate(50%, -50%); color: var(--pink); font-weight: 900; }
+.mo-flow span { font-size: var(--fs-200); }
+.mo-flow b { font-size: var(--fs-120); color: var(--yellow); }
+.mo-flow small { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
+
+/* The agents: the owner above, the boss first, each agent as a job description */
+.mo-owner { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-4) var(--s-12); border: 2px dashed var(--yellow); border-radius: var(--r-16); padding: var(--s-10) var(--s-16); }
+.mo-owner b { color: var(--yellow); font-size: var(--fs-110); }
+.mo-owner span { color: var(--muted); font-size: var(--fs-90); }
+.mo-team { display: grid; grid-template-columns: 1.3fr repeat(4, 1fr); gap: var(--s-12); }
+.mo-team article { display: flex; flex-direction: column; gap: var(--s-8); background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-14); }
+.mo-team .mo-boss { border-color: rgb(var(--pink-rgb) / 0.7); }
+.mo-team header { display: flex; align-items: center; gap: var(--s-8); }
+.mo-team header span { font-size: var(--fs-160); }
+.mo-team header b { display: block; font-size: var(--fs-110); }
+.mo-team header small { color: var(--cyan); font-weight: 700; font-size: var(--fs-85); }
+.mo-team ul { margin: 0; padding-left: var(--s-16); display: grid; gap: var(--s-4); font-size: var(--fs-85); line-height: 1.35; }
+.mo-team p { margin: 0; font-size: var(--fs-85); line-height: 1.35; }
+.mo-team .mo-when { color: var(--muted); font-style: italic; }
+.mo-team .mo-hands { color: var(--yellow); margin-top: auto; }
+.mo-team .mo-limit { color: var(--danger-soft); }
+.mo-small { font-size: var(--fs-90); }
+
+/* Nine weeks: a horizontal line of milestones */
+.mo-timeline { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-20) var(--s-16); }
+.mo-timeline li { display: flex; flex-direction: column; gap: var(--s-4); border-top: 3px solid var(--cyan); padding-top: var(--s-10); }
+.mo-timeline time { color: var(--cyan); font-weight: 900; font-size: var(--fs-90); }
+.mo-timeline b { font-size: var(--fs-110); }
+.mo-timeline span { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
+
+/* The learnings: numbered cards, the line to say in yellow */
+.mo-learnings { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-12); counter-reset: learning; }
+.mo-learnings li {
+  counter-increment: learning; display: grid; grid-template-columns: var(--s-28) 1fr; align-items: baseline; align-content: start; column-gap: var(--s-4);
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16) var(--s-18);
+}
+.mo-learnings li > * { grid-column: 2; }
+.mo-learnings li::before { content: counter(learning); grid-column: 1; grid-row: 1; font-family: var(--font-body); font-weight: 900; color: var(--pink); font-size: var(--fs-120); }
+.mo-learnings h3 { margin: 0 0 var(--s-6); font-size: var(--fs-120); color: var(--ink); }
+.mo-learnings p { margin: 0; color: var(--muted); font-size: var(--fs-100); line-height: 1.45; }
+.mo-learnings[start="6"] { counter-reset: learning 5; }
+/* The presenter's line under each learning: hidden from the room until N or the Notes button shows it */
+.mo-learnings .mo-proof { display: none; margin-top: var(--s-8); color: var(--yellow); font-style: italic; font-size: var(--fs-90); }
+.mo-learnings .mo-proof::before { content: '🗣 '; font-style: normal; }
+.mo-notes-on .mo-learnings .mo-proof { display: block; }
+.mo-notes-btn {
+  font: inherit; font-weight: 700; color: var(--muted); background: transparent; cursor: pointer;
+  border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10);
+}
+.mo-notes-btn[aria-pressed="true"] { color: var(--ink-on-yellow); background: var(--yellow); border-color: var(--yellow); }
+
+/* The end: the QR to play */
+.mo-end { align-items: center; text-align: center; }
+.mo-qr { width: 220px; height: 220px; padding: var(--s-16); background: var(--ink); border-radius: var(--r-16); }
+.mo-qr svg { width: 100%; height: 100%; display: block; }
+.mo-url { color: var(--yellow); font-weight: 900; font-size: var(--fs-200); text-decoration: none; }
+
+/* A narrow window (or a phone): everything in one column */
+@media (max-width: 900px) {
+  .mo-split, .mo-learnings { grid-template-columns: 1fr; }
+  .mo-play { grid-template-columns: 1fr 1fr; }
+  .mo-play-wide { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+  .mo-team { grid-template-columns: 1fr 1fr; }
+  .mo-team .mo-boss { grid-column: 1 / -1; }
+  .mo-flow, .mo-timeline { grid-template-columns: 1fr 1fr; }
+  .mo-flow li::after { display: none; }
+}
+@media (max-width: 560px) {
+  .mo-stats, .mo-flow, .mo-team, .mo-timeline, .mo-play-wide { grid-template-columns: 1fr; }
+  .mo-diagram-svg { min-width: 860px; }
+  .mo-section { min-height: auto; }
+  html { scroll-padding-top: calc(var(--s-32) * 3); }
+  .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
+}

@@ -658,6 +658,7 @@ node tools/e2e/inert.test.mjs
 node tools/e2e/narrow.test.mjs
 node tools/e2e/output.test.mjs
 node tools/e2e/png.test.mjs
+node tools/e2e/pool-from-page.test.mjs
 node tools/e2e/scope-guard.test.mjs
 node tools/e2e/scope.test.mjs
 node tools/e2e/since-passed.test.mjs

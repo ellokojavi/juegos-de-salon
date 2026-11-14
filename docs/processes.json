@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
+  "checkedUpTo": "5ad8edd0cb115afd06693292f5fb4798cc4afc78",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -505,7 +505,11 @@
           "commit": "1dfd3c9dec1db607ba70a7c2f3288f3c84ed7cd4"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-13",
+        "what": "cup/tournament.mjs reads the open pool in the page; pool-from-page.test.mjs refuses an e2e script that imports POZO_ABIERTO in Node (folded from #1416)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1416"
+      },
       "signatures": [
         "0faec1e3e5",
         "6fad0784f2"
@@ -558,6 +562,22 @@
       "signatures": [
         "13e7a7848e"
       ]
+    },
+    {
+      "key": "flag-layout-race",
+      "what": "a published flag that changes a cover's layout (compact-lang) was applied only after flags/ answered from Firebase; landing-fold.mjs clears localStorage, so a slow answer in CI left Empezar 51 px below the fold on random ?today covers",
+      "seen": [
+        {
+          "date": "2026-11-13",
+          "what": "a published flag that changes a cover's layout (compact-lang) was applied only after flags/ answered from Firebase; landing-fold.mjs clears localStorage, so a slow answer in CI left Empezar 51 px below the fold on random ?today covers",
+          "commit": "7a714300"
+        }
+      ],
+      "mechanism": {
+        "date": "2026-11-13",
+        "what": "compact-lang's gate removed: the cover compacts before first paint; landing-fold.mjs ignores the top bar and measures today's cover once",
+        "pr": "pending"
+      }
     }
   ],
   "mechanisms": [
@@ -668,6 +688,18 @@
       "key": "design-lint-gate",
       "what": "push-guard.mjs hook runs design-lint.mjs --gate and stops git push on a hit not allowlisted (push-guard.test.mjs)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1352"
+    },
+    {
+      "date": "2026-11-13",
+      "key": "e2e-stale-assertion",
+      "what": "cup/tournament.mjs reads the open pool in the page; pool-from-page.test.mjs refuses an e2e script that imports POZO_ABIERTO in Node (folded from #1416)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1416"
+    },
+    {
+      "date": "2026-11-13",
+      "key": "flag-layout-race",
+      "what": "compact-lang's gate removed: the cover compacts before first paint; landing-fold.mjs ignores the top bar and measures today's cover once",
+      "pr": "pending"
     }
   ],
   "queueDone": [
@@ -679,12 +711,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-11",
-      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
+      "date": "2026-11-13",
+      "to": "5ad8edd0cb115afd06693292f5fb4798cc4afc78"
     },
     "usability": {
-      "date": "2026-11-11",
-      "to": "de0c9294ca2517f2a212dcb5f52844302f61a65f"
+      "date": "2026-11-13",
+      "to": "5ad8edd0cb115afd06693292f5fb4798cc4afc78"
     },
     "ideas": {
       "date": "2026-11-11",
@@ -883,6 +915,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#1380), usability, ideas; collected 21 changelog entries; popularity refreshed; CI signatures 0faec1e3e5 and 6fad0784f2 promoted to e2e-stale-assertion"
+    },
+    {
+      "date": "2026-11-13",
+      "from": "de0c9294ca2517f2a212dcb5f52844302f61a65f",
+      "to": "5ad8edd0cb115afd06693292f5fb4798cc4afc78",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1435",
+      "pr": null,
+      "note": "catch-up round 11-12/11-13; folded #1416"
     }
   ],
   "ownerDecisions": [

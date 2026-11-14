@@ -89,6 +89,7 @@ Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 [`affected.mjs`](affected.mjs), tested by `node tools/e2e/affected.test.mjs`). There is no build, so
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
 A file whose diff only touches comments or blank lines is dropped first (D-515,
+An e2e script reads La Copa's open pool from the page, never by importing `POZO_ABIERTO` in Node, so it cannot drift from what the page shows (`node tools/e2e/pool-from-page.test.mjs`).
 [`inert.mjs`](inert.mjs), tested by `node tools/e2e/inert.test.mjs`): no browser can notice it.
 A module whose diff changes only some functions, or some texts of `i18n.js`, runs only the pages
 that use those names (D-516, [`narrow.mjs`](narrow.mjs), tested by `node tools/e2e/narrow.test.mjs`).

@@ -4,7 +4,7 @@
  * y se guarda en localStorage. Por defecto: español. Idiomas: es, en y pt (D-47); el alemán salió (D-514).
  */
 import { el } from './ui.js';
-import { flag, cachedFlags, stateOf } from './flags.js';
+import { flag } from './flags.js';
 
 const KEY = 'juegos-de-salon:lang';
 
@@ -952,9 +952,9 @@ export function langToggle(onChange = () => location.reload()) {
 }
 
 /**
- * The language on a game's cover (C-3, D-537). Behind the flag `compact-lang` the cover keeps no
+ * The language on a game's cover (C-3, D-537). The cover keeps no
  * toggle: choosing a language is set and forget, so the top bar gets one round button with the
- * current flag, which opens the three. Without the flag, the full toggle stays under the title.
+ * current flag, which opens the three. A page with no top bar keeps the full toggle under the title.
  * The returned node goes where the toggle always went; it empties itself when the button takes over.
  */
 export function coverLangToggle(onChange) {
@@ -970,10 +970,9 @@ export function coverLangToggle(onChange) {
   // The cover's share button, in the top bar beside the language (cover-share.js)
   // lab: #seccion-cover-share
   flag('cover-share').then(on => { if (on) import('./cover-share.js').then(m => m.mountCoverShare({ cover: slot })); }).catch(() => {});
-  // Published for everyone: no wait and no flash; in the lab, once the key answers
-  // lab: #seccion-compact-lang
-  if (stateOf(cachedFlags(), 'compact-lang') === 'all') queueMicrotask(compact);
-  else flag('compact-lang').then(on => { if (on) compact(); }).catch(() => {});
+  // Before the first paint, never after a read of flags/ (D-537, published 2026-11-07): waiting for
+  // it showed the full toggle first and pushed Empezar 51 px down on a slow network, below the fold at 320 px
+  queueMicrotask(compact);
   return slot;
 }
 

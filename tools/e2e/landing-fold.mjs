@@ -52,7 +52,7 @@ const MEASURE = `(()=>{
   const root = document.querySelector('.screen.active') || document.body;
   // getClientRects, not offsetParent: a fixed button has no offsetParent and is still on screen
   const visible = x => x.getClientRects().length > 0 && x.getBoundingClientRect().height > 0 && getComputedStyle(x).visibility !== 'hidden';
-  const outside = x => !x.closest('header, nav, footer, details, dialog, .confirm, .lang-toggle, .sound-toggle, .back');
+  const outside = x => !x.closest('header, .topbar, nav, footer, details, dialog, .confirm, .lang-toggle, .lang-btn, .sound-toggle, .back');
   const mode = [...root.querySelectorAll('.mode, .opcion-modo')].filter(visible).filter(outside)[0];
   const start = [...root.querySelectorAll('#btn-empezar')].filter(visible)[0];
   const main = start || mode || [...root.querySelectorAll('#btn-crear, #btn-go-setup, .btn--yellow, .btn, button')].filter(visible).filter(outside)[0];
@@ -64,6 +64,7 @@ const MEASURE = `(()=>{
 let failures = 0;
 for (const [width, height] of SIZES) {
   const b = await launch({ dir: `${OUT}/profile-${width}`, out: OUT, width, height });
+  const todays = new Set();
   for (const { name: game, route, steps, fresh } of LANDINGS) {
     for (const lang of LANGS) {
       const labs = EN_LABS.includes(lang) ? `localStorage.setItem('${LABS_KEY}', '${lang}');` : '';
@@ -71,6 +72,12 @@ for (const [width, height] of SIZES) {
       await b.evaluate(`localStorage.clear(); sessionStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); ${labs} 1`);
       await b.open(`${SITE}/${route}`);
       if (fresh) await b.settle(1000);
+      // Every `?today` link opens today's game (the others send there): its cover is measured once per size and language
+      if (game.endsWith(' today')) {
+        const where = `${await b.evaluate('location.pathname')} ${lang}`;
+        if (todays.has(where)) continue;
+        todays.add(where);
+      }
       for (const step of steps) { await b.evaluate(`(()=>{ ${step} ; return 1})()`); await sleep(700); }
       await b.settle(1000);
       const m = JSON.parse(await b.evaluate(MEASURE));

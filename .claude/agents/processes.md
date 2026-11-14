@@ -314,6 +314,11 @@ that (after a new game, after a big text change), saying why.
    - `context`: two or three lines, **your recommendation first** and then the why and the link
      to what's being approved. Don't repeat what each checkbox does: `decide` writes it next to
      it ("Yes: merges #300", "No: closes #300");
+   - `origin` (required, `decide` refuses without it; #1435, the owner's request): where the idea
+     came from, so the owner knows if it was theirs, a player's or an agent's. Who or what started
+     it (the owner's request, a 🐞 report, an agent's round, a session's work), when, and the links
+     (issue, PR, commit, feedback). For a branch, read its commits and the PR or session that pushed
+     it (`git log origin/main..origin/<branch>`, `gh pr list --head <branch> --state all`);
    - `yes` and `no`: the actions for each answer (`{ "type": "merge", "pr": 300 }`), from the
      closed list in `tools/agents/approve.mjs`: `merge` (pr), `close-pr` (pr, reason),
      `close-issue` (issue, reason), `comment` (on, text), `run` (workflow: `e2e.yml` or
