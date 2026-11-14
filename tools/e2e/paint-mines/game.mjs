@@ -70,6 +70,12 @@ const { t } = g;
 ok(t.colores === 1 && t.variante === 'easy' && await ev(`document.querySelectorAll('.pm-pinceles .pm-pincel').length`) === 2, 'easy: one color and two brushes');
 ok(await ev(`document.querySelectorAll('#pm-tablero .pm-casilla.tinta, #pm-tablero .pm-casilla.fondo').length`) === t.dadas.length, `the given cells show painted (${t.dadas.length})`);
 const L = free(t);
+// Flag pm-pick-brush (on in the lab, and so on localhost): no brush to start, and a tap on the board paints nothing
+ok(await waitFor(`!document.querySelector('.pm-pincel[aria-pressed="true"]')`, 3000), 'the game starts with no brush chosen');
+ok(/Primero elige un pincel/.test(await ev(`document.querySelector('.pm-aviso').textContent`)), 'and says to pick one');
+await ev(`${cell(L[0])}.click(); 1`); await sleep(80);
+ok(await ev(`${cell(L[0])}.textContent === '' && !${cell(L[0])}.disabled && window.__pintaminas.estado().errores.size === 0`), 'a tap on the board with no brush paints nothing and costs nothing');
+ok(await ev(`document.querySelector('.pm-pinceles').classList.contains('pm-llama')`), 'and the brushes light up to be picked');
 await paint(L[0], t.sol[L[0]]);
 ok(await ev(`${cell(L[0])}.textContent`) === String(numero(t.sol, L[0])), 'a hit shows the cell\'s number');
 ok(await ev(`document.getElementById('${brush(t.sol[L[0]])}').getAttribute('aria-pressed')`) === 'true', 'the chosen brush shows');

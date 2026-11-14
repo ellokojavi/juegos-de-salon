@@ -17,6 +17,7 @@
 import * as motor from './engine.js';
 import TEXTOS from './texts.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { flag } from '../../../assets/js/flags.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -252,8 +253,11 @@ export function montar(raiz, ctx) {
   const dos = t.colores === 2;
   const nombreColor = k => T.pmColores[t.dibujo.pinturas[k - 1].id] || t.dibujo.pinturas[k - 1].id;
   const inicial = motor.estado(t, jugadas);
-  // The brush starts on the first color; resumed, on the last one used
-  let pincel = [...jugadas].reverse().find(j => Number.isInteger(j.color))?.color ?? 1;
+  // The brush starts on the first color; resumed, on the last one used. Behind the lab flag
+  // `pm-pick-brush` (lab: #seccion-pm-pick-brush) a new game starts with none: the player picks one before
+  // the first cell, so nobody paints by mistake with a brush they did not choose
+  const usado = [...jugadas].reverse().find(j => Number.isInteger(j.color))?.color;
+  let pincel = usado ?? 1, elegido = usado !== undefined;
   const porDe = new Map();   // the numbers that explain each paid hint, to show it again as it was
 
   const marcador = el('p', { class: 'pm-marcador', id: 'pm-marcador' });
@@ -264,7 +268,7 @@ export function montar(raiz, ctx) {
   // One brush per color, and «No pinta» last
   const botonPincel = k => el('button', {
     type: 'button', class: `pm-pincel ${k ? `pm-pincel--tinta pm-p${k}` : 'pm-pincel--fondo'}`, id: k ? (k === 1 ? 'btn-tinta' : `btn-tinta${k}`) : 'btn-fondo', 'data-k': k,
-    onClick: () => { SFX.tap(); pincel = k; dibujar(); },
+    onClick: () => { SFX.tap(); pincel = k; elegido = true; pinceles.classList.remove('pm-llama'); if (aviso.classList.contains('elige')) { aviso.className = 'pm-aviso'; aviso.textContent = ''; } dibujar(); },
   }, k ? fmt(T.pmTinta, { c: nombreColor(k) }) : T.pmFondo);
   const pinceles = el('div', { class: `pm-pinceles${dos ? ' tres' : ''}`, role: 'group', 'aria-label': T.pmPincel, style: estiloPinturas(t) },
     ...t.dibujo.pinturas.map((_, k) => botonPincel(k + 1)), botonPincel(0));
@@ -342,6 +346,13 @@ export function montar(raiz, ctx) {
     if (armado) desarmar();
     const antes = motor.estado(t, jugadas);
     if (antes.terminado || antes.conocidas.has(i)) return;
+    if (pincel === null) {
+      // No brush yet: nothing is painted, the brushes call for a choice
+      SFX.tap(); vibrate(20);
+      aviso.className = 'pm-aviso elige'; aviso.textContent = T.pmElige;
+      pinceles.classList.remove('pm-llama'); void pinceles.offsetWidth; pinceles.classList.add('pm-llama');
+      return;
+    }
     guardar({ i, color: pincel });
     const e = dibujar();
     const b = casillas[i];
@@ -377,6 +388,12 @@ export function montar(raiz, ctx) {
 
   dibujar();
   if (inicial.terminado) revelar(inicial, { recien: false });
+  else if (!elegido) flag('pm-pick-brush').then(on => {
+    // still nothing chosen (no brush tapped while the flag was read): the game starts with no brush
+    if (!on || elegido || jugadas.some(j => Number.isInteger(j.color)) || motor.estado(t, jugadas).terminado || !raiz.isConnected) return;
+    pincel = null; dibujar();
+    if (!aviso.textContent) { aviso.className = 'pm-aviso elige'; aviso.textContent = T.pmElige; }
+  }).catch(() => {});
   // For the end-to-end scripts: the board and the state, as the engine sees them
   globalThis.__pintaminas = { p: t, jugadas: () => jugadas.slice(), estado: () => motor.estado(t, jugadas) };
 }

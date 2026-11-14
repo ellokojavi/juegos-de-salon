@@ -26,7 +26,11 @@ by ARRKKA**, and the waiting room says so, with the link.
 - **Board:** 7×7. Some cells come given, with their color and their number (on average 1 or 2 in
   easy and 5 in hard: the rest follows by deduction). It is always solved without guessing.
 - **Brushes:** «Pinta {color}» (the drawing's color) and «No pinta» (grey, like unpainted cells);
-  three in hard («Pinta rojo», «Pinta verde», «No pinta»). The chosen one shows. Tapping an unknown
+  three in hard («Pinta rojo», «Pinta verde», «No pinta»). The chosen one shows. Behind the lab flag
+  `pm-pick-brush` (the owner, 2026-11-13; card `#seccion-pm-pick-brush`) a new game starts with **no brush
+  chosen**: «Primero elige un pincel abajo.» shows under the board, and a tap on a cell before choosing one
+  paints nothing and costs nothing, it only says so again and makes the brushes pulse twice in yellow. A
+  resumed game keeps the last brush used. It is the same on its own page and in La Copa. Without the flag the brush starts on the first color. Tapping an unknown
   cell paints it with the brush.
 - **A hit** shows its number, which gives more clues. **A miss** uncovers the cell anyway with its
   true color and a red border, and subtracts 15 («❌ Se pintaba de rojo: −15.» / «❌ No se pintaba: −15.»).

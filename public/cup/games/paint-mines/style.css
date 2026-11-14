@@ -74,9 +74,13 @@ button.pm-casilla:not(:disabled):active { transform: scale(0.92); }
 .pm-marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
 .pm-marcador .parte { white-space: nowrap; }
 .pm-aviso { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
-.pm-aviso.mal { color: var(--pm-alerta); } .pm-aviso.ayuda { color: var(--yellow); } .pm-aviso.era { color: var(--yellow); font-size: var(--fs-120); }
+.pm-aviso.mal { color: var(--pm-alerta); } .pm-aviso.elige { color: var(--yellow); } .pm-aviso.ayuda { color: var(--yellow); } .pm-aviso.era { color: var(--yellow); font-size: var(--fs-120); }
 /* The brushes: each button has the color it paints (the drawing's or the unpainted grey), and the chosen one shows */
 .pm-pinceles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-10); }
+/* A tap on the board with no brush chosen (flag pm-pick-brush): the brushes pulse twice in yellow */
+.pm-pinceles.pm-llama .pm-pincel { animation: pm-llama 0.45s ease-in-out 2; }
+@keyframes pm-llama { 50% { border-color: var(--yellow); box-shadow: 0 0 0 3px rgb(var(--yellow-rgb) / 0.5); transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .pm-pinceles.pm-llama .pm-pincel { animation: none; border-color: var(--yellow); } }
 .pm-pinceles.tres { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-8); }
 .pm-pinceles.tres .pm-pincel { font-size: var(--fs-100); padding: 0 var(--s-4); }
 .pm-pincel { min-height: 54px; min-width: 0; border-radius: var(--r-16); border: 3px solid transparent; color: var(--ink); overflow-wrap: anywhere;
