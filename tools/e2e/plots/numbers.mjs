@@ -46,7 +46,8 @@ ok(/Números/.test(await ev(`document.querySelector('#selector-variante .opcion.
 ok(/Inspirado en Shikaku, de Nikoli/.test(await ev(`document.getElementById('lt-credito')?.textContent || ''`)) && /wikipedia\.org\/wiki\/Shikaku/.test(await ev(`document.getElementById('link-shikaku')?.href || ''`)), 'the name carries the credit to Shikaku with its link');
 ok(await waitFor(`document.querySelectorAll('.lt-demo .lt-lote').length >= 2`, 8000), 'the 5×5 on top solves itself: the plots get painted');
 ok(await ev(`document.querySelectorAll('.lt-demo .lt-num').length`) === 25, 'it is a 5×5 of numbers');
-ok(await ev(`document.querySelectorAll('.panel .como li').length`) === 3 && /un 6 puede ser de 2×3/.test(await ev(`document.querySelector('.panel .como').textContent`)), 'three steps, the numbers ones');
+// In the cover's panel, or behind the flag cover-dialogs in the Instrucciones dialog (lab: #seccion-cover-dialogs)
+ok(await ev(`document.querySelectorAll('.panel .como li, .portada-pasos .como li').length`) === 3 && /un 6 puede ser de 2×3/.test(await ev(`document.querySelector('.panel .como, .portada-pasos .como').textContent`)), 'three steps, the numbers ones');
 ok(await ev(`document.querySelectorAll('.lt-ejemplo figure').length`) === 2, 'the drawing: a right board and a wrong plot');
 ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), `no sideways scroll in the waiting room at ${WIDTH} px`);
 await b.shot('01-lobby');

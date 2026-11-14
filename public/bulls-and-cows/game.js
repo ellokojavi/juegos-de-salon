@@ -23,6 +23,7 @@ import { teclado, CIFRAS } from '../assets/js/teclado.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
+import { coverWithDialogs } from '../assets/js/cover-dialogs.js';
 import { rankingsVisibles, leerYo } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { codigoAlAzar } from '../cup/code.js';
@@ -846,6 +847,8 @@ function init() {
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
     bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // The cover's Instrucciones and Entrar as dialogs, no game chip on top (lab: #seccion-cover-dialogs)
+  coverWithDialogs($('#screen-intro'), { lang, alTocar: () => SFX.tap() });
   renderResumeSlot();
   const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {

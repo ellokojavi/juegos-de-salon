@@ -148,6 +148,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | A chip to choose | `.chip-btn`, `.chip-btn.on` | a pill to tap, 44 px tall; on is yellow like `.opcion.on` (yellow is the choice). La Copa's names to sit as, its week styles and its length shortcuts (phase 7) |
 | Stack | `.stack` | vertical rhythm of 12 px |
 | Sheet | `.hoja*`, `.hoja-cabeza` | the bottom sheet (D-232); `.hoja-cabeza` its title with the ✕ |
+| The cover's dialogs (lab: flag `cover-dialogs`) | `.portada-acciones`, `.portada-ventana`, `.portada-pasos`, `.portada-cuenta`, `body.portada-v2` | built only by `cover-dialogs.js`: the row of two `.opcion` buttons under Empezar (Entrar in `--cyan` until signed in); the sheet's pieces as a centred dialog; the steps numbered in pink 32 px circles; the ranking's sign-in block always open, without its card. `body.portada-v2` hides the top bar's game name chip and draws `.back` 44 px tall |
 | Chat | `.chat*` | the room's chat bubble |
 | Random | `.azar*` | the random-game control (D-237) |
 | One a day | `.uad*` | |

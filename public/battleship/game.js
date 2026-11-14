@@ -16,6 +16,7 @@ import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
+import { coverWithDialogs } from '../assets/js/cover-dialogs.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
@@ -1050,6 +1051,8 @@ function init() {
   mountHowToPlayFacts(GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // The cover's Instrucciones and Entrar as dialogs, no game chip on top (lab: #seccion-cover-dialogs)
+  coverWithDialogs($('#screen-intro'), { lang, alTocar: () => SFX.tap() });
   renderResumeSlot();
   const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {

@@ -22,7 +22,9 @@ const draw = r => ev(`window.__loteo.dibujar(${JSON.stringify(r)}); 1`);
 const notice = () => ev(`document.getElementById('lt-aviso')?.textContent`);
 const plots = () => ev(`document.querySelectorAll('#lt-tablero .lt-lote').length`);
 const P = expr => ev(`(()=>{const P=window.__loteo.P;return ${expr}})()`);
-const steps = () => ev(`[...document.querySelectorAll('.panel .como li')].map(l => l.textContent).join(' | ')`);
+// The steps: in the cover's panel, or behind the flag cover-dialogs in the Instrucciones dialog (lab: #seccion-cover-dialogs)
+const COMO = '.panel .como li, .portada-pasos .como li';
+const steps = () => ev(`[...document.querySelectorAll('${COMO}')].map(l => l.textContent).join(' | ')`);
 const on = () => ev(`document.querySelector('#selector-variante .opcion.on')?.textContent || ''`);
 const PAGE = `${SITE}/plots/?test`;
 
@@ -46,7 +48,7 @@ ok(toUtilities.length === 1, `the title stays put while switching to Utilities (
 ok(/Servicios/.test(await on()) && /Un ⚡ y un 💧 por lote/.test(await on()), 'tapping Utilities picks it, with its second line');
 const utilitiesSteps = await steps();
 ok(utilitiesSteps !== numbersSteps && /un ⚡ y un 💧, ni más ni menos/.test(utilitiesSteps) && /del tamaño que dice arriba/.test(utilitiesSteps) && /deja una casilla sin lote posible/.test(utilitiesSteps), `the steps change (${utilitiesSteps})`);
-ok(await ev(`document.querySelectorAll('.panel .como li').length`) === 3, 'three steps');
+ok(await ev(`document.querySelectorAll('${COMO}').length`) === 3, 'three steps');
 ok(/Dos ⚡ en un lote/.test(await ev(`document.querySelector('.lt-ejemplo').textContent`)) && await ev(`document.querySelectorAll('.lt-ejemplo .lt-icono[data-servicio]').length`) > 0, 'the drawing is the utilities one');
 ok(await waitFor(`document.querySelectorAll('.lt-demo .lt-icono[data-servicio=luz]').length === 4`, 3000), 'the demo has ⚡ and 💧 (4×4 in plots of 4)');
 ok(/Lotes de 4 casillas/.test(await ev(`document.querySelector('.lt-demo-tam')?.textContent || ''`)), 'and states the size of its plots');

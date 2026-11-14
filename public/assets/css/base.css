@@ -651,6 +651,34 @@ html.i18n-pendiente body { visibility: hidden; }
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
 }
 .hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.3); }
+/* A game's cover with dialogs (flag cover-dialogs, lab: #seccion-cover-dialogs; cover-dialogs.js):
+   the top bar without the game's name chip and ‹ Menú as tall as its icons, the row of two buttons
+   under the start action, and the two dialogs centred over the page */
+body.portada-v2 .topbar .tools > .chip { display: none; }
+body.portada-v2 .topbar .back { display: inline-flex; align-items: center; box-sizing: border-box; height: 44px; }
+.portada-ventana .hoja-cabeza h2 { font-size: var(--fs-200); }
+.opciones.dos.portada-acciones { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.portada-acciones .opcion { padding: var(--s-14) var(--s-8); text-align: center; }
+/* One line, the two halves equal: a long name (up to 20 letters) ends in … instead of widening its half */
+.portada-acciones .opcion b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Under 375 px «📖 Instrucciones» fits its half only a little smaller, and the dialog's title on one line */
+@media (max-width: 374px) {
+  .portada-acciones .opcion { padding-left: var(--s-2); padding-right: var(--s-2); }
+  .portada-acciones .opcion b { font-size: var(--fs-100); }
+  .portada-ventana .hoja-cabeza h2 { font-size: var(--fs-160); }
+}
+.portada-acciones .opcion.portada-entrar { border-color: var(--cyan); }
+.hoja-capa.portada-ventana { align-items: center; padding: var(--s-16); }
+.portada-ventana .hoja { border-radius: var(--r-22); border-bottom: 2px solid var(--glass-border); padding: var(--s-18); }
+/* The steps, numbered in pink circles */
+/* (ol.como: the shared cover's own list, whose indent in cup/style.css would push the circles in) */
+.portada-pasos ol, .portada-pasos ol.como { counter-reset: paso; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-12); }
+/* The circle sits beside the text, not in a grid: a step with bold words stays one flowing line */
+.portada-pasos ol > li { counter-increment: paso; position: relative; min-height: 32px; padding-left: calc(32px + var(--s-12)); }
+.portada-pasos ol > li::before { content: counter(paso); position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--pink); color: var(--ink); font-weight: 900; display: grid; place-items: center; }
+/* The ranking's own sign-in block, inside its dialog: always open, without its folded title or card */
+.portada-cuenta .rk-jugador summary { display: none; }
+.portada-cuenta .rk-jugador details.panel { background: none; border: 0; box-shadow: none; padding: 0; }
 .hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
 .hoja p { margin: 0; line-height: 1.45; }
 .hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }

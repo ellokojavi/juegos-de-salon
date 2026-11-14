@@ -18,6 +18,7 @@ import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish, nombreDelCelular } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
+import { coverWithDialogs } from '../assets/js/cover-dialogs.js';
 import { rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -1073,6 +1074,8 @@ function init() {
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
     bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
+  // The cover's Instrucciones and Entrar as dialogs, no game chip on top (lab: #seccion-cover-dialogs)
+  coverWithDialogs($('#screen-intro'), { lang, alTocar: () => SFX.tap() });
   renderResumeSlot();
   const code = param('room');
   if (code && /^[A-Z]{4}$/i.test(code)) {

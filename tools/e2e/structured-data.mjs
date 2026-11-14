@@ -30,7 +30,9 @@ const READ = `(()=>{
   const how = [...document.querySelectorAll('details')].filter(d => /c[oó]mo se juega/i.test(d.querySelector('summary')?.textContent || ''))
     .map(d => { d.open = true; return norm(d.innerText.slice(d.querySelector('summary').innerText.length)); })
     // A Cup game's own page: its folded panel, read by its title (#883)
-    .concat([...document.querySelectorAll('#como-titulo')].map(t => norm(t.parentElement.innerText.slice(t.innerText.length))));
+    .concat([...document.querySelectorAll('#como-titulo')].map(t => norm(t.parentElement.innerText.slice(t.innerText.length))))
+    // Behind the flag cover-dialogs (lab: #seccion-cover-dialogs) the same text is in the Instrucciones dialog, hidden until opened
+    .concat([...document.querySelectorAll('.portada-pasos')].map(p => { const capa = p.closest('[hidden]'); if (capa) capa.hidden = false; const t = norm(p.innerText); if (capa) capa.hidden = true; return t; }));
   return JSON.stringify({ ld, how, path: location.pathname, text: norm(document.title + ' ' + document.body.innerText) });
 })()`;
 
