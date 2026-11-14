@@ -121,6 +121,11 @@ falling does nothing, and it shows dimmer until it is ready, so mashing does not
   see-through, where they will drop (the upper half, clear of the bumpers), each with a ring that fills up and a
   last quick blink; they fall from there about 1.1 and 2.1 s in, not from the roof, so you see them coming and
   they do not all arrive together.
+- **One finger on each side** (the owner, 2026-11-14): until a side is first tapped, a 👆 pulses under its flipper with
+  «TOCA», and the side being pressed glows; the intro says «un dedo a cada lado: cada uno mueve su paleta».
+- **Smooth motion** (the owner saw it choppy, 2026-11-14): the physics runs in steps of about 3 ms however long a frame
+  takes (up to 50 ms, so a slow phone does not play it in slow motion), each ball leaves a continuous tapering streak of
+  every step's position instead of six dots, and its halo and body are sprites drawn once.
 - **A ball counts once a flipper has hit it** (a green ring, and its dot in the corner turns green): each ball
   hit and still on the table after 7 s (longer since 2026-11-14) is a ★; all three down ends it at once with none. Without a tap it
   scores 0, and holding a side down too. A ball wedged between a guide and a flipper's base gets a nudge after
