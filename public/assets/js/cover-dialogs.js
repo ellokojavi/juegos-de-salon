@@ -93,6 +93,8 @@ export async function coverWithDialogs(raiz, { lang = getLang(), alTocar = () =>
     const pintar = () => {
       boton.classList.toggle('portada-entrar', !leerYo());
       boton.replaceChildren(el('b', {}, titulo()));
+      // signing in or out inside the open dialog renames it too: «👤 Entrar» becomes «🏅 <name>»
+      document.getElementById('portada-cuenta-titulo')?.replaceChildren(titulo());
       // the block redraws itself on signing in or out: its panel stays open inside the dialog
       yo.querySelectorAll('details').forEach(d => { d.open = true; });
     };
