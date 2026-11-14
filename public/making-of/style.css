@@ -145,6 +145,7 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
   .mo-team { grid-template-columns: 1fr 1fr; }
   .mo-team .mo-boss { grid-column: 1 / -1; }
   .mo-flow, .mo-timeline { grid-template-columns: 1fr 1fr; }
+  .mo-flow { gap: var(--s-12); }
   .mo-flow li::after { display: none; }
 }
 @media (max-width: 560px) {
