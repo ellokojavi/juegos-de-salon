@@ -208,7 +208,7 @@ export const CAMPAIGNS = {
     emoji: '⚡',
     requires: ['microgames'],
     kicker: { es: '¡Nuevo juego!', en: 'New game!', pt: 'Jogo novo!' },
-    title: { es: '¡Juega al toque!', en: 'Play in a flash!', pt: 'Jogue na hora!' },
+    title: { es: 'No es rápido; ¡es al toque! ⚡', en: 'It’s not fast; it’s in a flash! ⚡', pt: 'Não é rápido; é na hora! ⚡' },
     hero: true,
     items: [{
       emoji: '⚡', href: 'labs/microgames/', video: 'assets/splash/al-toque-teaser.mp4', img: 'assets/splash/al-toque-teaser-start.png', still: 'assets/splash/al-toque-teaser.png', ratio: '8 / 5', smooth: true,
