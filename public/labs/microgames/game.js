@@ -853,7 +853,7 @@ trackVisit();   // the site's traffic (D-208)
         const { lay, W, H } = lay0(`<canvas class="pb-canvas" id="pbc"></canvas><span class="c4note pb-note">${t('toca a la izquierda o a la derecha')}</span>`);
         const cv = $id('pbc'), dpr = Math.min(2, devicePixelRatio || 1);
         cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.scale(dpr, dpr);
-        const R = Math.max(7, W * 0.024), G = H * 1.35 * sp * sp, MAXV = H * 2.6;
+        const R = Math.max(5.5, W * 0.018), G = H * 1.35 * sp * sp, MAXV = H * 2.6;
         // The table: side walls, a roof with its corners cut, inlanes that lead onto each flipper, and the drain between them
         const fy = H * 0.84, FL = W * 0.25, pivL = [W * 0.2, fy], pivR = [W * 0.8, fy];
         const walls = [[[6, H * 0.14], [W * 0.18, 6]], [[W * 0.18, 6], [W * 0.82, 6]], [[W * 0.82, 6], [W - 6, H * 0.14]],
@@ -877,14 +877,20 @@ trackVisit();   // the site's traffic (D-208)
         const fl = [flip(pivL, 1), flip(pivR, -1)];
         const tip = f => [f.piv[0] + f.dir * FL * Math.cos(f.a), f.piv[1] + FL * Math.sin(f.a)];
         const COLORS = ['#ffffff', '#ffe27a', '#8ff7ee'];
-        // The first ball drops straight onto a flipper at once, so you react from the start; the other two come in from the
-        // roof later, about one and two seconds in, through the bumpers, so they never all arrive together (the owner's request)
+        // The first ball drops straight onto a flipper at once, so you react from the start; the other two wait on the table
+        // where they will drop, as see-through balls with a ring that fills up, and fall from there about 1.3 and 2.5 s in, so
+        // they never all arrive together and you see them coming (the owner's requests, 2026-11-14)
         const side = rand() < 0.5 ? 0 : 1, firstX = side ? W * (0.68 + rand() * 0.06) : W * (0.26 + rand() * 0.06);
+        // Where a waiting ball sits: on the table's upper half, clear of the bumpers, the walls and the other one
+        const spots = [];
+        const spot = () => { let best = [W / 2, H * 0.2];
+          for (let a = 0; a < 80; a++) { const x = W * (0.24 + rand() * 0.52), y = H * (0.16 + rand() * 0.32);
+            if (bumpers.every(o => Math.hypot(o.x - x, o.y - y) > o.r + R * 3) && spots.every(([sx, sy]) => Math.hypot(sx - x, sy - y) > W * 0.2)) { best = [x, y]; break; } }
+          spots.push(best); return best; };
         const ball = (k, x, y, vx, vy, at) => ({ x, y, vx, vy, live: true, c: COLORS[k], trail: [], at, saved: false, still: 0 });
         const balls = [
           ball(0, firstX, H * 0.63, (side ? 1 : -1) * W * 0.05, H * 0.15, 150),
-          ball(1, W * (0.35 + rand() * 0.3), H * 0.07, (rand() - 0.5) * W * 0.5, H * 0.05, 800 + rand() * 200),
-          ball(2, W * (0.35 + rand() * 0.3), H * 0.07, (rand() - 0.5) * W * 0.5, H * 0.05, 1500 + rand() * 200),
+          ...[1, 2].map(k => { const [x, y] = spot(k); return ball(k, x, y, (rand() - 0.5) * W * 0.2, 0, k === 1 ? 1200 + rand() * 250 : 2400 + rand() * 250); }),
         ];
         let alive = 3, taps = 0, last = performance.now(), shake = 0, sparks = [], party = 0;
         // The end-to-end tests read the table to play it (C-14)
@@ -929,9 +935,13 @@ trackVisit();   // the site's traffic (D-208)
             glow(b.c, 16); const bl = g.createRadialGradient(b.x - R * 0.35, b.y - R * 0.35, 1, b.x, b.y, R); bl.addColorStop(0, '#ffffff'); bl.addColorStop(1, b.c);
             g.fillStyle = bl; g.beginPath(); g.arc(b.x, b.y, R, 0, Math.PI * 2); g.fill();
             if (b.saved) { g.shadowBlur = 0; g.strokeStyle = 'rgba(157,255,58,0.85)'; g.lineWidth = 2; g.beginPath(); g.arc(b.x, b.y, R + 3.5, 0, Math.PI * 2); g.stroke(); } }
-          // Where the next ball will come in, blinking for half a second before it drops
-          for (const b of balls) { const wait = b.at / sp - (now - t0Pin); if (b.live && !b.trail.length && wait > 0 && wait < 550) {
-            g.strokeStyle = `rgba(255,255,255,${0.35 + 0.35 * Math.sin(now / 60)})`; g.lineWidth = 2; g.beginPath(); g.arc(b.x, b.y, R + 4, 0, Math.PI * 2); g.stroke(); } }
+          // The balls still waiting: see-through where they will drop, with a ring that fills up until they fall, and a
+          // last quick blink
+          for (const b of balls) { const wait = b.at / sp - (now - t0Pin); if (!b.live || b.trail.length || wait <= 0) continue;
+            const k = Math.max(0, Math.min(1, 1 - wait / (b.at / sp))), soon = wait < 400;
+            g.globalAlpha = soon ? 0.55 + 0.35 * Math.sin(now / 45) : 0.35; g.fillStyle = b.c; g.beginPath(); g.arc(b.x, b.y, R, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+            g.strokeStyle = 'rgba(255,255,255,0.25)'; g.lineWidth = 2; g.beginPath(); g.arc(b.x, b.y, R + 5, 0, Math.PI * 2); g.stroke();
+            g.strokeStyle = b.c; g.beginPath(); g.arc(b.x, b.y, R + 5, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); g.stroke(); }
           if (party) drawParty(now);
           // How many are left, top left
           g.shadowBlur = 0; for (let k = 0; k < 3; k++) { const live = balls.filter(b => b.live); g.fillStyle = k < live.length ? (live[k].saved ? '#9dff3a' : '#ffffff') : 'rgba(255,255,255,0.18)'; g.beginPath(); g.arc(W * 0.18 + 16 + k * 14, 22, 4.5, 0, Math.PI * 2); g.fill(); }
@@ -981,9 +991,9 @@ trackVisit();   // the site's traffic (D-208)
                 const vel = (px, py) => { const rx = px - f.piv[0], ry = py - f.piv[1]; return [-f.dir * f.w * ry, f.dir * f.w * rx]; };
                 // A ball the flipper swings into counts as saved: only those score, so every star takes a tap
                 if (hit(b, f.piv, tip(f), 5, 0.35, vel) && f.w < 0) { if (!b.saved) { b.saved = true; pop(lay, '✓', b.x, b.y - R * 2); } shake = Math.min(4, shake + 2); try { navigator.vibrate?.(12); } catch (_) { /* none */ } } }
-              // A bumper kicks a ball hard once; after that it only bounces it back softer, so no ball stays up there all game
+              // A bumper kicks a ball hard once, softer when it sends it down toward the flippers (the owner's request); after that it only bounces it back softer, so no ball stays up there all game
               for (const bp of bumpers) { const dx = b.x - bp.x, dy = b.y - bp.y, d = Math.hypot(dx, dy), min = R + bp.r;
-                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = (b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.85, Math.hypot(b.vx, b.vy) * 0.95) : Math.hypot(b.vx, b.vy) * 0.6;
+                if (d < min && d > 0) { const nx = dx / d, ny = dy / d, sp3 = ((b.bumps = (b.bumps || 0) + 1) <= 1 ? Math.max(H * 0.85, Math.hypot(b.vx, b.vy) * 0.95) : Math.hypot(b.vx, b.vy) * 0.6) * (ny > 0.3 ? 0.65 : 1);
                   b.x = bp.x + nx * min; b.y = bp.y + ny * min; b.vx = nx * sp3; b.vy = ny * sp3; bp.lit = 1; SFX.reveal();
                   for (let k = 0; k < 8; k++) { const an = rand() * Math.PI * 2; sparks.push({ x: bp.x + nx * bp.r, y: bp.y + ny * bp.r, vx: Math.cos(an) * 90, vy: Math.sin(an) * 90, l: 1, c: k % 2 ? '#ff2e88' : '#ffd23f' }); } } }
               const v = Math.hypot(b.vx, b.vy); if (v > MAXV) { b.vx *= MAXV / v; b.vy *= MAXV / v; }
@@ -999,7 +1009,7 @@ trackVisit();   // the site's traffic (D-208)
           draw(now);
         });
         const savedN = () => balls.filter(b => b.live && b.saved).length;
-        active = true; runTimer(T(5000), () => {
+        active = true; runTimer(T(6500), () => {
           const n = savedN();
           if (n < 3) { finish(n, t('Salvaste {n} de 3', { n })); return; }
           party = performance.now(); timer.hidden = true; SFX.win?.();
@@ -1510,7 +1520,7 @@ trackVisit();   // the site's traffic (D-208)
     ['para', t('¡PARA!'), '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
     ['aplasta', t('¡APLASTA!'), '🪰', 'Nueve moscas revoloteando: toca donde están y el matamoscas baja a aplastarlas. Dos de un golpe es ¡COMBO!'],
     ['revienta', t('¡REVIENTA!'), '🫧', 'Suben burbujas de distintos tamaños y colores parecidos: revienta solo las del azul que te muestran.'],
-    ['pinball', t('¡PINBALL!'), '🕹️', 'Tres bolas caen en una mesa de pinball: toca la mitad izquierda o derecha para mover esa paleta y mantenerlas arriba. Cada bola que golpeaste con una paleta y sigue en la mesa al final es una estrella.'],
+    ['pinball', t('¡PINBALL!'), '🕹️', 'Tres bolas caen en una mesa de pinball: toca la mitad izquierda o derecha para mover esa paleta y mantenerlas arriba. Las dos últimas esperan transparentes donde van a caer. Cada bola que golpeaste con una paleta y sigue en la mesa al final es una estrella.'],
     ['rebota', t('¡REBOTA!'), '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
     ['equilibra', t('¡EQUILIBRA!'), '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
     ['dibuja', t('¡DIBUJA!'), '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
