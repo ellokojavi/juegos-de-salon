@@ -100,15 +100,28 @@ Each game gives 0 to 3 stars, mostly by time or accuracy; the rules of each are 
 
 The owner's idea (2026-11-13): «a mini pinball where 3 balls drop and you keep them alive», about 5 seconds,
 some 3 to 5 taps, visually appealing; the gameplay first. A neon table on a canvas (cyan walls with their
-corners cut, three pink bumpers that light up and spark, two yellow flippers over a red-glowing drain). The
-three balls drop in a third of a second apart. Tapping the left or right half swings that flipper (both at
-once with two fingers; ← → or Z M on a keyboard); it drops back on its own after 0.35 s, so every save is a
-new tap and holding it up does not cradle the balls. **A ball counts once a flipper has hit it** (a green
-ring, and its dot in the corner turns green): each ball hit and still on the table after 5 s is a ★; all
-three down ends it at once with none. Without a tap it scores 0, and holding a side down too. A ball wedged
-between a guide and a flipper's base gets a nudge after 0.3 s. Speed: gravity grows with the run's `sp`. In
-tests `window.__pinball` exposes the table (balls, flippers, saved); a bot that taps when a ball reaches its
-flipper saves 1 to 3 with 4 to 8 taps.
+corners cut, three pink bumpers that light up and spark, two yellow flippers over a red-glowing drain).
+Tapping the left or right half swings that flipper (both at once with two fingers; ← → or Z M on a keyboard);
+it drops back on its own after 0.35 s, so every save is a new tap and holding it up does not cradle the balls.
+
+- **The bumpers move** (the owner, 2026-11-14): three, drawn anew each game in the upper half, clear of the
+  walls and of each other by more than a ball. A bumper kicks a ball hard once; after that it only bounces it
+  back softer, so no ball stays up there all game.
+- **The balls come in turns** (the owner, 2026-11-14): the first drops straight onto a flipper at once (it
+  reaches it in about 0.4 s), so you react from the start; the other two come in from the roof about 0.8 and
+  1.5 s later, through the bumpers, so they do not all arrive together. A ring blinks where the next one will
+  drop, half a second before it does.
+- **A ball counts once a flipper has hit it** (a green ring, and its dot in the corner turns green): each ball
+  hit and still on the table after 5 s is a ★; all three down ends it at once with none. Without a tap it
+  scores 0, and holding a side down too. A ball wedged between a guide and a flipper's base gets a nudge after
+  0.3 s. Gravity grows with the run's `sp`.
+- **All three saved: ¡JACKPOT!** (the owner asked for something silly): the table stops, the three balls line
+  up, grow googly eyes, a grin and crooked party hats and do a kick line while the bumpers flash every color
+  and «¡JACKPOT!» pulses, for about 1.7 s before the stars.
+
+In tests `window.__pinball` exposes the table (balls, flippers, saved). A bot that taps when a ball reaches its
+flipper saves 1 to 3 (about 2) with 6 to 10 taps; the first ball reaches a flipper at about 0.4 s and the
+others at 1.8 to 4.6 s.
 
 ## Usability rules of the microgames
 

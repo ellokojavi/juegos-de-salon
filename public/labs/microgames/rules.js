@@ -110,6 +110,7 @@ const ROWS = [
   ['toca a cada lado para mover las paletas', 'tap each side to swing its flipper', 'toque cada lado para mover as palhetas'],
   ['¡Se cayeron las tres!', 'All three fell!', 'Caíram as três!'],
   ['¡Las tres arriba!', 'All three still up!', 'As três ainda no jogo!'],
+  ['¡JACKPOT!', 'JACKPOT!', 'JACKPOT!'],
   ['Salvaste {n} de 3', 'You saved {n} of 3', 'Você salvou {n} de 3'],
   ['¡REBOTA!', 'BOUNCE!', 'REBATA!'],
   ['¡Le diste a los tres!', 'You hit all three!', 'Acertou os três!'],
