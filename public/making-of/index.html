@@ -26,7 +26,6 @@
     <a href="#team">The agents</a>
     <a href="#weeks">Nine weeks</a>
     <a href="#learnings">Learnings</a>
-    <button type="button" class="mo-notes-btn" id="mo-notes" aria-pressed="false" title="Presenter notes (N)">🗒 Notes</button>
   </nav>
 
   <main>
@@ -45,7 +44,7 @@
         <div><b>200+</b><span>test files, plus browser scripts</span></div>
         <div><b>Free</b><span>for players: no ads, no accounts</span></div>
       </div>
-      <a class="mo-next" href="#product">See it ↓</a>
+      <a class="mo-next" href="#product">Next: The product <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="product" class="mo-section">
@@ -66,11 +65,13 @@
           <img src="img/cup-podium.jpg" alt="The Cup's podium at the end of the week" loading="lazy">
         </div>
       </div>
+      <a class="mo-next" href="#play">Next: See it played <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="play" class="mo-section">
       <p class="mo-kicker">See it played</p>
-      <h2 class="display display--lg">Four games, real play</h2>
+      <h2 class="display display--lg">20+ games. Four of them, in play</h2>
+      <p class="mo-sub">Every game plays on any phone, in the browser. These four were recorded straight from the site.</p>
       <div class="mo-play">
         <figure class="mo-clip mo-clip--tall">
           <video src="clips/where.mp4" poster="clips/where.jpg" autoplay muted loop playsinline aria-label="Where Is It?: the globe spins to the city, a pin drops, the distance is scored"></video>
@@ -91,6 +92,7 @@
           </figure>
         </div>
       </div>
+      <a class="mo-next" href="#factory">Next: How it's built <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="factory" class="mo-section">
@@ -103,7 +105,7 @@
         <li><span>👀</span><b>Agents review</b><small>Usability and documentation agents review each change, sized by its risk.</small></li>
         <li><span>🚀</span><b>It ships</b><small>Low-risk changes merge on their own. New features sit behind a switch until I flip it.</small></li>
       </ol>
-      <a class="mo-next" href="#team">Meet the agents ↓</a>
+      <a class="mo-next" href="#setup">Next: The setup <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="setup" class="mo-section">
@@ -112,6 +114,7 @@
       <div class="mo-diagram">
         <svg class="mo-diagram-svg" viewBox="0 0 1200 822" role="img" aria-labelledby="dg-title"><title id="dg-title">The setup: the owner and a contributor work through Claude Code and GitHub; agents run on a Mac mini; the owner watches /panel/ and flips features live in /labs/; the site on GitHub Pages and Firebase serves players.</title><defs><marker id="dg-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="dg-lane" x="10" y="8" width="220" height="800" rx="18"/><text class="dg-lane-t" x="26" y="30">PEOPLE</text><rect class="dg-lane" x="330" y="8" width="400" height="800" rx="18"/><text class="dg-lane-t" x="346" y="30">THE FACTORY</text><rect class="dg-lane" x="830" y="8" width="362" height="800" rx="18"/><text class="dg-lane-t" x="846" y="30">THE PRODUCT</text><g class="dg-box dg-me"><rect x="26" y="104" width="188" height="112" rx="14"/><text class="dg-t1" x="42" y="134">👤 Me, the owner</text><text class="dg-t2" x="42" y="159">laptop and phone</text><text class="dg-t2" x="42" y="180">direction · decisions</text><text class="dg-t2" x="42" y="201">approvals</text></g><g class="dg-box "><rect x="26" y="344" width="188" height="92" rx="14"/><text class="dg-t1" x="42" y="374">🤝 A contributor</text><text class="dg-t2" x="42" y="399">a fork or an invite</text><text class="dg-t2" x="42" y="420">opens pull requests</text></g><g class="dg-box "><rect x="346" y="104" width="368" height="92" rx="14"/><text class="dg-t1" x="362" y="134">💬 Claude Code</text><text class="dg-t2" x="362" y="159">in the Claude app: desktop, web, phone</text><text class="dg-t2" x="362" y="180">several sessions, each in its own copy</text></g><g class="dg-box "><rect x="346" y="276" width="368" height="136" rx="14"/><text class="dg-t1" x="362" y="306">🐙 GitHub</text><text class="dg-t2" x="362" y="331">the code · every change is a pull request</text><text class="dg-t2" x="362" y="352">checks: tests, browser scripts, risk lane</text><text class="dg-t2" x="362" y="373">issues: my one-tap decisions</text><text class="dg-t2" x="362" y="394">9 scheduled jobs · publishing</text></g><g class="dg-box dg-agents"><rect x="346" y="514" width="150" height="132" rx="14"/><text class="dg-t1" x="362" y="544">🤖 5 agents</text><text class="dg-t2" x="362" y="569">processes</text><text class="dg-t2" x="362" y="590">usability · docs</text><text class="dg-t2" x="362" y="611">ideas · support</text></g><g class="dg-box "><rect x="560" y="514" width="154" height="132" rx="14"/><text class="dg-t1" x="576" y="544">🖥 Mac mini</text><text class="dg-t2" x="576" y="569">7 scheduled jobs</text><text class="dg-t2" x="576" y="590">the 4:30 am round</text><text class="dg-t2" x="576" y="611">watches the inbox</text></g><g class="dg-box dg-me"><rect x="846" y="104" width="118" height="116" rx="14"/><text class="dg-t1" x="858" y="134">🧪 /labs/</text><text class="dg-t2" x="858" y="159">new work</text><text class="dg-t2" x="858" y="180">live switches</text><text class="dg-t2" x="858" y="201">lab keys</text></g><g class="dg-box dg-me"><rect x="976" y="104" width="118" height="116" rx="14"/><text class="dg-t1" x="988" y="134">📊 /panel/</text><text class="dg-t2" x="988" y="159">usage · Cups</text><text class="dg-t2" x="988" y="180">feedback</text><text class="dg-t2" x="988" y="201">health</text></g><g class="dg-box dg-site"><rect x="846" y="282" width="248" height="90" rx="14"/><text class="dg-t1" x="862" y="312">🌐 The site</text><text class="dg-t2" x="862" y="337">HTML, CSS, JS · GitHub Pages</text><text class="dg-t2" x="862" y="358">parlorgames.app</text></g><g class="dg-box "><rect x="846" y="434" width="248" height="90" rx="14"/><text class="dg-t1" x="862" y="464">🔥 Firebase</text><text class="dg-t2" x="862" y="489">live rooms, Cups, rankings</text><text class="dg-t2" x="862" y="510">switches, feedback, usage</text></g><g class="dg-box "><rect x="846" y="580" width="248" height="68" rx="14"/><text class="dg-t1" x="862" y="610">✉️ hola@ inbox</text><text class="dg-t2" x="862" y="635">a Cloudflare Worker</text></g><g class="dg-box dg-players"><rect x="846" y="708" width="248" height="90" rx="14"/><text class="dg-t1" x="862" y="738">🎮 Players</text><text class="dg-t2" x="862" y="763">any phone, no account</text><text class="dg-t2" x="862" y="784">Spanish · English · Portuguese</text></g><path class="dg-arrow " d="M214,150 L344,150" marker-end="url(#dg-head)"/><text class="dg-lbl" x="279" y="140" text-anchor="middle">asks</text><path class="dg-arrow dg-back" d="M346,344 C276,344 276,204 216,204" marker-end="url(#dg-head)"/><text class="dg-lbl" x="282" y="280" text-anchor="middle">decides</text><path class="dg-arrow " d="M214,390 L344,390" marker-end="url(#dg-head)"/><text class="dg-lbl" x="279" y="380" text-anchor="middle">PRs</text><path class="dg-arrow " d="M530,196 L530,274" marker-end="url(#dg-head)"/><text class="dg-lbl" x="542" y="240" text-anchor="start">PRs</text><path class="dg-arrow " d="M430,514 L430,414" marker-end="url(#dg-head)"/><text class="dg-lbl" x="442" y="468" text-anchor="start">review</text><path class="dg-arrow " d="M560,580 L498,580" marker-end="url(#dg-head)"/><text class="dg-lbl" x="529" y="568" text-anchor="middle">runs</text><path class="dg-arrow " d="M714,344 C760,344 760,327 800,327 L844,327" marker-end="url(#dg-head)"/><text class="dg-lbl" x="779" y="370" text-anchor="middle">merge = live</text><path class="dg-arrow dg-back" d="M120,104 L120,46 L1035,46 L1035,102" marker-end="url(#dg-head)"/><text class="dg-lbl" x="600" y="40" text-anchor="middle">watches · flips live</text><path class="dg-arrow dg-back" d="M905,46 L905,102" marker-end="url(#dg-head)"/><path class="dg-arrow dg-back" d="M846,156 L716,156" marker-end="url(#dg-head)"/><text class="dg-lbl" x="781" y="144" text-anchor="middle">🚀 publish</text><path class="dg-arrow " d="M905,220 L905,280" marker-end="url(#dg-head)"/><text class="dg-lbl" x="917" y="254" text-anchor="start">go live</text><path class="dg-arrow " d="M970,372 L970,432" marker-end="url(#dg-head)"/><text class="dg-lbl" x="982" y="406" text-anchor="start">real time</text><path class="dg-arrow " d="M1094,479 C1150,479 1150,162 1130,162 L1096,162" marker-end="url(#dg-head)"/><text class="dg-lbl" x="1146" y="320" text-anchor="middle">usage</text><path class="dg-arrow " d="M1094,753 C1186,753 1186,327 1132,327 L1096,327" marker-end="url(#dg-head)"/><text class="dg-lbl" x="1172" y="544" text-anchor="middle">play</text><path class="dg-arrow " d="M940,708 L940,650" marker-end="url(#dg-head)"/><text class="dg-lbl" x="952" y="684" text-anchor="start">feedback</text><path class="dg-arrow " d="M846,614 L716,614" marker-end="url(#dg-head)"/><text class="dg-lbl" x="781" y="602" text-anchor="middle">emails</text></svg>
       </div>
+      <a class="mo-next" href="#team">Next: The agents <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="team" class="mo-section">
@@ -174,6 +177,7 @@
         </article>
       </div>
       <p class="mo-sub mo-small">And where no judgement is needed, plain scripts, no AI: syncing feedback every 5 minutes, logging every failed check, measuring which lab features are ready to launch.</p>
+      <a class="mo-next" href="#weeks">Next: Nine weeks <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="weeks" class="mo-section">
@@ -190,6 +194,7 @@
         <li><time>Nov 1</time><b>Risk lanes</b><span>Review depth set by what a mistake would cost.</span></li>
         <li><time>Nov 7</time><b>No rule without enforcement</b><span>Every rule is a test, a ratchet or a named reviewer.</span></li>
       </ol>
+      <a class="mo-next" href="#learnings">Next: Learnings <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="learnings" class="mo-section">
@@ -199,29 +204,25 @@
         <li>
           <h3>The job moves from doing to deciding</h3>
           <p>The AI writes the code; the value I add is the call: what, why, and what "good" means. I've written 550+ decisions, each with its reason.</p>
-          <p class="mo-proof">"The repo is the memory, not the chat. A new session reads the rules and picks up where the last one left."</p>
         </li>
         <li>
           <h3>Attention is the scarce resource. Design for it</h3>
           <p>Agents could produce more than I could review. So every question to me is a one-tap choice on my phone, with a recommendation.</p>
-          <p class="mo-proof">"If the human is the bottleneck, make the human's decisions cheap, not fewer."</p>
         </li>
         <li>
           <h3>Review by the cost of a mistake, not the AI's confidence</h3>
           <p>A text tweak merges on its own. Anything touching privacy, stored data or emails waits for my explicit Yes.</p>
-          <p class="mo-proof">"Green, yellow, red lanes. The AI never decides how sure it is; the file decides how risky it is."</p>
         </li>
         <li>
           <h3>The same mistake twice becomes a mechanism</h3>
           <p>An AI repeats errors happily. The second time something breaks, the fix ships with the test that stops a third.</p>
-          <p class="mo-proof">"200+ test files, many born from a real bug. Quality is a system, not a promise."</p>
         </li>
         <li>
           <h3>Production is a switch, not a deploy</h3>
           <p>Everything new ships hidden behind a lab flag. Launching is me flipping it on; rolling back is flipping it off.</p>
-          <p class="mo-proof">"Speed without fear comes from making every release reversible."</p>
         </li>
       </ol>
+      <a class="mo-next" href="#learnings-2">Next: More learnings <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="learnings-2" class="mo-section">
@@ -231,29 +232,25 @@
         <li>
           <h3>Parallel AI needs the plumbing of a parallel team</h3>
           <p>Several sessions at once collided on the same shared files. The fixes were classic team tools: own branches, reserved numbers, one changelog file per change.</p>
-          <p class="mo-proof">"Agents don't remove coordination problems; they reach them faster."</p>
         </li>
         <li>
           <h3>Give agents a boss and narrow powers</h3>
           <p>Each agent has one job and only the access that job needs. The one that reads strangers' emails can't touch code, git or keys.</p>
-          <p class="mo-proof">"Least privilege, applied to AI, just like to people."</p>
         </li>
         <li>
           <h3>Context is a budget</h3>
           <p>The rulebook every session loaded grew to 35 KB and slowed all of them. I cut it to an 8 KB index; the detail is read only when a task needs it.</p>
-          <p class="mo-proof">"Documentation for AI follows the same rule as for people: shorter, findable, one place per fact."</p>
         </li>
         <li>
           <h3>Evals start by writing down what humans already do</h3>
           <p>To let an AI judge game content, I first had to state the rule I was applying by eye. Then my judgement moved the rule in ways the eval couldn't.</p>
-          <p class="mo-proof">"The human in the loop isn't for checking; it's for generalising."</p>
         </li>
         <li>
           <h3>Keep the cost per use at zero</h3>
           <p>AI runs in the factory, at build time, on a flat plan. Nothing a player does costs money, so growth is never a risk.</p>
-          <p class="mo-proof">"Put the model where the cost is fixed, and ship its output as plain data."</p>
         </li>
       </ol>
+      <a class="mo-next" href="#end">Next: Try it <span aria-hidden="true">↓</span></a>
     </section>
 
     <section id="end" class="mo-section mo-end">
@@ -268,13 +265,6 @@
     import { renderQr } from '../assets/js/qr.js';
     renderQr('https://parlorgames.app/', '#mo-qr');
 
-    // Presenter notes: the "say" line under each learning, hidden from the room until N (or the button) shows it;
-    // ?notes opens the page with them on
-    const notesBtn = document.getElementById('mo-notes');
-    const setNotes = on => { document.body.classList.toggle('mo-notes-on', on); notesBtn.setAttribute('aria-pressed', String(on)); };
-    notesBtn.addEventListener('click', () => setNotes(!document.body.classList.contains('mo-notes-on')));
-    if (new URLSearchParams(location.search).has('notes')) setNotes(true);
-    document.addEventListener('keydown', e => { if ((e.key === 'n' || e.key === 'N') && !e.metaKey && !e.ctrlKey) setNotes(!document.body.classList.contains('mo-notes-on')); });
 
     // Presenting: → / ↓ / Space / PageDown go to the next section, ← / ↑ / PageUp to the previous one
     const sections = [...document.querySelectorAll('.mo-section')];
