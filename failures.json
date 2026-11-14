@@ -3208,6 +3208,19 @@
         "stat": "4 file(s) +11 −7: tools/e2e/cup/tournament.mjs, tools/e2e/paths.mjs, tools/e2e/plots/numbers.mjs, tools/e2e/plots/utilities.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 43628780431,
+      "check": "tests",
+      "pr": 1460,
+      "branch": "making-of-traction-live",
+      "commit": "956971fefd7e769775508e183c4b678efa0470c8",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/firebase/traction.test.mjs",
+      "signature": "37be243b46",
+      "date": "2026-11-14T18:52:19.965Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
