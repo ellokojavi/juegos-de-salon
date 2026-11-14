@@ -3123,6 +3123,71 @@
         "stat": "3 file(s) +11 −1: changelog/landing-fold-flake.md, docs/games/microgames.md, public/labs/microgames/style.css"
       },
       "flaky": false
+    },
+    {
+      "run": 43573699172,
+      "check": "end-to-end",
+      "pr": 1448,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "a76386024d1413410163e13aba178a7468ec792f",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ standalone game: no trial and back to the menu",
+      "signature": "6b4319919d",
+      "date": "2026-11-14T08:13:12.875Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 43573699172,
+      "check": "end-to-end",
+      "pr": 1448,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "a76386024d1413410163e13aba178a7468ec792f",
+      "test": "plots/utilities.mjs",
+      "error": "✗ the steps change ()",
+      "signature": "503b03cfc0",
+      "date": "2026-11-14T08:13:12.875Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 43573699172,
+      "check": "end-to-end",
+      "pr": 1448,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "a76386024d1413410163e13aba178a7468ec792f",
+      "test": "liars-dice/languages.mjs",
+      "error": "✗ rules · es: a step of the path failed (Uncaught TypeError: Cannot set properties of null (setting 'open'))",
+      "signature": "cdbb977b5c",
+      "date": "2026-11-14T08:13:12.875Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 43573699172,
+      "check": "end-to-end",
+      "pr": 1448,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "a76386024d1413410163e13aba178a7468ec792f",
+      "test": "plots/numbers.mjs",
+      "error": "✗ three steps, the numbers ones",
+      "signature": "86eb23b8cb",
+      "date": "2026-11-14T08:13:12.875Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 43573699172,
+      "check": "end-to-end",
+      "pr": 1448,
+      "branch": "ccr-f7f308c0-4frrzt",
+      "commit": "a76386024d1413410163e13aba178a7468ec792f",
+      "test": "generala/languages.mjs",
+      "error": "✗ rules · es: a step of the path failed (Uncaught TypeError: Cannot set properties of null (setting 'open'))",
+      "signature": "60703ca9f7",
+      "date": "2026-11-14T08:13:12.875Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
