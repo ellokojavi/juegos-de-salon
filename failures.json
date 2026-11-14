@@ -3286,6 +3286,19 @@
       "date": "2026-11-14T19:01:43.105Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 43629876611,
+      "check": "tests",
+      "pr": 1461,
+      "branch": "processes-sweep",
+      "commit": "bde9e10c22e598c7de89aa2a534b3c64f46d143d",
+      "test": "README up to date",
+      "error": "ERROR · appeared tests: tools/agents/sweep.test.mjs",
+      "signature": "eb4ad68f3e",
+      "date": "2026-11-14T19:04:24.982Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
