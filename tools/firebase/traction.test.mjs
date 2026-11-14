@@ -18,7 +18,16 @@ assert.equal(t.bestDay, new Date((today - 3) * DAY).toISOString().slice(0, 10));
 assert.equal(t.phones7, 6, 'different browsers, not visits');
 assert.equal(t.phones30, 6);
 assert.equal(t.asOf, '2026-11-13');
-assert.deepEqual(Object.keys(t).sort(), ['asOf', 'at', 'best', 'bestDay', 'phones30', 'phones7', 'total', 'week'], 'only totals go out');
+assert.equal(t.bestWeek, 8, 'the best 7 days of games');
+assert.equal(t.peak7, 6);
+assert.equal(t.peak30, 6);
+// A slow last week leaves the records where they were
+const slow = traction({ ...days, [today - 20]: { fin: { zip: { solo: 30 } }, activos: ids(9) } }, {}, now);
+assert.equal(slow.week, 8);
+assert.equal(slow.bestWeek, 30);
+assert.equal(slow.peak7, 9);
+assert.equal(slow.peak30, 9 + 0, 'the 9 of that day are in the same 30 days as the later 6');
+assert.deepEqual(Object.keys(t).sort(), ['asOf', 'at', 'best', 'bestDay', 'bestWeek', 'peak30', 'peak7', 'phones30', 'phones7', 'total', 'week'], 'only totals go out');
 const none = traction({}, {}, now);
 assert.equal(none.total, 0);
 assert.equal(none.bestDay, null);

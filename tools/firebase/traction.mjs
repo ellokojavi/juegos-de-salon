@@ -2,7 +2,8 @@
 // five public totals to `controls/traction`, so the page shows them fresh without the owner's access.
 // It counts with the panel's own functions (the panel's "games finished" and its different browsers),
 // over the last whole UTC day: games finished in all (rooms with an ending, offline games finished,
-// La Copa games), in the last 7 days, the best day so far, and different browsers in 7 and 30 days.
+// La Copa games), in the last 7 days, the best day so far, and different browsers in 7 and 30 days,
+// plus the records the page shows (the best 7 days of games, the most browsers in 7 and 30 days).
 // Only these totals go out: no id, game, country or time.
 //
 //   node tools/firebase/traction.mjs           # print what it would write
@@ -26,16 +27,28 @@ export function traction(days = {}, torneos = {}, now = Date.now()) {
   const ks = Object.keys(days).map(Number).filter(d => d <= to);
   const first = ks.length ? Math.min(...ks) : to;
   let total = 0, week = 0, best = 0, bestDay = null;
+  const perDay = {};
   for (let d = first; d <= to; d++) {
-    const n = finished(days, torneos, d, now);
+    const n = perDay[d] = finished(days, torneos, d, now);
     total += n;
     if (d > to - 7) week += n;
     if (n > best) { best = n; bestDay = d; }
   }
+  // The records (D-554, the owner's ask): the best 7 days of games and the most different browsers
+  // in any 7 and 30 days so far. A record never drops, so a slow week never undersells the reach.
+  let bestWeek = 0, peak7 = 0, peak30 = 0;
+  for (let e = first; e <= to; e++) {
+    let w = 0;
+    for (let d = e - 6; d <= e; d++) w += perDay[d] || 0;
+    bestWeek = Math.max(bestWeek, w);
+    const u = usuarios(days, { from: e, to: e });
+    peak7 = Math.max(peak7, u.semana);
+    peak30 = Math.max(peak30, u.mes);
+  }
   const u = usuarios(days, { from: to - 29, to });
   return {
     total, week, best, bestDay: bestDay === null ? null : iso(bestDay),
-    phones7: u.semana, phones30: u.mes, asOf: iso(to), at: now,
+    phones7: u.semana, phones30: u.mes, bestWeek, peak7, peak30, asOf: iso(to), at: now,
   };
 }
 
