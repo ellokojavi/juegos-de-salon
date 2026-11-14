@@ -48,6 +48,7 @@ import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 import { PANTALLAS, redibujarCon } from './screens.js';
+import { coverWithDialogs, gameTopBar } from '../assets/js/cover-dialogs.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -1875,6 +1876,7 @@ function practica(id, varianteElegida = null) {
   // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
   if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   // En el laboratorio, "‹ Laboratorio" es largo: bajo 400 px el chip queda solo con el emoji (U-12)
+  if (SUELTO) gameTopBar();
   if (SUELTO) $('#chip-juego').replaceChildren(gameIcon(J), el('span', { class: LABS ? 'chip-txt chip-txt--lab' : 'chip-txt' }, ` ${J.nombre}`));
   if (HOY) {
     // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
@@ -1935,6 +1937,8 @@ function practica(id, varianteElegida = null) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
+  // A game's own page: Instrucciones and Entrar as dialogs, no game chip on top (lab: #seccion-cover-dialogs)
+  if (SUELTO) coverWithDialogs(body, { lang: LANG, alTocar: () => SFX.tap() });
   // The first attempt counts from its start (D-433): the line says so, an attempt left halfway goes
   // on where it was, and one started on another phone counts 0
   // Empezar waits for that answer (at once without a player; with one, at most Firebase's 2.5 s)
