@@ -19,7 +19,7 @@ Each canon's form (🤖 checked, 📈 ratcheted, 👁 judged) and what enforces 
 - **Figures the player reads or compares** (keypads, attempts, secret numbers) use `var(--font-num)` (Nunito 900) with `tabular-nums`, never Bangers: there the 1 and the 7 are almost the same stroke and players get them wrong (D-30). Bangers stays for titles, names, words and room codes (letters, no I or O).
 - No per-game "brand" styles: a game may have thematic colors (the sea in Batalla Naval), but buttons, panels, chips and titles come from the shared classes.
 - **The design system** (D-533, [DESIGN.md](DESIGN.md)): every distance, corner, shadow and text size a game writes comes from the tokens in `base.css` (`--s-*`, `--r-*`, `--edge-*`, `--fs-*`), and a component that exists there is used, not copied. Thematic colours are declared once at the top of the game's stylesheet and listed in DESIGN.md's escapes. The usability agent owns the system; its lint (phase 2 of #1188) measures it.
-- Each game has its own emoji that identifies it in the menu, the tab and the top bar.
+- Each game has its own emoji that identifies it in the menu, the tab and the top bar (behind the lab flag `cover-dialogs`, the top bar drops the game's name chip on every game screen, and «‹ Menú» is 44 px tall like its icons).
 - Closing moments with celebration: confetti and sound on winning or finishing a game.
 
 ## C-2 · Structure of a game
@@ -202,6 +202,7 @@ mode the game plans to have.
 - Nothing important below the fold on an 812 px phone: the end screen's buttons must show without scrolling.
 - If a list can grow without limit, the confirm button floats (`position: sticky; bottom: 0`) with a gradient behind it, never at the end of the content.
 - Long blocks (game review, rules) are collapsed by default. **On every cover the instructions start folded** (D-550): "Cómo se juega" is a closed `<details class="panel">`, so the cover shows what matters.
+  Behind the lab flag `cover-dialogs` (`public/assets/js/cover-dialogs.js`, every game's cover: the shared one in `cup/game.js` and the six with their own), the panel becomes a row of two equal buttons under Empezar, «📖 Instrucciones» and «👤 Entrar» (or «🏅 <name>»), each opening a centred dialog: the same steps, numbered, with Empezar under them, and the ranking's own sign-in or account block, moved in as is; the ranking stays open below. The steps stay in the page, hidden, so the FAQ's structured data still matches them.
 - No horizontal scroll. Grids and tables adapt to the width.
 - **Room between the board and its buttons** (D-309): the game board, and whatever sums up the game on the result, carries `data-tablero`; `base.css` gives it 28 px (`--aire-tablero`) to what is below, minus the container gap (`--gap-contenedor`) and the button bar's padding (`--aire-ya`, which the game declares). It is not separated with loose margins. Each script screenshot measures it and marks ✗ under 24 px; `look.mjs` reports it.
 - A grid's labels (letters, numbers) go **inside** the same CSS grid, as one more row and column; never in a separate container aligned "by eye", because each browser stretches it differently (it happened in Safari with Batalla Naval).
@@ -587,7 +588,8 @@ that moment, and only those, in the same order everywhere (D-343):
 - **One primary (yellow) button per view**: the rest are cyan or ghost. A card that offers
   something extra under a result (the Cup's next-day notice) does not compete with it.
 - **No exit twice:** where the header's ‹ already goes to the menu, the result does not add a
-  second "back to the menu" next to another exit (One a Day).
+  second "back to the menu" next to another exit (One a Day). Behind the lab flag `cover-dialogs`,
+  a game's cover drops its «Volver al menú» too: the header's «‹ Menú» is its way back.
 - **The exits come from `public/assets/js/fin.js`** (`salidasFin(contexto)`): the same words and
   look in every game. A game does not build its own "back to the menu" (or "back to the lab",
   `salidasFin('lab')`) for these contexts; `fin.test.mjs` fails on a hand-built one (#1042).
