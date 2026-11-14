@@ -55,7 +55,7 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 
 /* The setup: one SVG drawn on the tokens; on a phone it keeps its width and scrolls inside its box */
 .mo-diagram { overflow-x: auto; }
-.mo-diagram-svg { width: 100%; height: auto; display: block; font-family: var(--font-body); }
+.mo-diagram-svg { width: 100%; height: auto; max-height: 70vh; display: block; font-family: var(--font-body); }
 .dg-lane { fill: rgb(var(--ink-rgb) / 0.03); stroke: var(--glass-border); stroke-dasharray: 4 6; }
 .dg-lane-t { fill: var(--cyan); font-weight: 900; letter-spacing: 0.12em; font-size: var(--fs-85); }
 .dg-box rect { fill: rgb(var(--bg2-rgb) / 0.9); stroke: var(--glass-border); stroke-width: 2; }
@@ -124,6 +124,12 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-learnings p { margin: 0; color: var(--muted); font-size: var(--fs-100); line-height: 1.45; }
 .mo-learnings[start="6"] { counter-reset: learning 5; }
 
+/* Where the presenter is: the section's number, quiet in the corner */
+.mo-count {
+  position: fixed; right: var(--s-16); bottom: var(--s-12); z-index: 2; color: var(--muted); font-weight: 700;
+  font-size: var(--fs-85); font-variant-numeric: tabular-nums; background: rgb(var(--bg1-rgb) / 0.7); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10);
+}
+
 /* The end: the QR to play */
 .mo-end { align-items: center; text-align: center; }
 .mo-qr { width: 220px; height: 220px; padding: var(--s-16); background: var(--ink); border-radius: var(--r-16); }
@@ -142,8 +148,9 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 }
 @media (max-width: 560px) {
   .mo-stats, .mo-flow, .mo-team, .mo-timeline, .mo-play-wide { grid-template-columns: 1fr; }
-  .mo-diagram-svg { min-width: 860px; }
+  .mo-diagram-svg { min-width: 860px; max-height: none; }
   .mo-section { min-height: auto; }
   html { scroll-padding-top: calc(var(--s-32) * 3); }
   .mo-nav a:not(.mo-brand) { font-size: var(--fs-85); }
+  .mo-count { display: none; } /* a presenting aid: on a phone it would sit on the text */
 }

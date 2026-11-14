@@ -16,7 +16,10 @@ This programme works on the border between the two halves, with two goals of equ
    down in the piece's *Learnings* section as the D-n record decisions. That record is the owner's
    material for their career (talks, texts, their own team), not a by-product. Its public face
    is `/making-of/`, the unlisted English page the owner projects for executives: when a
-   learning or a headline number changes, update it there too. Its gameplay clips
+   learning changes, update it there too. Its headline numbers (games, weeks, PRs, decisions,
+   test files) count themselves when the page opens, from `ALL_GAMES` and GitHub's public API
+   (unauthenticated, from the viewer's browser); the written numbers are only the fallback if a
+   source does not answer, so refresh them now and then. Its gameplay clips
    (`public/making-of/clips/`) are recorded by `node tools/generators/making-of-clips.mjs`.
 
 The owner is a product-management lead. The programme is a conversation (2026-11-04) turned into
