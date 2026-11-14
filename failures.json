@@ -3036,7 +3036,11 @@
       "error": "✗ rutas today 320×568 pt: «🖌️ Começar» ends at 579 px, 11 px below the fold",
       "signature": "ee2715f0b6",
       "date": "2026-11-13T08:33:58.947Z",
-      "fix": null,
+      "fix": {
+        "commit": "86acaf83a1a22639f32662581e8cecd85db9bef1",
+        "date": "2026-11-14T02:54:18.281Z",
+        "stat": "83 file(s) +1242 −219: .claude/agents/processes.md, CHANGELOG.md, README.md, changelog/about-the-build.md, changelog/bodega-camaleon.md, …"
+      },
       "flaky": false
     },
     {
