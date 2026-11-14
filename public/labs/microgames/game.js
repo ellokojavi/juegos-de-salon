@@ -948,7 +948,7 @@ trackVisit();   // the site's traffic (D-208)
         });
         const savedN = () => balls.filter(b => b.live && b.saved).length;
         active = true; runTimer(T(5000), () => { const n = savedN(); finish(n, n === 3 ? t('¡Las tres arriba!') : t('Salvaste {n} de 3', { n })); });
-      }, '🪩 ⚪⚪⚪', t('toca a cada lado para mover las paletas'));
+      }, '🕹️ ⚪⚪⚪', t('toca a cada lado para mover las paletas'));
     },
     rebota() {
       // Three little pixel aliens (our own 8-bit drawings), each in its own color: '#' body, 'w' white, 'k' black
@@ -1452,7 +1452,7 @@ trackVisit();   // the site's traffic (D-208)
     ['para', t('¡PARA!'), '🎯', 'Un radar gira y va encendiendo luces de colores: frénalo en la franja. La zona ancha da ★, la del medio ★★ y la angosta del centro ★★★.'],
     ['aplasta', t('¡APLASTA!'), '🪰', 'Nueve moscas revoloteando: toca donde están y el matamoscas baja a aplastarlas. Dos de un golpe es ¡COMBO!'],
     ['revienta', t('¡REVIENTA!'), '🫧', 'Suben burbujas de distintos tamaños y colores parecidos: revienta solo las del azul que te muestran.'],
-    ['pinball', t('¡PINBALL!'), '🪩', 'Tres bolas caen en una mesa de pinball: toca la mitad izquierda o derecha para mover esa paleta y mantenerlas arriba. Cada bola que golpeaste con una paleta y sigue en la mesa al final es una estrella.'],
+    ['pinball', t('¡PINBALL!'), '🕹️', 'Tres bolas caen en una mesa de pinball: toca la mitad izquierda o derecha para mover esa paleta y mantenerlas arriba. Cada bola que golpeaste con una paleta y sigue en la mesa al final es una estrella.'],
     ['rebota', t('¡REBOTA!'), '👾', 'Como Pong: mueve la paleta para que la pelota rebote y le dé a los tres marcianitos pixelados de arriba.'],
     ['equilibra', t('¡EQUILIBRA!'), '🍽️', 'Un plato con tres cosas encima sobre un palo: muévelo de lado a lado. Si se inclina mucho se cae una cosa; cada una que queda es una estrella.'],
     ['dibuja', t('¡DIBUJA!'), '✏️', 'Repasa la figura punteada sin salirte. Completa da más estrellas; si te falta un pedazo, menos.'],
