@@ -113,3 +113,24 @@ for (const pr of [fork, stranger]) {
   assert.match(report(r), /outside PR/);
 }
 assert.ok(INSIDERS.includes(OWNER), 'the owner is an insider');
+
+// Lab game owners (D-553): a contributor's PR inside their own lab games takes its files' lane
+{
+  const { ownsAll, LAB_OWNERS } = await import('./lanes.mjs');
+  const owners = { flap: 'Chanicua' };
+  const chan = { user: { login: 'Chanicua' }, head: { repo }, base: { repo } };
+  const mine = ['public/labs/flap/game.js', 'docs/games/flap.md', 'tools/e2e/flap/play.mjs', 'changelog/x.md'];
+  assert.ok(ownsAll('chanicua', mine, owners));
+  assert.equal(outsideReason(chan, mine, owners), null);
+  assert.notEqual(laneOfPr(mine, { outside: outsideReason(chan, mine, owners) }).lane, 'red');
+  for (const extra of ['public/labs/memory/game.js', 'public/assets/js/games.js', 'tools/agents/lab-owners.json', 'public/labs/flapx/a.js']) {
+    assert.match(outsideReason(chan, [...mine, extra], owners), /outside their lab games/, extra);
+  }
+  assert.match(outsideReason(chan, [], owners), /not the owner/, 'no files is not a pass');
+  assert.match(outsideReason(stranger, mine, owners), /not the owner/, 'only the game owner');
+  const forkChan = { ...chan, head: { repo: { full_name: 'Chanicua/juegos-de-salon' } } };
+  assert.match(outsideReason(forkChan, mine, owners), /fork/);
+  assert.equal(laneOf('tools/agents/lab-owners.json').lane, 'red', 'granting ownership needs the owner');
+  for (const [g, who] of Object.entries(LAB_OWNERS)) assert.ok(/^[\w-]+$/.test(g) && /^[\w-]+$/.test(who), g);
+}
+console.log('lab owners ok');

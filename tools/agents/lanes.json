@@ -29,6 +29,7 @@
     { "glob": "tools/release/pages-5xx.mjs", "lane": "red", "reason": "release tooling: the Pages deploy" },
     { "glob": "tools/agents/approve.mjs", "lane": "red", "reason": "the one-tap actions run with the workflow token" },
     { "glob": "tools/agents/lanes.*", "lane": "red", "reason": "the lane gate itself" },
+    { "glob": "tools/agents/lab-owners.json", "lane": "red", "reason": "who may merge lab games without the owner (D-553)" },
 
     { "glob": "public/labs/**", "lane": "green", "reason": "lab: few players, the owner checks it (D-413)" },
     { "glob": "docs/**", "lane": "green", "reason": "documentation" },
