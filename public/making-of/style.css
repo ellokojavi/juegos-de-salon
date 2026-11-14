@@ -77,12 +77,13 @@ main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; paddin
 .mo-shots img { width: 100%; height: auto; border-radius: var(--r-16); border: 2px solid var(--glass-border); box-shadow: var(--shadow-panel); }
 
 /* The factory: five steps in a row, then the agents */
-.mo-flow { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-12); counter-reset: step; }
+.mo-flow { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-32); counter-reset: step; }
 .mo-flow li {
   position: relative; display: flex; flex-direction: column; gap: var(--s-6);
   background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-16);
 }
-.mo-flow li:not(:last-child)::after { content: '→'; position: absolute; right: calc(-1 * var(--s-12)); top: 50%; transform: translate(50%, -50%); color: var(--pink); font-weight: 900; }
+/* The arrow sits in the middle of the gap between two steps */
+.mo-flow li:not(:last-child)::after { content: '→'; position: absolute; right: calc(-0.5 * var(--s-32)); top: 50%; transform: translate(50%, -50%); color: var(--pink); font-weight: 900; font-size: var(--fs-160); line-height: 1; }
 .mo-flow span { font-size: var(--fs-200); }
 .mo-flow b { font-size: var(--fs-120); color: var(--yellow); }
 .mo-flow small { color: var(--muted); font-size: var(--fs-90); line-height: 1.4; }
