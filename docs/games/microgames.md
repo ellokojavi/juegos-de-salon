@@ -138,6 +138,17 @@ In tests `window.__pinball` exposes the table (balls, flippers, saved). A bot th
 flipper saves 1 to 3 (about 2.4) with 4 to 8 taps; the first ball reaches a flipper at about 0.5 s and the
 others at 2 to 6.2 s (one in eight did not get down in time).
 
+## ¡Rebota!
+
+A paddle at the bottom, a ball and three pixel aliens to hit (our own 8-bit drawings); where the ball meets the
+paddle sets its angle, like Pong. The owner's tuning (2026-11-14):
+
+- **Neon**: a court with a cyan neon frame over a violet night with a faint grid; the paddle a cyan neon tube, the
+  ball a warm white-yellow glow with a short trail, the aliens glowing in their own colour, and every burst (an
+  alien hit, a small cyan one on each paddle hit) of glowing pixels.
+- **A shorter court**: it starts 16 % of the stage down, so the ball, at the same speed, goes up and comes back more
+  often in the same 9 s; the roof is the court's top edge.
+
 ## Usability rules of the microgames
 
 - **¡Rueda!:** lifting the finger pauses the ball (the clock keeps going); putting it back on the ball goes on.
