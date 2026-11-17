@@ -3795,7 +3795,11 @@
       "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/contributions.test.mjs",
       "signature": "00e797871d",
       "date": "2026-11-17T16:18:03.392Z",
-      "fix": null,
+      "fix": {
+        "commit": "d4cd7d9f331eec486d79d0a7cfe703ea0426da82",
+        "date": "2026-11-17T16:22:37.598Z",
+        "stat": "2 file(s) +2 −0: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
@@ -3808,7 +3812,11 @@
       "error": "ERROR · appeared tests: tools/agents/contributions.test.mjs",
       "signature": "639a086645",
       "date": "2026-11-17T16:19:43.890Z",
-      "fix": null,
+      "fix": {
+        "commit": "d4cd7d9f331eec486d79d0a7cfe703ea0426da82",
+        "date": "2026-11-17T16:22:37.598Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
