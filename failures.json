@@ -3732,6 +3732,19 @@
       "date": "2026-11-17T06:01:32.335Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44085732428,
+      "check": "end-to-end",
+      "pr": 1517,
+      "branch": "usability-2026-11-17",
+      "commit": "ac0717192291d37c684392b3c9f6f19852b80ccb",
+      "test": "cup/tournament.mjs:weekend",
+      "error": "✗ 🎲 draws nine different games of the pool",
+      "signature": "b872490b7e",
+      "date": "2026-11-17T12:49:53.800Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
