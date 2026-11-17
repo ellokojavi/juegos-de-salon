@@ -3943,7 +3943,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ rules-es: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon by 6 px",
       "signature": "8e9f26f9ad",
       "date": "2026-11-17T17:50:59.109Z",
-      "fix": null,
+      "fix": {
+        "commit": "7438b203363729bc19f83cef7492d1cf1edf2d9c",
+        "date": "2026-11-17T22:56:50.791Z",
+        "stat": "112 file(s) +8375 −218: .github/pull_request_template.md, .github/workflows/notifications.yml, CLAUDE.md, CONTRIBUTING.md, README.md, …"
+      },
       "flaky": false
     },
     {
@@ -3956,7 +3960,11 @@
       "error": "✗ 01-intro: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon.icon--cyan by 9 px\n##[warning]bulls-and-cows/local.mjs failed on the first attempt (1 check(s) red); repeating it once (D-299)\n✗ 01-intro: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon.icon--cyan by 9 px",
       "signature": "4ba0c3d919",
       "date": "2026-11-17T17:50:59.109Z",
-      "fix": null,
+      "fix": {
+        "commit": "7438b203363729bc19f83cef7492d1cf1edf2d9c",
+        "date": "2026-11-17T22:56:50.791Z",
+        "stat": "112 file(s) +8375 −218: .github/pull_request_template.md, .github/workflows/notifications.yml, CLAUDE.md, CONTRIBUTING.md, README.md, …"
+      },
       "flaky": false
     },
     {
@@ -4003,7 +4011,11 @@
       "error": "✗ and says \"Juegos de Salón como app\"",
       "signature": "d92f6eced1",
       "date": "2026-11-17T18:36:29.712Z",
-      "fix": null,
+      "fix": {
+        "commit": "7438b203363729bc19f83cef7492d1cf1edf2d9c",
+        "date": "2026-11-17T22:56:50.791Z",
+        "stat": "83 file(s) +7509 −154: .github/workflows/notifications.yml, CLAUDE.md, README.md, changelog/blackjack-bet-transition.md, changelog/blackjack-chip-coins.md, …"
+      },
       "flaky": false
     },
     {
@@ -4063,7 +4075,11 @@
       "error": "✗ handoff-es: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 6 px, M-4 .corner.br covers .pip by 6 px\n✗ handoff-en: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px\n✗ handoff-pt: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px",
       "signature": "37f0b5a63b",
       "date": "2026-11-17T20:24:42.536Z",
-      "fix": null,
+      "fix": {
+        "commit": "7438b203363729bc19f83cef7492d1cf1edf2d9c",
+        "date": "2026-11-17T22:56:50.791Z",
+        "stat": "27 file(s) +376 −78: CLAUDE.md, changelog/blackjack-deal-guard.md, changelog/blackjack-defeat.md, changelog/blackjack-fit-screen.md, changelog/blackjack-static-table.md, …"
+      },
       "flaky": false
     },
     {
@@ -4076,7 +4092,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ 08-pass: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px",
       "signature": "92a70ad907",
       "date": "2026-11-17T20:24:42.536Z",
-      "fix": null,
+      "fix": {
+        "commit": "7438b203363729bc19f83cef7492d1cf1edf2d9c",
+        "date": "2026-11-17T22:56:50.791Z",
+        "stat": "27 file(s) +376 −78: CLAUDE.md, changelog/blackjack-deal-guard.md, changelog/blackjack-defeat.md, changelog/blackjack-fit-screen.md, changelog/blackjack-static-table.md, …"
+      },
       "flaky": false
     },
     {
