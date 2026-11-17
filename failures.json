@@ -4016,7 +4016,11 @@
       "error": "✗ and says \"Juegos de Salón como app\"",
       "signature": "d92f6eced1",
       "date": "2026-11-17T19:16:54.720Z",
-      "fix": null,
+      "fix": {
+        "commit": "896db8e3bc19804c498623e323711284a0d89e16",
+        "date": "2026-11-17T21:58:37.065Z",
+        "stat": "56 file(s) +7216 −127: .github/workflows/notifications.yml, CLAUDE.md, README.md, changelog/blackjack-bet-transition.md, changelog/blackjack-deal-guard.md, …"
+      },
       "flaky": false
     },
     {
