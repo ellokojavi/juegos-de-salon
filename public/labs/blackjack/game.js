@@ -184,7 +184,7 @@ function renderSegmented(label, options, current, formatFn, onSelect) {
         type: 'button',
         class: 'seg-btn' + (current === val ? ' active' : ''),
         onClick: () => { SFX.tap(); onSelect(val); renderSetupOptions(); },
-      }, formatFn(val))),
+      }, ...[formatFn(val)].flat())),
     ),
   );
 }
@@ -193,7 +193,7 @@ function renderSetupOptions() {
   $('#setup-options').replaceChildren(
     renderSegmented(T.decksLabel, DECK_OPTIONS, setupConfig.decks, v => String(v), v => { setupConfig.decks = v; }),
     renderSegmented(T.roundsLabel, ROUND_OPTIONS, setupConfig.maxRounds, v => (v === 0 ? T.unlimitedRounds : String(v)), v => { setupConfig.maxRounds = v; }),
-    renderSegmented(T.coinsLabel, COIN_OPTIONS, setupConfig.startingCoins, v => '🪙 ' + v, v => { setupConfig.startingCoins = v; }),
+    renderSegmented(T.coinsLabel, COIN_OPTIONS, setupConfig.startingCoins, v => [el('span', { class: 'seg-chip' }, chipSpotSvg(5)), String(v)], v => { setupConfig.startingCoins = v; }),
   );
 }
 
@@ -800,8 +800,8 @@ function renderPlay() {
 }
 
 /* ---------------- The felt table (lab: #seccion-blackjack-felt) ---------------- */
-function chipSpotSvg() {
-  const c = CHIP_PALETTE[10];
+function chipSpotSvg(value = 10) {
+  const c = CHIP_PALETTE[value];
   return parseSvg(`<svg viewBox="0 0 56 56" aria-hidden="true">
     <ellipse cx="28" cy="32" rx="24" ry="22" fill="${c.side}"/>
     <circle cx="28" cy="26" r="23" fill="${c.face}" stroke="${c.rim}" stroke-width="1.5"/>
