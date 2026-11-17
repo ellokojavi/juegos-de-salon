@@ -4164,6 +4164,32 @@
       "date": "2026-11-17T22:32:48.896Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44193599153,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "55a21c07beafcacd94e919620f029533ab5849d8",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
+      "signature": "3f17b9bc87",
+      "date": "2026-11-17T22:52:51.214Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44193599153,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "55a21c07beafcacd94e919620f029533ab5849d8",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.copa.files: public/cup/games/sapiondo/engine.js, public/cup/games/sapiondo/scene.js, public/cup/games/sapiondo/style.css, public/cup/games/sapiondo/texts.js, public/cup/games/sapiondo/ui.js",
+      "signature": "f5b529dbd8",
+      "date": "2026-11-17T22:52:51.214Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
