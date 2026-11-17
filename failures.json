@@ -4275,6 +4275,19 @@
       "date": "2026-11-17T23:45:15.495Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44202096623,
+      "check": "tests",
+      "pr": 1556,
+      "branch": "session-hooks",
+      "commit": "9a389dc8c0eceebd5f1d8b575f30221d899e12e6",
+      "test": "README up to date",
+      "error": "ERROR · appeared tests: tools/agents/pr-created.test.mjs",
+      "signature": "b7079e24db",
+      "date": "2026-11-17T23:50:58.701Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
