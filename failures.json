@@ -3926,7 +3926,11 @@
       "error": "✗ Tango: a sun left in place is marked and counted 1.5 s after another cell is tapped",
       "signature": "6c3e23ad94",
       "date": "2026-11-17T17:46:04.229Z",
-      "fix": null,
+      "fix": {
+        "commit": "b49fc11d6a91efac6a03cbcb0d93836c5166d538",
+        "date": "2026-11-17T18:27:48.780Z",
+        "stat": "42 file(s) +871 −80: .github/pull_request_template.md, .github/workflows/notifications.yml, CONTRIBUTING.md, changelog/blackjack-felt.md, changelog/install-invite.md, …"
+      },
       "flaky": false
     },
     {
