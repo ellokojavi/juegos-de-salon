@@ -16,6 +16,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 |---|---|---|
 | `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (push notifications) |
 | `mac` | a launchd job on the owner's Mac mini: a plain script, or `claude-task.mjs <prompt>` for a headless Claude session (D-451) | frequent checks (free to check, Claude only when there is work) and the rounds that are Claude's work every time (processes, weekly report), their prompt in `tools/jobs/prompts/<id>.md`; or a **service** (`service: true`): a process launchd keeps alive instead of running on a schedule (the `referee` gateway, `tools/referee/`) |
+| `cloud` | a Claude Code cloud scheduled task (claude.ai/code → Routines): runs on Anthropic's machines with the owner's plan, no Mac (D-568, D-577) | Claude work that needs only GitHub or Claude's own tools: reviewing outside PRs (`contributions`), proposing which sessions to archive (`session-sweep`); its prompt in `tools/jobs/prompts/<id>.md`, `trigger` the task's id |
 | `hook` | a Claude Code hook (`.claude/settings.json`) | what runs with each session |
 
 ## Adding a job
@@ -29,9 +30,37 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
    (`KeepAlive`), so `jobs.mjs run <id>` refuses it.
 3. `github`: the workflow, with the same cron. A Claude round: a `mac` job whose command is
    `node tools/jobs/claude-task.mjs tools/jobs/prompts/<id>.md` (`jobs.test.mjs` checks every file the
-   prompt names exists); not a desktop-app or claude.ai scheduled task, which stop or cannot reach the Mac (D-451).
+   prompt names exists). Only when it needs the Mac (its keys, its files): otherwise a `cloud` job (below).
    Its prompt file also gets an entry in `JOBS` in `claude-task.mjs` with the tools that round needs
    and no more (a prompt file without one does not run; `claude-task.test.mjs` checks it, #865).
+
+4. `cloud`: the prompt file first, then the task (see below), then its `trigger` id in `jobs.json`.
+
+**Where a new job goes, in this order** (the owner, 2026-11-17: nothing that matters lives only on the
+Mac): `github` if it needs no Claude (free; a 5-minute chore rides the heartbeat in `notifications.yml`,
+D-569, because GitHub's own crons run late or not at all); `cloud` if it needs Claude but not the Mac;
+`mac` only when nothing else can reach what it needs.
+
+## Cloud scheduled tasks: what to know (D-568, D-577)
+
+Learned the hard way, so a new session does not repeat it:
+
+- **Create it from a cloud session, or from the CLI's `/schedule` inside the repo, never from a session
+  running on the Mac** (Remote Control): a task created there is tied to the Mac, and nothing in the
+  cloud can edit it afterwards.
+- **A task that reads the repo through `gh` needs the repository attached with write access** (`/schedule`
+  inside the repo attaches it; check it on claude.ai/code → Routines). Without it `gh api` answers 403.
+- **A task's own fresh session lacks the session tools** (`list_sessions`, `archive_session`): those
+  exist only in an ordinary cloud session. So `session-sweep` is a long-lived cloud session, «🧹 Session
+  sweeper», whose task wakes it (the task created from inside that session, firing into itself).
+- **Archiving a session needs the owner's own confirmation**: the tool refuses on a task's message, so
+  the sweep proposes by push notification and archives on the owner's «sí». Never work around it.
+- **A task's prompt can be edited only from the conversation it posts into**; recreate rather than fight
+  it, and keep the prompt file here as the source of truth.
+- **Never accept `confirm_repository_trust` on the owner's behalf**: it ties a session to the owner's
+  trusted devices for good.
+- Use the cheapest model that does the job, and start every round with a free check that ends it when
+  there is nothing to do (`contributions.mjs check`).
 
 ## The jobs on the Mac
 

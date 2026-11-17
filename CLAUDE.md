@@ -54,6 +54,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | The learning programme (AI in the game, the owner's learning) | [docs/LEARNING.md](docs/LEARNING.md) and `docs/learning/<piece>.md` (D-532): no variable cost, the owner's plan never serves players, three free places for a model | Before any work that puts a model in a game or measures the factory; read only the index and the piece |
 | Parallel sessions, worktrees, forks, tests side by side | [docs/SESSIONS.md](docs/SESSIONS.md) (D-135, D-189, D-252, D-301, D-303, D-428) | At the start of any work that will commit |
 | Before merging, auto-merge, waiting, version, publishing, Firebase rules | [docs/MERGING.md](docs/MERGING.md) (D-143, D-216, D-300, D-302, D-400, D-419) | Before proposing a merge |
+| Every job and where it runs (GitHub, Claude cloud tasks, the Mac mini), with what cloud tasks can and cannot do | [tools/jobs/README.md](tools/jobs/README.md), the list in `tools/jobs/jobs.json` (D-365, D-568, D-569, D-577) | Before adding or moving a job, or touching a scheduled task |
 | Every agent and owner tool, with its commands | [docs/AGENTS.md](docs/AGENTS.md) (processes, documentation, usability, support, marketing, ideas, lab keys, splash, jobs) | Before using or changing one |
 
 **A rule that changes is changed in its place, in the same PR:** the PR edits the canon or doc and

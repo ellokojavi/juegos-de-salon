@@ -496,7 +496,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | amended by D-449 |
 | [D-449](decisions/D-449.md) | ☕ Invítame a un café is a card over the page, not a page of its own (in the lab) | current |
 | [D-450](decisions/D-450.md) | A finished Cup's podium is saved within the hour of its close, even if nobody reopens the Cup | amended by D-499 |
-| [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
+| [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | amended by D-577 |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
 | [D-453](decisions/D-453.md) | Toque y Fama's score, by deduction: tried in the lab, then published | current |
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |

@@ -246,7 +246,8 @@
       "what": "Every hour, a Claude Code cloud scheduled task (Sonnet): the contributions agent reviews the outside PRs that changed since its last look and comments what is missing; when one waits only for the owner's Yes, contrib-ready.yml tells the owner. Ends at once when nothing changed.",
       "decisions": [
         "D-568"
-      ]
+      ],
+      "trigger": "trig_015jHtCymxwCaDNoSF6sKA3L"
     },
     {
       "id": "stalled-takeover",
@@ -266,7 +267,8 @@
       "what": "Every day, a Claude Code cloud scheduled task (cheapest model, no repository): archives the owner's sessions of every project that are completed and idle over 2 days, or review-ready or failed and idle over 7; lists those waiting on the owner in a push notification.",
       "decisions": [
         "D-577"
-      ]
+      ],
+      "trigger": "trig_01DyV3Zw7Pb9bQotxSVSzkjJ"
     }
   ]
 }
