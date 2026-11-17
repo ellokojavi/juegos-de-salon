@@ -3888,7 +3888,11 @@
       "error": "✗ es: the tester tab offers to show it again",
       "signature": "2ccd50abfb",
       "date": "2026-11-17T17:12:59.713Z",
-      "fix": null,
+      "fix": {
+        "commit": "ced04dc31e59184de77cf5b8f9aaafcc33ed7718",
+        "date": "2026-11-17T17:53:27.053Z",
+        "stat": "31 file(s) +134 −66: .github/pull_request_template.md, .github/workflows/feedback.yml, .github/workflows/notifications.yml, CONTRIBUTING.md, changelog/blackjack-felt.md, …"
+      },
       "flaky": false
     },
     {
