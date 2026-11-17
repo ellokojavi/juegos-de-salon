@@ -4001,6 +4001,19 @@
       "date": "2026-11-17T18:36:29.712Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44154993790,
+      "check": "end-to-end",
+      "pr": 1533,
+      "branch": "tango-time-docs",
+      "commit": "bb233561349109f8175e919f092b4b7f162ebba9",
+      "test": "install-prompt.mjs",
+      "error": "✗ and says \"Juegos de Salón como app\"",
+      "signature": "d92f6eced1",
+      "date": "2026-11-17T19:16:54.720Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
