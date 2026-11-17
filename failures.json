@@ -3771,6 +3771,19 @@
       "date": "2026-11-17T15:46:26.320Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44117710674,
+      "check": "end-to-end",
+      "pr": 1518,
+      "branch": "ccr-0b5e5446-m7wp23",
+      "commit": "98ce62e33dd9cbf5544e09e4663208f063cac32d",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ the lab offers only prototypes, each in its folder (wobbles-3d/ wobbles/ transfer/ memory/ dominorama/ exploding-numbers/ artifacts/ ../ ../cup/ chameleon/ ../battleship/ case/ code/ ../connections/",
+      "signature": "cbd9e0e8e5",
+      "date": "2026-11-17T16:00:22.971Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
