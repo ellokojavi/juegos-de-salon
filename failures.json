@@ -4296,6 +4296,32 @@
         "stat": "1 file(s) +1 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44202580838,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "e99f96efc527d1803043340c3c028b6da743a065",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/labs/sapiondo/index.html has no social card  →  node tools/release/og.mjs cards\nERROR · public/assets/og/sapiondo.jpg is missing  →  node tools/release/og.mjs images\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards",
+      "signature": "91f5f586ec",
+      "date": "2026-11-17T23:52:09.913Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44202580838,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "e99f96efc527d1803043340c3c028b6da743a065",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
+      "signature": "3f17b9bc87",
+      "date": "2026-11-17T23:52:09.913Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
