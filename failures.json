@@ -3719,6 +3719,19 @@
       "date": "2026-11-17T05:55:08.730Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44027469336,
+      "check": "tests",
+      "pr": null,
+      "branch": "blackjack",
+      "commit": "527d65129f76eb15005e2610217d79474b3bdca1",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
+      "signature": "3f17b9bc87",
+      "date": "2026-11-17T06:01:32.335Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
