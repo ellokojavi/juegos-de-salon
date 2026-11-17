@@ -4048,6 +4048,32 @@
         "stat": "2 file(s) +11 −2: changelog/publish-install-fix.md, tools/e2e/install-prompt.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 44166775890,
+      "check": "end-to-end",
+      "pr": 1523,
+      "branch": "visual-spacing-rule",
+      "commit": "e545d384dcdc393c26186ecbf719573f67b3c1a5",
+      "test": "Scripts",
+      "error": "✗ handoff-es: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 6 px, M-4 .corner.br covers .pip by 6 px\n✗ handoff-en: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px\n✗ handoff-pt: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px",
+      "signature": "37f0b5a63b",
+      "date": "2026-11-17T20:24:42.536Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44166775890,
+      "check": "end-to-end",
+      "pr": 1523,
+      "branch": "visual-spacing-rule",
+      "commit": "e545d384dcdc393c26186ecbf719573f67b3c1a5",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ 08-pass: uneven margins (DESIGN.md rule 7): M-4 .pip covers .corner by 7 px, M-4 .corner.br covers .pip by 7 px",
+      "signature": "92a70ad907",
+      "date": "2026-11-17T20:24:42.536Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
