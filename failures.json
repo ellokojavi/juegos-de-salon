@@ -3818,6 +3818,19 @@
         "stat": "1 file(s) +1 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44124215570,
+      "check": "end-to-end",
+      "pr": 1520,
+      "branch": "uad-skip-end",
+      "commit": "77d65f3bd87b3fddf0198e8d3eca1a9f532c9c87",
+      "test": "cup/talk.mjs",
+      "error": "✗ es: the tester tab offers to show it again",
+      "signature": "2ccd50abfb",
+      "date": "2026-11-17T16:32:10.652Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
