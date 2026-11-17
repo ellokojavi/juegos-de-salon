@@ -3986,7 +3986,11 @@
       "error": "✗ es: the tester tab offers to show it again",
       "signature": "2ccd50abfb",
       "date": "2026-11-17T18:06:40.561Z",
-      "fix": null,
+      "fix": {
+        "commit": "a2b499bbaf3956a2b58263477540e533a175df83",
+        "date": "2026-11-17T19:46:53.613Z",
+        "stat": "142 file(s) +4669 −323: .claude/agents/contributions.md, .github/pull_request_template.md, .github/workflows/contrib-ready.yml, .github/workflows/feedback.yml, .github/workflows/notifications.yml, …"
+      },
       "flaky": false
     },
     {
@@ -4038,7 +4042,11 @@
       "error": "✗ and says \"Juegos de Salón como app\"",
       "signature": "d92f6eced1",
       "date": "2026-11-17T19:32:17.829Z",
-      "fix": null,
+      "fix": {
+        "commit": "a2b499bbaf3956a2b58263477540e533a175df83",
+        "date": "2026-11-17T19:46:53.613Z",
+        "stat": "2 file(s) +11 −2: changelog/publish-install-fix.md, tools/e2e/install-prompt.mjs"
+      },
       "flaky": false
     }
   ]
