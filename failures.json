@@ -3907,6 +3907,19 @@
         "stat": "1 file(s) +1 −1: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44134359680,
+      "check": "end-to-end",
+      "pr": 1525,
+      "branch": "tango-time-score",
+      "commit": "c0a2a384a920cbb958437c9ad6d2faefec466bbb",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ Tango: a sun left in place is marked and counted 1.5 s after another cell is tapped",
+      "signature": "6c3e23ad94",
+      "date": "2026-11-17T17:46:04.229Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
