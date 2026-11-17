@@ -4151,6 +4151,19 @@
         "stat": "22 file(s) +144 −13: CLAUDE.md, changelog/blackjack-sweep.md, changelog/jobs-docs.md, changelog/session-sweep.md, changelog/tango-time-docs.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 44190272869,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "7ff9e9db19cd8921fcf7e59b4e62bce21f5bfa55",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-17T22:32:48.896Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
