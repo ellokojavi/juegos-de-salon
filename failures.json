@@ -3769,7 +3769,11 @@
       "error": "Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64\nLD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib\n/home/runner/work/_temp/site/labs/wobbles/index.html: it loads modules and has no stylesheet or head to put the import map before",
       "signature": "1c38b6af74",
       "date": "2026-11-17T15:46:26.320Z",
-      "fix": null,
+      "fix": {
+        "commit": "6ecf65db3c33d2468ad540b131e9d969e8a21b23",
+        "date": "2026-11-17T16:43:11.319Z",
+        "stat": "32 file(s) +2863 −12: .claude/agents/contributions.md, .github/workflows/contrib-ready.yml, README.md, changelog/blackjack.md, changelog/contributions-watch.md, …"
+      },
       "flaky": false
     },
     {
@@ -3842,7 +3846,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared modules: public/assets/js/manifests/labs/wobbles-3d.js, public/assets/js/manifests/labs/wobbles.js, public/labs/wobbles-3d/game.js, public/labs/wobbles/game.js\nERROR · appeared e2e: wobbles-3d/game.mjs, wobbles/game.mjs",
       "signature": "6aa15eb817",
       "date": "2026-11-17T16:40:31.062Z",
-      "fix": null,
+      "fix": {
+        "commit": "6ecf65db3c33d2468ad540b131e9d969e8a21b23",
+        "date": "2026-11-17T16:43:11.319Z",
+        "stat": "2 file(s) +17 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
