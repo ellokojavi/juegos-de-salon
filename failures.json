@@ -4014,6 +4014,19 @@
       "date": "2026-11-17T19:16:54.720Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44154901812,
+      "check": "end-to-end",
+      "pr": 1530,
+      "branch": "blackjack-bet-transition",
+      "commit": "185f1dbf03ae0627bfdd865bf3fb7e4525948d71",
+      "test": "install-prompt.mjs",
+      "error": "✗ and says \"Juegos de Salón como app\"",
+      "signature": "d92f6eced1",
+      "date": "2026-11-17T19:25:43.012Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
