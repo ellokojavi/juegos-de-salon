@@ -46,7 +46,7 @@ Solo mode runs locally on one phone and persists full state after every move via
 
 ## On trial in the lab
 
-- **The felt table** (flag `blackjack-felt`, card `#seccion-blackjack-felt` in `/labs/`): `html.bj-felt` turns the
+- **The felt table** (flag `blackjack-felt`, described inside the game's own `/labs/` card as `#seccion-blackjack-felt`, switched in the «T» tab: one card for the game, D-498's 🚀 stays with the game): `html.bj-felt` turns the
   dealer and the seats into one felt table (`.bj-table`, with the table's two lines in `#felt-arc`), the cards bigger
   and fanned with a corner index (`.c`), the bet a chip on its spot (`.bet-spot`), the shoe a bar with the red card
   marked, and each hand's result a stamp (`.stamp`). On the cover, the same flag draws a hand dealt to a Blackjack over and over (`#bj-demo`, through `onScreen`)
