@@ -3869,6 +3869,19 @@
       "date": "2026-11-17T16:52:57.254Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44131302841,
+      "check": "end-to-end",
+      "pr": 1522,
+      "branch": "blackjack-felt",
+      "commit": "deea097e6435abbda564d4d9e52830271efc8c40",
+      "test": "cup/talk.mjs",
+      "error": "✗ es: the tester tab offers to show it again",
+      "signature": "2ccd50abfb",
+      "date": "2026-11-17T17:12:59.713Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
