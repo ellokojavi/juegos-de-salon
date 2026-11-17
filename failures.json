@@ -4027,6 +4027,19 @@
       "date": "2026-11-17T19:25:43.012Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44157909506,
+      "check": "end-to-end",
+      "pr": 1503,
+      "branch": "auto/popularity-2026-11-16",
+      "commit": "05decf9d0414f3e5adc556c43ea094640eee5f38",
+      "test": "install-prompt.mjs",
+      "error": "✗ and says \"Juegos de Salón como app\"",
+      "signature": "d92f6eced1",
+      "date": "2026-11-17T19:32:17.829Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
