@@ -3680,6 +3680,32 @@
         "stat": "2 file(s) +3 −0: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44025209913,
+      "check": "tests",
+      "pr": null,
+      "branch": "blackjack",
+      "commit": "c596d2e80e1d11890b8808d0e431c1f399bfbeb0",
+      "test": "public/assets/js/game-labels.test.mjs",
+      "error": "",
+      "signature": "4a27de7928",
+      "date": "2026-11-17T05:40:05.908Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44025209913,
+      "check": "tests",
+      "pr": null,
+      "branch": "blackjack",
+      "commit": "c596d2e80e1d11890b8808d0e431c1f399bfbeb0",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-17T05:40:05.908Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
