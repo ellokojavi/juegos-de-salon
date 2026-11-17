@@ -3758,6 +3758,19 @@
       "date": "2026-11-17T15:43:12.500Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44117710491,
+      "check": "tests",
+      "pr": 1518,
+      "branch": "ccr-0b5e5446-m7wp23",
+      "commit": "98ce62e33dd9cbf5544e09e4663208f063cac32d",
+      "test": "Version stamping",
+      "error": "Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64\nLD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib\n/home/runner/work/_temp/site/labs/wobbles/index.html: it loads modules and has no stylesheet or head to put the import map before",
+      "signature": "1c38b6af74",
+      "date": "2026-11-17T15:46:26.320Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
