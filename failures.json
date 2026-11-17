@@ -4111,7 +4111,11 @@
       "error": "✗ it reaches the result",
       "signature": "be14e898b5",
       "date": "2026-11-17T21:17:53.987Z",
-      "fix": null,
+      "fix": {
+        "commit": "da508f75d58bbd19e802f3b3c999eaca0d3cd333",
+        "date": "2026-11-17T21:32:30.497Z",
+        "stat": "2 file(s) +92 −61: changelog/blackjack-deal-guard.md, public/labs/blackjack/game.js"
+      },
       "flaky": false
     },
     {
