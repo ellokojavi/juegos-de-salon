@@ -3833,7 +3833,11 @@
       "error": "✗ es: the tester tab offers to show it again",
       "signature": "2ccd50abfb",
       "date": "2026-11-17T16:32:10.652Z",
-      "fix": null,
+      "fix": {
+        "commit": "5957c348242e733048738d8275eb364a271366b5",
+        "date": "2026-11-17T17:04:20.712Z",
+        "stat": "2 file(s) +20 −12: changelog/uad-skip-end.md, tools/e2e/cup/talk.mjs"
+      },
       "flaky": false
     },
     {
