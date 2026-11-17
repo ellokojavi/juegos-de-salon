@@ -4262,6 +4262,19 @@
       "date": "2026-11-17T23:44:27.754Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44199966959,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "876aaf7b21a824a63f1c9d807b84a5656a2153b0",
+      "test": "visual.mjs:sapiondo",
+      "error": "❌ sapiondo-intro: no reference (run node tools/e2e/visual.mjs --update --part sapiondo and commit it)",
+      "signature": "568475e844",
+      "date": "2026-11-17T23:45:15.495Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
