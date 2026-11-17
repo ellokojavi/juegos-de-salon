@@ -3743,7 +3743,11 @@
       "error": "✗ 🎲 draws nine different games of the pool",
       "signature": "b872490b7e",
       "date": "2026-11-17T12:49:53.800Z",
-      "fix": null,
+      "fix": {
+        "commit": "c6f4082263d0691d893f0bbc26cbb8dc5a2d8a51",
+        "date": "2026-11-17T18:21:02.129Z",
+        "stat": "106 file(s) +3984 −288: .claude/agents/contributions.md, .github/pull_request_template.md, .github/workflows/contrib-ready.yml, .github/workflows/feedback.yml, .github/workflows/notifications.yml, …"
+      },
       "flaky": false
     },
     {
@@ -3961,7 +3965,11 @@
       "error": "✗ 🎲 draws nine different games of the pool",
       "signature": "b872490b7e",
       "date": "2026-11-17T18:00:04.388Z",
-      "fix": null,
+      "fix": {
+        "commit": "c6f4082263d0691d893f0bbc26cbb8dc5a2d8a51",
+        "date": "2026-11-17T18:21:02.129Z",
+        "stat": "29 file(s) +471 −34: .github/pull_request_template.md, .github/workflows/notifications.yml, CONTRIBUTING.md, changelog/blackjack-felt.md, changelog/stalled-pr-watch.md, …"
+      },
       "flaky": false
     },
     {
