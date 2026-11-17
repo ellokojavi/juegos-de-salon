@@ -3920,6 +3920,32 @@
       "date": "2026-11-17T17:46:04.229Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44134464344,
+      "check": "end-to-end",
+      "pr": 1523,
+      "branch": "visual-spacing-rule",
+      "commit": "0b143e0678d5b3ed164033af0613acdb96173551",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ rules-es: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon by 6 px",
+      "signature": "8e9f26f9ad",
+      "date": "2026-11-17T17:50:59.109Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44134464344,
+      "check": "end-to-end",
+      "pr": 1523,
+      "branch": "visual-spacing-rule",
+      "commit": "0b143e0678d5b3ed164033af0613acdb96173551",
+      "test": "Scripts",
+      "error": "✗ 01-intro: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon.icon--cyan by 9 px\n##[warning]bulls-and-cows/local.mjs failed on the first attempt (1 check(s) red); repeating it once (D-299)\n✗ 01-intro: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .icon.icon--cyan by 9 px",
+      "signature": "4ba0c3d919",
+      "date": "2026-11-17T17:50:59.109Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
