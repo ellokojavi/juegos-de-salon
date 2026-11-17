@@ -3786,7 +3786,11 @@
       "error": "✗ the lab offers only prototypes, each in its folder (wobbles-3d/ wobbles/ transfer/ memory/ dominorama/ exploding-numbers/ artifacts/ ../ ../cup/ chameleon/ ../battleship/ case/ code/ ../connections/",
       "signature": "cbd9e0e8e5",
       "date": "2026-11-17T16:00:22.971Z",
-      "fix": null,
+      "fix": {
+        "commit": "410a88b20a8377189caad47e861b20eb57dc3d79",
+        "date": "2026-11-17T17:29:28.205Z",
+        "stat": "50 file(s) +2951 −64: .claude/agents/contributions.md, .github/workflows/contrib-ready.yml, .github/workflows/feedback.yml, .github/workflows/notifications.yml, README.md, …"
+      },
       "flaky": false
     },
     {
@@ -3867,7 +3871,11 @@
       "error": "no failing test found in the log",
       "signature": "f2f83772a2",
       "date": "2026-11-17T16:52:57.254Z",
-      "fix": null,
+      "fix": {
+        "commit": "410a88b20a8377189caad47e861b20eb57dc3d79",
+        "date": "2026-11-17T17:29:28.205Z",
+        "stat": "23 file(s) +90 −54: .github/workflows/feedback.yml, .github/workflows/notifications.yml, changelog/jobs-to-actions.md, changelog/uad-skip-end.md, docs/AGENTS.md, …"
+      },
       "flaky": false
     },
     {
