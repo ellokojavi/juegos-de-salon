@@ -4249,6 +4249,19 @@
       "date": "2026-11-17T23:42:34.842Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44201735631,
+      "check": "tests",
+      "pr": 1556,
+      "branch": "session-hooks",
+      "commit": "7084013053afd5d516d8281183f86d03ae0c0927",
+      "test": "README up to date",
+      "error": "ERROR · the block \"tests\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared tests: tools/agents/pr-created.test.mjs",
+      "signature": "982b72bd80",
+      "date": "2026-11-17T23:44:27.754Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
