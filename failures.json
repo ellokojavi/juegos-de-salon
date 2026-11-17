@@ -4130,6 +4130,19 @@
       "date": "2026-11-17T21:30:06.566Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44182385155,
+      "check": "tests",
+      "pr": 1544,
+      "branch": "double-tap-rule",
+      "commit": "9db3ee68d1d7500febaa5febadb5787f459673a4",
+      "test": "README up to date",
+      "error": "ERROR · appeared e2e: double-tap.mjs",
+      "signature": "3fb5d4fefe",
+      "date": "2026-11-17T21:47:51.562Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
