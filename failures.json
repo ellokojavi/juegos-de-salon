@@ -3963,6 +3963,19 @@
       "date": "2026-11-17T18:00:04.388Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44141635886,
+      "check": "end-to-end",
+      "pr": 1503,
+      "branch": "auto/popularity-2026-11-16",
+      "commit": "18f985b241a17c8a985a29b141b7b48d6f5bc5fa",
+      "test": "cup/talk.mjs",
+      "error": "✗ es: the tester tab offers to show it again",
+      "signature": "2ccd50abfb",
+      "date": "2026-11-17T18:06:40.561Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
