@@ -4100,6 +4100,19 @@
       "date": "2026-11-17T21:14:41.166Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44177521752,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "blackjack-deal-guard",
+      "commit": "9d9ff44dc514f50233a30433a307aaa52ed657ab",
+      "test": "blackjack/game.mjs",
+      "error": "✗ it reaches the result",
+      "signature": "be14e898b5",
+      "date": "2026-11-17T21:17:53.987Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
