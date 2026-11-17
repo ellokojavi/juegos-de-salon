@@ -3893,7 +3893,11 @@
       "error": "ERROR · changed commonKeys: 53 → 54",
       "signature": "3edabd944f",
       "date": "2026-11-17T17:14:52.664Z",
-      "fix": null,
+      "fix": {
+        "commit": "2c6ba652073502dfc7bde2a70aedc0c838230def",
+        "date": "2026-11-17T17:20:50.866Z",
+        "stat": "1 file(s) +1 −1: docs/facts.json"
+      },
       "flaky": false
     }
   ]
