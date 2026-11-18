@@ -4971,7 +4971,11 @@
       "error": "❌ croc-intro: 24.29 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2",
       "signature": "2109ee0a10",
       "date": "2026-11-18T23:37:36.084Z",
-      "fix": null,
+      "fix": {
+        "commit": "885f5ade7aee48178a6c80d5bbac4ab742a155e2",
+        "date": "2026-11-18T23:49:32.188Z",
+        "stat": "2 file(s) +2 −1: public/labs/croc/game.js, tools/e2e/visual/ref/croc-intro.png"
+      },
       "flaky": false
     },
     {
@@ -4984,7 +4988,11 @@
       "error": "❌ croc-intro: 2.28 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "3933a7e2b8",
       "date": "2026-11-18T23:43:40.514Z",
-      "fix": null,
+      "fix": {
+        "commit": "885f5ade7aee48178a6c80d5bbac4ab742a155e2",
+        "date": "2026-11-18T23:49:32.188Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/croc-intro.png"
+      },
       "flaky": false
     }
   ]
