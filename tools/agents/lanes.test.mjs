@@ -157,3 +157,37 @@ console.log('lab owners ok');
   assert.equal(out({ head: { repo }, base: { repo }, user: { login: 'github-actions[bot]' } }), null, "the repo's own workflows are insiders (weekly popularity)");
   assert.match(out({ head: { repo: { full_name: 'x/fork' } }, base: { repo }, user: { login: 'github-actions[bot]' } }), /fork/, 'a fork is outside whoever opened it');
 }
+
+// The lane job on a fork (3f17b9bc87): GitHub gives it a read-only token, so every write fails. It
+// must pass without writing (owner-approval stays missing and blocks the merge), not go red on every push.
+{
+  const { mkdtempSync, writeFileSync, readFileSync: read, chmodSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join: j } = await import('node:path');
+  const dir = mkdtempSync(j(tmpdir(), 'lanes-fork-'));
+  const calls = j(dir, 'calls');
+  // A fake gh: it answers the PR's files and fails every other call the way a read-only token does
+  writeFileSync(j(dir, 'gh'), `#!/bin/sh\necho "$*" >> "${calls}"\ncase "$*" in *pulls/*/files*) echo '["docs/LANES.md"]';; *) echo 'GraphQL: Resource not accessible by integration' >&2; exit 1;; esac\n`);
+  chmodSync(j(dir, 'gh'), 0o755);
+  const repo = { full_name: 'ellokojavi/juegos-de-salon' };
+  const event = pr => { const f = j(dir, 'event.json'); writeFileSync(f, JSON.stringify({ pull_request: { number: 9, title: 't', user: { login: 'someone' }, head: { sha: 'abc', repo: pr }, base: { repo } } })); return f; };
+  const ci = head => {
+    writeFileSync(calls, '');
+    try {
+      const out = execFileSync(process.execPath, [new URL('./lanes.mjs', import.meta.url).pathname, 'ci'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, GITHUB_EVENT_PATH: event(head), GITHUB_REPOSITORY: repo.full_name } });
+      return { ok: true, out, calls: read(calls, 'utf8').trim().split('\n') };
+    } catch (e) { return { ok: false, out: String(e.stdout) + String(e.stderr), calls: read(calls, 'utf8').trim().split('\n') }; }
+  };
+  for (const head of [{ full_name: 'someone/juegos-de-salon' }, null]) {
+    const r = ci(head);
+    assert.ok(r.ok, `a fork's lane job passes: ${r.out}`);
+    assert.match(r.out, /🔴 red/, 'it still says the PR is red');
+    assert.match(r.out, /From a fork.*owner-approval stays missing/, 'and why it writes nothing');
+    assert.deepEqual(r.calls.filter(c => !/pulls\/9\/files/.test(c)), [], 'it tries no write a read-only token would refuse');
+  }
+  // The same PR from a branch of this repo still writes: the guard is the fork, not the outside author
+  const r = ci(repo);
+  assert.ok(!r.ok && r.calls.some(c => /statuses|--add-label|label create/.test(c)), 'a PR from this repo still tries to write the gate');
+  rmSync(dir, { recursive: true, force: true });
+  console.log('lane job on a fork ok');
+}

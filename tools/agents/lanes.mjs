@@ -61,6 +61,9 @@ export function ownsAll(login, files, owners = LAB_OWNERS) {
   return files.every(f => res.some(re => re.test(f)));
 }
 
+/** Whether a PR comes from a fork (or a deleted repository): its `pull_request` jobs get a read-only token. */
+export const fromFork = pr => pr.head?.repo?.full_name !== pr.base?.repo?.full_name;
+
 /**
  * Why a PR comes from outside (#1249 step 4), or null: from a fork, or by an author who is not the
  * owner. An outside PR is always 🔴, whatever its files, so it never auto-merges, unless its author
@@ -68,8 +71,7 @@ export function ownsAll(login, files, owners = LAB_OWNERS) {
  */
 export function outsideReason(pr, files = null, owners = LAB_OWNERS) {
   if (!pr) return null;
-  const head = pr.head?.repo?.full_name, base = pr.base?.repo?.full_name;
-  if (head !== base) return `from a fork (${head || 'a deleted repository'})`;
+  if (fromFork(pr)) return `from a fork (${pr.head?.repo?.full_name || 'a deleted repository'})`;
   const author = pr.user?.login;
   if (INSIDERS.includes(author)) return null;
   if (files && ownsAll(author, files, owners)) return null;
@@ -171,6 +173,13 @@ async function ci() {
   const files = prFiles(n);
   const result = laneOfPr(files, { outside: outsideReason(pr, files) });
   console.log(report(result));
+  // A fork's job gets a read-only token whatever `permissions:` says: it can write no label, status or
+  // decision, and trying turned the job red on every push. owner-approval stays missing, which blocks
+  // the merge as surely as a red one (docs/LANES.md), so the job passes as tests.yml says it always does
+  if (fromFork(pr)) {
+    console.log('From a fork: this job\'s token is read-only, so it writes nothing. owner-approval stays missing and the PR cannot merge without the owner (docs/LANES.md).');
+    return;
+  }
   const status = (state, description) => gh('api', '-X', 'POST', `repos/${repo}/statuses/${sha}`, '-f', `state=${state}`, '-f', `context=${STATUS}`, '-f', `description=${description}`);
   if (result.lane !== 'red') {
     status('success', `${result.lane} lane: no owner approval needed`);
