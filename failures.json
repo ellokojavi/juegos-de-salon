@@ -4973,6 +4973,19 @@
       "date": "2026-11-18T23:37:36.084Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44422462739,
+      "check": "end-to-end",
+      "pr": 1624,
+      "branch": "croc-cover",
+      "commit": "6a8dd79cfbf2ad4c8d4caec6c676dddefb4c3937",
+      "test": "visual.mjs:croc",
+      "error": "❌ croc-intro: 2.28 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2e",
+      "signature": "3933a7e2b8",
+      "date": "2026-11-18T23:43:40.514Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
