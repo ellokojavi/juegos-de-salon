@@ -4525,7 +4525,11 @@
       "error": "❌ sapiondo-intro: 4.42 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_",
       "signature": "9f5bdc02a2",
       "date": "2026-11-18T06:29:12.873Z",
-      "fix": null,
+      "fix": {
+        "commit": "ae7717fd100f590d36381c306807805ea547f6cd",
+        "date": "2026-11-18T07:33:21.001Z",
+        "stat": "19 file(s) +143 −129: README.md, changelog/sapiondo.md, docs/facts.json, docs/games/sapiondo.md, public/assets/og/huellas.json, …"
+      },
       "flaky": false
     },
     {
@@ -4603,7 +4607,11 @@
       "error": "❌ sapiondo-intro: 390×812 vs 195×406 (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_temp/e2e/v",
       "signature": "030f46983e",
       "date": "2026-11-18T07:12:29.804Z",
-      "fix": null,
+      "fix": {
+        "commit": "ae7717fd100f590d36381c306807805ea547f6cd",
+        "date": "2026-11-18T07:33:21.001Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/sapiondo-intro.png"
+      },
       "flaky": false
     },
     {
