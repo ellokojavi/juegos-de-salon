@@ -4937,7 +4937,11 @@
       "error": "✗ playing · pt: no horizontal scroll (C-8)",
       "signature": "a388ac578c",
       "date": "2026-11-18T22:53:56.863Z",
-      "fix": null,
+      "fix": {
+        "commit": "a430f1c9d0c5c6788adb12c893c1a53465f9deef",
+        "date": "2026-11-18T23:05:49.759Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/croc-intro.png"
+      },
       "flaky": false
     },
     {
@@ -4950,7 +4954,11 @@
       "error": "❌ croc-intro: 98.72 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2",
       "signature": "2afac662bf",
       "date": "2026-11-18T22:53:56.863Z",
-      "fix": null,
+      "fix": {
+        "commit": "a430f1c9d0c5c6788adb12c893c1a53465f9deef",
+        "date": "2026-11-18T23:05:49.759Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/croc-intro.png"
+      },
       "flaky": false
     }
   ]
