@@ -4465,7 +4465,11 @@
       "error": "",
       "signature": "14fef58185",
       "date": "2026-11-18T06:07:30.434Z",
-      "fix": null,
+      "fix": {
+        "commit": "807c6e3327fd74c4c4d903f741cda3aaffb1f40b",
+        "date": "2026-11-18T06:11:30.626Z",
+        "stat": "3 file(s) +9 −4: public/labs/wobbles/easy/index.html, tools/e2e/README.md, tools/e2e/durations.json"
+      },
       "flaky": false
     },
     {
@@ -4478,7 +4482,11 @@
       "error": "",
       "signature": "14fef58185",
       "date": "2026-11-18T06:08:35.694Z",
-      "fix": null,
+      "fix": {
+        "commit": "807c6e3327fd74c4c4d903f741cda3aaffb1f40b",
+        "date": "2026-11-18T06:11:30.626Z",
+        "stat": "1 file(s) +4 −1: tools/e2e/durations.json"
+      },
       "flaky": false
     }
   ]
