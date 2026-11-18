@@ -4767,7 +4767,11 @@
       "error": "ERROR · public/labs/sapiondo/index.html fell behind games.js  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards",
       "signature": "357b30b96e",
       "date": "2026-11-18T19:49:06.952Z",
-      "fix": null,
+      "fix": {
+        "commit": "982962605b1a0ad50ae6d4400a37d04feb488e23",
+        "date": "2026-11-18T21:24:37.560Z",
+        "stat": "9 file(s) +537 −37: changelog/saporin-water-boats.md, public/cup/games/sapiondo/scene.js, public/labs/index.html, public/labs/sapiondo/game.js, public/labs/sapiondo/index.html, …"
+      },
       "flaky": false
     },
     {
@@ -4810,7 +4814,11 @@
       "error": "ERROR · public/labs/sapiondo/index.html fell behind games.js  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards",
       "signature": "357b30b96e",
       "date": "2026-11-18T21:14:56.717Z",
-      "fix": null,
+      "fix": {
+        "commit": "982962605b1a0ad50ae6d4400a37d04feb488e23",
+        "date": "2026-11-18T21:24:37.560Z",
+        "stat": "2 file(s) +10 −10: public/labs/sapiondo/index.html, public/sapiondo/index.html"
+      },
       "flaky": false
     }
   ]
