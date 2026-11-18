@@ -4420,6 +4420,19 @@
         "stat": "1 file(s) +1 −1: public/cup/games/microgames/ui.js"
       },
       "flaky": false
+    },
+    {
+      "run": 44243368105,
+      "check": "tests",
+      "pr": 1582,
+      "branch": "blackjack-setup-name",
+      "commit": "a511223caa6018fc987927ac40a0985d496f6408",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "",
+      "signature": "91fa192ea2",
+      "date": "2026-11-18T05:20:24.508Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
