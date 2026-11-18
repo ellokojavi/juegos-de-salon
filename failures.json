@@ -4678,6 +4678,19 @@
       "date": "2026-11-18T13:00:34.347Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44309036020,
+      "check": "end-to-end",
+      "pr": 1605,
+      "branch": "game-texts-pass",
+      "commit": "ca9be9001b321cabb55cf82b1caf92f80f3a641f",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ playing solo: the score (Tu puntaje: 100 de 100.), ¿quieres que cuente? and the solo table",
+      "signature": "1b82c44d73",
+      "date": "2026-11-18T13:16:49.079Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
