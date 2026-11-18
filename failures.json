@@ -4488,6 +4488,32 @@
         "stat": "1 file(s) +4 −1: tools/e2e/durations.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44250477982,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo-swipes-lives",
+      "commit": "bde3def52c06b6d6cc459e455261dc3356eccaef",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
+      "signature": "3f17b9bc87",
+      "date": "2026-11-18T06:20:38.827Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44250477982,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo-swipes-lives",
+      "commit": "bde3def52c06b6d6cc459e455261dc3356eccaef",
+      "test": "README up to date",
+      "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"languages\" went stale  →  python3 tools/release/readme.py update\nERROR · changed games.sapiondo.name.en: Sapiondo → Dash Hopper",
+      "signature": "71fb9ba27f",
+      "date": "2026-11-18T06:20:38.827Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
