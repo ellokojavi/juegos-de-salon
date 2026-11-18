@@ -4686,7 +4686,11 @@
       "error": "ERROR · appeared games.copa.files: public/cup/games/microgames/intros.js\nERROR · appeared modules: public/cup/games/microgames/intros.js",
       "signature": "1b1238ce67",
       "date": "2026-11-18T07:40:22.180Z",
-      "fix": null,
+      "fix": {
+        "commit": "551bd7e502b90ead2675e488f1c17b28d81e5d12",
+        "date": "2026-11-18T15:25:38.170Z",
+        "stat": "1 file(s) +5 −1: docs/facts.json"
+      },
       "flaky": false
     },
     {
