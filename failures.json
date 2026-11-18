@@ -4859,6 +4859,19 @@
       "date": "2026-11-18T21:54:15.806Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44406470359,
+      "check": "tests",
+      "pr": null,
+      "branch": "saporin-water-boats",
+      "commit": "650fb43d1cc19ef84d1a9888fead72b8aca74415",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/assets/og/dash-hopper.jpg was made with another drawing or other texts  →  node tools/release/og.mjs images",
+      "signature": "800176f64d",
+      "date": "2026-11-18T21:57:24.029Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
