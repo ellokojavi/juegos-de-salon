@@ -662,6 +662,115 @@
       "signatures": [
         "2ccd50abfb"
       ]
+    },
+    {
+      "key": "lane-job-fork-readonly",
+      "what": "CI tests: Run node tools/agents/lanes.mjs ci · Set by:",
+      "seen": [
+        {
+          "date": "2026-11-17T05:55:08.730Z",
+          "what": "blackjack tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "9c7a224dfe3f1f4a6055c6bd41a2c2e63fc64373"
+        },
+        {
+          "date": "2026-11-17T06:01:32.335Z",
+          "what": "blackjack tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "527d65129f76eb15005e2610217d79474b3bdca1"
+        },
+        {
+          "date": "2026-11-17T15:43:12.500Z",
+          "what": "blackjack tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "153bdbc8c2243bfdf6df08d477cdf6292c3a2e72"
+        },
+        {
+          "date": "2026-11-17T21:11:08.950Z",
+          "what": "blackjack-deal-guard tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "d7a053ac793658323006b665bb0f64834eb05ef8"
+        },
+        {
+          "date": "2026-11-17T21:14:41.166Z",
+          "what": "blackjack-deal-guard tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "9d9ff44dc514f50233a30433a307aaa52ed657ab"
+        },
+        {
+          "date": "2026-11-17T21:30:06.566Z",
+          "what": "blackjack-deal-guard tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "da508f75d58bbd19e802f3b3c999eaca0d3cd333"
+        },
+        {
+          "date": "2026-11-17T22:52:51.214Z",
+          "what": "sapiondo tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "55a21c07beafcacd94e919620f029533ab5849d8"
+        },
+        {
+          "date": "2026-11-17T23:04:31.217Z",
+          "what": "sapiondo tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "48b5dc9fca0cdb5ecf731bef738f11423061bd46"
+        },
+        {
+          "date": "2026-11-17T23:52:09.913Z",
+          "what": "sapiondo tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "e99f96efc527d1803043340c3c028b6da743a065"
+        },
+        {
+          "date": "2026-11-18T00:04:47.545Z",
+          "what": "sapiondo tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "48c7119313f95a4077ef44832e7130eff3969470"
+        },
+        {
+          "date": "2026-11-18T01:06:15.518Z",
+          "what": "sapiondo tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "b9341bcc19fdcf8a6e5f43a55efa2d1f0735b3a4"
+        },
+        {
+          "date": "2026-11-18T06:20:38.827Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "bde3def52c06b6d6cc459e455261dc3356eccaef"
+        },
+        {
+          "date": "2026-11-18T06:31:37.680Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "a5aaf86d4b271b636e2b26dd27fd6b87f129477b"
+        },
+        {
+          "date": "2026-11-18T06:36:45.072Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "12cd6b4fa268ecabe3506cbf3e260b9bf7672b0e"
+        },
+        {
+          "date": "2026-11-18T06:43:42.316Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "2006a9d5804245aef3389c837c2e0b8d52eb2549"
+        },
+        {
+          "date": "2026-11-18T06:58:00.673Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "f4a11b1d44bb7cd55ce4ae8611f845ce69bba833"
+        },
+        {
+          "date": "2026-11-18T07:13:46.309Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "e386c3f4b4299dfd30e73e49b3003430c1674af9"
+        },
+        {
+          "date": "2026-11-18T07:23:47.420Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "ae7717fd100f590d36381c306807805ea547f6cd"
+        },
+        {
+          "date": "2026-11-18T07:49:20.834Z",
+          "what": "sapiondo-swipes-lives tests: Run node tools/agents/lanes.mjs ci",
+          "commit": "0dda88dfe3be4c37cae56a444d430550c5bbca57"
+        }
+      ],
+      "mechanism": {
+        "date": "2026-11-18",
+        "what": "lanes.mjs ci sees a fork PR (read-only token) and passes without writing; owner-approval stays missing so the gate holds; lanes.test.mjs runs ci against a fake read-only gh",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1598"
+      },
+      "signatures": [
+        "3f17b9bc87"
+      ]
     }
   ],
   "mechanisms": [
@@ -802,6 +911,12 @@
       "key": "e2e-live-flags-talk",
       "what": "e2e tests read tools/e2e/flags-snapshot.json, never live Firebase flags (D-578)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1550"
+    },
+    {
+      "date": "2026-11-18",
+      "key": "lane-job-fork-readonly",
+      "what": "lanes.mjs ci sees a fork PR (read-only token) and passes without writing; owner-approval stays missing so the gate holds; lanes.test.mjs runs ci against a fake read-only gh",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1598"
     }
   ],
   "queueDone": [
