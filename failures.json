@@ -4335,6 +4335,19 @@
       "date": "2026-11-18T00:04:47.545Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44205946655,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "sapiondo",
+      "commit": "50de15a621d3b1f7c783d1ee80611f13ae606771",
+      "test": "visual.mjs:sapiondo",
+      "error": "❌ sapiondo-intro: 390×812 vs 195×406 (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_temp/e2e/v",
+      "signature": "030f46983e",
+      "date": "2026-11-18T00:53:22.788Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
