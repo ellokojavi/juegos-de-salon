@@ -4769,6 +4769,19 @@
       "date": "2026-11-18T19:49:06.952Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44384020734,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "saporin-water-boats",
+      "commit": "734b074da6cb5ea58da3f33266a49f69f9263a82",
+      "test": "visual.mjs:sapiondo",
+      "error": "❌ sapiondo-intro: 1.03 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_",
+      "signature": "9fd9e70eed",
+      "date": "2026-11-18T19:56:57.265Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
