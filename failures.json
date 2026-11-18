@@ -4893,6 +4893,19 @@
       "date": "2026-11-18T22:07:55.825Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44408690454,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "saporin-water-boats",
+      "commit": "fbdab711ab9d22a3e1f3e65369571f5357114c34",
+      "test": "visual.mjs:dash-hopper",
+      "error": "❌ dash-hopper-intro: 390×812 vs 195×406 (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part dash-hopper; the new and the diff images are in /home/runner/work/_temp",
+      "signature": "3424adcb15",
+      "date": "2026-11-18T22:17:38.670Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
