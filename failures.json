@@ -4403,6 +4403,19 @@
         "stat": "1 file(s) +4 −2: tools/e2e/margins-common.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 44227158047,
+      "check": "tests",
+      "pr": 1572,
+      "branch": "ccr-a79a8d9d-db0hax",
+      "commit": "15edde98d66bc62b259b73e0666a391427caaa96",
+      "test": "public/labs/listed.test.mjs",
+      "error": "",
+      "signature": "0474882977",
+      "date": "2026-11-18T03:00:02.797Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
