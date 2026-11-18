@@ -4793,7 +4793,11 @@
       "error": "ERROR · appeared modules: public/assets/js/home-carousels.js",
       "signature": "6a06daba4a",
       "date": "2026-11-18T20:17:32.871Z",
-      "fix": null,
+      "fix": {
+        "commit": "ea1ecb063216f0e8633553e1ab952114a6ee598f",
+        "date": "2026-11-18T20:19:00.131Z",
+        "stat": "2 file(s) +7 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
