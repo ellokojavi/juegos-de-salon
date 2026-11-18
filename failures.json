@@ -4784,7 +4784,11 @@
       "error": "❌ sapiondo-intro: 1.03 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_",
       "signature": "9fd9e70eed",
       "date": "2026-11-18T19:56:57.265Z",
-      "fix": null,
+      "fix": {
+        "commit": "dec95f3f2085993b211b9569438bb8a4174b7e7d",
+        "date": "2026-11-18T22:32:51.691Z",
+        "stat": "59 file(s) +1809 −387: README.md, changelog/cover-demos-in-sheet.md, changelog/home-carousels.md, changelog/saporin-water-boats.md, docs/ADD-GAME.md, …"
+      },
       "flaky": false
     },
     {
@@ -4831,7 +4835,11 @@
       "error": "❌ sapiondo-intro: 18.81 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/",
       "signature": "f2e16dec66",
       "date": "2026-11-18T21:33:43.732Z",
-      "fix": null,
+      "fix": {
+        "commit": "dec95f3f2085993b211b9569438bb8a4174b7e7d",
+        "date": "2026-11-18T22:32:51.691Z",
+        "stat": "59 file(s) +1809 −387: README.md, changelog/cover-demos-in-sheet.md, changelog/home-carousels.md, changelog/saporin-water-boats.md, docs/ADD-GAME.md, …"
+      },
       "flaky": false
     },
     {
@@ -4844,7 +4852,11 @@
       "error": "❌ sapiondo-intro: 5.15 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_",
       "signature": "a07c1b762d",
       "date": "2026-11-18T21:45:03.885Z",
-      "fix": null,
+      "fix": {
+        "commit": "dec95f3f2085993b211b9569438bb8a4174b7e7d",
+        "date": "2026-11-18T22:32:51.691Z",
+        "stat": "59 file(s) +1809 −387: README.md, changelog/cover-demos-in-sheet.md, changelog/home-carousels.md, changelog/saporin-water-boats.md, docs/ADD-GAME.md, …"
+      },
       "flaky": false
     },
     {
@@ -4891,7 +4903,11 @@
       "error": "❌ dash-hopper-intro: 5.15 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part dash-hopper; the new and the diff images are in /home/runner/",
       "signature": "5459e57360",
       "date": "2026-11-18T22:07:55.825Z",
-      "fix": null,
+      "fix": {
+        "commit": "dec95f3f2085993b211b9569438bb8a4174b7e7d",
+        "date": "2026-11-18T22:32:51.691Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/dash-hopper-intro.png"
+      },
       "flaky": false
     },
     {
@@ -4904,7 +4920,11 @@
       "error": "❌ dash-hopper-intro: 390×812 vs 195×406 (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part dash-hopper; the new and the diff images are in /home/runner/work/_temp",
       "signature": "3424adcb15",
       "date": "2026-11-18T22:17:38.670Z",
-      "fix": null,
+      "fix": {
+        "commit": "dec95f3f2085993b211b9569438bb8a4174b7e7d",
+        "date": "2026-11-18T22:32:51.691Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/dash-hopper-intro.png"
+      },
       "flaky": false
     }
   ]
