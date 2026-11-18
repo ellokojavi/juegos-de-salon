@@ -4799,6 +4799,19 @@
         "stat": "2 file(s) +7 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44399205004,
+      "check": "tests",
+      "pr": null,
+      "branch": "saporin-water-boats",
+      "commit": "44a9f2032e47a424e770c4800d77e21c8f789418",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/labs/sapiondo/index.html fell behind games.js  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards\nERROR · public/sapiondo/index.html: the bridge page is missing or fell behind  →  node tools/release/og.mjs cards",
+      "signature": "357b30b96e",
+      "date": "2026-11-18T21:14:56.717Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
