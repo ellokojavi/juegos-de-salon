@@ -4454,6 +4454,19 @@
         "stat": "1 file(s) +2 −0: tools/e2e/blackjack/game.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 44248756360,
+      "check": "tests",
+      "pr": 1587,
+      "branch": "wobbles-compliant",
+      "commit": "a0c45c4329a486a4bf5d3df5c423b5a3fd112655",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-18T06:07:30.434Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
