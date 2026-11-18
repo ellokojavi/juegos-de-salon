@@ -4857,7 +4857,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · appeared games.dash-hopper.files: public/dash-hopper/index.html",
       "signature": "30a36f82e5",
       "date": "2026-11-18T21:54:15.806Z",
-      "fix": null,
+      "fix": {
+        "commit": "16e9cba9c59228b374361d63beea9680ad1a96dd",
+        "date": "2026-11-18T22:00:03.667Z",
+        "stat": "3 file(s) +5 −3: README.md, docs/facts.json, public/assets/og/huellas.json"
+      },
       "flaky": false
     },
     {
@@ -4870,7 +4874,11 @@
       "error": "ERROR · public/assets/og/dash-hopper.jpg was made with another drawing or other texts  →  node tools/release/og.mjs images",
       "signature": "800176f64d",
       "date": "2026-11-18T21:57:24.029Z",
-      "fix": null,
+      "fix": {
+        "commit": "16e9cba9c59228b374361d63beea9680ad1a96dd",
+        "date": "2026-11-18T22:00:03.667Z",
+        "stat": "1 file(s) +1 −1: public/assets/og/huellas.json"
+      },
       "flaky": false
     }
   ]
