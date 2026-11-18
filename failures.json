@@ -4277,7 +4277,11 @@
       "error": "❌ sapiondo-intro: no reference (run node tools/e2e/visual.mjs --update --part sapiondo and commit it)",
       "signature": "568475e844",
       "date": "2026-11-17T23:45:15.495Z",
-      "fix": null,
+      "fix": {
+        "commit": "b9341bcc19fdcf8a6e5f43a55efa2d1f0735b3a4",
+        "date": "2026-11-18T01:17:13.644Z",
+        "stat": "138 file(s) +6435 −927: .claude/agents/ci-health.md, .claude/agents/contributions.md, .claude/agents/feedback.md, .claude/agents/player.md, .claude/agents/processes.md, …"
+      },
       "flaky": false
     },
     {
@@ -4346,7 +4350,11 @@
       "error": "❌ sapiondo-intro: 390×812 vs 195×406 (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_temp/e2e/v",
       "signature": "030f46983e",
       "date": "2026-11-18T00:53:22.788Z",
-      "fix": null,
+      "fix": {
+        "commit": "b9341bcc19fdcf8a6e5f43a55efa2d1f0735b3a4",
+        "date": "2026-11-18T01:17:13.644Z",
+        "stat": "122 file(s) +6008 −900: .claude/agents/ci-health.md, .claude/agents/feedback.md, .claude/agents/player.md, .claude/agents/processes.md, .claude/agents/usability.md, …"
+      },
       "flaky": false
     },
     {
