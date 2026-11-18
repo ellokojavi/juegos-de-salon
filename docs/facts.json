@@ -725,7 +725,7 @@
       "id": "sapiondo",
       "emoji": "🐸",
       "name": {
-        "es": "Sapiondo",
+        "es": "Saporín",
         "en": "Dash Hopper",
         "pt": "Sapichão"
       },
@@ -1494,6 +1494,7 @@
   ],
   "tests": [
     "firebase/controls.test.mjs",
+    "firebase/cup-rounds.test.mjs",
     "firebase/cup-talk.test.mjs",
     "firebase/cup-tiebreak.test.mjs",
     "firebase/flags.test.mjs",
@@ -1673,6 +1674,7 @@
     "tools/agents/lanes.test.mjs",
     "tools/agents/marketing.test.mjs",
     "tools/agents/memory.test.mjs",
+    "tools/agents/merge-queue.test.mjs",
     "tools/agents/pending.test.mjs",
     "tools/agents/popularity.test.mjs",
     "tools/agents/pr-created.test.mjs",
@@ -1856,6 +1858,7 @@
     "paint-mines/game.mjs",
     "panel/views.mjs",
     "paths.mjs",
+    "play-fold.mjs",
     "plots/numbers.mjs",
     "plots/utilities.mjs",
     "png.mjs",
@@ -2120,7 +2123,7 @@
     },
     {
       "path": "docs/games/sapiondo.md",
-      "title": "🐸 Sapiondo (lab, in Juegos en prueba)"
+      "title": "🐸 Saporín (lab, in Juegos en prueba)"
     },
     {
       "path": "docs/games/stack.md",

@@ -127,8 +127,9 @@ export function createScene(canvas) {
       popups.push({ x: ev.col + 0.5, y: ev.row + 0.8, text: txt, color: '#ffd94a', life: 1.05, maxLife: 1.05 });
       shake = Math.max(shake, 0.2);
     } else if (ev.type === 'hit') {
-      spawnBurst(ev.col, ev.row, '#ff4d6d', 14, 3.2);
-      popups.push({ x: ev.col + 0.5, y: ev.row + 0.8, text: '-1 ❤️', color: '#ff4d6d', life: 0.9, maxLife: 0.9 });
+      const col = ev.vehicle === 'water' ? '#38bdf8' : '#ff4d6d';
+      spawnBurst(ev.col, ev.row, col, 14, 3.2);
+      popups.push({ x: ev.col + 0.5, y: ev.row + 0.8, text: '-1 ❤️', color: col, life: 0.9, maxLife: 0.9 });
       shake = 0.32;
       hitShake = 0.45;
     } else if (ev.type === 'crash') {
@@ -227,6 +228,24 @@ export function createScene(canvas) {
       return;
     }
 
+    if (lane.kind === 'water') {
+      ctx.fillStyle = '#0369a1';
+      ctx.fillRect(0, rowY, w, tile);
+      ctx.fillStyle = '#0ea5e9';
+      ctx.fillRect(0, rowY + tile * 0.08, w, tile * 0.84);
+      // Animated water shimmer ripples
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.28)';
+      const drift = (clock * lane.dir * lane.speed * tile * 0.45) % tile;
+      for (let rx = -tile; rx < w + tile; rx += tile * 1.1) {
+        ctx.fillRect(rx + drift, rowY + tile * 0.28, tile * 0.42, tile * 0.07);
+        ctx.fillRect(rx - drift * 0.6 + tile * 0.4, rowY + tile * 0.66, tile * 0.36, tile * 0.07);
+      }
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      ctx.fillRect(0, rowY, w, tile * 0.08);
+      ctx.fillRect(0, rowY + tile * 0.92, w, tile * 0.08);
+      return;
+    }
+
     if (lane.kind === 'finish') {
       // Andean Park & Shimmering Lily Pond
       ctx.fillStyle = '#1f7045';
@@ -273,6 +292,30 @@ export function createScene(canvas) {
     const vw = v.len * tile;
     const vh = tile * 0.68;
     const vy = rowY + (tile - vh) / 2 - tile * 0.03;
+
+    if (v.type === 'boat') {
+      const wakeX = dir > 0 ? vx - tile * 0.28 : vx + vw;
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.35)';
+      ctx.fillRect(wakeX, vy + vh * 0.28, tile * 0.28, vh * 0.14);
+      ctx.fillRect(wakeX, vy + vh * 0.58, tile * 0.22, vh * 0.14);
+
+      const hull = v.color === 'boatB' ? '#e11d48' : '#d97706';
+      const dark = v.color === 'boatB' ? '#9f1239' : '#92400e';
+      ctx.fillStyle = dark;
+      drawRoundedRect(ctx, vx, vy + tile * 0.04, vw, vh, tile * 0.22);
+      ctx.fill();
+      ctx.fillStyle = hull;
+      drawRoundedRect(ctx, vx, vy, vw, vh * 0.9, tile * 0.22);
+      ctx.fill();
+      ctx.fillStyle = '#fde68a';
+      drawRoundedRect(ctx, vx + vw * 0.1, vy + vh * 0.14, vw * 0.8, vh * 0.62, tile * 0.14);
+      ctx.fill();
+      const cabX = dir > 0 ? vx + vw * 0.56 : vx + vw * 0.18;
+      ctx.fillStyle = '#f8fafc';
+      drawRoundedRect(ctx, cabX, vy + vh * 0.22, vw * 0.26, vh * 0.46, tile * 0.08);
+      ctx.fill();
+      return;
+    }
 
     // Headlight cones (stronger in night expressway!)
     const coneAlpha = sector === 3 ? 0.26 : sector === 2 ? 0.15 : 0.08;

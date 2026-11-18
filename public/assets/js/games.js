@@ -642,7 +642,7 @@ export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_D
  * when a game sends signals with an id that has no name.
  */
 export const LAB_NAMES = {
-  sapiondo: { emoji: '🐸', name: { es: 'Sapiondo', en: 'Dash Hopper', pt: 'Sapichão' } },
+  sapiondo: { emoji: '🐸', name: { es: 'Saporín', en: 'Dash Hopper', pt: 'Sapichão' } },
   blackjack: { emoji: '♠️', name: { es: 'Blackjack', en: 'Blackjack', pt: 'Blackjack' } },
   memory: { emoji: '👀', name: { es: 'Memorice', en: 'Memorice', pt: 'Memorice' } },
   artifacts: { emoji: '⚙️', name: { es: 'Artefactos', en: 'Artifacts', pt: 'Artefatos' } },

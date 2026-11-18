@@ -1,4 +1,4 @@
-# 🐸 Sapiondo (lab, in Juegos en prueba)
+# 🐸 Saporín (lab, in Juegos en prueba)
 
 A solo arcade highway crossing built for mobile touch controls and deterministic Cup play.
 
@@ -9,9 +9,10 @@ A solo arcade highway crossing built for mobile touch controls and deterministic
 
 ## Rules
 
-Cross 33 rows across three escalating sectors (Suburb Ave, City Highway, Night Expressway) to reach the pond.
+Cross 33 rows across three escalating sectors (Suburb Ave, City Highway, Night Expressway) and a **water canal with passing boats** (`row 22`, after the safe riverbank at `row 21`) to reach the pond.
 
 - **Movement:** Board-wide swipes (forward, left, right — no going backward), with edge padding and `touch-action: none` to prevent browser scroll/navigation conflicts, plus keyboard support. Lateral hops fire immediately on swipe; forward swipes wait for release so a long forward swipe (`2.4` tiles) previews the glowing `DASH` arrow.
+- **Water Canal & Boats:** At `row 22`, either **Dash** over the canal (`21 → 23`) or hop onto a **passing boat** (drifting with it across the water). Missing a boat splashes `-1 ❤️` and returns you to the shore (`row 21`) with `1.5 s` ghost invulnerability.
 - **Dash (`⚡`):** Starts with `3` charges (`⚡⚡⚡`). A long forward swipe leaps 2 lanes forward over traffic.
 - **Close-Call:** Passing within a narrow bumper margin (when not in ghost mode) triggers celebratory UX (particles, sound, popup) and restores `+1 ⚡` Dash charge (0 points).
 - **Lives & Ghost Mode:** `3` lives (`❤️❤️❤️`); getting hit deducts 1 life (`-1` point) and grants `1.5 s` of pulsing transparent ghost invulnerability.

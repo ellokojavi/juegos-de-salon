@@ -55,10 +55,32 @@ const VEHICLE_SPECS = {
 
 const SEDAN_COLORS = ['coral', 'teal', 'indigo', 'lime'];
 
+function buildWaterLane(row, rand, prevDir, diffCfg) {
+  const dir = prevDir ? -prevDir : (rand() < 0.5 ? 1 : -1);
+  const speed = (1.1 + rand() * 0.45) * diffCfg.speedScale;
+  const count = 3;
+  const boatLen = 2.05;
+  const gap = TRACK_W / count;
+  const start = -WRAP_PAD + rand() * 1.5;
+  const vehicles = [];
+  for (let i = 0; i < count; i++) {
+    vehicles.push({
+      id: `${row}-b${i}`,
+      type: 'boat',
+      len: boatLen,
+      color: i % 2 === 0 ? 'boatA' : 'boatB',
+      x: wrapX(start + i * gap),
+      grazed: false,
+    });
+  }
+  return { row, kind: 'water', sector: 3, dir, speed, vehicles, props: [] };
+}
+
 function buildLane(row, rand, prevDir, diffCfg) {
   if (row === 0) return { row, kind: 'safe', sector: 1, dir: 0, speed: 0, vehicles: [], props: [] };
   if (row === 11) return { row, kind: 'median', sector: 2, dir: 0, speed: 0, vehicles: [], props: buildMedianProps(rand) };
-  if (row === 22) return { row, kind: 'median', sector: 3, dir: 0, speed: 0, vehicles: [], props: buildMedianProps(rand) };
+  if (row === 21) return { row, kind: 'median', sector: 3, dir: 0, speed: 0, vehicles: [], props: buildMedianProps(rand) };
+  if (row === 22) return buildWaterLane(row, rand, prevDir, diffCfg);
   if (row >= FINISH_ROW) return { row, kind: 'finish', sector: 3, dir: 0, speed: 0, vehicles: [], props: [] };
 
   const sector = sectorOf(row);
@@ -364,14 +386,56 @@ function finishHop(g) {
   }
 }
 
+function boatUnderFrog(lane, fx) {
+  return lane.vehicles.some(b => fx >= b.x - 0.14 && fx <= b.x + b.len + 0.14);
+}
+
+function splashWater(g, laneIdx) {
+  const f = g.frog;
+  if (g.mode === 'demo') {
+    const fresh = newGame({ seed: g.seed + 1, mode: 'demo' });
+    Object.assign(g, fresh);
+    return;
+  }
+  g.lives = Math.max(0, (g.lives | 0) - 1);
+  if (g.lives > 0) {
+    g.shield = SHIELD_DUR;
+    recomputeScore(g);
+    const shoreRow = Math.max(0, laneIdx - 1);
+    const shoreCol = Math.max(0, Math.min(COLS - 1, Math.round(f.x)));
+    f.col = shoreCol; f.row = shoreRow;
+    f.fromCol = shoreCol; f.fromRow = shoreRow;
+    f.toCol = shoreCol; f.toRow = shoreRow;
+    f.x = shoreCol; f.y = shoreRow; f.z = 0; f.hopT = 0; f.isDash = false;
+    g.queued = null;
+    g.events.push({ type: 'hit', col: shoreCol, row: laneIdx, lives: g.lives, vehicle: 'water' });
+    return;
+  }
+  g.mode = 'crash';
+  g.queued = null;
+  recomputeScore(g);
+  g.events.push({ type: 'crash', col: f.x, row: laneIdx, vehicle: 'water' });
+}
+
 function checkTraffic(g) {
   const f = g.frog;
-  // Airborne during middle of a Dash or in ghost shield clears vehicles cleanly
-  if ((f.isDash && f.z > 0.5) || g.shield > 0) return;
+  // Airborne during middle of a Dash clears vehicles & water cleanly
+  if (f.isDash && f.z > 0.5) return;
 
+  const hopping = f.fromCol !== f.toCol || f.fromRow !== f.toRow;
   const laneIdx = Math.round(f.y);
   const lane = g.lanes[laneIdx];
-  if (!lane || lane.kind !== 'road') return;
+  if (!lane) return;
+
+  if (lane.kind === 'water') {
+    if (hopping) return;
+    if (f.x < -0.35 || f.x > COLS - 0.65 || !boatUnderFrog(lane, f.x + 0.5)) {
+      splashWater(g, laneIdx);
+    }
+    return;
+  }
+
+  if (g.shield > 0 || lane.kind !== 'road') return;
 
   const frogCenter = f.x + 0.5;
   const frogHalf = 0.23; // Forgiving arcade hitbox
@@ -418,7 +482,9 @@ function checkTraffic(g) {
 }
 
 function laneClearAt(lane, col, lookAheadSec = 0.16) {
-  if (!lane || lane.kind !== 'road') return true;
+  if (!lane) return true;
+  if (lane.kind === 'water') return boatUnderFrog(lane, col + 0.5 + lane.dir * lane.speed * lookAheadSec * 0.5);
+  if (lane.kind !== 'road') return true;
   const fx = col + 0.5;
   for (const v of lane.vehicles) {
     const nx = wrapX(v.x + lane.dir * lane.speed * lookAheadSec);
@@ -467,14 +533,14 @@ export function step(g, dt) {
     autopilot(g, dt);
   }
 
-  // Move traffic
+  // Move traffic & boats
   for (const lane of g.lanes) {
-    if (lane.kind !== 'road') continue;
+    if (lane.kind !== 'road' && lane.kind !== 'water') continue;
     const dx = lane.dir * lane.speed * dt;
     for (const v of lane.vehicles) v.x = wrapX(v.x + dx);
   }
 
-  // Advance frog hop / dash arc
+  // Advance frog hop / dash arc (or drift on a boat)
   const f = g.frog;
   if (f.eyeAlert > 0) f.eyeAlert = Math.max(0, f.eyeAlert - dt);
   const hopping = f.fromCol !== f.toCol || f.fromRow !== f.toRow;
@@ -487,6 +553,12 @@ export function step(g, dt) {
     f.y = f.fromRow + (f.toRow - f.fromRow) * ease;
     f.z = Math.sin(p * Math.PI) * (f.isDash ? 1.0 : 0.45);
     if (p >= 1) finishHop(g);
+  } else if (g.lanes[f.row]?.kind === 'water' && boatUnderFrog(g.lanes[f.row], f.x + 0.5)) {
+    const wLane = g.lanes[f.row];
+    f.x += wLane.dir * wLane.speed * dt;
+    f.col = Math.max(0, Math.min(COLS - 1, Math.round(f.x)));
+    f.fromCol = f.col;
+    f.toCol = f.col;
   }
 
   if (g.mode === 'play' || g.mode === 'demo') checkTraffic(g);

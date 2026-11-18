@@ -12,10 +12,10 @@ export const DEFAULT_CONFIG = { finishRow: FINISH_ROW };
 
 const ES = {
   ui: {
-    docTitle: 'Sapiondo 🐸 · Juegos de Salón',
-    gameChip: '🐸 Sapiondo',
+    docTitle: 'Saporín 🐸 · Juegos de Salón',
+    gameChip: '🐸 Saporín',
     menu: '‹ Laboratorio',
-    title: 'Sapiondo',
+    title: 'Saporín',
     lead: 'Cruza la autopista sin mirar atrás: esquiva autos, agarra frutas y salta el peligro con tu dash.',
     howTitle: '🐸 Cómo se juega',
     modeSolo: 'Cruzar la autopista',
@@ -49,8 +49,8 @@ const ES = {
     againNew: 'Nueva pista',
     shareRotulo: '📤 Compartir',
     shareContext: 'Cruce',
-    shareLineWin: '🐸 ¡Sapiondo cruzó los {total} carriles en {time}s! {score} pts',
-    shareLineCrash: '🐸 Sapiondo llegó al carril {lanes}/{total} con {score} pts',
+    shareLineWin: '🐸 ¡Saporín cruzó los {total} carriles en {time}s! {score} pts',
+    shareLineCrash: '🐸 Saporín llegó al carril {lanes}/{total} con {score} pts',
   },
   como: [
     '👆 Desliza adelante, izquierda o derecha en cualquier parte del tablero (sin retroceder).',

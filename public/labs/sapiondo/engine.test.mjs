@@ -111,4 +111,22 @@ assert.equal(restored.seed, d.seed);
 assert.equal(restored.frog.row, d.frog.row);
 assert.equal(restored.score, d.score);
 
+// 8. Water canal (row 22): riding a boat drifts safely; landing in water splashes back to shore (row 21)
+const water = newGame({ seed: 6060 });
+assert.equal(water.lanes[21].kind, 'median', 'row 21 is a safe shore before water');
+assert.equal(water.lanes[22].kind, 'water', 'row 22 is the water canal');
+water.lanes[22].vehicles = [{ id: 'b0', type: 'boat', len: 2.0, color: 'boatA', x: 2.5, grazed: false }];
+water.lanes[22].speed = 0.5;
+water.lanes[22].dir = 1;
+water.frog.row = 21; water.frog.fromRow = 21; water.frog.toRow = 21; water.frog.y = 21;
+act(water, 'up');
+for (let i = 0; i < 30; i++) step(water, STEP);
+assert.equal(water.frog.row, 22, 'hopping onto a boat stays on row 22');
+assert.equal(water.lives, LIVES, 'riding a boat costs no life');
+
+water.lanes[22].vehicles = [];
+for (let i = 0; i < 5; i++) step(water, STEP);
+assert.equal(water.lives, LIVES - 1, 'falling in water loses 1 life');
+assert.equal(water.frog.row, 21, 'splashing returns frog to shore');
+
 console.log('sapiondo engine.test.mjs ok');

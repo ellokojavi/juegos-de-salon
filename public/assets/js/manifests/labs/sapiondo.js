@@ -5,7 +5,7 @@ export default {
   "slug": "sapiondo",
   "emoji": "🐸",
   "name": {
-    "es": "Sapiondo",
+    "es": "Saporín",
     "en": "Dash Hopper",
     "pt": "Sapichão"
   },
@@ -16,7 +16,7 @@ export default {
   },
   "keywords": {
     "es": [
-      "sapiondo",
+      "saporin",
       "rana",
       "autopista"
     ],

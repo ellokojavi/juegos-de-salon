@@ -3,7 +3,7 @@
  */
 const ES = {
   juego: {
-    nombre: 'Sapiondo',
+    nombre: 'Saporín',
     habilidad: 'reflejos',
     como: [
       'Desliza adelante, izquierda o derecha en el tablero para cruzar sin retroceder.',
