@@ -2,7 +2,7 @@
 /**
  * A PR in conflict only because of generated files is brought up to date by itself (D-580). Many
  * sessions work at once, and every merge to `main` rewrites the same generated files (the decisions
- * index, docs/facts.json, the README's generated blocks), so open PRs went into conflict for hours
+ * index, docs/facts.json, the README's generated blocks, the rule counts), so open PRs went into conflict for hours
  * with nothing of theirs actually clashing (2026-11-17: DECISIONS.md touched by 60 merges in 3 days).
  *
  *   node tools/agents/sync-pr.mjs          # in the PR's worktree, on its branch, with nothing uncommitted
@@ -18,6 +18,11 @@ import { fileURLToPath } from 'node:url';
 
 /** Files whose content is generated from others: a conflict in them is never real. */
 export const GENERATED = ['docs/DECISIONS.md', 'docs/facts.json'];
+/** Files whose only conflicts are the rule counts and lists that rules.mjs writes from docs/rules.json. */
+export const RULE_COUNTS = ['docs/RULES.md', 'CONTRIBUTING.md', '.github/pull_request_template.md'];
+/** A conflict hunk that only differs in numbers (the counts a generator writes). */
+export const numbersOnly = text => [...text.matchAll(/^<<<<<<< [^\n]*\n([\s\S]*?)^=======\n([\s\S]*?)^>>>>>>> [^\n]*\n/gm)]
+  .every(([, a, b]) => a.replace(/\d+/g, '#') === b.replace(/\d+/g, '#'));
 /** Files with generated blocks among prose: automatic only when every conflict sits inside a block. */
 export const BLOCKS = ['README.md'];
 
@@ -37,7 +42,7 @@ export const keepOurs = text => text.replace(/^<<<<<<< [^\n]*\n([\s\S]*?)^======
 
 /** Which conflicted files can be resolved by regenerating, and which cannot. */
 export function classify(files, read = f => readFileSync(f, 'utf8')) {
-  const real = files.filter(f => !GENERATED.includes(f) && !(BLOCKS.includes(f) && onlyInBlocks(read(f))));
+  const real = files.filter(f => !GENERATED.includes(f) && !(BLOCKS.includes(f) && onlyInBlocks(read(f))) && !(RULE_COUNTS.includes(f) && numbersOnly(read(f))));
   return { auto: files.filter(f => !real.includes(f)), real };
 }
 
@@ -58,11 +63,13 @@ export function sync({ push = true } = {}) {
     return 1;
   }
   for (const f of auto) {
-    if (GENERATED.includes(f)) git('checkout', '--theirs', f);
+    if (GENERATED.includes(f) || RULE_COUNTS.includes(f)) git('checkout', '--theirs', f);
     else writeFileSync(f, keepOurs(readFileSync(f, 'utf8')));
   }
   // Regenerated even when git merged them by itself: a clean merge of two index edits can still be wrong
   sh('node', 'tools/agents/decision.mjs', 'index');
+  sh('node', 'tools/agents/rules.mjs', 'index');
+  sh('node', 'tools/agents/rules.mjs', 'contributing');
   sh('python3', 'tools/release/readme.py', 'update');
   if (auto.includes('docs/facts.json')) sh('python3', 'tools/release/readme.py', 'seal');
   if (conflicted.length) { git('add', '-A'); git('commit', '-q', '--no-edit'); }
