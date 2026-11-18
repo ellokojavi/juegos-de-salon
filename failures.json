@@ -4386,6 +4386,19 @@
         "stat": "2 file(s) +2 −2: docs/DECISIONS.md, docs/decisions/D-583.md"
       },
       "flaky": false
+    },
+    {
+      "run": 44219953656,
+      "check": "end-to-end",
+      "pr": 1576,
+      "branch": "blackjack-plate-footer",
+      "commit": "3517ccedb2f6e4867644a83380608116de35513e",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ intro-es: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .sapiondo-logo by 7 px",
+      "signature": "8dbb26568f",
+      "date": "2026-11-18T02:15:55.110Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
