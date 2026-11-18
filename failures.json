@@ -4514,6 +4514,19 @@
       "date": "2026-11-18T06:20:38.827Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44250477824,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "sapiondo-swipes-lives",
+      "commit": "bde3def52c06b6d6cc459e455261dc3356eccaef",
+      "test": "visual.mjs:sapiondo",
+      "error": "❌ sapiondo-intro: 4.42 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part sapiondo; the new and the diff images are in /home/runner/work/_",
+      "signature": "9f5bdc02a2",
+      "date": "2026-11-18T06:29:12.873Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
