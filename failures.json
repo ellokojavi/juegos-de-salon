@@ -4380,7 +4380,11 @@
       "error": "",
       "signature": "754d57b1bc",
       "date": "2026-11-18T01:53:17.311Z",
-      "fix": null,
+      "fix": {
+        "commit": "06a4d7797ac41196398655d83813d32a3045967e",
+        "date": "2026-11-18T01:54:44.587Z",
+        "stat": "2 file(s) +2 −2: docs/DECISIONS.md, docs/decisions/D-583.md"
+      },
       "flaky": false
     }
   ]
