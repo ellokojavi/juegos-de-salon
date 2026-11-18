@@ -19,6 +19,8 @@
  * a one-tap decision at the top of its own description (D-531) whose Yes is `approve-pr` (approve.mjs) for that commit; 🟢/🟡 get a
  * green `owner-approval` at once. A push after the owner's tick asks again, except one that only merges
  * main into the branch (GitHub's "Update branch", D-575): the tick carries over and auto-merge goes on.
+ * On a fork the token is read-only, so `ci` only prints the lane and passes; owner-approval stays
+ * missing and blocks the merge (docs/LANES.md).
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
