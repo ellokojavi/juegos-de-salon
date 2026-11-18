@@ -4369,6 +4369,19 @@
       "date": "2026-11-18T01:06:15.518Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44219024791,
+      "check": "tests",
+      "pr": 1574,
+      "branch": "agents-deck-fix",
+      "commit": "514c00641c7c9c92d84eb357ccf4bd5e3d8d2fda",
+      "test": "tools/agents/document.test.mjs",
+      "error": "",
+      "signature": "754d57b1bc",
+      "date": "2026-11-18T01:53:17.311Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
