@@ -4880,6 +4880,19 @@
         "stat": "1 file(s) +1 −1: public/assets/og/huellas.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44406931910,
+      "check": "end-to-end",
+      "pr": null,
+      "branch": "saporin-water-boats",
+      "commit": "16e9cba9c59228b374361d63beea9680ad1a96dd",
+      "test": "visual.mjs:dash-hopper",
+      "error": "❌ dash-hopper-intro: 5.15 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part dash-hopper; the new and the diff images are in /home/runner/",
+      "signature": "5459e57360",
+      "date": "2026-11-18T22:07:55.825Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
