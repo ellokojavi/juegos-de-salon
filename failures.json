@@ -4553,6 +4553,19 @@
       "date": "2026-11-18T06:31:37.680Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44252427139,
+      "check": "tests",
+      "pr": null,
+      "branch": "sapiondo-swipes-lives",
+      "commit": "12cd6b4fa268ecabe3506cbf3e260b9bf7672b0e",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
+      "signature": "3f17b9bc87",
+      "date": "2026-11-18T06:36:45.072Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
