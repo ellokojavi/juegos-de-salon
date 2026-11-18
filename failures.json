@@ -4414,7 +4414,11 @@
       "error": "",
       "signature": "0474882977",
       "date": "2026-11-18T03:00:02.797Z",
-      "fix": null,
+      "fix": {
+        "commit": "fe2fbe5fa62ce1fa4cd680d3739ab0da7efa70bc",
+        "date": "2026-11-18T03:10:25.031Z",
+        "stat": "1 file(s) +1 −1: public/cup/games/microgames/ui.js"
+      },
       "flaky": false
     }
   ]
