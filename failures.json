@@ -4397,7 +4397,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\n✗ intro-es: uneven margins (DESIGN.md rule 7): M-4 .display.display--xl covers .sapiondo-logo by 7 px",
       "signature": "8dbb26568f",
       "date": "2026-11-18T02:15:55.110Z",
-      "fix": null,
+      "fix": {
+        "commit": "e7ea6231a334ad278bbe9ca5807a7d90718480df",
+        "date": "2026-11-18T02:39:15.214Z",
+        "stat": "1 file(s) +4 −2: tools/e2e/margins-common.mjs"
+      },
       "flaky": false
     }
   ]
