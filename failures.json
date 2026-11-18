@@ -4467,6 +4467,19 @@
       "date": "2026-11-18T06:07:30.434Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44248972036,
+      "check": "tests",
+      "pr": 1587,
+      "branch": "wobbles-compliant",
+      "commit": "ff5658ef472916efec281e7573a86e825b23d990",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-18T06:08:35.694Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
