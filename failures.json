@@ -4499,7 +4499,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T06:20:38.827Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "158 file(s) +1607 −626: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, README.md, changelog/agent-models.md, …"
+      },
       "flaky": false
     },
     {
@@ -4512,7 +4516,11 @@
       "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"languages\" went stale  →  python3 tools/release/readme.py update\nERROR · changed games.sapiondo.name.en: Sapiondo → Dash Hopper",
       "signature": "71fb9ba27f",
       "date": "2026-11-18T06:20:38.827Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "158 file(s) +1607 −626: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, README.md, changelog/agent-models.md, …"
+      },
       "flaky": false
     },
     {
@@ -4542,7 +4550,11 @@
       "error": "ERROR · public/assets/og/sapiondo.jpg was made with another drawing or other texts  →  node tools/release/og.mjs images",
       "signature": "9666b69501",
       "date": "2026-11-18T06:31:37.680Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "156 file(s) +1602 −622: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4555,7 +4567,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T06:31:37.680Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "156 file(s) +1602 −622: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4568,7 +4584,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T06:36:45.072Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "154 file(s) +1601 −621: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4581,7 +4601,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T06:43:42.316Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "148 file(s) +1531 −511: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4594,7 +4618,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T06:58:00.673Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "144 file(s) +1462 −495: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4624,7 +4652,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T07:13:46.309Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "144 file(s) +1462 −495: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4637,7 +4669,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T07:23:47.420Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "143 file(s) +1462 −495: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
@@ -4663,7 +4699,11 @@
       "error": "Set by:\n(the whole PR)  (no rule: an outside PR, from a fork (danielanguita/juegos-de-salon): never auto-merge, the owner approves)\nGraphQL: Resource not accessible by integration (addLabelsToLabelable)",
       "signature": "3f17b9bc87",
       "date": "2026-11-18T07:49:20.834Z",
-      "fix": null,
+      "fix": {
+        "commit": "cac4b6bb4eb1df786cb8c819eeb900a9fdbf9fd8",
+        "date": "2026-11-18T14:07:01.261Z",
+        "stat": "139 file(s) +1447 −469: .claude/skills/game-change/SKILL.md, .github/workflows/lane-box.yml, CHANGELOG.md, changelog/agent-models.md, changelog/agents-deck-fix.md, …"
+      },
       "flaky": false
     },
     {
