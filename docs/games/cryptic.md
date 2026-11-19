@@ -25,7 +25,7 @@ look. Spanish clues only for now, by the owner's call: the mechanics first, the 
   Solving is worth 3 stars minus the helps; «Me rindo» shows the answer, with no stars.
 - **The day's clue** is the same for everyone on a date, at the player's own midnight: clue number
   `days since 2026-11-19 + 1`, walking the bank with a stride so every clue comes out once before any
-  repeats (`indexOf` in `engine.js`). With 33 clues, a month.
+  repeats (`indexOf` in `engine.js`). With 42 clues, six weeks.
 - **The streak:** days in a row with the day's clue solved; given up breaks it. Practice clues (any other
   clue of the bank, at random) count for nothing.
 - Rankings: none yet (D-212: whether it keeps a score is the owner's call).
@@ -60,14 +60,20 @@ result stays on the phone for the streak.
 
 ## Writing a clue (the owner, 2026-11-19)
 
-The first bank was too direct: the owner asked for clues that make the player think and reach for a hint,
-while staying solvable. Every clue in `clues.js` follows these four rules:
+The first bank was too direct, and so was its first rewrite: the owner asked for clues that make the player
+think and reach for a hint, while staying solvable. The owner's own (SIETE, PEATÓN, COMA, CAMISA) are the bar.
+Every clue in `clues.js` follows these rules:
 
 1. **One natural sentence that tells another story.** No colon or semicolon splitting wordplay from
-   definition: the seam is the player's to find («Una monja loca se cura colgada en la despensa»).
-2. **A fair but sideways definition** at one end: «ni te cases ni te embarques» for MARTES, «Recluta» for SOLDADO.
-3. **A blended indicator**: «loca», «regresa», «a escondidas», «decapitan» read as part of the story, not as an instruction.
-4. **One answer only**, and `x` shows every step of the solution. The engine test checks the mechanics it can
+   definition: the seam is the player's to find («Di que se va, pero exige flores en el camarín»).
+2. **Every piece is clued too, never written out**: a synonym (cara for costosa), a note (SOL, RE, LA), a Roman
+   number (V), a chemical symbol (NA), a translation (tour for GIRA), as «beso catalán» is PETÓ. Only anagrams
+   and hidden words show their letters, and then the definition carries the difficulty.
+3. **A fair but sideways definition** at one end: «ni te cases ni te embarques» for MARTES, «tiene cuatro
+   esquinas» for MANZANA, never the dictionary line.
+4. **A blended indicator**: «alborotada», «vuelve», «sin que se viera», «le cortan la cabeza» read as part of
+   the story, not as an instruction.
+5. **One answer only**, and `x` shows every step of the solution. The engine test checks the mechanics it can
    (definition at an end, anagram letters, hidden and reversed words).
 
 ## Excepciones a los cánones

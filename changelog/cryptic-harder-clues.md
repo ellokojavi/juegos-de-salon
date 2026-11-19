@@ -1,10 +1,6 @@
 level: patch
 
-- **Críptico (lab): harder clues.** The 30 clues of the bank are rewritten as one natural sentence that tells
-  another story, with no colon between the wordplay and the definition, a sideways definition and an indicator
-  blended into the story, so the player has to think and reach for a hint. The owner's two clues stay as written.
-  The rules are in the game's spec.
-- **Críptico (lab): a new clue from the owner**, COMA, a double definition («Ojalá se alimente y te ayude a separar
-  las ideas»). The bank has 33 clues.
-- **Críptico (lab): the owner's CAMISA clue** («En la cumbre, de dos en dos, Camilo miraba Santiago. Hasta que se le
-  salió un botón») replaces the earlier CAMISA one; still 33 clues.
+- **Críptico (lab): harder clues.** The owner found the clues too easy, twice. The bank is rewritten and grows to
+  42: one natural sentence that tells another story, every piece clued instead of written out (a synonym, a note,
+  a Roman number, a symbol), a sideways definition and an indicator blended in. The owner's clues are the bar and
+  join the bank: SIETE, PEATÓN, COMA and CAMISA (which replaces ours). The rules are in the game's spec.
