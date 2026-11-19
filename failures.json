@@ -5141,7 +5141,11 @@
       "error": "❌ croc-intro: 9.15 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2e",
       "signature": "784822721f",
       "date": "2026-11-19T01:20:58.333Z",
-      "fix": null,
+      "fix": {
+        "commit": "54e6d27f763cda683f33fd49de8c8fd2a22d2356",
+        "date": "2026-11-19T01:28:33.777Z",
+        "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/croc-intro.png"
+      },
       "flaky": false
     }
   ]
