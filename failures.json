@@ -5483,6 +5483,19 @@
       "date": "2026-11-19T22:36:13.688Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44630689619,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "6ef5ad88296e630738397c9f5cb763696dc1d523",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/cup/index.html fell behind games.js  →  node tools/release/og.mjs cards",
+      "signature": "cfc9cbd762",
+      "date": "2026-11-19T22:42:04.566Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
