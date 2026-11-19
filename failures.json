@@ -5318,6 +5318,19 @@
       "date": "2026-11-19T18:48:28.203Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44588970318,
+      "check": "end-to-end",
+      "pr": 1653,
+      "branch": "icon-covers",
+      "commit": "4fb0213b20d86d6a9567b07e7e2e70002076b9fe",
+      "test": "home/carousels.mjs",
+      "error": "✗ 390: a tap on generala opens its sheet",
+      "signature": "132d6a20a7",
+      "date": "2026-11-19T18:56:07.792Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
