@@ -5113,6 +5113,19 @@
         "stat": "1 file(s) +0 −0: changelog/day-cover-dates.md"
       },
       "flaky": false
+    },
+    {
+      "run": 44433796903,
+      "check": "tests",
+      "pr": 1629,
+      "branch": "croc-demo-swipe",
+      "commit": "afb455e2aad8c73673dbd4c7d75289c856ba5c7c",
+      "test": "README up to date",
+      "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · disappeared games.croc.modes: Cruzar la autopista\nERROR · appeared games.croc.variants: Cruzar la autopista",
+      "signature": "2d8bd33aea",
+      "date": "2026-11-19T01:03:35.429Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
