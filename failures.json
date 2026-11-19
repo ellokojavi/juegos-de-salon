@@ -5279,6 +5279,19 @@
       "date": "2026-11-19T18:34:25.625Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44588751776,
+      "check": "tests",
+      "pr": 1654,
+      "branch": "memory-ready",
+      "commit": "90d9ca752a955be62f82f2cf39ea1d48d77ba1ca",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/assets/og/memory.jpg was made with another drawing or other texts  →  node tools/release/og.mjs images",
+      "signature": "1cb676e682",
+      "date": "2026-11-19T18:34:44.346Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
