@@ -5158,7 +5158,11 @@
       "error": "❌ croc-intro: 13.99 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2",
       "signature": "04d7171e38",
       "date": "2026-11-19T01:54:24.233Z",
-      "fix": null,
+      "fix": {
+        "commit": "4a6d8c60632a77005217f5dff34d23ad1e6a9c89",
+        "date": "2026-11-19T02:01:43.034Z",
+        "stat": "8 file(s) +22 −8: changelog/croc-countdown.md, docs/ADD-GAME.md, public/labs/canons.test.mjs, public/labs/croc/game.js, tools/e2e/croc/game.mjs, …"
+      },
       "flaky": false
     }
   ]
