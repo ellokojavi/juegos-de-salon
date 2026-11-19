@@ -5096,6 +5096,19 @@
         "stat": "4 file(s) +94 −68: changelog/croc-wetland-verge.md, docs/games/croc.md, public/labs/croc/scene.js, tools/e2e/visual/ref/croc-intro.png"
       },
       "flaky": false
+    },
+    {
+      "run": 44433143694,
+      "check": "tests",
+      "pr": 1628,
+      "branch": "linea-fold-date",
+      "commit": "7a67c90dfe4d150fc64883b367ef06cb2914e8fc",
+      "test": "tools/agents/english.test.mjs",
+      "error": "",
+      "signature": "e2c4295683",
+      "date": "2026-11-19T00:58:44.061Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
