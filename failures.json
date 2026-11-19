@@ -5379,7 +5379,11 @@
       "error": "✗ dominorama-memorice at 1440×900 looks right: the window is 40 px taller than the screen: Play may be out of sight",
       "signature": "2179c292ef",
       "date": "2026-11-19T19:43:49.858Z",
-      "fix": null,
+      "fix": {
+        "commit": "d6fac2ec27845f8eb741e35e17a11851bcf2299a",
+        "date": "2026-11-19T19:55:15.230Z",
+        "stat": "5 file(s) +4 −8: marketing/splash/campaigns/dominorama-memorice/README.md, marketing/splash/campaigns/dominorama-memorice/en-390.jpg, marketing/splash/campaigns/dominorama-memorice/es-390.jpg, marketing/splash/campaigns/dominorama-memorice/pt-390.jpg, public/assets/js/splash.js"
+      },
       "flaky": false
     }
   ]
