@@ -5396,7 +5396,11 @@
       "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed standalone.agentes.emoji: 🕵️ → 🗝️",
       "signature": "7a6980f81e",
       "date": "2026-11-19T20:50:43.863Z",
-      "fix": null,
+      "fix": {
+        "commit": "90a85e0612b57697613ee7d8ac34ee38f54e28de",
+        "date": "2026-11-19T21:27:07.143Z",
+        "stat": "16 file(s) +129 −19: README.md, changelog/cryptic.md, docs/facts.json, docs/games/cryptic.md, public/assets/js/games.js, …"
+      },
       "flaky": false
     },
     {
@@ -5409,7 +5413,11 @@
       "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed standalone.agentes.emoji: 🕵️ → 🗝️",
       "signature": "7a6980f81e",
       "date": "2026-11-19T20:51:57.915Z",
-      "fix": null,
+      "fix": {
+        "commit": "90a85e0612b57697613ee7d8ac34ee38f54e28de",
+        "date": "2026-11-19T21:27:07.143Z",
+        "stat": "16 file(s) +128 −18: README.md, changelog/cryptic.md, docs/facts.json, docs/games/cryptic.md, public/assets/js/games.js, …"
+      },
       "flaky": false
     },
     {
@@ -5448,7 +5456,11 @@
       "error": "ERROR · appeared modules: public/labs/cryptic/flapboard.js",
       "signature": "7d95ee8813",
       "date": "2026-11-19T21:09:47.400Z",
-      "fix": null,
+      "fix": {
+        "commit": "90a85e0612b57697613ee7d8ac34ee38f54e28de",
+        "date": "2026-11-19T21:27:07.143Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
