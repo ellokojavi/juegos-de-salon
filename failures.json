@@ -5260,7 +5260,11 @@
       "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed documents: {\"path\": \"docs/games/transfer.md\", \"title\": \"🚉 Transbordo (T → {\"path\": \"docs/games/transfer.md\", \"title\": \"🚉 Transbordo (T",
       "signature": "62bda6c8dc",
       "date": "2026-11-19T18:18:22.546Z",
-      "fix": null,
+      "fix": {
+        "commit": "4e9870cd45b4f19c755cbd426e4c3d7614bb285b",
+        "date": "2026-11-19T18:20:48.031Z",
+        "stat": "2 file(s) +12 −2: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
