@@ -4994,6 +4994,32 @@
         "stat": "1 file(s) +0 −0: tools/e2e/visual/ref/croc-intro.png"
       },
       "flaky": false
+    },
+    {
+      "run": 44424005858,
+      "check": "end-to-end",
+      "pr": 1624,
+      "branch": "croc-cover",
+      "commit": "62f8d614c84601f67ad984c654c412131c5e763c",
+      "test": "landing-fold.mjs:375",
+      "error": "✗ croc 375×667 es: «Cruzar la autopista1 jugador ·» ends at 720 px, 53 px below the fold",
+      "signature": "022fe2bbff",
+      "date": "2026-11-19T00:00:53.225Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44424005858,
+      "check": "end-to-end",
+      "pr": 1624,
+      "branch": "croc-cover",
+      "commit": "62f8d614c84601f67ad984c654c412131c5e763c",
+      "test": "landing-fold.mjs:320",
+      "error": "✗ croc 320×568 es: «Cruzar la autopista1 jugador ·» ends at 683 px, 115 px below the fold",
+      "signature": "a962d459c1",
+      "date": "2026-11-19T00:00:53.225Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
