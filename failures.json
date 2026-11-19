@@ -5411,6 +5411,32 @@
       "date": "2026-11-19T20:51:57.915Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44611254112,
+      "check": "end-to-end",
+      "pr": 1662,
+      "branch": "word-in-words",
+      "commit": "26f5e522f100edd1a9c38c1c62289f7d115cf07b",
+      "test": "home/carousels.mjs",
+      "error": "✗ 390 es: every game of the home page is in a carousel (missing: letras)",
+      "signature": "8f310e451f",
+      "date": "2026-11-19T21:00:51.468Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44611254112,
+      "check": "end-to-end",
+      "pr": 1662,
+      "branch": "word-in-words",
+      "commit": "26f5e522f100edd1a9c38c1c62289f7d115cf07b",
+      "test": "home/search.mjs",
+      "error": "✗ the list below does not move while typing",
+      "signature": "915b0ecda5",
+      "date": "2026-11-19T21:00:51.468Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
