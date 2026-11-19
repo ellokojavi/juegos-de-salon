@@ -5226,7 +5226,11 @@
       "error": "",
       "signature": "e2c4295683",
       "date": "2026-11-19T16:14:36.002Z",
-      "fix": null,
+      "fix": {
+        "commit": "87cbad80e4b60a62670306ec77f12dc6c0c8db1e",
+        "date": "2026-11-19T16:22:06.141Z",
+        "stat": "2 file(s) +1 −0: changelog/cup-gold-play.md, docs/games/cup.md"
+      },
       "flaky": false
     },
     {
@@ -5239,7 +5243,11 @@
       "error": "",
       "signature": "e2c4295683",
       "date": "2026-11-19T16:15:05.841Z",
-      "fix": null,
+      "fix": {
+        "commit": "87cbad80e4b60a62670306ec77f12dc6c0c8db1e",
+        "date": "2026-11-19T16:22:06.141Z",
+        "stat": "1 file(s) +0 −0: changelog/cup-gold-play.md"
+      },
       "flaky": false
     }
   ]
