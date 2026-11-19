@@ -5033,6 +5033,32 @@
       "date": "2026-11-19T00:13:50.722Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44425848579,
+      "check": "end-to-end",
+      "pr": 1626,
+      "branch": "croc-wetland-verge",
+      "commit": "bd306f062116660c83979f03dda838f0f3850c6c",
+      "test": "landing-fold.mjs:320",
+      "error": "✗ linea today 320×568 en: «Play today» ends at 575 px, 7 px below the fold",
+      "signature": "b60526ceec",
+      "date": "2026-11-19T00:14:07.545Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44425848579,
+      "check": "end-to-end",
+      "pr": 1626,
+      "branch": "croc-wetland-verge",
+      "commit": "bd306f062116660c83979f03dda838f0f3850c6c",
+      "test": "visual.mjs:croc",
+      "error": "❌ croc-intro: 1.58 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2e",
+      "signature": "d4579b3893",
+      "date": "2026-11-19T00:14:07.545Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
