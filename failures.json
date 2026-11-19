@@ -5368,6 +5368,19 @@
         "stat": "49 file(s) +2042 −963: README.md, changelog/bodega-transfer.md, changelog/dominorama-ready.md, changelog/memory-ready.md, docs/UNO-AL-DIA.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 44599475275,
+      "check": "end-to-end",
+      "pr": 1658,
+      "branch": "splash-dominorama-memorice",
+      "commit": "1363545f0ffc283cd7eccffe969c7756a6f94dd9",
+      "test": "splash/margins.mjs",
+      "error": "✗ dominorama-memorice at 1440×900 looks right: the window is 40 px taller than the screen: Play may be out of sight",
+      "signature": "2179c292ef",
+      "date": "2026-11-19T19:43:49.858Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
