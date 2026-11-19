@@ -5266,6 +5266,19 @@
         "stat": "2 file(s) +12 −2: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44588793563,
+      "check": "tests",
+      "pr": 1655,
+      "branch": "dominorama-ready",
+      "commit": "a9e88be794e94a5e3cda944634e2acb1abe322f1",
+      "test": "tools/agents/architecture.test.mjs",
+      "error": "",
+      "signature": "ea485401a9",
+      "date": "2026-11-19T18:34:25.625Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
