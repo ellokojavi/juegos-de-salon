@@ -5290,7 +5290,11 @@
       "error": "ERROR · public/assets/og/memory.jpg was made with another drawing or other texts  →  node tools/release/og.mjs images",
       "signature": "1cb676e682",
       "date": "2026-11-19T18:34:44.346Z",
-      "fix": null,
+      "fix": {
+        "commit": "b5a5df9f060556304d233548a1d44a40f592c400",
+        "date": "2026-11-19T18:56:19.047Z",
+        "stat": "8 file(s) +18 −18: README.md, changelog/bodega-transfer.md, docs/facts.json, docs/games/transfer.md, docs/labs-canon-debt.json, …"
+      },
       "flaky": false
     },
     {
