@@ -5071,6 +5071,19 @@
       "date": "2026-11-19T00:14:07.545Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44430054124,
+      "check": "end-to-end",
+      "pr": 1626,
+      "branch": "croc-wetland-verge",
+      "commit": "35a1821247cf66fb68b231cbc669f4ed0f14ad84",
+      "test": "visual.mjs:croc",
+      "error": "❌ croc-intro: 1.58 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part croc; the new and the diff images are in /home/runner/work/_temp/e2e",
+      "signature": "d4579b3893",
+      "date": "2026-11-19T00:41:43.119Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
