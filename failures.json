@@ -5005,7 +5005,11 @@
       "error": "✗ croc 375×667 es: «Cruzar la autopista1 jugador ·» ends at 720 px, 53 px below the fold",
       "signature": "022fe2bbff",
       "date": "2026-11-19T00:00:53.225Z",
-      "fix": null,
+      "fix": {
+        "commit": "41f336bf1e514d1b87caec4e39daac3dbfb64357",
+        "date": "2026-11-19T00:41:20.218Z",
+        "stat": "3 file(s) +8 −4: changelog/generala-daily-short.md, public/generala/rules.js, public/labs/croc/style.css"
+      },
       "flaky": false
     },
     {
@@ -5018,7 +5022,11 @@
       "error": "✗ croc 320×568 es: «Cruzar la autopista1 jugador ·» ends at 683 px, 115 px below the fold",
       "signature": "a962d459c1",
       "date": "2026-11-19T00:00:53.225Z",
-      "fix": null,
+      "fix": {
+        "commit": "41f336bf1e514d1b87caec4e39daac3dbfb64357",
+        "date": "2026-11-19T00:41:20.218Z",
+        "stat": "3 file(s) +8 −4: changelog/generala-daily-short.md, public/generala/rules.js, public/labs/croc/style.css"
+      },
       "flaky": false
     },
     {
@@ -5031,7 +5039,11 @@
       "error": "✗ linea today 320×568 en: «Play today» ends at 575 px, 7 px below the fold",
       "signature": "b60526ceec",
       "date": "2026-11-19T00:13:50.722Z",
-      "fix": null,
+      "fix": {
+        "commit": "41f336bf1e514d1b87caec4e39daac3dbfb64357",
+        "date": "2026-11-19T00:41:20.218Z",
+        "stat": "2 file(s) +6 −3: changelog/generala-daily-short.md, public/generala/rules.js"
+      },
       "flaky": false
     },
     {
