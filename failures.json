@@ -5177,6 +5177,19 @@
       "date": "2026-11-19T04:09:05.624Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44456412390,
+      "check": "tests",
+      "pr": 1639,
+      "branch": "ccr-6e992ec8-lpw5ur",
+      "commit": "ee226d1f56ca7e470943d3355e523e40bde67b22",
+      "test": "Social cards up to date",
+      "error": "ERROR · public/word/index.html fell behind public/cup/suelto/index.html or games.js  →  node tools/release/og.mjs cards",
+      "signature": "43e7c57d7c",
+      "date": "2026-11-19T04:11:24.074Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
