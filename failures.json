@@ -5362,7 +5362,11 @@
       "error": "❌ dominorama-intro: no reference (run node tools/e2e/visual.mjs --update --part dominorama and commit it)",
       "signature": "4593c8c842",
       "date": "2026-11-19T18:58:33.192Z",
-      "fix": null,
+      "fix": {
+        "commit": "ffbb1566e6ffda95bab0053a9dcc9129fe0409b5",
+        "date": "2026-11-19T19:26:47.402Z",
+        "stat": "49 file(s) +2042 −963: README.md, changelog/bodega-transfer.md, changelog/dominorama-ready.md, changelog/memory-ready.md, docs/UNO-AL-DIA.md, …"
+      },
       "flaky": false
     }
   ]
