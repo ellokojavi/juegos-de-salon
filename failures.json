@@ -5292,6 +5292,32 @@
       "date": "2026-11-19T18:34:44.346Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44589189219,
+      "check": "tests",
+      "pr": 1655,
+      "branch": "dominorama-ready",
+      "commit": "cb0ce98d005900c234eb3a95fc120f11b0e6e491",
+      "test": "public/cup/games/juegos.test.mjs",
+      "error": "",
+      "signature": "1775f3ddb9",
+      "date": "2026-11-19T18:48:28.203Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44589189219,
+      "check": "tests",
+      "pr": 1655,
+      "branch": "dominorama-ready",
+      "commit": "cb0ce98d005900c234eb3a95fc120f11b0e6e491",
+      "test": "tools/agents/architecture.test.mjs",
+      "error": "",
+      "signature": "ea485401a9",
+      "date": "2026-11-19T18:48:28.203Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
