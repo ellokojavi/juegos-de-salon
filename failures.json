@@ -5335,6 +5335,19 @@
       "date": "2026-11-19T18:56:07.792Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44589189292,
+      "check": "end-to-end",
+      "pr": 1655,
+      "branch": "dominorama-ready",
+      "commit": "cb0ce98d005900c234eb3a95fc120f11b0e6e491",
+      "test": "visual.mjs:dominorama",
+      "error": "❌ dominorama-intro: no reference (run node tools/e2e/visual.mjs --update --part dominorama and commit it)",
+      "signature": "4593c8c842",
+      "date": "2026-11-19T18:58:33.192Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
