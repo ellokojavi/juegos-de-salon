@@ -5385,6 +5385,19 @@
         "stat": "5 file(s) +4 −8: marketing/splash/campaigns/dominorama-memorice/README.md, marketing/splash/campaigns/dominorama-memorice/en-390.jpg, marketing/splash/campaigns/dominorama-memorice/es-390.jpg, marketing/splash/campaigns/dominorama-memorice/pt-390.jpg, public/assets/js/splash.js"
       },
       "flaky": false
+    },
+    {
+      "run": 44611609323,
+      "check": "tests",
+      "pr": 1663,
+      "branch": "cryptic",
+      "commit": "e30cd4c6c47bfb4b8d444cc4ba5b301006ede26b",
+      "test": "README up to date",
+      "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed standalone.agentes.emoji: 🕵️ → 🗝️",
+      "signature": "7a6980f81e",
+      "date": "2026-11-19T20:50:43.863Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
