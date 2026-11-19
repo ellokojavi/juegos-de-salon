@@ -5124,7 +5124,11 @@
       "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · disappeared games.croc.modes: Cruzar la autopista\nERROR · appeared games.croc.variants: Cruzar la autopista",
       "signature": "2d8bd33aea",
       "date": "2026-11-19T01:03:35.429Z",
-      "fix": null,
+      "fix": {
+        "commit": "785063f8205a1669871d3669a94e02be2e351773",
+        "date": "2026-11-19T01:07:26.673Z",
+        "stat": "2 file(s) +3 −3: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
