@@ -5398,6 +5398,19 @@
       "date": "2026-11-19T20:50:43.863Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44611679951,
+      "check": "tests",
+      "pr": 1663,
+      "branch": "cryptic",
+      "commit": "96a5c45e78dae89c2fd620d6ed97b47daba2f522",
+      "test": "README up to date",
+      "error": "ERROR · the block \"games\" went stale  →  python3 tools/release/readme.py update\nERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed standalone.agentes.emoji: 🕵️ → 🗝️",
+      "signature": "7a6980f81e",
+      "date": "2026-11-19T20:51:57.915Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
