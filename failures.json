@@ -5198,6 +5198,19 @@
         "stat": "1 file(s) +1 −1: public/word/index.html"
       },
       "flaky": false
+    },
+    {
+      "run": 44528090837,
+      "check": "end-to-end",
+      "pr": 1644,
+      "branch": "solo-result-today-card",
+      "commit": "6de19168aa361042cc042d2d1eedaa3464f850bf",
+      "test": "install-prompt.mjs",
+      "error": "✗ new: the ✕ snoozes it 14 days",
+      "signature": "17ae0d2806",
+      "date": "2026-11-19T13:03:57.399Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
