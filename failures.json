@@ -5249,6 +5249,19 @@
         "stat": "1 file(s) +0 −0: changelog/cup-gold-play.md"
       },
       "flaky": false
+    },
+    {
+      "run": 44586100246,
+      "check": "tests",
+      "pr": 1652,
+      "branch": "bodega-transfer",
+      "commit": "d4d9f2cef33764a4346c2b4bd571a7e5d7f72aad",
+      "test": "README up to date",
+      "error": "ERROR · the block \"docs\" went stale  →  python3 tools/release/readme.py update\nERROR · changed documents: {\"path\": \"docs/games/transfer.md\", \"title\": \"🚉 Transbordo (T → {\"path\": \"docs/games/transfer.md\", \"title\": \"🚉 Transbordo (T",
+      "signature": "62bda6c8dc",
+      "date": "2026-11-19T18:18:22.546Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
