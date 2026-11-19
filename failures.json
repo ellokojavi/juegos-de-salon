@@ -5209,7 +5209,11 @@
       "error": "✗ new: the ✕ snoozes it 14 days",
       "signature": "17ae0d2806",
       "date": "2026-11-19T13:03:57.399Z",
-      "fix": null,
+      "fix": {
+        "commit": "eaa3d121f256aca2df9cf41137699165f30aa02a",
+        "date": "2026-11-19T16:21:18.091Z",
+        "stat": "5 file(s) +24 −4: changelog/install-prompt-page-clock.md, docs/decisions/D-589.md, tools/e2e/README.md, tools/e2e/install-prompt.mjs, tools/e2e/real-date.test.mjs"
+      },
       "flaky": false
     },
     {
