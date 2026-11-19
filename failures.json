@@ -5224,6 +5224,19 @@
       "date": "2026-11-19T16:14:36.002Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44562590323,
+      "check": "tests",
+      "pr": 1648,
+      "branch": "copa-gold-play",
+      "commit": "5778971e3132fab9c9bdb6998123d42e088626b0",
+      "test": "tools/agents/english.test.mjs",
+      "error": "",
+      "signature": "e2c4295683",
+      "date": "2026-11-19T16:15:05.841Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
