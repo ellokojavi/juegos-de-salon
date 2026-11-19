@@ -5345,7 +5345,11 @@
       "error": "✗ 390: a tap on generala opens its sheet",
       "signature": "132d6a20a7",
       "date": "2026-11-19T18:56:07.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "93c6ed78614e7ff4f1947e6a3145fe89b95c36da",
+        "date": "2026-11-19T19:18:45.059Z",
+        "stat": "1 file(s) +8 −1: tools/e2e/home/carousels.mjs"
+      },
       "flaky": false
     },
     {
