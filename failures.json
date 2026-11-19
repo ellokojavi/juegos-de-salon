@@ -5496,6 +5496,19 @@
       "date": "2026-11-19T22:42:04.566Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44635272678,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "7c515d132f0500636afa07559440af77e0e91f81",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "",
+      "signature": "91fa192ea2",
+      "date": "2026-11-19T23:11:24.595Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
