@@ -5430,7 +5430,11 @@
       "error": "✗ 390 es: every game of the home page is in a carousel (missing: letras)",
       "signature": "8f310e451f",
       "date": "2026-11-19T21:00:51.468Z",
-      "fix": null,
+      "fix": {
+        "commit": "1c455732065eb27c430dee46e6aa9080dba93861",
+        "date": "2026-11-19T21:35:14.926Z",
+        "stat": "2 file(s) +23 −5: public/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -5443,7 +5447,11 @@
       "error": "✗ the list below does not move while typing",
       "signature": "915b0ecda5",
       "date": "2026-11-19T21:00:51.468Z",
-      "fix": null,
+      "fix": {
+        "commit": "1c455732065eb27c430dee46e6aa9080dba93861",
+        "date": "2026-11-19T21:35:14.926Z",
+        "stat": "2 file(s) +23 −5: public/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
