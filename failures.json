@@ -5827,6 +5827,58 @@
         "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44674837436,
+      "check": "end-to-end",
+      "pr": 1694,
+      "branch": "rankings-gaps",
+      "commit": "4fa8e8a9e5836ab7734f44910c8140c85ac433dc",
+      "test": "visual.mjs:battleship",
+      "error": "❌ battleship-intro: 1.66 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part battleship, commit the PNG and push; on a PR the Visual refere",
+      "signature": "0e7ce48c05",
+      "date": "2026-11-20T04:46:08.510Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44674837436,
+      "check": "end-to-end",
+      "pr": 1694,
+      "branch": "rankings-gaps",
+      "commit": "4fa8e8a9e5836ab7734f44910c8140c85ac433dc",
+      "test": "visual.mjs:timeline",
+      "error": "❌ timeline-intro: 1.66 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part timeline, commit the PNG and push; on a PR the Visual references",
+      "signature": "f12c4466c7",
+      "date": "2026-11-20T04:46:08.510Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44674837436,
+      "check": "end-to-end",
+      "pr": 1694,
+      "branch": "rankings-gaps",
+      "commit": "4fa8e8a9e5836ab7734f44910c8140c85ac433dc",
+      "test": "cup/tournament.mjs:labs",
+      "error": "✗ the lab offers only prototypes, each in its folder (cryptic/ croc/ wobbles/ blackjack/ ../memorice/ ../dominorama/ exploding-numbers/ artifacts/ ../ ../ ../ ../records/#copas ../generala/ ../?type=w",
+      "signature": "db54981cfd",
+      "date": "2026-11-20T04:46:08.510Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44674837436,
+      "check": "end-to-end",
+      "pr": 1694,
+      "branch": "rankings-gaps",
+      "commit": "4fa8e8a9e5836ab7734f44910c8140c85ac433dc",
+      "test": "visual.mjs:liars-dice",
+      "error": "❌ liars-dice-intro: 0.50 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice, commit the PNG and push; on a PR the Visual refere",
+      "signature": "497b6cfc83",
+      "date": "2026-11-20T04:46:08.510Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
