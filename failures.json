@@ -5481,7 +5481,11 @@
       "error": "ERROR · public/cup/index.html fell behind games.js  →  node tools/release/og.mjs cards",
       "signature": "cfc9cbd762",
       "date": "2026-11-19T22:36:13.688Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "12 file(s) +104 −27: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/assets/js/flag-list.js, public/cup/admin.js, public/cup/demo.js, …"
+      },
       "flaky": false
     },
     {
@@ -5494,7 +5498,11 @@
       "error": "ERROR · public/cup/index.html fell behind games.js  →  node tools/release/og.mjs cards",
       "signature": "cfc9cbd762",
       "date": "2026-11-19T22:42:04.566Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "11 file(s) +100 −27: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/assets/js/flag-list.js, public/cup/admin.js, public/cup/engine.js, …"
+      },
       "flaky": false
     },
     {
@@ -5507,7 +5515,11 @@
       "error": "",
       "signature": "91fa192ea2",
       "date": "2026-11-19T23:11:24.595Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "11 file(s) +60 −45: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/assets/js/flag-list.js, public/cup/admin.js, public/cup/engine.js, …"
+      },
       "flaky": false
     },
     {
@@ -5520,7 +5532,11 @@
       "error": "",
       "signature": "9603d6ae72",
       "date": "2026-11-20T01:03:34.845Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +38 −35: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5533,7 +5549,11 @@
       "error": "",
       "signature": "91fa192ea2",
       "date": "2026-11-20T01:03:34.845Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +38 −35: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5546,7 +5566,11 @@
       "error": "",
       "signature": "965641ffe6",
       "date": "2026-11-20T01:03:34.845Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +38 −35: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5559,7 +5583,11 @@
       "error": "",
       "signature": "9603d6ae72",
       "date": "2026-11-20T01:09:51.106Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +32 −30: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5572,7 +5600,11 @@
       "error": "",
       "signature": "91fa192ea2",
       "date": "2026-11-20T01:09:51.106Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +32 −30: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5585,7 +5617,11 @@
       "error": "",
       "signature": "965641ffe6",
       "date": "2026-11-20T01:09:51.106Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +32 −30: changelog/ccr-a3fc731d-nmmmbx.md, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5598,7 +5634,11 @@
       "error": "",
       "signature": "9603d6ae72",
       "date": "2026-11-20T01:20:34.985Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "6 file(s) +17 −20: docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, public/cup/style.css, …"
+      },
       "flaky": false
     },
     {
@@ -5611,7 +5651,11 @@
       "error": "",
       "signature": "91fa192ea2",
       "date": "2026-11-20T01:20:34.985Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "6 file(s) +17 −20: docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, public/cup/style.css, …"
+      },
       "flaky": false
     },
     {
@@ -5624,7 +5668,11 @@
       "error": "",
       "signature": "965641ffe6",
       "date": "2026-11-20T01:20:34.985Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "6 file(s) +17 −20: docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, public/cup/style.css, …"
+      },
       "flaky": false
     },
     {
@@ -5637,7 +5685,11 @@
       "error": "",
       "signature": "9603d6ae72",
       "date": "2026-11-20T01:26:49.073Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +16 −25: docs/design-allowlist.json, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5650,7 +5702,11 @@
       "error": "",
       "signature": "965641ffe6",
       "date": "2026-11-20T01:26:49.073Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +16 −25: docs/design-allowlist.json, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5663,7 +5719,11 @@
       "error": "",
       "signature": "e9a8156856",
       "date": "2026-11-20T01:26:49.073Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "7 file(s) +16 −25: docs/design-allowlist.json, docs/games/cup.md, public/cup/engine.js, public/cup/game.js, public/cup/store.test.mjs, …"
+      },
       "flaky": false
     },
     {
@@ -5676,7 +5736,11 @@
       "error": "",
       "signature": "9603d6ae72",
       "date": "2026-11-20T01:27:44.590Z",
-      "fix": null,
+      "fix": {
+        "commit": "5f40874bbc45a3caccf1d7f3abcb4ac271d7c880",
+        "date": "2026-11-20T01:29:57.369Z",
+        "stat": "1 file(s) +6 −9: public/labs/index.html"
+      },
       "flaky": false
     }
   ]
