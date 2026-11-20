@@ -5925,6 +5925,19 @@
         "stat": "1 file(s) +2 −2: public/labs/index.html"
       },
       "flaky": false
+    },
+    {
+      "run": 44681389110,
+      "check": "tests",
+      "pr": 1699,
+      "branch": "ccr-fcfcc206-bw6e2o",
+      "commit": "74cab7aac033d93d416933685a7937d903275c36",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "",
+      "signature": "91fa192ea2",
+      "date": "2026-11-20T05:35:31.572Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
