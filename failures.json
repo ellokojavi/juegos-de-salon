@@ -5838,7 +5838,11 @@
       "error": "❌ battleship-intro: 1.66 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part battleship, commit the PNG and push; on a PR the Visual refere",
       "signature": "0e7ce48c05",
       "date": "2026-11-20T04:46:08.510Z",
-      "fix": null,
+      "fix": {
+        "commit": "ec689ad6d4b6a6d0a2fc4942744b2358b053f322",
+        "date": "2026-11-20T04:59:50.983Z",
+        "stat": "2 file(s) +8 −2: public/labs/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -5851,7 +5855,11 @@
       "error": "❌ timeline-intro: 1.66 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part timeline, commit the PNG and push; on a PR the Visual references",
       "signature": "f12c4466c7",
       "date": "2026-11-20T04:46:08.510Z",
-      "fix": null,
+      "fix": {
+        "commit": "ec689ad6d4b6a6d0a2fc4942744b2358b053f322",
+        "date": "2026-11-20T04:59:50.983Z",
+        "stat": "2 file(s) +8 −2: public/labs/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -5864,7 +5872,11 @@
       "error": "✗ the lab offers only prototypes, each in its folder (cryptic/ croc/ wobbles/ blackjack/ ../memorice/ ../dominorama/ exploding-numbers/ artifacts/ ../ ../ ../ ../records/#copas ../generala/ ../?type=w",
       "signature": "db54981cfd",
       "date": "2026-11-20T04:46:08.510Z",
-      "fix": null,
+      "fix": {
+        "commit": "ec689ad6d4b6a6d0a2fc4942744b2358b053f322",
+        "date": "2026-11-20T04:59:50.983Z",
+        "stat": "2 file(s) +8 −2: public/labs/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -5877,7 +5889,11 @@
       "error": "❌ liars-dice-intro: 0.50 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice, commit the PNG and push; on a PR the Visual refere",
       "signature": "497b6cfc83",
       "date": "2026-11-20T04:46:08.510Z",
-      "fix": null,
+      "fix": {
+        "commit": "ec689ad6d4b6a6d0a2fc4942744b2358b053f322",
+        "date": "2026-11-20T04:59:50.983Z",
+        "stat": "2 file(s) +8 −2: public/labs/index.html, tools/e2e/flags-held.json"
+      },
       "flaky": false
     }
   ]
