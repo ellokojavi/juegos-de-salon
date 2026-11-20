@@ -6034,7 +6034,11 @@
       "error": "ERROR · appeared modules: public/panel/game-report.js",
       "signature": "ccf7abb091",
       "date": "2026-11-20T23:43:53.623Z",
-      "fix": null,
+      "fix": {
+        "commit": "9f9c0c7aa949c8ae1f4074f97580f73c9b267e45",
+        "date": "2026-11-20T23:48:12.537Z",
+        "stat": "8 file(s) +143 −8: README.md, changelog/wbr-charts.md, docs/PANEL.md, docs/facts.json, public/panel/panel.js, …"
+      },
       "flaky": false
     },
     {
@@ -6047,7 +6051,11 @@
       "error": "",
       "signature": "90d13e425d",
       "date": "2026-11-20T23:44:34.729Z",
-      "fix": null,
+      "fix": {
+        "commit": "9f9c0c7aa949c8ae1f4074f97580f73c9b267e45",
+        "date": "2026-11-20T23:48:12.537Z",
+        "stat": "6 file(s) +139 −7: changelog/wbr-charts.md, docs/PANEL.md, public/panel/panel.js, public/panel/style.css, public/panel/wbr.js, …"
+      },
       "flaky": false
     }
   ]
