@@ -5976,6 +5976,19 @@
       "date": "2026-11-20T06:02:59.560Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44755253697,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "eeeecca40ea347149affc4b2e36f89c8b7993eed",
+      "test": "public/labs/short-cards.test.mjs",
+      "error": "",
+      "signature": "97c0b5ca90",
+      "date": "2026-11-20T14:44:56.182Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
