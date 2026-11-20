@@ -5509,6 +5509,45 @@
       "date": "2026-11-19T23:11:24.595Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44650569723,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "c6fb3a1d0a34b79c3cf555fcbab7ba426be0a07f",
+      "test": "public/labs/bodega.test.mjs",
+      "error": "",
+      "signature": "9603d6ae72",
+      "date": "2026-11-20T01:03:34.845Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44650569723,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "c6fb3a1d0a34b79c3cf555fcbab7ba426be0a07f",
+      "test": "tools/agents/design-lint.test.mjs",
+      "error": "",
+      "signature": "91fa192ea2",
+      "date": "2026-11-20T01:03:34.845Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 44650569723,
+      "check": "tests",
+      "pr": 1667,
+      "branch": "ccr-a3fc731d-nmmmbx",
+      "commit": "c6fb3a1d0a34b79c3cf555fcbab7ba426be0a07f",
+      "test": "tools/agents/identifiers.test.mjs",
+      "error": "",
+      "signature": "965641ffe6",
+      "date": "2026-11-20T01:03:34.845Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
