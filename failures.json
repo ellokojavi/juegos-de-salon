@@ -5938,6 +5938,19 @@
       "date": "2026-11-20T05:35:31.572Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44681768263,
+      "check": "tests",
+      "pr": 1699,
+      "branch": "ccr-fcfcc206-bw6e2o",
+      "commit": "1ea0d8d7a33bdb7efba834fe56103e6763ebe7c3",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/home-settings.js",
+      "signature": "d036124d96",
+      "date": "2026-11-20T05:37:17.480Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
