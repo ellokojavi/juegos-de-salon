@@ -5753,7 +5753,11 @@
       "error": "ERROR · changed documents: {\"path\": \"docs/games/dominorama.md\", \"title\": \"🎲 Dominorama , {\"path\": \"docs/games/memory.md\", \"title\": \"👀 Memorice (La Co → {\"path\": \"docs/games/dominorama.md\", \"title\": \"🎲 Dominorama , {\"path\": \"docs/games/memory.md\", \"title\": \"👀 Memorice (La Co",
       "signature": "3294078a92",
       "date": "2026-11-20T03:02:09.631Z",
-      "fix": null,
+      "fix": {
+        "commit": "39702031d66decf9104f57ce26a383c2eaf56516",
+        "date": "2026-11-20T03:07:18.426Z",
+        "stat": "20 file(s) +219 −38: changelog/wbr-game-users.md, docs/DECISIONS.md, docs/PANEL.md, docs/decisions/D-349.md, docs/decisions/D-590.md, …"
+      },
       "flaky": false
     }
   ]
