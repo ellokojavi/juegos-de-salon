@@ -5770,7 +5770,11 @@
       "error": "ERROR · changed standalone.agentes.kinds: words → logic",
       "signature": "397fcd1f67",
       "date": "2026-11-20T03:14:29.454Z",
-      "fix": null,
+      "fix": {
+        "commit": "80fa68a2b06974ae9757665438dc34f5320eec39",
+        "date": "2026-11-20T03:48:00.967Z",
+        "stat": "5 file(s) +8 −4: changelog/ccr-9cacd614-ysyu57.md, docs/canons/C-17.md, docs/facts.json, public/assets/js/home-carousels.js, tools/e2e/paths.mjs"
+      },
       "flaky": false
     },
     {
@@ -5783,7 +5787,11 @@
       "error": "ERROR · changed standalone.agentes.kinds: words → logic",
       "signature": "397fcd1f67",
       "date": "2026-11-20T03:19:08.541Z",
-      "fix": null,
+      "fix": {
+        "commit": "80fa68a2b06974ae9757665438dc34f5320eec39",
+        "date": "2026-11-20T03:48:00.967Z",
+        "stat": "3 file(s) +4 −2: docs/canons/C-17.md, docs/facts.json, tools/e2e/paths.mjs"
+      },
       "flaky": false
     },
     {
@@ -5796,7 +5804,11 @@
       "error": "ERROR · changed standalone.agentes.kinds: words → logic",
       "signature": "397fcd1f67",
       "date": "2026-11-20T03:45:50.382Z",
-      "fix": null,
+      "fix": {
+        "commit": "80fa68a2b06974ae9757665438dc34f5320eec39",
+        "date": "2026-11-20T03:48:00.967Z",
+        "stat": "1 file(s) +1 −1: docs/facts.json"
+      },
       "flaky": false
     }
   ]
