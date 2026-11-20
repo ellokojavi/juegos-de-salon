@@ -5759,6 +5759,19 @@
         "stat": "20 file(s) +219 −38: changelog/wbr-game-users.md, docs/DECISIONS.md, docs/PANEL.md, docs/decisions/D-349.md, docs/decisions/D-590.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 44666176463,
+      "check": "tests",
+      "pr": 1688,
+      "branch": "ccr-9cacd614-ysyu57",
+      "commit": "d150dac762079904550a08b7285bd555d9c6a44a",
+      "test": "README up to date",
+      "error": "ERROR · changed standalone.agentes.kinds: words → logic",
+      "signature": "397fcd1f67",
+      "date": "2026-11-20T03:14:29.454Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
