@@ -114,7 +114,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). A lab game needs no card for itself, but a treatment tried inside it asks its own flag like any page,
   with its card and `FLAGS` row (first: Blackjack's `blackjack-felt`). **Every card, game or feature, opens its
   title with its emoji, or the game's drawing when it has one** (the owner, 2026-11-17), so its pill in the index at the
-  top of `/labs/` carries it too (`public/labs/index-nav.js`; `index-nav.test.mjs` fails a bare title). The
+  top of `/labs/` carries it too (`public/labs/index-nav.js`; `index-nav.test.mjs` fails a bare title). **Its text is short** (D-594): what it tries, in 25 words or fewer, and how to try it only when that is not obvious; the detail goes in the PR and the docs (`public/labs/short-cards.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.
   What launches for everyone moves its card to La Bodega in the same PR (D-479); a flag flipped to *all* moves it on its own when `/labs/` opens (`public/labs/launched.js`, D-534), keeping its switch (D-510); the cleanup PR that removes the gate moves its HTML for good. The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the

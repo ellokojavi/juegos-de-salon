@@ -40,6 +40,8 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-invita--compacta .rk-invita-btn { padding: 8px 14px; }
 .rk-invita--destacada[open] .rk-invita-btn { display: none; }
 .rk-hint { margin: 0 0 10px; font-size: 0.92rem; }
+/* A wins table nobody is in yet (flag wins-hide-empty): only its title and hint, with even padding */
+.rk-wins-empty .rk-hint { margin-bottom: 0; }
 .rk-campo { display: grid; gap: 4px; margin-bottom: 10px; }
 .rk-campo span { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .rk-campo input {

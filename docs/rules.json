@@ -250,6 +250,17 @@
    ]
   },
   {
+   "id": "lab-cards-short",
+   "title": "A card in /labs/ says what it tries in 25 words or fewer (D-594)",
+   "doc": "docs/AGENTS.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "public/labs/short-cards.test.mjs"
+   ]
+  },
+  {
    "id": "C-1",
    "title": "Identity and tone",
    "doc": "docs/CANONS.md",

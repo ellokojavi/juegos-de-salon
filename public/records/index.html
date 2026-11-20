@@ -213,7 +213,7 @@
     // Copas: los campeones y el mejor día de copa de cada uno, juego por juego
     const ranuraDia = el('div', {});
     const elegirDia = id => {
-      const o = deUno.find(x => x.id === id) || deUno[0];
+      const o = deCopa.find(x => x.id === id) || deCopa[0];
       marcarFichas(fichasDia, o.id);
       ranuraDia.replaceChildren(bloqueRanking({ juego: `${o.id}_copa`, titulo: withIcon(o, `${T.cupBestDay}: ${o.nombre}`), pestanas: ['siempre', 'amigos'], alTocar: tap }));
     };
@@ -225,6 +225,15 @@
       el('div', { class: 'panel' }, el('p', { class: 'lead rk-titulo' }, `📅 ${T.cupBestDay}`), el('p', { class: 'muted rk-hint' }, T.cupBestDayHint), fichasDia),
       ranuraDia);
     if (deCopa.length) elegirDia(deCopa[0].id);
+    // La Copa's own games, which have no page of their own (Línea Relámpago, Toque y Fama: Número, La Gran Final),
+    // also keep their best Cup day: their chips go after the others (flag cup-best-day-all). lab: #seccion-cup-best-day-all
+    import('../assets/js/flags.js').then(({ flag }) => flag('cup-best-day-all')).then(on => {
+      if (!on) return;
+      const extra = ['linea', 'numero', 'final'].map(id => juegosCopa(lang)[id]).filter(Boolean)
+        .map(j => ({ id: j.id, emoji: j.emoji, nombre: j.nombre }));
+      deCopa.push(...extra);
+      fichasDia.append(...extra.map(o => ficha(o, elegirDia)));
+    }).catch(() => {});
 
     // El filtro grande: Juegos o Copas
     let seccion = 'juegos';
