@@ -6006,6 +6006,19 @@
       "date": "2026-11-20T16:51:41.894Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44780989658,
+      "check": "tests",
+      "pr": 1706,
+      "branch": "cryptic-hide-answers",
+      "commit": "8eba7c5d3a7ad3c6141a537d6995f415355ec230",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/labs/cryptic/sealed.js",
+      "signature": "0eb479b77c",
+      "date": "2026-11-20T17:13:58.566Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
