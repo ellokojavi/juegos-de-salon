@@ -6036,6 +6036,19 @@
       "date": "2026-11-20T23:43:53.623Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44838851193,
+      "check": "tests",
+      "pr": 1718,
+      "branch": "panel-game-report",
+      "commit": "af40f0d91f1132c2599a3f65e50ba913978745b8",
+      "test": "tools/reports/weekly-data.test.mjs",
+      "error": "",
+      "signature": "90d13e425d",
+      "date": "2026-11-20T23:44:34.729Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
