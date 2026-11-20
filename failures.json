@@ -5959,6 +5959,19 @@
         "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44684502125,
+      "check": "tests",
+      "pr": 1699,
+      "branch": "ccr-fcfcc206-bw6e2o",
+      "commit": "089d3846c195ff29d7721c851653b474f75af19b",
+      "test": "public/labs/short-cards.test.mjs",
+      "error": "",
+      "signature": "97c0b5ca90",
+      "date": "2026-11-20T06:02:59.560Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
