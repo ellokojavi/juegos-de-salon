@@ -5906,7 +5906,11 @@
       "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\nError: Uncaught TypeError: Cannot read properties of null (reading 'click')",
       "signature": "ed711792cd",
       "date": "2026-11-20T05:31:47.883Z",
-      "fix": null,
+      "fix": {
+        "commit": "cd33c95950d103213469ea432a1a0363b9ae70cf",
+        "date": "2026-11-20T06:14:22.398Z",
+        "stat": "18 file(s) +160 −55: .claude/skills/owner-tools/SKILL.md, .github/pull_request_template.md, CONTRIBUTING.md, changelog/labs-short-cards.md, changelog/rankings-gaps.md, …"
+      },
       "flaky": false
     },
     {
