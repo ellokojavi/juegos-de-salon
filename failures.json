@@ -6023,6 +6023,19 @@
         "stat": "1 file(s) +3 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44838556260,
+      "check": "tests",
+      "pr": 1718,
+      "branch": "panel-game-report",
+      "commit": "865c63cca465b2bec1e8116e517eb1236aae986a",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/panel/game-report.js",
+      "signature": "ccf7abb091",
+      "date": "2026-11-20T23:43:53.623Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
