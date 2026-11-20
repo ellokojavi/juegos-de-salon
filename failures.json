@@ -5895,6 +5895,19 @@
         "stat": "2 file(s) +8 −2: public/labs/index.html, tools/e2e/flags-held.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44678870393,
+      "check": "end-to-end",
+      "pr": 1697,
+      "branch": "parked-flags-off-tester",
+      "commit": "557c182424409964802b42f513e9c26d59f361e9",
+      "test": "UNKNOWN STEP",
+      "error": "^[[36;1mecho \"::error::the server did not come up\"; exit 1^[[0m\n^[[36;1mtimeout 60 \"$RUNNER_TEMP/chrome\" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true^[[0m\nError: Uncaught TypeError: Cannot read properties of null (reading 'click')",
+      "signature": "ed711792cd",
+      "date": "2026-11-20T05:31:47.883Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
