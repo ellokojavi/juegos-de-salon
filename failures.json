@@ -5821,7 +5821,11 @@
       "error": "ERROR · appeared modules: public/labs/marquee/marquee.js",
       "signature": "91bcf30149",
       "date": "2026-11-20T04:20:40.939Z",
-      "fix": null,
+      "fix": {
+        "commit": "6944c10dbe2784037bfe4ad74385be6d98a35f21",
+        "date": "2026-11-20T04:24:08.342Z",
+        "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
