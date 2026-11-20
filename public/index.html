@@ -621,7 +621,7 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     // Offline mode's ☁️ (D-538): whether this phone can play with no signal; hidden while the flag is off. lab: #seccion-offline
-    import('./assets/js/offline-ready.js').then(({ offlineReadyButton }) => document.getElementById('offline-ready-slot').append(offlineReadyButton({ tap: () => SFX.tap() }))).catch(() => {});
+    const offlineReady = import('./assets/js/offline-ready.js').then(({ offlineReadyButton }) => document.getElementById('offline-ready-slot').append(offlineReadyButton({ tap: () => SFX.tap() }))).catch(() => {});
     document.addEventListener('click', e => { if (e.target.closest('.game-card, .fav, .lang-toggle button, .filtros button, .link-btn')) SFX.tap(); });
     const lang = getLang();
     document.documentElement.lang = lang;
@@ -659,6 +659,14 @@
     }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
+    // ⚙️ Settings: the language, the sound and the games kept for no signal in one button, the bar in one row
+    // (flag home-settings). lab: #seccion-home-settings
+    import('./assets/js/flags.js').then(({ flag }) => flag('home-settings')).then(async on => {
+      if (!on) return;
+      await offlineReady;
+      const { mountHomeSettings } = await import('./assets/js/home-settings.js');
+      mountHomeSettings({ bar: document.querySelector('.portada-barra'), lang, tap: () => SFX.tap() });
+    }).catch(() => {});
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más
     // Mientras estén en el laboratorio, solo en los celulares que los activaron
     import('./assets/js/jugador.js').then(({ rankingsVisibles }) => {

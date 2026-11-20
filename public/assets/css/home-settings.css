@@ -1,0 +1,17 @@
+/* The home page's ⚙️ settings (lab flag home-settings, home-settings.js): one button for the language,
+   the sound and the games kept for no signal; the bar is one row */
+/* The panel hangs from the bar's right edge, not the button's, so it never leaves the screen at 320 px */
+.portada-barra.with-settings { flex-wrap: nowrap; position: relative; }
+.settings-wrap { display: inline-flex; }
+.settings-pop {
+  position: absolute; top: calc(100% + var(--s-8)); right: 0; z-index: 30;
+  width: max-content; max-width: 100%;
+  display: grid; gap: var(--s-12); padding: var(--s-16);
+  background: var(--bg2); border: 1px solid var(--glass-border); border-radius: var(--r-16);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.settings-pop[hidden] { display: none; }
+.settings-title { margin: 0; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-16); }
+.settings-row[hidden] { display: none; }
+.settings-label { font-weight: 800; font-size: var(--fs-100); }
