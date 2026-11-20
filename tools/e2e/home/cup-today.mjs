@@ -63,7 +63,8 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), 'played today: as tall as One a Day\'s card');
   }
   // The top bar (flag home-pill-bar, #1027): its buttons as tall as the language toggle
-  ok(await ev(`[...document.querySelectorAll('.portada-barra .tools .icon-btn, .portada-barra .tools .sound-toggle')].every(x => Math.abs(x.offsetHeight - document.querySelector('.portada-barra .lang-toggle').offsetHeight) <= 1)`), `${width}px: the top bar's buttons are as tall as the language toggle`);
+  // With ⚙️ settings (flag home-settings) the toggle lives in its closed panel: the bar's buttons are one height among themselves
+  ok(await ev(`(bar => { const btns = [...bar.querySelectorAll('.tools > .icon-btn, .tools > span > .icon-btn, .tools > span > .sound-toggle')].filter(x => x.offsetHeight); const ref = bar.classList.contains('with-settings') ? btns[0].offsetHeight : bar.querySelector('.lang-toggle').offsetHeight; return btns.every(x => Math.abs(x.offsetHeight - ref) <= 1); })(document.querySelector('.portada-barra'))`), `${width}px: the top bar's buttons are as tall as the language toggle (or as each other, with ⚙️)`);
   await b.shot(name);
   b.close();
 }
