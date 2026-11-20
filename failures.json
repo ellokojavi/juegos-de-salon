@@ -6017,7 +6017,11 @@
       "error": "ERROR · appeared modules: public/labs/cryptic/sealed.js",
       "signature": "0eb479b77c",
       "date": "2026-11-20T17:13:58.566Z",
-      "fix": null,
+      "fix": {
+        "commit": "a309590549e13f5a1931f8841500a64f47d647ca",
+        "date": "2026-11-20T17:22:20.359Z",
+        "stat": "1 file(s) +3 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
