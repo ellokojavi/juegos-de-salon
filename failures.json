@@ -6153,7 +6153,11 @@
       "error": "✗ case: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (no footer on the screen)",
       "signature": "14362fb79f",
       "date": "2026-11-21T16:40:11.696Z",
-      "fix": null,
+      "fix": {
+        "commit": "08f8b89fed31013a8354ddb5ef73ba8282c9e9f8",
+        "date": "2026-11-21T16:51:57.612Z",
+        "stat": "4 file(s) +11 −5: tools/e2e/cup-games/footer-bottom.mjs, tools/e2e/footer-bottom.mjs, tools/e2e/footer-bottom.test.mjs, tools/e2e/pages-footer-bottom.mjs"
+      },
       "flaky": false
     }
   ]
