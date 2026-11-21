@@ -6125,6 +6125,19 @@
         "stat": "2 file(s) +7 −2: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44871012901,
+      "check": "end-to-end",
+      "pr": 1728,
+      "branch": "cryptic-three-clues",
+      "commit": "1efef0f3e54bd5357643e6aec6dfb9a0447567b2",
+      "test": "cryptic/languages.mjs",
+      "error": "✗ play · en: no line identical to the Spanish one: \"Hace aserrín y recorta el horizonte (6)\"",
+      "signature": "5726588038",
+      "date": "2026-11-21T05:38:45.178Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
