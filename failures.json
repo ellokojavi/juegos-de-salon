@@ -6085,7 +6085,11 @@
       "error": "ERROR · appeared modules: public/panel/wbr-view.js, public/wbr/page.js",
       "signature": "86588a1bc8",
       "date": "2026-11-21T02:37:48.597Z",
-      "fix": null,
+      "fix": {
+        "commit": "b8c59e093e37e413db391d8559a32c28bc0eff1e",
+        "date": "2026-11-21T02:47:37.982Z",
+        "stat": "4 file(s) +9 −3: README.md, docs/AGENTS.md, docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     },
     {
@@ -6098,7 +6102,11 @@
       "error": "ERROR · appeared modules: public/panel/wbr-view.js, public/wbr/page.js",
       "signature": "86588a1bc8",
       "date": "2026-11-21T02:38:38.947Z",
-      "fix": null,
+      "fix": {
+        "commit": "b8c59e093e37e413db391d8559a32c28bc0eff1e",
+        "date": "2026-11-21T02:47:37.982Z",
+        "stat": "3 file(s) +8 −3: README.md, docs/AGENTS.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
@@ -6111,7 +6119,11 @@
       "error": "ERROR · appeared modules: public/panel/wbr-view.js, public/wbr/page.js",
       "signature": "86588a1bc8",
       "date": "2026-11-21T02:39:07.182Z",
-      "fix": null,
+      "fix": {
+        "commit": "b8c59e093e37e413db391d8559a32c28bc0eff1e",
+        "date": "2026-11-21T02:47:37.982Z",
+        "stat": "2 file(s) +7 −2: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
