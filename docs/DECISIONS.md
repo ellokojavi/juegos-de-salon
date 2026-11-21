@@ -42,7 +42,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474, D-499, D-512, D-539 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465, D-595 |
 | Game memory | C-6 | D-25, D-150 |
-| Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447, D-481, D-483 |
+| Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447, D-481, D-483, D-599 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427, D-482, D-485, D-508 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-503, D-504, D-509, D-528, D-554, D-560, D-561, D-584, D-590 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529, D-591 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538, D-544, D-545, D-546, D-564, D-565, D-571, D-574 |
 
-## In force (582)
+## In force (583)
 
 | D | Title | Status |
 |---|---|---|
@@ -132,7 +132,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-74](decisions/D-74.md) | The language can come in the link | amended by D-197, D-536 |
 | [D-75](decisions/D-75.md) | The app measures what is seen, not what the screen says it measures | amended by D-77 |
 | [D-76](decisions/D-76.md) | Screenshots are taken with the screen still | amended by D-77 |
-| [D-77](decisions/D-77.md) | The app is built for the small height of the screen | current |
+| [D-77](decisions/D-77.md) | The app is built for the small height of the screen | amended by D-599 |
 | [D-78](decisions/D-78.md) | The README in English, the rest in Spanish | amended by D-316, D-324 |
 | [D-79](decisions/D-79.md) | The panel records who won and from which country it was played | current |
 | [D-80](decisions/D-80.md) | Six ranks in the panel, and what is downloaded grows with them | amended by D-473 |
@@ -641,6 +641,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-596](decisions/D-596.md) | On the owner's own PR, the tick survives a later push that touches no 🔴 file | current |
 | [D-597](decisions/D-597.md) | Agents that must not touch code are stopped by a hook, and PRs flag documentation drift | current |
 | [D-598](decisions/D-598.md) | Críptico: three clues a day, scored out of 100 | current |
+| [D-599](decisions/D-599.md) | Nothing under the footer, on every page | current |
 
 ## No longer in force (12)
 

@@ -90,7 +90,7 @@ measured: each job leaves a "Durations" notice with how long each script took, a
 `node tools/e2e/groups.mjs measure` moves it into `durations.json` (the processes round, every round;
 that file alone runs no script, D-428). A script that goes over about 4 minutes is split into parts (`PARTS` in
 `ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs`, `demos` and `weekend` (D-439), `cup/languages.mjs` into `cup`,
-`standalone`, `screens-a` and `screens-b` (D-428), `cup-games/languages.mjs` into one per game, and `landing-fold.mjs` into `320` and `375` (one per phone width). Each part reaches the script as `--part <name>`; without a part, the script runs whole
+`standalone`, `screens-a` and `screens-b` (D-428), `cup-games/languages.mjs` and `cup-games/footer-bottom.mjs` into one per game, and `landing-fold.mjs` into `320` and `375` (one per phone width). Each part reaches the script as `--part <name>`; without a part, the script runs whole
 (that is how `readme.py screenshots` runs it, and anyone testing it by hand).
 
 A PR that touches nothing in the browser (`docs/`, `marketing/`, `.claude/`, the `.md` files outside `public/`
@@ -181,6 +181,7 @@ The **key margins** (DESIGN.md §3 rule 7) are measured on every `b.shot()` too 
 
 A **double tap** counts once (C-14, D-576): `doubleTap(b, selector)` (`double-tap.mjs`) clicks a button twice 60 ms apart; a game's script calls it on each button that waits on an animation before it acts, then checks the screen (one round moved, the cards still there).
 The **space between a cover's blocks** (DESIGN.md §3 rule 6) is measured by `cover-gaps.mjs`: the panels, stage and ranking of a game's first screen sit 12 px from the next. `conformance.mjs` runs it as each game's `spacing` check, and ¡Al toque!'s `in-a-flash/page.mjs` too.
+**Nothing under the footer** (D-599) is measured by `footer-bottom.mjs`: on a tall phone (1016 px) with the column made 56 px shorter, as when Android hides its address bar, the screen's last row of pixels, scrolled to the end, must have the colour of the footer's own last row. It applies to every page: `conformance.mjs` runs it on every game with a game.json, `cup-games/footer-bottom.mjs` on every La Copa game's cover and `pages-footer-bottom.mjs` on every other page with a footer; `footer-bottom.test.mjs` fails when a page is in none of them and not in `NO_FOOTER` with why it has no footer.
 `--height`, `--notches` (a phone with a notch), `--chat` (mounts the room chat's 💬 bubble and names any button it covers, C-15) and `--out <folder>` are the other options. The
 panel is viewed with seeded data: `look.mjs panel <shot>`, with `data`, `now`, `tournament`, `games`,
 `audience`, `traffic`, `screens`, `health` (D-251), `cup-card`, `cup-days`, `cup-history`, `game-card` or `room-card` (D-207); `tournament` also brings a week of seeded notifications (D-233). The
@@ -314,6 +315,8 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `cup-games/footer-bottom.mjs` | Every La Copa game's cover ends in its sunset down to the bottom edge, also with the browser's bar hidden (`footer-bottom.mjs`, D-599); one part per game |
+| `pages-footer-bottom.mjs` | Every other page with a footer (the home page in each language, Rankings, Uno al día, the lab) ends in it down to the bottom edge, also with the browser's bar hidden (D-599) |
 | `sudoku/game.mjs` | Sudoku (lab): each level, a repeated digit (red, costs 10 points), a note and an undo, the board filled through the hook and its score checked; the conformance checks run it in every language |
 | `memory/page.mjs` | 👀 Memorice at /memorice/ (D-517's way, behind flags/memory): the waiting room with the 👀 title and the demo board playing itself; Empezar, the 3×3 board, ⏩ Tapar ya, the asked picture found (round 2), three wrong tiles end the game, Continuar and the result with its breakdown and card; en and pt; no sideways scroll at 320 px |
 | `sudoku/page.mjs` | #️⃣ Sudoku at /sudoku/ (D-517's way): the waiting room with the drawn icon, the demo and the level lever; the 6×6 board, a wrong digit (−10), a hint (−15), the board filled and the result with its breakdown and card; the lever up to the 9×9 and the red-violet page, giving up (0, the solution); en and pt at 320 px |

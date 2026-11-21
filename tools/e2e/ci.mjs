@@ -33,7 +33,7 @@ const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
 const CAP_MS = 15 * 60 * 1000;
 
 // Not tests: they look at screens or build screenshot sheets
-const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'margins-common.mjs', 'double-tap.mjs', 'cover-gaps.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs', 'inert.mjs', 'narrow.mjs', 'png.mjs', 'landing-stamp.mjs']);
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'margins-common.mjs', 'double-tap.mjs', 'cover-gaps.mjs', 'footer-bottom.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs', 'inert.mjs', 'narrow.mjs', 'png.mjs', 'landing-stamp.mjs']);
 // They open rooms or join them in the production Firebase: still run by hand
 const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const ALSO_FIREBASE = new Set([
@@ -60,6 +60,8 @@ export const PARTS = {
   // One job per phone width: whole, it was the longest script (~8 min) and set every full run's time
   'landing-fold.mjs': ['320', '375'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
+  // One job per game's cover, the same parts (D-599)
+  'cup-games/footer-bottom.mjs': SUELTOS.map(m => m.slug),
   // One job per game's screens, named after its page, so a PR compares only the games it reaches (#1249)
   'visual.mjs': visualScreens().map(s => s.part),
   // The conformance suite, one part per game with a game.json, named after its folder's last segment (#1249 step 8)

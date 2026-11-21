@@ -137,6 +137,8 @@ export async function launch({ port: requested, dir, out, width = 390, height = 
     flags: states => { for (const [id, state] of Object.entries(states)) flagOverrides[id] = { state }; },
     send, // raw CDP, for what has no helper (for example cutting Firebase off the network)
     evaluate: async expr => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.text + ' ' + (r.result.exceptionDetails.exception?.description || '')); return r.result?.result?.value; },
+    // Changes the screen size mid-run (a measure that needs a taller phone), then back with the launch's own size
+    resize: async (w = width, h = height) => { await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 2, mobile: true }); await sleep(300); },
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
     /**
      * Like `go`, but without a fixed pause: waits for the new page's `load` and for it to settle

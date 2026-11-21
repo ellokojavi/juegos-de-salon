@@ -167,6 +167,25 @@
    ]
   },
   {
+   "id": "footer-bottom",
+   "title": "Nothing under the footer, on every page: a page with a footer ends in it down to the bottom edge of the screen, also with the browser's bar hidden; a page without one says why (D-599)",
+   "doc": "docs/DESIGN.md",
+   "form": [
+    "check"
+   ],
+   "enforcedBy": [
+    "tools/e2e/footer-bottom.mjs",
+    "tools/e2e/conformance.mjs",
+    "tools/e2e/cup-games/footer-bottom.mjs",
+    "tools/e2e/pages-footer-bottom.mjs",
+    "tools/e2e/footer-bottom.test.mjs"
+   ],
+   "applies": [
+    "public/**/*.css",
+    "public/assets/js/site-footer.js"
+   ]
+  },
+  {
    "id": "visual-measured",
    "title": "Every visual change is measured before it ships: shot by its e2e script, measured with look.mjs at 390 and 320 px, what was measured said in the PR (DESIGN.md rule 10, D-570)",
    "doc": "docs/DESIGN.md",

@@ -155,7 +155,7 @@ these uses the class; a game that needs something close to one asks for a varian
 | One a day | `.uad*` | |
 | Ranking | `.rk-*` in `ranking.css` | tables, rows, medals (D-212); a ranking section under the stage (`.app > #ranking`) takes its 12 px from it (§3 rule 6), no game sets that space |
 | Keyboard | `teclado.css` | |
-| Topbar, footer | `.topbar`, footer | the `atardecer` footer also covers the room `<body>` keeps for a phone's gesture bar (`--safe-bottom`), so no dark band shows under it |
+| Topbar, footer | `.topbar`, footer | the `atardecer` footer also covers the room `<body>` keeps for a phone's gesture bar (`--safe-bottom`), and its last colour carries on to the bottom edge of the screen (`::after`, a shadow that does not lengthen the page), so no dark band shows under it on any page, also with the browser's bar hidden (D-599, checked on every page by `tools/e2e/footer-bottom.mjs`; a page without a footer is listed in `pages-footer-bottom.mjs` with why) |
 
 **The game shell** (phase 4, #1192): what every game's screens are made of, once in `base.css`.
 Until November 2026 each game copied these from the one before (eleven copies of `.screen`, eight
