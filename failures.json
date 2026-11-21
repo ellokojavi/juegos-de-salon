@@ -6087,6 +6087,19 @@
       "date": "2026-11-21T02:37:48.597Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44856872685,
+      "check": "tests",
+      "pr": 1724,
+      "branch": "wbr-share",
+      "commit": "0faee039d9821feae7e62fdae0e0a06e9ab6c52c",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/panel/wbr-view.js, public/wbr/page.js",
+      "signature": "86588a1bc8",
+      "date": "2026-11-21T02:38:38.947Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
