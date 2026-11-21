@@ -6159,6 +6159,19 @@
         "stat": "4 file(s) +11 −5: tools/e2e/cup-games/footer-bottom.mjs, tools/e2e/footer-bottom.mjs, tools/e2e/footer-bottom.test.mjs, tools/e2e/pages-footer-bottom.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 44939635236,
+      "check": "tests",
+      "pr": 1743,
+      "branch": "profile-lab",
+      "commit": "92e974e5d397a83a0e68b0ef0f29a15dca373484",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/play-hours.js, public/assets/js/profile-button.js, public/profile/badges.js, public/profile/profile.js, public/profile/texts.js",
+      "signature": "f432e18ab6",
+      "date": "2026-11-21T19:14:44.181Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
