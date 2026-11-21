@@ -6176,6 +6176,19 @@
         "stat": "2 file(s) +16 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 44959890639,
+      "check": "end-to-end",
+      "pr": 1745,
+      "branch": "profile-everywhere",
+      "commit": "0a393c1cac19b1882695da211a79789315edea51",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: /queens/'s language opens inside the screen",
+      "signature": "dba5a298d2",
+      "date": "2026-11-21T23:15:25.532Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
