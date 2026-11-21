@@ -6170,7 +6170,11 @@
       "error": "ERROR · appeared modules: public/assets/js/play-hours.js, public/assets/js/profile-button.js, public/profile/badges.js, public/profile/profile.js, public/profile/texts.js",
       "signature": "f432e18ab6",
       "date": "2026-11-21T19:14:44.181Z",
-      "fix": null,
+      "fix": {
+        "commit": "c66b8a45b2437755263f9aeab3c210010a6e8417",
+        "date": "2026-11-21T19:16:35.023Z",
+        "stat": "2 file(s) +16 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
