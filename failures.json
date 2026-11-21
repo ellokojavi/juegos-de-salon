@@ -6142,6 +6142,19 @@
         "stat": "1 file(s) +5 −2: tools/e2e/cryptic/languages.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 44924948560,
+      "check": "end-to-end",
+      "pr": 1736,
+      "branch": "footer-no-band",
+      "commit": "e1265a1c4d62cb143b0b5fcb339154aff2473da6",
+      "test": "cup-games/footer-bottom.mjs:case",
+      "error": "✗ case: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (no footer on the screen)",
+      "signature": "14362fb79f",
+      "date": "2026-11-21T16:40:11.696Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
