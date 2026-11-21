@@ -533,6 +533,18 @@ table.wbr td.wbr-tendencia-celda { padding-top: 0; padding-bottom: 0; vertical-a
 .wbr-tendencia .wbr-tendencia-parcial { stroke-dasharray: 3 3; }
 .wbr-tendencia circle { fill: var(--pink); }
 
+/* The WBR as a PDF deck (📄 PDF): 16:9 slides for a screen, not paper; the page as it looks, controls out */
+@media print {
+  @page { size: 1120px 630px; margin: 0; }
+  html.wbr-pdf, html.wbr-pdf * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html.wbr-pdf body { background: var(--bg2); background-image: none; }
+  html.wbr-pdf .app { max-width: none; margin: 0; padding: var(--s-32) var(--s-32) 0; }
+  html.wbr-pdf .topbar, html.wbr-pdf .filters, html.wbr-pdf .nav-panel, html.wbr-pdf .pie, html.wbr-pdf .wbr-nav, html.wbr-pdf #avisos-dueno-msg, html.wbr-pdf .screen:not(#screen-panel) { display: none !important; }
+  html.wbr-pdf .wbr-diapo { break-before: page; padding-top: var(--s-32); }
+  html.wbr-pdf .wbr-grafico, html.wbr-pdf table.wbr tr { break-inside: avoid; }
+  html.wbr-pdf .wbr-scroll { overflow: visible; }
+}
+
 /* 📱 Screens: the bands with their phones, and the width × height cross */
 .pant-scroll { overflow-x: auto; }
 table.pant { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }

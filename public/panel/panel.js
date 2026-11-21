@@ -1413,7 +1413,7 @@ function wbrGraficoRitmo(t) {
   svg.append(linea(r.promedio, 'wbr-ritmo-prom'), linea(r.pasada, 'wbr-ritmo-pasada'), linea(r.esta, 'wbr-ritmo-esta'));
   const mismoDia = r.pasada[hoy], cambio = mismoDia ? Math.round((r.esta[hoy] / mismoDia - 1) * 100) : null;
   const dia = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][hoy];
-  return el('div', { class: 'wbr-grafico' },
+  return el('div', { class: 'wbr-grafico wbr-diapo' },
     el('h3', {}, 'Pace: games finished from Sunday'),
     el('ul', { class: 'wbr-leyenda' },
       el('li', { class: 'wbr-leyenda--esta' }, el('b', {}, `${r.semana}: ${n(r.esta[hoy])}`), cambio === null ? '' : `, ${cambio > 0 ? '+' : cambio < 0 ? '−' : '±'}${Math.abs(cambio)}% vs. ${n(mismoDia)} by ${dia} of ${r.anterior.replace('–', '–\u2060')}`),
@@ -1442,13 +1442,29 @@ function wbrTendencia(t, valores) {
   return svg;
 }
 
+/**
+ * The WBR as a PDF deck for screens: the browser's own PDF (Save as PDF in the print dialog) of this very
+ * page, with its CSS, its fonts and real text; 16:9 slides, one section each (`.wbr-diapo` starts one),
+ * the dark background kept and the panel's controls left out (`html.wbr-pdf` in style.css). The file is
+ * named after the week (the page title while it prints).
+ */
+function wbrPdf(w) {
+  const titulo = document.title;
+  document.title = `WBR ${isoDay(w.from)} to ${isoDay(w.to)}`;
+  document.documentElement.classList.add('wbr-pdf');
+  const fin = () => { document.documentElement.classList.remove('wbr-pdf'); document.title = titulo; removeEventListener('afterprint', fin); };
+  addEventListener('afterprint', fin);
+  print();
+}
+
 function vistaWbr(now) {
   const w = weekOf(S.ruta.args[0], now);
   const nota = 'The closed week (Sunday to Saturday, Pacific time) against the four before and the last three months, like the Sunday email; on the latest closed week, the week so far goes first and the month runs to today (marked *, partial, not compared). Lab plays left out (D-560). Browsers and visits before Nov 16 follow UTC days (D-561).';
   const cabeza = [...titulo(`📋 WBR · ${wbrDay(w.from).replace(/, \d{4}$/, '')} – ${wbrDay(w.to)}`, nota),
     el('div', { class: 'wbr-nav' },
       el('a', { class: 'btn btn--sm btn--ghost', href: ir('wbr', [isoDay(w.to - 7)]) }, '‹ Week before'),
-      w.to < weekOf(null, now).to ? el('a', { class: 'btn btn--sm btn--ghost', href: ir('wbr', [isoDay(w.to + 7)]) }, 'Week after ›') : null)];
+      w.to < weekOf(null, now).to ? el('a', { class: 'btn btn--sm btn--ghost', href: ir('wbr', [isoDay(w.to + 7)]) }, 'Week after ›') : null,
+      S.daysLoaded && S.torneosLoaded ? el('button', { type: 'button', class: 'btn btn--sm btn--ghost', onClick: () => wbrPdf(w) }, '📄 PDF') : null)];
   if (!S.daysLoaded || !S.torneosLoaded) return [...cabeza, el('p', { class: 'empty' }, 'Loading…')];
   // Kept until its data or week changes: every Firebase answer and the 30 s tick redraw the panel (it froze)
   const dias = wbrDays(), copas = playerCups(), flags = S.flags || SIN_FLAGS;
@@ -1470,15 +1486,15 @@ function vistaWbr(now) {
     el('ul', { class: 'wbr-destacados' }, ...highlights(t).map(x => el('li', {}, x))),
     wbrGraficoSemanas(t),
     wbrGraficoRitmo(t),
-    el('h3', {}, 'Headline'),
+    el('h3', { class: 'wbr-diapo' }, 'Headline'),
     tabla(t.metricas.map(m => [m.nombre, m.valores, m.cambio, m.decimales]), ''),
     el('p', { class: 'muted small' }, t.leyenda),
-    el('h3', {}, 'Games'),
+    el('h3', { class: 'wbr-diapo' }, 'Games'),
     el('p', { class: 'muted small' }, 'Every game finished at least once in the trend\'s weeks, ranked by the closed week. Games finished, as in the headline; every mode and version, La Copa included. Trend: its weeks, oldest to newest. n/a: not measured yet, or the game was not out yet. Under the total, the share of games finished the top 3, 5, 10 and 20 take, each column ranking its own games.'),
     tabla([...t.todos.map((g, i) => [`${i + 1}. ${g.juego}${g.nuevo ? ` (out ${g.nuevo.replace(/, \d{4}$/, '')})` : ''}`, g.valores, g.cambio]),
       ['Total games finished', t.totales.valores, t.totales.cambio, false, 'wbr-total'],
       ...[3, 5, 10, 20].map(nn => [`Top ${nn} share`, t.totales.cuota[nn], null, '%'])], 'Game', true),
-    el('h3', {}, 'Weekly active users by game'),
+    el('h3', { class: 'wbr-diapo' }, 'Weekly active users by game'),
     el('p', { class: 'muted small' }, `Browsers that finished each game at least once in the week; a month is the average of its full weeks (Sunday to Saturday) since the game came out. Sorted by the closed week, most first. ~ estimated: before ${desdeConteo}, the browsers that started a game that week split by each game's share of the games finished; it reads low, since one browser plays several games.`),
     u.filas.length ? tabla(u.filas.map(f => [f.juego, f.valores, f.cambio, 'auto', null, u.estimado]), 'Game') : el('p', { class: 'empty' }, 'No browsers measured in this week yet.'),
   ];
