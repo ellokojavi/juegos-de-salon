@@ -6074,6 +6074,19 @@
         "stat": "1 file(s) +1 −1: public/panel/panel.js"
       },
       "flaky": false
+    },
+    {
+      "run": 44856819725,
+      "check": "tests",
+      "pr": 1724,
+      "branch": "wbr-share",
+      "commit": "718de3f79bfe7ea5ba93c647894a902b38fd792c",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/panel/wbr-view.js, public/wbr/page.js",
+      "signature": "86588a1bc8",
+      "date": "2026-11-21T02:37:48.597Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
