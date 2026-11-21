@@ -6136,7 +6136,11 @@
       "error": "✗ play · en: no line identical to the Spanish one: \"Hace aserrín y recorta el horizonte (6)\"",
       "signature": "5726588038",
       "date": "2026-11-21T05:38:45.178Z",
-      "fix": null,
+      "fix": {
+        "commit": "f14aee22b31c8bfd7e8ac04633355a6929a845e7",
+        "date": "2026-11-21T05:49:33.269Z",
+        "stat": "1 file(s) +5 −2: tools/e2e/cryptic/languages.mjs"
+      },
       "flaky": false
     }
   ]
