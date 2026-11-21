@@ -6187,7 +6187,11 @@
       "error": "✗ 320: /queens/'s language opens inside the screen",
       "signature": "dba5a298d2",
       "date": "2026-11-21T23:15:25.532Z",
-      "fix": null,
+      "fix": {
+        "commit": "f899816552648e38ed5d7ff34b2d2c4acaf310c9",
+        "date": "2026-11-21T23:29:18.227Z",
+        "stat": "1 file(s) +2 −0: public/assets/css/base.css"
+      },
       "flaky": false
     }
   ]
