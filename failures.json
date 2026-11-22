@@ -6336,7 +6336,11 @@
       "error": "✗ the list below does not move while typing",
       "signature": "915b0ecda5",
       "date": "2026-11-22T23:14:45.063Z",
-      "fix": null,
+      "fix": {
+        "commit": "5b09c68f21b77deff5a3003e9206539ac7de35a0",
+        "date": "2026-11-22T23:32:59.340Z",
+        "stat": "2 file(s) +2 −2: public/assets/css/duels.css, public/assets/js/duels-home.js"
+      },
       "flaky": false
     },
     {
@@ -6349,7 +6353,11 @@
       "error": "✗ 🔥 Populares shows only the three popular games, and the link keeps it",
       "signature": "0bdf9b2501",
       "date": "2026-11-22T23:14:45.063Z",
-      "fix": null,
+      "fix": {
+        "commit": "5b09c68f21b77deff5a3003e9206539ac7de35a0",
+        "date": "2026-11-22T23:32:59.340Z",
+        "stat": "2 file(s) +2 −2: public/assets/css/duels.css, public/assets/js/duels-home.js"
+      },
       "flaky": false
     },
     {
@@ -6362,7 +6370,11 @@
       "error": "✗ 320: 🎃 its window fits the screen",
       "signature": "e5aa407465",
       "date": "2026-11-22T23:14:45.063Z",
-      "fix": null,
+      "fix": {
+        "commit": "5b09c68f21b77deff5a3003e9206539ac7de35a0",
+        "date": "2026-11-22T23:32:59.340Z",
+        "stat": "2 file(s) +2 −2: public/assets/css/duels.css, public/assets/js/duels-home.js"
+      },
       "flaky": false
     }
   ]
