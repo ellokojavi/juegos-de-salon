@@ -6261,6 +6261,19 @@
         "stat": "1 file(s) +4 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45031949743,
+      "check": "end-to-end",
+      "pr": 1761,
+      "branch": "processes-2026-11-22-failure-log",
+      "commit": "65b6f09162cf49931dfaeb71c109e42e0a6a7ac4",
+      "test": "cup/variants.mjs",
+      "error": "✗ the random week can bring Pintaminas and Loteo",
+      "signature": "fc75af69d6",
+      "date": "2026-11-22T14:33:55.695Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
