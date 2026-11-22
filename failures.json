@@ -6325,6 +6325,45 @@
         "stat": "2 file(s) +9 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45080378781,
+      "check": "end-to-end",
+      "pr": 1777,
+      "branch": "ccr-de3c29e1-6xot2p",
+      "commit": "0c75adff383756f475d713f3f0583cb3bba8f03d",
+      "test": "home/search.mjs",
+      "error": "✗ the list below does not move while typing",
+      "signature": "915b0ecda5",
+      "date": "2026-11-22T23:14:45.063Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45080378781,
+      "check": "end-to-end",
+      "pr": 1777,
+      "branch": "ccr-de3c29e1-6xot2p",
+      "commit": "0c75adff383756f475d713f3f0583cb3bba8f03d",
+      "test": "home/popular.mjs",
+      "error": "✗ 🔥 Populares shows only the three popular games, and the link keeps it",
+      "signature": "0bdf9b2501",
+      "date": "2026-11-22T23:14:45.063Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45080378781,
+      "check": "end-to-end",
+      "pr": 1777,
+      "branch": "ccr-de3c29e1-6xot2p",
+      "commit": "0c75adff383756f475d713f3f0583cb3bba8f03d",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: 🎃 its window fits the screen",
+      "signature": "e5aa407465",
+      "date": "2026-11-22T23:14:45.063Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
