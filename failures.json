@@ -6206,6 +6206,19 @@
       "date": "2026-11-22T00:57:01.893Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44966203421,
+      "check": "end-to-end",
+      "pr": 1747,
+      "branch": "profile-account",
+      "commit": "aa9aed39350a30580718a70b9a2cf0c469259cad",
+      "test": "blackjack/languages.mjs",
+      "error": "✗ result · pt: no horizontal scroll (C-8)",
+      "signature": "5d11b1de02",
+      "date": "2026-11-22T01:06:39.843Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
