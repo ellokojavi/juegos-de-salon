@@ -6227,6 +6227,19 @@
         "stat": "23 file(s) +61 −34: changelog/badge-obsession-name.md, changelog/blackjack-shake-scroll.md, changelog/profile-no-initial.md, changelog/splash-bigger-clips.md, marketing/splash/README.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 44988129305,
+      "check": "tests",
+      "pr": 1758,
+      "branch": "wobbles-cover-anim",
+      "commit": "aeefc802f27c7c8e7391813fb85d7a0c29d53755",
+      "test": "README up to date",
+      "error": "ERROR · appeared games.wobbles.files: public/wobbles/cover/easy.jpg, public/wobbles/cover/easy.mp4, public/wobbles/cover/hard.jpg, public/wobbles/cover/hard.mp4",
+      "signature": "ac41306823",
+      "date": "2026-11-22T05:15:56.117Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
