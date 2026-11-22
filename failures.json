@@ -6240,6 +6240,19 @@
       "date": "2026-11-22T05:15:56.117Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 44988598728,
+      "check": "tests",
+      "pr": 1758,
+      "branch": "wobbles-cover-anim",
+      "commit": "d093b79dfa83cc3b17d9b62639d777d98108db0e",
+      "test": "README up to date",
+      "error": "ERROR · appeared games.wobbles.files: public/wobbles/cover/easy.jpg, public/wobbles/cover/easy.mp4, public/wobbles/cover/hard.jpg, public/wobbles/cover/hard.mp4",
+      "signature": "ac41306823",
+      "date": "2026-11-22T05:17:25.346Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
