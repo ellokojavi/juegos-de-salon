@@ -6193,6 +6193,19 @@
         "stat": "1 file(s) +2 −0: public/assets/css/base.css"
       },
       "flaky": false
+    },
+    {
+      "run": 44966203421,
+      "check": "end-to-end",
+      "pr": 1747,
+      "branch": "profile-account",
+      "commit": "aa9aed39350a30580718a70b9a2cf0c469259cad",
+      "test": "(end-to-end)",
+      "error": "no failing test found in the log",
+      "signature": "f2f83772a2",
+      "date": "2026-11-22T00:57:01.893Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
