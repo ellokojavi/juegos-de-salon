@@ -6285,7 +6285,11 @@
       "error": "✗ en: the lever in en",
       "signature": "d977b3f0ec",
       "date": "2026-11-22T17:49:36.163Z",
-      "fix": null,
+      "fix": {
+        "commit": "99e3f1107125c8abbeac3e1ab766f1013bcb3cfb",
+        "date": "2026-11-22T19:10:56.663Z",
+        "stat": "1 file(s) +1 −1: tools/e2e/croc/page.mjs"
+      },
       "flaky": false
     }
   ]
