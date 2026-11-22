@@ -6291,6 +6291,19 @@
         "stat": "1 file(s) +1 −1: tools/e2e/croc/page.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 45061639560,
+      "check": "tests",
+      "pr": 1771,
+      "branch": "profile-cups",
+      "commit": "81850d96bdb8c7dd0b1eb8b567ba63ead3c11097",
+      "test": "README up to date",
+      "error": "ERROR · appeared games.copa.files: public/cup/history.js, public/cup/history/index.html\nERROR · appeared modules: public/cup/history.js",
+      "signature": "57bf712e57",
+      "date": "2026-11-22T19:37:18.526Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
