@@ -6238,7 +6238,11 @@
       "error": "ERROR · appeared games.wobbles.files: public/wobbles/cover/easy.jpg, public/wobbles/cover/easy.mp4, public/wobbles/cover/hard.jpg, public/wobbles/cover/hard.mp4",
       "signature": "ac41306823",
       "date": "2026-11-22T05:15:56.117Z",
-      "fix": null,
+      "fix": {
+        "commit": "987fa5157b91ca2c35ea117bf7cc59ccc2a3939a",
+        "date": "2026-11-22T05:19:20.335Z",
+        "stat": "5 file(s) +8 −4: docs/facts.json, marketing/splash/clips.md, public/wobbles/cover/easy.jpg, public/wobbles/cover/easy.mp4, tools/generators/wobbles-cover.mjs"
+      },
       "flaky": false
     },
     {
@@ -6251,7 +6255,11 @@
       "error": "ERROR · appeared games.wobbles.files: public/wobbles/cover/easy.jpg, public/wobbles/cover/easy.mp4, public/wobbles/cover/hard.jpg, public/wobbles/cover/hard.mp4",
       "signature": "ac41306823",
       "date": "2026-11-22T05:17:25.346Z",
-      "fix": null,
+      "fix": {
+        "commit": "987fa5157b91ca2c35ea117bf7cc59ccc2a3939a",
+        "date": "2026-11-22T05:19:20.335Z",
+        "stat": "1 file(s) +4 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
