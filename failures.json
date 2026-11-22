@@ -6319,7 +6319,11 @@
       "error": "ERROR · appeared modules: public/assets/js/duels-home.js, public/assets/js/duels-texts.js, public/assets/js/duels-ui.js, public/assets/js/duels.js, public/duels/duels-page.js",
       "signature": "618733238a",
       "date": "2026-11-22T22:54:21.987Z",
-      "fix": null,
+      "fix": {
+        "commit": "0c75adff383756f475d713f3f0583cb3bba8f03d",
+        "date": "2026-11-22T22:57:42.545Z",
+        "stat": "2 file(s) +9 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
