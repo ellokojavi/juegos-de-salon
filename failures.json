@@ -6274,6 +6274,19 @@
       "date": "2026-11-22T14:33:55.695Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45050706508,
+      "check": "end-to-end",
+      "pr": 1768,
+      "branch": "ccr-61087785-5liyw9",
+      "commit": "9f06c5904a03a3dceafd9e88d276fe4342ac833f",
+      "test": "croc/page.mjs",
+      "error": "✗ en: the lever in en",
+      "signature": "d977b3f0ec",
+      "date": "2026-11-22T17:49:36.163Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
