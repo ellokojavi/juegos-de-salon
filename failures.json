@@ -6204,7 +6204,11 @@
       "error": "no failing test found in the log",
       "signature": "f2f83772a2",
       "date": "2026-11-22T00:57:01.893Z",
-      "fix": null,
+      "fix": {
+        "commit": "3fd6facd8b2b9fdb08556b3c5f5cff4b01cb3b22",
+        "date": "2026-11-22T01:48:30.379Z",
+        "stat": "23 file(s) +61 −34: changelog/badge-obsession-name.md, changelog/blackjack-shake-scroll.md, changelog/profile-no-initial.md, changelog/splash-bigger-clips.md, marketing/splash/README.md, …"
+      },
       "flaky": false
     },
     {
@@ -6217,7 +6221,11 @@
       "error": "✗ result · pt: no horizontal scroll (C-8)",
       "signature": "5d11b1de02",
       "date": "2026-11-22T01:06:39.843Z",
-      "fix": null,
+      "fix": {
+        "commit": "3fd6facd8b2b9fdb08556b3c5f5cff4b01cb3b22",
+        "date": "2026-11-22T01:48:30.379Z",
+        "stat": "23 file(s) +61 −34: changelog/badge-obsession-name.md, changelog/blackjack-shake-scroll.md, changelog/profile-no-initial.md, changelog/splash-bigger-clips.md, marketing/splash/README.md, …"
+      },
       "flaky": false
     }
   ]
