@@ -6308,6 +6308,19 @@
         "stat": "2 file(s) +5 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45080108563,
+      "check": "tests",
+      "pr": 1777,
+      "branch": "ccr-de3c29e1-6xot2p",
+      "commit": "5fb980fd06c611d983c7d6b90be53560388dc1ed",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/duels-home.js, public/assets/js/duels-texts.js, public/assets/js/duels-ui.js, public/assets/js/duels.js, public/duels/duels-page.js",
+      "signature": "618733238a",
+      "date": "2026-11-22T22:54:21.987Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
