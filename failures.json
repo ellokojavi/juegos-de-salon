@@ -6534,6 +6534,19 @@
       "date": "2026-11-23T15:52:50.281Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 45212767646,
+      "check": "tests",
+      "pr": 1811,
+      "branch": "ccr-770d46d3-p7f6rk",
+      "commit": "866c9d11f834e6d0a530aeb3d57ca382dad7bc1c",
+      "test": "public/assets/js/fin.test.mjs",
+      "error": "",
+      "signature": "d93391aa89",
+      "date": "2026-11-23T16:14:14.503Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
