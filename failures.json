@@ -6579,7 +6579,11 @@
       "error": "✗ 390: offline mode pinned: its row and the cloud states show in the first view",
       "signature": "34dd650bfe",
       "date": "2026-11-23T17:33:05.897Z",
-      "fix": null,
+      "fix": {
+        "commit": "459ce4607c486258d0ae2358b9fdb9b9d44a4786",
+        "date": "2026-11-23T20:07:38.664Z",
+        "stat": "82 file(s) +1591 −611: .github/workflows/preview.yml, README.md, changelog/cryptic-clue-batch-6.md, changelog/groups-alarm-rounding.md, changelog/offline-everywhere.md, …"
+      },
       "flaky": false
     },
     {
@@ -6592,7 +6596,11 @@
       "error": "✗ 390px: the top bar's buttons are as tall as the language toggle",
       "signature": "70d8e2fa96",
       "date": "2026-11-23T17:33:05.897Z",
-      "fix": null,
+      "fix": {
+        "commit": "459ce4607c486258d0ae2358b9fdb9b9d44a4786",
+        "date": "2026-11-23T20:07:38.664Z",
+        "stat": "82 file(s) +1591 −611: .github/workflows/preview.yml, README.md, changelog/cryptic-clue-batch-6.md, changelog/groups-alarm-rounding.md, changelog/offline-everywhere.md, …"
+      },
       "flaky": false
     },
     {
@@ -6605,7 +6613,11 @@
       "error": "✗ 320: ⚙️ has no offline ☁️: it stays on the home page",
       "signature": "64698a5310",
       "date": "2026-11-23T17:33:05.897Z",
-      "fix": null,
+      "fix": {
+        "commit": "459ce4607c486258d0ae2358b9fdb9b9d44a4786",
+        "date": "2026-11-23T20:07:38.664Z",
+        "stat": "82 file(s) +1591 −611: .github/workflows/preview.yml, README.md, changelog/cryptic-clue-batch-6.md, changelog/groups-alarm-rounding.md, changelog/offline-everywhere.md, …"
+      },
       "flaky": false
     },
     {
