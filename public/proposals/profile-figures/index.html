@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil · cómo aparecen las cifras</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<style>
+/* The card, as on /profile/ */
+.pf-who { display: grid; text-align: center; }
+.pf-player { margin: 0; font-weight: 900; font-size: var(--fs-140); line-height: 1.2; }
+.pf-since { margin: var(--s-2) 0 0; font-size: var(--fs-90); }
+.pf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); margin-top: var(--s-14); }
+.pf-stat { background: var(--well); border-radius: var(--r-12); padding: var(--s-10) var(--s-6); text-align: center; position: relative; overflow: hidden; }
+.pf-stat b { display: flex; justify-content: center; align-items: center; height: 1.4em; line-height: 1.4; font: 900 var(--fs-140)/1.4 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); white-space: nowrap; }
+.pf-stat > span { font-size: var(--fs-75); color: var(--muted); font-weight: 800; }
+
+/* The page around the options */
+body { margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 20px 14px 60px; }
+h1.t { font-family: var(--font-display); letter-spacing: 0.04em; font-size: 2rem; text-align: center; margin: 4px 0 4px; }
+.intro { text-align: center; color: var(--muted); max-width: 640px; margin: 0 auto 14px; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 0 0 18px; }
+.ctrl .lbl { color: var(--muted); font-weight: 800; font-size: 0.85rem; }
+.chipb { border: 2px solid var(--glass-border); background: var(--glass); color: var(--ink); border-radius: 999px; padding: 8px 14px; font: 800 0.9rem var(--font-body); cursor: pointer; min-height: 40px; }
+.chipb.on { background: var(--yellow); color: #2a1a00; border-color: var(--yellow); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
+.opt { display: grid; gap: 10px; align-content: start; }
+.opt h2 { margin: 0; font-size: 1.15rem; font-weight: 900; display: flex; gap: 8px; align-items: baseline; }
+.opt h2 .k { font-family: var(--font-display); letter-spacing: 0.05em; color: var(--yellow); font-size: 1.5rem; }
+.opt p.d { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
+.opt.ref h2 .k { color: var(--muted); }
+.phase { font-size: 0.75rem; font-weight: 800; color: var(--muted); text-align: right; min-height: 1em; }
+.again { justify-self: start; }
+
+/* ── 0 · Today: spinner, then count-up ── */
+.sp { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 999px; border: 0.12em solid rgb(var(--yellow-rgb) / 0.25); border-top-color: var(--yellow); animation: sp 0.8s linear infinite; }
+@keyframes sp { to { transform: rotate(1turn); } }
+
+/* ── A · Rodillo: the digits spin like a slot machine and land on the real number ── */
+.reel { display: inline-block; height: 1.4em; overflow: hidden; position: relative; width: 0.62em; transition: width 0.25s; }
+.reel > i { display: flex; flex-direction: column; font-style: normal; will-change: transform; }
+.reel > i > s { text-decoration: none; height: 1.4em; line-height: 1.4; display: block; }
+.reel.spin > i { animation: reel 0.45s linear infinite; filter: blur(1.2px); opacity: 0.85; }
+@keyframes reel { from { transform: translateY(0); } to { transform: translateY(-14em); } }
+.reel.land > i { transition: transform var(--land, 0.7s) cubic-bezier(0.2, 0.9, 0.25, 1.15); filter: none; }
+.pf-stat.landed b { animation: thump 0.35s ease-out; }
+@keyframes thump { 50% { transform: scale(1.12); } }
+
+/* ── B · Brillo: the tile breathes a light sweep, the number rises in ── */
+.pf-stat.shine::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.10) 45%, rgb(var(--yellow-rgb) / 0.14) 50%, transparent 75%); background-size: 250% 100%; animation: shine 1.3s ease-in-out infinite; pointer-events: none; }
+@keyframes shine { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+.bar { display: inline-block; width: 1.6em; height: 0.55em; border-radius: 999px; background: rgb(var(--yellow-rgb) / 0.18); }
+.rise { animation: rise 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+@keyframes rise { from { transform: translateY(0.6em); opacity: 0; filter: blur(3px); } to { transform: none; opacity: 1; filter: none; } }
+
+/* ── C · Puntos: three yellow dots hop, the number pops in ── */
+.dots3 { display: inline-flex; gap: 0.16em; }
+.dots3 i { width: 0.22em; height: 0.22em; border-radius: 999px; background: var(--yellow); animation: hop 0.9s ease-in-out infinite; }
+.dots3 i:nth-child(2) { animation-delay: 0.15s; } .dots3 i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes hop { 0%, 60%, 100% { transform: translateY(0); opacity: 0.45; } 30% { transform: translateY(-0.28em); opacity: 1; } }
+.popin { animation: popin 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+@keyframes popin { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ── D · Tarjeta que se da vuelta: each tile flips over, the number on its back ── */
+.pf-stat.flip { transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1.2); transform-style: preserve-3d; }
+.pf-stat.flip.wait { animation: tilt 1.6s ease-in-out infinite; }
+@keyframes tilt { 0%, 100% { transform: perspective(400px) rotateY(0); } 50% { transform: perspective(400px) rotateY(16deg); } }
+.pf-stat.flip.turn { animation: turn 0.55s cubic-bezier(0.3, 0.7, 0.3, 1.1) both; }
+@keyframes turn { 0% { transform: perspective(400px) rotateY(0); } 50% { transform: perspective(400px) rotateY(90deg); } 100% { transform: perspective(400px) rotateY(0); } }
+.q { color: rgb(var(--yellow-rgb) / 0.45); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="t">¿Cómo aparecen las cifras?</h1>
+  <p class="intro">Cada tarjeta espera al servidor y luego muestra el número real. Elige cuánto demora el servidor y toca «Repetir» (o «Todas de nuevo») para verlas otra vez.</p>
+  <div class="ctrl">
+    <span class="lbl">El servidor demora</span>
+    <button class="chipb" data-ms="300">0,3 s</button>
+    <button class="chipb on" data-ms="1200">1,2 s</button>
+    <button class="chipb" data-ms="3000">3 s</button>
+    <button class="chipb" id="all">↻ Todas de nuevo</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const FIGS = [
+  { k: 'streak', pre: '🔥 ', v: 14, label: 'días seguidos' },
+  { k: 'plays', pre: '', v: 188, label: 'partidas' },
+  { k: 'cups', pre: '🏆 ', v: 3, label: 'copas ganadas' },
+];
+const OPTS = [
+  { id: 'A', name: 'Rodillo', d: 'Mientras espera, los dígitos giran como una máquina tragamonedas. Cuando llega el dato, cada rodillo frena y cae en su número, de izquierda a derecha, con un golpecito. Un solo movimiento: buscar y encontrar.', run: rodillo },
+  { id: 'B', name: 'Brillo', d: 'La casilla tiene una barra tenue y un reflejo que la cruza, como algo que se está cargando. Cuando llega el dato, el número sube y se enfoca, sin contar.', run: brillo },
+  { id: 'C', name: 'Puntos', d: 'Tres puntos amarillos saltan en el lugar del número. Cuando llega, el número aparece de golpe con un pequeño rebote, el mismo «pop» de otras partes del sitio.', run: puntos },
+  { id: 'D', name: 'Carta que se da vuelta', d: 'Mientras espera, la casilla se mece y muestra «?». Cuando llega el dato, se da vuelta como una carta y el número está al otro lado, una casilla tras otra.', run: carta },
+  { id: '0', name: 'Lo de hoy', d: 'Spinner y luego las cifras subiendo desde cero. Como referencia.', run: hoy, ref: true },
+];
+let DELAY = 1200;
+const $ = (t, a = {}, ...c) => { const e = document.createElement(t); for (const [k, v] of Object.entries(a)) k === 'class' ? (e.className = v) : e.setAttribute(k, v); e.append(...c.flat()); return e; };
+const num = n => n.toLocaleString('es-CL');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function cardFor() {
+  const stats = FIGS.map(f => { const b = $('b'); const s = $('div', { class: 'pf-stat' }, b, $('span', {}, f.label)); return { f, b, s }; });
+  const card = $('section', { class: 'panel pf-card' },
+    $('div', { class: 'pf-who' }, $('p', { class: 'pf-player' }, '🇨🇱 Jiri'), $('p', { class: 'muted pf-since' }, 'Jugando desde marzo de 2026 · 12 de 33 logros')),
+    $('div', { class: 'pf-stats' }, stats.map(x => x.s)));
+  return { card, stats };
+}
+
+for (const o of OPTS) {
+  const { card, stats } = cardFor();
+  const phase = $('div', { class: 'phase' });
+  const again = $('button', { class: 'chipb again' }, '↻ Repetir');
+  const box = $('div', { class: `opt${o.ref ? ' ref' : ''}` }, $('h2', {}, $('span', { class: 'k' }, o.id), o.name), $('p', { class: 'd' }, o.d), card, phase, again);
+  document.getElementById('grid').append(box);
+  let gen = 0;
+  o.play = async () => {
+    const g = ++gen;
+    const alive = () => g === gen;
+    stats.forEach(x => { x.s.className = 'pf-stat'; x.b.replaceChildren(); x.b.className = ''; });
+    phase.textContent = 'esperando al servidor…';
+    const arrived = sleep(DELAY).then(() => { if (alive()) phase.textContent = 'llegó el dato'; });
+    await o.run(stats, arrived, alive);
+  };
+  again.onclick = () => o.play();
+}
+const all = () => OPTS.forEach(o => o.play());
+document.getElementById('all').onclick = all;
+document.querySelectorAll('[data-ms]').forEach(b => b.onclick = () => { DELAY = +b.dataset.ms; document.querySelectorAll('[data-ms]').forEach(x => x.classList.toggle('on', x === b)); all(); });
+all();
+
+/* 0 · today */
+async function hoy(stats, arrived, alive) {
+  stats.forEach(x => x.b.append($('span', { class: 'sp' })));
+  await arrived; if (!alive()) return;
+  stats.forEach(({ f, b }) => {
+    const ms = Math.min(1400, 500 + f.v * 6), t0 = performance.now();
+    (function step(t) { if (!alive()) return; const k = Math.min(1, (t - t0) / ms); b.textContent = f.pre + num(Math.round(f.v * (1 - (1 - k) ** 3))); if (k < 1) requestAnimationFrame(step); })(t0);
+  });
+}
+
+/* A · slot reels */
+function reel() {
+  const r = $('span', { class: 'reel spin' }); const i = $('i');
+  for (let n = 0; n < 20; n++) i.append($('s', {}, String(n % 10)));
+  r.append(i); return r;
+}
+async function rodillo(stats, arrived, alive) {
+  const reels = stats.map(({ f, b }) => { const pre = f.pre ? $('span', { style: 'margin-right:0.25em' }, f.pre.trim()) : ''; const rs = [reel(), reel()]; b.append(pre, ...rs); return rs; });
+  await arrived; if (!alive()) return;
+  let order = 0;
+  stats.forEach(({ f, b, s }, si) => {
+    const digits = String(f.v).split('');
+    let rs = reels[si];
+    while (rs.length < digits.length) { const r = reel(); r.style.width = '0'; b.append(r); rs.push(r); requestAnimationFrame(() => { r.style.width = ''; }); }
+    while (rs.length > digits.length) { const r = rs.pop(); r.style.width = '0'; setTimeout(() => r.remove(), 260); }
+    digits.forEach((d, di) => {
+      const r = rs[di], i = r.firstChild, at = ++order;
+      setTimeout(() => {
+        if (!alive()) return;
+        // freeze where the spin is, then roll on to the digit, a full turn more
+        const y = new DOMMatrix(getComputedStyle(i).transform).m42;
+        r.classList.remove('spin'); i.style.transform = `translateY(${y}px)`;
+        void i.offsetHeight;
+        r.classList.add('land'); r.style.setProperty('--land', `${0.55 + di * 0.08}s`);
+        i.style.transform = `translateY(-${(10 + Number(d)) * 1.4}em)`;
+        if (di === digits.length - 1) setTimeout(() => { if (alive()) { s.classList.remove('landed'); void s.offsetWidth; s.classList.add('landed'); } }, 520 + di * 80);
+      }, at * 110);
+    });
+  });
+}
+
+/* B · shine */
+async function brillo(stats, arrived, alive) {
+  stats.forEach(({ b, s }) => { s.classList.add('shine'); b.append($('span', { class: 'bar' })); });
+  await arrived; if (!alive()) return;
+  stats.forEach(({ f, b, s }, i) => setTimeout(() => { if (!alive()) return; s.classList.remove('shine'); b.replaceChildren($('span', { class: 'rise' }, f.pre + num(f.v))); }, i * 90));
+}
+
+/* C · dots */
+async function puntos(stats, arrived, alive) {
+  stats.forEach(({ b }) => b.append($('span', { class: 'dots3' }, $('i'), $('i'), $('i'))));
+  await arrived; if (!alive()) return;
+  stats.forEach(({ f, b }, i) => setTimeout(() => { if (alive()) b.replaceChildren($('span', { class: 'popin' }, f.pre + num(f.v))); }, i * 110));
+}
+
+/* D · card flip */
+async function carta(stats, arrived, alive) {
+  stats.forEach(({ b, s }, i) => { s.classList.add('flip', 'wait'); s.style.animationDelay = `${i * 0.2}s`; b.append($('span', { class: 'q' }, '?')); });
+  await arrived; if (!alive()) return;
+  stats.forEach(({ f, b, s }, i) => setTimeout(() => {
+    if (!alive()) return;
+    s.classList.remove('wait'); s.style.animationDelay = ''; void s.offsetWidth; s.classList.add('turn');
+    setTimeout(() => { if (alive()) b.replaceChildren(f.pre + num(f.v)); }, 275);
+  }, i * 160));
+}
+</script>
+</body>
+</html>
