@@ -6404,7 +6404,11 @@
       "error": "ERROR · changed commonKeys: 54 → 52",
       "signature": "b4f25e7ba8",
       "date": "2026-11-23T05:34:48.474Z",
-      "fix": null,
+      "fix": {
+        "commit": "7f72f49251236a500fe8bce6cae7b70503476576",
+        "date": "2026-11-23T05:37:29.875Z",
+        "stat": "1 file(s) +1 −1: docs/facts.json"
+      },
       "flaky": false
     }
   ]
