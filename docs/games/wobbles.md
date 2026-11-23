@@ -14,7 +14,7 @@ its home card with ✨ Nuevo for 10 days, the search and the 🎯 Pulso filter, 
 which is later work.
 
 - **Launch:** launched on 2026-11-22 at 21:00 Pacific (2026-11-23 05:00 UTC) with 🐸 Croc!, the nine cheers
-  (flag `wobbles-cheers`) and the splash `nos-volvimos-locos`. `nuevoDesde` in `game.json` is the launch day
+  (flag `wobbles-cheers`, flipped to *all* by the owner with the launch) and the splash `nos-volvimos-locos`. `nuevoDesde` in `game.json` is the launch day
   (`2026-11-22`; the ✨ Nuevo label also starts at the flag's `at`, D-556).
 - **The splash** `nos-volvimos-locos` (off) names it by its id (`game: 'wobbles'`) and opens its cover, `/wobbles/`.
 - **Still lab-only:** the «T» tab's pieces at the start; the launch leaves them as they are (the nine cheers
@@ -36,7 +36,7 @@ which is later work.
 - **Easy (2D):** the claw carries each piece across on its own; tap to drop it on the plank. Keep the plank
   level: when the level's bubble reaches the end of the red, it tips over and the round ends. Three
   lives: each piece that falls in the water costs one. Pieces come faster and faster. Score: pieces
-  placed plus balanced turns (Perfect!; behind the flag `wobbles-cheers`, its switch in the «T» tab, one of nine cheers, never the same twice in a row).
+  placed plus balanced turns (Perfect!; flag `wobbles-cheers`, now on for everyone, its switch kept in the «T» tab; one of nine cheers, never the same twice in a row).
 - **Hard (3D):** a round disc on a pivot: drag each piece onto it, turn it with a held finger, turn the
   board with two fingertips. Keep the disc level (the hoop goes green); it capsizes past its limit.
   Three hearts: each piece lost costs one.

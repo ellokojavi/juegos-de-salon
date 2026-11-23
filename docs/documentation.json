@@ -5,7 +5,8 @@
     "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
     "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
     "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
-    "Dominorama/Memorice launched 2026-11-19 and Croc/Tembleque/Wobbles launch prep: og.mjs link card list does not name them, owner to say if it should; profile lab (flag profile) docs not reviewed"
+    "Dominorama/Memorice launched 2026-11-19: og.mjs link card list does not name them, owner to say if it should",
+    "Duels (flag rivals, D-603) in the lab: when published, add its game/feature doc, README and LO_PRINCIPAL (D-271)"
   ],
   "known": [],
   "rounds": [
