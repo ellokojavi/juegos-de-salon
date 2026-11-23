@@ -66,9 +66,18 @@ function drawRanking() {
   const slot = document.getElementById('rk-table');
   if (!slot || rankingShown === chosen || !rankingsVisibles()) return;
   rankingShown = chosen;
-  const level = SOLO_LEVELS[GAME_ID]?.[chosen]?.[lang] || SOLO_LEVELS[GAME_ID]?.[chosen]?.es || '';
+  slot.replaceChildren(bloqueRanking({ juego: `${GAME_ID}_${chosen}`, titulo: rankingTitle(chosen), alTocar: () => SFX.tap() }));
+}
+
+/**
+ * «Ranking de Tembleque · 🟢 Fácil»: the cover and each level's result name the level, as Sudoku's do (the player
+ * agent, 2026-11-22: after a hard game the result said only «Ranking de Tembleque»). The dot and the colour stay
+ * on the word's line at 320 px (no-break spaces).
+ */
+function rankingTitle(level) {
+  const name = (SOLO_LEVELS[GAME_ID]?.[level]?.[lang] || SOLO_LEVELS[GAME_ID]?.[level]?.es || '').replace(/ /g, '\u00a0');
   const game = manifest.name[lang] || manifest.name.es;
-  slot.replaceChildren(bloqueRanking({ juego: `${GAME_ID}_${chosen}`, titulo: fmt(C.rk.titleOf, { game: level ? `${game} · ${level}` : game }), alTocar: () => SFX.tap() }));
+  return fmt(C.rk.titleOf, { game: name ? `${game}\u00a0· ${name}` : game });
 }
 
 /* ---------------- The level lever: Sudoku's (Pintaminas' electric switch), as is ---------------- */
@@ -190,7 +199,7 @@ function wireResult() {
     rank.replaceChildren();
     byId('cAviso').replaceChildren();
     if (!rankingsVisibles()) return;
-    const table = bloqueTabla({ tabla: `${GAME_ID}_${resultLevel}`, titulo: fmt(C.rk.titleOf, { game: manifest.name[lang] || manifest.name.es }), entrar: false });
+    const table = bloqueTabla({ tabla: `${GAME_ID}_${resultLevel}`, titulo: rankingTitle(resultLevel), entrar: false });
     rank.append(table);
     // Signed in, the score is recorded and said; not yet, the one-line offer to make it count
     byId('cAviso').append(avisoPartida({ juego: GAME_ID, variante: resultLevel, s, ms, alAnotar: () => table.recargar() }));
