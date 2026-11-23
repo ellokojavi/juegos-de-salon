@@ -78,6 +78,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const prFiles = noticeable(prAll);
   const quiet = prAll.length - prFiles.length;
   let result = { files: prFiles, since: null };
+  // Why the whole PR, when it is: said once, true for the case (the log is how a slow run is explained)
+  let why = 'no earlier commit of this PR passed';
   try {
     const commits = lines(gh(`repos/${repo}/pulls/${pr}/commits`, '--paginate', '--jq', '.[].sha'));
     const passed = sha => !!validMark(JSON.parse(gh(`repos/${repo}/actions/artifacts?name=${HEAD_MARK(sha)}`)).artifacts || []);
@@ -85,14 +87,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const comparedAll = since ? withPatch(`repos/${repo}/compare/${since}...${head}`) : null;
     const compared = comparedAll && (comparedAll.length >= COMPARE_LIMIT ? comparedAll.map(f => f.filename) : noticeable(comparedAll));
     result = filesToTest({ since, compared, prFiles });
-    if (since && compared && compared.length < COMPARE_LIMIT && !result.since) console.error(`since-passed: since ${since.slice(0, 7)}, which passed, the push brings files only main changed (a merge of main): the PR's own files, not main's (D-610)`);
+    if (since && !result.since) why = !compared || compared.length >= COMPARE_LIMIT
+      ? `${since.slice(0, 7)} passed, but its compare is too long to trust`
+      : `${since.slice(0, 7)} passed, and the push brings files only main changed (a merge of main): the PR's own files, not main's (D-610)`;
     if (result.since) patches = new Map(comparedAll.map(f => [f.filename, f]));
   } catch (e) {
-    console.error(`since-passed: ${e.message.split('\n')[0]}; testing the whole PR`);
+    why = `asking GitHub failed (${e.message.split('\n')[0]})`;
   }
   console.error(result.since
     ? `since-passed: ${result.files.length} file(s) changed since ${result.since.slice(0, 7)}, the last commit of this PR that passed`
-    : `since-passed: no earlier commit of this PR passed: the whole PR (${result.files.length} file(s))`);
+    : `since-passed: ${why}: the whole PR (${result.files.length} file(s))`);
   if (quiet) console.error(`since-passed: ${quiet} file(s) of the PR change only comments: no script runs for them (inert.mjs)`);
   // The head is the test merge's second parent, fetched with it (fetch-depth: 2)
   const at = f => { try { return execFileSync('git', ['show', `${head}:${f}`], { encoding: 'utf8', maxBuffer: 1e8, stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; } };
