@@ -6564,6 +6564,45 @@
         "stat": "1 file(s) +6 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45217963053,
+      "check": "end-to-end",
+      "pr": 1812,
+      "branch": "cloud-quiet",
+      "commit": "7824eea06541ec4f1f66f2a1c66fe1c7554a1364",
+      "test": "home/tester-tab.mjs",
+      "error": "✗ 390: offline mode pinned: its row and the cloud states show in the first view",
+      "signature": "34dd650bfe",
+      "date": "2026-11-23T17:33:05.897Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45217963053,
+      "check": "end-to-end",
+      "pr": 1812,
+      "branch": "cloud-quiet",
+      "commit": "7824eea06541ec4f1f66f2a1c66fe1c7554a1364",
+      "test": "home/cup-today.mjs",
+      "error": "✗ 390px: the top bar's buttons are as tall as the language toggle",
+      "signature": "70d8e2fa96",
+      "date": "2026-11-23T17:33:05.897Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45217963053,
+      "check": "end-to-end",
+      "pr": 1812,
+      "branch": "cloud-quiet",
+      "commit": "7824eea06541ec4f1f66f2a1c66fe1c7554a1364",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: ⚙️ has no offline ☁️: it stays on the home page",
+      "signature": "64698a5310",
+      "date": "2026-11-23T17:33:05.897Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
