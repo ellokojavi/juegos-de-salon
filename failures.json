@@ -6521,6 +6521,19 @@
         "stat": "3 file(s) +8 −3: README.md, docs/DECISIONS.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45204044361,
+      "check": "end-to-end",
+      "pr": 1807,
+      "branch": "score-time-cup",
+      "commit": "0bac2a070c64a1eba3cb45db60e24028091ec8e6",
+      "test": "cup/variants.mjs",
+      "error": "✗ the random week can bring Pintaminas and Loteo",
+      "signature": "fc75af69d6",
+      "date": "2026-11-23T15:52:50.281Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
