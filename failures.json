@@ -6410,6 +6410,45 @@
         "stat": "1 file(s) +1 −1: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45119339011,
+      "check": "end-to-end",
+      "pr": 1792,
+      "branch": "labs-launched-games",
+      "commit": "d5fa3e1f5294985969e375d48a7fb476374735f4",
+      "test": "home/lab.mjs",
+      "error": "✗ the games being tried are apart from the improvements",
+      "signature": "e25f392ffe",
+      "date": "2026-11-23T05:55:19.703Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45119339011,
+      "check": "end-to-end",
+      "pr": 1792,
+      "branch": "labs-launched-games",
+      "commit": "d5fa3e1f5294985969e375d48a7fb476374735f4",
+      "test": "dominorama/lab.mjs",
+      "error": "✗ the lab offers Dominorama under Juegos en prueba",
+      "signature": "0079d945e2",
+      "date": "2026-11-23T05:55:19.703Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45119339011,
+      "check": "end-to-end",
+      "pr": 1792,
+      "branch": "labs-launched-games",
+      "commit": "d5fa3e1f5294985969e375d48a7fb476374735f4",
+      "test": "memory/lab.mjs",
+      "error": "✗ the lab offers Memorice under Active projects: its page, and the prototype",
+      "signature": "c260ccb184",
+      "date": "2026-11-23T05:55:19.703Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
