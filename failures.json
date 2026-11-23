@@ -6558,7 +6558,11 @@
       "error": "ERROR · appeared documents: {\"path\": \"docs/ORG-MIGRATION.md\", \"title\": \"Moving the repo",
       "signature": "ea99def95c",
       "date": "2026-11-23T16:58:38.821Z",
-      "fix": null,
+      "fix": {
+        "commit": "b48248b77344ed80759897f189c9bfafb489fca5",
+        "date": "2026-11-23T17:17:03.465Z",
+        "stat": "1 file(s) +6 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
