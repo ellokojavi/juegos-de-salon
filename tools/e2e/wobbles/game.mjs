@@ -22,6 +22,10 @@ ok(await b.evaluate("!!document.querySelector('#screen-intro details.panel, #btn
 const clips = "[...document.querySelectorAll('#pic video')].map(v => v.getAttribute('src') + ':' + (v.paused ? 'paused' : 'playing') + ':' + v.loop + v.muted).join(' ')";
 await sleep(800);
 ok(await b.evaluate(clips) === 'cover/easy.mp4:playing:truetrue cover/hard.mp4:paused:truetrue', `the easy loop plays, muted, and hard waits (${await b.evaluate(clips)})`);
+// Its level's table under Entrar, as on every solo game's cover (missing at launch, 2026-11-22)
+const rankTitle = "document.querySelector('#rk-table .rk-ranking')?.dataset.tabla + ' | ' + document.querySelector('#rk-table .rk-titulo')?.textContent";
+ok(/^wobbles_easy \| .*Tembleque · 🟢 Fácil$/.test(await b.evaluate(rankTitle)), `the cover shows the easy level's ranking (${await b.evaluate(rankTitle)})`);
+ok(/Empezar$/.test(await b.evaluate("document.getElementById('btn-play').textContent")) && (await b.evaluate("document.getElementById('btn-play').textContent")).startsWith('⚖️'), 'its button says ⚖️ Empezar, as every cover does');
 await b.shot('cover-easy');
 const howEasy = await b.evaluate("document.getElementById('how').textContent");
 ok(!/\b[23]D\b/.test(await b.evaluate('document.body.innerText')), 'the cover never says 2D or 3D');
@@ -29,10 +33,11 @@ await b.evaluate("document.getElementById('btn-level').click(); 1"); await sleep
 ok(await b.evaluate("window.__wobbles.level === 'hard' && document.getElementById('btn-level').getAttribute('aria-checked') === 'true' && document.getElementById('pic').classList.contains('hard') && document.body.classList.contains('wb-hard')"), 'flipping the lever shows hard, the 3D picture and the red cover');
 await sleep(800);
 ok(await b.evaluate(clips) === 'cover/easy.mp4:paused:truetrue cover/hard.mp4:playing:truetrue', `the lever swaps the loops: hard plays, easy pauses (${await b.evaluate(clips)})`);
+ok(/^wobbles_hard \| .*Tembleque · 🔴 Difícil$/.test(await b.evaluate(rankTitle)), `the lever swaps the ranking to hard (${await b.evaluate(rankTitle)})`);
 await b.shot('cover-hard');
 ok(await b.evaluate("document.getElementById('how').textContent") !== howEasy, 'how to play changes with the lever');
 await b.evaluate("document.getElementById('btn-play').click(); 1"); await sleep(900);
-ok(await b.evaluate('location.pathname') === '/wobbles/hard/', '¡A jugar! opens the level the lever shows');
+ok(await b.evaluate('location.pathname') === '/wobbles/hard/', '⚖️ Empezar opens the level the lever shows');
 
 for (const level of ['easy', 'hard']) {
   for (const lang of ['es', 'en', 'pt']) {

@@ -191,9 +191,9 @@ A dominoes puzzle inspired by *Pips* from The New York Times Games (credited on 
 
 Spec and design: [docs/games/dominorama.md](docs/games/dominorama.md)
 
-### 🐸 Croc! (ready to launch, not launched)
+### 🐸 Croc! (launched 2026-11-22, 21:00 Pacific)
 
-An arcade highway crossing for one player, built as a La Copa game the way Sudoku was (D-517), with its page `/croc/`: swipe the frog forward or sideways across 33 lanes of traffic and a canal with boats to the pond, never back. A long swipe is a Dash over two lanes (three charges, given back by fruit and close calls), and there are 3 lives. The points are a lane each, 10 at the pond and a fruit each, minus a life lost; the time breaks a tie. Its traffic lever is La Copa's variant: normal by default, heavy traffic ranked apart. It is ready to launch and hidden until the owner switches the flag `croc` on; a lab key opens it before. The launch date is not set yet, so Uno al día's start in its `games.js` entry is a placeholder the launch PR moves. `/labs/croc/`, where it grew, now leads to `/croc/`.
+An arcade highway crossing for one player, built as a La Copa game the way Sudoku was (D-517), with its page `/croc/`: swipe the frog forward or sideways across 33 lanes of traffic and a canal with boats to the pond, never back. A long swipe is a Dash over two lanes (three charges, given back by fruit and close calls), and there are 3 lives. The points are a lane each, 10 at the pond and a fruit each, minus a life lost; the time breaks a tie. Its traffic lever is La Copa's variant: normal by default, heavy traffic ranked apart. It launched for everyone with ⚖️ Tembleque on 2026-11-22 (flag `croc`, D-517's way) and joins Uno al día from 2026-11-23. `/labs/croc/`, where it grew, now leads to `/croc/`.
 
 Spec and design: [docs/games/croc.md](docs/games/croc.md)
 
@@ -415,7 +415,7 @@ Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
 ## ⚖️ The Wobbles (Tembleque)
 
-> **Ready to launch, not launched**: it opens for everyone once the owner switches the flag `wobbles` on (D-517's way); the date is the owner's to pick.
+> **Launched 2026-11-22, 21:00 Pacific** (flag `wobbles`, D-517's way), with 🐸 Croc!: the home page, the search and Rankings; not La Copa or Uno al día, which wait for a house-engine version (D-601).
 
 A balance game for one player with two levels behind one cover, picked with a lever: **easy**, where a claw carries each piece across and you tap to drop it on a plank, and **hard**, where you drag and turn each piece onto a disc that tips. Keep it level: past its limit it capsizes, and every piece that falls costs one of three lives. Each level has its own ranking (`wobbles_easy`, `wobbles_hard`). In three languages.
 
@@ -710,7 +710,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [🔗 Connections (Conexiones)](docs/games/connections.md)
-- [🐸 Croc! (La Copa game, ready to launch by flag; not launched)](docs/games/croc.md)
+- [🐸 Croc! (La Copa game, launched 2026-11-22)](docs/games/croc.md)
 - [🗝️ Cryptic (Críptico; lab, in Juegos en prueba)](docs/games/cryptic.md)
 - [La Copa](docs/games/cup.md)
 - [🎨 The components page (the design system, in the lab)](docs/games/design.md)
@@ -736,7 +736,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🚉 Transbordo (Transfer, lab, in La Bodega)](docs/games/transfer.md)
 - [🧶 Untangle (Desenredo)](docs/games/untangle.md)
 - [📍 Where Is It? (¿Dónde queda?)](docs/games/where.md)
-- [⚖️ The Wobbles (Tembleque; /wobbles/, ready to launch by flag, home page only)](docs/games/wobbles.md)
+- [⚖️ The Wobbles (Tembleque; /wobbles/, launched 2026-11-22, home page only)](docs/games/wobbles.md)
 - [🔤 Bulls and Cows: Word (Toque y Fama: Palabra)](docs/games/word.md)
 - [📅 What Year? (¿En qué año?)](docs/games/year.md)
 - [〰️ Zip](docs/games/zip.md)

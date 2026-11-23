@@ -1,7 +1,7 @@
 /**
  * Tembleque / The Wobbles: the cover (C-2). A lever picks the level, Sudoku's (Pintaminas' hard-mode
  * switch): down and green is easy, the 2D plank; up and red is hard, the 3D disc. The picture above shows
- * the level the lever shows, moving, and ¡A jugar! opens it. Each level is a page of its own that keeps
+ * the level the lever shows, moving, and ⚖️ Empezar opens it; under Entrar, that level's ranking, as Sudoku's cover has. Each level is a page of its own that keeps
  * the owner's prototype whole: easy/ and hard/; their ‹ comes back here. Out of the lab, launched by flags/wobbles (D-517's way); docs/games/wobbles.md.
  */
 import { $, el, vibrate } from '../assets/js/ui.js';
@@ -13,7 +13,8 @@ import { abrirComentario } from '../assets/js/labs-idioma.js';
 import { labAccess } from '../assets/js/lab-access.js';
 import { flag } from '../assets/js/flags.js';
 import { coverWithDialogs } from '../assets/js/cover-dialogs.js';
-import { bloqueJugador, avisoPartida, bloqueTabla } from '../assets/js/ranking.js';
+import { bloqueJugador, avisoPartida, bloqueTabla, bloqueRanking } from '../assets/js/ranking.js';
+import { SOLO_LEVELS } from '../assets/js/games.js';
 import { salidasFin } from '../assets/js/fin.js';
 import { ponerBuzon } from '../assets/js/buzon.js';
 import { rankingsVisibles } from '../assets/js/jugador.js';
@@ -47,11 +48,27 @@ function playClip() {
   }
 }
 
-/** The picture and how to play follow the lever. */
+/** The picture, how to play and the ranking follow the lever. */
 function drawPicture() {
   $('#pic').classList.toggle('hard', chosen === 'hard');
   playClip();
   $('#how').replaceChildren(...L.como[chosen].map(step => el('li', {}, step)));
+  drawRanking();
+}
+
+/**
+ * The level's table on the cover, under Entrar, as every solo game's cover has it (Sudoku's names its level:
+ * «Ranking de Sudoku · 🟢 Fácil»). It was missing at launch (2026-11-22): the tables were only on each
+ * level's result. `wobbles_easy` or `wobbles_hard`, the one the lever shows.
+ */
+let rankingShown = null;
+function drawRanking() {
+  const slot = document.getElementById('rk-table');
+  if (!slot || rankingShown === chosen || !rankingsVisibles()) return;
+  rankingShown = chosen;
+  const level = SOLO_LEVELS[GAME_ID]?.[chosen]?.[lang] || SOLO_LEVELS[GAME_ID]?.[chosen]?.es || '';
+  const game = manifest.name[lang] || manifest.name.es;
+  slot.replaceChildren(bloqueRanking({ juego: `${GAME_ID}_${chosen}`, titulo: fmt(C.rk.titleOf, { game: level ? `${game} · ${level}` : game }), alTocar: () => SFX.tap() }));
 }
 
 /* ---------------- The level lever: Sudoku's (Pintaminas' electric switch), as is ---------------- */
@@ -113,10 +130,10 @@ function renderModes() {
     el('span', { class: 'wb-bolt b1' }, '⚡'), el('span', { class: 'wb-bolt b2' }, '⚡'), el('span', { class: 'wb-bolt b3' }, '⚡'),
     el('span', { class: 'wb-arm' }, el('span', { class: 'wb-knob' })), el('span', { class: 'wb-axle' })),
   el('span', { class: 'wb-label' }, title, sub));
-  // ¡A jugar! opens the level the lever shows; `?lang` goes along if it came
+  // ⚖️ Empezar opens the level the lever shows; `?lang` goes along if it came
   const play = () => { SFX.tap(); location.href = (chosen === 'hard' ? 'hard/' : 'easy/') + location.search; };
   $('#modes').replaceChildren(lever,
-    el('button', { class: 'btn btn--yellow', id: 'btn-play', 'data-mode': 'solo', onClick: play }, T.play));
+    el('button', { class: 'btn btn--yellow', id: 'btn-play', 'data-mode': 'solo', onClick: play }, `${manifest.emoji || '⚖️'} ${T.play}`));
   if (hard) startFlicker(lever);
   setTheme(); drawPicture();
 }

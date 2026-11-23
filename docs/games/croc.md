@@ -1,4 +1,4 @@
-# 🐸 Croc! (La Copa game, ready to launch by flag; not launched)
+# 🐸 Croc! (La Copa game, launched 2026-11-22)
 
 A solo arcade highway crossing built for mobile touch controls and deterministic Cup play.
 
@@ -66,10 +66,10 @@ sends the result (`cup/game.js`); a finished run reopens finished.
 
 None.
 
-## Out of the lab, ready to launch (D-517's way, 2026-11-21)
+## Out of the lab (D-517's way, 2026-11-21), launched 2026-11-22
 
-Prepared the way Sudoku (`3f60e2d8`) and Dominorama (`ba085a29`) were, **not launched**: the owner said "prepare
-the launch, launch nothing". It stays hidden until the owner switches `flags/croc` to *all* on its `/labs/` card.
+Prepared the way Sudoku (`3f60e2d8`) and Dominorama (`ba085a29`) were, and launched with ⚖️ Tembleque on
+2026-11-22 at 21:00 Pacific (`flags/croc` to *all*, splash `nos-volvimos-locos`).
 
 - **La Copa's screen**: the lab's engine and scene moved into `public/cup/games/croc/` (they were older copies
   there): the engine keeps the cup's track length (`finishRow`) and its demo keeps its traffic when it starts
