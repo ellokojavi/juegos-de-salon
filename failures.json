@@ -6515,7 +6515,11 @@
       "error": "ERROR · appeared modules: public/assets/js/party-colors.js",
       "signature": "bb7f261900",
       "date": "2026-11-23T15:46:39.231Z",
-      "fix": null,
+      "fix": {
+        "commit": "cbe6fdcd00b6aa15322b45bc36c6a18ea40bd0ba",
+        "date": "2026-11-23T15:51:56.541Z",
+        "stat": "3 file(s) +8 −3: README.md, docs/DECISIONS.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
