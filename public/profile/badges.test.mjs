@@ -1,6 +1,6 @@
 // The profile's badges (lab flag profile): each one is earned by what it says, stays earned, and is new once.
 import assert from 'node:assert/strict';
-import { BADGES, GROUPS, earned, fullMonths, EARLY_GAMES, EARLY_DAYS, weekendsOf, cupsInAWeek, premieres, lastOnDay, daysPlayed } from './badges.js';
+import { BADGES, GROUPS, earned, fullMonths, EARLY_GAMES, EARLY_DAYS, weekendsOf, cupsInAWeek, premieres, lastOnDay, daysPlayed, withAnnounced } from './badges.js';
 
 const ids = BADGES.map(b => b.id);
 assert.equal(new Set(ids).size, ids.length, 'one id per badge');
@@ -107,5 +107,16 @@ assert.ok(!earned({ now: NOW }).list.some(b => b.id === 'tuesday-13'));
 for (const [id, k] of [['fiestas', 'fiestas'], ['halloween', 'halloween'], ['xmas', 'xmas'], ['new-year', 'newyear']]) {
   assert.ok(got(id, { marks: { days: { [k]: true } } }).got, id);
   assert.ok(got(id, {}).secret && !got(id, {}).got, `${id}: secret until earned`);
+}
+
+// A badge the window celebrated stays earned on the profile, new until the profile shows it; a server one does not
+{
+  const list = earned({}, {}).list;
+  const done = { premiere: 1, 'triple-crown': 1 };
+  const out = withAnnounced(list, done, new Set(['premiere']), {});
+  const p = out.find(b => b.id === 'premiere');
+  assert.ok(p.got && p.new && p.progress === null, 'an announced local badge is earned and new');
+  assert.ok(!out.find(b => b.id === 'triple-crown').got, 'a server badge is not earned by the phone announcing it');
+  assert.equal(withAnnounced(list, done, new Set(['premiere']), { premiere: 1 }).find(b => b.id === 'premiere').new, false, 'shown before: not new');
 }
 console.log('profile badges: ok');

@@ -21,10 +21,11 @@ import { nombreOfensivo } from '../assets/js/name-guard.js';
 import { flag } from '../assets/js/flags.js';
 import { leer as leerDia, recorrer } from '../assets/js/uno-al-dia.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { BADGES, GROUPS, earned, lastOnDay } from './badges.js';
+import { BADGES, GROUPS, earned, lastOnDay, withAnnounced } from './badges.js';
 import { TEXTS } from './texts.js';
 import { tableOf } from './peek.js';
-import { phoneFacts } from '../assets/js/phone-facts.js';
+import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
+import { announced } from '../assets/js/secret-achievements.js';
 
 const lang = getLang();
 const T = TEXTS[lang] || TEXTS.es;
@@ -48,6 +49,69 @@ const gameOf = id => ALL_GAMES.find(g => g.id === id);
 const SEEN = jid => `juegos-de-salon:profile-badges:${jid || 'guest'}`;
 const readSeen = jid => { try { return JSON.parse(localStorage.getItem(SEEN(jid)) || '{}') || {}; } catch (_) { return {}; } };
 const writeSeen = (jid, v) => { try { localStorage.setItem(SEEN(jid), JSON.stringify(v)); } catch (_) { /* not kept */ } };
+
+/**
+ * What the profile had shown when this page opened, by player: a badge is new against it for the whole visit, so its
+ * «¡Nueva!» survives the page's three draws (the phone's facts, the server's, the places) and a redraw. `first`: the
+ * profile never drew this player's badges here (then every earned one is new, without the reveal below).
+ */
+const atLoad = new Map();
+function seenAtLoad(jid) {
+  const k = jid || 'guest';
+  if (!atLoad.has(k)) { let first = true; try { first = localStorage.getItem(SEEN(jid)) == null; } catch (_) { /* not kept */ } atLoad.set(k, { seen: readSeen(jid), first }); }
+  return atLoad.get(k);
+}
+
+/**
+ * The badges with their state for `f`, written down as shown. A badge the phone already celebrated in its window is
+ * earned here too (`withAnnounced`, the owner, 2026-11-22): the window and the page never disagree.
+ */
+function badgeState(f, jid) {
+  const { seen } = seenAtLoad(jid);
+  const r = earned(f, seen);
+  const list = withAnnounced(r.list, announced(), LOCAL_BADGES, seen);
+  const out = { ...readSeen(jid), ...r.seen };
+  for (const b of list) if (b.got && !out[b.id]) out[b.id] = Date.now();
+  writeSeen(jid, out);
+  return list;
+}
+
+/**
+ * The reveal of a badge new since the last visit (the owner, 2026-11-22): its medal turns from grey to its metal
+ * with a flash, once, then keeps its «¡Nueva!» glow for the visit. Each badge's start is kept, so a redraw in the
+ * middle carries on where it was (a negative delay) instead of starting over. The first visit has no reveal:
+ * everything there is new.
+ */
+const REVEAL_GAP = 450;
+const revealAt = new Map();
+let revealUntil = null;
+const calm = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+function revealDelay(id) {
+  const now = performance.now();
+  if (!revealAt.has(id)) revealAt.set(id, Math.max(now + 350, ...[...revealAt.values()].map(t => t + REVEAL_GAP)));
+  return Math.round(revealAt.get(id) - now);
+}
+/**
+ * After a draw: the first badge being revealed comes into view if the badges' tab is showing, and stays in view until
+ * its reveal and glow are over: whatever grows above it meanwhile (the server's facts, the duels, the fonts) brings
+ * it back, so it is seen happening, unless the player scrolls first.
+ */
+function revealIntoView(root) {
+  const find = () => { const b = root.querySelector('.pf-badge--reveal'); return b && !b.closest('[hidden]') ? b : null; };
+  const b = find();
+  if (!b || revealUntil != null) return;
+  revealUntil = revealAt.get(b.dataset.badge) + 4500;
+  const keep = () => {
+    if (performance.now() > revealUntil) { ro?.disconnect(); return; }
+    const x = find(), r = x?.getBoundingClientRect();
+    if (r && (r.top < 0 || r.bottom > innerHeight)) x.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'center' });
+  };
+  const ro = globalThis.ResizeObserver ? new ResizeObserver(keep) : null;
+  ro?.observe(document.body);
+  // The player's own scroll wins: a touch or a wheel ends the follow
+  for (const ev of ['touchstart', 'wheel']) addEventListener(ev, () => { revealUntil = 0; ro?.disconnect(); }, { once: true, passive: true });
+  keep();
+}
 
 /** The facts this phone holds without asking anyone (a guest's, and a player's first draw): phone-facts.js. */
 const localFacts = () => phoneFacts();
@@ -134,9 +198,11 @@ async function ranksOf(J, f, onGame) {
 /* Drawing                                                             */
 /* ------------------------------------------------------------------ */
 
-function badgeEl(b) {
+function badgeEl(b, { reveal = false } = {}) {
   const [name, desc] = b.secret && !b.got ? [T.secretName, T.secretDesc] : T.badges[b.id] || [b.id, ''];
-  return el('div', { class: `pf-badge pf-badge--${b.tier}${b.got ? '' : ' pf-badge--locked'}${b.new ? ' pf-badge--new' : ''}`, 'data-badge': b.id },
+  const show = reveal && b.new && b.got && !calm();
+  return el('div', { class: `pf-badge pf-badge--${b.tier}${b.got ? '' : ' pf-badge--locked'}${b.new ? ' pf-badge--new' : ''}${show ? ' pf-badge--reveal' : ''}`, 'data-badge': b.id,
+    ...(show ? { style: `--pf-d:${revealDelay(b.id)}ms` } : {}) },
     b.new ? el('span', { class: 'pf-new' }, T.isNew) : null,
     el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.secret && !b.got ? '?' : b.icon),
     b.got && b.count > 1 ? el('span', { class: 'pf-times' }, `×${b.count}`) : null,
@@ -145,7 +211,7 @@ function badgeEl(b) {
     b.progress ? el('span', { class: 'pf-bar', 'aria-hidden': 'true' }, el('i', { style: `width:${Math.round(100 * b.progress[0] / b.progress[1])}%` })) : null);
 }
 
-function badgePanels(list, { only = null } = {}) {
+function badgePanels(list, { only = null, reveal = false } = {}) {
   const title = { daily: T.groupDaily, cup: T.groupCup, games: T.groupGames };
   return GROUPS.map(g => {
     const all = list.filter(b => b.group === g && (!only || only(b)));
@@ -153,7 +219,7 @@ function badgePanels(list, { only = null } = {}) {
     const got = all.filter(b => b.got).length;
     return el('section', { class: 'panel pf-group', 'data-group': g },
       el('p', { class: 'lead pf-group-head' }, el('span', {}, title[g]), el('small', {}, fmt(T.groupOf, { n: got, total: all.length }))),
-      el('div', { class: 'pf-grid' }, all.map(badgeEl)));
+      el('div', { class: 'pf-grid' }, all.map(b => badgeEl(b, { reveal }))));
   });
 }
 
@@ -491,10 +557,9 @@ export async function drawProfile(root, { sub }) {
     let f = { ...localFacts(), byGame: [] };
     // A window only once every fact is in: the first look must note what the server knows too (💎, 🎂)
     const paint = (final = false) => {
-      const r = earned(f, readSeen(yo.jid));
-      writeSeen(yo.jid, r.seen);
-      if (final) celebrateHere(r.list).catch(() => {});
-      return r.list;
+      const list = badgeState(f, yo.jid);
+      if (final) celebrateHere(list).catch(() => {});
+      return list;
     };
     const badgesBox = el('div', { class: 'pf-tab' });
     const cardSlot = el('div', {});
@@ -507,7 +572,12 @@ export async function drawProfile(root, { sub }) {
       for (const k of TABS) panes[k].hidden = k !== id;
       history.replaceState(null, '', `#${id}`);
     }
-    const repaint = list => { cardSlot.replaceChildren(card(yo, f, list)); badgesBox.replaceChildren(...badgePanels(list).filter(Boolean)); };
+    const reveal = !seenAtLoad(yo.jid).first;
+    const repaint = list => {
+      cardSlot.replaceChildren(card(yo, f, list));
+      badgesBox.replaceChildren(...badgePanels(list, { reveal }).filter(Boolean));
+      if (badgesBox.isConnected) revealIntoView(badgesBox);
+    };
     repaint(paint());
     // Duels (lab flag rivals, duels-ui.js): under the player's card, before the tabs; lab: #seccion-rivals
     const duelsSlot = el('div', { class: 'dl-slot' });
@@ -515,6 +585,7 @@ export async function drawProfile(root, { sub }) {
     flag('rivals').then(on => on && import('../assets/js/duels-ui.js'))
       .then(m => m && mine === turn && m.seccionPerfil({ alTocar: tap })).then(box => box && duelsSlot.replaceChildren(box)).catch(() => {});
     show(tab);
+    revealIntoView(badgesBox);
     try { f = { ...f, ...(await playerFacts(J, yo)) }; } catch (_) { /* offline: the phone's facts stay */ }
     if (mine !== turn) return;
     repaint(paint());
@@ -534,22 +605,23 @@ export async function drawProfile(root, { sub }) {
 }
 
 function drawGuest(root) {
-  const r = earned(localFacts(), readSeen(null));
-  writeSeen(null, r.seen);
-  celebrateHere(r.list).catch(() => {});
+  const all = badgeState(localFacts(), null);
+  const reveal = !seenAtLoad(null).first;
+  celebrateHere(all).catch(() => {});
   // The badges this phone could earn without a name: Uno al día's streaks and hours, and the games played
   const local = new Set(['streak-10', 'streak-30', 'month-full', 'early-bird', 'explorer', 'plays-100', 'obsession', 'premiere', 'regular', 'weekends', 'mondays',
     'night-owl', 'fiestas', 'halloween', 'xmas', 'new-year']);
-  const list = r.list.filter(b => local.has(b.id) && (b.got || !b.secret));
+  const list = all.filter(b => local.has(b.id) && (b.got || !b.secret));
   root.replaceChildren(
     bloqueJugador({ abierto: true, destacado: true, alTocar: tap }),
     el('section', { class: 'panel pf-group' },
       el('p', { class: 'lead pf-group-head' }, el('span', {}, T.guestBadges), el('small', {}, fmt(T.groupOf, { n: list.filter(b => b.got).length, total: list.length }))),
-      el('div', { class: 'pf-grid' }, list.map(badgeEl)),
+      el('div', { class: 'pf-grid' }, list.map(b => badgeEl(b, { reveal }))),
       el('p', { class: 'muted rk-hint pf-note' }, T.guestBadgesNote)),
     bloqueRanking({ juego: TODOTERRENO, titulo: T.general, hint: RK.allRounderHint, alTocar: tap }),
     bloqueRanking({ juego: UAD_PUNTOS, titulo: fmt(T.dailyMonth, { month: monthName(Date.now()) }), pestanas: ['mes', 'amigosMes'], alTocar: tap }),
     el('a', { class: 'btn btn--ghost', href: '../records/', onClick: tap }, T.allRankings));
+  revealIntoView(root);
 }
 
 

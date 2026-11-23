@@ -164,3 +164,13 @@ export function earned(facts = {}, seen = {}) {
   });
   return { list, seen: out };
 }
+
+/**
+ * A badge this phone already celebrated in its window stays earned on the profile (the owner, 2026-11-22: «lo
+ * felicitó y al ver mis logros salía apagado»): `list` is `earned(…).list`, `done` the phone's announced ones
+ * (secret-achievements.js `announced`), `local` the ids the phone tells alone (phone-facts.js `LOCAL_BADGES`; a
+ * server one, 💎 or 🎂, is the player's and stays the facts'), `seen` what the profile had shown. Pure.
+ */
+export function withAnnounced(list = [], done = {}, local = new Set(), seen = {}) {
+  return list.map(b => (!b.got && local.has(b.id) && done[b.id] ? { ...b, got: true, progress: null, new: !seen[b.id] } : b));
+}

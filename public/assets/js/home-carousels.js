@@ -153,7 +153,7 @@ export async function drawCarousels({ lang, T, games, tap = () => {}, doc = docu
     (again || box.querySelector(`[data-id="${before?.id}"]`))?.focus?.();
   }
 
-  function open(g, shelf, paths) {
+  function open(g, shelf) {
     close();
     before = { id: g.id, shelf };
     const name = pickLang(g.name, lang);
@@ -243,9 +243,8 @@ export async function drawCarousels({ lang, T, games, tap = () => {}, doc = docu
     const play = el('a', { class: 'btn btn--yellow', id: 'btn-game-sheet-play', href: g.path }, t.play);
     play.addEventListener('click', () => {
       tap();
-      // Where the game came from, and the row it was in, for swiping between covers (as a card does)
+      // Where the game came from (as a card does)
       import('./transport/stats.js').then(m => m.markOrigin('card', play.href)).catch(() => {});
-      import('./game-swipe.js').then(m => m.rememberList(paths)).catch(() => {});
     });
 
     const panel = el('div', { class: 'hoja game-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'game-sheet-title', id: 'game-sheet', 'data-id': g.id },
@@ -274,9 +273,8 @@ export async function drawCarousels({ lang, T, games, tap = () => {}, doc = docu
       // A line between La Copa and Uno al día, above, and the games (the list's own divider)
       el('hr', { class: 'filtros-fin shelves-rule', 'aria-hidden': 'true' }),
       ...shelves(games, { favs: favoritos() }).map(s => {
-        const paths = s.games.map(g => new URL(g.path, doc.baseURI).href);
         const row = el('div', { class: 'shelf-row', 'data-shelf': s.id, role: 'list' }, s.games.map(g =>
-          el('div', { role: 'listitem' }, el('button', { type: 'button', class: 'shelf-tile', 'data-id': g.id, 'aria-haspopup': isDirect ? null : 'dialog', onClick: () => { tap(); if (isDirect) goCover(g); else open(g, s.id, paths); } },
+          el('div', { role: 'listitem' }, el('button', { type: 'button', class: 'shelf-tile', 'data-id': g.id, 'aria-haspopup': isDirect ? null : 'dialog', onClick: () => { tap(); if (isDirect) goCover(g); else open(g, s.id); } },
             el('span', { class: 'emoji', 'aria-hidden': 'true' }, gameIcon(g, { size: 1 })),
             el('span', { class: 'name' }, pickLang(g.name, lang))))));
         return el('section', { class: 'shelf', 'aria-labelledby': `shelf-${s.id}` },
