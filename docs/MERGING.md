@@ -77,6 +77,7 @@ queue takes it (its next step also starts the Publish run such a merge does not 
 nothing: auto-merge on, `wait-pr.mjs` as before.
 
 - Needs the `MERGE_QUEUE_TOKEN` secret (a push with the workflow token re-runs no checks); without it the queue does nothing.
+- **Planned replacement**: GitHub's own merge queue (batches, tests ahead), after moving the repo to an organization: [ORG-MIGRATION.md](ORG-MIGRATION.md), not started.
 - **Off switch**: `gh variable set MERGE_QUEUE --body off`, and strict off:
   `gh api -X PATCH repos/ellokojavi/juegos-de-salon/branches/main/protection/required_status_checks -F strict=false`.
 - **Measure**: `node tools/agents/merge-queue.mjs report [--since 2026-11-19] [--until <date>]` prints the

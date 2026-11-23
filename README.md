@@ -752,6 +752,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [The learning programme: AI in the game, and what the owner learns building it](docs/LEARNING.md)
 - [Merging and publishing](docs/MERGING.md)
 - [Offline mode (RP-13)](docs/OFFLINE.md)
+- [Moving the repo to an organization, for GitHub's merge queue (plan, not started)](docs/ORG-MIGRATION.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
 - [Seeded randomness and replay](docs/REPLAY.md)
