@@ -6478,6 +6478,32 @@
         "stat": "16 file(s) +192 −25: .claude/skills/launch-game/SKILL.md, .github/workflows/e2e.yml, changelog/launch-check-gate.md, changelog/profile-stats-spinner.md, changelog/reveal-demo.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 45205584157,
+      "check": "tests",
+      "pr": 1809,
+      "branch": "profile-figures-proposal",
+      "commit": "6d63d264c27abd7abdc7746e08b0284512c4904f",
+      "test": "public/assets/css/fonts-preload.test.mjs",
+      "error": "",
+      "signature": "ab95767eb0",
+      "date": "2026-11-23T15:35:26.577Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45205584157,
+      "check": "tests",
+      "pr": 1809,
+      "branch": "profile-figures-proposal",
+      "commit": "6d63d264c27abd7abdc7746e08b0284512c4904f",
+      "test": "tools/e2e/footer-bottom.test.mjs",
+      "error": "",
+      "signature": "03ba96abef",
+      "date": "2026-11-23T15:35:26.577Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
