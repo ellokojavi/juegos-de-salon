@@ -6461,6 +6461,19 @@
         "stat": "3 file(s) +5 −5: tools/e2e/dominorama/lab.mjs, tools/e2e/home/lab.mjs, tools/e2e/memory/lab.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 45197919926,
+      "check": "tests",
+      "pr": 1807,
+      "branch": "score-time-cup",
+      "commit": "0e45f131666121a9c7d22b74b53760c31985d32b",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-23T14:50:13.232Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
