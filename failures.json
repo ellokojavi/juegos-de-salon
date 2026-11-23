@@ -6421,7 +6421,11 @@
       "error": "✗ the games being tried are apart from the improvements",
       "signature": "e25f392ffe",
       "date": "2026-11-23T05:55:19.703Z",
-      "fix": null,
+      "fix": {
+        "commit": "2107dd3b8abfd45341ce28bc2c3385f6c4756b89",
+        "date": "2026-11-23T06:13:55.814Z",
+        "stat": "3 file(s) +5 −5: tools/e2e/dominorama/lab.mjs, tools/e2e/home/lab.mjs, tools/e2e/memory/lab.mjs"
+      },
       "flaky": false
     },
     {
@@ -6434,7 +6438,11 @@
       "error": "✗ the lab offers Dominorama under Juegos en prueba",
       "signature": "0079d945e2",
       "date": "2026-11-23T05:55:19.703Z",
-      "fix": null,
+      "fix": {
+        "commit": "2107dd3b8abfd45341ce28bc2c3385f6c4756b89",
+        "date": "2026-11-23T06:13:55.814Z",
+        "stat": "3 file(s) +5 −5: tools/e2e/dominorama/lab.mjs, tools/e2e/home/lab.mjs, tools/e2e/memory/lab.mjs"
+      },
       "flaky": false
     },
     {
@@ -6447,7 +6455,11 @@
       "error": "✗ the lab offers Memorice under Active projects: its page, and the prototype",
       "signature": "c260ccb184",
       "date": "2026-11-23T05:55:19.703Z",
-      "fix": null,
+      "fix": {
+        "commit": "2107dd3b8abfd45341ce28bc2c3385f6c4756b89",
+        "date": "2026-11-23T06:13:55.814Z",
+        "stat": "3 file(s) +5 −5: tools/e2e/dominorama/lab.mjs, tools/e2e/home/lab.mjs, tools/e2e/memory/lab.mjs"
+      },
       "flaky": false
     }
   ]
