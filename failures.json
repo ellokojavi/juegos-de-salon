@@ -6387,7 +6387,11 @@
       "error": "✗ the random week can bring Pintaminas and Loteo",
       "signature": "fc75af69d6",
       "date": "2026-11-23T03:04:27.535Z",
-      "fix": null,
+      "fix": {
+        "commit": "1275c39b36ae71f2718b464254991664cbccbbd0",
+        "date": "2026-11-23T03:25:32.882Z",
+        "stat": "17 file(s) +52 −155: changelog/profile-no-toggle.md, docs/DECISIONS.md, docs/decisions/D-602.md, docs/decisions/D-604.md, docs/decisions/D-605.md, …"
+      },
       "flaky": false
     }
   ]
