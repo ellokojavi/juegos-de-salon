@@ -6545,7 +6545,11 @@
       "error": "",
       "signature": "d93391aa89",
       "date": "2026-11-23T16:14:14.503Z",
-      "fix": null,
+      "fix": {
+        "commit": "c756282745e77f31fd2be1f0d89a0b4fb3a33092",
+        "date": "2026-11-23T18:49:11.104Z",
+        "stat": "56 file(s) +880 −188: .github/workflows/preview.yml, README.md, changelog/ccr-770d46d3-p7f6rk.md, changelog/offline-everywhere.md, changelog/org-migration-plan.md, …"
+      },
       "flaky": false
     },
     {
