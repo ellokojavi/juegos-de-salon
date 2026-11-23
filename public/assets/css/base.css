@@ -985,9 +985,10 @@ footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
 html.offline :is(#btn-apoyo-portada, .op-apoyo, #apoyo-pie) { display: none; }
 
 /* The offline palette, "Candlelight" (the owner, 2026-11-07; D-538, PR 8): while offline, every page
-   that is not a game's (home, Uno al día, /labs/, Rankings…) takes a quieter warm palette, so the
-   player feels in the offline version. offline-ui.js sets html.offline-shell, and each page's first inline script already sets it when the phone is offline, so the first paint has it; game pages keep their
-   colours. Text contrast is checked by offline-palette.test.mjs (WCAG AA). */
+   and every screen (home, Uno al día, /labs/, Rankings, the games' covers and their play screens, the
+   owner 2026-11-23) takes a quieter warm palette, so the player feels in the offline version.
+   offline-ui.js sets html.offline-shell, and each page's first inline script already sets it when the
+   phone is offline, so the first paint has it. Text contrast is checked by offline-palette.test.mjs (WCAG AA). */
 html.offline-shell {
   --bg1: #1a120b; --bg1-rgb: 26 18 11;
   --bg2: #2a1d12; --bg2-rgb: 42 29 18;
@@ -995,8 +996,10 @@ html.offline-shell {
   --pink: #d9944a; --pink-rgb: 217 148 74;
   --pink-deep: #9a5f26; --edge-pink: #9a5f26;
   --yellow: #f0d39a; --yellow-rgb: 240 211 154;
-  --orange: #d9944a; --orange-rgb: 217 148 74;
-  --cyan: #c9b48a; --cyan-rgb: 201 180 138;
+  /* Orange and cyan keep apart from the amber accent and the creams, so what a game tells by colour
+     still reads offline (Batalla Naval's hit, sunk and water; Generala's kept dice and boxes; D-609) */
+  --orange: #d8643c; --orange-rgb: 216 100 60;
+  --cyan: #8fb8a8; --cyan-rgb: 143 184 168;
   --purple: #8c6a4a; --purple-rgb: 140 106 74;
   --lime: #c8c08a; --lime-rgb: 200 192 138;
   --fondo:
@@ -1006,9 +1009,9 @@ html.offline-shell {
     linear-gradient(160deg, #1a120b, #2a1d12 55%, #14100c) !important;
 }
 /* Sheets take the palette too (their purple is hard-coded); the offline sheet always does, even
-   opened over a game screen that keeps its colours */
+   opened online from the tester tab */
 html.offline-shell .hoja, .hoja.hoja-offline {
-  --yellow: #f0d39a; --yellow-rgb: 240 211 154; --orange: #d9944a; --orange-rgb: 217 148 74;
+  --yellow: #f0d39a; --yellow-rgb: 240 211 154; --orange: #d8643c; --orange-rgb: 216 100 60;
   --pink: #d9944a; --pink-rgb: 217 148 74; --pink-deep: #9a5f26;
   background: linear-gradient(180deg, rgba(42, 29, 18, 0.985), rgba(20, 16, 12, 0.99));
   border-color: rgb(217 148 74 / 0.35);

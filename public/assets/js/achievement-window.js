@@ -12,6 +12,7 @@
  * earned before this arrived is never announced.
  */
 import { fireworks } from './month-end.js';
+import { partyColors } from './party-colors.js';
 import { readFacts, dueSecret, announced, markAnnounced } from './secret-achievements.js';
 
 const ROOT = new URL('../../', import.meta.url);
@@ -100,7 +101,7 @@ function confettiBurst(cv, x, y) {
   const ctx = cv.getContext('2d'), dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
   cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
   ctx.scale(dpr, dpr);
-  const cols = ['#ffd23f', '#ff2e88', '#2ee6d6', '#9dff3a', '#8a4dff', '#ff7a1a', '#ffffff'];
+  const cols = partyColors();
   const parts = Array.from({ length: 140 }, () => {
     const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.3, v = 6 + Math.random() * 9;
     return { x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 5 + Math.random() * 6, h: 8 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.5, c: cols[Math.random() * cols.length | 0] };

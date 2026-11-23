@@ -84,6 +84,9 @@ jobs:
         run: |
           rsync -a --exclude='*.test.mjs' --exclude=CNAME public/ "$RUNNER_TEMP/site/"
           python3 tools/release/set-version.py --site "$RUNNER_TEMP/site" --commit "$SHA"
+          # Offline mode's list, as publish.yml writes it: without it a preview stored the old committed
+          # list and, offline, games added since opened as empty pages (the player agent, 2026-11-23)
+          node tools/release/precache.mjs --site "$RUNNER_TEMP/site"
           find "$RUNNER_TEMP/site" -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
           echo "folder=$(printf '%s' "$BRANCH" | tr 'A-Z' 'a-z' | sed 's/[^a-z0-9-]/-/g')" >> "$GITHUB_OUTPUT"
 

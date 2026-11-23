@@ -12,12 +12,17 @@ const SITE = fileURLToPath(new URL('../../public/', import.meta.url));
 const { ALL_GAMES, offlineOk } = await import(new URL('../../public/assets/js/games.js', import.meta.url));
 const { release, urls } = await precache(SITE);
 const set = new Set(urls);
+const pages = d => readdirSync(join(SITE, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? pages(join(d, e.name)) : e.name === "index.html" ? [join(d, e.name)] : []);
 
 assert.equal(release, 'dev', 'public/ carries no release meta: it is stamped at publish time');
 assert.equal(set.size, urls.length, 'no repeats');
 assert.ok(set.has('./'), 'the home page');
 for (const g of ALL_GAMES) {
   assert.equal(set.has(g.path), offlineOk(g) && !g.path?.startsWith(LAB), `${g.id}: its page is precached exactly when it is offline-capable and not in the lab`);
+}
+// A kept game's own sub-pages go in too, or offline they open the home page (Tembleque's levels, 2026-11-23)
+for (const g of ALL_GAMES.filter(g => set.has(g.path) && !g.torneo)) {
+  for (const p of pages(g.path)) { const url = p.split('\\').join('/').slice(0, -'index.html'.length); assert.ok(set.has(url), `${url}: a page of ${g.id}, kept with it`); }
 }
 // The minigames' pages load La Copa's engine and each game's module: those come along
 for (const f of ['cup/game.js', 'cup/style.css', 'cup/games/index.js', 'cup/games/zip/engine.js', 'assets/js/games.js', 'assets/css/base.css']) {
@@ -36,7 +41,6 @@ for (const u of urls) {
 }
 // A page loads its own modules through `import`, never `<script type="module" src>`: the import map
 // gives an import its `?h=`, not a src, and the offline worker kept the unstamped file forever (¡Al toque!, 2026-11-10)
-const pages = d => readdirSync(join(SITE, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? pages(join(d, e.name)) : e.name === "index.html" ? [join(d, e.name)] : []);
 for (const p of pages("")) assert.ok(!/<script type="module" src="(?!https?:)/.test(readFileSync(join(SITE, p), "utf8")), `${p}: load its module with import, so it gets its ?h= (D-467)`);
 // A page whose game imports ranking.js links ranking.css, or its table draws as bare browser buttons (¡Al toque!, 2026-11-10)
 for (const p of pages("")) { const dir = join(SITE, p, ".."), js = join(dir, "game.js");

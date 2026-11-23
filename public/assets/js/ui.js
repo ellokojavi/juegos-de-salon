@@ -4,6 +4,7 @@
  */
 import { canShare, shareLink, compartir, comparteArchivos, EMOJI_OSCUROS } from './compartir.js';
 import { flagGuess } from './flags.js';
+import { partyColors } from './party-colors.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -56,7 +57,8 @@ export function vibrate(pattern = 30) {
 export function sparkles(count = 18) {
   if (document.querySelector('.bg-sparkles')) return;
   const wrap = el('div', { class: 'bg-sparkles', 'aria-hidden': 'true' });
-  const colors = ['#ffd23f', '#ff2e88', '#2ee6d6', '#9dff3a', '#8a4dff'];
+  // The design tokens, so offline (Candlelight, D-538) they take its palette like the rest of the page
+  const colors = ['var(--yellow)', 'var(--pink)', 'var(--cyan)', 'var(--lime)', 'var(--purple)'];
   for (let i = 0; i < count; i++) {
     const s = el('span');
     const size = 4 + Math.random() * 10;
@@ -91,7 +93,7 @@ export function confetti({ duration = 2500, count = 160 } = {}) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
   ctx.scale(dpr, dpr);
-  const colors = ['#ffd23f', '#ff2e88', '#2ee6d6', '#9dff3a', '#8a4dff', '#ff7a1a', '#ffffff'];
+  const colors = partyColors();
   const pieces = Array.from({ length: count }, () => ({
     x: Math.random() * innerWidth, y: -20 - Math.random() * innerHeight * 0.5,
     w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,

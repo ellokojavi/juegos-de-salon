@@ -68,7 +68,9 @@ export async function precache(site) {
   const urls = new Set(['./', ...OFFLINE_PAGES, ...games.map(g => g.path)]);
   for (const f of [...all].sort()) {
     if (SKIP.test(f) || f.startsWith(LAB) || NEVER.some(n => f.startsWith(n))) continue;
-    if (f.endsWith('/index.html')) continue;
+    // A page is cached by its folder's URL: a game's own sub-pages too (Tembleque's easy/ and hard/
+    // levels were left out, so offline a level opened the home page instead, 2026-11-23)
+    if (f.endsWith('/index.html')) { urls.add(f.slice(0, -'index.html'.length)); continue; }
     // Big pictures (Dónde's satellite tiles) are cached the first time they are seen, not up front
     if (/\.(webp|jpe?g|png|gif|mp4|mp3|ogg)$/.test(f) && statSync(join(site, f)).size > BIG) continue;   // a page is cached by its folder's URL, above
     urls.add(/\.(js|css)$/.test(f) ? `${f}?h=${digest(join(site, f))}` : f);

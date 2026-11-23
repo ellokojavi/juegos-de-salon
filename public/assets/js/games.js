@@ -810,7 +810,7 @@ export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
 /**
  * Whether a game can be played with no connection (D-538, docs/OFFLINE.md): every game is, in its
  * local modes, unless its entry says `offline: false` (La Copa). Offline mode dims the rest with
- * "📡 Con señal", and the service worker precaches only these. A two-phone room is never offline,
+ * "📡 Solo con señal", and the service worker precaches only these. A two-phone room is never offline,
  * whatever the game: that is the mode (ROOM_MODE), not the game.
  */
 export const offlineOk = g => !!g && g.offline !== false;

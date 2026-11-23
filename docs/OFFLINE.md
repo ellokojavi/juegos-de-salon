@@ -24,12 +24,14 @@ site when it opens (the Firebase SDK is loaded with `import()` only when a room 
 `public/assets/js/connection.js` (PR 3), started by `instalable.js` on every page while the flag is on:
 
 - `offline` event or `navigator.onLine === false`: on at once.
-- Poor connection, or a dead one the browser does not report (an iPhone in airplane mode often keeps
-  `navigator.onLine` true and sends no `offline` event): two probes in a row fail or take over 4 s. A
-  probe is a no-cache `HEAD` of `precache.json`, which the service worker never answers from its cache;
-  one every 20 s online while the page is in view (none while hidden), a failed one confirmed 3 s later,
-  every 15 s offline, and one each time the page comes back to the front (1.5 s later, so the radio is awake). So a silent
-  cut shows in at most ~23 s, and in ~5 s after returning to the app (the owner, 2026-11-22: it took two minutes).
+- A probe refused outright twice, 0.5 s apart (no route at all, as in airplane mode): on in about half a second; one refusal alone is a hiccup, and offline only by refusals one good answer brings it back. An iPhone in airplane
+  mode often keeps `navigator.onLine` true and sends no `offline` event, so the probes are all there is
+  (D-609, the owner 2026-11-23: it must be immediate). Online they run every 5 s while the page is in
+  view (none while hidden), on each touch of the screen (at most every 2 s), when Android reports a
+  network change (`navigator.connection`), and 1 s after the page comes back to the front (a refusal
+  then is confirmed 1.5 s later, so a waking radio does not flash offline mid-room). Offline, every 15 s.
+- Poor connection: two probes in a row take over 4 s, the second 1.5 s after the first. A probe is a
+  no-cache `HEAD` of `precache.json`, which the service worker never answers from its cache.
 - Off only after two good probes at least 10 s apart, so a flaky signal does not flip the screen.
 - The state is `connection().mode()`, an `onChange` listener, `<html data-connection>` and a
   `connection` event; screens only listen.
@@ -47,11 +49,12 @@ No new control on the home page while online. Offline:
    signal; your scores are saved here and upload by themselves. One button, "Entendido".
 2. **While offline** (`offline-ui.js`, `offline.css`, PR 4): a sticker "📴 Sin conexión · 2 por subir"
    like the cards' "Nuevo", stuck at the end of the page's title (the home page's "Juegos de Salón", a
-   game cover's name). It is positioned absolutely, so going offline or back moves nothing on screen;
-   a page with no title gets it floating at the bottom; it steps aside while playing. A tap on the
+   game cover's name, a setup screen's heading). It is positioned absolutely, so going offline or back
+   moves nothing on screen; a page with no title gets it floating at the bottom; it steps aside while
+   playing (`html.offline-play`), so it never covers a board. A tap on the
    sticker opens the sheet of point 1 again, as often as wanted. Every link to a page the phone
    does not keep (La Copa, Rankings, /privacy/…) and every game's two-phone mode stay in place, dimmed
-   and tagged **"📡 Con señal"** (Needs signal / Com sinal); small icon buttons and things inside a
+   and tagged **"📡 Solo con señal"** (Needs signal / Só com sinal; "Con señal" until D-609, which read as "has signal"); small icon buttons and things inside a
    dimmed card are dimmed without a tag of their own. A tap shows one line: "Esto necesita conexión.
    Vuelve cuando vuelva la señal." The games mark their modes with `data-mode`.
 3. **End screen**: "Guardado en tu celular. Se sube al volver la señal." instead of the ranking place;
@@ -123,7 +126,7 @@ PR that changes what is kept on the phone.
    No update toast: pages are network-first and assets are content-hashed, so a new release is
    picked up on the next load with no prompt (`sw.test.mjs`, `precache.test.mjs`).
 3. ✅ `connection.js`: probes, hysteresis, the tester switch in `/labs/` and the T tab, a real cut while on (`offline-cut.js` and the service worker: nothing reaches the network, `navigator.onLine` false; `?connection=online` is the way out) (`connection.test.mjs`).
-4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Con señal", the chip, the
+4. ✅ Home page and game covers: dimmed links and two-phone modes with "📡 Solo con señal", the chip, the
    one-line explanation on tap (`offline-ui.test.mjs`).
 5. ✅ Scores: queue of 200 with ids and exactly-once counting, queued without Firebase, end-screen wording,
    reconnect toast with what was lost and why, `storage.persist()`, Uno al día yesterday within 48 h,
@@ -139,13 +142,16 @@ PR that changes what is kept on the phone.
    queued game and links that need signal are dimmed; back online it uploads once (counter +1 exactly)
    with its toast. The queue does not try to upload while offline mode is on. The way back (flag off
    forgets the stored files) is `sw.test.mjs`'s.
-8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `offline.css`, set by
-   `offline-ui.js` on every page that is not a game's, `offline-palette.test.mjs`. Game covers take it
-   too (the owner, 2026-11-07): `#screen-intro`, `#screen-setup` or `body.antesala` (the cover of the games built in `cup/games/`)
-   (`COVER` in `offline-ui.js`); the play screens keep their colours. No fade yet: the palette switches with the mode): while offline, everything outside the games (home
-   page, menus, top bars, sheets, /labs/, Rankings, and the game covers) takes a quieter palette, so
-   players feel they are in the offline version of Juegos de Salón. The game screens themselves keep
-   their colours. A second set of the design tokens under `html.offline`. Built last, after everything else.
+8. ✅ **An offline palette** (the owner, 2026-11-07; built: `html.offline-shell` in `base.css`, set by
+   `offline-ui.js`, `offline-palette.test.mjs`): while offline, **everything** takes a quieter palette,
+   so players feel they are in the offline version of Juegos de Salón: home page, menus, top bars,
+   sheets, /labs/, the profile, Rankings, and every game, its cover and its play screens alike (D-609,
+   the owner 2026-11-23: "the whole game's palette changes"; until then the play screens kept their
+   colours). A game's own drawing (Aletazo's sky, Shinobi's night, Reinas' region colours) keeps its
+   colours: it is the board. A second set of the design tokens under `html.offline-shell`; colours
+   written outside the tokens take it beside them (the home page's La Copa and Uno al día cards), and
+   the sparkles and confetti read the tokens (`party-colors.js`). Every page that runs offline mode
+   carries the first-paint script, new games included (`offline-first-paint.test.mjs`).
    - **Chosen: "Candlelight"** (the owner, 2026-11-07, from four mockups: blue-grey night, greyscale +
      cyan, candlelight, deep sea): dark warm brown with amber and cream. Starting values:
      `--bg1 #1a120b`, `--bg2 #2a1d12`, `--bg3 #14100c`; `--pink #d9944a` (main accent),
@@ -161,7 +167,7 @@ PR that changes what is kept on the phone.
      same screen and crossfades (~600 ms, View Transitions; instant without them or with reduced
      motion). Back online is immediate when the browser says so and a probe agrees; only a recovered
      poor connection still waits for two good probes 10 s apart.
-   - **Readable**: text and the dimmed "📡 Con señal" tags on the new background pass WCAG AA contrast
+   - **Readable**: text and the dimmed "📡 Solo con señal" tags on the new background pass WCAG AA contrast
      (4.5:1), checked by a test.
    - **The random game offline** (the owner, 2026-11-07): the 🎲 picks only games this phone keeps and
      can play (`guardados` in `azar.js`), so it never lands on a page that cannot open.

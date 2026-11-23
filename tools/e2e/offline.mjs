@@ -59,6 +59,16 @@ await b.go(`${SITE}/battleship/?lang=es`, 1500);
 if (!(await until(`document.documentElement.classList.contains('offline-shell')`, 6000))) bad('the battleship cover does not take the offline palette');
 else ok('a game cover takes the offline palette');
 
+// And so does the game itself (the owner, 2026-11-23: the whole game's palette changes); while playing
+// the sticker steps aside so it covers nothing of the board
+await b.go(`${SITE}/zip/?lang=es`, 1500);
+await b.evaluate(`[...document.querySelectorAll('button')].find(e => /Empezar/i.test(e.textContent) && e.offsetParent)?.click(); 1`);
+const playing = await until(`document.documentElement.classList.contains('offline-play')`, 8000);
+if (!playing) bad('Zip did not start offline');
+else if (!(await b.evaluate(`document.documentElement.classList.contains('offline-shell')`))) bad('a play screen keeps its normal colours offline');
+else if (await b.evaluate(`(() => { const c = document.querySelector('.offline-chip'); return !!c && getComputedStyle(c).display !== 'none'; })()`)) bad('the Sin conexión sticker shows over the board while playing');
+else ok('a play screen takes the offline palette, with the sticker out of the way');
+
 // The random game works offline: it lands on a game this phone keeps, which opens
 await b.go(`${SITE}/?lang=es`, 1500);
 await b.evaluate(`localStorage.setItem('juegos-de-salon:offline-sheet-seen', '1'); document.querySelector('.btn-azar').click()`);

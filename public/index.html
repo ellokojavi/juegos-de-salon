@@ -487,6 +487,18 @@
     .uad-card .meta .uad-card-chip .uad-card-sub { font: 800 0.78rem/1.1 var(--font-body); color: var(--muted); }
     .uad-card-sub i { font-style: normal; }
     .uad-card-sub b { color: var(--yellow); font-family: var(--font-num); }
+    /* Offline (Candlelight, D-538): the featured cards' colours are their own, not the tokens, so they
+       take the palette here; the whole site changes, these cards too (the owner, 2026-11-23) */
+    html.offline-shell .game-card.torneo {
+      border-color: rgb(240 211 154 / 0.5); box-shadow: 0 0 22px rgb(217 148 74 / 0.22);
+      background: linear-gradient(115deg, rgb(240 211 154 / 0.28), rgb(217 148 74 / 0.36) 30%, rgb(140 106 74 / 0.42) 55%, rgb(217 148 74 / 0.34) 80%, rgb(240 211 154 / 0.28)) 0% 50% / 300% 300%;
+    }
+    html.offline-shell .game-card.torneo .copa-mes { background: #2a1d12; border-color: rgb(240 211 154 / 0.6); }
+    html.offline-shell .uad-card { border-color: rgb(217 148 74 / 0.55); box-shadow: 0 0 20px rgb(217 148 74 / 0.2); background: linear-gradient(160deg, rgb(217 148 74 / 0.36), rgb(140 106 74 / 0.36)); }
+    html.offline-shell .uad-card.hecho { border-color: rgb(201 180 138 / 0.6); background: linear-gradient(160deg, rgb(201 180 138 / 0.3), rgb(140 106 74 / 0.32)); }
+    html.offline-shell .uad-card .uad-card-mes { background: #2a1d12; color: #f0d39a; border-color: rgb(217 148 74 / 0.6); }
+    html.offline-shell .uad-card.invita .uad-card-mes { background: #9a5f26; color: #fff; border-color: #f0d39a; }
+    html.offline-shell .uad-card.hecho .uad-card-mes { border-color: rgb(201 180 138 / 0.6); color: #f0d39a; }
     .uad-card .meta .uad-card-chip .uad-card-fuego { color: var(--ink); font-family: var(--font-num); }
     @media (max-width: 340px) { .uad-card-sub i { display: none; } }
     /* El punto no se monta sobre el título: "Spiel des Tages" llega hasta el borde (U-12) */

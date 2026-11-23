@@ -49,3 +49,13 @@ console.log('✓ offline-ui: what needs signal is exactly what the phone does no
   const ui = readFileSync(new URL('./offline-ui.js', import.meta.url), 'utf8');
   assert.match(ui, /childList: true, attributes: true/, 'Start swaps the cover for the board with no class change: children are watched too');
 }
+
+// A kept game's own sub-pages are kept too (precache.mjs): Tembleque's levels never need signal
+{
+  const { needsSignal } = await import('./offline-ui.js');
+  const root = new URL('https://juegosdesalon.cl/');
+  assert.equal(needsSignal('/wobbles/easy/', { root }), false, 'Tembleque easy is kept');
+  assert.equal(needsSignal('/wobbles/hard/', { root }), false, 'Tembleque hard is kept');
+  assert.equal(needsSignal('/cup/history/', { root }), true, 'La Copa keeps only its own page, not its sub-pages');
+  console.log('✓ offline-ui: a kept game\'s sub-pages open offline');
+}

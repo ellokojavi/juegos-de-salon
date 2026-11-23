@@ -18,6 +18,14 @@
         if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* the Spanish one stays */ }
     })();
+    // Offline mode (D-538): a phone already offline paints its first frame in the offline palette,
+    // with no flash of the normal one (offline-ui.js takes over once the page has loaded)
+    (function () {
+      try {
+        var f = localStorage.getItem('juegos-de-salon:offline-forced');
+        if (localStorage.getItem('juegos-de-salon:offline-flag') === '1' && f !== '0' && (f === '1' || navigator.onLine === false)) document.documentElement.classList.add('offline', 'offline-shell');
+      } catch (_) { /* no storage: it paints as always */ }
+    })();
   </script>
   <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
   <script src="../../assets/js/vigia.js"></script>

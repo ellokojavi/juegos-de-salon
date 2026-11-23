@@ -7,6 +7,7 @@
  * table» opens the season's table window. In the lab behind its flag, asked in recap.js (lab: #seccion-uad-month-end).
  * `?recap=month-end-demo&place=N` shows it with a made-up season. The pure parts are tested by node.
  */
+import { partyColors } from './party-colors.js';
 
 const ROOT = new URL('../../', import.meta.url);
 
@@ -103,7 +104,7 @@ export function fireworks(cv) {
   if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return () => {};
   const ctx = cv.getContext('2d'), dpr = globalThis.devicePixelRatio || 1;
   cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
-  const cols = ['#ffd23f', '#ff2e88', '#2ee6d6', '#9dff3a', '#ff7a1a', '#ffffff'];
+  const cols = partyColors();
   let parts = [], rockets = [], t = 0, stop = false;
   const burst = (x, y) => {
     const c = cols[Math.random() * cols.length | 0];

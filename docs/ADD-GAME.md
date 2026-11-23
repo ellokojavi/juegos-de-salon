@@ -16,7 +16,7 @@ born (`tools/generators/new-game.test.mjs` proves it on a fresh one, untouched):
 
 - `public/labs/<id>/` with C-2's files plus `game.json`: `index.html` with the head every page needs
   (the lab's door `labs-puerta.js` and `noindex`, the manifest and icon, `vigia.js`, the font preloads,
-  `instalable.js`; D-221, D-222, D-251, D-281), `style.css` on the tokens only, `rules.js` with
+  `instalable.js`, and the first-paint offline script so Candlelight shows from the first frame, `offline-first-paint.test.mjs`; D-221, D-222, D-251, D-281, D-609), `style.css` on the tokens only, `rules.js` with
   `LOCALES = { es, en, pt }` (same keys), `engine.js` a pure state machine with `engine.test.mjs`, and
   `game.js` with the session store (C-6), the panel signal `trackStart` / `trackFinish` (C-7, D-210),
   the result's exits from `fin.js` (C-19) and its share through `compartir.js`.

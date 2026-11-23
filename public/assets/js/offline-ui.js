@@ -2,7 +2,7 @@
  * What offline mode shows (D-538, docs/OFFLINE.md, PR 4), on every page while the flag `offline` is
  * on and connection.js says offline. Nothing is added while online.
  *
- * - **Dimmed, tagged "📡 Con señal"**: every link to a page of the site the phone does not keep
+ * - **Dimmed, tagged "📡 Solo con señal"**: every link to a page of the site the phone does not keep
  *   offline (La Copa, Rankings, /privacy/…; the kept ones are the offline-capable games and the home
  *   page) and every game's two-phone mode (`.mode[data-mode="online"]`). They stay in place; a tap
  *   says in one line why, instead of opening.
@@ -30,8 +30,10 @@ const ROOT = new URL('../../', import.meta.url);
 
 /** The site's paths a phone keeps offline: the home page, OFFLINE_PAGES (Uno al día) and each offline-capable game's page. */
 export const KEPT = new Set(['', ...OFFLINE_PAGES.map(p => p.replace(/\/$/, '')), ...ALL_GAMES.filter(g => offlineOk(g) && g.path).map(g => g.path.replace(/\/$/, ''))]);
+/** The games whose whole folder is kept, sub-pages too (Tembleque's easy/ and hard/; precache.mjs). A tournament keeps only its own files. */
+const KEPT_FOLDERS = ALL_GAMES.filter(g => offlineOk(g) && g.path && !g.torneo && !g.path.startsWith('labs/')).map(g => g.path.replace(/\/$/, ''));
 
-/** The games' own pages: they keep their colours offline; every other page takes the offline palette (PR 8). */
+/** The games' own pages: while playing (not on the cover) the "Sin conexión" sticker steps aside. */
 export const GAME_PATHS = new Set(ALL_GAMES.filter(g => g.path).map(g => g.path.replace(/^\/|\/$/g, '')));
 /** Whether `pathname` is a game's page, under the site's root. */
 export function isGamePage(pathname = globalThis.location?.pathname || '/', root = ROOT) {
@@ -44,15 +46,15 @@ export function isGamePage(pathname = globalThis.location?.pathname || '/', root
  * A game's cover (the owner, 2026-11-07): its first screen, before playing. Party games show it as
  * `#screen-intro` or `#screen-setup`. A minigame's own page (Shinobi, Zip, Babel…) draws its cover
  * inside `#screen-jugar` with an `.intro-hero`, which Start replaces with the board; `body.antesala`
- * is only La Copa's day cover, never a standalone minigame's (that miss left every minigame cover in
- * its normal colours, 2026-11-07). Offline, a cover takes the offline palette like the rest of the
- * site; the play screens keep their colours.
+ * is only La Copa's day cover, never a standalone minigame's. Offline, every screen takes the offline
+ * palette, covers and play screens alike (the owner, 2026-11-23: "the whole game's palette changes");
+ * the cover only decides where the sticker goes: on its title, and away while playing.
  */
 export const COVER = '#screen-intro.active, #screen-setup.active, #screen-jugar.active .intro-hero, body.antesala';
 export const onCover = (doc = globalThis.document) => !!doc.querySelector(COVER);
 
 /** The page's title the "Sin conexión" sticker sticks to: the home page's, a party game's cover, a minigame's cover. */
-export const TITLE = '.hero > h1, #screen-intro.active h1, #screen-setup.active h1, #screen-jugar.active .intro-hero h1, #screen-jugar.active .intro-hero h2';
+export const TITLE = '.hero > h1, #screen-intro.active h1, #screen-setup.active h1, #screen-setup.active > h2, #screen-jugar.active .intro-hero h1, #screen-jugar.active .intro-hero h2';
 
 /** Whether a link needs signal: a page of this site that is not kept offline. Anchors and other sites never. */
 export function needsSignal(href, { root = ROOT, base = root } = {}) {
@@ -61,7 +63,7 @@ export function needsSignal(href, { root = ROOT, base = root } = {}) {
   if (u.origin !== root.origin || !u.pathname.startsWith(root.pathname)) return false;
   const path = u.pathname.slice(root.pathname.length).replace(/index\.html$/, '').replace(/\/$/, '');
   if (/\.\w+$/.test(path)) return false;   // a file, not a page
-  return !KEPT.has(path);
+  return !KEPT.has(path) && !KEPT_FOLDERS.some(k => path.startsWith(`${k}/`));
 }
 
 /** Finished games waiting to upload: the rankings' queue and La Copa's days played offline (D-544). */
@@ -126,7 +128,9 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     const host = title || doc.body;
     chip.classList.toggle('offline-chip--float', !title);
     if (chip.parentElement !== host) host.append(chip);
-    if (!title) return;
+    // Floating, the place measured on a title before goes: a `top` left over with the float's `bottom`
+    // stretched the sticker into a tall dark bar over the setup screen (2026-11-23)
+    if (!title) { chip.style.left = ''; chip.style.top = ''; return; }
     // At the end of the title's text, whatever the title's layout (a centred line, or a minigame's flex
     // row with its emoji): measured, since an absolute child of a flex row would sit at its start
     if (win.getComputedStyle(title).position === 'static') title.style.position = 'relative';
@@ -135,7 +139,21 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     range.setEndBefore(chip);
     const end = [...range.getClientRects()].filter(r => r.width).pop();
     const box = title.getBoundingClientRect();
-    if (end) { chip.style.left = `${end.right - box.left}px`; chip.style.top = `${end.top - box.top}px`; }
+    if (!end) return;
+    let left = end.right - box.left;
+    chip.style.left = `${left}px`; chip.style.top = `${end.top - box.top}px`;
+    // A short title's sticker rises onto the game's icon above it (Tembleque's scale, 2026-11-23): it
+    // moves right, past the icon, as far as the screen allows
+    // The icon's drawing, not its box (a block as wide as the screen): its contents measured
+    const above = title.previousElementSibling;
+    let icon = null;
+    if (above) { const r = doc.createRange(); r.selectNodeContents(above); icon = r.getBoundingClientRect(); }
+    const c = chip.getBoundingClientRect();
+    const room = (win.innerWidth || doc.documentElement.clientWidth) - 8 - c.right;
+    if (icon && icon.width && c.left < icon.right && c.right > icon.left && c.top < icon.bottom && c.bottom > icon.top && room > 0) {
+      left += Math.min(icon.right + 4 - c.left, room);
+      chip.style.left = `${left}px`;
+    }
   };
   win.addEventListener('resize', () => stick());
 
@@ -165,8 +183,13 @@ export function startOfflineUi({ connection, doc = globalThis.document, win = gl
     toast();
   }, true);
 
-  // The palette: every page that is not a game's, and a game's page while its cover shows
-  const shell = () => html.classList.toggle('offline-shell', html.classList.contains('offline') && (!isGamePage(win.location?.pathname) || onCover(doc)));
+  // The palette on every page and every screen while offline (the owner, 2026-11-23); `offline-play`
+  // marks a game's page while playing, where the sticker steps aside so it covers nothing of the board
+  const shell = () => {
+    const off = html.classList.contains('offline');
+    html.classList.toggle('offline-shell', off);
+    html.classList.toggle('offline-play', off && isGamePage(win.location?.pathname) && !onCover(doc));
+  };
   const screens = new win.MutationObserver(() => { shell(); if (html.classList.contains('offline')) stick(); });
   // Classes (a screen turning active) and children (a minigame's Start swaps its cover for the board
   // without any class changing)

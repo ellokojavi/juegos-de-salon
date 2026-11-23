@@ -1,9 +1,15 @@
 // Run: node public/assets/js/offline-palette.test.mjs
 // The offline palette (D-538, PR 8) is readable: white text, the accents used as text, and the
-// "📡 Con señal" tag pass WCAG AA (4.5:1) on its backgrounds. Game pages keep their own colours.
+// "📡 Solo con señal" tag pass WCAG AA (4.5:1) on its backgrounds. Every page and screen takes it, games included.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isGamePage } from './offline-ui.js';
+// The whole game takes the palette offline, play screens too (the owner, 2026-11-23): offline-ui.js
+// never limits offline-shell to some pages again
+{
+  const ui = readFileSync(new URL('./offline-ui.js', import.meta.url), 'utf8');
+  assert.match(ui, /toggle\('offline-shell', off\)/, 'offline-shell follows the mode alone, on every page');
+}
 
 const css = readFileSync(new URL('../css/base.css', import.meta.url), 'utf8');
 const block = css.slice(css.indexOf('html.offline-shell {'));
@@ -28,9 +34,19 @@ for (const bg of bgs) {
 // Muted text (white at 72 %)
 for (const bg of bgs) assert.ok(ratio(over([255, 255, 255], 0.72, bg), bg) >= 4.5, `muted text on ${bg}`);
 
+// The accents games tell things apart by stay apart (D-609: hit and sunk in Batalla Naval were the same
+// amber): every pair at least 40 apart in RGB
+{
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const names = ['pink', 'orange', 'yellow', 'cyan', 'lime'];
+  for (const a of names) for (const b of names) if (a < b) {
+    const d = Math.hypot(...rgb(token(a)).map((v, i) => v - rgb(token(b))[i]));
+    assert.ok(d >= 40, `--${a} ${token(a)} and --${b} ${token(b)} look alike offline (${d.toFixed(0)})`);
+  }
+}
 assert.equal(isGamePage('/zip/'), true);
 assert.equal(isGamePage('/hangman/index.html'), true);
-assert.equal(isGamePage('/'), false, 'the home page takes the palette');
-assert.equal(isGamePage('/today/'), false, 'Uno al día takes the palette');
+assert.equal(isGamePage('/'), false, 'the home page is not a game (the sticker stays on its title)');
+assert.equal(isGamePage('/today/'), false, 'nor Uno al día');
 assert.equal(isGamePage('/labs/'), false);
-console.log('✓ offline palette: readable (WCAG AA) on its three backgrounds; game pages keep their colours');
+console.log('✓ offline palette: readable (WCAG AA) on its three backgrounds; on every page and screen, games included');

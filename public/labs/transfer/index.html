@@ -23,6 +23,14 @@
         setTimeout(listo, 1500);
       } catch (_) { /* no storage: it paints as always */ }
     })();
+    // Offline mode (D-538): a phone already offline paints its first frame in the offline palette,
+    // with no flash of the normal one (offline-ui.js takes over once the page has loaded)
+    (function () {
+      try {
+        var f = localStorage.getItem('juegos-de-salon:offline-forced');
+        if (localStorage.getItem('juegos-de-salon:offline-flag') === '1' && f !== '0' && (f === '1' || navigator.onLine === false)) document.documentElement.classList.add('offline', 'offline-shell');
+      } catch (_) { /* no storage: it paints as always */ }
+    })();
   </script>
   <meta name="description" content="Arma la ruta con tus cartas y sube al metro. Cinco viajes, para jugar solo.">
   <link rel="manifest" href="../../manifest.webmanifest">
