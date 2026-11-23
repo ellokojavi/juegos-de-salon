@@ -347,8 +347,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **🎲 Dominorama** (prepared 2026-11-19, D-517's way, not launched) comes from the lab into the pool
   (`copa: { pozo: 20 }`) when the owner switches `flags/dominorama` on; its page is [dominorama.md](dominorama.md).
   A day plays its three boards (the trial, the easy one); its score is 0 to 100 already, speed read from the cup's clock.
-- **🐸 Croc!** (prepared 2026-11-21, D-517's way, not launched) comes from the lab into the pool
-  (`copa: { pozo: 21 }`) when the owner switches `flags/croc` on; its page is [croc.md](croc.md). Its traffic levels
+- **🐸 Croc!** (prepared 2026-11-21, D-517's way; launched 2026-11-22, 21:00 Pacific) came from the lab into the pool
+  (`copa: { pozo: 21 }`) when `flags/croc` went on; its page is [croc.md](croc.md). Its traffic levels
   are variants (`VARIANTES.croc`): a day plays 🟢 normal unless the admin picks 🔥 heavy (`hard`); the trial is a
   15-row track. Its points have no cap; Uno al día takes its own 0–100 (`dayScore`).
 - **#️⃣ Sudoku** (2026-11-11, D-517's way) came from the lab into the pool (`copa: { pozo: 17 }`), launched by
