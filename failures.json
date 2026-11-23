@@ -6472,7 +6472,11 @@
       "error": "",
       "signature": "14fef58185",
       "date": "2026-11-23T14:50:13.232Z",
-      "fix": null,
+      "fix": {
+        "commit": "0bac2a070c64a1eba3cb45db60e24028091ec8e6",
+        "date": "2026-11-23T15:23:50.920Z",
+        "stat": "16 file(s) +192 −25: .claude/skills/launch-game/SKILL.md, .github/workflows/e2e.yml, changelog/launch-check-gate.md, changelog/profile-stats-spinner.md, changelog/reveal-demo.md, …"
+      },
       "flaky": false
     }
   ]
