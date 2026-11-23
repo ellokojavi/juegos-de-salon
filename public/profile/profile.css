@@ -19,10 +19,14 @@
 .pf-stat { background: var(--well); border-radius: var(--r-12); padding: var(--s-10) var(--s-6); text-align: center; }
 .pf-stat b { display: block; font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .pf-stat > span { font-size: var(--fs-75); color: var(--muted); font-weight: 800; }
-/* Until the server's figure arrives, a spinner the size of the number: the card never jumps (the owner, 2026-11-23) */
-.pf-stat .pf-spin { display: inline-block; width: 0.7em; height: 0.7em; vertical-align: -0.05em; border-radius: var(--r-pill);
-  border: 0.12em solid rgb(var(--yellow-rgb) / 0.25); border-top-color: var(--yellow); animation: pf-spin 0.8s linear infinite; }
-@keyframes pf-spin { to { transform: rotate(1turn); } }
+/* Until the server's figure arrives, three dots hop where the number goes; then the number pops in (the owner, 2026-11-23) */
+.pf-dots { display: inline-flex; gap: 0.16em; vertical-align: middle; }
+.pf-dots i { width: 0.22em; height: 0.22em; border-radius: var(--r-pill); background: var(--yellow); animation: pf-hop 0.9s ease-in-out infinite; }
+.pf-dots i:nth-child(2) { animation-delay: 0.15s; }
+.pf-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pf-hop { 0%, 60%, 100% { transform: translateY(0); opacity: 0.45; } 30% { transform: translateY(-0.28em); opacity: 1; } }
+.pf-stat b.pf-pop { animation: pf-pop 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+@keyframes pf-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* The three tabs: always in view while scrolling */
 /* Sticky over the badges: nearly opaque in the page's own colour, blurred behind and edged, so it reads as a bar

@@ -124,7 +124,7 @@ for (const W of [320, 390]) {
   await ev(`localStorage.setItem('juegos-de-salon:partidas', ${JSON.stringify(plays0 ?? '0')})`);
   ok(await ev(`document.querySelector('.pf-player')?.textContent.includes('Javi')`), `${W}: the card names the player`);
   ok(await ev(`!document.querySelector('.pf-avatar') && !!document.querySelector('.pf-card .pf-player .rk-flag, .pf-card .pf-player')`), `${W}: the card is the player's flag and name, no initial in a circle`);
-  // The figures count up from zero to their number (the owner, 2026-11-23), then stay
+  // The figures pop in once the server answers (the owner, 2026-11-23), then stay
   await sleep(1600);
   ok(/14/.test(await ev(`document.querySelector('.pf-stat b')?.textContent`)), `${W}: the card shows the 14-day streak`);
   ok(await ev(`!!document.querySelector('[data-badge="streak-10"]:not(.pf-badge--locked)')`), `${W}: 🔥 10 in a row is earned`);
@@ -139,23 +139,23 @@ for (const W of [320, 390]) {
   const spill = await ev(`[...document.querySelectorAll('.pf-badge')].filter(x => { const n = x.querySelector('.pf-name'), r = n.getBoundingClientRect(), c = x.getBoundingClientRect(); return n.scrollWidth > n.clientWidth + 1 || r.left < c.left - 0.5 || r.right > c.right + 0.5; }).map(x => x.dataset.badge).join(', ')`);
   ok(!spill, `${W}: every badge's name fits inside its card${spill ? ` (${spill})` : ''}`);
   ok(await ev(`!!document.querySelector('[data-badge="number-one"]:not(.pf-badge--locked) .pf-new')`), `${W}: 🥇 number 1 is earned and new`);
-  ok(await ev(`(async () => { window.__profile.redraw(); await new Promise(r => setTimeout(r, 120)); const v = [...document.querySelectorAll('.pf-stat b')].map(b => b.textContent); return /14/.test(v[0]) && /^20$/.test(v[1]); })()`), `${W}: drawn again, the figures count on from where they stood, never from zero again`);
+  ok(await ev(`(async () => { window.__profile.redraw(); await new Promise(r => setTimeout(r, 120)); const v = [...document.querySelectorAll('.pf-stat b')].map(b => b.textContent); return !document.querySelector('.pf-stat .pf-pop, .pf-stat .pf-dots') && /14/.test(v[0]) && /^20$/.test(v[1]); })()`), `${W}: drawn again, the figures stay as they stood: no dots, no pop again`);
   // The day it reaches everyone (the owner, 2026-11-23): what a phone had already earned is never announced, secret ones too
   await ev(`localStorage.removeItem('juegos-de-salon:logros-base'); localStorage.removeItem('juegos-de-salon:logros-anunciados')`);
-  // Every figure the card puts up, as it was put up: the first is a spinner, never this phone's partial count (the owner, 2026-11-23)
-  await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `window.__figs = []; new MutationObserver(rs => { for (const r of rs) for (const n of r.addedNodes) if (n.querySelectorAll) for (const x of n.querySelectorAll('.pf-stat b[data-count]')) window.__figs.push({ k: x.dataset.count, spin: !!x.querySelector('.pf-spin'), t: x.textContent }); }).observe(document, { childList: true, subtree: true });` });
+  // Every figure the card puts up, as it was put up: the first are hopping dots, never this phone's partial count (the owner, 2026-11-23)
+  await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `window.__figs = []; new MutationObserver(rs => { for (const r of rs) for (const n of r.addedNodes) if (n.querySelectorAll) for (const x of n.querySelectorAll('.pf-stat b[data-count]')) window.__figs.push({ k: x.dataset.count, dots: !!x.querySelector('.pf-dots'), t: x.textContent }); }).observe(document, { childList: true, subtree: true });` });
   await b.go(`${SITE}/profile/?test`, 5000);
   {
     const figs = await ev(`window.__figs`);
     const first = Object.fromEntries(['streak', 'plays', 'cups'].map(k => [k, figs.find(x => x.k === k)]));
-    ok(Object.values(first).every(x => x?.spin && !/\d/.test(x.t)), `${W}: before the server answers, each figure is a spinner, never a partial number (${JSON.stringify(first)})`);
-    ok(/^20$/.test(await ev(`document.querySelector('.pf-stat b[data-count="plays"]')?.textContent`)) && !(await ev(`!!document.querySelector('.pf-spin')`)), `${W}: then the server's figure, the spinner gone`);
-    // The spinner holds the number's place: the card does not jump when the figure arrives (D-570)
+    ok(Object.values(first).every(x => x?.dots && !/\d/.test(x.t)), `${W}: before the server answers, each figure is three hopping dots, never a partial number (${JSON.stringify(first)})`);
+    ok(/^20$/.test(await ev(`document.querySelector('.pf-stat b[data-count="plays"]')?.textContent`)) && !(await ev(`!!document.querySelector('.pf-dots')`)), `${W}: then the server's figure pops in, the dots gone`);
+    // The dots hold the number's place: the card does not jump when the figure arrives (D-570)
     const jump = await ev(`(() => { const s = document.querySelector('.pf-card .pf-stats'), h0 = s.getBoundingClientRect().height, bs = [...s.querySelectorAll('b')], keep = bs.map(x => x.innerHTML);
-      bs.forEach(x => { x.innerHTML = '<span class="pf-spin"></span>'; }); const h1 = s.getBoundingClientRect().height, sp = bs[1].querySelector('.pf-spin').getBoundingClientRect(), bb = bs[1].getBoundingClientRect();
+      bs.forEach(x => { x.innerHTML = '<span class="pf-dots"><i></i><i></i><i></i></span>'; }); const h1 = s.getBoundingClientRect().height, sp = bs[1].querySelector('.pf-dots').getBoundingClientRect(), bb = bs[1].getBoundingClientRect();
       const r = { dh: Math.round(h1 - h0), dx: Math.round((sp.left + sp.right) / 2 - (bb.left + bb.right) / 2) }; window.__keepFigs = keep; return r; })()`);
-    ok(!jump.dh && Math.abs(jump.dx) <= 1, `${W}: the spinner sits centred where the number goes, the card the same height (${JSON.stringify(jump)})`);
-    await ev(`document.querySelector('.pf-card').scrollIntoView()`); await b.shot(`card-spinner-${W}`);
+    ok(!jump.dh && Math.abs(jump.dx) <= 1, `${W}: the dots sit centred where the number goes, the card the same height (${JSON.stringify(jump)})`);
+    await ev(`document.querySelector('.pf-card').scrollIntoView()`); await b.shot(`card-dots-${W}`);
     await ev(`[...document.querySelectorAll('.pf-card .pf-stats b')].forEach((x, i) => { x.innerHTML = window.__keepFigs[i]; })`);
   }
   ok(await ev(`(() => { const d = JSON.parse(localStorage.getItem('juegos-de-salon:logros-anunciados') || '{}'); return !document.querySelector('.aw-capa') && !!localStorage.getItem('juegos-de-salon:logros-base') && !!d.halloween && !!d['streak-10']; })()`), `${W}: 🎲 a phone's first look announces nothing it had already earned, secret or not: it only notes them`);

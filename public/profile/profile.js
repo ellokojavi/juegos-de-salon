@@ -239,41 +239,33 @@ function badgePanels(list, { only = null, reveal = false } = {}) {
 }
 
 /**
- * The card's figures count up from zero to their number, fast, every number in turn, like a machine looking for the
- * right one (the owner, 2026-11-23). A figure is only the server's: until it arrives, a spinner, never this phone's
- * partial count (the owner, 2026-11-23: Partidos went 153 → 188). Drawn again later, each figure stays where it stood
- * while the server answers, then counts on from there, never from zero again. With reduced motion, the number at once.
+ * The card's figures are only the server's (the owner, 2026-11-23: Partidos went 153 → 188, this phone's count first).
+ * Until they arrive, three yellow dots hop where each number goes; then the number pops in, one figure after the other
+ * (the owner picked «Puntos», 2026-11-23). Drawn again later, a figure stays as it stood while the server answers and
+ * pops again only if it changed. A figure the server could not give is «—», never 0.
  */
-let counted = { jid: null, v: {} };
-const countedFor = jid => { if (counted.jid !== jid) counted = { jid, v: {} }; return counted.v; };
-function countUp(jid, key, prefix, to) {
-  const v = countedFor(jid);
+let shown = { jid: null, v: {} };
+const shownFor = jid => { if (shown.jid !== jid) shown = { jid, v: {} }; return shown.v; };
+const FIG_ORDER = ['streak', 'plays', 'cups'];
+function figure(jid, key, prefix, to) {
+  const v = shownFor(jid);
   if (to === undefined) {
-    // Not in yet: the last real figure, or a spinner
+    // Not in yet: the last real figure, or the dots
     if (v[key] !== undefined) return el('b', { 'data-count': key }, `${prefix}${num(v[key])}`);
-    return el('b', { 'data-count': key, class: 'pf-loading', 'aria-busy': 'true' }, el('span', { class: 'pf-spin', 'aria-hidden': 'true' }));
+    return el('b', { 'data-count': key, 'aria-busy': 'true' }, el('span', { class: 'pf-dots', 'aria-hidden': 'true' }, el('i'), el('i'), el('i')));
   }
   // The server could not be read: unknown, not zero
   if (to === null) return el('b', { 'data-count': key }, '—');
-  const b = el('b', { 'data-count': key });
-  const from = v[key] ?? 0;
+  const changed = v[key] !== to;
   v[key] = to;
-  const put = v => { b.textContent = `${prefix}${num(v)}`; };
-  if (from === to || globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { put(to); return b; }
-  put(from);
-  const ms = Math.min(1400, 500 + Math.abs(to - from) * 6), t0 = performance.now();
-  (function step(t) {
-    if (!b.isConnected && t - t0 > 100) return;
-    const k = Math.min(1, (t - t0) / ms);
-    put(Math.round(from + (to - from) * (1 - (1 - k) ** 3)));
-    if (k < 1) requestAnimationFrame(step);
-  })(t0);
+  const b = el('b', { 'data-count': key }, `${prefix}${num(to)}`);
+  if (changed) { b.classList.add('pf-pop'); b.style.animationDelay = `${FIG_ORDER.indexOf(key) * 110}ms`; }
   return b;
 }
 
-/** The card: `ready` once the server's facts are in; before that, its figures wait (countUp). */
+/** The card: `ready` once the server's facts are in; before that, its figures wait (figure). */
 function card(yo, f, list, ready) {
-  const fig = (key, prefix, known, value) => countUp(yo.jid, key, prefix, !ready ? undefined : known ? value : null);
+  const fig = (key, prefix, known, value) => figure(yo.jid, key, prefix, !ready ? undefined : known ? value : null);
   const got = list.filter(b => b.got).length;
   // The flag and the name are the player, as on every table (the owner, 2026-11-21: no initial in a circle)
   return el('section', { class: 'panel pf-card' },
