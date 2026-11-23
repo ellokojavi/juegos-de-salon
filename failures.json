@@ -6393,6 +6393,19 @@
         "stat": "17 file(s) +52 −155: changelog/profile-no-toggle.md, docs/DECISIONS.md, docs/decisions/D-602.md, docs/decisions/D-604.md, docs/decisions/D-605.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 45118457683,
+      "check": "tests",
+      "pr": 1791,
+      "branch": "ccr-e9d4b5be-lbxfok",
+      "commit": "a3106e4da25fb0b9d03f1a6898def2fe3e90eed0",
+      "test": "README up to date",
+      "error": "ERROR · changed commonKeys: 54 → 52",
+      "signature": "b4f25e7ba8",
+      "date": "2026-11-23T05:34:48.474Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
