@@ -6607,6 +6607,19 @@
       "date": "2026-11-23T17:33:05.897Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45240315300,
+      "check": "end-to-end",
+      "pr": 1811,
+      "branch": "ccr-770d46d3-p7f6rk",
+      "commit": "c756282745e77f31fd2be1f0d89a0b4fb3a33092",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: 🥇 number 1 is earned and new",
+      "signature": "548f19e757",
+      "date": "2026-11-23T19:37:28.506Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
