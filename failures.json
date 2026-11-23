@@ -6376,6 +6376,19 @@
         "stat": "2 file(s) +2 −2: public/assets/css/duels.css, public/assets/js/duels-home.js"
       },
       "flaky": false
+    },
+    {
+      "run": 45102487576,
+      "check": "end-to-end",
+      "pr": 1783,
+      "branch": "achievement-window-all",
+      "commit": "8880cbabdf77ac13f84a95d012dde6dde1a2a5fb",
+      "test": "cup/variants.mjs",
+      "error": "✗ the random week can bring Pintaminas and Loteo",
+      "signature": "fc75af69d6",
+      "date": "2026-11-23T03:04:27.535Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
