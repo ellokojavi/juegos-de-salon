@@ -7187,7 +7187,11 @@
       "error": "ERROR · appeared modules: public/assets/js/bulls-and-cows-tabs.js",
       "signature": "cf7d3a8584",
       "date": "2026-11-24T08:49:24.716Z",
-      "fix": null,
+      "fix": {
+        "commit": "d9b73574274bb556f0874dfeb3af75624353d2a0",
+        "date": "2026-11-24T08:53:39.863Z",
+        "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
