@@ -33,6 +33,8 @@ const RAIZ = new URL('../../', import.meta.url);
 export const STALE_MS = 60_000;
 /** With no list and no word from the worker after this long, nothing is being stored. */
 export const NOTHING_MS = 15_000;
+/** While a view says loading, it reads the caches again this often, whatever messages it heard. */
+export const POLL_MS = 3_000;
 
 export const TEXTS = {
   es: {
@@ -235,10 +237,22 @@ export function cloudWatch({ doc = globalThis.document, lang = getLang(), nav = 
   // offers Reintentar instead of a ring that never fills
   const born = Date.now();
   const settle = s => (s.state === 'loading' && !s.total && Date.now() - born > NOTHING_MS ? { state: 'missing', have: 0, total: 0 } : s);
-  const refresh = () => readState({ nav }).then(s => {
-    show(settle(s));
-    if (s.state === 'loading' && !s.total) setTimeout(refresh, NOTHING_MS + 500);
-  }).catch(() => {});
+  // Every view reads the same caches, so they must agree (the owner, 2026-11-23: the home page's cloud had left
+  // while ⚙️ still said «Preparando los juegos…»). Two guards: a read that started earlier never overwrites a later
+  // one (a slow file-by-file count used to land after the fast «still storing» one), and while it says loading it
+  // reads again every POLL_MS, so a progress message this page missed (opened after the last tick, or the worker
+  // killed) cannot leave it loading: the next read sees the end, or STALE_MS turns it into missing
+  let asked = 0;
+  let poll = null;
+  const refresh = () => {
+    const mine = ++asked;
+    return readState({ nav }).then(s => {
+      if (mine !== asked) return;
+      show(settle(s));
+      clearTimeout(poll);
+      if (s.state === 'loading') poll = setTimeout(refresh, s.total ? POLL_MS : NOTHING_MS + 500);
+    }).catch(() => {});
+  };
   const pretend = state => {
     clearInterval(demo); demo = null;
     if (!state) { refresh(); return; }
@@ -267,6 +281,8 @@ export function cloudWatch({ doc = globalThis.document, lang = getLang(), nav = 
     refresh();
     nav.serviceWorker?.addEventListener?.('message', e => {
       if (e.data?.type !== 'offline-progress') return;
+      // A tick is newer than any read still on its way: that read must not draw over it
+      if (e.data.storing) { asked++; clearTimeout(poll); poll = setTimeout(refresh, POLL_MS); }
       if (e.data.storing) show({ state: 'loading', have: e.data.have || 0, total: e.data.total || 0 });
       else refresh();
     });
@@ -289,6 +305,13 @@ export const QUIET_SHOWN = new Set(['loading', 'missing']);
 export const QUIET_GOODBYE_MS = 2500;
 export const QUIET_FLOAT_MS = 600;
 export const QUIET_CLOSE_MS = 300;
+/**
+ * Its way in, the mirror of the way out (the owner, 2026-11-23: "que aparezca de forma orgánica, no de golpe"):
+ * first its slot opens to the cloud's width (QUIET_OPEN_MS) with nothing in it yet, so share and the pill are not
+ * pushed by a cloud; then the cloud grows from a point at its centre, past its size and back (QUIET_GROW_MS).
+ */
+export const QUIET_OPEN_MS = 250;
+export const QUIET_GROW_MS = 450;
 export const shownWhenQuiet = s => QUIET_SHOWN.has(s?.state);
 
 /** The row the T tab's cloud states go with (D-592): the quiet cloud's own while it is in the lab here, else offline mode's. */
@@ -310,6 +333,32 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
   let quiet = false;
   let goodbye = null;
   let leaving = false;
+  let arriving = null;
+  // The way in, cut short: the cloud at its size and its slot back to its own width
+  const stopArrive = () => {
+    clearTimeout(arriving); arriving = null;
+    btn.classList.remove('or-llega', 'or-crece');
+    const slot = btn.parentElement;
+    if (slot?.classList.contains('or-abre')) { slot.classList.remove('or-abre', 'or-abierto'); slot.style.width = ''; }
+  };
+  const arrive = () => {
+    btn.hidden = false;
+    const slot = btn.parentElement;
+    btn.classList.add('or-llega');
+    if (slot) {
+      const w = slot.offsetWidth;
+      slot.style.width = '0px';
+      slot.classList.add('or-abre');
+      void slot.offsetWidth;
+      slot.classList.add('or-abierto');
+      slot.style.width = `${w}px`;
+    }
+    arriving = setTimeout(() => {
+      if (slot) { slot.classList.remove('or-abre', 'or-abierto'); slot.style.width = ''; }
+      btn.classList.replace('or-llega', 'or-crece');
+      arriving = setTimeout(stopArrive, QUIET_GROW_MS);
+    }, QUIET_OPEN_MS);
+  };
   // The way out, undone at once: the cloud back in place and its slot as wide as it was
   const settle = () => {
     clearTimeout(goodbye); goodbye = null; leaving = false;
@@ -337,8 +386,14 @@ export function offlineReadyButton({ doc = globalThis.document, lang = getLang()
   const visible = (s, was) => {
     // On its way out and still nothing to ask: let it finish (a repeated ready must not cut it)
     if (leaving && !shownWhenQuiet(s) && quiet) return;
+    const hidden = btn.hidden;
     settle();
-    if (!quiet || shownWhenQuiet(s)) { btn.hidden = false; return; }
+    if (!quiet || shownWhenQuiet(s)) {
+      // Coming into a quiet bar: its way in; already there (a progress tick), it stays as it is
+      if (quiet && hidden && !arriving) arrive(); else if (!arriving) btn.hidden = false;
+      return;
+    }
+    stopArrive();
     // Just finished storing: the flash shows where it went, then the cloud floats away
     if (was === 'loading' && s.state === 'ready' && !btn.hidden) { leaving = true; goodbye = setTimeout(floatAway, QUIET_GOODBYE_MS); return; }
     btn.hidden = true;
