@@ -62,7 +62,7 @@ as an empty box.
   redrawn by Deshacer or Limpiar, a second finger, the page hidden), takes its ghost with it.
 - **The zones:** once full, a kept rule's diamond gets a green ring, a broken one turns red and shakes, and
   the zone's cells get stripes and a solid edge in the zone's own color drawn over the dominoes (`.dm-mala`, no
-  pointer events), so a broken zone can be seen even when dominoes cover it. A laid domino leaves an even 5 px gap on every side of
+  pointer events), so a broken zone can be seen even when dominoes cover it. A laid domino keeps square halves (2026-11-24): it leaves a 6 px gap along its long sides and 12 px at its ends, within
   its two cells, so the zone's color and dashed edge show around it; its edge is drawn inside it. The zones' colors stay away from
   red (no pink, orange or coral), so a broken rule's red stands out. A laid domino settles with a squash
   and a ring spreads from its two cells (`.dm-onda`); both calm down with reduced motion.
