@@ -357,7 +357,9 @@ for (const W of [320, 390]) {
   const shown = `[...document.querySelectorAll('.sound-toggle, .lang-btn, .lang-toggle')].filter(x => x.offsetParent && !x.closest('.pf-settings')).length`;
   for (const page of ['', 'hangman/', 'queens/', 'today/', 'records/']) {
     await b.go(`${SITE}/${page}?test`, 3000);
-    ok(await ev(`${shown} === 0`), `${W}: /${page} shows no 🔊 and no language`);
+    // The home page keeps its language (PR #1841): only the flags of the bar, never 🔊
+    if (page === '') ok(await ev(`!document.querySelector('.sound-toggle')?.offsetParent && !!document.querySelector('.portada-barra #lang-slot .lang-btn, .portada-barra #lang-slot .lang-toggle')?.offsetParent`), `${W}: / shows the language and no 🔊`);
+    else ok(await ev(`${shown} === 0`), `${W}: /${page} shows no 🔊 and no language`);
     ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: /${page}, no sideways scroll`);
     await b.shot(`settings-off-${page.replace('/', '') || 'home'}-${W}`);
   }
