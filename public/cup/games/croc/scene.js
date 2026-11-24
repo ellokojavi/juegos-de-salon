@@ -11,6 +11,13 @@ const SEDAN_PALETTE = {
   lime: { body: '#7be04a', roof: '#a7f082', dark: '#459421' },
 };
 
+const FISH_COLORS = [
+  { body: 'rgba(251, 146, 60, 0.82)', fin: 'rgba(234, 88, 12, 0.85)', hi: 'rgba(254, 215, 170, 0.65)' },
+  { body: 'rgba(250, 204, 21, 0.82)', fin: 'rgba(202, 138, 4, 0.85)', hi: 'rgba(254, 249, 195, 0.65)' },
+  { body: 'rgba(125, 211, 252, 0.82)', fin: 'rgba(56, 189, 248, 0.85)', hi: 'rgba(240, 249, 255, 0.65)' },
+  { body: 'rgba(251, 113, 133, 0.8)', fin: 'rgba(225, 29, 72, 0.82)', hi: 'rgba(255, 228, 230, 0.6)' },
+];
+
 const SEASON_SHIRTS = {
   halloween: { base: '#5b1fb8', band: '#ff7a1a', trim: '#1e1b4b', accent: '#fde047' },
   thanksgiving: { base: '#b45309', band: '#78350f', trim: '#fef3c7', accent: '#fbbf24' },
@@ -241,6 +248,190 @@ export function createScene(canvas) {
   const curb = (yy, hgt, top, tile) => { const g = ctx.createLinearGradient(0, yy, 0, yy + hgt); g.addColorStop(0, top ? '#ffffff' : '#d4d9e2'); g.addColorStop(1, top ? '#b9c0cc' : '#8a91a0'); ctx.fillStyle = g; ctx.fillRect(0, yy, w, hgt);
     for (let x = 0; x < w; x += tile * 0.55) { ctx.fillStyle = 'rgba(40,45,60,0.45)'; ctx.fillRect(x, yy, 1.5, hgt); } };
 
+  const wrapPos = (x, span) => ((x % span) + span) % span;
+
+  function drawWaterLane(lane, rowY, tile) {
+    // River depth gradient: lighter shallows at banks, deeper channel in the center
+    const riverGrad = ctx.createLinearGradient(0, rowY, 0, rowY + tile);
+    riverGrad.addColorStop(0, '#115e75');
+    riverGrad.addColorStop(0.18, '#0e7490');
+    riverGrad.addColorStop(0.5, '#084c61');
+    riverGrad.addColorStop(0.82, '#0e7490');
+    riverGrad.addColorStop(1, '#115e75');
+    ctx.fillStyle = riverGrad;
+    ctx.fillRect(0, rowY, w, tile);
+
+    // Submerged riverbed stones & drifting caustics
+    for (let i = 0; i < 10; i++) {
+      const sx = rnd(i, 91, lane.row) * w;
+      const sy = rowY + tile * (0.18 + rnd(i, 92, lane.row) * 0.64);
+      const rx = tile * (0.14 + rnd(i, 93, lane.row) * 0.2);
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(3, 37, 52, 0.28)' : 'rgba(34, 166, 179, 0.14)';
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, rx, rx * 0.42, 0, 0, 7);
+      ctx.fill();
+    }
+
+    const causticSpan = w + tile * 2;
+    const causticShift = clock * lane.dir * lane.speed * tile * 0.18;
+    ctx.fillStyle = 'rgba(125, 211, 252, 0.1)';
+    for (let i = 0; i < 9; i++) {
+      const cx = wrapPos(rnd(i, 94, lane.row) * causticSpan + causticShift, causticSpan) - tile;
+      const cy = rowY + tile * (0.2 + rnd(i, 95, lane.row) * 0.6);
+      const rw = tile * (0.28 + rnd(i, 96, lane.row) * 0.22);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rw, tile * 0.08, 0, 0, 7);
+      ctx.fill();
+    }
+
+    // Swaying underwater seaweed along the shallows
+    ctx.save();
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 8; i++) {
+      const sx = (0.06 + rnd(i, 101, lane.row) * 0.88) * w;
+      const topBank = i % 2 === 0;
+      const baseY = rowY + (topBank ? tile * 0.1 : tile * 0.9);
+      const swayDir = topBank ? 1 : -1;
+      for (let b = 0; b < 3; b++) {
+        const bx = sx + (b - 1) * tile * 0.055;
+        const len = tile * (0.14 + rnd(i * 3 + b, 102, lane.row) * 0.1);
+        const sway = Math.sin(clock * 2.1 + i * 1.4 + b * 0.7) * tile * 0.045;
+        const tipX = bx + lane.dir * tile * 0.09 + sway;
+        const tipY = baseY + swayDir * len;
+        ctx.strokeStyle = b === 1 ? 'rgba(34, 197, 94, 0.42)' : 'rgba(21, 128, 61, 0.48)';
+        ctx.lineWidth = Math.max(1.8, tile * 0.036);
+        ctx.beginPath();
+        ctx.moveTo(bx, baseY);
+        ctx.quadraticCurveTo(bx + lane.dir * tile * 0.04 - sway * 0.5, baseY + swayDir * len * 0.55, tipX, tipY);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    // Swimming & jumping river fish
+    const fishSpan = w + tile * 2;
+    for (let i = 0; i < 4; i++) {
+      const speedMul = 0.28 + rnd(i, 97, lane.row) * 0.25;
+      const fx = wrapPos(rnd(i, 98, lane.row) * fishSpan + clock * lane.dir * lane.speed * tile * speedMul, fishSpan) - tile;
+      const sway = Math.sin(clock * 2.2 + i * 1.9) * tile * 0.04;
+      const fy = rowY + tile * (0.24 + rnd(i, 99, lane.row) * 0.52) + sway;
+      const fLen = tile * (0.22 + rnd(i, 100, lane.row) * 0.08);
+      const tailWag = Math.sin(clock * 9 + i * 2.3) * fLen * 0.28;
+      const pal = FISH_COLORS[i % FISH_COLORS.length];
+
+      // Periodic jump for two of the fish
+      const jumpCycle = (clock * 0.36 + i * 0.47) % 1;
+      const jumping = i < 2 && jumpCycle < 0.28;
+      const jt = jumping ? jumpCycle / 0.28 : 0;
+      const jumpArc = jumping ? Math.sin(jt * Math.PI) * tile * 0.28 : 0;
+
+      if (jumping && (jt < 0.25 || jt > 0.75)) {
+        const ringR = tile * (0.07 + (jt < 0.25 ? jt : 1 - jt) * 0.52);
+        ctx.strokeStyle = 'rgba(240, 249, 255, 0.58)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(fx, fy, ringR, ringR * 0.42, 0, 0, 7);
+        ctx.stroke();
+      }
+
+      ctx.save();
+      ctx.translate(fx, fy - jumpArc);
+      if (jumping) ctx.rotate(-lane.dir * (0.5 - jt) * 0.9);
+      ctx.scale(lane.dir, 1);
+
+      ctx.fillStyle = pal.fin;
+      ctx.beginPath();
+      ctx.moveTo(-fLen * 0.42, 0);
+      ctx.lineTo(-fLen * 0.88, -fLen * 0.26 + tailWag);
+      ctx.lineTo(-fLen * 0.88, fLen * 0.26 + tailWag);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = jumping ? '#fef08a' : pal.body;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, fLen * 0.55, fLen * 0.25, 0, 0, 7);
+      ctx.fill();
+
+      ctx.fillStyle = jumping ? 'rgba(255, 255, 255, 0.8)' : pal.hi;
+      ctx.beginPath();
+      ctx.ellipse(fLen * 0.08, -fLen * 0.07, fLen * 0.26, fLen * 0.07, 0, 0, 7);
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(fLen * 0.34, -fLen * 0.04, Math.max(1.2, fLen * 0.055), 0, 7);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Sparser curved moving waves flowing in lane.dir
+    ctx.save();
+    ctx.lineCap = 'round';
+    const waveBands = [
+      { yFrac: 0.30, step: tile * 2.15, speedMul: 0.42, len: tile * 0.58, phase: 0.0 },
+      { yFrac: 0.68, step: tile * 2.45, speedMul: 0.58, len: tile * 0.64, phase: 2.5 },
+    ];
+    for (const band of waveBands) {
+      const wrapW = w + band.step * 2;
+      const shift = clock * lane.dir * lane.speed * tile * band.speedMul;
+      const count = Math.ceil(wrapW / band.step);
+      for (let i = 0; i < count; i++) {
+        const wx = wrapPos(i * band.step + shift, wrapW) - band.step;
+        const bob = Math.sin(clock * 2.2 + i * 1.3 + band.phase) * tile * 0.02;
+        const wy = rowY + tile * band.yFrac + bob;
+        const crestH = tile * 0.045;
+
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.24)';
+        ctx.lineWidth = Math.max(2, tile * 0.06);
+        ctx.beginPath();
+        ctx.moveTo(wx, wy);
+        ctx.quadraticCurveTo(wx + band.len * 0.5, wy - crestH, wx + band.len, wy);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(240, 249, 255, 0.52)';
+        ctx.lineWidth = Math.max(1.2, tile * 0.024);
+        ctx.beginPath();
+        ctx.moveTo(wx + band.len * 0.12, wy - tile * 0.01);
+        ctx.quadraticCurveTo(wx + band.len * 0.5, wy - crestH - tile * 0.01, wx + band.len * 0.88, wy - tile * 0.01);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    // Organic riverbanks & shallow shoreline foam
+    const bankHeight = tile * 0.085;
+    for (const isTop of [true, false]) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.42)';
+      ctx.beginPath();
+      if (isTop) {
+        ctx.moveTo(0, rowY);
+        ctx.lineTo(w, rowY);
+        for (let x = w; x >= 0; x -= 12) {
+          ctx.lineTo(x, rowY + bankHeight + Math.sin(x / tile * 2.1 + lane.row) * tile * 0.02);
+        }
+      } else {
+        ctx.moveTo(0, rowY + tile);
+        ctx.lineTo(w, rowY + tile);
+        for (let x = w; x >= 0; x -= 12) {
+          ctx.lineTo(x, rowY + tile - bankHeight + Math.sin(x / tile * 2.3 + lane.row + 1.5) * tile * 0.02);
+        }
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
+      ctx.lineWidth = Math.max(1, tile * 0.022);
+      ctx.beginPath();
+      const foamY = isTop ? rowY + bankHeight + tile * 0.015 : rowY + tile - bankHeight - tile * 0.015;
+      for (let x = 0; x <= w; x += 12) {
+        const fy = foamY + Math.sin(x / tile * 2.2 + lane.row + (isTop ? 0 : 1.5)) * tile * 0.02;
+        if (x === 0) ctx.moveTo(x, fy);
+        else ctx.lineTo(x, fy);
+      }
+      ctx.stroke();
+    }
+  }
+
   function drawLane(lane, rowY, tile, padX) {
     const x0 = padX;
     const roadW = COLS * tile;
@@ -259,20 +450,7 @@ export function createScene(canvas) {
     }
 
     if (lane.kind === 'water') {
-      ctx.fillStyle = '#0369a1';
-      ctx.fillRect(0, rowY, w, tile);
-      ctx.fillStyle = '#0ea5e9';
-      ctx.fillRect(0, rowY + tile * 0.08, w, tile * 0.84);
-      // Animated water shimmer ripples
-      ctx.fillStyle = 'rgba(224, 242, 254, 0.28)';
-      const drift = (clock * lane.dir * lane.speed * tile * 0.45) % tile;
-      for (let rx = -tile; rx < w + tile; rx += tile * 1.1) {
-        ctx.fillRect(rx + drift, rowY + tile * 0.28, tile * 0.42, tile * 0.07);
-        ctx.fillRect(rx - drift * 0.6 + tile * 0.4, rowY + tile * 0.66, tile * 0.36, tile * 0.07);
-      }
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-      ctx.fillRect(0, rowY, w, tile * 0.08);
-      ctx.fillRect(0, rowY + tile * 0.92, w, tile * 0.08);
+      drawWaterLane(lane, rowY, tile);
       return;
     }
 
@@ -321,25 +499,68 @@ export function createScene(canvas) {
     const vy = rowY + (tile - vh) / 2 - tile * 0.03;
 
     if (v.type === 'boat') {
-      const wakeX = dir > 0 ? vx - tile * 0.28 : vx + vw;
-      ctx.fillStyle = 'rgba(224, 242, 254, 0.35)';
-      ctx.fillRect(wakeX, vy + vh * 0.28, tile * 0.28, vh * 0.14);
-      ctx.fillRect(wakeX, vy + vh * 0.58, tile * 0.22, vh * 0.14);
+      const bob = Math.sin(clock * 3.8 + v.x * 1.7) * tile * 0.016;
+      const by = vy + bob;
+      const sternX = dir > 0 ? vx : vx + vw;
+      const cy = by + vh * 0.48;
+
+      // V-shaped Kelvin wake & inner ripples fading behind the stern
+      const wakeStartX = sternX + dir * vw * 0.25;
+      const wakeLen = tile * 1.2;
+      const wakeEndX = sternX - dir * wakeLen;
+      const wakeGrad = ctx.createLinearGradient(wakeStartX, cy, wakeEndX, cy);
+      wakeGrad.addColorStop(0, 'rgba(240, 249, 255, 0.58)');
+      wakeGrad.addColorStop(0.45, 'rgba(186, 230, 253, 0.35)');
+      wakeGrad.addColorStop(1, 'rgba(186, 230, 253, 0)');
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = wakeGrad;
+      ctx.lineWidth = Math.max(1.8, tile * 0.055);
+      for (const side of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(wakeStartX, cy + side * vh * 0.34);
+        ctx.quadraticCurveTo(
+          sternX - dir * tile * 0.15,
+          cy + side * vh * 0.54,
+          wakeEndX,
+          cy + side * vh * 0.86,
+        );
+        ctx.stroke();
+      }
+
+      // Animated stern foam rings drifting backward
+      for (let k = 0; k < 4; k++) {
+        const phase = (clock * 1.35 + k * 0.25 + v.x * 0.13) % 1;
+        const fx = sternX - dir * phase * tile * 0.92;
+        const alpha = (1 - phase) * 0.55;
+        ctx.strokeStyle = `rgba(240, 249, 255, ${alpha.toFixed(3)})`;
+        ctx.lineWidth = Math.max(1.4, tile * (0.045 - phase * 0.02));
+        ctx.beginPath();
+        ctx.arc(fx, cy, vh * (0.2 + phase * 0.34), dir > 0 ? Math.PI * 0.68 : -Math.PI * 0.32, dir > 0 ? Math.PI * 1.32 : Math.PI * 0.32);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Water shadow under hull
+      ctx.fillStyle = 'rgba(3, 25, 42, 0.38)';
+      drawRoundedRect(ctx, vx + dir * tile * 0.02, by + tile * 0.06, vw, vh, tile * 0.22);
+      ctx.fill();
 
       const hull = v.color === 'boatB' ? '#e11d48' : '#d97706';
       const dark = v.color === 'boatB' ? '#9f1239' : '#92400e';
       ctx.fillStyle = dark;
-      drawRoundedRect(ctx, vx, vy + tile * 0.04, vw, vh, tile * 0.22);
+      drawRoundedRect(ctx, vx, by + tile * 0.04, vw, vh, tile * 0.22);
       ctx.fill();
       ctx.fillStyle = hull;
-      drawRoundedRect(ctx, vx, vy, vw, vh * 0.9, tile * 0.22);
+      drawRoundedRect(ctx, vx, by, vw, vh * 0.9, tile * 0.22);
       ctx.fill();
       ctx.fillStyle = '#fde68a';
-      drawRoundedRect(ctx, vx + vw * 0.1, vy + vh * 0.14, vw * 0.8, vh * 0.62, tile * 0.14);
+      drawRoundedRect(ctx, vx + vw * 0.1, by + vh * 0.14, vw * 0.8, vh * 0.62, tile * 0.14);
       ctx.fill();
       const cabX = dir > 0 ? vx + vw * 0.56 : vx + vw * 0.18;
       ctx.fillStyle = '#f8fafc';
-      drawRoundedRect(ctx, cabX, vy + vh * 0.22, vw * 0.26, vh * 0.46, tile * 0.08);
+      drawRoundedRect(ctx, cabX, by + vh * 0.22, vw * 0.26, vh * 0.46, tile * 0.08);
       ctx.fill();
       return;
     }
