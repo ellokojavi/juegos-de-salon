@@ -113,6 +113,51 @@ export function nemesis(lista, me, t = Date.now()) {
   return Object.values(por).filter(x => x.g + x.p >= 2 && x.p > x.g).sort((a, b) => b.p - b.g - (a.p - a.g))[0] || null;
 }
 
+/**
+ * Every rival I finished a duel with, head to head: [{ jid, n, g, p, e, total, ultimo }], the most
+ * played first (then the newest). Pure, so the page and the tests agree.
+ */
+export function rivalidades(lista, me, t = Date.now()) {
+  const por = {};
+  for (const d of lista) {
+    const e = estado(d, me, t);
+    if (!e.termino) continue;
+    const x = (por[e.rival] ||= { jid: e.rival, n: e.rivalN, g: 0, p: 0, e: 0, total: 0, ultimo: 0 });
+    x.total++;
+    if (e.gano === 1) x.g++; else if (e.gano === -1) x.p++; else x.e++;
+    if ((d.at || 0) >= x.ultimo) { x.ultimo = d.at || 0; x.n = e.rivalN; }
+  }
+  return Object.values(por).sort((a, b) => b.total - a.total || b.ultimo - a.ultimo);
+}
+
+/**
+ * My arch rival: the one I have dueled most (at least three finished duels), the closest record
+ * breaking a tie. Can be the same player as the nemesis. Null when there is none yet.
+ */
+export function archirrival(lista, me, t = Date.now()) {
+  return rivalidades(lista, me, t).filter(x => x.total >= 3)
+    .sort((a, b) => b.total - a.total || Math.abs(a.g - a.p) - Math.abs(b.g - b.p) || b.ultimo - a.ultimo)[0] || null;
+}
+
+/**
+ * The statistics of a player's duels: { jugados, g, p, e, pct, racha, mejorRacha, rivales,
+ * abiertos, rondasG, rondasP, juego: the game id played most, or null }.
+ */
+export function estadisticas(lista, me, t = Date.now()) {
+  const r = record(lista, me, t), f = duelFacts(lista, me, t);
+  let abiertos = 0, rondasG = 0, rondasP = 0;
+  const juegos = {};
+  for (const d of lista) {
+    const e = estado(d, me, t);
+    if (!e.termino) { abiertos++; continue; }
+    rondasG += e.rondas.filter(x => x === 'w').length;
+    rondasP += e.rondas.filter(x => x === 'l').length;
+    for (let i = 0; i < e.n; i++) { const g = roundGame(d, i); if (g) juegos[g] = (juegos[g] || 0) + 1; }
+  }
+  const juego = Object.entries(juegos).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  return { jugados: f.played, g: r.g, p: r.p, e: r.e, pct: r.pct, racha: r.racha, mejorRacha: f.bestRun, rivales: f.rivals, abiertos, rondasG, rondasP, juego };
+}
+
 /** The game page of a duel's round: the game's own page with the round's seed. */
 export function linkRonda(d, i, raiz, path) {
   // `path` is the page of round i's game (roundGame)
