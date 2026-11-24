@@ -10,8 +10,9 @@
  *   node tools/agents/merge-queue.mjs report [--since <yyyy-mm-dd>] [--until <yyyy-mm-dd>]
  *
  * `step`: a PR is in the line when it is open, not a draft, from this repo, has auto-merge on, is not
- * waiting for the owner (`needs-owner`, 🔴) and its required checks (`tests`, `end-to-end`) passed but
- * it is behind main. While the PR the queue last updated (label `merge-queue`) still runs its checks,
+ * waiting for the owner (`needs-owner`, 🔴), is behind main, `tests` passed and `end-to-end` did not
+ * fail (D-618: `end-to-end` runs once, after the update; a behind PR's running `end-to-end` is
+ * cancelled, since it tests a main the PR can no longer merge into). While the PR the queue last updated (label `merge-queue`) still runs its checks,
  * nothing else moves. Otherwise the head of the line (auto-merge on the longest) is updated by
  * merging main in (GitHub's update-branch, never a rebase); if that conflicts, sync-pr.mjs tries
  * (a conflict only in generated files, D-580); a real conflict gets one comment and the PR is
@@ -42,11 +43,23 @@ const checkState = (pr, name) => {
   const c = runs[runs.length - 1];
   const v = (c.conclusion || c.state || '').toUpperCase();
   if (v === 'SUCCESS') return 'success';
+  if (v === 'CANCELLED') return 'cancelled';
   if (['FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT', 'ACTION_REQUIRED', 'STARTUP_FAILURE'].includes(v)) return 'failure';
   return 'pending';
 };
 export const green = pr => REQUIRED.every(n => checkState(pr, n) === 'success');
-export const failed = pr => REQUIRED.some(n => checkState(pr, n) === 'failure');
+export const failed = pr => REQUIRED.some(n => ['failure', 'cancelled'].includes(checkState(pr, n)));
+/**
+ * Ready to join the line (D-618): `tests` passed and `end-to-end` did not fail. An `end-to-end` still
+ * running, never run or cancelled (the queue cancels it on a behind PR) does not hold a PR out: it runs
+ * once, after the update, on today's main. A real `end-to-end` failure does, until its session fixes it.
+ */
+export const ready = pr => checkState(pr, 'tests') === 'success' && checkState(pr, 'end-to-end') !== 'failure';
+/**
+ * The PRs whose `end-to-end` run is wasted (D-618): in the line's reach (eligible) and behind main, so
+ * that run tests a main the PR can no longer merge into; it runs again once the queue updates the PR.
+ */
+export const stale = prs => prs.filter(p => eligible(p) && p.mergeStateStatus === 'BEHIND' && checkState(p, 'end-to-end') === 'pending');
 const labels = pr => (pr.labels || []).map(l => l.name);
 
 /** Whether a PR may be in the line at all. */
@@ -61,7 +74,7 @@ export function pick(prs, skip = new Set()) {
   const inFlight = prs.find(p => labels(p).includes(LABEL) && eligible(p)
     && p.mergeStateStatus !== 'BEHIND' && p.mergeStateStatus !== 'DIRTY' && !failed(p) && !green(p));
   if (inFlight) return { action: 'wait', pr: inFlight };
-  const line = prs.filter(p => eligible(p) && p.mergeStateStatus === 'BEHIND' && green(p) && !skip.has(`${p.number}@${p.headRefOid}`))
+  const line = prs.filter(p => eligible(p) && p.mergeStateStatus === 'BEHIND' && ready(p) && !skip.has(`${p.number}@${p.headRefOid}`))
     .sort((a, b) => Date.parse(a.autoMergeRequest.enabledAt) - Date.parse(b.autoMergeRequest.enabledAt) || a.number - b.number);
   return line.length ? { action: 'update', pr: line[0], behindIt: line.length - 1 } : { action: 'idle' };
 }
@@ -166,6 +179,7 @@ function step(argv) {
   const prs = JSON.parse(gh('pr', 'list', '--base', 'main', '--state', 'open', '--limit', '100', '--json',
     'number,isDraft,isCrossRepository,autoMergeRequest,baseRefName,labels,mergeStateStatus,statusCheckRollup,headRefName,headRefOid,author'));
   for (const p of prs) if (labels(p).includes(LABEL) && failed(p) && !dry) gh('pr', 'edit', String(p.number), '--remove-label', LABEL);
+  for (const p of stale(prs)) cancelStale(p, dry);
   const skip = new Set();
   for (;;) {
     const next = pick(prs, skip);
@@ -174,12 +188,39 @@ function step(argv) {
     const p = next.pr;
     console.log(`merge-queue: updating #${p.number} (${next.behindIt} behind it)`);
     if (dry) return 0;
-    if (update(R, p)) { gh('pr', 'edit', String(p.number), '--add-label', LABEL); return 0; }
+    if (update(R, p)) { mark(p.number); return 0; }
     skip.add(`${p.number}@${p.headRefOid}`);
     const mark = `${CONFLICT_MARK}${p.headRefOid} -->`;
     const said = gh('api', `repos/${R}/issues/${p.number}/comments`, '--paginate', '--jq', '.[].body').includes(mark);
     if (!said) gh('pr', 'comment', String(p.number), '--body', `${mark}\nMerge queue (D-586): this PR is next in line but merging \`main\` into it conflicts, so the queue skips it. Its session fixes it with \`node tools/agents/sync-pr.mjs\` (or by hand) and pushes; the PR then joins the line again.`);
   }
+}
+
+/** Cancels the running `end-to-end` of a PR that is behind main (D-618). A refusal is logged, never fatal. */
+function cancelStale(p, dry) {
+  let runs = [];
+  try {
+    runs = JSON.parse(gh('run', 'list', '--workflow', 'e2e.yml', '--branch', p.headRefName, '--event', 'pull_request',
+      '--limit', '5', '--json', 'databaseId,status'));
+  } catch (e) { console.log(`merge-queue: could not list #${p.number}'s end-to-end runs: ${String(e.stderr || e.message).trim().split('\n')[0]}`); return; }
+  for (const r of runs.filter(r => r.status !== 'completed')) {
+    console.log(`merge-queue: #${p.number} is behind main: cancelling its end-to-end run ${r.databaseId}`);
+    if (dry) continue;
+    try { gh('run', 'cancel', String(r.databaseId)); }
+    catch (e) { console.log(`merge-queue: cancel refused for run ${r.databaseId}: ${String(e.stderr || e.message).trim().split('\n')[0]}`); }
+  }
+}
+
+/**
+ * Labels the PR the queue just updated. If the label was deleted, it is made again first: without it
+ * the queue loses track of the PR in flight and updates another on every run (2026-11-24, an hour of
+ * failed steps and six PRs testing at once).
+ */
+function mark(n) {
+  try { gh('pr', 'edit', String(n), '--add-label', LABEL); return; }
+  catch (e) { if (!/not found/i.test(String(e.stderr || e.message))) throw e; }
+  gh('label', 'create', LABEL, '--force', '--color', '5319e7', '--description', 'The merge queue brought this PR up to date (D-586)');
+  gh('pr', 'edit', String(n), '--add-label', LABEL);
 }
 
 /** Merges main into the PR: GitHub's update-branch, then sync-pr.mjs for generated-file conflicts. */

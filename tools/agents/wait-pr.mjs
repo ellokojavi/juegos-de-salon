@@ -48,7 +48,8 @@ export const REQUIRED = ['tests', 'end-to-end'];
 export function outcome({ state, mergeable, checks }) {
   if (state === 'MERGED') return 'merged';
   if (state === 'CLOSED') return 'closed';
-  const red = checks.find(c => REQUIRED.includes(c.name) && ['FAILURE', 'CANCELLED', 'TIMED_OUT', 'ACTION_REQUIRED'].includes(c.conclusion));
+  // CANCELLED is not red (D-618): a newer push, or the merge queue on a behind PR, cancels a run and another follows
+  const red = checks.find(c => REQUIRED.includes(c.name) && ['FAILURE', 'TIMED_OUT', 'ACTION_REQUIRED'].includes(c.conclusion));
   if (red) return `failed: ${red.name}`;
   if (mergeable === 'CONFLICTING') return 'conflict';
   return null;

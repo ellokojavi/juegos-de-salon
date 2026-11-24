@@ -23,6 +23,7 @@ import { leer as leerDia, recorrer } from '../assets/js/uno-al-dia.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { BADGES, GROUPS, DUELS_FLAG, earned, lastOnDay, withAnnounced } from './badges.js';
 import { TEXTS } from './texts.js';
+import { DETAILED, detailOf } from './badge-details.js';
 import { tableOf } from '../assets/js/player-peek.js';
 import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
 import { announced } from '../assets/js/secret-achievements.js';
@@ -227,10 +228,48 @@ async function champsOf(J, wins = []) {
 /* Drawing                                                             */
 /* ------------------------------------------------------------------ */
 
-function badgeEl(b, { reveal = false } = {}) {
+/**
+ * A badge's detail (lab flag badge-details; lab: #seccion-badge-details): what its card hides, in a sheet a tap opens.
+ * `detail` holds the facts of the last draw and the places as they arrive.
+ */
+let detailsOn = false;
+const detail = { f: {}, places: {}, general: {} };
+flag('badge-details').then(on => { if (on) { detailsOn = true; globalThis.__profile?.redraw?.(); } }).catch(() => {});
+function playedHere() { try { const x = JSON.parse(localStorage.getItem('juegos-de-salon:jugados') || '[]'); return Array.isArray(x) ? x : []; } catch (_) { return []; } }
+function openDetail(b) {
+  tap();
+  const D = T.detail;
+  const d = detailOf(b.id, { ...detail.f, playedIds: playedHere() }, { T, lang, games: CATALOGUE, places: detail.places, general: detail.general }) || {};
+  const [name] = T.badges[b.id] || [b.id, ''];
+  const row = r => el(r.href ? 'a' : 'div', { class: 'pf-dt-row', ...(r.href ? { href: r.href, onClick: tap } : {}) }, el('span', {}, r.label), el('b', {}, r.right));
+  const rows = el('div', { class: 'pf-dt-rows' }, (d.rows || []).map(row));
+  const more = d.more?.length ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => { tap(); rows.append(...d.more.map(row)); more.remove(); } }, fmt(D.more, { n: d.more.length })) : null;
+  const cal = d.cal ? el('div', { class: 'pf-dt-cal' }, ...Array.from({ length: d.cal.first }, () => el('span', {})), ...d.cal.days.map(x => el('span', { class: `pf-dt-${x.s}` }, String(x.n)))) : null;
+  const when = b.got && readSeen(leerYo()?.jid)[b.id] ? fmt(D.earnedOn, { date: new Date(readSeen(leerYo()?.jid)[b.id]).toLocaleDateString(lang, { day: 'numeric', month: 'long' }) }) : null;
+  const medal = badgeEl({ ...b, new: false }, { plain: true });
+  medal.querySelector('.pf-name')?.remove();
+  let layer = null;
+  const close = () => { layer?.remove(); removeEventListener('keydown', esc); };
+  const esc = e => { if (e.key === 'Escape') close(); };
+  const sheet = el('div', { class: 'hoja pf-dt', role: 'dialog', 'aria-modal': 'true', 'aria-label': name },
+    el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
+    el('div', { class: 'hoja-cabeza' }, el('h3', {}, `${b.icon} ${name}`), el('button', { type: 'button', class: 'btn btn--ghost btn--sm pf-dt-x', 'aria-label': D.close, onClick: () => { tap(); close(); } }, '✕')),
+    medal,
+    ...[when ? el('p', { class: 'pf-dt-when' }, when) : null, d.lead ? el('p', { class: 'lead pf-dt-lead' }, d.lead) : null,
+      d.rows?.length ? rows : null, more, cal, d.note ? el('p', { class: 'muted pf-dt-note' }, d.note) : null,
+      d.go ? el('a', { class: 'btn', href: d.go[0], onClick: tap }, d.go[1]) : null].filter(Boolean));
+  layer = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), sheet);
+  document.body.append(layer);
+  addEventListener('keydown', esc);
+  sheet.querySelector('.pf-dt-x').focus();
+}
+
+function badgeEl(b, { reveal = false, plain = false } = {}) {
   const [name, desc] = b.secret && !b.got ? [T.secretName, T.secretDesc] : T.badges[b.id] || [b.id, ''];
   const show = reveal && b.new && b.got && !calm();
-  return el('div', { class: `pf-badge pf-badge--${b.tier}${b.got ? '' : ' pf-badge--locked'}${b.new ? ' pf-badge--new' : ''}${show ? ' pf-badge--reveal' : ''}`, 'data-badge': b.id,
+  const tappable = !plain && detailsOn && DETAILED.has(b.id) && !(b.secret && !b.got);
+  return el(tappable ? 'button' : 'div', { class: `pf-badge pf-badge--${b.tier}${b.got ? '' : ' pf-badge--locked'}${b.new ? ' pf-badge--new' : ''}${show ? ' pf-badge--reveal' : ''}${tappable ? ' pf-badge--tap' : ''}`, 'data-badge': b.id,
+    ...(tappable ? { type: 'button', onClick: () => openDetail(b) } : {}),
     ...(show ? { style: `--pf-d:${revealDelay(b.id)}ms` } : {}) },
     b.new ? el('span', { class: 'pf-new' }, T.isNew) : null,
     el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.secret && !b.got ? '?' : b.icon),
@@ -253,7 +292,8 @@ function playsPanel(f) {
   if (!rows.length) return null;
   const top = rows[0].n || 1, total = rows.reduce((s, g) => s + g.n, 0);
   const bar = (g, i) => el('li', { class: 'pf-play', 'data-game': g.id, hidden: i >= PLAYS_SHOWN, style: `--w: ${Math.max(6, Math.round((g.n / top) * 100))}%` },
-    el('span', { class: 'pf-play-name' }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
+    // A tap on the game opens its cover (the owner, 2026-11-24)
+    el('a', { class: 'pf-play-name', href: `../${gameOf(g.id).path}`, onClick: tap }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
     el('b', {}, num(g.n)));
   const list = el('ol', { class: 'pf-plays' }, rows.map(bar));
   const box = el('section', { class: 'panel pf-plays-panel' },
@@ -283,7 +323,7 @@ function badgePanels(list, { only = null, reveal = false, duels = null } = {}) {
         // Duels: the record sits in the title's row, between the title and the count (hidden on the narrowest screens)
         const x = g === 'duels' && duels ? duels() : {};
         // Every group ends with the way to where its badges are won (the owner, 2026-11-23)
-        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo], games: ['../', T.gamesGo] }[g];
+        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo] }[g];
         if (go) x.foot = el('a', { class: 'btn btn--ghost btn--sm pf-group-go', href: go[0], onClick: tap }, go[1]);
         return [el('p', { class: 'lead pf-group-head' }, ...[el('span', {}, title[g]), x.top, el('small', {}, fmt(T.groupOf, { n: got, total: all.length }))].filter(Boolean)),
           el('div', { class: 'pf-grid' }, all.map(b => badgeEl(b, { reveal }))), x.foot].filter(Boolean);
@@ -703,6 +743,7 @@ export async function drawProfile(root, { sub }) {
     const reveal = !seenAtLoad(yo.jid).first || REVEAL_PARAM != null;
     let ready = false;
     const repaint = list => {
+      detail.f = f;
       cardSlot.replaceChildren(card(yo, f, list, ready));
       badgesBox.replaceChildren(...[...badgePanels(list, { reveal, duels: duelsExtra }), playsOn ? playsPanel(f) : null].filter(Boolean));
       if (badgesBox.isConnected) revealIntoView(badgesBox);
@@ -726,9 +767,10 @@ export async function drawProfile(root, { sub }) {
     repaint(paint());
     const rk = rankingsTab(J, f);
     panes.rankings.replaceChildren(rk.box);
-    await ranksOf(J, f, (id, r) => rk.game(id, r)).catch(() => {});
+    detail.places = {};
+    await ranksOf(J, f, (id, r) => { detail.places[id] = r; rk.game(id, r); }).catch(() => {});
     if (mine !== turn) return;
-    if (f.general) rk.general(f.general);
+    if (f.general) { rk.general(f.general); detail.general = f.general; }
     await duelsIn;
     if (mine !== turn) return;
     repaint(paint(true));
@@ -743,7 +785,8 @@ export async function drawProfile(root, { sub }) {
 }
 
 function drawGuest(root) {
-  const all = badgeState(localFacts(), null);
+  detail.f = localFacts();
+  const all = badgeState(detail.f, null);
   const reveal = !seenAtLoad(null).first || REVEAL_PARAM != null;
   celebrateHere(all).catch(() => {});
   // The badges this phone could earn without a name: Uno al día's streaks and hours, and the games played
