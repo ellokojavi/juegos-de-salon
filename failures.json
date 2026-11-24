@@ -6961,6 +6961,19 @@
       "date": "2026-11-24T01:11:29.792Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45303219566,
+      "check": "end-to-end",
+      "pr": 1829,
+      "branch": "settings-in-profile",
+      "commit": "e28157da952893625d680cab0b33ab7c36142013",
+      "test": "home/extended-offline.mjs",
+      "error": "✗ 390: flag off: the sticker on the title as before, no plate",
+      "signature": "ca83c32340",
+      "date": "2026-11-24T01:30:48.047Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
