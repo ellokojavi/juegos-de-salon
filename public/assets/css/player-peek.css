@@ -16,6 +16,8 @@
 .pf-medal { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-160); margin-bottom: var(--s-2); }
 .pf-badge--gold .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-oro-luz), var(--pf-oro) 45%, var(--pf-oro-hondo)); box-shadow: 0 0 0 3px var(--pf-oro-aro), 0 6px 16px rgb(var(--yellow-rgb) / 0.45); }
 .pf-badge--silver .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata-luz), var(--pf-plata) 45%, var(--pf-plata-hondo)); box-shadow: 0 0 0 3px var(--pf-plata-aro); }
+/* 🥟 El canapé: a pale dumpling on pale silver, so its medal is the deep end of the silver and the emoji gets a dark rim */
+.pf-badge--silver[data-badge="party"]:not(.pf-badge--locked) .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata), var(--pf-plata-hondo) 55%, rgb(var(--card-ink-rgb) / 0.85)); text-shadow: 1px 0 rgb(var(--card-ink-rgb) / 0.8), -1px 0 rgb(var(--card-ink-rgb) / 0.8), 0 1px rgb(var(--card-ink-rgb) / 0.8), 0 -1px rgb(var(--card-ink-rgb) / 0.8); }
 .pf-badge--bronze .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-bronce-luz), var(--pf-bronce) 45%, var(--pf-bronce-hondo)); box-shadow: 0 0 0 3px var(--pf-bronce-aro); }
 
 /* A name that opens its player's sheet: any ranking's row (ranking.js) and a Cup's (cup/game.js) */
