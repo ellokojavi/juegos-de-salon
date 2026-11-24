@@ -43,22 +43,18 @@ for (const W of [320, 390]) {
   await ev('localStorage.clear()');
   await b.go(`${SITE}/profile/?test`, 3000);
   ok(await ev(`!!document.querySelector('#pf-page .rk-invita[open] #rk-entrar')`), `${W}: a guest is invited to sign in, the form open`);
-  // 👋 The welcome: open by itself on the first visit, closed after; «¿Cómo funciona?» opens it again (the owner, 2026-11-22)
-  ok(await ev(`(() => { const i = document.getElementById('pf-intro'); return !!i && !i.hidden && i.querySelectorAll('.pf-intro-list li').length === 3 && document.querySelector('.pf-help').getAttribute('aria-expanded') === 'true' && i.getBoundingClientRect().right <= ${W} && !!localStorage.getItem('juegos-de-salon:profile-intro') && !!localStorage.getItem('juegos-de-salon:profile-bubble'); })()`), `${W}: 👋 the first visit opens the welcome: three points, and the pill's bubble is retired`);
+  // 👋 The welcome: open by itself on the first visit, closed after, nothing reopens it (the owner, 2026-11-22, 2026-11-24)
+  ok(await ev(`(() => { const i = document.getElementById('pf-intro'); return !!i && !i.hidden && i.querySelectorAll('.pf-intro-list li').length === 3 && i.getBoundingClientRect().right <= ${W} && !!localStorage.getItem('juegos-de-salon:profile-intro') && !!localStorage.getItem('juegos-de-salon:profile-bubble'); })()`), `${W}: 👋 the first visit opens the welcome: three points, and the pill's bubble is retired`);
   ok(await ev(`(() => { const i = document.getElementById('pf-intro').getBoundingClientRect(), n = document.getElementById('pf-page').firstElementChild.getBoundingClientRect(); return Math.round(n.top - i.bottom) === 12; })()`), `${W}: 👋 the welcome keeps 12 px of air above the next block`);
   await b.shot(`intro-${W}`);
   const si = await small(b);
   ok(!si, `${W}: 👋 the welcome, every tappable thing is 44 px or more${si ? ` (${si})` : ''}`);
   await ev(`document.querySelector('.pf-intro-ok').click()`); await sleep(300);
-  ok(await ev(`document.getElementById('pf-intro').hidden && !document.querySelector('.pf-help').hidden`), `${W}: 👋 «Entendido» closes it`);
+  ok(await ev(`document.getElementById('pf-intro').hidden`), `${W}: 👋 «Entendido» closes it`);
   await b.go(`${SITE}/profile/?test`, 3000);
-  ok(await ev(`document.getElementById('pf-intro').hidden && !document.querySelector('.pf-help').hidden`), `${W}: 👋 the next visit starts with it closed`);
-  ok(await ev(`(() => { const h = document.querySelector('.pf-title-row h1').getBoundingClientRect(), i = document.querySelector('.pf-help').getBoundingClientRect(), s = document.getElementById('pf-sub').getBoundingClientRect(); return i.left >= h.right - 6 && i.left - h.right < 4 && i.top < h.top + h.height / 2 && i.right <= ${W} && s.top >= h.bottom - 2 && Math.abs((h.left + h.right) / 2 - ${W} / 2) < 4; })()`), `${W}: 👋 ⓘ sits at the title's right, the title still centred, no line of its own`);
+  ok(await ev(`document.getElementById('pf-intro').hidden`), `${W}: 👋 the next visit starts with it closed`);
+  ok(await ev(`!document.querySelector('.pf-help, .pf-title-row')`), `${W}: 👋 no ⓘ by the title`);
   await b.shot(`intro-closed-${W}`);
-  await ev(`document.querySelector('.pf-help').click()`); await sleep(500);
-  ok(await ev(`!document.getElementById('pf-intro').hidden`), `${W}: 👋 ⓘ opens it again`);
-  await ev(`document.querySelector('.pf-intro-x').click()`); await sleep(300);
-  ok(await ev(`document.getElementById('pf-intro').hidden`), `${W}: 👋 ✕ closes it too`);
   ok(await ev(`document.querySelectorAll('#pf-page .pf-group .pf-badge').length`) >= 5, `${W}: a guest sees the badges this phone can earn`);
   ok(await ev(`document.querySelectorAll('#pf-page .rk-ranking, #pf-page .rk-lista').length`) >= 2, `${W}: a guest sees the rankings, as on /records/`);
   ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: guest, no sideways scroll`);
