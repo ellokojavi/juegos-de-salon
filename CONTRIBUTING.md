@@ -9,7 +9,8 @@ modules: no build, no npm and no account for anything to work on it.
 2. Create a **branch named by topic** (`dudo-modo-rapido`, not `v0-90`).
 3. Work, test (below) and open a **PR to `main`**. The tests run on their own in the PR and
    show ✅ or ❌ in two checks, `tests` and `end-to-end`; with one red, it does not merge.
-4. The owner reviews it, merges it and publishes it. `main` is protected: nothing goes in without a PR, and
+4. The owner reviews it, merges it and publishes it. Each PR falls in a lane (🟢/🟡/🔴,
+   [docs/LANES.md](docs/LANES.md), D-519): a 🔴 PR waits for the owner's Yes even with every check green. `main` is protected: nothing goes in without a PR, and
    what goes into `main` goes out right away on https://juegosdesalon.cl/.
    Leave **Allow edits by maintainers** ticked when you open the PR, so it can be kept up to date with `main`.
    A red check is rerun once on its own, then read and explained to you; if you go silent for 7 days with
@@ -56,6 +57,9 @@ many as you need.
 - **[docs/CANONS.md](docs/CANONS.md)**: today's rules for every game (languages, sound, modes,
   game memory, touch interface, anti-cheating, tests, documentation). At the end it has a
   checklist.
+- **[docs/DESIGN.md](docs/DESIGN.md)**, before writing any CSS: the design system (D-533). Sizes, colours
+  and spacing come from the tokens in `public/assets/css/base.css`, not written by hand;
+  `node tools/agents/design-lint.mjs` names the file and line of anything that skips them.
 - **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: how texts are written and where buttons go.
 - **[docs/ADD-GAME.md](docs/ADD-GAME.md)**, if it is a new game.
 - **[docs/DECISIONS.md](docs/DECISIONS.md)**: why things are the way they are. Before changing something
@@ -94,6 +98,7 @@ git ls-files '*.test.mjs' | xargs -P8 -I{} sh -c 'node "{}" > /dev/null 2>&1 || 
 for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 python3 tools/release/readme.py check
 node tools/release/og.mjs check
+node tools/agents/design-lint.mjs      # if you touched CSS
 ```
 
 The end-to-end tests (`tools/e2e/`) play complete games in Chrome; see their README.
@@ -106,7 +111,11 @@ To look at a single screen: `node tools/e2e/look.mjs <game> <screen> --width 320
       (`node tools/release/changelog.mjs new patch` or `minor`).
 - [ ] Player-facing texts in the three languages; buttons ≥ 44 px; no horizontal scroll at 320 px.
 - [ ] Anything new on a player page sits behind its lab flag (`flag('<id>')`, `public/assets/js/flags.js`)
-      and is listed in `/labs/` (D-395, D-498): the owner turns it on, not the PR.
+      and is listed in `/labs/` (D-395, D-498): the owner turns it on, not the PR. Testers switch it
+      on for their own phone from the «T» tester tab (D-567, D-592).
+- [ ] Every screen whose look changed was shot with its end-to-end script and checked with
+      `look.mjs` at **390 and 320 px** (margins, nothing covering the next block, even gaps), and the
+      PR description says what was measured (D-570, rule 10 of [docs/DESIGN.md](docs/DESIGN.md)).
 - [ ] A new game in `public/labs/<id>/` comes in with **all** its canons built (D-579), not later:
       start from `node tools/generators/new-game.mjs <id>` (it is born passing) and keep
       `node public/labs/canons.test.mjs` and `node public/assets/js/conformance.test.mjs` green.
