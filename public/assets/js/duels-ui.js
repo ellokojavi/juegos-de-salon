@@ -8,7 +8,7 @@ import { gameIcon } from './game-icon.js';
 import { getLang } from './i18n.js';
 import { SUELTOS } from './games.js';
 import { jugador, leerYo } from './jugador.js';
-import { estado, record, nemesis, sugeridos, linkRonda, roundGame, FORMATOS } from './duels.js';
+import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS } from './duels.js';
 import { TEXTS } from './duels-texts.js';
 
 const lang = getLang();
@@ -50,8 +50,8 @@ export function duelCard(d, me, { alTocar = () => {} } = {}) {
       : el('p', { class: 'dl-espera' }, e.termino ? T[e.gano === 1 ? 'won' : e.gano === -1 ? 'lost' : 'draw'] : fmt(T.waitingFor, { n: e.rivalN })));
 }
 
-/** A duel as a row (the all-duels page). */
-export function fila(d, me, { alTocar = () => {} } = {}) {
+/** A duel as a row (the all-duels page); a finished one carries ⚔️ Rematch (same rival, game and format). */
+export function fila(d, me, { alTocar = () => {}, lista = null } = {}) {
   const e = estado(d, me);
   const fin = e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null;
   const h = Math.max(1, Math.ceil((e.vence - Date.now()) / 3600000));
@@ -60,7 +60,8 @@ export function fila(d, me, { alTocar = () => {} } = {}) {
       el('b', {}, e.rivalN),
       el('small', {}, titulo(d) + (e.termino ? '' : ` · ${fmt(T.hoursLeft, { h })}`)),
       el('div', { class: 'dl-row-sc' }, el('span', { class: 'dl-puntos' }, puntos(e)), marcador(e))),
-    fin ? el('span', { class: `dl-fin ${fin}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[fin]])
+    fin ? el('div', { class: 'dl-fin-col' }, el('span', { class: `dl-fin ${fin}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[fin]]),
+      lista ? el('button', { type: 'button', class: 'chip-btn dl-revancha', 'data-rematch': d.id, onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: e.rival, n: e.rivalN }, juego: duelGame(d.g) ? d.g : null, formato: d.f, alTocar }); } }, T.rematch) : null)
       : e.turno >= 0 ? el('a', { class: 'btn btn--yellow btn--sm', href: hrefRonda(d, e.turno), onClick: alTocar }, T.play)
         : el('span', { class: 'dl-espera' }, fmt(T.waitingFor, { n: e.rivalN })));
 }
@@ -79,13 +80,65 @@ export function ordenar(lista, me) {
   return [...lista].sort((a, b) => peso(a) - peso(b) || b.at - a.at);
 }
 
-/** Your nemesis, the rival you lose to most, with ⚔️ Rematch (the profile and /duels/), or null. */
+/** Your nemesis, the rival you lose to most, with ⚔️ Rematch (the profile), or null. */
 export function panelNemesis(lista, me, { alTocar = () => {} } = {}) {
   const nem = nemesis(lista, me);
   if (!nem) return null;
   return el('div', { class: 'panel dl-nemesis', id: 'dl-nemesis' },
     el('b', {}, `${T.nemesis} · ${nem.n} ${nem.g}–${nem.p}`),
     el('button', { type: 'button', class: 'btn btn--cyan btn--sm', onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: nem.jid, n: nem.n }, alTocar }); } }, T.rematch));
+}
+
+/** The stats of /duels/: a grid of tiles (record, win rate, streaks, rounds, rivals, favourite game), or null with none finished. */
+export function panelEstadisticas(lista, me) {
+  const s = estadisticas(lista, me);
+  if (!s.jugados) return null;
+  const g = s.juego && duelGame(s.juego);
+  const tile = (v, txt, cls = '') => el('div', { class: `dl-stat${cls ? ` ${cls}` : ''}` }, el('b', {}, String(v)), el('span', {}, txt));
+  return el('section', { class: 'panel', id: 'dl-stats' },
+    el('p', { class: 'lead' }, T.statsTitle),
+    el('div', { class: 'dl-stats' },
+      tile(`${s.g}–${s.p}${s.e ? `–${s.e}` : ''}`, T.statRecord, 'ancho'),
+      tile(s.pct == null ? '–' : `${s.pct}%`, T.statPct),
+      tile(s.racha, T.statStreak),
+      tile(s.mejorRacha, T.statBest),
+      tile(`${s.rondasG}–${s.rondasP}`, T.statRounds),
+      tile(s.rivales, T.statRivals),
+      tile(s.abiertos, T.statOpen)),
+    g ? el('p', { class: 'dl-nota center' }, `${T.statGame} `, el('span', { 'aria-hidden': 'true' }, gameIcon(g)), ` ${nombreJuego(g)}`) : null);
+}
+
+/**
+ * The rivalries of /duels/: the arch rival (most duels) and the nemesis (loses to most) as two
+ * cards, then every rival head to head, each with ⚔️ Rematch.
+ */
+export function panelRivalidades(lista, me, { alTocar = () => {} } = {}) {
+  const todos = rivalidades(lista, me);
+  if (!todos.length) return null;
+  const arch = archirrival(lista, me), nem = nemesis(lista, me);
+  const revancha = (x, grande = false) => el('button', { type: 'button', class: grande ? 'btn btn--cyan btn--sm' : 'chip-btn dl-revancha', 'data-rival': x.jid, onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: x.jid, n: x.n }, alTocar }); } }, T.rematch);
+  const destacado = (x, etiqueta, cls, nota) => el('div', { class: `panel dl-destacado ${cls}`, id: `dl-${cls}` },
+    el('p', { class: 'dl-label' }, etiqueta),
+    el('div', { class: 'dl-vs' }, el('span', {}, leerYo()?.n || ''), el('b', { class: 'dl-marcador' }, `${x.g}–${x.p}`), el('span', {}, x.n)),
+    el('p', { class: 'dl-nota center' }, nota), revancha(x, true));
+  const tarjetas = [
+    arch ? destacado(arch, nem?.jid === arch.jid ? `${T.archTitle} · 💀 ${T.nemesis}` : T.archTitle, 'arch', fmt(T.archNote, { t: arch.total })) : null,
+    nem && nem.jid !== arch?.jid ? destacado(nem, `💀 ${T.nemesis}`, 'nemesis', fmt(T.nemesisNote, { p: nem.p })) : null,
+  ].filter(Boolean);
+  const etiqueta = x => (x.jid === arch?.jid && x.jid === nem?.jid ? `🔥 ${T.archTag} · 💀 ${T.nemesisTag}` : x.jid === arch?.jid ? `🔥 ${T.archTag}` : x.jid === nem?.jid ? `💀 ${T.nemesisTag}` : '');
+  return el('div', { class: 'stack' },
+    tarjetas.length ? el('div', { class: 'dl-destacados' }, tarjetas) : null,
+    el('section', { class: 'panel', id: 'dl-rivalidades' },
+      el('p', { class: 'lead' }, T.rivalsTitle),
+      todos.slice(0, 12).map(x => {
+        const tono = x.g > x.p ? 'w' : x.g < x.p ? 'l' : 't';
+        return el('div', { class: 'dl-row', 'data-rival': x.jid },
+          el('div', { class: 'dl-row-txt' },
+            el('b', {}, x.n),
+            el('small', {}, [fmt(T.rivalLine, { t: x.total }), etiqueta(x)].filter(Boolean).join(' · ')),
+            el('div', { class: `dl-row-sc dl-h2h ${tono}` }, `${x.g}–${x.p}${x.e ? `–${x.e}` : ''}`)),
+          revancha(x));
+      })));
 }
 
 /** The invite link a challenger sends: the duel's own page, where the rival accepts (duels-page.js). */
@@ -107,12 +160,12 @@ export async function shareInvite(d, btn) {
  * 3 or 5. Custom: 1 who, 2 how to win, 3 each round's game. Once sent, the challenger sends the
  * invite to that rival and can play round 1.
  */
-export async function abrirNuevo({ rival = null, juego = null, lista = null, alTocar = () => {} } = {}) {
+export async function abrirNuevo({ rival = null, juego = null, formato: f0 = null, lista = null, alTocar = () => {} } = {}) {
   cargarCss();
   const yo = leerYo();
   const centrado = !!rival && !!juego;
-  let modo = centrado ? 'quick' : 'menu', paso = 1, editando = -1;
-  let elegido = rival, formato = 'bo3', g = juego && duelGame(juego) ? juego : DUEL_GAMES[0]?.id;
+  let modo = centrado || rival ? 'quick' : 'menu', paso = 1, editando = -1;
+  let elegido = rival, formato = FORMATOS[f0] ? f0 : 'bo3', g = juego && duelGame(juego) ? juego : DUEL_GAMES[0]?.id;
   let gr = [];
   const ponerRondas = () => { const n = FORMATOS[formato]; gr = Array.from({ length: n }, (_, k) => gr[k] || g); };
   const titulo = el(centrado ? 'h2' : 'h3', { id: 'dl-titulo', class: centrado ? 'display display--md' : '' });
@@ -140,7 +193,7 @@ export async function abrirNuevo({ rival = null, juego = null, lista = null, alT
     const { bloqueJugador } = await import('./ranking.js');
     cuerpo.removeAttribute('aria-busy');
     cuerpo.replaceChildren(bloqueJugador({ abierto: true, destacado: true, titulo: T.signInCard, alTocar }));
-    J.escuchar(() => { if (leerYo() && capa.isConnected) { cerrar(); abrirNuevo({ rival, juego, lista, alTocar }); } });
+    J.escuchar(() => { if (leerYo() && capa.isConnected) { cerrar(); abrirNuevo({ rival, juego, formato: f0, lista, alTocar }); } });
     return capa;
   }
   const pDuelos = pJ.then(J => J.duelos());

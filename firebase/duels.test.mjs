@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { createDb } from '../tools/firebase/rules-sim.mjs';
 import { crearAlmacenLocal } from '../public/assets/js/jugador-local.js';
 import { crearJugador } from '../public/assets/js/jugador.js';
-import { estado, record, nemesis, sugeridos, ganaRonda, roundGame, DURACION } from '../public/assets/js/duels.js';
+import { estado, record, nemesis, rivalidades, archirrival, estadisticas, sugeridos, ganaRonda, roundGame, DURACION } from '../public/assets/js/duels.js';
 
 const T0 = 1_800_000_000_000;
 const A = 'aaaa1111', B = 'bbbb2222', C = 'cccc3333', DID = 'duel000001';
@@ -108,5 +108,10 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   ];
   assert.deepEqual(record(lista, A, at + 10), { g: 1, p: 2, e: 0, pct: 33, racha: 1 });
   assert.equal(nemesis(lista, A, at + 10)?.jid, B, 'the rival I lose to most');
+  assert.deepEqual(rivalidades(lista, A, at + 10).map(x => [x.jid, x.g, x.p, x.total]), [[B, 1, 2, 3]], 'head to head with each rival');
+  assert.equal(archirrival(lista, A, at + 10)?.jid, B, 'three duels with the same rival make an arch rival');
+  assert.equal(archirrival(lista.slice(0, 2), A, at + 10), null, 'two duels are not a rivalry yet');
+  const st = estadisticas(lista, A, at + 10);
+  assert.deepEqual([st.jugados, st.g, st.p, st.rondasG, st.rondasP, st.rivales, st.abiertos], [3, 1, 2, 2, 4, 1, 0], 'the stats panel');
   assert.deepEqual(sugeridos(lista, A, { [C]: 'Caro', [B]: 'Beto' }).map(x => x.jid), [B, C], 'rivals first, then cup friends, once each');
 }
