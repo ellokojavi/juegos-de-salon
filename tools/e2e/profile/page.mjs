@@ -36,7 +36,7 @@ const small = b => b.evaluate(`[...document.querySelectorAll('main button, main 
 for (const W of [320, 390]) {
   const b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
   // The home page as the owner sees it in Labs: its icon view (flag home-carousels), with the profile's pill
-  b.flags({ profile: 'all', 'home-carousels': 'all', 'ranking-peek': 'all' });
+  b.flags({ profile: 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all' });
   const ev = e => b.evaluate(e);
   // A guest (a clean phone, so the script can run again)
   await b.go(`${SITE}/profile/?test`, 1500);
@@ -129,6 +129,14 @@ for (const W of [320, 390]) {
   // The figures pop in once the server answers (the owner, 2026-11-23), then stay
   await sleep(1600);
   ok(/14/.test(await ev(`document.querySelector('.pf-stat b')?.textContent`)), `${W}: the card shows the 14-day streak`);
+  // 🎮 Your games played, moved from /records/ (the owner, 2026-11-23): bars, the most played first, five shown, the rest below
+  await sleep(1200);
+  ok(await ev(`(() => { const p = document.querySelector('.pf-plays-panel'); if (!p) return false; const li = [...p.querySelectorAll('.pf-play')], shown = li.filter(x => !x.hidden); return li.length === 8 && shown.length === 5 && li[0].dataset.game === 'reinas' && li[0].querySelector('b').textContent === '6' && /20 partidas/.test(p.textContent) && p.getBoundingClientRect().height < 420; })()`), `${W}: 🎮 your games played: eight bars, Reinas first with 6, five shown, not the whole screen`);
+  await ev(`document.querySelector('.pf-plays-panel').scrollIntoView({ block: 'center' })`); await sleep(900);
+  await b.shot(`plays-${W}`);
+  await ev(`document.querySelector('.pf-plays-panel .pf-more').click()`); await sleep(200);
+  ok(await ev(`(() => { const p = document.querySelector('.pf-plays-panel'); return [...p.querySelectorAll('.pf-play')].every(x => !x.hidden) && p.querySelector('.pf-more').getAttribute('aria-expanded') === 'true' && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 🎮 «Ver 3 juegos más» opens the rest, and closes them again`);
+  await ev(`document.querySelector('.pf-plays-panel .pf-more').click()`); await sleep(200);
   ok(await ev(`!!document.querySelector('[data-badge="streak-10"]:not(.pf-badge--locked)')`), `${W}: 🔥 10 in a row is earned`);
   ok(/14 \/ 30/.test(await ev(`document.querySelector('[data-badge="streak-30"]')?.textContent`)), `${W}: 🔥 30 in a row shows its progress, 14 / 30`);
   ok(/4 \/ 7/.test(await ev(`document.querySelector('[data-badge="early-bird"]')?.textContent`)), `${W}: 🌅 the early bird counts the mornings, 4 / 7`);
@@ -210,7 +218,7 @@ for (const W of [320, 390]) {
   ok(await ev(`(() => { const r = [...document.querySelectorAll('.pf-tab .rk-fila[data-peek]')].find(x => x.textContent.includes('Cata')); if (!r) return false; r.scrollIntoView({ block: 'center' }); r.click(); return r.getAttribute('role') === 'button'; })()`), `${W}: 👀 a rival's name in a ranking is a button`);
   await sleep(1500);
   ok(await ev(`(() => { const p = document.getElementById('pf-peek'); return !!p && p.querySelector('.pf-peek-name')?.textContent.includes('Cata') && !p.querySelector('.pf-peek-kicker') && p.querySelectorAll('.pf-peek-stats .pf-stat').length === 3 && [...p.querySelectorAll('.pf-peek-games li')].map(x => x.dataset.game).sort().join() === 'reinas,tango' && [...p.querySelectorAll('.pf-peek-games li small')].map(x => x.textContent).sort().join() === '1.º histórico,2.º histórico' && !p.querySelector('.pf-peek-games')?.textContent.match(/partida/); })()`), `${W}: 👀 a rival's sheet: their name, three figures and their most played games, each with their all-time place, not how often they play it`);
-  ok(await ev(`(() => { const h = document.querySelector('#pf-peek .pf-peek-here'), l = h?.querySelector('.pf-peek-here-label')?.textContent || ''; return !!h && l.length > 2 && /\\d/.test(h.querySelector('b')?.textContent || '') && !h.textContent.includes(' · · ') && h.getBoundingClientRect().bottom <= document.querySelector('#pf-peek .pf-peek-body').getBoundingClientRect().top; })()`), `${W}: 👀 the sheet starts with where it was tapped: that table, and the row as it showed`);
+  ok(await ev(`(() => { const h = document.querySelector('#pf-peek .pf-peek-here'), l = h?.querySelector('.pf-peek-here-label')?.textContent || ''; return !!h && l.length > 2 && !!h.querySelector('.pf-peek-here-medal .pf-medal') && /\\d/.test(h.querySelector('.pf-peek-here-vals')?.textContent || '') && h.getBoundingClientRect().bottom <= document.querySelector('#pf-peek .pf-peek-body').getBoundingClientRect().top; })()`), `${W}: 👀 the sheet starts with where it was tapped: that table, and the row as it showed`);
   ok(await ev(`(() => { const p = document.getElementById('pf-peek').getBoundingClientRect(); return p.left >= 0 && p.right <= ${W} && p.top >= 0 && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 the sheet fits the screen`);
   const sp = await small(b);
   ok(!sp, `${W}: 👀 the sheet, every tappable thing is 44 px or more${sp ? ` (${sp})` : ''}`);
@@ -230,7 +238,7 @@ for (const W of [320, 390]) {
   await b.go(`${SITE}/queens/?test`, 3000);
   ok(await ev(`(() => { const r = [...document.querySelectorAll('.rk-ranking .rk-fila[data-peek]')].find(x => x.textContent.includes('Cata')); if (!r) return false; r.scrollIntoView({ block: 'center' }); r.click(); return true; })()`), `${W}: 👀 on a game's cover, a name in its ranking opens the sheet too`);
   await sleep(1500);
-  ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!h && /Reinas|Queens/.test(h.textContent) && /semana/i.test(h.querySelector('.pf-peek-here-label').textContent) && /95/.test(h.querySelector('b').textContent) && /histórico/.test(h.querySelector('.pf-peek-here-all').textContent) && p.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 from a game's week ranking the sheet says that game and week, the row and their all-time place in it`);
+  ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!h && /Reinas|Queens/.test(h.textContent) && /semana/i.test(h.querySelector('.pf-peek-here-label').textContent) && /95\\s*pts/.test(h.querySelector('.pf-peek-here-vals').textContent) && /tiempo/.test(h.querySelector('.pf-peek-here-vals').textContent) && /histórico/.test(h.querySelector('.pf-peek-here-all').textContent) && !!h.querySelector('.pf-peek-here-medal.pf-badge--silver, .pf-peek-here-medal.pf-badge--gold, .pf-peek-here-medal.pf-badge--plain') && p.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it`);
   // The sheet's own buttons (the ranking under it has its own check on its page)
   const sq = await ev(`[...document.querySelectorAll('#pf-peek button')].filter(x => x.offsetHeight < 43.5 || x.offsetWidth < 43.5).map(x => x.className).join(', ')`);
   ok(!sq, `${W}: 👀 the sheet on a cover, every tappable thing is 44 px or more${sq ? ` (${sq})` : ''}`);

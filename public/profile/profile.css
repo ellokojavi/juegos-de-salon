@@ -173,5 +173,23 @@
 .pf-intro-again { margin: 0; text-align: center; font-size: var(--fs-85); }
 .pf-intro-ok { justify-self: center; }
 @media (prefers-reduced-motion: reduce) { .pf-intro { animation: none; } }
-/* «👀 Tus juegos son visibles» (D-604): a yellow bubble under the switch, its tail pointing up at it */
-@media (prefers-reduced-motion: reduce) { 
+/* 🎮 Your games played (the owner, 2026-11-23, from /records/): one bar per game, as long as its share of the most
+   played one, the name over it and the number at its end; five show, the rest open below */
+.pf-plays { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-6); }
+.pf-play { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s-10);
+  min-height: 40px; padding: 0 var(--s-12); border-radius: var(--r-12); background: var(--well); overflow: hidden; }
+.pf-play[hidden] { display: none; }
+.pf-play::before { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--yellow) 32%, transparent), color-mix(in srgb, var(--yellow) 12%, transparent));
+  transform-origin: left; animation: pf-play-grow 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.pf-play:nth-child(2)::before { animation-delay: 0.06s; }
+.pf-play:nth-child(3)::before { animation-delay: 0.12s; }
+.pf-play:nth-child(4)::before { animation-delay: 0.18s; }
+.pf-play:nth-child(5)::before { animation-delay: 0.24s; }
+@keyframes pf-play-grow { from { transform: scaleX(0); } }
+.pf-play-name, .pf-play b { position: relative; }
+.pf-play-name { font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-play b { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-plays-panel .pf-more { margin-top: var(--s-10); justify-self: center; }
+@media (prefers-reduced-motion: reduce) { .pf-play::before { animation: none; } }
+.pf-plays-panel { display: grid; }

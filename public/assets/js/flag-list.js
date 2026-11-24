@@ -4,6 +4,7 @@
  * end-to-end scripts of every page (D-515). A new flag is a row here and its card in /labs/.
  */
 export const FLAGS = {
+  'profile-plays': '🎮 Profile: «Tus partidas» moves from Rankings to the profile\'s Logros tab, as one bar per game, five shown',
   'panel-nav-more': '📊 Panel on a phone: five tabs and ☰ More at the bottom, the other sections in a sheet by group',
   'cup-footer': '🏆 La Copa: the board ends with the site footer, its report and leave links as tiles (U-38)',
   'cup-zone-phone': '🏆 La Copa: a new cup\'s audience, and so its zone, starts on the phone\'s zone, not its language (D-608)',

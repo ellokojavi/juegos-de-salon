@@ -554,7 +554,7 @@ Balloon (D-566, lab, flag `cup-talk-hint`): the first time a 💬 shows, a note 
 
 ## A name opens the player's profile (lab, flag `ranking-peek`)
 
-A tap (or Enter) on a named seat's row of the table opens `player-peek.js` (`assets/js/`, with `assets/css/player-peek.css`): the same sheet every ranking opens, headed by this cup, the player's place and points in it. A seat with no name of its own is not a button. Wired in `game.js`; end to end: `tools/e2e/cup/peek.mjs`.
+A tap (or Enter) on a named seat's row of the table opens `player-peek.js` (`assets/js/`, with `assets/css/player-peek.css`): the same sheet every ranking opens, headed by this cup, the player's place in a medal (the podium's metals, a plain ring from 4th on) and their points with the unit (`values: [{ v, unit: 'pts' }]` in `contextOf`, option A of the owner's pick). A seat with no name of its own is not a button. Wired in `game.js`; end to end: `tools/e2e/cup/peek.mjs`.
 
 ## Excepciones a los cánones
 
