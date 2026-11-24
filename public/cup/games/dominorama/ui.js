@@ -13,6 +13,7 @@
 import * as E from './engine.js';
 import TEXTOS from './texts.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { flag, flagGuess } from '../../../assets/js/flags.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -29,6 +30,12 @@ function h(tag, attrs = {}, ...hijos) {
   for (const x of hijos.flat()) if (x !== null && x !== undefined && x !== false) n.append(x instanceof Node ? x : String(x));
   return n;
 }
+
+// Bigger rules (lab: #seccion-dominorama-corner-labels): the zone's corner filled with its color and the rule
+// inside, big, instead of the small diamond; some players found the diamonds too small (the owner, 2026-11-24)
+let esquinas = false;
+const ponerEsquinas = on => { esquinas = !!on; globalThis.document?.querySelectorAll('.dm-board').forEach(g => g.classList.toggle('dm-esquinas', esquinas)); };
+if (globalThis.document) { esquinas = !!flagGuess('dominorama-corner-labels'); flag('dominorama-corner-labels').then(ponerEsquinas).catch(() => {}); }
 
 /** One color per zone, in order; a zone with no rule is plain. */
 // The zones' colors stay away from red, so a broken rule's red stands out (the owner, 2026-11-22)
@@ -53,7 +60,7 @@ function tableroVacio(t, { chico = false } = {}) {
   const zonaDe = Array(t.celdas.length);
   t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
   const en = (r, c) => t.celdas.findIndex(x => x.r === r && x.c === c);
-  const g = h('div', { class: `dm-board${chico ? ' chico' : ''}`, style: `--w:${t.ancho};--h:${t.alto}`, 'data-tablero': 'dominorama' });
+  const g = h('div', { class: `dm-board${chico ? ' chico' : ''}${esquinas ? ' dm-esquinas' : ''}`, style: `--w:${t.ancho};--h:${t.alto}`, 'data-tablero': 'dominorama' });
   let color = 0;
   const colorDe = t.zonas.map(z => (z.tipo === 'libre' ? null : COLORES[color++ % COLORES.length]));
   t.celdas.forEach((c, i) => {
