@@ -452,6 +452,8 @@ details.panel summary::-webkit-details-marker { display: none; }
   transition: transform 0.1s; text-decoration: none;
 }
 .sound-toggle:active, .icon-btn:active { transform: scale(0.92); }
+/* The profile's vibration switch: always 📳, greyed out when off (the owner 2026-11-24) */
+.vibration-toggle[aria-pressed="false"] { filter: grayscale(1); opacity: 0.35; }
 .topbar .tools { display: flex; gap: 8px; align-items: center; }
 /* With the cover's share button (cover-share.js) a 320 px bar has no room for the game's chip: the
    cover's title right below names the game, so the chip steps aside there */
