@@ -122,6 +122,11 @@ home a two-button toggle under the language picks 🔢 Número or 🔤 Palabra, 
 La Copa's waiting room (Loteo, D-331): Palabra opens `/word/`, whose waiting room shows the same toggle
 with Palabra on (`selectorTyf` in `public/cup/game.js`), and Número comes back here. Tried in the lab
 first (D-409), now for every player; its lab card is in La Bodega, marked 🚀 Lanzado.
+Since 2026-11-24 (the owner's request) the toggle works like a tab: it swaps the game in place, with
+no page load (`public/assets/js/bulls-and-cows-tabs.js`). It fetches the other page (precached), puts in its
+stylesheets and body, runs a fresh copy of its entry module and pushes its URL; Back swaps back. A
+view transition keeps the old screen until the new one draws, with the top bar still. If anything
+fails it loads the page as before. Checked by `tools/e2e/bulls-and-cows/tabs.mjs`.
 
 ### Repaso al final
 
