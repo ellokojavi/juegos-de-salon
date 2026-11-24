@@ -6,10 +6,10 @@
  */
 import { leer as leerDia, recorrer, fechaLocal } from './uno-al-dia.js';
 import { readHours, readRun, readMarks } from './play-hours.js';
-import { ALL_GAMES } from './games.js';
+import { ALL_GAMES, PLAYABLE_GAMES } from './games.js';
 
 /** The games a player can earn badges in: launched, not hidden. */
-export const CATALOGUE = ALL_GAMES.filter(g => g.available !== false && !g.labs && !g.oculto);
+export const CATALOGUE = PLAYABLE_GAMES;
 /** stats.js' PARTIDAS_KEY (phone-facts.test.mjs keeps them equal): not imported, so this stays light. */
 export const PLAYS_KEY = 'juegos-de-salon:partidas';
 /** The badges this phone can tell alone (profile/badges.js ids): a guest's, and those celebrated right after a game. */

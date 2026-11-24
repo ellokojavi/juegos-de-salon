@@ -13,7 +13,7 @@ import { el, vibrationToggle } from '../assets/js/ui.js';
 import { withIcon } from '../assets/js/game-icon.js';
 import { getLang, langToggle, pickLang, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle } from '../assets/js/sound.js';
-import { ALL_GAMES } from '../assets/js/games.js';
+import { ALL_GAMES, PLAYABLE_GAMES } from '../assets/js/games.js';
 import { bloqueJugador, bloqueRanking, mmss, conBandera } from '../assets/js/ranking.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 import { TODOTERRENO, UAD_PUNTOS, SIEMPRE, semana, medallero, limpiarNombre, esPin } from '../assets/js/records.js';
@@ -41,7 +41,7 @@ const monthName = ms => new Intl.DateTimeFormat(lang, { month: 'long', year: 'nu
 const FIRST_POINTS_MONTH = '2026-10';
 
 /** The games a player can earn badges in: launched, not hidden. */
-const CATALOGUE = ALL_GAMES.filter(g => g.available !== false && !g.labs && !g.oculto);
+const CATALOGUE = PLAYABLE_GAMES;
 const gameOf = id => ALL_GAMES.find(g => g.id === id);
 
 /* ------------------------------------------------------------------ */
