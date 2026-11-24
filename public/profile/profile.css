@@ -195,7 +195,8 @@
 
 /* A badge's detail (lab flag badge-details): a tappable badge, and its sheet */
 button.pf-badge--tap { font: inherit; color: inherit; border: 0; cursor: pointer; width: 100%; }
-.pf-badge--tap::after { content: 'ⓘ'; position: absolute; top: var(--s-4); left: var(--s-6); font-size: var(--fs-75); color: var(--muted); }
+/* The ⓘ at the card's top-right, toned down (the owner, 2026-11-24, variant A) */
+.pf-badge--tap::after { content: 'ⓘ'; position: absolute; top: var(--s-4); right: var(--s-6); font-size: var(--fs-75); color: var(--muted); opacity: 0.55; }
 .pf-dt .pf-badge { padding: var(--s-12); }
 .pf-dt-x { width: 44px; min-height: 44px; padding: 0; }
 .pf-dt-lead, .pf-dt-when { margin: 0; }
