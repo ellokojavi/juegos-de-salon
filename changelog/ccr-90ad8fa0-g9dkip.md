@@ -1,3 +1,4 @@
 level: patch
 
-- **Duels' 🎲 Mix rolls the rounds like La Copa's week** (lab flag rivals): in a custom duel's last step, each round's row spins through duel games and stops on its own, top to bottom, on the rounds already drawn; a tap meanwhile acts on the real round, and with reduced motion nothing moves. La Copa and Duels share one roll, `assets/js/slot-roll.js`, with its styles in `base.css` (`.slot-spin`, `.slot-reel`, `.slot-land`, D-425); La Copa's week rolls as before.
+- **Duels open straight on the quick duel** (lab flag rivals): «Nuevo duelo» no longer asks ⚡ or 🛠️ first; the rival, the format and the game are there at once, and «🛠️ Arma un duelo a tu medida» is a link right under the button, with «⚡ Volver al duelo rápido» to come back.
+- **A custom duel can be best of 3, 5, 7 or 9** (or most points): «Al mejor de» with one chip per number, each saying how many rounds win it. The rules (`firebase/database.rules.json`), the test store and a round's link take up to nine rounds.

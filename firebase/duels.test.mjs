@@ -11,7 +11,8 @@ const T0 = 1_800_000_000_000;
 const A = 'aaaa1111', B = 'bbbb2222', C = 'cccc3333', DID = 'duel000001';
 const ok = (r, msg, db) => assert.equal(r, true, `${msg} (${db?.why?.join(', ')})`);
 const no = (r, msg) => assert.equal(r, false, msg);
-const duelo = (f = 'bo3') => ({ a: A, b: B, an: 'Ana', bn: 'Beto', f, g: 'desenredo', sd: f === 'bo5' ? ['ABCDE', 'FGHJK', 'LMNPQ', 'RSTUV', 'WXYZA'] : ['ABCDE', 'FGHJK', 'LMNPQ'], at: { '.sv': 'timestamp' } });
+const SEMILLAS = ['ABCDE', 'FGHJK', 'LMNPQ', 'RSTUV', 'WXYZA', 'BCDEF', 'GHJKL', 'MNPQR', 'STUVW'];
+const duelo = (f = 'bo3') => ({ a: A, b: B, an: 'Ana', bn: 'Beto', f, g: 'desenredo', sd: SEMILLAS.slice(0, ({ bo5: 5, bo7: 7, bo9: 9 })[f] || 3), at: { '.sv': 'timestamp' } });
 const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${DID}`]: { '.sv': 'timestamp' }, [`jugadorDuelos/${B}/${DID}`]: { '.sv': 'timestamp' }, [`duelosRecientes/${DID}`]: { '.sv': 'timestamp' } });
 
 {
@@ -24,7 +25,10 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   no(w('ub', crear()), 'only a phone seated as the challenger creates the duel');
   no(w('ua', crear({ ...duelo(), b: A })), 'nobody challenges themselves');
   no(w('ua', crear({ ...duelo(), b: 'zzzz9999' })), 'the rival is a player');
-  no(w('ua', crear({ ...duelo(), f: 'bo7' })), 'only the formats there are');
+  no(w('ua', crear({ ...duelo(), f: 'bo11' })), 'only the formats there are');
+  no(w('ua', crear({ ...duelo('bo7'), sd: SEMILLAS.slice(0, 5) })), 'best of seven carries seven seeds');
+  no(w('ua', crear({ ...duelo('bo9'), sd: SEMILLAS.slice(0, 8) })), 'best of nine carries nine seeds');
+  no(w('ua', crear({ ...duelo('bo5'), sd: SEMILLAS.slice(0, 7) })), 'and best of five no more than five');
   no(w('ua', crear({ ...duelo('bo5'), sd: ['ABCDE', 'FGHJK', 'LMNPQ'] })), 'best of five carries five seeds');
   no(w('ua', crear({ ...duelo(), r: { [A]: { 0: { s: 100, ms: 1, at: T0 } } } })), 'a duel is born with no results');
   no(w('uc', { [`jugadorDuelos/${C}/${DID}`]: { '.sv': 'timestamp' } }), 'no stray entry in a list');
@@ -45,6 +49,11 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   ok(w('ub', { [`duelos/${DID}/r/${B}/0`]: { s: 90, ms: 5000, at: { '.sv': 'timestamp' } } }), 'and writes its result', db);
   no(w('ub', { [`duelos/${DID}/r/${B}/0`]: { s: 100, ms: 4000, at: { '.sv': 'timestamp' } } }), 'a result is written once');
   no(w('ua', { [`duelos/${DID}/e/${A}/0`]: { '.sv': 'timestamp' } }, T0 + 1000 + DURACION), 'after three days nothing is played');
+  // Best of nine (the custom duel, the owner, 2026-11-24): nine rounds, the ninth playable
+  const D9 = 'duel000009';
+  ok(w('ua', { [`duelos/${D9}`]: duelo('bo9'), [`jugadorDuelos/${A}/${D9}`]: { '.sv': 'timestamp' }, [`jugadorDuelos/${B}/${D9}`]: { '.sv': 'timestamp' }, [`duelosRecientes/${D9}`]: { '.sv': 'timestamp' } }), 'a best of nine is created with nine seeds', db);
+  ok(w('ub', { [`duelos/${D9}/e/${B}/8`]: { '.sv': 'timestamp' } }), 'and its ninth round is played', db);
+  no(w('ub', { [`duelos/${D9}/e/${B}/9`]: { '.sv': 'timestamp' } }), 'but no tenth');
 }
 
 {
@@ -78,6 +87,9 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   assert.deepEqual([0, 1, 2].map(i => roundGame(c2, i)), ['reinas', 'tango', 'desenredo'], "a custom duel's rounds play their own games");
   const q = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo3', gr: ['zip', 'zip', 'zip'] });
   assert.equal((await D.leer(q.id)).gr, undefined, 'the same game every round is a quick duel: no gr');
+  const n7 = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo7', gr: ['zip', 'tango', 'zip', 'reinas', 'zip', 'tango', 'desenredo'] });
+  assert.equal(Object.keys((await D.leer(n7.id)).sd).length, 7, 'a best of seven has seven rounds');
+  assert.equal(await D.empezar(n7.id, 6), true, 'and its seventh is played');
 }
 
 {
@@ -99,6 +111,10 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   assert.deepEqual([e.termino, e.gano, e.rondas], [true, 1, ['w', 't', 't']], 'after three days what was not played is a 0');
   e = estado(d('bo3', {}, {}, { [B]: { 0: at } }), A, at + DURACION);
   assert.deepEqual([e.termino, e.gano], [true, 0], 'a round begun and left is worth nothing');
+  e = estado(d('bo7', { 0: r(9), 1: r(9), 2: r(9) }, { 0: r(1), 1: r(1), 2: r(1) }), A, at + 1);
+  assert.deepEqual([e.n, e.termino], [7, false], 'best of seven is not over at three');
+  e = estado(d('bo9', { 0: r(9), 1: r(9), 2: r(9), 3: r(9), 4: r(9) }, { 0: r(1), 1: r(1), 2: r(1), 3: r(1), 4: r(1) }), A, at + 1);
+  assert.deepEqual([e.n, e.termino, e.gano], [9, true, 1], 'best of nine ends at five');
   e = estado(d('pts', { 0: r(90), 1: r(10), 2: r(10) }, { 0: r(40), 1: r(40), 2: r(40) }), A, at + 1);
   assert.deepEqual([e.termino, e.gano, e.puntos], [true, -1, [110, 120]], 'most points adds every round');
   const lista = [

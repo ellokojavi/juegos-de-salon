@@ -4,7 +4,7 @@
  * their own pace, and the duel lasts three days at most (the owner, 2026-11-22).
  *
  *   duelos/<did>                { a, b, an, bn, f, g, sd: { 0: CODE, … }, gr?: { 0: game, … }, at }
- *                               a challenged b to game `g` in format `f` (bo3, bo5, pts), written once;
+ *                               a challenged b to game `g` in format `f` (bo3, bo5, bo7, bo9, pts), written once;
  *                               a custom duel's `gr` names each round's game (round i plays gr[i] or g)
  *   duelos/<did>/e/<jid>/<i>    when jid began round i, once: a round begun and left counts as 0
  *   duelos/<did>/r/<jid>/<i>    { s, ms, at }: jid's result in round i, once, after it began
@@ -18,7 +18,7 @@
 import { esJid, claveNombre, S_MAX, MS_MAX, TODOTERRENO, SIEMPRE, semana } from './records.js';
 
 export const DURACION = 3 * 86400000;
-export const FORMATOS = { bo3: 3, bo5: 5, pts: 3 };
+export const FORMATOS = { bo3: 3, bo5: 5, bo7: 7, bo9: 9, pts: 3 };
 export const DID = /^[a-z0-9]{10}$/;
 export const esDid = d => typeof d === 'string' && DID.test(d);
 const HORA = { '.sv': 'timestamp' };

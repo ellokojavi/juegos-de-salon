@@ -1263,15 +1263,15 @@
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20"
         },
         "f": {
-          ".validate": "newData.isString() && newData.val().matches(/^(bo3|bo5|pts)$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^(bo3|bo5|bo7|bo9|pts)$/)"
         },
         "g": {
           ".validate": "newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{1,24}$/)"
         },
         "sd": {
-          ".validate": "newData.hasChildren(['0', '1', '2']) && (newData.parent().child('f').val() === 'bo5') === newData.hasChildren(['3', '4'])",
+          ".validate": "newData.hasChildren(['0', '1', '2']) && (newData.parent().child('f').val() === 'bo5' || newData.parent().child('f').val() === 'bo7' || newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['3', '4']) && (newData.parent().child('f').val() === 'bo7' || newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['5', '6']) && (newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['7', '8'])",
           "$i": {
-            ".validate": "$i.matches(/^[0-4]$/) && newData.isString() && newData.val().matches(/^[A-HJ-NP-Z]{5}$/)"
+            ".validate": "$i.matches(/^[0-8]$/) && newData.isString() && newData.val().matches(/^[A-HJ-NP-Z]{5}$/)"
           }
         },
         "at": {
@@ -1279,13 +1279,13 @@
         },
         "gr": {
           "$i": {
-            ".validate": "$i.matches(/^[0-4]$/) && newData.parent().parent().child('sd/' + $i).exists() && newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{1,24}$/)"
+            ".validate": "$i.matches(/^[0-8]$/) && newData.parent().parent().child('sd/' + $i).exists() && newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{1,24}$/)"
           }
         },
         "e": {
           "$jid": {
             "$i": {
-              ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (root.child('duelos/' + $did).child('a').val() === $jid || root.child('duelos/' + $did).child('b').val() === $jid) && $i.matches(/^[0-4]$/) && root.child('duelos/' + $did).child('sd/' + $i).exists() && now < root.child('duelos/' + $did).child('at').val() + 259200000",
+              ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (root.child('duelos/' + $did).child('a').val() === $jid || root.child('duelos/' + $did).child('b').val() === $jid) && $i.matches(/^[0-8]$/) && root.child('duelos/' + $did).child('sd/' + $i).exists() && now < root.child('duelos/' + $did).child('at').val() + 259200000",
               ".validate": "newData.val() === now"
             }
           }
@@ -1293,7 +1293,7 @@
         "r": {
           "$jid": {
             "$i": {
-              ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (root.child('duelos/' + $did).child('a').val() === $jid || root.child('duelos/' + $did).child('b').val() === $jid) && $i.matches(/^[0-4]$/) && root.child('duelos/' + $did).child('sd/' + $i).exists() && root.child('duelos/' + $did).child('e/' + $jid + '/' + $i).exists() && now < root.child('duelos/' + $did).child('at').val() + 259200000",
+              ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (root.child('duelos/' + $did).child('a').val() === $jid || root.child('duelos/' + $did).child('b').val() === $jid) && $i.matches(/^[0-8]$/) && root.child('duelos/' + $did).child('sd/' + $i).exists() && root.child('duelos/' + $did).child('e/' + $jid + '/' + $i).exists() && now < root.child('duelos/' + $did).child('at').val() + 259200000",
               ".validate": "newData.hasChildren(['s', 'ms', 'at'])",
               "s": {
                 ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
