@@ -41,11 +41,11 @@
         <strong>team of AI agents</strong>. I don't write the code: I set the direction, make the calls and
         design the system that builds, tests and ships it.</p>
       <div class="mo-stats">
-        <div><b data-stat="games">20+</b><span>games, in 3 languages</span></div>
-        <div><b data-stat="weeks">9</b><span>weeks from first commit</span></div>
-        <div><b data-stat="prs">1,100+</b><span>changes merged (PRs)</span></div>
-        <div><b data-stat="decisions">550+</b><span>written decisions</span></div>
-        <div><b data-stat="tests">200+</b><span>test files, plus browser scripts</span></div>
+        <div><b data-stat="games">25+</b><span>games, in 3 languages</span></div>
+        <div><b data-stat="weeks">11</b><span>weeks from first commit</span></div>
+        <div><b data-stat="prs">1,500+</b><span>changes merged (PRs), by <i data-stat="contributors">3</i> contributors</span></div>
+        <div><b data-stat="decisions">600+</b><span>written decisions</span></div>
+        <div><b data-stat="tests">250+</b><span>test files, plus browser scripts</span></div>
         <div><b>Free</b><span>for players: no ads, no accounts</span></div>
       </div>
       <a class="mo-next" href="#product">Next: The product <span aria-hidden="true">↓</span></a>
@@ -74,7 +74,7 @@
 
     <section id="play" class="mo-section">
       <p class="mo-kicker">See it played</p>
-      <h2 class="display display--lg"><span data-stat="games">20+</span> games. Four of them, in play</h2>
+      <h2 class="display display--lg"><span data-stat="games">25+</span> games. Four of them, in play</h2>
       <p class="mo-sub">Every game plays on any phone, in the browser. These four were recorded straight from the site.</p>
       <div class="mo-play">
         <figure class="mo-clip mo-clip--tall">
@@ -312,7 +312,7 @@
       <ol class="mo-learnings">
         <li>
           <h3>The job moves from doing to deciding</h3>
-          <p>The AI writes the code; the value I add is the call: what, why, and what "good" means. I've written <span data-stat="decisions">550+</span> decisions, each with its reason.</p>
+          <p>The AI writes the code; the value I add is the call: what, why, and what "good" means. I've written <span data-stat="decisions">600+</span> decisions, each with its reason.</p>
         </li>
         <li>
           <h3>Attention is the scarce resource. Design for it</h3>
@@ -411,6 +411,10 @@
     }).catch(() => {});
     json(`https://api.github.com/search/issues?q=repo:${REPO}+is:pr+is:merged&per_page=1`)
       .then(({ total_count: n }) => put('prs', plus(n))).catch(() => {});
+    // The people who commit (bots and the AI's own account left out)
+    json(`https://api.github.com/repos/${REPO}/contributors?per_page=100`)
+      .then(list => { const n = list.filter(c => c.type === 'User' && c.login !== 'claude').length; if (n) put('contributors', String(n)); })
+      .catch(() => {});
 
     // Presenting: → / ↓ / Space / PageDown go to the next section, ← / ↑ / PageUp to the previous one
     const sections = [...document.querySelectorAll('.mo-section')];
