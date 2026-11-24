@@ -144,6 +144,8 @@ export const TEXTS = {
       'duel-rivals': ['Retador', 'Duelos con 5 rivales distintos'],
       'duel-wins': ['Duelista', 'Ganaste 10 duelos'],
       'duel-run': ['Invicto', 'Ganaste 5 duelos seguidos'],
+      'duel-rival-run': ['De hijo', 'Le ganaste 3 duelos seguidos al mismo rival'],
+      'duel-champion': ['Mata gigantes', 'Le ganaste un duelo al campeón de un juego'],
     },
   },
   en: {
@@ -287,6 +289,8 @@ export const TEXTS = {
       'duel-rivals': ['Challenger', 'Duels with 5 different rivals'],
       'duel-wins': ['Duelist', 'You won 10 duels'],
       'duel-run': ['Unbeaten', 'You won 5 duels in a row'],
+      'duel-rival-run': ['Got their number', 'You beat the same rival 3 duels in a row'],
+      'duel-champion': ['Giant slayer', 'You beat a game\'s champion in a duel'],
     },
   },
   pt: {
@@ -430,6 +434,8 @@ export const TEXTS = {
       'duel-rivals': ['Desafiante', 'Duelos com 5 rivais diferentes'],
       'duel-wins': ['Duelista', 'Você venceu 10 duelos'],
       'duel-run': ['Invicto', 'Você venceu 5 duelos seguidos'],
+      'duel-rival-run': ['Freguês', 'Você venceu o mesmo rival 3 duelos seguidos'],
+      'duel-champion': ['Mata gigantes', 'Você venceu o campeão de um jogo num duelo'],
     },
   },
 };
