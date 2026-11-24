@@ -82,6 +82,7 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { TEXTS, CONTACT } from './texts.js';
     import { ALL_GAMES } from '../assets/js/games.js';
+    import { flag } from '../assets/js/flags.js';
 
     trackVisit(); // the site's traffic (D-208); it also tells the watcher the page started (D-251)
     const lang = getLang();
@@ -98,7 +99,10 @@
     const texto = s => String(s).split(CONTACT).flatMap((part, i) => (i ? [el('a', { href: `mailto:${CONTACT}` }, CONTACT), part] : [part]));
     /** An item about a lab game shows only once the game is out (texts.js). */
     const out = id => ALL_GAMES.some(g => g.id === id && !g.oculto && !g.labs);
-    const items = s => s.items.filter(i => typeof i === 'string' || out(i.game)).map(i => i.t ?? i);
+    const flagsOn = Object.fromEntries(await Promise.all([...new Set(T.sections.flatMap(s => s.items || []).map(i => i.flag).filter(Boolean))]
+      .map(async id => [id, await flag(id).catch(() => false)])));
+    const shown = i => typeof i === 'string' || (i.game ? out(i.game) : flagsOn[i.flag]);
+    const items = s => s.items.filter(shown).map(i => i.t ?? i);
     document.getElementById('pv').append(
       ...T.sections.map(s => el('section', { class: 'panel' },
         el('h2', {}, s.h),

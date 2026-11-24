@@ -10,7 +10,7 @@ const shape = t => ({ keys: Object.keys(t).sort(), sections: t.sections.map(s =>
 for (const [lang, t] of Object.entries(TEXTS)) {
   assert.deepEqual(shape(t), shape(TEXTS.es), `${lang}: the same sections, paragraphs and items as Spanish`);
   const all = [t.title, t.lead, t.who, t.updated, ...t.sections.flatMap(s => [s.h, ...(s.p || []), ...(s.items || []).map(i => i.t ?? i)])];
-  for (const i of t.sections.flatMap(s => s.items || [])) if (typeof i !== 'string') assert.equal(i.game, TEXTS.es.sections.flatMap(s => s.items || []).find(x => x.t && x.game === i.game)?.game, `${lang}: lab item for ${i.game} in every language`);
+  for (const i of t.sections.flatMap(s => s.items || [])) if (typeof i !== 'string') assert.ok(TEXTS.es.sections.flatMap(s => s.items || []).some(x => x.t && x.game === i.game && x.flag === i.flag), `${lang}: lab item ${i.game || i.flag} in every language`);
   for (const s of all) assert.ok(typeof s === 'string' && s.trim() && !s.includes('undefined'), `${lang}: no empty text`);
   const text = all.join('\n');
   assert.ok(text.includes(CONTACT), `${lang}: says where to write`);
