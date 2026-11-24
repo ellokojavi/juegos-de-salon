@@ -916,7 +916,7 @@ function fichasEnTabla(nodo) {
     onTap: () => SFX.tap(), rows: '.fila',
     jidOf: r => L()?.players?.[r.dataset.pid]?.j,
     nameOf: r => r.querySelector('.quien b')?.firstChild?.textContent || '',
-    contextOf: r => ({ label: `🏆 ${L()?.meta?.name || ''}`.trim(), place: r.querySelector('.lugar')?.textContent || '', value: r.querySelector('.total')?.textContent || '' }),
+    contextOf: r => ({ label: `🏆 ${L()?.meta?.name || ''}`.trim(), place: r.querySelector('.lugar')?.textContent || '', values: [{ v: r.querySelector('.total')?.firstChild?.textContent || '', unit: 'pts' }] }),
   })).catch(() => {});
 }
 

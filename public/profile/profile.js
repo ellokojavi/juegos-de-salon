@@ -226,6 +226,38 @@ function badgeEl(b, { reveal = false } = {}) {
     b.progress ? el('span', { class: 'pf-bar', 'aria-hidden': 'true' }, el('i', { style: `width:${Math.round(100 * b.progress[0] / b.progress[1])}%` })) : null);
 }
 
+/**
+ * 🎮 Your games (the owner, 2026-11-23: moved here from /records/, in the lab: flag profile-plays): how many times the player finished each game, as
+ * bars, the most played first. Five show; the rest open below, so it never takes the whole screen.
+ */
+const PLAYS_SHOWN = 5;
+// In the lab (flag profile-plays; lab: #seccion-profile-plays): drawn once the flag answers
+let playsOn = false;
+flag('profile-plays').then(on => { if (on) { playsOn = true; globalThis.__profile?.redraw?.(); } }).catch(() => {});
+function playsPanel(f) {
+  const rows = (f.byGame || []).filter(g => gameOf(g.id));
+  if (!rows.length) return null;
+  const top = rows[0].n || 1, total = rows.reduce((s, g) => s + g.n, 0);
+  const bar = (g, i) => el('li', { class: 'pf-play', 'data-game': g.id, hidden: i >= PLAYS_SHOWN, style: `--w: ${Math.max(6, Math.round((g.n / top) * 100))}%` },
+    el('span', { class: 'pf-play-name' }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
+    el('b', {}, num(g.n)));
+  const list = el('ol', { class: 'pf-plays' }, rows.map(bar));
+  const box = el('section', { class: 'panel pf-plays-panel' },
+    el('p', { class: 'lead pf-group-head' }, el('span', {}, T.myPlays), el('small', {}, total === 1 ? T.playsOne : fmt(T.plays, { n: num(total) }))),
+    list);
+  if (rows.length > PLAYS_SHOWN) {
+    const more = el('button', { type: 'button', class: 'btn btn--ghost btn--sm pf-more', 'aria-expanded': 'false', onClick: () => {
+      tap();
+      const open = more.getAttribute('aria-expanded') !== 'true';
+      list.querySelectorAll('.pf-play').forEach((li, i) => { li.hidden = !open && i >= PLAYS_SHOWN; });
+      more.setAttribute('aria-expanded', String(open));
+      more.textContent = open ? T.fewerGames : fmt(T.moreGames, { n: rows.length - PLAYS_SHOWN });
+    } }, fmt(T.moreGames, { n: rows.length - PLAYS_SHOWN }));
+    box.append(more);
+  }
+  return box;
+}
+
 function badgePanels(list, { only = null, reveal = false, duels = null } = {}) {
   const title = { daily: T.groupDaily, cup: T.groupCup, duels: T.groupDuels, games: T.groupGames };
   return GROUPS.map(g => {
@@ -641,7 +673,7 @@ export async function drawProfile(root, { sub }) {
     let ready = false;
     const repaint = list => {
       cardSlot.replaceChildren(card(yo, f, list, ready));
-      badgesBox.replaceChildren(...badgePanels(list, { reveal, duels: duelsExtra }).filter(Boolean));
+      badgesBox.replaceChildren(...[playsOn ? playsPanel(f) : null, ...badgePanels(list, { reveal, duels: duelsExtra })].filter(Boolean));
       if (badgesBox.isConnected) revealIntoView(badgesBox);
     };
     repaint(paint());

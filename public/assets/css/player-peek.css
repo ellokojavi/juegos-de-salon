@@ -5,6 +5,7 @@
   --pf-oro-luz: #fff3b0; --pf-oro: #ffc93c; --pf-oro-hondo: #c98a00; --pf-oro-aro: #ffe48a;
   --pf-plata-luz: #ffffff; --pf-plata: #cfd8e3; --pf-plata-hondo: #8a97a8; --pf-plata-aro: #e6edf5;
   --pf-bronce-luz: #ffd9b8; --pf-bronce: #d98a4e; --pf-bronce-hondo: #8f4f22; --pf-bronce-aro: #f0b483;
+  --pf-tinta-medalla: #3a2a00; /* the place's ink on a metal medal */
 }
 
 .pf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); margin-top: var(--s-14); }
@@ -40,9 +41,16 @@
 .pf-peek-badges small { font-size: var(--fs-75); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
 .pf-peek-more .pf-medal { background: rgb(var(--ink-rgb) / 0.1); font: 900 var(--fs-100) var(--font-num); }
 @media (max-width: 359px) { .pf-peek-badges { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-/* Where it was tapped (the owner, 2026-11-23): the table and tab, the row as it showed, their all-time place */
-.pf-peek-here { display: grid; gap: var(--s-2); background: var(--well); border-radius: var(--r-12); padding: var(--s-8) var(--s-12); margin-bottom: var(--s-14); }
-.pf-peek-here-label { color: var(--muted); font-weight: 800; font-size: var(--fs-75); overflow-wrap: anywhere; }
-.pf-peek-here b { font: 900 var(--fs-120) var(--font-num); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.pf-peek-here-all { color: var(--muted); font-weight: 800; font-size: var(--fs-85); }
+/* Where it was tapped (the owner, 2026-11-23, option A): their place in a medal (the badges' metals on the podium,
+   a plain ring from 4th on), the table and tab over what the row counts with its unit, their all-time place as a tag */
+.pf-peek-here { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--s-14);
+  background: var(--well); border-radius: var(--r-14); padding: var(--s-12) var(--s-14); margin-bottom: var(--s-14); }
+.pf-peek-here-medal .pf-medal { width: 64px; height: 64px; margin: 0; font: 900 var(--fs-140) var(--font-num); color: var(--pf-tinta-medalla); }
+.pf-peek-here-medal.pf-badge--plain .pf-medal { background: rgb(var(--ink-rgb) / 0.08); box-shadow: 0 0 0 3px rgb(var(--ink-rgb) / 0.2); color: var(--ink); }
+.pf-peek-here-txt { display: grid; gap: var(--s-4); min-width: 0; grid-column: -2; }
+.pf-peek-here-label { color: var(--cyan); font-weight: 900; font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.06em; overflow-wrap: anywhere; }
+.pf-peek-here-vals { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--s-14); row-gap: var(--s-2); }
+.pf-peek-here-vals b { font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-peek-here-vals small { margin-left: var(--s-4); color: var(--muted); font-weight: 800; font-size: var(--fs-75); }
+.pf-peek-here-all { justify-self: start; background: rgb(var(--ink-rgb) / 0.1); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10); font-weight: 800; font-size: var(--fs-75); }
 .pf-peek-here-all:empty { display: none; }

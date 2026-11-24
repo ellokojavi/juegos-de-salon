@@ -114,30 +114,54 @@ const nextMonth = m => { const [y, mo] = m.split('-').map(Number); return mo ===
 
 /**
  * Where a ranking row was tapped, read from what the screen shows (pure for node: `r` only needs
- * `closest` and `querySelector`): `label` the table's title and its tab, `place` the row's (a medal or a
- * number), `value` the rest of it (score, time or medals, as drawn), `allTime` the table to read their all-time place from, only from a tab that is
- * not already all-time (a week's or friends').
+ * `closest`, `querySelector` and `dataset`): `label` the table's title and its tab, `place` the row's place
+ * (a number when it has one, else what it shows), `values` what the row counts, each with the key of its unit
+ * (`pts`, `time`, `wins`, `plays`, `streak`, or none), `allTime` the table to read their all-time place from,
+ * only from a tab that is not already all-time (a week's or friends').
  */
 export function rowContext(r) {
   const box = r.closest?.('.rk-ranking, .rk-campeones');
   const txt = x => (x?.textContent || '').replace(/\s+/g, ' ').trim();
   const on = box?.querySelector('.rk-seg .on');
   const tab = on?.dataset?.p || box?.dataset?.pestana || '';
-  const place = txt(r.querySelector('.rk-puesto'));
-  const value = ['.rk-puntos', '.rk-tiempo', '.rk-medallas'].map(c => txt(r.querySelector(c))).filter(Boolean);
+  const shown = txt(r.querySelector('.rk-puesto'));
+  const place = /^\d+$/.test(String(r.dataset?.puesto ?? '')) ? String(r.dataset.puesto) : shown === '·' ? '' : shown;
+  const s = txt(r.querySelector('.rk-puntos')), second = txt(r.querySelector('.rk-tiempo'));
+  const k = r.dataset?.k || (r.querySelector('.rk-medallas') ? 'medals' : 'score');
+  const values = {
+    score: [{ v: s, unit: 'pts' }, { v: second, unit: 'time' }],
+    wins: [{ v: s, unit: 'wins' }],
+    plays: [{ v: s, unit: 'plays' }],
+    streak: [{ v: `🔥 ${s}`, unit: 'streak' }],
+    points: [{ v: s, unit: 'pts' }, { v: second.replace(/^🔥\s*/, '🔥 '), unit: 'streak' }],
+    medals: [{ v: txt(r.querySelector('.rk-medallas')) }],
+  }[k] || [{ v: s }];
   const table = box?.dataset?.tabla;
   return {
     label: [txt(box?.querySelector('.rk-titulo')), txt(on)].filter(Boolean).join(' · '),
-    place: place === '·' ? '' : place,
-    value: value.join(' · '),
+    place,
+    values: values.filter(x => x.v && x.v !== '🔥 '),
     // The overall table's all-time place is already the sheet's own line (peekPlace)
     allTime: ['semana', 'amigos'].includes(tab) && table && table !== TODOTERRENO ? table : null,
   };
 }
 
+/** The word after a figure in the sheet's header: singular for exactly 1 («1 victoria», «🔥 1 día seguido»), never «1 victorias». */
+export function unitWord(T, unit, v) {
+  const one = /^(🔥\s*)?1$/.test(String(v).trim());
+  return ({
+    pts: T.peekUnitPts, time: T.peekUnitTime,
+    wins: one ? T.peekUnitWin : T.peekUnitWins,
+    plays: one ? T.peekUnitPlay : T.peekUnitPlays,
+    streak: one ? T.peekUnitStreakOne : T.statStreak,
+  })[unit] || '';
+}
+
 /**
  * Opens the sheet for `jid`; `hint` (`{ n, co }`) is what the tapped row showed, drawn while the rest loads;
- * `context` (`{ label, place, value, allTime }`, from `rowContext`) says where it was tapped.
+ * `context` (`{ label, place, values, allTime }`, from `rowContext`) says where it was tapped: a medal with their
+ * place (gold, silver and bronze on the podium, the badges' metals), the table and tab over what the row counts,
+ * each with its unit, and their all-time place there as a tag (the owner's pick, option A, 2026-11-23).
  */
 export async function peekPlayer(jid, { hint = {}, context = null, lang = getLang(), doc = document, onTap = () => {} } = {}) {
   if (!jid || doc.getElementById('pf-peek')) return null;
@@ -161,10 +185,15 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   const placeOf = n => (lang === 'en' ? `#${n}` : `${n}.º`);
   // Where it was tapped, first: the table and tab, the row as it showed, and (filled in below) their all-time place
   const allTime = el('small', { class: 'pf-peek-here-all' });
-  const here = context && (context.label || context.place || context.value) ? el('div', { class: 'pf-peek-here' },
-    context.label ? el('small', { class: 'pf-peek-here-label' }, context.label) : null,
-    context.place || context.value ? el('b', {}, [/^\d+$/.test(context.place || '') ? placeOf(context.place) : context.place, context.value].filter(Boolean).join(/^\d+$/.test(context.place || '') ? ' · ' : ' ')) : null,
-    allTime) : null;
+  const n = /^\d+$/.test(context?.place || '') ? Number(context.place) : null;
+  const tier = n === 1 ? 'gold' : n === 2 ? 'silver' : n === 3 ? 'bronze' : 'plain';
+  const vals = context?.values || [];
+  const here = context && (context.label || context.place || vals.length) ? el('div', { class: 'pf-peek-here' },
+    context.place ? el('div', { class: `pf-peek-here-medal pf-badge--${tier}` }, el('span', { class: 'pf-medal' }, n ? placeOf(n) : context.place)) : null,
+    el('div', { class: 'pf-peek-here-txt' },
+      context.label ? el('small', { class: 'pf-peek-here-label' }, context.label) : null,
+      vals.length ? el('div', { class: 'pf-peek-here-vals' }, vals.map(x => el('span', {}, el('b', {}, x.v), unitWord(T, x.unit, x.v) ? el('small', {}, unitWord(T, x.unit, x.v)) : null))) : null,
+      allTime)) : null;
   const body = el('div', { class: 'pf-peek-body' }, el('p', { class: 'muted pf-peek-wait' }, T.peekLoading));
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
