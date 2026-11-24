@@ -72,13 +72,11 @@ button.dm-ficha:active { transform: scale(0.94); }
 .dm-bandeja .dm-ficha, .dm-board .dm-puesta { touch-action: none; -webkit-touch-callout: none; }
 .dm-ficha.arrastrada { opacity: 0.3; }
 .dm-ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgb(var(--well-rgb) / 0.55); }
-/* A placed domino sits on its two cells, small enough that the zone's color and edge show around it */
+/* A placed domino sits on its two cells, small enough that the zone's color and edge show around it; its halves
+   stay square, so it is two squares like every domino (the owner, 2026-11-24): the gap at its ends is a little wider */
 .dm-puesta { --t: calc(var(--s) - 12px); z-index: 1; align-self: center; justify-self: center; }
-/* Along its length each half is 6 px longer, so the gap to the zone's edge is the same 5 px on every side */
 /* Its edge is drawn inside it, not hanging below, so the gap under it looks the same as above */
 .dm-board .dm-puesta { box-shadow: inset 0 -2px 0 var(--dm-canto), 0 2px 6px rgb(var(--well-rgb) / 0.3); }
-.dm-puesta:not(.vertical) .dm-mitad { width: calc(var(--s) - 6px); }
-.dm-puesta.vertical .dm-mitad { height: calc(var(--s) - 6px); }
 .dm-board .dm-puesta.cae { animation: dm-cae 0.28s ease-out; }
 .dm-board .dm-puesta.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 18px var(--yellow); }
 @keyframes dm-cae {
