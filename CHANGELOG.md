@@ -1,5 +1,165 @@
 # Changelog
 
+## 1.46.2 — 2026-11-24
+- **Toque y Fama: 🔢 Número and 🔤 Palabra switch like tabs.** The toggle changes the game on the same page, with the top bar still, instead of loading the other page; Back returns to the previous tab.
+
+## 1.46.1 — 2026-11-24
+- **Duels on the home page**: on a desktop or a wide screen the sliding row shows two and a half cards; the narrowest phone still sees a peek of the next one.
+
+## 1.46.0 — 2026-11-24
+- **#️⃣ Sudoku, in the lab: bigger number keys.** Behind the `sudoku-big-keys` flag, the 9×9 pad splits into two rows, five keys and four centred under them, a little taller than today, and the board's digits bigger (the 6×6 keeps its one row), so a wide finger hits the number it meant.
+
+## 1.45.2 — 2026-11-24
+- CONTRIBUTING: the design system and its lint, measuring visual changes at 390 and 320 px, the tester tab for lab flags, and lanes.
+
+## 1.45.1 — 2026-11-24
+- **Profile ⚙️, «Juegos sin señal»**: the row no longer stays on «Preparando los juegos…» while the phone already keeps every game. It looked for the saved games in the wrong place; it now looks where the home page does. La Copa had the same slip when sending results with the app closed, and it is fixed too.
+
+## 1.45.0 — 2026-11-24
+- **Vibration can be turned off** (lab flag vibration-setting): a «Vibración» 📳/📴 switch in the profile's ⚙️ Preferencias, next to Sonido; off, no game vibrates on this phone (kept in `juegos-de-salon:no-vibration`), including the ones that call the phone's vibration directly.
+
+## 1.44.0 — 2026-11-24
+- **Two new duel badges** (lab flag `rivals`): 🔁 *De hijo*, beat the same rival three duels in a row, and
+  🐉 *Mata gigantes*, win a duel against a game's champion (the rival is 1st ever in one of the duel's games
+  when the profile opens), a reason to challenge the best.
+
+## 1.43.12 — 2026-11-23
+- **The home page shows the language selector again.** With *settings-in-profile* on for everyone, the flags had left the home page too; a first visitor without a profile could not find how to change the language. Game covers and the other bars still leave 🔊 and the language to the profile's ⚙️.
+
+## 1.43.11 — 2026-11-23
+- **Labs: the icon sheet goes to La Bodega.** The «🎠 Íconos que abren una hoja con tabs» card is folded under 🎲 Juegos guardados as 💤 No prosperó, and its switch leaves the T tab (PARKED); tapping an icon keeps opening the game's cover.
+
+## 1.43.10 — 2026-11-23
+- **Profile**: the «El canapé» badge now shows a dumpling 🥟 instead of a toast 🥂, on a deeper silver medal with a dark rim so it reads well.
+
+## 1.43.9 — 2026-11-23
+- **The weekly 🔥 Popular refresh no longer gets stuck**: when its PR is behind main, the workflow turns on auto-merge and the merge queue merges it, instead of failing and leaving it open.
+
+## 1.43.8 — 2026-11-23
+- **Labs (ranking-peek): the badges on a player's sheet breathe**: they sit in a card like the most-played games, with bigger medals ringed in their metal and quieter names, and CERRAR stays at the bottom over a fade.
+
+## 1.43.7 — 2026-11-24
+- **Contributors' PRs no longer stay stuck** (D-616): a red commit is rerun once in case it was not their code, a second red is read and explained, a fork is asked to allow edits by maintainers, and a contributor silent a week becomes a one-tap decision for the owner.
+
+## 1.43.6 — 2026-11-24
+- **Duels (lab):** the ⚔️ on a ranking row is just the icon, without its circle, with a larger tap area. The challenge sheet opened from a ranking now shows the games with that ranking's game already chosen, so it can be changed, under the format (now also Most points), which comes first. The new-duel sheet opens at once, with grey placeholders where the rivals load, instead of growing as the network answers.
+
+## 1.43.5 — 2026-11-23
+- **🔥 Popular, this week**: the home page's order and its three 🔥 Popular games follow the games finished in the last four weeks.
+
+## 1.43.4 — 2026-11-23
+- **Croc!**: Richer river visuals on the water canal (depth gradient, organic banks, swaying seaweed, swimming and jumping fish, curved moving waves) and clearer boat wakes (V-shaped Kelvin wake and animated stern foam rings).
+
+## 1.43.3 — 2026-11-23
+- **Tests**: La Copa's create-week check expects Tango as `tango:time` in a new cup (D-607); it failed whenever the random week drew Tango.
+
+## 1.43.2 — 2026-11-24
+- **Profile (Labs): «🎮 Tus partidas» now sits below the badges** in Logros, not first (the owner; flag `profile-plays`).
+
+## 1.43.1 — 2026-11-23
+- **Labs (👀 flag `ranking-peek`): your own name in a ranking opens your sheet with «(tú)» after the name and a «Ver mi perfil →» link to your profile.** Not on the profile itself, where your sheet is «how others see me» and stays as they see it.
+
+## 1.43.0 — 2026-11-24
+- **Duels (lab):** the Duels page now shows your numbers (record, win rate, streaks, rounds, rivals, your duel game), your 🔥 arch rival (the one you have dueled most) and 💀 nemesis side by side, every rival head to head, and a ⚔️ Rematch on each rival and each finished duel, with the same game and format.
+
+## 1.42.1 — 2026-11-23
+- **Labs (settings-in-profile): sound and language only in the profile's ⚙️.** With the flag on, game covers, the home page and every other top bar drop 🔊 and the language flags; the profile keeps both.
+
+## 1.42.0 — 2026-11-23
+- **🎖️ Profile in the owner's panel** (D-615): how many open the player profile, who (signed-in players by their ranking name, only the owner sees it), what they use there, where they came from, and whether it moves account creation, sign-ins and coming back. The privacy page says so in the three languages.
+
+## 1.41.2 — 2026-11-23
+- **Profile (Labs): «🎮 Tus partidas» moves from Rankings to the profile** (the owner; flag `profile-plays`): in Logros, one bar per game as long as its share of the most played, five shown and the rest behind «Ver N juegos más». With the flag on, /records/ no longer lists it. Also closes a stray `@media` left open at the end of profile.css.
+
+## 1.41.1 — 2026-11-23
+- **Labs (👀 flag `ranking-peek`): the sheet a name in a ranking opens now starts with the player's place in a medal.** Gold, silver or bronze on the podium, the same metals as the badges, and a plain ring from 4th on. Beside it: the table and tab in small capitals, then what the row counts with its unit («95 pts», «0:50 tiempo», «12 victorias», «🔥 21 días seguidos»). Below that, their all-time place as a tag.
+
+## 1.41.0 — 2026-11-23
+- **A duel round's result shows only the duel's ways on**: no «🏠 Volver al menú» button and no «📅 Uno al día de hoy» line under it; «⚔️ Volver a tus duelos» moves under «Compartir mi resultado»; the header's ‹ Menú stays the way to the menu.
+- **The profile's duels move into Logros** (lab flag rivals): a ⚔️ Duelos group with five badges (Primer duelo, Primera victoria, Retador: 5 rivals, Duelista: 10 wins, Invicto: 5 wins in a row), the duel record and «⚔️ Ir a tus duelos» to /duels/; the duels block above the tabs is gone.
+- **Every Logros group ends with its way on** (lab flag profile): «📅 Ir a Uno al día», «🏆 Ir a tus copas», «🎮 Ir a los juegos», like «⚔️ Ir a tus duelos».
+
+## 1.40.34 — 2026-11-23
+- **☁️ The cloud floats straight up, whole** (flag `cloud-quiet`): when storing ends, the cloud now rises out of its button while the button fades where it is, so the top of the screen no longer cuts it, and its place closes only once it is gone. A second «ready» from the phone no longer cuts the animation short.
+
+## 1.40.33 — 2026-11-23
+- **☁️ The offline cloud floats away** (in Labs, flag `cloud-quiet`): when the phone finishes storing the games, the cloud flashes, waits a moment and rises as it fades, and its place in the bar closes smoothly instead of vanishing at once. With reduced motion it only fades.
+
+## 1.40.32 — 2026-11-23
+- **📴 Extended offline mode** (in Labs, flag `extended-offline`): offline, the home page shows a still plate «📴 SIN CONEXIÓN» where the dancing emoji was, which moves nothing and opens the offline sheet; the other screens drop the sticker and the Candlelight palette alone says it; the games waiting to upload show apart, as a line at the bottom for a few seconds.
+
+## 1.40.31 — 2026-11-23
+- **☁️ Quiet cloud on the left of share** (Labs, flag `cloud-quiet`): when the cloud comes and goes on the home page's bar, it does so on share's left, so share and the profile pill never move.
+
+## 1.40.30 — 2026-11-23
+- **A game plays by the same rules in La Copa and outside it** (D-613, written in C-21): La Copa only adds what a cup needs. The two cups running with Tango ahead move to scoring the time at their next Tango day nobody has played.
+
+## 1.40.29 — 2026-11-23
+- **Behind the scenes**: when a PR takes in the latest `main` (by hand or from the merge queue), its end-to-end run repeats only the scripts that both the PR's own changes and what `main` brought reach, not the PR's whole scope (D-612). Over the last 89 such merges that is 752 batches instead of 1092, about 2,800 script minutes fewer, so PRs in the merge queue wait less.
+
+## 1.40.28 — 2026-11-23
+- **☁️ The offline cloud, only when it asks for something** (in Labs, flag `cloud-quiet`): on the home page's bar the cloud shows while the phone stores the games or when some are missing, and leaves once it is ready; the profile's ⚙️ always has a «Juegos sin señal» row with the state, which opens the same sheet. Its four states are tried from the «T» tab, with no network cut.
+- **Tests**: the end-to-end groups may take 420 s each, up from 400 (D-611): main sat at the alarm with 1 s of headroom, and no new script could get in.
+- **☁️ The cloud comes in as softly as it leaves**: its slot opens first, then the cloud grows from its centre, a little past its size and back. And the profile's «Juegos sin señal» row no longer stays on «Preparando los juegos…» after the home page's cloud has gone: while it says loading it reads again every 3 s, and an older read never draws over a newer one.
+
+## 1.40.27 — 2026-11-23
+- **Main green again**: the end-to-end groups check compared a 460 s group against 459.99999 s (400 × 1.15 in floating point); the alarm is rounded now.
+
+## 1.40.26 — 2026-11-23
+- **Críptico (lab)**: one more hard clue by the owner.
+
+## 1.40.25 — 2026-11-23
+- **Labs (👀 flag `ranking-peek`): tap any name in any ranking to see that player's profile.** It works on every table with names: a game's cover and result, Rankings, Uno al día, La Copa's champions, and a Cup's own table (for players signed in with their name). The sheet opens with where you tapped it: that table and tab, their place and score as the row showed them, and their all-time place in that table when you came from the week's or friends' tab. From a Cup's table it says the Cup, their place and points.
+
+## 1.40.24 — 2026-11-23
+- **☀️ Tango scores the same in La Copa and outside it**: in the cups created from now on, Tango scores the time, as on its own page and as Reinas does; mistakes cost nothing and each hint adds 15 seconds. The cups already running finish with the rule they began with (D-607).
+
+## 1.40.23 — 2026-11-23
+- **Offline, the whole game is in Candlelight** (D-609): the play screens of every game take the offline palette, not only the home page and the covers, and so do the home page's La Copa and Uno al día cards, the floating sparkles and the confetti. The "Sin conexión" sticker steps aside while playing so it covers no board, and no longer stretches into a dark bar over the setup screens.
+- **Airplane mode shows at once**: a connection check that gets no answer is asked again half a second later and then switches; checks run every 5 s while the page is in view and on each touch of the screen, so it takes a few seconds at most, and half a second after a tap. A single lost answer (a Wi-Fi to data handoff) no longer flashes the room offline.
+- **Offline colours keep their meaning**: Candlelight's orange and cyan are their own (terracotta, sage) instead of the same amber and cream, so Batalla Naval's hit, sunk and water and Generala's kept dice still read apart.
+- **"📡 Solo con señal"** (pt "Só com sinal") instead of "Con señal" on what needs signal offline: it read as "has signal".
+- **Tembleque plays offline**: its easy and hard levels are now kept on the phone; offline they opened the home page.
+- **Every page paints Candlelight from its first frame**: Tembleque and four lab pages lacked the script; a test now requires it on every page and game.
+- **The sticker no longer covers a cover's icon** on short titles (Tembleque's scale): it moves right of it.
+- **PR previews store the real offline list**, so a game added since the last publish also opens offline there.
+
+## 1.40.22 — 2026-11-23
+- **Plan to move the repo to an organization** and use GitHub's merge queue (batches instead of one PR at a time), written down to run later: `docs/ORG-MIGRATION.md`. Nothing changes yet.
+
+## 1.40.21 — 2026-11-23
+- **Profile (Labs): the card's figures wait with three hopping dots.** Until the server answers, three yellow dots hop where each figure goes; then the real number pops in, one figure after the other. This replaces the spinner and the count-up, which are gone. A figure the server could not give still shows «—».
+
+## 1.40.20 — 2026-11-23
+- **Faster PRs after a merge of main**: a PR that already passed its tests and then takes the latest
+  `main` reruns only its own end-to-end scope against it, no longer every script `main` brought (D-610).
+  #1802 waited half an hour for 18 batches after its own 8-minute test had passed.
+
+## 1.40.19 — 2026-11-23
+- **La Copa, in the lab (`cup-zone-phone`): a new cup starts on the time of your phone, not of your language.** Creating a cup in Spanish from the United States no longer starts it on Chile's audience and Chile's midnight (days from 19:00 to 18:59): it starts on 🌎 Global and your phone's hours. A phone in Chile still starts on 🇨🇱 Chile and one in Brazil on 🇧🇷 Brazil (D-608).
+
+## 1.40.18 — 2026-11-23
+- A PR that launches a game (its launch day moves while it is behind its flag) now runs `launch-check.mjs --screens` on GitHub, in the `launch` job of `end-to-end`, and cannot merge on a ✗ (D-606): the next launch cannot go out with a place missing.
+
+## 1.40.17 — 2026-11-23
+- **Profile (Labs): the card's figures wait for the real number.** Partidos, the streak and the cups show a spinner until the server answers, then count up to the real figure; before, the card first showed this phone's own count (153) and jumped to the player's real total (188). A figure the server could not give shows «—», never a partial number.
+
+## 1.40.16 — 2026-11-23
+- **Profile (Labs): `/profile/?reveal` replays a new badge's reveal** for the last badge earned (or
+  `?reveal=<id>` for one), on every visit and without recording anything, to try it as often as wanted.
+
+## 1.40.15 — 2026-11-23
+- **⚔️ Duels page** (lab, flag `rivals`): it is called «Duelos» and shows other players' recent duels («Ana 2–1 Beto», the game, who won or «En juego»), under your own when you have them. In ⚡ Quick duel the games come in two rows that slide sideways, the next column peeking. On a game's ranking the ⚔️ is smaller, and your own row keeps the same columns, so every row lines up.
+- **⚔️ Choosing a rival** (lab, flag `rivals`): the search is always there and finds players as you type the start of their name, without the keyboard jumping; the suggestions include the players of your cups and, so the list is never empty, the players active this week. Signed out, the sign-in card on /duels/ and in the new-duel sheet says «⚔️ Entra para tener duelos». The sheet closes with its ✕ alone (no ‹ Back).
+- **PR previews come with test data**: each browser that opens a preview gets, once, six made-up players with this week's scores in a few games and some duels between them, so rankings, suggestions and recent duels can be tried there. Never on localhost or the real site.
+- **⚔️ Duels page** (lab, flag `rivals`): your open duels in one list, no tabs: ▶ Jugar where it is your turn, «Esperando a …» where not; and your nemesis, with ⚔️ Revancha, under them.
+
+## 1.40.14 — 2026-11-23
+- **Profile: the card's figures count up** (the owner): days in a row, games and cups run fast from zero to their number, like a machine looking for it; drawn again as the server answers, they count on from where they stood. With reduced motion, the number at once.
+
+## 1.40.13 — 2026-11-23
+- **Workshop**: a test (`root-files.test.mjs`) now fails when a file nobody expects is committed at the repo root, so scratch files no longer slip in. The flags snapshot follows the launches of Profile and Wobbles,.
+
 ## 1.40.12 — 2026-11-22
 - `launch-check.mjs` no longer gives false ✗: the cover's ranking in the static pass is a hint (a cover may draw it with `bloqueTabla`; `--screens` decides), the home card gets 12 s to appear when several games are checked together, and `--live` judges the launch's own splash (one that is on, else the one switched last), not an older game's campaign that is rightly off.
 
