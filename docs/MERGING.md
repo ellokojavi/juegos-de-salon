@@ -92,6 +92,8 @@ nothing: auto-merge on, `wait-pr.mjs` as before.
   End to end runs on main, queue wait (green with auto-merge on → merged: median, p90, max) and main-merge
   commits on PRs (each one re-runs both checks).
 
+On 2026-11-25 a scheduled evaluation decides: remove, keep, or build on it judged on the queue as it is since D-618 and D-619 (2026-11-24); the criteria are in D-586.
+
 ## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
 - **Every PR body says where its change is seen** (D-504): a line `Ver en: <path of the site>`, and
