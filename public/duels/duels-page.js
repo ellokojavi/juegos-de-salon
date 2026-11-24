@@ -10,7 +10,7 @@ import { SFX } from '../assets/js/sound.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 import { bloqueJugador } from '../assets/js/ranking.js';
 import { estado, record, esDid, rondas } from '../assets/js/duels.js';
-import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, panelRecientes, panelNemesis } from '../assets/js/duels-ui.js';
+import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
 
 export { T };
 const tap = () => SFX.tap();
@@ -95,8 +95,9 @@ export async function drawDuels(root, { sub }) {
     const hechos = orden.filter(d => es(d).termino);
     root.replaceChildren(...[nuevo,
       abiertos.length ? el('section', { class: 'panel', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle), abiertos.map(d => fila(d, yo.jid, { alTocar: tap }))) : null,
-      panelNemesis(lista, yo.jid, { alTocar: tap }),
-      hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), hechos.map(d => fila(d, yo.jid, { alTocar: tap }))) : null,
+      panelEstadisticas(lista, yo.jid),
+      panelRivalidades(lista, yo.jid, { alTocar: tap }),
+      hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), hechos.map(d => fila(d, yo.jid, { alTocar: tap, lista }))) : null,
       otros].filter(Boolean));
   };
   J.escuchar(() => draw());
