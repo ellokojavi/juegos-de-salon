@@ -318,9 +318,9 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     const clave = `${modo}${paso}`, nueva = vista !== null && clave !== vista;
     vista = clave;
     if (!suave) return;
+    alto?.cancel(); // an easing still running pins the old height: drop it before measuring the new one
     const h1 = panel.getBoundingClientRect().height;
     if (Math.abs(h1 - h0) > 1) {
-      alto?.cancel();
       alto = panel.animate([{ height: `${h0}px`, overflow: 'hidden' }, { height: `${h1}px`, overflow: 'hidden' }], { duration: 260, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
     }
     if (nueva) cuerpo.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' });
