@@ -233,7 +233,8 @@ try {
   await click('#btn-crear-go');
   await b.until(`__copa.estado.copa?.meta`, 3000); await sleep(500);
   const cal = await ev('__copa.estado.copa.meta.cal');
-  const expected = [...final.map((id, i) => (i === pinta ? 'pintaminas:hard' : id)), 'final'].join(',');
+  // A cup created while tango-time is on (it is in the flags snapshot) writes Tango with its new rule (D-607)
+  const expected = [...final.map((id, i) => (i === pinta ? 'pintaminas:hard' : id === 'tango' ? 'tango:time' : id)), 'final'].join(',');
   ok(pinta >= 0 && cal === expected, `the cup saves the week as shown, with its version (${cal})`);
   ok(/\?primos&test$/.test(await ev('location.search')), 'with its own link');
   ok(await ev('__copa.estado.copa.meta.tz') === 'America/Sao_Paulo', 'and in the zone chosen (D-521)');
