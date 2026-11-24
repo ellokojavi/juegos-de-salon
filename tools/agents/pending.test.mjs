@@ -1,7 +1,7 @@
 // Pending work nobody is watching (D-441): which open PRs count as stuck and which branches as
 // stranded. A PR its session is still working on, and a branch about to get its PR, are left alone.
 import assert from 'node:assert/strict';
-import { stuck, stranded, issueBody, TITLE, stall, nudgeBody, MARK } from './pending.mjs';
+import { stuck, stranded, issueBody, TITLE, stall, nudgeBody, MARK, contribStall, rerunBody, RERUN_MARK } from './pending.mjs';
 
 const now = Date.parse('2026-10-24T17:00:00Z');
 const ago = h => new Date(now - h * 3600 * 1000).toISOString();
@@ -41,5 +41,15 @@ assert.equal(st({ author: 'Chanicua' }), null, "a contributor's PR is the contri
 assert.equal(st({ nudgedAt: ago(1) }), null, 'nudged an hour ago: give the session time');
 assert.equal(st({ nudgedAt: ago(3) }), 'takeover', 'nudged three hours ago and the same commit: take it over');
 assert.ok(nudgeBody('abc', ['tests']).startsWith(MARK('abc')), 'the mark ties the nudge to its commit, so a push starts over');
+
+// A contributor's red commit (D-616): one rerun after an hour with no push, never twice for one commit
+const cs = o => contribStall({ draft: false, red: ['end-to-end'], pushedAt: ago(2), ...o }, now);
+assert.equal(cs({}), 'rerun');
+assert.equal(cs({ pushedAt: ago(0.5) }), null, 'pushed half an hour ago: the contributor is on it');
+assert.equal(cs({ red: [] }), null);
+assert.equal(cs({ draft: true }), null);
+assert.equal(cs({ rerunAt: ago(1) }), null, 'reran once for this commit: the contributions agent reads it now');
+assert.ok(rerunBody('abc', ['end-to-end']).startsWith(RERUN_MARK('abc')));
+assert.match(rerunBody('abc', ['end-to-end']), /not your code/);
 
 console.log('✓ pending: stuck PRs and stranded branches, with a grace period for work in progress');
