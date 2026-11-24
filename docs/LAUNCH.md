@@ -53,7 +53,7 @@ Precedents: Sudoku `3f60e2d8`, ¡Al toque! `54324382`, Dominorama `ba085a29`, Me
   - [ ] Scripts never depend on today's date (D-589).
   - [ ] A cover with a live demo goes in `VISUAL_SKIP` (`tools/e2e/paths.mjs`).
 - [ ] **Texts** in es, en and pt, through the `player-text` skill. U-18 instructions are at most 280 characters.
-- [ ] **Privacy.** What it stores goes in `public/privacy/texts.js` when that is new (C-17).
+- [ ] **Privacy.** What it stores goes in `public/privacy/texts.js` when that is new (C-17). While the game is in the lab, write the line as `{ game: '<id>', t: '…' }` in all three languages: the page shows it only once the game is in `ALL_GAMES` and not `oculto`, so launching needs no extra edit.
 - [ ] **Docs.**
   - [ ] `docs/games/<folder>.md` (C-13).
   - [ ] README section, screenshots and og cards (the `readme-and-cards` skill). The README says "ready to launch".
