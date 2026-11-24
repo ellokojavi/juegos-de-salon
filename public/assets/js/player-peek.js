@@ -29,6 +29,7 @@ import { recorrer, fechaLocal } from './uno-al-dia.js';
 import { earned } from './badges.js';
 import { TEXTS } from './profile-texts.js';
 import { loadCss } from './load-css.js';
+import { flag } from './flags.js';
 
 const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join('\u00a0');
 /** The sheet's styles (and the tappable name's), shared by every page with a ranking. */
@@ -212,6 +213,8 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
       el('button', { type: 'button', class: 'icon-btn', 'aria-label': T.peekClose, title: T.peekClose, onClick: close }, '✕')),
     here, body,
     el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--yellow pf-peek-ok', onClick: close }, T.peekClose)));
+  // The badges in a card and CERRAR kept at the bottom (the owner, 2026-11-23); lab: #seccion-ranking-peek
+  flag('ranking-peek').then(on => on && panel.classList.add('pf-peek--card')).catch(() => {});
   layer = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), panel);
   doc.body.append(layer);
   Object.assign(doc.body.style, { position: 'fixed', top: `-${y}px`, left: '0', right: '0', overflow: 'hidden' });
