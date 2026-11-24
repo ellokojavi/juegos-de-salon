@@ -235,14 +235,24 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   if (!layer) return null;
   if (!f) { body.replaceChildren(el('p', { class: 'muted pf-peek-wait' }, T.peekError)); return panel; }
   name(f.co, f.n);
-  const line = [f.since ? fmt(T.since, { month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(f.since)) }) : null,
-    f.allRounder ? fmt(T.peekPlace, { place: placeOf(f.allRounder) }) : null].filter(Boolean);
+  const sinceFull = f.since ? fmt(T.since, { month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(f.since)) }) : null;
+  const placeFull = f.allRounder ? fmt(T.peekPlace, { place: placeOf(f.allRounder) }) : null;
+  const line = [sinceFull, placeFull].filter(Boolean);
+  // In the lab (flag profile-chips, as on one's own profile): the same two facts as short chips, the sentence each
+  // stands for as its label (the owner's pick, option A, 2026-11-24)
+  const chips = await flag('profile-chips').catch(() => false);
+  const shortMonth = ms => new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(new Date(ms)).replace(/\.| de /g, ' ').replace(/\s+/g, ' ').trim();
+  const chip = (text, label) => el('span', { class: 'chip', role: 'img', 'aria-label': label, title: label }, text);
+  const facts = !line.length ? null : chips
+    ? el('p', { class: 'chips pf-peek-chips' }, sinceFull ? chip(`📅 ${shortMonth(f.since)}`, sinceFull) : null,
+      placeFull ? chip(fmt(T.peekPlaceShort, { place: placeOf(f.allRounder) }), placeFull) : null)
+    : el('p', { class: 'muted pf-peek-line' }, line.join(' · '));
   const stat = (b, s) => el('div', { class: 'pf-stat' }, el('b', {}, b), el('span', {}, s));
   const badges = peekBadges(f);
   const badgeName = b => (T.badges[b.id] || [b.id])[0];
   const fav = f.byGame.slice(0, SHOWN_GAMES);
   body.replaceChildren(...[
-    line.length ? el('p', { class: 'muted pf-peek-line' }, line.join(' · ')) : null,
+    facts,
     el('div', { class: 'pf-stats pf-peek-stats' },
       stat(`🔥 ${num(f.streak || 0)}`, T.statStreak), stat(num(f.plays || 0), T.statPlays), stat(`🏆 ${num(f.medals.gold)}`, T.statCups)),
     el('section', { class: 'pf-peek-part' },
