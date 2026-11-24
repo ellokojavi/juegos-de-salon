@@ -7273,7 +7273,11 @@
       "error": "Set by:\n.github/workflows/notifications.yml  (.github/**: workflows: secrets, permissions, publishing)\nGraphQL: Something went wrong while executing your query on 2026-11-24T15:23:13Z. Please include `A0BE:396813:53801C:828312:6B05ABE1` when reporting this issue.",
       "signature": "1bd6e7fd2e",
       "date": "2026-11-24T15:23:30.833Z",
-      "fix": null,
+      "fix": {
+        "commit": "fd76e76c0950dd967759ec7582a6877ede2bf75c",
+        "date": "2026-11-24T16:45:28.758Z",
+        "stat": "72 file(s) +321 −211: .github/workflows/notifications.yml, CHANGELOG.md, changelog/badge-soft-rim.md, changelog/bodega-home-carousels-sheet.md, changelog/canape-dumpling.md, …"
+      },
       "flaky": false
     }
   ]
