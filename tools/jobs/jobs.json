@@ -270,6 +270,27 @@
       ]
     },
     {
+      "id": "queue-watch",
+      "where": "github",
+      "what": "Every 5 minutes, inside the heartbeat (notifications.yml), without Claude: `merge-queue.mjs doctor --heal --alarm` makes the queue's label again if it was deleted, starts a queue step when a PR waits and none ran, and keeps the \"Merge queue needs a look\" issue with what is still wrong.",
+      "decisions": [
+        "D-619"
+      ],
+      "workflow": "notifications.yml",
+      "trigger": "every 5-minute round of the heartbeat (D-569)"
+    },
+    {
+      "id": "queue-doctor",
+      "where": "cloud",
+      "cron": "45 * * * *",
+      "prompt": "tools/jobs/prompts/queue-doctor.md",
+      "trigger": "trig_01EUEoQEdrD3rkiC9dMK5HZC",
+      "what": "Every hour, a Claude Code cloud scheduled task: when `merge-queue.mjs doctor` finds the queue failing, slow or a PR stuck, fixes it on its own (the queue's code, a conflict, a hung check) and ships the fix with auto-merge. Ends at once when the queue is well.",
+      "decisions": [
+        "D-619"
+      ]
+    },
+    {
       "id": "session-sweep",
       "where": "cloud",
       "cron": "CRON_TZ=America/Los_Angeles 41 3 * * *",

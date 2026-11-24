@@ -67,6 +67,19 @@ export const eligible = pr => !pr.isDraft && !pr.isCrossRepository && pr.autoMer
   && pr.baseRefName === 'main' && !labels(pr).includes('needs-owner');
 
 /**
+ * Which PRs go first (D-619): 0, a fix to the queue itself (it unblocks every other PR); 1, a PR that
+ * changes nothing under public/ (its end-to-end runs a few scripts, minutes instead of half an hour);
+ * 2, the rest. A PR whose file list is cut short (over 100 files) counts as 2.
+ */
+export const QUEUE_FILES = ['tools/agents/merge-queue.mjs', '.github/workflows/merge-queue.yml'];
+export function rank(pr) {
+  const files = (pr.files || []).map(f => f.path);
+  if (!files.length || (pr.changedFiles && files.length < pr.changedFiles)) return 2;
+  if (files.some(f => QUEUE_FILES.includes(f))) return 0;
+  return files.some(f => f.startsWith('public/')) ? 2 : 1;
+}
+
+/**
  * What the queue does now: `wait` (the PR it updated still runs its checks), `update` (the head of
  * the line) or `idle`. `skip` holds PRs left out for a conflict on their current head.
  */
@@ -75,9 +88,44 @@ export function pick(prs, skip = new Set()) {
     && p.mergeStateStatus !== 'BEHIND' && p.mergeStateStatus !== 'DIRTY' && !failed(p) && !green(p));
   if (inFlight) return { action: 'wait', pr: inFlight };
   const line = prs.filter(p => eligible(p) && p.mergeStateStatus === 'BEHIND' && ready(p) && !skip.has(`${p.number}@${p.headRefOid}`))
-    .sort((a, b) => Date.parse(a.autoMergeRequest.enabledAt) - Date.parse(b.autoMergeRequest.enabledAt) || a.number - b.number);
+    .sort((a, b) => rank(a) - rank(b) || Date.parse(a.autoMergeRequest.enabledAt) - Date.parse(b.autoMergeRequest.enabledAt) || a.number - b.number);
   return line.length ? { action: 'update', pr: line[0], behindIt: line.length - 1 } : { action: 'idle' };
 }
+
+// ---- doctor (D-619) ----
+export const SLOW_MIN = 45;   // the in-flight PR's checks normally finish within ~30 minutes
+export const STUCK_MIN = 240; // auto-merge on this long without merging, though not red
+export const SILENT_MIN = 30; // a PR waits to be updated and no queue step succeeded
+
+/**
+ * What is wrong with the queue, from GitHub's state: `{ kind, text, heal? }` each. `heal` is what
+ * `doctor --heal` does by itself without a model (`label`: make the label again; `dispatch`: start a
+ * queue step); the rest wait for the queue-doctor cloud task. Pure, for the test.
+ * `runs`: the latest merge-queue.yml runs, newest first.
+ */
+export function diagnose({ prs, runs, labelExists, now = Date.now() }) {
+  const out = [];
+  const min = t => Math.round((now - Date.parse(t)) / 60e3);
+  if (!labelExists) out.push({ kind: 'label', heal: 'label', text: `the \`${LABEL}\` label is missing: the queue cannot mark the PR in flight` });
+  const done = runs.filter(r => r.status === 'completed' && !['cancelled', 'skipped'].includes(r.conclusion));
+  if (done.length >= 2 && done[0].conclusion === 'failure' && done[1].conclusion === 'failure')
+    out.push({ kind: 'failing', text: `the last two queue steps failed (run ${done[0].databaseId}): read its log` });
+  const next = pick(prs);
+  const ok = done.find(r => r.conclusion === 'success');
+  if (next.action === 'update' && (!ok || min(ok.createdAt) > SILENT_MIN))
+    out.push({ kind: 'silent', heal: 'dispatch', text: `#${next.pr.number} waits to be updated and no queue step succeeded for ${SILENT_MIN} min` });
+  if (next.action === 'wait') {
+    const started = (next.pr.statusCheckRollup || []).filter(c => REQUIRED.includes(c.name || c.context) && !c.conclusion && c.startedAt)
+      .map(c => min(c.startedAt));
+    if (started.length && Math.max(...started) > SLOW_MIN)
+      out.push({ kind: 'slow', text: `#${next.pr.number}, in flight, has had a required check running for ${Math.max(...started)} min` });
+  }
+  for (const p of prs) if (eligible(p) && !failed(p) && min(p.autoMergeRequest.enabledAt) > STUCK_MIN)
+    out.push({ kind: 'stuck', text: `#${p.number} has had auto-merge on for ${min(p.autoMergeRequest.enabledAt)} min without merging` });
+  return out;
+}
+
+export const ALARM_TITLE = 'Merge queue needs a look';
 
 // ---- report helpers (pure) ----
 export function quantile(xs, q) {
@@ -177,7 +225,7 @@ function step(argv) {
   const pub = JSON.parse(gh('run', 'list', '--workflow', 'publish.yml', '--commit', head, '--limit', '1', '--json', 'databaseId'));
   if (!pub.length && !dry) { gh('workflow', 'run', 'publish.yml', '--ref', 'main'); console.log(`merge-queue: main ${head.slice(0, 7)} had no Publish run: started one`); }
   const prs = JSON.parse(gh('pr', 'list', '--base', 'main', '--state', 'open', '--limit', '100', '--json',
-    'number,isDraft,isCrossRepository,autoMergeRequest,baseRefName,labels,mergeStateStatus,statusCheckRollup,headRefName,headRefOid,author'));
+    'number,isDraft,isCrossRepository,autoMergeRequest,baseRefName,labels,mergeStateStatus,statusCheckRollup,headRefName,headRefOid,author,files,changedFiles'));
   for (const p of prs) if (labels(p).includes(LABEL) && failed(p) && !dry) gh('pr', 'edit', String(p.number), '--remove-label', LABEL);
   for (const p of stale(prs)) cancelStale(p, dry);
   const skip = new Set();
@@ -238,9 +286,49 @@ function update(R, p) {
   finally { try { git('worktree', 'remove', '--force', dir); } catch (_) { rmSync(dir, { recursive: true, force: true }); } }
 }
 
+/**
+ * `doctor` (D-619): prints what is wrong with the queue, one line each, or NOTHING. `--heal` fixes
+ * what needs no model (makes the label again, starts a queue step); `--alarm` keeps one issue,
+ * "Merge queue needs a look", with what is still wrong, and closes it when all is well. The heartbeat
+ * runs it every 5 minutes with both; the queue-doctor cloud task runs it bare and handles the rest.
+ */
+function doctor(argv) {
+  const R = repo();
+  const prs = JSON.parse(gh('pr', 'list', '--base', 'main', '--state', 'open', '--limit', '100', '--json',
+    'number,isDraft,isCrossRepository,autoMergeRequest,baseRefName,labels,mergeStateStatus,statusCheckRollup,headRefOid,files,changedFiles'));
+  const runs = JSON.parse(gh('run', 'list', '--workflow', 'merge-queue.yml', '--limit', '8', '--json', 'databaseId,status,conclusion,createdAt'));
+  let labelExists = true;
+  try { gh('api', `repos/${R}/labels/${LABEL}`); } catch (_) { labelExists = false; }
+  let found = diagnose({ prs, runs, labelExists });
+  if (argv.includes('--heal')) {
+    for (const f of found.filter(f => f.heal)) {
+      try {
+        if (f.heal === 'label') gh('label', 'create', LABEL, '--force', '--color', '5319e7', '--description', 'The merge queue brought this PR up to date (D-586)');
+        if (f.heal === 'dispatch') gh('workflow', 'run', 'merge-queue.yml', '--ref', 'main');
+        console.log(`healed: ${f.text}`);
+      } catch (e) { console.log(`could not heal (${f.kind}): ${String(e.stderr || e.message).trim().split('\n')[0]}`); continue; }
+      found = found.filter(x => x !== f);
+    }
+  }
+  if (argv.includes('--alarm')) alarm(found);
+  console.log(found.length ? found.map(f => `${f.kind}: ${f.text}`).join('\n') : 'NOTHING');
+  return 0;
+}
+
+/** One open issue while something is wrong; closed when all is well. */
+function alarm(found) {
+  const open = JSON.parse(gh('issue', 'list', '--state', 'open', '--search', `in:title "${ALARM_TITLE}"`, '--json', 'number,title'))
+    .filter(i => i.title === ALARM_TITLE);
+  const body = `The heartbeat checks the merge queue every 5 minutes (\`merge-queue.mjs doctor\`, D-619). Still wrong:\n\n${found.map(f => `- **${f.kind}**: ${f.text}`).join('\n')}\n\nThe queue-doctor cloud task takes it within the hour and fixes it on its own (\`tools/jobs/prompts/queue-doctor.md\`). This issue closes itself when the queue is well again.`;
+  if (found.length && !open.length) gh('issue', 'create', '--title', ALARM_TITLE, '--body', body);
+  else if (found.length) gh('issue', 'edit', String(open[0].number), '--body', body);
+  else for (const i of open) gh('issue', 'close', String(i.number), '--comment', 'The merge queue is well again.');
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, ...rest] = process.argv.slice(2);
   if (cmd === 'step') process.exit(step(rest));
+  else if (cmd === 'doctor') process.exit(doctor(rest));
   else if (cmd === 'report') report(rest);
-  else { console.log('usage: merge-queue.mjs step [--dry] | report [--since yyyy-mm-dd] [--until yyyy-mm-dd]'); process.exit(2); }
+  else { console.log('usage: merge-queue.mjs step [--dry] | doctor [--heal] [--alarm] | report [--since yyyy-mm-dd] [--until yyyy-mm-dd]'); process.exit(2); }
 }
