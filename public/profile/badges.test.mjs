@@ -126,3 +126,15 @@ assert.deepEqual(of({ now: NOW, duels: { rivalRun: 2 } })['duel-rival-run'].prog
 assert.ok(of({ now: NOW, duels: { rivalRun: 3 } })['duel-rival-run'].got);
 assert.ok(!of({ now: NOW, duels: { champs: 0 } })['duel-champion'].got);
 assert.deepEqual([of({ now: NOW, duels: { champs: 2 } })['duel-champion'].got, of({ now: NOW, duels: { champs: 2 } })['duel-champion'].count], [true, 2]);
+
+// La Copa is a way of playing the games, not one more game (2026-11-24): no "games played" count holds it
+{
+  const { PLAYABLE_GAMES } = await import('../assets/js/games.js');
+  const { CATALOGUE } = await import('../assets/js/phone-facts.js');
+  assert.ok(!PLAYABLE_GAMES.some(g => g.id === 'copa' || g.torneo), 'La Copa is not a game to collect');
+  assert.ok(PLAYABLE_GAMES.length > 10 && CATALOGUE === PLAYABLE_GAMES);
+  for (const f of ['public/profile/profile.js', 'public/assets/js/player-peek.js']) {
+    const src = (await import('node:fs')).readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
+    assert.match(src, /const CATALOGUE = PLAYABLE_GAMES;/, `${f} counts the games from PLAYABLE_GAMES`);
+  }
+}
