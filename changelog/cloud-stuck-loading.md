@@ -1,3 +1,3 @@
 level: patch
 
-- **Profile ⚙️, «Juegos sin señal»**: the row no longer stays on «Preparando los juegos…» while the phone already keeps every game. It looked for what the service worker had saved under the profile's own address instead of the site's root, so it never found it; it now reads the same place the home page does. La Copa's upload with the app closed had the same slip from the Cup's pages and is fixed too.
+- **Profile ⚙️, «Juegos sin señal»**: the row no longer stays on «Preparando los juegos…» while the phone already keeps every game. It looked for the saved games in the wrong place; it now looks where the home page does. La Copa had the same slip when sending results with the app closed, and it is fixed too.
