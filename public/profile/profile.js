@@ -253,7 +253,8 @@ function playsPanel(f) {
   if (!rows.length) return null;
   const top = rows[0].n || 1, total = rows.reduce((s, g) => s + g.n, 0);
   const bar = (g, i) => el('li', { class: 'pf-play', 'data-game': g.id, hidden: i >= PLAYS_SHOWN, style: `--w: ${Math.max(6, Math.round((g.n / top) * 100))}%` },
-    el('span', { class: 'pf-play-name' }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
+    // A tap on the game opens its cover (the owner, 2026-11-24)
+    el('a', { class: 'pf-play-name', href: `../${gameOf(g.id).path}`, onClick: tap }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
     el('b', {}, num(g.n)));
   const list = el('ol', { class: 'pf-plays' }, rows.map(bar));
   const box = el('section', { class: 'panel pf-plays-panel' },
@@ -283,7 +284,7 @@ function badgePanels(list, { only = null, reveal = false, duels = null } = {}) {
         // Duels: the record sits in the title's row, between the title and the count (hidden on the narrowest screens)
         const x = g === 'duels' && duels ? duels() : {};
         // Every group ends with the way to where its badges are won (the owner, 2026-11-23)
-        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo], games: ['../', T.gamesGo] }[g];
+        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo] }[g];
         if (go) x.foot = el('a', { class: 'btn btn--ghost btn--sm pf-group-go', href: go[0], onClick: tap }, go[1]);
         return [el('p', { class: 'lead pf-group-head' }, ...[el('span', {}, title[g]), x.top, el('small', {}, fmt(T.groupOf, { n: got, total: all.length }))].filter(Boolean)),
           el('div', { class: 'pf-grid' }, all.map(b => badgeEl(b, { reveal }))), x.foot].filter(Boolean);
