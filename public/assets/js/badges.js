@@ -26,7 +26,8 @@
  *   byGame         [{ id, n }] games finished with the player, by game
  *   cupList        [{ code, at }] the cups the player sat in, with when
  *   climbs         how many cups the player won after being last on day 1
- *   duels          { played, won, bestRun, rivals } the player's finished duels (duels.js `duelFacts`)
+ *   duels          { played, won, bestRun, rivals, rivalRun } the player's finished duels (duels.js `duelFacts`),
+ *                  and `champs`: how many duels the player won against a game's champion (profile.js `champsOf`)
  *   since          when the player was created (ms)
  *   now            ms
  */
@@ -40,6 +41,7 @@ export const DUELS_FLAG = 'rivals';
 export const DUEL_WINS = 10;     // duels won
 export const DUEL_RUN = 5;       // duels won in a row
 export const DUEL_RIVALS = 5;    // different rivals
+export const DUEL_RIVAL_RUN = 3; // duels won in a row against one same rival
 export const EARLY_GAMES = 3;   // games before 7 in one morning…
 export const EARLY_DAYS = 7;    // …on this many mornings
 export const RUN_GAMES = 10;    // one same game in a row
@@ -136,6 +138,9 @@ export const BADGES = [
   { id: 'duel-rivals', group: 'duels', tier: 'silver', icon: '🤝', check: f => progress(f.duels?.rivals, DUEL_RIVALS) },
   { id: 'duel-wins', group: 'duels', tier: 'silver', icon: '🛡️', check: f => progress(f.duels?.won, DUEL_WINS) },
   { id: 'duel-run', group: 'duels', tier: 'gold', icon: '🗡️', check: f => progress(f.duels?.bestRun, DUEL_RUN) },
+  // The owner, 2026-11-24: beat one rival three duels in a row; beat a game's reigning champion (a reason to challenge the best)
+  { id: 'duel-rival-run', group: 'duels', tier: 'silver', icon: '🔁', check: f => progress(f.duels?.rivalRun, DUEL_RIVAL_RUN) },
+  { id: 'duel-champion', group: 'duels', tier: 'gold', icon: '🐉', check: f => { const c = n(f.duels?.champs); return { got: c > 0, count: c }; } },
 
   { id: 'explorer', group: 'games', tier: 'bronze', icon: '🧭', check: f => progress(f.gamesPlayed, 10) },
   { id: 'collector', group: 'games', tier: 'gold', icon: '🧩', check: f => progress(f.gamesPlayed, Math.max(1, n(f.gamesTotal))) },

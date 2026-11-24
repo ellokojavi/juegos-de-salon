@@ -93,12 +93,23 @@ export function record(lista, me, t = Date.now()) {
   return { g, p, e, pct: g + p ? Math.round((100 * g) / (g + p)) : null, racha };
 }
 
-/** The facts of the duels' badges (badges.js): finished duels, won, the longest run of wins, different rivals. Pure. */
+/**
+ * The facts of the duels' badges (badges.js): finished duels, won, the longest run of wins, different
+ * rivals, the longest run of wins against one same rival (`rivalRun`) and the duels won, each with its
+ * rival and games (`wins`: [{ rival, games }], for the champion's badge, which the profile checks). Pure.
+ */
 export function duelFacts(lista, me, t = Date.now()) {
   const fin = lista.map(d => ({ d, e: estado(d, me, t) })).filter(x => x.e.termino).sort((x, y) => x.d.at - y.d.at);
-  let run = 0, bestRun = 0;
-  for (const x of fin) { run = x.e.gano === 1 ? run + 1 : 0; bestRun = Math.max(bestRun, run); }
-  return { played: fin.length, won: fin.filter(x => x.e.gano === 1).length, bestRun, rivals: new Set(fin.map(x => x.e.rival)).size };
+  let run = 0, bestRun = 0, rivalRun = 0;
+  const porRival = {};
+  for (const x of fin) {
+    run = x.e.gano === 1 ? run + 1 : 0; bestRun = Math.max(bestRun, run);
+    const r = (porRival[x.e.rival] = x.e.gano === 1 ? (porRival[x.e.rival] || 0) + 1 : 0);
+    rivalRun = Math.max(rivalRun, r);
+  }
+  const wins = fin.filter(x => x.e.gano === 1)
+    .map(x => ({ rival: x.e.rival, games: [...new Set(Array.from({ length: x.e.n }, (_, i) => roundGame(x.d, i)).filter(Boolean))] }));
+  return { played: fin.length, won: wins.length, bestRun, rivals: new Set(fin.map(x => x.e.rival)).size, rivalRun, wins };
 }
 
 /** The rival I lose to most (at least two duels and more lost than won), or null. */

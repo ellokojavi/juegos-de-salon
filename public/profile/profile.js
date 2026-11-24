@@ -9,7 +9,7 @@
  * tables they are in. A badge earned once stays earned on this phone (`earned`'s `seen`), so a
  * first place lost this week keeps its badge.
  */
-import { el } from '../assets/js/ui.js';
+import { el, vibrationToggle } from '../assets/js/ui.js';
 import { withIcon } from '../assets/js/game-icon.js';
 import { getLang, langToggle, pickLang, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle } from '../assets/js/sound.js';
@@ -208,6 +208,19 @@ async function ranksOf(J, f, onGame) {
   await Promise.all([worker(), worker(), worker()]);
   f.firsts = firsts;
   return f;
+}
+
+/**
+ * How many duels the player won against a game's champion: the rival is 1st ever in the table of one
+ * of the duel's games (the owner, 2026-11-24: «si le ganaste al campeón vigente… te lo llevas»). Read
+ * when the profile opens, so the champion is the reigning one; the badge stays earned once seen.
+ */
+async function champsOf(J, wins = []) {
+  const champ = {};
+  const of = g => (champ[g] ||= J.tabla(tableOf(g).t, SIEMPRE, { top: 1, reciente: 60000 }).then(v => v?.top?.[0]?.jid || null).catch(() => null));
+  let c = 0;
+  for (const w of wins) if ((await Promise.all(w.games.map(of))).includes(w.rival)) c++;
+  return c;
 }
 
 /* ------------------------------------------------------------------ */
@@ -574,6 +587,8 @@ function settingsTab(yo) {
   const row = (label, hint, control) => el('div', { class: 'toggle-row' }, el('span', { class: 'txt' }, el('b', {}, label), hint ? el('small', {}, hint) : null), control);
   const prefs = el('section', { class: 'panel pf-settings' }, el('p', { class: 'lead rk-titulo' }, T.prefs),
     row(T.language, null, langToggle()), row(T.sound, null, soundToggle()));
+  // 📳 Vibration off for every game (flag vibration-setting). lab: #seccion-vibration-setting
+  flag('vibration-setting').then(on => on && 'vibrate' in navigator && prefs.append(row(T.vibration, null, vibrationToggle()))).catch(() => {});
   // ☁️ Games with no signal: where the phone stands, always here; the home page's bar shows the cloud only when it asks for something
   // (flag cloud-quiet, offline-ready.js). lab: #seccion-cloud-quiet
   Promise.all([flag('offline'), flag('cloud-quiet')])
@@ -688,6 +703,7 @@ export async function drawProfile(root, { sub }) {
         DU = ui;
         duelList = await D.mios();
         duelF = du.duelFacts(duelList, yo.jid);
+        duelF.champs = await champsOf(J, duelF.wins).catch(() => 0);
       }).catch(() => {});
     show(tab);
     revealIntoView(badgesBox);

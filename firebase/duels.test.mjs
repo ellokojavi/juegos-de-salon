@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { createDb } from '../tools/firebase/rules-sim.mjs';
 import { crearAlmacenLocal } from '../public/assets/js/jugador-local.js';
 import { crearJugador } from '../public/assets/js/jugador.js';
-import { estado, record, nemesis, rivalidades, archirrival, estadisticas, sugeridos, ganaRonda, roundGame, DURACION } from '../public/assets/js/duels.js';
+import { estado, record, duelFacts, nemesis, rivalidades, archirrival, estadisticas, sugeridos, ganaRonda, roundGame, DURACION } from '../public/assets/js/duels.js';
 
 const T0 = 1_800_000_000_000;
 const A = 'aaaa1111', B = 'bbbb2222', C = 'cccc3333', DID = 'duel000001';
@@ -113,5 +113,13 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   assert.equal(archirrival(lista.slice(0, 2), A, at + 10), null, 'two duels are not a rivalry yet');
   const st = estadisticas(lista, A, at + 10);
   assert.deepEqual([st.jugados, st.g, st.p, st.rondasG, st.rondasP, st.rivales, st.abiertos], [3, 1, 2, 2, 4, 1, 0], 'the stats panel');
+  // The badges' facts: three wins in a row against one rival (the owner: «de hijo»), the wins with rival and games
+  const gana = (k, rival = B) => ({ ...d('bo3'), g: 'desenredo', b: rival, r: { [A]: { 0: r(9), 1: r(9) }, [rival]: { 0: r(1), 1: r(1) } }, id: `w${k}`, at: at + k });
+  const pierde = k => ({ ...d('bo3', { 0: r(1), 1: r(1) }, { 0: r(9), 1: r(9) }), id: `l${k}`, at: at + k });
+  let ff = duelFacts([gana(1), gana(2), gana(3, C), gana(4)], A, at + 10);
+  assert.deepEqual([ff.won, ff.bestRun, ff.rivalRun], [4, 4, 3], 'a win against another rival does not break the run against one');
+  assert.deepEqual(ff.wins[0], { rival: B, games: ['desenredo'] }, 'each win with its rival and games');
+  ff = duelFacts([gana(1), gana(2), pierde(3), gana(4)], A, at + 10);
+  assert.equal(ff.rivalRun, 2, 'a loss to that rival breaks the run');
   assert.deepEqual(sugeridos(lista, A, { [C]: 'Caro', [B]: 'Beto' }).map(x => x.jid), [B, C], 'rivals first, then cup friends, once each');
 }
