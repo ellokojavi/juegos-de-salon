@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3",
+  "checkedUpTo": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -366,6 +366,11 @@
         {
           "date": "2026-11-02",
           "what": "Usability round: a leftover http.server from a removed worktree held port 8799; tournament.mjs failed like a code bug",
+          "commit": null
+        },
+        {
+          "date": "2026-11-24",
+          "what": "Usability 2026-11-24: another session's http.server held 8799; tournament.mjs crashed with no ✗",
           "commit": null
         }
       ],
@@ -1128,6 +1133,11 @@
           "date": "2026-11-23",
           "what": "Resent pass still skipped the per-PR diffs (README profile modules left 'in the lab'); finished partly in #1800",
           "commit": null
+        },
+        {
+          "date": "2026-11-24",
+          "what": "Documentation round 2026-11-24 again stat/grep only on first pass; sent back, second pass read 24 of 47 diffs",
+          "commit": null
         }
       ],
       "mechanism": null
@@ -1152,7 +1162,11 @@
           "commit": "cfaa4bedd9f4a5aaa31f1922042f4e8d09ed3965"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-24",
+        "what": "push-guard.mjs runs footer-bottom.test.mjs and stops a push with an unplaced page (push-guard.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1857"
+      },
       "signatures": [
         "03ba96abef"
       ]
@@ -1356,6 +1370,12 @@
       "key": "stray-root-file",
       "what": "root-files.test.mjs fails on any tracked repo-root file not in its allowlist",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1801"
+    },
+    {
+      "date": "2026-11-24",
+      "key": "footer-page-unplaced",
+      "what": "push-guard.mjs runs footer-bottom.test.mjs and stops a push with an unplaced page (push-guard.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1857"
     }
   ],
   "queueDone": [
@@ -1668,6 +1688,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1801",
       "note": "dispatched docs (#1800, sent back once: shallow; pattern executor-documentation-shallow now 2x) + usability (no fixes, tournament 477 ✓); collected 40 changelog entries; flags snapshot refreshed (profile, wobbles, wobbles-cheers); mechanism stray-root-file; durations not committed: heaviest group 471 s over target, for ci-health"
+    },
+    {
+      "date": "2026-11-24",
+      "from": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3",
+      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1857",
+      "note": "dispatched docs (#1854, sent back once: shallow, pattern now 3x) + usability (477 ✓, no fixes; port 8799 taken again); collected 47 changelog entries; flags snapshot refreshed (5 flags to all); mechanism footer-page-unplaced; durations not committed: heaviest group 484 s, for ci-health"
     }
   ],
   "ownerDecisions": [
