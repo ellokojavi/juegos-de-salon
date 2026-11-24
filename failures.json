@@ -7121,6 +7121,19 @@
         "stat": "5 file(s) +252 −24: changelog/create-week-tango-time.md, changelog/croc-river-visuals.md, docs/games/croc.md, public/cup/games/croc/scene.js, tools/e2e/cup/create-week.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 45327497661,
+      "check": "end-to-end",
+      "pr": 1841,
+      "branch": "home-lang-back",
+      "commit": "58c4d3509836c739091f6abfcfb8ecb95908de45",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: / shows no 🔊 and no language",
+      "signature": "0966b1a4c7",
+      "date": "2026-11-24T05:34:58.224Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
