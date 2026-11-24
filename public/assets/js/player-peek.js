@@ -33,6 +33,8 @@ import { loadCss } from './load-css.js';
 const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join('\u00a0');
 /** The sheet's styles (and the tappable name's), shared by every page with a ranking. */
 const CSS = new URL('../css/player-peek.css', import.meta.url).href;
+const PROFILE = new URL('../../profile/', import.meta.url).href;
+const onProfile = (pathname = globalThis.location?.pathname) => /\/profile\/?(index\.html)?$/.test(String(pathname || ''));
 
 /** The achievements that public data can tell: the rest live on the player's own phone. */
 export const PUBLIC_BADGES = new Set(['streak-10', 'streak-30', 'streak-100', 'month-full', 'month-podium', 'month-champion',
@@ -183,7 +185,12 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
     doc.removeEventListener('keydown', onKey);
   };
   const onKey = e => { if (e.key === 'Escape') close(); };
-  const who = el('h2', { id: 'pf-peek-name', class: 'pf-peek-name' }, conBandera(hint.co, hint.n || '…'));
+  // One's own sheet from a ranking (not on the profile, where it is «how others see me»): «(tú)» after the
+  // name and a link to their profile (the owner, 2026-11-23)
+  const self = jid === leerYo()?.jid && !onProfile(doc.defaultView?.location?.pathname);
+  const who = el('h2', { id: 'pf-peek-name', class: 'pf-peek-name' });
+  const name = (co, n) => who.replaceChildren(conBandera(co, n), ...(self ? [' ', el('span', { class: 'pf-peek-you' }, `(${T.peekYou})`)] : []));
+  name(hint.co, hint.n || '…');
   const placeOf = n => (lang === 'en' ? `#${n}` : `${n}.º`);
   // Where it was tapped, first: the table and tab, the row as it showed, and (filled in below) their all-time place
   const allTime = el('small', { class: 'pf-peek-here-all' });
@@ -200,7 +207,8 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
     el('div', { class: 'hoja-cabeza' },
-      el('div', { class: 'pf-peek-who' }, who),
+      el('div', { class: 'pf-peek-who' }, who,
+        self ? el('a', { class: 'pf-peek-mine', href: PROFILE }, T.peekMyProfile) : null),
       el('button', { type: 'button', class: 'icon-btn', 'aria-label': T.peekClose, title: T.peekClose, onClick: close }, '✕')),
     here, body,
     el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--yellow pf-peek-ok', onClick: close }, T.peekClose)));
@@ -222,12 +230,12 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   } catch (_) { f = null; }
   if (!layer) return null;
   if (!f) { body.replaceChildren(el('p', { class: 'muted pf-peek-wait' }, T.peekError)); return panel; }
-  who.textContent = conBandera(f.co, f.n);
+  name(f.co, f.n);
   const line = [f.since ? fmt(T.since, { month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(f.since)) }) : null,
     f.allRounder ? fmt(T.peekPlace, { place: placeOf(f.allRounder) }) : null].filter(Boolean);
   const stat = (b, s) => el('div', { class: 'pf-stat' }, el('b', {}, b), el('span', {}, s));
   const badges = peekBadges(f);
-  const name = b => (T.badges[b.id] || [b.id])[0];
+  const badgeName = b => (T.badges[b.id] || [b.id])[0];
   const fav = f.byGame.slice(0, SHOWN_GAMES);
   body.replaceChildren(...[
     line.length ? el('p', { class: 'muted pf-peek-line' }, line.join(' · ')) : null,
@@ -245,7 +253,7 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
       badges.length
         ? el('ul', { class: 'pf-peek-badges' },
           badges.slice(0, SHOWN_BADGES).map(b => el('li', { class: `pf-badge--${b.tier}`, 'data-badge': b.id },
-            el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.icon), el('small', {}, name(b)))),
+            el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.icon), el('small', {}, badgeName(b)))),
           badges.length > SHOWN_BADGES ? el('li', { class: 'pf-peek-more' }, el('span', { class: 'pf-medal' }, `+${badges.length - SHOWN_BADGES}`)) : null)
         : el('p', { class: 'muted' }, T.peekNoBadges)),
   ].filter(Boolean));

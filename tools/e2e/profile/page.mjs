@@ -230,7 +230,7 @@ for (const W of [320, 390]) {
   await b.shot(`peek-rival-${W}`);
   await ev(`document.querySelector('#pf-peek .pf-peek-ok').click()`); await sleep(300);
   await ev(`(() => { const r = document.querySelector('.pf-tab .rk-fila.yo[data-peek]'); r.scrollIntoView({ block: 'center' }); r.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`); await sleep(1500);
-  ok(await ev(`(() => { const p = document.getElementById('pf-peek'); return !!p && !p.querySelector('.pf-peek-kicker') && !/Así te ven/.test(p.textContent) && p.querySelector('.pf-peek-name').textContent.includes('Javi') && p.querySelectorAll('.pf-peek-stats .pf-stat').length === 3 && p.querySelectorAll('.pf-peek-badges li').length > 0 && !p.querySelector('.pf-peek-hidden'); })()`), `${W}: 👀 your own name (Enter works too) opens exactly the sheet others see, your activity shown by default`);
+  ok(await ev(`(() => { const p = document.getElementById('pf-peek'); return !!p && !p.querySelector('.pf-peek-kicker') && !/Así te ven/.test(p.textContent) && p.querySelector('.pf-peek-name').textContent.includes('Javi') && p.querySelectorAll('.pf-peek-stats .pf-stat').length === 3 && p.querySelectorAll('.pf-peek-badges li').length > 0 && !p.querySelector('.pf-peek-hidden, .pf-peek-you, .pf-peek-mine'); })()`), `${W}: 👀 your own name (Enter works too) opens exactly the sheet others see, your activity shown by default, no «(tú)» or link on the profile itself`);
   await b.shot(`peek-you-${W}`);
   await ev(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))`); await sleep(300);
   ok(await ev(`!document.getElementById('pf-peek')`), `${W}: 👀 Escape closes it`);
@@ -244,6 +244,13 @@ for (const W of [320, 390]) {
   ok(!sq, `${W}: 👀 the sheet on a cover, every tappable thing is 44 px or more${sq ? ` (${sq})` : ''}`);
   await b.shot(`peek-cover-${W}`);
   await ev(`document.querySelector('#pf-peek .pf-peek-ok').click()`); await sleep(300);
+  // Your own name in a ranking (the owner, 2026-11-23): «(tú)» after it and a link to your profile
+  ok(await ev(`(() => { const r = document.querySelector('.rk-ranking .rk-fila.yo[data-peek]'); if (!r) return false; r.scrollIntoView({ block: 'center' }); r.click(); return true; })()`), `${W}: 👀 your own row in a game's ranking opens your sheet`);
+  await sleep(1500);
+  ok(await ev(`(() => { const p = document.getElementById('pf-peek'), a = p?.querySelector('.pf-peek-who .pf-peek-mine'); return !!p && p.querySelector('.pf-peek-name').textContent.includes('Javi') && p.querySelector('.pf-peek-name .pf-peek-you')?.textContent === '(tú)' && !!a && /\\/profile\\/$/.test(new URL(a.href).pathname) && a.textContent.includes('Ver mi perfil') && a.getBoundingClientRect().height >= 43.5 && p.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 your own sheet says «(tú)» after your name and links to your profile`);
+  await b.shot(`peek-self-${W}`);
+  await ev(`document.querySelector('#pf-peek .pf-peek-mine').click()`); await sleep(2500);
+  ok(/\/profile\/$/.test(new URL(await ev('location.href')).pathname), `${W}: 👀 «Ver mi perfil» opens your profile`);
   await b.go(`${SITE}/profile/?test`, 3000);
   await ev(`document.querySelector('[data-tab=settings]').click()`); await sleep(800);
   ok(await ev(`!!document.querySelector('.pf-settings .lang-toggle') && !!document.querySelector('.pf-settings .sound-toggle') && !!document.querySelector('#pf-account') && !document.querySelector('.pf-tab .rk-yo')`), `${W}: ⚙️ has your account, the language and the sound`);
