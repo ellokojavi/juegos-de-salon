@@ -53,7 +53,8 @@ const kind = (k, s, t) => rowContext(node({ data: { k, puesto: '7' }, closest: {
 assert.deepEqual(kind('wins', '12', '🏆'), [{ v: '12', unit: 'wins' }], 'a wins table counts wins, no time');
 assert.deepEqual(kind('plays', '340', '🎲'), [{ v: '340', unit: 'plays' }]);
 assert.deepEqual(kind('streak', '21', '🔥'), [{ v: '🔥 21', unit: 'streak' }]);
-assert.deepEqual(kind('points', '180', '🔥9'), [{ v: '180', unit: 'pts' }, { v: '🔥 9', unit: 'streak' }]);
+assert.deepEqual(kind('points', '180', ''), [{ v: '180', unit: 'pts' }]);
+assert.deepEqual(kind('points', '2620', '🔥10'), [{ v: '2620', unit: 'pts' }], 'the capped bonus streak never shows as days in a row');
 for (const l of ['es', 'en', 'pt']) for (const k of ['peekUnitPts', 'peekUnitTime', 'peekUnitWins', 'peekUnitPlays', 'statStreak']) assert.ok(TEXTS[l][k], `${l}.${k}`);
 // From the all-time tab there is no second all-time line; the Cups' medal table has no tabs and shows the medals
 const always = node({ data: { tabla: 'sudoku_easy', pestana: 'siempre' }, q: { '.rk-seg .on': node({ text: 'Siempre', data: { p: 'siempre' } }) } });

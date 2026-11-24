@@ -136,7 +136,8 @@ export function rowContext(r) {
     wins: [{ v: s, unit: 'wins' }],
     plays: [{ v: s, unit: 'plays' }],
     streak: [{ v: `🔥 ${s}`, unit: 'streak' }],
-    points: [{ v: s, unit: 'pts' }, { v: second.replace(/^🔥\s*/, '🔥 '), unit: 'streak' }],
+    // Only the points: the real streak is the sheet's own stat below (the row's 🔥 was the bonus cap, 10 at most)
+    points: [{ v: s, unit: 'pts' }],
     medals: [{ v: txt(r.querySelector('.rk-medallas')) }],
   }[k] || [{ v: s }];
   const table = box?.dataset?.tabla;

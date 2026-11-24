@@ -51,7 +51,9 @@
 .pf-peek-here { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--s-14);
   background: var(--well); border-radius: var(--r-14); padding: var(--s-12) var(--s-14); margin-bottom: var(--s-14); }
 .pf-peek-here-medal .pf-medal { width: 64px; height: 64px; margin: 0; font: 900 var(--fs-140) var(--font-num); color: var(--pf-tinta-medalla); }
-.pf-peek-here-medal.pf-badge--plain .pf-medal { background: rgb(var(--ink-rgb) / 0.08); box-shadow: 0 0 0 3px rgb(var(--ink-rgb) / 0.2); color: var(--ink); }
+/* From 4th on, no ring: the place big in the yellow-to-pink gradient, as the home page's Uno al día card shows it (the owner, 2026-11-24) */
+.pf-peek-here-medal.pf-badge--plain .pf-medal { width: auto; min-width: 64px; background: linear-gradient(90deg, var(--yellow), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  font: 800 var(--fs-200)/0.95 var(--font-num); letter-spacing: -0.02em; padding-right: 0.06em; }
 .pf-peek-here-txt { display: grid; gap: var(--s-4); min-width: 0; grid-column: -2; }
 .pf-peek-here-label { color: var(--cyan); font-weight: 900; font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.06em; overflow-wrap: anywhere; }
 .pf-peek-here-vals { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--s-14); row-gap: var(--s-2); }
