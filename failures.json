@@ -7347,6 +7347,19 @@
         "stat": "1 file(s) +0 −0: changelog/pips-zone-palette.md"
       },
       "flaky": false
+    },
+    {
+      "run": 45495273095,
+      "check": "tests",
+      "pr": 1882,
+      "branch": "peek-since-chips",
+      "commit": "551b0a89e4868621b5b1ad93e4c8a848cf4fdfe6",
+      "test": "public/labs/short-cards.test.mjs",
+      "error": "",
+      "signature": "97c0b5ca90",
+      "date": "2026-11-24T21:53:02.209Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
