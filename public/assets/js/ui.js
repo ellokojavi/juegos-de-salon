@@ -49,8 +49,37 @@ export function shuffle(arr) {
   return a;
 }
 
+/* Vibration off (profile ⚙️, flag vibration-setting): one key on the phone, and every call goes
+   through navigator.vibrate, patched here so the games that call it directly obey it too. */
+const NO_VIBRATION = 'juegos-de-salon:no-vibration';
+let vibrationOff = false;
+try { vibrationOff = localStorage.getItem(NO_VIBRATION) === '1'; } catch (_) { /* nada */ }
+export function isVibrationOff() { return vibrationOff; }
+export function setVibrationOff(v) {
+  vibrationOff = !!v;
+  try { localStorage.setItem(NO_VIBRATION, vibrationOff ? '1' : '0'); } catch (_) { /* nada */ }
+}
+try {
+  const nav = globalThis.navigator;
+  if (nav && typeof nav.vibrate === 'function' && !nav.vibrate.__jds) {
+    const real = nav.vibrate.bind(nav);
+    const gated = pattern => (vibrationOff ? false : real(pattern));
+    gated.__jds = true;
+    nav.vibrate = gated;
+  }
+} catch (_) { /* sin soporte */ }
+
 export function vibrate(pattern = 30) {
   try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (_) { /* sin soporte */ }
+}
+
+/** The 📳/📴 switch of the profile's settings. */
+export function vibrationToggle() {
+  const paint = b => { b.textContent = vibrationOff ? '📴' : '📳'; b.setAttribute('aria-pressed', vibrationOff ? 'false' : 'true'); };
+  const btn = el('button', { type: 'button', class: 'sound-toggle vibration-toggle', title: 'Vibración / Vibration / Vibração' });
+  paint(btn);
+  btn.addEventListener('click', () => { setVibrationOff(!vibrationOff); paint(btn); vibrate(30); });
+  return btn;
 }
 
 /** Fondo con partículas flotantes, estilo luces de fiesta. */
