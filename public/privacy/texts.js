@@ -5,7 +5,8 @@
  * that the 90 days are the ones the feedback job applies and the 24 months the stats job applies (D-472).
  *
  * Each section is a heading, paragraphs (`p`) and an optional list (`items`). The contact address
- * becomes a link when drawn.
+ * becomes a link when drawn. An item `{ game, t }` speaks of a game still in the lab: the page shows it
+ * only once that game is out for everyone, so it never tells players about a game they cannot play.
  */
 export const CONTACT = 'hola@juegosdesalon.cl';
 export const UPDATED = '2026-11-22';
@@ -30,7 +31,7 @@ export const TEXTS = {
           'Estadísticas de uso, para saber qué se juega y qué falla: conteos por día (juego, idioma, hora, aparato y tamaño aproximado de pantalla, el sitio y enlace por donde llegaste y el país, según el huso horario), un número al azar del navegador para contar quién vuelve y a qué juegos, los nombres escritos en cada partida, qué anuncios del sitio viste con ese nombre y los errores con navegador y versión. Los nombres se borran a los 24 meses; los conteos quedan.',
           'Avisos al celular, si los activas: la dirección de avisos que da tu navegador, el idioma, el huso horario, los avisos que pediste y la última temporada de Uno al día cuyo resumen ya viste, para no avisarte lo que ya sabes. Se borran al desactivarlos o cuando el navegador los da por vencidos.',
           'Sugerencias y comentarios: lo que escribes, tu nombre o apodo si lo pones, la página y la versión. Los copiamos a la lista de tareas del proyecto en GitHub, que es pública, con tu nombre tapado salvo la primera letra de cada palabra y sin tu correo, así que no escribas ahí datos personales. Todavía no tienen fecha de borrado.',
-          'Si propones una pista en Críptico, el nombre que elijas para firmarla sale completo en GitHub y, si la publicamos, junto a la pista en el juego, con el código de tu jugador si entraste (para que ese día no te toque tu propia pista).',
+          { game: 'cryptic', t: 'Si propones una pista en Críptico, el nombre que elijas para firmarla sale completo en GitHub y, si la publicamos, junto a la pista en el juego, con el código de tu jugador si entraste (para que ese día no te toque tu propia pista).' },
           'Tu correo, si lo dejas en una sugerencia o nos escribes a hola@juegosdesalon.cl: solo para responderte, y nunca se publica. Lo borramos al responderte o, si no hubo respuesta, a los 90 días.',
         ],
       },
@@ -72,7 +73,7 @@ export const TEXTS = {
           'Usage statistics, to know what gets played and what breaks: daily counts (game, language, hour, device and rough screen size, the site and the link you came from and the country, from the time zone), a random number from your browser to count who comes back and to which games, the names typed in each game, which of the site\'s announcements you saw with that name, and errors with browser and version. The names are deleted after 24 months; the counts stay.',
           'Phone notifications, if you turn them on: the notification address your browser gives, the language, the time zone, the notifications you asked for and the last One a Day season whose recap you already saw, so we do not tell you what you already know. They are deleted when you turn them off or when the browser expires them.',
           'Suggestions and comments: what you write, your name or nickname if you give one, the page and the version. We copy them to the project\'s task list on GitHub, which is public, with your name hidden except the first letter of each word and without your email, so don\'t write personal details there. They have no deletion date yet.',
-          'If you propose a clue in Cryptic, the name you choose to sign it with shows in full on GitHub and, if we publish it, next to the clue in the game, with your player code if you signed in (so you do not get your own clue that day).',
+          { game: 'cryptic', t: 'If you propose a clue in Cryptic, the name you choose to sign it with shows in full on GitHub and, if we publish it, next to the clue in the game, with your player code if you signed in (so you do not get your own clue that day).' },
           'Your email, if you leave it with a suggestion or write to us at hola@juegosdesalon.cl: only to reply to you, and it is never published. We delete it once we reply or, if there was no reply, after 90 days.',
         ],
       },
@@ -114,7 +115,7 @@ export const TEXTS = {
           'Estatísticas de uso, para saber o que se joga e o que falha: contagens por dia (jogo, idioma, hora, aparelho e tamanho aproximado da tela, o site e o link de onde você veio e o país, pelo fuso horário), um número aleatório do seu navegador para contar quem volta e para quais jogos, os nomes digitados em cada partida, quais anúncios do site você viu com esse nome e os erros, com navegador e versão. Os nomes são apagados após 24 meses; as contagens ficam.',
           'Avisos no celular, se você ativar: o endereço de avisos que seu navegador dá, o idioma, o fuso horário, os avisos que você pediu e a última temporada do Um por dia cujo resumo você já viu, para não avisar o que você já sabe. São apagados quando você os desativa ou quando expiram no navegador.',
           'Sugestões e comentários: o que você escreve, seu nome ou apelido se você puser, a página e a versão. Copiamos para a lista de tarefas do projeto no GitHub, que é pública, com seu nome oculto, menos a primeira letra de cada palavra e sem seu e-mail, então não escreva ali dados pessoais. Ainda não têm data para serem apagados.',
-          'Se você propuser uma pista no Críptico, o nome que você escolher para assiná-la aparece completo no GitHub e, se a publicarmos, junto da pista no jogo, com o código do seu jogador se você entrou (para que nesse dia não caia a sua própria pista).',
+          { game: 'cryptic', t: 'Se você propuser uma pista no Críptico, o nome que você escolher para assiná-la aparece completo no GitHub e, se a publicarmos, junto da pista no jogo, com o código do seu jogador se você entrou (para que nesse dia não caia a sua própria pista).' },
           'Seu e-mail, se você deixar numa sugestão ou nos escrever em hola@juegosdesalon.cl: só para te responder, e nunca é publicado. Apagamos ao responder ou, se não houver resposta, depois de 90 dias.',
         ],
       },
