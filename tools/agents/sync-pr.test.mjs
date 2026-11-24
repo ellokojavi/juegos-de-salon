@@ -13,4 +13,7 @@ const files = { 'README.md': inBlock, 'CONTRIBUTING.md': conflict };
 assert.deepEqual(classify(['docs/DECISIONS.md', 'docs/facts.json', 'README.md'], f => files[f]), { auto: ['docs/DECISIONS.md', 'docs/facts.json', 'README.md'], real: [] });
 assert.deepEqual(classify(['docs/DECISIONS.md', 'CONTRIBUTING.md'], f => files[f]), { auto: ['docs/DECISIONS.md'], real: ['CONTRIBUTING.md'] });
 assert.deepEqual(classify(['README.md'], () => inProse), { auto: [], real: ['README.md'] });
+const counts = '<<<<<<< HEAD\n72 rules: 42 checked\n=======\n73 rules: 43 checked\n>>>>>>> origin/main\n';
+assert.deepEqual(classify(['docs/RULES.md'], () => counts), { auto: ['docs/RULES.md'], real: [] }, 'rule counts are generated');
+assert.deepEqual(classify(['docs/RULES.md'], () => conflict), { auto: [], real: ['docs/RULES.md'] }, 'a rule text conflict is real');
 console.log('✓ sync-pr: generated conflicts resolve themselves, real ones are left to the session');
