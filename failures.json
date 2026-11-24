@@ -7230,7 +7230,11 @@
       "error": "ERROR · appeared modules: public/profile/badge-details.js",
       "signature": "59142116d9",
       "date": "2026-11-24T12:09:35.321Z",
-      "fix": null,
+      "fix": {
+        "commit": "0d832a4a13719dd01bf860f68d2a3df4ca0502b1",
+        "date": "2026-11-24T12:13:28.845Z",
+        "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     },
     {
