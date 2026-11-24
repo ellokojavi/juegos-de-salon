@@ -7136,7 +7136,11 @@
       "error": "✗ 320: / shows no 🔊 and no language",
       "signature": "0966b1a4c7",
       "date": "2026-11-24T05:34:58.224Z",
-      "fix": null,
+      "fix": {
+        "commit": "f7d37fa4a809f46730cceb84e2822930a259827e",
+        "date": "2026-11-24T06:22:24.055Z",
+        "stat": "1 file(s) +3 −1: tools/e2e/profile/page.mjs"
+      },
       "flaky": false
     },
     {
