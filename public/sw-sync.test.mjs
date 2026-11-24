@@ -12,6 +12,10 @@ const DB = 'https://db.example';
 const H = 3600000;
 const NOW = Date.UTC(2026, 10, 8, 12);
 
+// Keys resolve like a browser's: a bare one from where the worker lives (the site's root), so the page must write there too
+const ROOT = new URL('./', import.meta.url);
+const at = k => new URL(k, ROOT).href;
+
 function browser({ session, server = {}, visible = false } = {}) {
   const store = new Map();
   const caches = {
@@ -19,9 +23,9 @@ function browser({ session, server = {}, visible = false } = {}) {
       if (!store.has(name)) store.set(name, new Map());
       const m = store.get(name);
       return {
-        match: async k => (m.has(k) ? new Response(m.get(k)) : undefined),
-        put: async (k, r) => { m.set(k, await r.text()); },
-        delete: async k => m.delete(k),
+        match: async k => (m.has(at(k)) ? new Response(m.get(at(k))) : undefined),
+        put: async (k, r) => { m.set(at(k), await r.text()); },
+        delete: async k => m.delete(at(k)),
       };
     },
     keys: async () => [...store.keys()],
