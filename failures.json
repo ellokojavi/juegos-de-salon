@@ -7138,6 +7138,19 @@
       "date": "2026-11-24T05:34:58.224Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45334463734,
+      "check": "end-to-end",
+      "pr": 1834,
+      "branch": "cloud-arrive-consistent",
+      "commit": "ce54be47c8ffd947cd57dab3ea0ca88a5593b017",
+      "test": "home/extended-offline.mjs",
+      "error": "✗ 390: flag off: the sticker on the title as before, no plate",
+      "signature": "ca83c32340",
+      "date": "2026-11-24T06:01:11.734Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
