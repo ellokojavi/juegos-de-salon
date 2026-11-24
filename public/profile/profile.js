@@ -283,7 +283,7 @@ function badgePanels(list, { only = null, reveal = false, duels = null } = {}) {
         // Duels: the record sits in the title's row, between the title and the count (hidden on the narrowest screens)
         const x = g === 'duels' && duels ? duels() : {};
         // Every group ends with the way to where its badges are won (the owner, 2026-11-23)
-        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo], games: ['../', T.gamesGo] }[g];
+        const go = { daily: ['../today/', T.dailyGo], cup: ['../cup/', T.cupGo] }[g];
         if (go) x.foot = el('a', { class: 'btn btn--ghost btn--sm pf-group-go', href: go[0], onClick: tap }, go[1]);
         return [el('p', { class: 'lead pf-group-head' }, ...[el('span', {}, title[g]), x.top, el('small', {}, fmt(T.groupOf, { n: got, total: all.length }))].filter(Boolean)),
           el('div', { class: 'pf-grid' }, all.map(b => badgeEl(b, { reveal }))), x.foot].filter(Boolean);
