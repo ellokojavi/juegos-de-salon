@@ -42,7 +42,14 @@ try {
   await b.shot('quick-390');
   await click('#dl-medida');
   await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
-  await click('#dl-rivales .chip-btn'); await click('#dl-siguiente'); await sleep(200);
+  await click('#dl-rivales .chip-btn');
+  // A size change eases instead of jumping: the sheet animates its height and the new step fades in
+  const anim = () => ev(`JSON.stringify([...['#dl-hoja .hoja', '#dl-hoja .dl-sheet'].map(q => document.querySelector(q).getAnimations().filter(a => !(a instanceof CSSAnimation)).length)])`).then(JSON.parse);
+  await click('#dl-siguiente');
+  const [hAnim, fAnim] = await anim();
+  ok(hAnim > 0 && fAnim > 0, `step 1 → 2: the sheet eases to its new height and the step fades in (${hAnim}, ${fAnim})`);
+  await sleep(350);
+  ok((await anim()).every(n => n === 0), 'and the animations end in a moment');
   const nums = () => ev(`JSON.stringify([...document.querySelectorAll('#dl-rondas [data-n]')].map(x=>x.textContent))`);
   ok(await ev(`document.querySelector('[data-modo="bo"]').classList.contains('on')`), 'how to win comes first: most rounds won by default');
   ok(await nums() === '["3","5","7","9"]', 'most rounds won: 3, 5, 7 or 9 rounds');
@@ -98,8 +105,11 @@ try {
 
   // Reduced motion: nothing spins
   await b.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+  await sleep(400);   // the last tap's easing ends first
   await click('#dl-mezclar'); await sleep(40);
   ok(await ev(`!document.querySelector('.slot-spin')`), 'with reduced motion, 🎲 Mix draws without a roll');
+  await click('.dl-ronda[data-ronda="0"]'); await sleep(40);
+  ok(await ev(`document.querySelector('#dl-hoja .hoja').getAnimations().filter(a => !(a instanceof CSSAnimation)).length === 0`), 'with reduced motion, the sheet changes size without easing');
 } catch (e) {
   console.log('✗', e.message); process.exitCode = 1;
 } finally {
