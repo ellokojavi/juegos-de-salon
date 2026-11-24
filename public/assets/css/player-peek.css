@@ -57,3 +57,18 @@
 .pf-peek-here-vals small { margin-left: var(--s-4); color: var(--muted); font-weight: 800; font-size: var(--fs-75); }
 .pf-peek-here-all { justify-self: start; background: rgb(var(--ink-rgb) / 0.1); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10); font-weight: 800; font-size: var(--fs-75); }
 .pf-peek-here-all:empty { display: none; }
+/* Lab (ranking-peek, the owner, 2026-11-23): the badges in a card like the games' rows, bigger medals with a thin ring
+   of their metal, quieter names; CERRAR stays at the bottom, 24 px under the content, over a fade */
+.pf-peek--card .pf-peek-part:has(> .pf-peek-badges) { gap: var(--s-12); }
+.pf-peek--card .pf-peek-badges { background: var(--well); border-radius: var(--r-12); padding: var(--s-16); row-gap: var(--s-20); column-gap: var(--s-8); }
+.pf-peek--card .pf-peek-badges li { gap: var(--s-8); align-content: start; }
+.pf-peek--card .pf-peek-badges .pf-medal { width: 56px; height: 56px; font-size: var(--fs-160); }
+.pf-peek--card .pf-peek-badges li.pf-badge--gold .pf-medal { box-shadow: 0 0 0 2px var(--pf-oro-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--silver .pf-medal { box-shadow: 0 0 0 2px var(--pf-plata-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--bronze .pf-medal { box-shadow: 0 0 0 2px var(--pf-bronce-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges small { font-size: var(--fs-75); font-weight: 600; opacity: 0.75; line-height: 1.2; max-width: 76px; overflow-wrap: normal;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.pf-peek--card .btn-row { position: sticky; bottom: calc(-22px - var(--safe-bottom)); z-index: 1; background: var(--bg1);
+  margin: var(--s-12) 0 calc(-22px - var(--safe-bottom)); padding-bottom: calc(22px + var(--safe-bottom)); }
+.pf-peek--card .btn-row::before { content: ''; position: absolute; inset: auto 0 100% 0; height: var(--s-24); pointer-events: none;
+  background: linear-gradient(to top, var(--bg1), rgb(var(--bg1-rgb) / 0)); }
