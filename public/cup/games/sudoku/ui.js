@@ -252,12 +252,13 @@ export function mount(raiz, ctx) {
   const board = el('div', { class: 'sd-board', id: 'sd-board', 'data-tablero': 'sudoku', 'data-n': G.n, style: `--n:${G.n}`, role: 'grid' },
     ...[...Array(G.cells)].map((_, i) => el('button', { type: 'button', class: 'sd-cell', 'data-i': i, onClick: () => select(i) })));
   const cells = [...board.children];
-  const pad = el('div', { class: 'sd-pad', id: 'sd-pad', style: `--n:${G.n};--half:${Math.ceil(G.n / 2)}` },
+  const pad = el('div', { class: 'sd-pad', id: 'sd-pad', style: `--n:${G.n}` },
     ...[...Array(G.n)].map((_, k) => el('button', { type: 'button', class: 'sd-key', 'data-d': k + 1, id: `sd-key-${k + 1}`, onClick: () => press(k + 1) },
       el('b', {}, String(k + 1)), el('small', {}))));
   const keys = [...pad.children];
-  // Big keys on two rows (lab: #seccion-sudoku-big-keys): for fat fingers, the same digits in rows of five (three on 6×6)
-  const bigKeys = on => pad.classList.toggle('sd-pad--big', !!on);
+  // Big keys on two rows (lab: #seccion-sudoku-big-keys): for fat fingers, on 9×9 five keys and four centred under
+  // them; 6×6 keeps its one row, whose keys are already wide
+  const bigKeys = on => pad.classList.toggle('sd-pad--big', !!on && dificil);
   bigKeys(flagGuess('sudoku-big-keys'));
   flag('sudoku-big-keys').then(bigKeys).catch(() => {});
   const btnNotes = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-notes', 'aria-pressed': 'false', onClick: () => { SFX.tap(); notesMode = !notesMode; draw(); } }, T.sdNotes);

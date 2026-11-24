@@ -78,7 +78,7 @@ ok(await ev(`[...document.querySelectorAll('#sd-board .sd-cell')].every(c => c.t
 await ev(`document.getElementById('btn-fin').click(); 1`);
 ok(await waitFor(`/^0/.test(document.querySelector('#screen-resultado.active .score-big')?.textContent || '')`, 5000), 'given up, 0 points');
 
-// Big keys on two rows (flag sudoku-big-keys): on, rows of five with taller keys
+// Big keys on two rows (flag sudoku-big-keys): on 9×9, five keys and four centred under them, taller; 6×6 keeps one row
 await ev(`localStorage.setItem('juegos-de-salon:flags', JSON.stringify({ ...JSON.parse(localStorage.getItem('juegos-de-salon:flags') || '{}'), 'sudoku-big-keys': { state: 'all' } })); localStorage.removeItem('juegos-de-salon:flags-off'); 1`);
 await b.go(`${SITE}/sudoku/?test&lang=es`, 1500);
 await waitFor(`!!document.getElementById('btn-level')`);
@@ -86,7 +86,7 @@ await ev(`document.getElementById('btn-level').getAttribute('aria-checked') === 
 await waitFor(`document.querySelectorAll('.sd-demo .sd-dcell').length === 81`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 await waitFor(`document.querySelectorAll('#sd-board .sd-cell').length === 81 && !document.getElementById('cuenta')`, 9000);
-ok(await ev(`getComputedStyle(document.getElementById('sd-pad')).gridTemplateColumns.split(' ').length`) === 5, 'with its flag the pad is two rows of five');
+ok(await ev(`(() => { const r = k => document.getElementById('sd-key-' + k).getBoundingClientRect(); return r(6).top > r(5).top && r(1).top === r(5).top && Math.abs((r(6).left + r(9).right) / 2 - (r(1).left + r(5).right) / 2) < 2; })()`), 'with its flag the pad is five keys, then four centred under them');
 ok(await ev(`document.getElementById('sd-key-1').getBoundingClientRect().height >= 52`), 'and each key is at least 52 px tall');
 await b.shot('05-big-keys');
 
