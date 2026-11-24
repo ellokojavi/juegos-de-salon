@@ -1,6 +1,7 @@
 # The 🔥 Popular label, refreshed every week on its own (D-547, amends D-361): every Monday it counts
 # the games finished in the last four weeks (tools/agents/popularity.mjs update) and, if the order
-# changed, opens a PR with the two rewritten lines of games.js, waits for its checks and merges it.
+# changed, opens a PR with the two rewritten lines of games.js, waits for its checks and merges it
+# (behind main, it turns on auto-merge and the merge queue merges it).
 # The label is not stored per game: `populares()` in games.js gives it to the first three of that
 # order (not La Copa, not a game still "New"), so a game that drops out of the three loses it with
 # the same merge. A week with the same order opens nothing.
@@ -108,5 +109,12 @@ jobs:
           done
           [ "$verdict" = passed ] || { echo "::error::the checks of #$pr did not pass ($verdict): it stays open"; exit 1; }
           if [ "$(gh pr view "$pr" --json mergeable --jq .mergeable)" = CONFLICTING ]; then echo "::error::#$pr conflicts with main"; exit 1; fi
-          gh pr merge "$pr" --merge
-          gh workflow run publish.yml --ref main
+          # main requires branches up to date (D-586): behind main, a plain merge is refused (#1825 and the
+          # week before failed here and sat open). Then auto-merge goes on and the merge queue brings it up
+          # to date, merges it and starts the Publish run such a merge does not wake (merge-queue.mjs).
+          if gh pr merge "$pr" --merge; then
+            gh workflow run publish.yml --ref main
+          else
+            gh pr merge "$pr" --auto --merge
+            echo "::notice::#$pr is behind main: auto-merge is on and the merge queue takes it from here"
+          fi
