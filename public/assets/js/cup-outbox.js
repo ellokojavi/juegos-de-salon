@@ -43,6 +43,8 @@ function escribirCola(cola, storage = store()) {
 /** Where the service worker reads the queue and writes what it uploaded (sw.js, `cup-outbox` sync). */
 export const SYNC_CACHE = 'cup-sync';
 export const SYNC_TAG = 'cup-outbox';
+/** A key of that cache, as the worker reads it: from the site's root (a bare 'outbox' written from /cup/ was /cup/outbox). */
+export const syncKey = name => new URL(`../../${name}`, import.meta.url).href;
 const json = v => new Response(JSON.stringify(v), { headers: { 'content-type': 'application/json' } });
 /** The queue, for the service worker. Nothing to do where there is no Cache Storage (node, old browsers). */
 export async function mirror(cola, { caches = globalThis.caches } = {}) {
@@ -50,8 +52,8 @@ export async function mirror(cola, { caches = globalThis.caches } = {}) {
   try {
     const { firebaseConfig: c } = await import('./firebase-config.js');
     const cache = await caches.open(SYNC_CACHE);
-    if (cola.length) await cache.put('outbox', json({ queue: cola, apiKey: c.apiKey, databaseURL: c.databaseURL }));
-    else await cache.delete('outbox');
+    if (cola.length) await cache.put(syncKey('outbox'), json({ queue: cola, apiKey: c.apiKey, databaseURL: c.databaseURL }));
+    else await cache.delete(syncKey('outbox'));
   } catch (_) { /* the page uploads it, as before */ }
 }
 
@@ -72,10 +74,10 @@ export async function reconcile({ storage = store(), caches = globalThis.caches,
   let done = null;
   try {
     const cache = await caches.open(SYNC_CACHE);
-    const r = await cache.match('done');
+    const r = await cache.match(syncKey('done'));
     if (!r) return null;
     done = await r.json();
-    await cache.delete('done');
+    await cache.delete(syncKey('done'));
   } catch (_) { return null; }
   const ids = new Set([...(done.sent || []), ...(done.late || []), ...(done.dup || [])]);
   escribirCola(readQueue(storage).filter(x => !ids.has(x.id)), storage);
