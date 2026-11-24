@@ -35,7 +35,7 @@
 import { LOCAL_SECRETS, NIGHT_GAMES } from './secret-achievements.js';
 
 export { NIGHT_GAMES };
-export const GROUPS = ['daily', 'cup', 'duels', 'games'];
+export const GROUPS = ['games', 'daily', 'cup', 'duels'];
 /** The duels' badges show only while the duels do (lab flag rivals). */
 export const DUELS_FLAG = 'rivals';
 export const DUEL_WINS = 10;     // duels won
