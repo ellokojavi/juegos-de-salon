@@ -314,3 +314,7 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
   on the real page (serve `public/`, change the DOM with Playwright using the page's own CSS classes and
   tokens, screenshot) and send the image, not only text. A mockup with its own styles does not count:
   it must look like the card or screen it changes, next to what surrounds it.
+  **It reaches the owner as a published Artifact page, readable on a phone** (the owner, 2026-11-24): the
+  owner works mostly from the phone, where a PNG left on disk or a file card cannot be opened. Publish one
+  page with the Artifact tool (the screenshots embedded, or the mockup itself, at phone width) and give
+  its link; never only a file path or an attached image.
