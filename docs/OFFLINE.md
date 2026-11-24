@@ -102,6 +102,10 @@ PR that changes what is kept on the phone.
   stands aside while a page of the app is on screen. iPhone has no Background Sync: there the screens
   say the day goes up the next time the app opens with signal (`sw-sync.test.mjs`).
 
+**Cache keys from a page are absolute from the site's root** (`configKey` in `offline-ready.js`, `syncKey` in
+`cup-outbox.js`): a bare key like `'progress'` resolves against the page's own folder, so `/profile/` or `/cup/`
+would miss what `sw.js` wrote at the root.
+
 ## Caching (amends D-221)
 
 - Pages: network-first with a timeout, cache as fallback, so an online player always gets the latest.

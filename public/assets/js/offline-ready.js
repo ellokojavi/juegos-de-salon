@@ -29,6 +29,12 @@ export function lastState(storage = globalThis.localStorage) {
   try { const s = JSON.parse(storage.getItem(LAST_KEY) || 'null'); return ['ready', 'missing', 'unsupported'].includes(s?.state) ? s : null; } catch (_) { return null; }
 }
 const RAIZ = new URL('../../', import.meta.url);
+/**
+ * A key of the worker's config cache (`progress`, `list`), as the worker wrote it: from the site's root. A bare
+ * `'progress'` is resolved against the page, so /profile/ asked for /profile/progress, found nothing and its ⚙️ row
+ * said «Preparando los juegos…» while the home page, at the root, had the cloud ready and gone (the owner, 2026-11-24).
+ */
+export const configKey = name => new URL(name, RAIZ).href;
 /** A storing not heard from in this long stopped (the worker was killed): it is not loading any more. */
 export const STALE_MS = 60_000;
 /** With no list and no word from the worker after this long, nothing is being stored. */
@@ -102,8 +108,8 @@ export async function readState({ nav = globalThis.navigator, cachesApi = global
   const online = nav.onLine !== false;
   try {
     const config = await cachesApi.open(CONFIG);
-    const progress = await json(await config.match('progress'));
-    const list = await json(await config.match('list'));
+    const progress = await json(await config.match(configKey('progress')));
+    const list = await json(await config.match(configKey('list')));
     if (progress?.storing && Date.now() - (progress.at || 0) < STALE_MS) return stateOf({ progress, online });
     if (!list?.urls?.length) return stateOf({ progress, online });
     const cache = await cachesApi.open(`jds-release-${list.release}`);

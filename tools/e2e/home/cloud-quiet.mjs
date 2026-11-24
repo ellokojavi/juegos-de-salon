@@ -109,6 +109,20 @@ for (const width of [390, 320]) {
   await settings();
   ok(await waitFor(`!!document.getElementById('or-fila')?.offsetHeight`), `${width}: flag on: ⚙️ has «Juegos sin señal»`);
   ok(await ev(`document.getElementById('or-fila').getBoundingClientRect().height >= 44 && document.documentElement.scrollWidth <= ${width}`), `${width}: the row is a 44 px tap target, nothing scrolls sideways`);
+  if (width === 390) {
+    // The real state, not pretended: what the worker kept, under its keys at the site's root (it writes 'list' from /sw.js),
+    // read from /profile/ with nothing remembered. A bare key there was /profile/list: the row stayed «Preparando…» (2026-11-24)
+    await ev(`(async () => {
+      const cfg = await caches.open('jds-config'), rel = await caches.open('jds-release-e2e');
+      await cfg.put('/list', new Response(JSON.stringify({ release: 'e2e', urls: ['./', 'zip/'] })));
+      await cfg.put('/progress', new Response(JSON.stringify({ storing: false, at: Date.now() })));
+      for (const u of ['/', '/zip/']) await rel.put(u, new Response('x'));
+      localStorage.removeItem('juegos-de-salon:offline-ready-last');
+    })()`);
+    await settings();
+    ok(await waitFor(`document.getElementById('or-fila')?.dataset.state === 'ready'`), `${width}: on /profile/, the row reads the worker's real caches: ready, like the home page`);
+    await ev(`Promise.all(['jds-config', 'jds-release-e2e'].map(n => caches.delete(n)))`);
+  }
   // At 320, the row's two longest lines; every state at 390
   for (const [state, title] of Object.entries(TITLES).filter(([st]) => width === 390 || st === 'unsupported' || st === 'missing')) {
     ok(await pretend(state) && await waitFor(`document.getElementById('or-fila').dataset.state === '${state}' && document.getElementById('or-fila-estado').textContent.startsWith('${title}')`), `${width}: ${state}: the row says «${title}…» with its cloud`);
