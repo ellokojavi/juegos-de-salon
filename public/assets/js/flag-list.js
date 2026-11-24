@@ -5,6 +5,7 @@
  */
 export const FLAGS = {
   'badge-details': '🎖️ Profile: a tap on a badge whose card hides something opens a sheet with it (the games left, the premiere, the month as a calendar…)',
+  'profile-chips': '🎖️ Profile: «Jugando desde…» and the badges count as two chips under the name, not a sentence',
   'profile-plays': '🎮 Profile: «Tus partidas» moves from Rankings to the profile\'s Logros tab, as one bar per game, five shown',
   'panel-nav-more': '📊 Panel on a phone: five tabs and ☰ More at the bottom, the other sections in a sheet by group',
   'cup-footer': '🏆 La Copa: the board ends with the site footer, its report and leave links as tiles (U-38)',
@@ -38,6 +39,7 @@ export const FLAGS = {
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'aletazo': '🐤 Aletazo: the game, on the home page, the search and new cups (D-517\'s way), launched 2026-11-09 at 00:00 Pacific',
+  'sudoku-big-keys': '#️⃣ Sudoku: the number pad on two rows of bigger keys, for fat fingers',
   'sudoku': '#️⃣ Sudoku: the game, on the home page, the search and new cups (D-517\'s way), launching 2026-11-11 at 21:00 Pacific',
   'memory': '👀 Memorice: the game, on the home page, the search and new cups (D-517\'s way); its launch date is the owner\'s to pick',
   'dominorama': '🎲 Dominorama: the game, on the home page, the search and new cups (D-517\'s way); prepared, not launched: the owner picks the date',

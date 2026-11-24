@@ -36,7 +36,7 @@ const small = b => b.evaluate(`[...document.querySelectorAll('main button, main 
 for (const W of [320, 390]) {
   const b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
   // The home page as the owner sees it in Labs: its icon view (flag home-carousels), with the profile's pill
-  b.flags({ profile: 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all' });
+  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all' });
   const ev = e => b.evaluate(e);
   // A guest (a clean phone, so the script can run again)
   await b.go(`${SITE}/profile/?test`, 1500);
@@ -134,6 +134,8 @@ for (const W of [320, 390]) {
   await ev(`localStorage.setItem('juegos-de-salon:partidas', ${JSON.stringify(plays0 ?? '0')})`);
   ok(await ev(`document.querySelector('.pf-player')?.textContent.includes('Javi')`), `${W}: the card names the player`);
   ok(await ev(`!document.querySelector('.pf-avatar') && !!document.querySelector('.pf-card .pf-player .rk-flag, .pf-card .pf-player')`), `${W}: the card is the player's flag and name, no initial in a circle`);
+  // 🎖️ Lab profile-chips (the owner, 2026-11-24): since when and the badges as two chips on one line, each with its sentence as its label
+  ok(await ev(`(() => { const c = [...document.querySelectorAll('.pf-card .pf-chips .chip')], p = document.querySelector('.pf-card .pf-chips'); return c.length === 2 && /^📅 /.test(c[0].textContent) && /^🎖️ \\d+\\/\\d+$/.test(c[1].textContent) && /desde/i.test(c[0].getAttribute('aria-label')) && /logros/.test(c[1].getAttribute('aria-label')) && c[0].getBoundingClientRect().top === c[1].getBoundingClientRect().top && p.getBoundingClientRect().right <= ${W} && !document.querySelector('.pf-since'); })()`), `${W}: 🎖️ the card's chips: 📅 since when and 🎖️ n/total on one line, their sentences as labels`);
   // The figures pop in once the server answers (the owner, 2026-11-23), then stay
   await sleep(1600);
   ok(/14/.test(await ev(`document.querySelector('.pf-stat b')?.textContent`)), `${W}: the card shows the 14-day streak`);
