@@ -36,7 +36,7 @@ const small = b => b.evaluate(`[...document.querySelectorAll('main button, main 
 for (const W of [320, 390]) {
   const b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
   // The home page as the owner sees it in Labs: its icon view (flag home-carousels), with the profile's pill
-  b.flags({ profile: 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all' });
+  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all' });
   const ev = e => b.evaluate(e);
   // A guest (a clean phone, so the script can run again)
   await b.go(`${SITE}/profile/?test`, 1500);
@@ -65,6 +65,14 @@ for (const W of [320, 390]) {
   const s0 = await small(b);
   ok(!s0, `${W}: guest, every tappable thing is 44 px or more${s0 ? ` (${s0})` : ''}`);
   await full(b, `guest-${W}`, W);
+  // 🎖️ A badge's detail (lab flag badge-details): a tap on Explorador opens its sheet with the games left, each a link
+  await ev(`document.querySelector('.pf-badge--tap[data-badge="explorer"]').click()`); await sleep(500);
+  ok(await ev(`(() => { const h = document.querySelector('.pf-dt'); return !!h && h.querySelectorAll('a.pf-dt-row').length >= 1 && h.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 🎖️ a tap on Explorador opens its detail, the games left as links`);
+  const sd = await small(b);
+  ok(!sd, `${W}: 🎖️ the detail, every tappable thing is 44 px or more${sd ? ` (${sd})` : ''}`);
+  await b.shot(`detail-${W}`);
+  await ev(`document.querySelector('.pf-dt-x').click()`); await sleep(300);
+  ok(await ev(`!document.querySelector('.pf-dt')`), `${W}: 🎖️ ✕ closes the detail`);
   // Seeded away from the profile: an open profile page would redraw for the new player and note its badges as seen
   await b.go(`${SITE}/privacy/?test`, 1500);
   // A player: two rivals, then the player with games, a 14-day streak and four early mornings
@@ -126,6 +134,8 @@ for (const W of [320, 390]) {
   await ev(`localStorage.setItem('juegos-de-salon:partidas', ${JSON.stringify(plays0 ?? '0')})`);
   ok(await ev(`document.querySelector('.pf-player')?.textContent.includes('Javi')`), `${W}: the card names the player`);
   ok(await ev(`!document.querySelector('.pf-avatar') && !!document.querySelector('.pf-card .pf-player .rk-flag, .pf-card .pf-player')`), `${W}: the card is the player's flag and name, no initial in a circle`);
+  // 🎖️ Lab profile-chips (the owner, 2026-11-24): since when and the badges as two chips on one line, each with its sentence as its label
+  ok(await ev(`(() => { const c = [...document.querySelectorAll('.pf-card .pf-chips .chip')], p = document.querySelector('.pf-card .pf-chips'); return c.length === 2 && /^📅 /.test(c[0].textContent) && /^🎖️ \\d+\\/\\d+$/.test(c[1].textContent) && /desde/i.test(c[0].getAttribute('aria-label')) && /logros/.test(c[1].getAttribute('aria-label')) && c[0].getBoundingClientRect().top === c[1].getBoundingClientRect().top && p.getBoundingClientRect().right <= ${W} && !document.querySelector('.pf-since'); })()`), `${W}: 🎖️ the card's chips: 📅 since when and 🎖️ n/total on one line, their sentences as labels`);
   // The figures pop in once the server answers (the owner, 2026-11-23), then stay
   await sleep(1600);
   ok(/14/.test(await ev(`document.querySelector('.pf-stat b')?.textContent`)), `${W}: the card shows the 14-day streak`);
@@ -133,6 +143,7 @@ for (const W of [320, 390]) {
   await sleep(1200);
   ok(await ev(`(() => { const p = document.querySelector('.pf-plays-panel'); if (!p) return false; const li = [...p.querySelectorAll('.pf-play')], shown = li.filter(x => !x.hidden); return li.length === 8 && shown.length === 5 && li[0].dataset.game === 'reinas' && li[0].querySelector('b').textContent === '6' && /20 partidas/.test(p.textContent) && p.getBoundingClientRect().height < 420; })()`), `${W}: 🎮 your games played: eight bars, Reinas first with 6, five shown, not the whole screen`);
   await ev(`document.querySelector('.pf-plays-panel').scrollIntoView({ block: 'center' })`); await sleep(900);
+  ok(await ev(`(() => { const li = document.querySelector('.pf-play'), r = li.getBoundingClientRect(), a = li.querySelector('a.pf-play-name'); const at = (x, y) => document.elementFromPoint(x, y)?.closest('a') === a; return !!a && /\\/[a-z]/.test(a.getAttribute('href')) && at(r.right - 14, r.top + r.height / 2) && at(r.left + r.width / 2, r.top + 2) && at(r.left + r.width / 4, r.bottom - 2) && document.elementFromPoint(r.left + 4, r.bottom + 3)?.closest('a') !== a; })()`), `${W}: 🎮 the whole row of a game, count included, opens its cover, and only that row`);
   await b.shot(`plays-${W}`);
   await ev(`document.querySelector('.pf-plays-panel .pf-more').click()`); await sleep(200);
   ok(await ev(`(() => { const p = document.querySelector('.pf-plays-panel'); return [...p.querySelectorAll('.pf-play')].every(x => !x.hidden) && p.querySelector('.pf-more').getAttribute('aria-expanded') === 'true' && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 🎮 «Ver 3 juegos más» opens the rest, and closes them again`);

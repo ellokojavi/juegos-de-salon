@@ -68,7 +68,9 @@ job's log, find the cause, fix it on the branch and push, without asking the own
 
 `main` requires branches up to date, so auto-merge only merges a PR whose checks ran on today's main.
 `.github/workflows/merge-queue.yml` brings **one** PR at a time up to date: the open PR with auto-merge
-on the longest whose `tests` and `end-to-end` passed but that is behind main. It merges main in
+on the longest that is behind main, whose `tests` passed and whose `end-to-end` did not fail (D-618:
+`end-to-end` runs once, after the update; the queue cancels the running `end-to-end` of a behind PR,
+since it tests a main the PR can no longer merge into, and a cancelled run is not red). It merges main in
 (GitHub's update-branch; on a conflict only in generated files, `sync-pr.mjs`), labels it `merge-queue`
 and waits until its checks finish; then auto-merge merges it, or it went red and its session fixes it.
 A real conflict gets one comment and the PR is skipped until its session pushes a fix. A 🔴 PR waits
