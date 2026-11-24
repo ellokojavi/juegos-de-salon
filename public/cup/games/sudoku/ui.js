@@ -257,8 +257,8 @@ export function mount(raiz, ctx) {
       el('b', {}, String(k + 1)), el('small', {}))));
   const keys = [...pad.children];
   // Big keys on two rows (lab: #seccion-sudoku-big-keys): for fat fingers, on 9×9 five keys and four centred under
-  // them; 6×6 keeps its one row, whose keys are already wide
-  const bigKeys = on => pad.classList.toggle('sd-pad--big', !!on && dificil);
+  // them, and the board's digits a little bigger; 6×6 keeps its one row, whose keys are already wide
+  const bigKeys = on => { pad.classList.toggle('sd-pad--big', !!on && dificil); board.classList.toggle('sd-board--big', !!on && dificil); };
   bigKeys(flagGuess('sudoku-big-keys'));
   flag('sudoku-big-keys').then(bigKeys).catch(() => {});
   const btnNotes = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-notes', 'aria-pressed': 'false', onClick: () => { SFX.tap(); notesMode = !notesMode; draw(); } }, T.sdNotes);

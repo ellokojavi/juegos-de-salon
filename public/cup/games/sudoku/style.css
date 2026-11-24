@@ -97,6 +97,8 @@ body.sd-hard .sd-board { box-shadow: 0 0 0 2px rgb(var(--red-rgb) / 0.6), 0 0 18
 .sd-pad--big .sd-key { grid-column: span 2; min-height: 48px; padding: var(--s-4) 0; align-content: center; }
 .sd-pad--big .sd-key:nth-child(6) { grid-column: 2 / span 2; }
 .sd-pad--big .sd-key b { font-size: var(--fs-160); }
+/* With the big keys, the 9×9 board's digits a little bigger too */
+.sd-board--big .sd-cell { font-size: clamp(1.25rem, 6.2vw, 1.9rem); }
 
 .sd-tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
 .sd-tools .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
