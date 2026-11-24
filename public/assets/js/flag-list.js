@@ -38,6 +38,7 @@ export const FLAGS = {
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517), with its background music',
   'aletazo': '🐤 Aletazo: the game, on the home page, the search and new cups (D-517\'s way), launched 2026-11-09 at 00:00 Pacific',
+  'sudoku-big-keys': '#️⃣ Sudoku: the number pad on two rows of bigger keys, for fat fingers',
   'sudoku': '#️⃣ Sudoku: the game, on the home page, the search and new cups (D-517\'s way), launching 2026-11-11 at 21:00 Pacific',
   'memory': '👀 Memorice: the game, on the home page, the search and new cups (D-517\'s way); its launch date is the owner\'s to pick',
   'dominorama': '🎲 Dominorama: the game, on the home page, the search and new cups (D-517\'s way); prepared, not launched: the owner picks the date',
