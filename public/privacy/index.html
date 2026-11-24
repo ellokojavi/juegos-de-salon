@@ -97,7 +97,7 @@
     /** A text with the contact address as a mailto link. */
     const texto = s => String(s).split(CONTACT).flatMap((part, i) => (i ? [el('a', { href: `mailto:${CONTACT}` }, CONTACT), part] : [part]));
     /** An item about a lab game shows only once the game is out (texts.js). */
-    const out = id => ALL_GAMES.some(g => g.id === id && !g.oculto);
+    const out = id => ALL_GAMES.some(g => g.id === id && !g.oculto && !g.labs);
     const items = s => s.items.filter(i => typeof i === 'string' || out(i.game)).map(i => i.t ?? i);
     document.getElementById('pv').append(
       ...T.sections.map(s => el('section', { class: 'panel' },

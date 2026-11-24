@@ -81,7 +81,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`, with its own switch in the «T» tester tab, D-567, D-592) and listed in
   `/labs/`; the owner publishes it by flipping `flags/<id>` to *all* on its `/labs/` card (the one place, D-498),
-  no PR; its card moves to La Bodega on its own, keeping its switch (D-510, D-534), and a later PR removes the gate. Details: [docs/AGENTS.md](docs/AGENTS.md).
+  no PR; its card moves to La Bodega on its own, keeping its switch (D-510, D-534), and a later PR removes the gate. **Until it is on for all, a lab game or feature changes nothing a player sees** (D-617):
+  no mention in texts, privacy, menus, Rankings or shares; only the tester toggles show it. Details: [docs/AGENTS.md](docs/AGENTS.md).
 - **Tests**: run every `*.test.mjs` / `*.test.py` before the PR (commands in [docs/SESSIONS.md](docs/SESSIONS.md));
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
   the `end-to-end` check on GitHub is the gate.
