@@ -19,7 +19,7 @@ const S = `${P}.state()`;
 
 // Until its launch (flags/sudoku), the page sends a visitor home: the phone's copy of the flags says it is out
 await b.go(`${SITE}/sudoku/?test`, 800);
-await ev(`localStorage.setItem('juegos-de-salon:flags', JSON.stringify({ ...JSON.parse(localStorage.getItem('juegos-de-salon:flags') || '{}'), sudoku: { state: 'all' } })); 1`);
+await ev(`localStorage.setItem('juegos-de-salon:flags', JSON.stringify({ ...JSON.parse(localStorage.getItem('juegos-de-salon:flags') || '{}'), sudoku: { state: 'all' } })); localStorage.setItem('juegos-de-salon:flags-off', JSON.stringify({ 'sudoku-big-keys': true })); 1`);
 
 // The waiting room, easy
 await b.go(`${SITE}/sudoku/?test&lang=es`, 1500);
@@ -71,11 +71,24 @@ ok(await waitFor(`document.body.classList.contains('sd-hard')`, 2000), 'and the 
 await b.shot('04-lobby-hard');
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 ok(await waitFor(`!!document.getElementById('sd-board') && !document.getElementById('cuenta') && document.querySelectorAll('#sd-board .sd-cell').length === 81`, 9000), 'hard plays a 9×9 board');
+ok(await ev(`getComputedStyle(document.getElementById('sd-pad')).gridTemplateColumns.split(' ').length`) === 9, 'without its flag the pad is one row of nine');
 await ev(`document.getElementById('btn-give-up').click(); document.getElementById('btn-give-up').click(); 1`);
 ok(await waitFor(`!!document.getElementById('btn-fin') && /Te rendiste/.test(document.getElementById('sd-sello').textContent)`, 3000), 'giving up asks twice and ends the game');
 ok(await ev(`[...document.querySelectorAll('#sd-board .sd-cell')].every(c => c.textContent)`), 'showing the solution');
 await ev(`document.getElementById('btn-fin').click(); 1`);
 ok(await waitFor(`/^0/.test(document.querySelector('#screen-resultado.active .score-big')?.textContent || '')`, 5000), 'given up, 0 points');
+
+// Big keys on two rows (flag sudoku-big-keys): on, rows of five with taller keys
+await ev(`localStorage.setItem('juegos-de-salon:flags', JSON.stringify({ ...JSON.parse(localStorage.getItem('juegos-de-salon:flags') || '{}'), 'sudoku-big-keys': { state: 'all' } })); localStorage.removeItem('juegos-de-salon:flags-off'); 1`);
+await b.go(`${SITE}/sudoku/?test&lang=es`, 1500);
+await waitFor(`!!document.getElementById('btn-level')`);
+await ev(`document.getElementById('btn-level').getAttribute('aria-checked') === 'true' || document.getElementById('btn-level').click(); 1`);
+await waitFor(`document.querySelectorAll('.sd-demo .sd-dcell').length === 81`);
+await ev(`document.getElementById('btn-empezar').click(); 1`);
+await waitFor(`document.querySelectorAll('#sd-board .sd-cell').length === 81 && !document.getElementById('cuenta')`, 9000);
+ok(await ev(`getComputedStyle(document.getElementById('sd-pad')).gridTemplateColumns.split(' ').length`) === 5, 'with its flag the pad is two rows of five');
+ok(await ev(`document.getElementById('sd-key-1').getBoundingClientRect().height >= 52`), 'and each key is at least 52 px tall');
+await b.shot('05-big-keys');
 
 // The languages
 for (const [lang, start] of [['en', /Start/], ['pt', /Começar/]]) {

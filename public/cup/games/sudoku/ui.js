@@ -18,6 +18,7 @@ import * as E from './engine.js';
 import TEXTOS from './texts.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { flag, flagGuess } from '../../../assets/js/flags.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -251,10 +252,14 @@ export function mount(raiz, ctx) {
   const board = el('div', { class: 'sd-board', id: 'sd-board', 'data-tablero': 'sudoku', 'data-n': G.n, style: `--n:${G.n}`, role: 'grid' },
     ...[...Array(G.cells)].map((_, i) => el('button', { type: 'button', class: 'sd-cell', 'data-i': i, onClick: () => select(i) })));
   const cells = [...board.children];
-  const pad = el('div', { class: 'sd-pad', id: 'sd-pad', style: `--n:${G.n}` },
+  const pad = el('div', { class: 'sd-pad', id: 'sd-pad', style: `--n:${G.n};--half:${Math.ceil(G.n / 2)}` },
     ...[...Array(G.n)].map((_, k) => el('button', { type: 'button', class: 'sd-key', 'data-d': k + 1, id: `sd-key-${k + 1}`, onClick: () => press(k + 1) },
       el('b', {}, String(k + 1)), el('small', {}))));
   const keys = [...pad.children];
+  // Big keys on two rows (lab: #seccion-sudoku-big-keys): for fat fingers, the same digits in rows of five (three on 6×6)
+  const bigKeys = on => pad.classList.toggle('sd-pad--big', !!on);
+  bigKeys(flagGuess('sudoku-big-keys'));
+  flag('sudoku-big-keys').then(bigKeys).catch(() => {});
   const btnNotes = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-notes', 'aria-pressed': 'false', onClick: () => { SFX.tap(); notesMode = !notesMode; draw(); } }, T.sdNotes);
   const btnUndo = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-undo', onClick: () => undoMove() }, T.sdUndo);
   const btnHint = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-hint', onClick: () => hint() }, T.sdHint);
