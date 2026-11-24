@@ -317,6 +317,18 @@ function figure(jid, key, prefix, to) {
   return b;
 }
 
+// In the lab (flag profile-chips; lab: #seccion-profile-chips): since when and the badges as two chips, not a sentence (the owner, 2026-11-24)
+let chipsOn = false;
+flag('profile-chips').then(on => { if (on) { chipsOn = true; globalThis.__profile?.redraw?.(); } }).catch(() => {});
+const shortMonth = ms => new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(new Date(ms)).replace(/\.| de /g, ' ').replace(/\s+/g, ' ').trim();
+/** 📅 <month year> · 🎖️ n/total: the sentence each one stands for is its label, read aloud and shown on a long press. */
+function sinceChips(f, got, total) {
+  const chip = (text, label) => el('span', { class: 'chip', role: 'img', 'aria-label': label, title: label }, text);
+  return el('p', { class: 'chips pf-chips' },
+    f.since ? chip(`📅 ${shortMonth(f.since)}`, fmt(T.since, { month: monthName(f.since) })) : null,
+    chip(`🎖️ ${got}/${total}`, fmt(T.badgesOf, { n: got, total })));
+}
+
 /** The card: `ready` once the server's facts are in; before that, its figures wait (figure). */
 function card(yo, f, list, ready) {
   const fig = (key, prefix, known, value) => figure(yo.jid, key, prefix, !ready ? undefined : known ? value : null);
@@ -326,7 +338,8 @@ function card(yo, f, list, ready) {
     el('div', { class: 'pf-who' },
       el('div', {},
         el('p', { class: 'pf-player' }, conBandera(yo.co, yo.n)),
-        el('p', { class: 'muted pf-since' }, [f.since ? fmt(T.since, { month: monthName(f.since) }) : null, fmt(T.badgesOf, { n: got, total: list.length })].filter(Boolean).join(' · ')))),
+        chipsOn ? sinceChips(f, got, list.length)
+          : el('p', { class: 'muted pf-since' }, [f.since ? fmt(T.since, { month: monthName(f.since) }) : null, fmt(T.badgesOf, { n: got, total: list.length })].filter(Boolean).join(' · ')))),
     el('div', { class: 'pf-stats' },
       el('div', { class: 'pf-stat' }, fig('streak', '🔥 ', f.known?.streak, f.streak || 0), el('span', {}, T.statStreak)),
       el('div', { class: 'pf-stat' }, fig('plays', '', f.known?.plays, f.plays || 0), el('span', {}, T.statPlays)),
