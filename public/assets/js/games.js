@@ -646,8 +646,8 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * `node tools/agents/popularity.mjs update` and merges the change when the order changed. The two lines below are written by that tool; a game not in the list
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
-export const POPULARIDAD_FECHA = '2026-11-16';
-export const POPULARIDAD = ['copa', 'stick', 'aletazo', 'reinas', 'tango', 'stack', 'pintaminas', 'generala', 'loteo', 'rutas', 'puentes', 'agentes', 'donde', 'zip', 'microgames', 'anio', 'letras', 'toque-y-fama', 'ahorcado', 'desenredo', 'batalla-naval', 'linea-de-tiempo', 'dudo', 'sudoku', 'conexiones'];
+export const POPULARIDAD_FECHA = '2026-11-23';
+export const POPULARIDAD = ['stick', 'copa', 'aletazo', 'tango', 'reinas', 'pintaminas', 'stack', 'generala', 'rutas', 'puentes', 'loteo', 'microgames', 'zip', 'donde', 'letras', 'agentes', 'toque-y-fama', 'anio', 'ahorcado', 'sudoku', 'desenredo', 'linea-de-tiempo', 'batalla-naval', 'croc', 'memory', 'dominorama', 'dudo', 'conexiones', 'wobbles'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**

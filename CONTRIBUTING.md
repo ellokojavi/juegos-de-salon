@@ -11,6 +11,9 @@ modules: no build, no npm and no account for anything to work on it.
    show ✅ or ❌ in two checks, `tests` and `end-to-end`; with one red, it does not merge.
 4. The owner reviews it, merges it and publishes it. `main` is protected: nothing goes in without a PR, and
    what goes into `main` goes out right away on https://juegosdesalon.cl/.
+   Leave **Allow edits by maintainers** ticked when you open the PR, so it can be kept up to date with `main`.
+   A red check is rerun once on its own, then read and explained to you; if you go silent for 7 days with
+   something still asked of you, the owner decides whether to take the work over or close it with thanks (D-616).
 
 ### As an invited collaborator
 

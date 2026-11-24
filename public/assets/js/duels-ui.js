@@ -163,9 +163,6 @@ export async function shareInvite(d, btn) {
 export async function abrirNuevo({ rival = null, juego = null, formato: f0 = null, lista = null, alTocar = () => {} } = {}) {
   cargarCss();
   const yo = leerYo();
-  const J = await jugador();
-  const D = await J.duelos();
-  // A rematch (a rival and a game, or a rival only) opens as a quick duel, centred when both are known
   const centrado = !!rival && !!juego;
   let modo = centrado || rival ? 'quick' : 'menu', paso = 1, editando = -1;
   let elegido = rival, formato = FORMATOS[f0] ? f0 : 'bo3', g = juego && duelGame(juego) ? juego : DUEL_GAMES[0]?.id;
@@ -173,7 +170,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   const ponerRondas = () => { const n = FORMATOS[formato]; gr = Array.from({ length: n }, (_, k) => gr[k] || g); };
   const titulo = el(centrado ? 'h2' : 'h3', { id: 'dl-titulo', class: centrado ? 'display display--md' : '' });
   const cerrarBtn = el('button', { type: 'button', class: 'icon-btn', 'aria-label': '✕' }, '✕');
-  const cuerpo = el('div', { class: 'stack dl-sheet' });
+  const cuerpo = el('div', { class: 'stack dl-sheet', 'aria-busy': 'true' });
   const panel = el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'dl-titulo' },
     centrado ? null : el('div', { class: 'hoja-asa' }), el('div', { class: 'hoja-cabeza' }, titulo, cerrarBtn), cuerpo);
   const capa = el('div', { class: `hoja-capa${centrado ? ' portada-ventana' : ''}`, id: 'dl-hoja' }, el('div', { class: 'hoja-fondo' }), panel);
@@ -183,36 +180,51 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   capa.addEventListener('click', e => { if (e.target === capa || e.target.classList.contains('hoja-fondo')) cerrar(); });
   cerrarBtn.addEventListener('click', () => { alTocar(); cerrar(); });
   document.addEventListener('keydown', onKey);
+  titulo.textContent = centrado ? `⚔️ ${T.challenge}` : `⚔️ ${T.newDuel}`;
+  // Grey shapes where the content will be, so the sheet opens at once at about its final size
+  // instead of growing as the network answers (the owner, 2026-11-23: it was jumpy)
+  const esqueleto = n => el('div', { class: 'dl-chips dl-esqueleto', 'aria-hidden': 'true' }, Array.from({ length: n }, () => el('span', { class: 'dl-hueso' })));
+  if (!yo) cuerpo.replaceChildren(esqueleto(3), el('div', { class: 'dl-hueso dl-hueso--btn', 'aria-hidden': 'true' }));
   document.body.append(capa);
 
+  const pJ = jugador();
   if (!yo) {
-    titulo.textContent = `⚔️ ${T.newDuel}`;
+    const J = await pJ;
     const { bloqueJugador } = await import('./ranking.js');
+    cuerpo.removeAttribute('aria-busy');
     cuerpo.replaceChildren(bloqueJugador({ abierto: true, destacado: true, titulo: T.signInCard, alTocar }));
     J.escuchar(() => { if (leerYo() && capa.isConnected) { cerrar(); abrirNuevo({ rival, juego, formato: f0, lista, alTocar }); } });
     return capa;
   }
-  const misDuelos = lista || await D.mios().catch(() => []);
+  const pDuelos = pJ.then(J => J.duelos());
   // Who to suggest: the rivals already played, the cup friends this phone knows and the players of
-  // the player's own cups (the owner, 2026-11-23: pre-populated with the people you have played with)
-  const amigos = { ...J.amigos() };
-  try {
-    const copas = (await J.copas()).slice(0, 6);
-    for (const ps of await Promise.all(copas.map(c => D.deCopa(c.code).catch(() => [])))) for (const x of ps) amigos[x.jid] ||= x.n;
-  } catch (_) { /* no signal: what this phone knows */ }
-  let candidatos = sugeridos(misDuelos, yo.jid, amigos);
-  // Then the players active lately, so there is always someone to pick (the owner, 2026-11-23:
-  // signed in with no duels and no cups, nobody was suggested)
-  if (candidatos.length < 10) for (const x of await D.activos(10).catch(() => [])) if (!candidatos.some(c => c.jid === x.jid)) candidatos.push(x);
-  if (rival && !candidatos.some(c => c.jid === rival.jid)) candidatos = [rival, ...candidatos];
-  const elegir = c => { elegido = c; if (!candidatos.some(x => x.jid === c.jid)) candidatos = [c, ...candidatos]; };
+  // the player's own cups (the owner, 2026-11-23: pre-populated with the people you have played with).
+  // Loaded while the sheet is already drawn; only the rival chips wait for it.
+  let candidatos = rival ? [rival] : null;
+  const cargarCandidatos = async () => {
+    const J = await pJ, D = await pDuelos;
+    const misDuelos = lista || await D.mios().catch(() => []);
+    const amigos = { ...J.amigos() };
+    try {
+      const copas = (await J.copas()).slice(0, 6);
+      for (const ps of await Promise.all(copas.map(c => D.deCopa(c.code).catch(() => [])))) for (const x of ps) amigos[x.jid] ||= x.n;
+    } catch (_) { /* no signal: what this phone knows */ }
+    let cs = sugeridos(misDuelos, yo.jid, amigos);
+    // Then the players active lately, so there is always someone to pick (the owner, 2026-11-23:
+    // signed in with no duels and no cups, nobody was suggested)
+    if (cs.length < 10) for (const x of await D.activos(10).catch(() => [])) if (!cs.some(c => c.jid === x.jid)) cs.push(x);
+    if (rival && !cs.some(c => c.jid === rival.jid)) cs = [rival, ...cs];
+    return cs;
+  };
+  const elegir = c => { elegido = c; if (!candidatos) candidatos = []; if (!candidatos.some(x => x.jid === c.jid)) candidatos = [c, ...candidatos]; };
   const error = el('p', { class: 'rk-error', 'aria-live': 'polite' });
   const tap = f => () => { alTocar(); f(); pintar(); };
   const label = t => el('p', { class: 'dl-label' }, t);
   const chips = (opciones, actual, poner) => el('div', { class: 'dl-chips' }, opciones.map(([v, txt]) => el('button', {
     type: 'button', class: `chip-btn${v === actual ? ' on' : ''}`, 'data-v': v, onClick: tap(() => poner(v)),
   }, txt)));
-  const tiles = (actual, poner) => el('div', { class: 'dl-juegos' }, DUEL_GAMES.map(x => el('button', {
+  // `primero`: that game's tile goes first, so the one chosen from a ranking is in view
+  const tiles = (actual, poner, primero = null) => el('div', { class: 'dl-juegos' }, (primero && duelGame(primero) ? [duelGame(primero), ...DUEL_GAMES.filter(x => x.id !== primero)] : DUEL_GAMES).map(x => el('button', {
     type: 'button', class: `dl-juego${x.id === actual ? ' on' : ''}`, 'data-g': x.id, onClick: tap(() => poner(x.id)),
   }, el('span', { class: 'dl-ic', 'aria-hidden': 'true' }, gameIcon(x)), el('span', {}, nombreJuego(x)))));
   // The search field is made once and kept: typing never redraws the sheet, so the keyboard stays put
@@ -226,6 +238,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     if (q.length < 2) { res.replaceChildren(); return; }
     espera = setTimeout(async () => {
       const mia = ++consulta;
+      const D = await pDuelos;
       const r = await D.buscar(q).catch(() => []);
       if (mia !== consulta) return;
       res.replaceChildren(...(r.length ? r.map(c => el('button', { type: 'button', class: 'chip-btn', 'data-jid': c.jid, onClick: tap(() => { elegir(c); inp.value = ''; res.replaceChildren(); }) }, c.n))
@@ -234,7 +247,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   });
   const rivales = () => el('div', { class: 'stack' },
     label(T.rival),
-    el('div', { class: 'dl-chips', id: 'dl-rivales' },
+    !candidatos ? esqueleto(5) : el('div', { class: 'dl-chips', id: 'dl-rivales' },
       candidatos.slice(0, 10).map(c => el('button', { type: 'button', class: `chip-btn${elegido?.jid === c.jid ? ' on' : ''}`, 'data-jid': c.jid, onClick: tap(() => { elegido = c; }) }, c.n))),
     el('div', { class: 'field dl-campo' }, inp), res);
   const versus = () => el('div', { class: 'dl-versus' }, el('div', {}, el('b', {}, yo.n)), el('span', { class: 'display display--md' }, 'VS'), el('div', {}, el('b', {}, elegido.n)));
@@ -246,8 +259,10 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
       el('button', { type: 'button', class: 'opcion dl-modo', id: 'dl-medida', onClick: tap(() => { modo = 'custom'; paso = 1; }) }, el('b', {}, T.customTitle), el('span', { class: 'dl-nota' }, T.customSub))],
     quick: () => [
       centrado ? versus() : rivales(),
-      centrado ? null : el('div', { class: 'stack' }, label(T.game), tiles(g, v => { g = v; })),
-      el('div', { class: 'stack' }, label(T.format), chips([['bo3', T.bo3], ['bo5', T.bo5], ...(formato === 'pts' ? [['pts', T.pts]] : [])], formato, v => { formato = v; })),
+      // How many rounds first, then the game (the owner, 2026-11-24), with most points too
+      el('div', { class: 'stack' }, label(T.format), chips([['bo3', T.bo3], ['bo5', T.bo5], ['pts', T.pts]], formato, v => { formato = v; })),
+      // From a ranking the game comes chosen, and can be changed (the owner, 2026-11-23)
+      el('div', { class: 'stack' }, label(T.game), tiles(g, v => { g = v; }, centrado ? juego : null)),
       el('p', { class: 'dl-nota' }, T.how), error, enviarBtn()],
     custom: () => {
       const cabeza = el('div', { class: 'dl-pasos' }, el('span', { class: 'dl-nota' }, fmt(T.stepOf, { n: paso })),
@@ -273,6 +288,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     },
   };
   function pintar() {
+    cuerpo.removeAttribute('aria-busy');
     titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'quick' ? T.quickTitle : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
     cuerpo.replaceChildren(...vistas[modo]().filter(Boolean));
   }
@@ -282,6 +298,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     error.textContent = '';
     try {
       const custom = modo === 'custom';
+      const D = await pDuelos;
       const d = await D.retar({ b: elegido.jid, bn: elegido.n, g: custom ? gr[0] : g, f: formato, gr: custom ? gr : null });
       const invitar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-invitar', onClick: () => { alTocar(); shareInvite(d, invitar); } }, fmt(T.shareInvite, { n: elegido.n }));
       cuerpo.replaceChildren(
@@ -290,6 +307,8 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     } catch (_) { error.textContent = T.errSend; }
   }
   pintar();
+  const conRivales = () => capa.isConnected && ((modo === 'quick' && !centrado) || (modo === 'custom' && paso === 1));
+  if (!centrado) cargarCandidatos().catch(() => []).then(cs => { candidatos = cs; if (conRivales()) pintar(); });
   return capa;
 }
 

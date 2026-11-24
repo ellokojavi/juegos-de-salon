@@ -9,7 +9,8 @@
  *
  *   node tools/agents/pending.mjs check    # lists stuck PRs and stranded branches (exit 0 either way)
  *   node tools/agents/pending.mjs notify   # pending-watch.yml: keeps the "Pending work" issue current, closes it when empty
- *   node tools/agents/pending.mjs nudge    # the heartbeat, each hour (D-573): one comment on each red PR its session left
+ *   node tools/agents/pending.mjs nudge    # the heartbeat, each hour (D-573): one comment on each red PR its session left,
+ *                                          # and one rerun of a contributor's red commit (D-616)
  *   node tools/agents/pending.mjs stalled  # the takeover task: the PRs nudged 2 h ago and still not moving
  *
  * Only the REST API (`gh api`), so it works on GitHub, on the Mac mini and in a cloud session alike.
@@ -17,6 +18,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { run as sweep } from './sweep.mjs';
+import { outsideReason } from './lanes.mjs';
 
 export const REPO = 'ellokojavi/juegos-de-salon';
 export const TITLE = 'Pending work';
@@ -76,7 +78,7 @@ export function issueBody({ prs, branches, stale = [] }) {
   return lines.join('\n');
 }
 
-/** The owner's PRs only: a contributor's PR is the contributions agent's (D-568). */
+/** The owner's PRs only: a contributor's PR is the contributions agent's (D-568), after its one rerun (D-616). */
 export const OWNER = 'ellokojavi';
 /** The hidden mark of a nudge, with the commit it was about: one nudge per push. */
 export const MARK = sha => `<!-- stalled-nudge ${sha} -->`;
@@ -92,6 +94,25 @@ export function stall({ author, draft, red = [], pushedAt, nudgedAt = null }, no
   if (![OWNER, 'github-actions[bot]'].includes(author) || draft || !red.length) return null;
   if (nudgedAt) return (now - Date.parse(nudgedAt)) / HOUR >= TAKEOVER_AFTER ? 'takeover' : null;
   return (now - Date.parse(pushedAt)) / HOUR >= NUDGE_AFTER ? 'nudge' : null;
+}
+
+/** The hidden mark of the one automatic rerun of a contributor's red commit (D-616). */
+export const RERUN_MARK = sha => `<!-- contrib-rerun ${sha} -->`;
+
+/**
+ * What the hourly check does with an outside PR (D-616): 'rerun' when a required check is red on a
+ * commit with no push for an hour and it was not rerun yet. Red on a contributor's PR is often not
+ * theirs (a flaky test, or main broke a test they never touched: #1826 on 2026-11-24), and a rerun
+ * touches nothing of theirs. Once per commit; if it is still red, the contributions agent reads why.
+ */
+export function contribStall({ draft, red = [], pushedAt, rerunAt = null }, now = Date.now()) {
+  if (draft || !red.length || rerunAt) return null;
+  return (now - Date.parse(pushedAt)) / HOUR >= NUDGE_AFTER ? 'rerun' : null;
+}
+
+/** The comment after the rerun, for the contributor: what happened and that it may not be theirs. */
+export function rerunBody(sha, red) {
+  return `${RERUN_MARK(sha)}\n🔁 ${red.join(' and ')} failed on this commit and nothing changed for an hour, so it was run again once: sometimes a flaky test or something on \`main\` fails, not your code. If it fails again, the contributions round reads the log and says what to do.`;
 }
 
 /** The comment: the cloud session subscribed to its PR wakes on it (CLAUDE.md, D-522). */
@@ -152,6 +173,30 @@ export function gatherStalls(now = Date.now()) {
   return out;
 }
 
+/** The outside PRs (D-568) whose red commit gets its one rerun now (D-616). */
+export function gatherContribReruns(now = Date.now()) {
+  const out = [];
+  for (const p of pages(`repos/${REPO}/pulls`).filter(p => p.state === 'open' && !p.draft)) {
+    if (!outsideReason(p, pages(`repos/${REPO}/pulls/${p.number}/files`).map(f => f.filename))) continue;
+    const red = redChecks(p.head.sha);
+    if (!red.length) continue;
+    const pushedAt = api(`repos/${REPO}/commits/${p.head.sha}`).commit.committer.date;
+    const mark = pages(`repos/${REPO}/issues/${p.number}/comments`).find(c => c.body.includes(RERUN_MARK(p.head.sha)));
+    if (contribStall({ draft: p.draft, red, pushedAt, rerunAt: mark?.created_at }, now)) out.push({ number: p.number, title: p.title, sha: p.head.sha, red });
+  }
+  return out;
+}
+
+/** The workflow runs of a commit whose required check failed: those are rerun (their failed jobs only). */
+const WORKFLOW_OF = { tests: 'Tests', 'end-to-end': 'End to end' };
+function failedRuns(sha, red) {
+  const names = red.map(r => WORKFLOW_OF[r]).filter(Boolean);
+  const runs = api(`repos/${REPO}/actions/runs?head_sha=${sha}&per_page=50`).workflow_runs.filter(r => names.includes(r.name));
+  // The newest run of each workflow: an older one was superseded
+  return names.map(n => runs.filter(r => r.name === n).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))[0])
+    .filter(r => r && r.status === 'completed' && r.conclusion !== 'success');
+}
+
 function nudge() {
   const found = gatherStalls().filter(s => s.action === 'nudge');
   for (const s of found) {
@@ -159,6 +204,13 @@ function nudge() {
     console.log(`nudged #${s.number} ${s.title}: ${s.red.join(', ')}`);
   }
   if (!found.length) console.log('No red PR left by its session.');
+  // A contributor's red commit: one rerun, never a push to their branch (D-616)
+  for (const s of gatherContribReruns()) {
+    const runs = failedRuns(s.sha, s.red);
+    for (const r of runs) execFileSync('gh', ['run', 'rerun', String(r.id), '--failed', '-R', REPO]);
+    execFileSync('gh', ['pr', 'comment', String(s.number), '-R', REPO, '--body', rerunBody(s.sha, s.red)]);
+    console.log(`reran #${s.number} ${s.title}: ${s.red.join(', ')} (${runs.length} run(s))`);
+  }
 }
 
 function print({ prs, branches }) {

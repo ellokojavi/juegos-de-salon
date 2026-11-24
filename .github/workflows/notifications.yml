@@ -41,7 +41,7 @@ on:
 
 permissions:
   contents: read
-  # pending.mjs nudge comments on red PRs its session left (D-573)
+  # pending.mjs nudge comments on red PRs its session left (D-573) and reruns a contributor's red commit once (D-616)
   pull-requests: write
   checks: read
   # feedback.mjs sync opens the 🐞 reports as issues (D-569)
