@@ -33,6 +33,8 @@
 .pf-peek-mine { display: inline-flex; align-items: center; min-height: 44px; color: var(--cyan); font-weight: 900; text-decoration: none; }
 .pf-peek-body { display: grid; gap: var(--s-20); }
 .hoja .pf-peek-line { font-size: var(--fs-85); }
+/* Lab flag profile-chips: since when and the overall place as two chips, centred (the owner's pick, 2026-11-24) */
+.pf-peek-chips { justify-content: center; margin: 0; }
 .pf-peek-stats { margin-top: 0; }
 .pf-peek-part { display: grid; gap: var(--s-10); }
 .pf-peek-part h3 { margin: 0; font-size: var(--fs-100); font-weight: 900; }
