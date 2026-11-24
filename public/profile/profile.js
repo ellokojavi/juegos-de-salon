@@ -676,7 +676,7 @@ export async function drawProfile(root, { sub }) {
     let ready = false;
     const repaint = list => {
       cardSlot.replaceChildren(card(yo, f, list, ready));
-      badgesBox.replaceChildren(...[playsOn ? playsPanel(f) : null, ...badgePanels(list, { reveal, duels: duelsExtra })].filter(Boolean));
+      badgesBox.replaceChildren(...[...badgePanels(list, { reveal, duels: duelsExtra }), playsOn ? playsPanel(f) : null].filter(Boolean));
       if (badgesBox.isConnected) revealIntoView(badgesBox);
     };
     repaint(paint());
