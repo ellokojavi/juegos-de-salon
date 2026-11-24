@@ -205,6 +205,13 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
       context.label ? el('small', { class: 'pf-peek-here-label' }, context.label) : null,
       vals.length ? el('div', { class: 'pf-peek-here-vals' }, vals.map(x => el('span', {}, el('b', {}, x.v), unitWord(T, x.unit, x.v) ? el('small', {}, unitWord(T, x.unit, x.v)) : null))) : null,
       allTime)) : null;
+  // Lab (flag podium-shine; lab: #seccion-podium-shine): the podium's medal shines, rays of its metal behind and the card
+  // framed in it, only the number inside (the owner's pick C, 2026-11-24)
+  if (here && n && tier !== 'plain') flag('podium-shine').then(on => {
+    if (!on) return;
+    here.classList.add('pf-peek-here--shine');
+    here.querySelector('.pf-medal').textContent = String(n);
+  }).catch(() => {});
   const body = el('div', { class: 'pf-peek-body' }, el('p', { class: 'muted pf-peek-wait' }, T.peekLoading));
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),

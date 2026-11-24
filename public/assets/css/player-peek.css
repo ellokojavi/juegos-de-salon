@@ -78,3 +78,30 @@
   margin: var(--s-12) 0 calc(-22px - var(--safe-bottom)); padding-bottom: calc(22px + var(--safe-bottom)); }
 .pf-peek--card .btn-row::before { content: ''; position: absolute; inset: auto 0 100% 0; height: var(--s-24); pointer-events: none;
   background: linear-gradient(to top, var(--bg1), rgb(var(--bg1-rgb) / 0)); }
+/* Lab (podium-shine, the owner's pick C, 2026-11-24): the podium shines. Rays of its metal turn behind the medal, the medal
+   beats, the card is framed in its metal with a gleam crossing it; still for whoever asks for less motion */
+.pf-peek-here--shine { position: relative; overflow: hidden; flex-shrink: 0; isolation: isolate;
+  background: radial-gradient(120% 140% at 0% 50%, rgb(var(--pf-brillo) / 0.22), transparent 60%), var(--well);
+  box-shadow: inset 0 0 0 1.5px rgb(var(--pf-brillo) / 0.55); }
+.pf-peek-here--shine:has(.pf-badge--gold) { --pf-brillo: 255 201 60; }
+.pf-peek-here--shine:has(.pf-badge--silver) { --pf-brillo: 207 216 227; }
+.pf-peek-here--shine:has(.pf-badge--bronze) { --pf-brillo: 217 138 78; }
+.pf-peek-here--shine .pf-peek-here-medal { position: relative; isolation: isolate; }
+.pf-peek-here--shine .pf-peek-here-medal::before { content: ''; position: absolute; inset: -30px; border-radius: 50%; z-index: -1;
+  background: repeating-conic-gradient(rgb(var(--pf-brillo) / 0.55) 0 7deg, transparent 7deg 30deg);
+  -webkit-mask: radial-gradient(circle, rgb(var(--well-rgb)) 20%, transparent 70%); mask: radial-gradient(circle, rgb(var(--well-rgb)) 20%, transparent 70%);
+  animation: pf-rayos 3s linear infinite; }
+.pf-peek-here--shine .pf-medal { position: relative; overflow: hidden; font-size: 30px; line-height: 1;
+  box-shadow: 0 0 0 3px var(--pf-aro), 0 0 22px 4px rgb(var(--pf-brillo) / 0.6); animation: pf-late 3s ease-in-out infinite; }
+.pf-peek-here--shine .pf-badge--gold { --pf-aro: var(--pf-oro-aro); }
+.pf-peek-here--shine .pf-badge--silver { --pf-aro: var(--pf-plata-aro); }
+.pf-peek-here--shine .pf-badge--bronze { --pf-aro: var(--pf-bronce-aro); }
+.pf-peek-here--shine .pf-medal::after, .pf-peek-here--shine::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgb(var(--ink-rgb) / 0.8) 50%, transparent 60%) no-repeat; background-size: 300% 100%;
+  animation: pf-destello 3s ease-in-out infinite; }
+.pf-peek-here--shine .pf-medal::after { border-radius: 50%; }
+.pf-peek-here--shine::after { background-image: linear-gradient(105deg, transparent 40%, rgb(var(--ink-rgb) / 0.1) 50%, transparent 60%); animation-delay: -0.4s; }
+@keyframes pf-rayos { to { transform: rotate(30deg); } }
+@keyframes pf-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes pf-destello { 0% { background-position: 120% 0; } 45%, 100% { background-position: -30% 0; } }
+@media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before { animation: none; } }

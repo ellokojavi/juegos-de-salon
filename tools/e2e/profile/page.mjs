@@ -36,7 +36,7 @@ const small = b => b.evaluate(`[...document.querySelectorAll('main button, main 
 for (const W of [320, 390]) {
   const b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
   // The home page as the owner sees it in Labs: its icon view (flag home-carousels), with the profile's pill
-  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all' });
+  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all', 'podium-shine': 'all' });
   const ev = e => b.evaluate(e);
   // A guest (a clean phone, so the script can run again)
   await b.go(`${SITE}/profile/?test`, 1500);
@@ -251,6 +251,8 @@ for (const W of [320, 390]) {
   ok(await ev(`(() => { const r = [...document.querySelectorAll('.rk-ranking .rk-fila[data-peek]')].find(x => x.textContent.includes('Cata')); if (!r) return false; r.scrollIntoView({ block: 'center' }); r.click(); return true; })()`), `${W}: 👀 on a game's cover, a name in its ranking opens the sheet too`);
   await sleep(1500);
   ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!h && /Reinas|Queens/.test(h.textContent) && /semana/i.test(h.querySelector('.pf-peek-here-label').textContent) && /95\\s*pts/.test(h.querySelector('.pf-peek-here-vals').textContent) && /tiempo/.test(h.querySelector('.pf-peek-here-vals').textContent) && /histórico/.test(h.querySelector('.pf-peek-here-all').textContent) && !!h.querySelector('.pf-peek-here-medal.pf-badge--silver, .pf-peek-here-medal.pf-badge--gold, .pf-peek-here-medal.pf-badge--plain') && p.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it`);
+  // 🥇 Lab podium-shine (the owner's pick C, 2026-11-24): a podium place shines, only its number inside, the card framed and nothing sideways
+  ok(await ev(`(() => { const h = document.querySelector('#pf-peek .pf-peek-here'), m = h.querySelector('.pf-peek-here-medal'); if (m.classList.contains('pf-badge--plain')) return !h.classList.contains('pf-peek-here--shine'); const r = h.getBoundingClientRect(); return h.classList.contains('pf-peek-here--shine') && /^[123]$/.test(m.textContent.trim()) && getComputedStyle(m, '::before').animationName === 'pf-rayos' && r.height > 60 && r.right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 🥇 a podium place on the sheet shines with only its number; from 4th on, as before`);
   // 🎖️ Lab profile-chips on the sheet too (the owner's pick A, 2026-11-24): since when and the overall place as chips on one line, each with its sentence as its label
   ok(await ev(`(() => { const c = [...document.querySelectorAll('#pf-peek .pf-peek-chips .chip')]; if (!c.length || document.querySelector('#pf-peek .pf-peek-line')) return false; const t = c.map(x => x.getBoundingClientRect().top); return /📅/.test(c[0].textContent) && c.every(x => /\\d/.test(x.getAttribute('aria-label') || '')) && Math.max(...t) - Math.min(...t) < 2 && c.every(x => x.getBoundingClientRect().right <= ${W}); })()`), `${W}: 🎖️ the sheet shows since when (and the overall place) as chips on one line, the sentence as each label`);
   // The sheet's own buttons (the ranking under it has its own check on its page)
