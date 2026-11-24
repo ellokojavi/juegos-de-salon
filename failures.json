@@ -7232,6 +7232,32 @@
       "date": "2026-11-24T12:09:35.321Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45390052192,
+      "check": "tests",
+      "pr": 1851,
+      "branch": "badge-look",
+      "commit": "cfaa4bedd9f4a5aaa31f1922042f4e8d09ed3965",
+      "test": "public/assets/js/labs-puerta.test.mjs",
+      "error": "",
+      "signature": "0f6b2d2de6",
+      "date": "2026-11-24T12:09:49.255Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45390052192,
+      "check": "tests",
+      "pr": 1851,
+      "branch": "badge-look",
+      "commit": "cfaa4bedd9f4a5aaa31f1922042f4e8d09ed3965",
+      "test": "tools/e2e/footer-bottom.test.mjs",
+      "error": "",
+      "signature": "03ba96abef",
+      "date": "2026-11-24T12:09:49.255Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
