@@ -338,5 +338,21 @@ for (const W of [320, 390]) {
   ok(await ev(`window.__r === 'dentro'`), `${W}: the new name and the new PIN sign in again`);
   b.close();
 }
+// Flag settings-in-profile: 🔊 and the language only in the profile's ⚙️ (the owner, 2026-11-23)
+for (const W of [320, 390]) {
+  const b = await launch({ dir: `${OUT}/s${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
+  b.flags({ profile: 'all', 'home-carousels': 'all', 'settings-in-profile': 'all' });
+  const ev = e => b.evaluate(e);
+  const shown = `[...document.querySelectorAll('.sound-toggle, .lang-btn, .lang-toggle')].filter(x => x.offsetParent && !x.closest('.pf-settings')).length`;
+  for (const page of ['', 'hangman/', 'queens/', 'today/', 'records/']) {
+    await b.go(`${SITE}/${page}?test`, 3000);
+    ok(await ev(`${shown} === 0`), `${W}: /${page} shows no 🔊 and no language`);
+    ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: /${page}, no sideways scroll`);
+    await b.shot(`settings-off-${page.replace('/', '') || 'home'}-${W}`);
+  }
+  await b.go(`${SITE}/profile/?test`, 3000);
+  ok(await ev(`!document.documentElement.classList.contains('settings-in-profile')`), `${W}: the profile keeps its sound and language`);
+  b.close();
+}
 console.log(failures ? `✗ profile page: ${failures} failure(s)` : '✓ profile page');
 process.exit(failures ? 1 : 0);

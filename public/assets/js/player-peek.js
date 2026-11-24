@@ -23,7 +23,7 @@ import { el } from './ui.js';
 import { withIcon } from './game-icon.js';
 import { getLang, pickLang } from './i18n.js';
 import { ALL_GAMES, GAMES, SOLO_TABLES, FIRST_VARIANT_TABLES } from './games.js';
-import { jugador } from './jugador.js';
+import { jugador, leerYo } from './jugador.js';
 import { TODOTERRENO, UAD_PUNTOS, SIEMPRE, medallero, bandera } from './records.js';
 import { recorrer, fechaLocal } from './uno-al-dia.js';
 import { earned } from './badges.js';
@@ -166,6 +166,8 @@ export function unitWord(T, unit, v) {
 export async function peekPlayer(jid, { hint = {}, context = null, lang = getLang(), doc = document, onTap = () => {} } = {}) {
   if (!jid || doc.getElementById('pf-peek')) return null;
   loadCss(CSS);
+  // Another player's sheet opened on the profile (D-615); one's own is «see how others see me», counted there
+  if (jid !== leerYo()?.jid) import('./profile-usage.js').then(m => m.isProfilePath() && m.trackProfile(['peek'])).catch(() => {});
   const T = TEXTS[lang] || TEXTS.es;
   const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
   const num = x => new Intl.NumberFormat(lang).format(x);

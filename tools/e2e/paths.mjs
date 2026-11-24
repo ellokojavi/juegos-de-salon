@@ -144,7 +144,12 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
       const feedback={f1:{texto:'Me encantó la Generala, ¿pueden agregar más idiomas?',at:now-50*60000,nombre:'Cata',tipo:'sugerencia'},f2:{texto:'El botón de compartir no hace nada en mi celular',at:now-26*3600000,tipo:'problema'},f3:{texto:'Una copa de solo palabras',at:now-3*DAY,nombre:'Leo',tipo:'idea',tester:'LV'},f4:{texto:'Hola, ¿se puede jugar sin internet?',at:now-5*3600000,nombre:'Bia',v:'email',contexto:JSON.stringify({canal:'email',idioma:'pt'}),correoMascara:'b********a@g********m'}};
       // 💬 Feedback: where each message stands (f1 in an open PR, f3 closed and replied, f2 with no issue yet)
       const feedbackEstado={f1:{issue:901,state:'open',replied:false,prs:[{n:950,state:'open',title:'More languages'}]},f3:{issue:880,state:'closed',replied:true,prs:[{n:890,state:'merged',title:'A words-only cup'}]}};
-      window.__panel.seed({rooms,days,torneos:cups,push,uad,feedback,feedbackEstado,vista:'${view}'});})()`;
+      // 🎖️ Profile (D-615): two weeks of visits, ways in and taps; the browsers that opened it; the named use and new players
+      for(let k=0;k<14;k++){const b=days[today-k],pd=today-k;b.perfilPt={[pd]:{'visit-guest':2+k%3,'visit-signed':3+k%4,'via-pill':3,'via-bubble':k%2,'via-window':1,'via-link':1,'via-direct':k%3,'tab-badges':2,'tab-rankings':3+k%2,'tab-settings':1,peek:2,public:k%2,'aw-shown':1,'aw-go':k%2,'signin-start':1,'signin-profile':k%2,'create-profile':k%3?0:1,'signin-other':2,'create-other':1}};b.perfilIdPt={[pd]:Object.fromEntries(ids.slice(0,6+k%4).filter((id,i)=>(i+k)%3!==0&&i<20+k).map(id=>[id,1]))};}
+      const isoOf=d=>new Date(d*DAY).toISOString().slice(0,10);
+      const perfilUso={sara0001:{[isoOf(today)]:{v:3,b:2,r:1,p:2},[isoOf(today-3)]:{v:1,o:1,w:1}},pedro001:{[isoOf(today-1)]:{v:1,s:1,i:1}},ana00001:{[isoOf(today-2)]:{v:2,c:1,b:1}},nuevo002:{[isoOf(today)]:{v:1}}};
+      const jugadores={};for(let k=0;k<40;k++)jugadores['j'+String(k).padStart(7,'0')]={at:now-k*0.9*DAY,n:'P'+k};Object.assign(jugadores,{sara0001:{at:now-40*DAY,n:'Sara'},pedro001:{at:now-30*DAY,n:'Pedro'},ana00001:{at:now-2*DAY,n:'Ana'}});
+      window.__panel.seed({rooms,days,torneos:cups,push,uad,feedback,feedbackEstado,perfilUso,jugadores,vista:'${view}'});})()`;
 
 /* --- Pintaminas: the variant the phone remembers, and painting the whole board with the engine's solution --- */
 /* --- Loteo: the phone remembers the variant too, so each path starts from Numbers --- */
@@ -658,7 +663,7 @@ export const PATHS = {
    */
   panel: {
     ...Object.fromEntries([['data', '/users'], ['now', '/now'], ['summary', '/summary'], ['timeline', '/timeline'], ['tournament', '/cup'], ['games', '/group'], ['group', '/group'], ['individual', '/individual'], ['daily', '/daily'], ['users', '/users'], ['audience', '/users'],
-      ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['screens', '/screens'], ['health', '/health'], ['wbr', '/wbr'], ['game-report', '/game-report'], ['campaigns', '/campaigns'], ['feedback', '/feedback']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
+      ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['screens', '/screens'], ['health', '/health'], ['wbr', '/wbr'], ['game-report', '/game-report'], ['campaigns', '/campaigns'], ['feedback', '/feedback'], ['profile', '/profile']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
     // 📣 Campaigns' other two tabs (D-477)
     ...Object.fromEntries([['campaigns-features', 1], ['campaigns-skins', 2]].map(([shot, i]) => [shot, [SEED_PANEL('/campaigns'), `document.querySelectorAll('.campanas-tabs button')[${i}].click()`]])),
     // A splash card's Quick look, opened

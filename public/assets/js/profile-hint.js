@@ -9,6 +9,7 @@
 import { el } from './ui.js';
 import { getLang } from './i18n.js';
 import { leerYo } from './jugador.js';
+import { markVia } from './profile-usage.js';
 
 export const BUBBLE_KEY = 'juegos-de-salon:profile-bubble';
 export const INTRO_KEY = 'juegos-de-salon:profile-intro';
@@ -91,7 +92,7 @@ export function pillBubble(pill, { doc = document, lang = getLang(), tries = 6 }
     doc.defaultView?.removeEventListener('resize', place);
   };
   box = el('div', { class: 'pf-bubble', id: 'pf-bubble', role: 'status' },
-    el('a', { class: 'pf-bubble-txt', href: pill.href, onClick: () => mark(BUBBLE_KEY) }, el('b', {}, T.title), el('span', {}, T.text)),
+    el('a', { class: 'pf-bubble-txt', href: pill.href, onClick: () => { mark(BUBBLE_KEY); markVia('bubble'); } }, el('b', {}, T.title), el('span', {}, T.text)),
     el('button', { type: 'button', class: 'pf-bubble-x', 'aria-label': T.close, title: T.close, onClick: close }, '✕'));
   doc.body.append(box);
   fit(box, doc);

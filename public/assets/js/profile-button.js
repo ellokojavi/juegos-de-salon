@@ -12,6 +12,7 @@
  * profile's ⚙️). The offline ☁️ stays on the home page only.
  */
 import { leerYo } from './jugador.js';
+import { markVia } from './profile-usage.js';
 import { bandera } from './records.js';
 import { langButton, getLang } from './i18n.js';
 
@@ -120,6 +121,11 @@ export function profileEverywhere({ doc = document, profileHref = new URL('../..
     pillFace(pill, { lang, doc });
   };
   fix();
+  // The way in, for the owner's 🎖️ Profile (D-615): a tap on the pill leaves its mark in this tab
+  if (!root.dataset.pfVia) {
+    root.dataset.pfVia = '1';
+    doc.addEventListener('click', e => { if (e.target?.closest?.('.pf-home, #btn-rankings')) markVia('pill'); }, true);
+  }
   // The first time, a bubble from the pill says the player's things live there (profile-hint.js)
   if (!isProfile(doc)) setTimeout(() => import('./profile-hint.js').then(m => {
     m.demoReset(doc.location);

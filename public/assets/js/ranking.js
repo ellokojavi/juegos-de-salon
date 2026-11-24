@@ -125,6 +125,8 @@ export function bloqueJugador({ abierto = false, destacado = false, compacto = f
       if (!limpiarNombre(nombre.value)) { err.textContent = T.errName; return; }
       if (!esPin(pin.value)) { err.textContent = T.errPin; return; }
       ocupado(true);
+      // A sign-in started on the profile, for the owner's 🎖️ Profile (D-615); how it ends is counted by jugador.js
+      import('./profile-usage.js').then(m => m.isProfilePath() && m.trackProfile(['signin-start'], { withName: false })).catch(() => {});
       try {
         const J = await jugador();
         const r = await J.entrar(nombre.value, pin.value);

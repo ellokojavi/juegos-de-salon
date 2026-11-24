@@ -22,5 +22,8 @@
   },
   "extended-offline": {
     "state": "off"
+  },
+  "settings-in-profile": {
+    "state": "off"
   }
 }

@@ -26,6 +26,7 @@ import { TEXTS } from './texts.js';
 import { tableOf } from '../assets/js/player-peek.js';
 import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
 import { announced } from '../assets/js/secret-achievements.js';
+import { trackProfile, trackProfileVisit } from '../assets/js/profile-usage.js';
 
 const lang = getLang();
 const T = TEXTS[lang] || TEXTS.es;
@@ -564,7 +565,7 @@ function accountPanel(yo) {
  * hide (D-605): the sheet shows where someone stands, not how much they play.
  */
 function publicPanel(yo) {
-  const see = el('button', { type: 'button', class: 'btn btn--ghost pf-see-public', onClick: () => { tap(); import('../assets/js/player-peek.js').then(m => m.peekPlayer(yo.jid, { hint: yo, onTap: tap })); } }, T.seePublic);
+  const see = el('button', { type: 'button', class: 'btn btn--ghost pf-see-public', onClick: () => { tap(); trackProfile(['public']); import('../assets/js/player-peek.js').then(m => m.peekPlayer(yo.jid, { hint: yo, onTap: tap })); } }, T.seePublic);
   return el('section', { class: 'panel pf-settings pf-public' }, el('p', { class: 'lead rk-titulo' }, T.publicTitle),
     el('p', { class: 'muted rk-hint' }, T.publicHint), see);
 }
@@ -631,6 +632,8 @@ async function welcome(root, sub) {
 
 export async function drawProfile(root, { sub }) {
   welcome(root, sub).catch(() => {});
+  // This visit, for the owner's 🎖️ Profile (D-615): not the achievements' demo, which records nothing
+  if (!/[?&]achievement=demo/.test(location.search)) trackProfileVisit();
   const J = await jugador();
   let turn = 0;
   const draw = async () => {
@@ -661,7 +664,7 @@ export async function drawProfile(root, { sub }) {
     const badgesBox = el('div', { class: 'pf-tab' });
     const cardSlot = el('div', {});
     const seg = el('div', { class: 'seg pf-tabs', role: 'tablist' }, TABS.map(id => el('button', {
-      type: 'button', role: 'tab', 'data-tab': id, onClick: () => { tap(); show(id); },
+      type: 'button', role: 'tab', 'data-tab': id, onClick: ev => { tap(); if (!ev.currentTarget.classList.contains('on')) trackProfile([`tab-${id}`]); show(id); },
     }, T[`tab${id[0].toUpperCase()}${id.slice(1)}`])));
     const panes = { badges: badgesBox, rankings: el('div', {}), settings: settingsTab(yo) };
     function show(id) {

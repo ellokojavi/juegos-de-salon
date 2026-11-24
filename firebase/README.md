@@ -362,6 +362,16 @@ finished loads, loads with a failure, and the first 8 hex of each key's SHA-256.
 time (`public/assets/js/lab-usage.js`); only the owner reads. `flagsListas/<flag>` is the verdict
 `tools/agents/lab-ready.mjs check` writes for the /labs/ card; owner only. Checked by `firebase/lab-ready.test.mjs`.
 
+## How the profile is used (`perfilUso`, D-615)
+
+`perfilUso/<jid>/<YYYY-MM-DD>` = `{ v, b, r, s, p, o, w, i, c }`: on that Pacific date, a signed-in player's
+visits to /profile/, taps on its 🎖️, 🏅 and ⚙️ tabs, other players' sheets opened there, «Ver cómo me ven los
+demás», «Ver mis logros» in an achievement window, and whether they signed in or created their account on the
+profile. Only a phone seated as that player writes (`jugadorSeats/<jid>/<uid>`), one up at a time, only those
+letters, at most 200 a day, never deleting; only the owner reads. Over REST with the anonymous session's token
+(`jugador-firebase.js` `sumar`, no websocket). For the panel's accounts by day the owner's UID may also list
+`jugadores/` by `at` (`.indexOn: at`). Mirrored in `jugador-local.js`; checked by `firebase/profile-usage.test.mjs`.
+
 ## Publishing a lab feature (`labsPublish`, D-480)
 
 `labsPublish/<card id>` = `{ state: 'requested'|'working'|'pr'|'merged'|'failed', at, title?, note?,
@@ -458,6 +468,8 @@ stats/prod/days/20342/
   hour/21: 5                           phone's local hour
   aviso/dia: 3                         La Copa notifications tapped, by type (D-233)
   uad/dado: 9                          what is done in Uno al día, by event (D-230)
+  perfilPt/20341/tab-rankings: 4       the profile's use by event, guests and players (D-615)
+  perfilIdPt/20341/k3p9aaaaaa: 1       this browser opened the profile that Pacific day (D-615)
   pwa/android: 2                       opens from the installed app (?pwa), by system
   mandados/plazo: 4                    notifications delivered, by type: only notify.mjs writes them
   falla/js/cup: 3                      loads with failures, by type and page: recorded by vigia.js (D-251)

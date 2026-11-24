@@ -37,7 +37,7 @@ export function toPacificDays(days = {}) {
     for (const modes of Object.values(b.local || {})) for (const [m, ns] of Object.entries(modes || {})) if (cuenta({ mode: m })) enLocal += Object.values(ns || {}).reduce((a, v) => a + (Number(v) || 0), 0);
     const live = Math.abs(todos.filter(([, x]) => cuenta(x)).length - enLocal) <= 1 ? todos : [];
     for (const [key, val] of Object.entries(b)) {
-      if (key === 'live' || key === 'rooms' || key === 'activosPt' || key === 'entradasPt' || key === 'juegosPt') continue;
+      if (key === 'live' || key === 'rooms' || key === 'activosPt' || key === 'entradasPt' || key === 'juegosPt' || key === 'perfilPt' || key === 'perfilIdPt') continue;
       // local/ and fin/ come from live/ when the day has it (they match it one to one since 2026-10-04)
       if ((key === 'local' || key === 'fin') && live.length) continue;
       const c = caja(d);
@@ -57,6 +57,12 @@ export function toPacificDays(days = {}) {
       const j = (caja(Number(p)).jugadores ||= {});
       for (const [g, ids] of Object.entries(juegos || {})) { const m = (j[g] ||= {}); for (const [id, v] of Object.entries(ids || {})) m[id] = Math.max(m[id] || 0, Number(v) || 0); }
     }
+    // The profile's use (D-615): `perfil/<event>` summed and `perfilIds/<id>` on its Pacific date
+    for (const [p, evs] of Object.entries(b.perfilPt || {})) {
+      const e = (caja(Number(p)).perfil ||= {});
+      for (const [k, v] of Object.entries(evs || {})) e[k] = (e[k] || 0) + (Number(v) || 0);
+    }
+    for (const [p, ids] of Object.entries(b.perfilIdPt || {})) Object.assign(caja(Number(p)).perfilIds ||= {}, ids);
     for (const [p, pags] of Object.entries(b.entradasPt || {})) {
       conEntradasPt.add(Number(p));
       const e = (caja(Number(p)).entradasPt ||= {});

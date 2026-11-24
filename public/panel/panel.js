@@ -49,6 +49,7 @@ import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js'
 import { WIDTH_BANDS, HEIGHT_BANDS } from '../assets/js/screen-bands.js';
 import { wireReleasePush } from './release-push.js';
 import { labelProblem, newKey, linkOf, fingerprint, keyRows, ACTIVE_DAYS } from './lab-keys.js';
+import { LAUNCH_DAY, eventTotals, distinct, pulseByDay, pulse, whoRows, accountsByDay, beforeAfter, returns, countedSince, USES, VIAS, COLUMNS } from './profile-report.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
   senales, SHARES_APP_NOTE, ordenTramos, embudoCopas, aCsv,
@@ -225,7 +226,7 @@ function listen() {
   // And the period before it, so every number can say how it changed (D-348)
   // The WBR reads back to the first of the month two months before its week
   // One UTC day more: a Pacific date's evening is in the next UTC bucket, its night before in the one before
-  const desde = Math.min(rangoAnterior(rangeOf(S.range)).from - 1, S.desdeDia ?? Infinity, S.ruta?.sec === 'wbr' ? trendStart(weekOf(S.ruta.args[0])) - 1 : Infinity, S.ruta?.sec === 'reporte' ? reportStart(weekOf(S.ruta.args[0])) - 1 : Infinity);
+  const desde = Math.min(rangoAnterior(rangeOf(S.range)).from - 1, S.desdeDia ?? Infinity, S.ruta?.sec === 'wbr' ? trendStart(weekOf(S.ruta.args[0])) - 1 : Infinity, S.ruta?.sec === 'reporte' ? reportStart(weekOf(S.ruta.args[0])) - 1 : Infinity, S.ruta?.sec === 'perfil' ? LAUNCH_DAY - PERFIL_ANTES - 1 : Infinity);
   S.desdeDia = desde;
   S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(String(desde))), snap => { S.days = snap.val() || {}; S.daysLoaded = true; render(); }, denied);
   // The cups that were still alive on the first day loaded (D-473): every number of a period
@@ -2334,6 +2335,7 @@ const SECCION = {
   torneo: TORNEO ? [TORNEO.emoji, TORNEO.name[PANEL_LANG] || TORNEO.name.es] : ['🏆', 'Tournament'],
   unoaldia: ['📅', 'One a Day'],
   usuarios: ['🌎', 'Users'],
+  perfil: ['🎖️', 'Profile'],
   trafico: ['📈', 'Traffic'],
   salud: ['🩺', 'Health'],
   feedback: ['💬', 'Feedback'],
@@ -2406,12 +2408,114 @@ function vistaLlaves(now) {
   ];
 }
 
+/* ------------------------------------------------------------------ */
+/* 🎖️ Profile (D-615): who opens the player profile and what it moves   */
+/* ------------------------------------------------------------------ */
+/** The named use (`perfilUso/`, owner-only), the players created since a month before the launch, and the names. */
+function leerPerfil() {
+  if (S.perfilUso !== undefined) return;
+  S.perfilUso = null; S.perfilJugadores = null; S.perfilNombres = S.perfilNombres || {};
+  get(ref(db, 'perfilUso')).then(snap => { S.perfilUso = snap.val() || {}; nombresPerfil(); render(); },
+    () => { S.perfilUso = {}; S.perfilMsg = 'This account cannot read perfilUso/ (are the rules published?).'; render(); });
+  get(query(ref(db, 'jugadores'), orderByChild('at'), startAt((LAUNCH_DAY - PERFIL_ANTES) * DAY_MS))).then(snap => {
+    S.perfilJugadores = Object.fromEntries(Object.entries(snap.val() || {}).map(([jid, p]) => [jid, { at: p?.at, n: p?.n }]));
+    for (const [jid, p] of Object.entries(S.perfilJugadores)) if (p.n) S.perfilNombres[jid] = p.n;
+    render();
+  }, () => { S.perfilJugadores = {}; S.perfilMsg = 'This account cannot list the players (are the rules published?).'; render(); });
+}
+/** The public name of each player in `perfilUso/` that the list of new players did not bring. */
+function nombresPerfil() {
+  for (const jid of Object.keys(S.perfilUso || {})) {
+    if (S.perfilNombres[jid] || !/^[a-z0-9]{8}$/.test(jid)) continue;
+    get(ref(db, `jugadores/${jid}/n`)).then(s => { if (s.val()) { S.perfilNombres[jid] = s.val(); renderSoon(); } }, () => {});
+  }
+}
+/** Days read before the launch, to compare. */
+const PERFIL_ANTES = 28;
+const C_GUEST = 'var(--yellow)', C_SIGNED = 'var(--cyan)', C_PROFILE = 'var(--lime)', C_OTHER = 'var(--purple)';
+const pctPerfil = x => (x === null || x === undefined ? '—' : `${(x * 100).toLocaleString(LOCALE, { maximumFractionDigits: x < 0.1 ? 1 : 0 })}%`);
+const promedio = x => (x === null ? '—' : x.toLocaleString(LOCALE, { maximumFractionDigits: 1 }));
+
+function vistaPerfil(now) {
+  leerPerfil();
+  const rango = rangeOf(S.range), antes = rangoAnterior(rango);
+  const pt = ptDays(), hoy = pacificDay(now);
+  const desde = countedSince(pt);
+  const nota = 'The player profile (/profile/), for everyone since 2026-11-23 (03:33 UTC). Visits and what is used there are counted for guests and players alike, without names; the table of names is only players signed in, by the name they show on the rankings (D-615). Pacific days.';
+  const p = pulse(pt, rango, antes);
+  const d7 = distinct(pt, { from: hoy - 6, to: hoy }), d30 = distinct(pt, { from: hoy - 29, to: hoy });
+  const porDia = pulseByDay(pt, rango);
+  const periodos = groupDays(porDia, rango.grano);
+  const maxV = Math.max(0, ...periodos.map(x => x.visits || 0));
+  const quienes = S.perfilUso ? whoRows(S.perfilUso, S.perfilNombres, rango) : null;
+  const usos = eventTotals(pt, rango);
+  const maxU = Math.max(0, ...USES.map(([k]) => usos[k] || 0)), maxVia = Math.max(0, ...VIAS.map(([k]) => usos[k] || 0));
+  const cuentas = accountsByDay(pt, S.perfilJugadores || {}, { from: LAUNCH_DAY - PERFIL_ANTES, to: hoy }, pacificDay);
+  const ba = beforeAfter(cuentas, { today: hoy, span: PERFIL_ANTES });
+  const vuelta = returns(pt, { from: Math.max(rango.from, desde ?? Infinity), to: rango.to, today: hoy });
+  const enRango = cuentas.filter(c => c.day >= rango.from && c.day <= rango.to);
+  const maxC = Math.max(0, ...enRango.map(c => Math.max(c.created, c.createProfile + c.createOther, c.signinProfile + c.signinOther)));
+  const csvQuien = () => (quienes || []).map(r => ({ player: r.name, jid: r.jid, first: r.first, last: r.last, days: r.days, ...Object.fromEntries(COLUMNS.map(([c, l]) => [l, r[c]])) }));
+  return [
+    ...titulo(`🎖️ Profile · ${tituloRango()}`, nota),
+    desde === null || desde > rango.from ? el('p', { class: 'muted small' }, desde === null
+      ? 'No profile use recorded yet: counting starts with this version, so nothing before it is known.'
+      : `Counted since ${dayLabel(desde)}: nothing about the profile is recorded before that.`) : null,
+    S.perfilMsg ? el('p', { class: 'campanas-msg', role: 'status' }, S.perfilMsg) : null,
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(p.visits, 'profile visits', { cambio: vs(p.visits, p.visitsPrev) }),
+      tile(p.browsers, 'browsers that opened it', { cambio: vs(p.browsers, p.prev.browsers) }),
+      tile(pctPerfil(p.share), `of the ${n(p.active)} active browsers opened it`),
+      tile(d7.browsers, `browsers in the last 7 days (${pctPerfil(d7.share)} of active)`),
+      tile(d30.browsers, `browsers in the last 30 days (${pctPerfil(d30.share)} of active)`),
+      tile(quienes ? quienes.length : '…', 'signed-in players who opened it'),
+    ),
+    conCsv(bloque({ dia: 'Visits per day', semana: 'Visits per week', mes: 'Visits per month' }[rango.grano],
+      'Each page load of the profile: guests (yellow) and signed-in players (cyan). On the right, the browsers that opened it and their share of the active ones that day.',
+      lista(periodos.map(x => bar(x.label, [seg(C_GUEST, x.guests || 0), seg(C_SIGNED, x.signed || 0)], maxV,
+        { detail: rango.grano === 'dia' ? `${n(x.browsers)} browsers · ${pctPerfil(x.share)} of ${n(x.active)} active` : `${n(x.browsers)} browser-days` })), 'Nothing yet.', 'bars')),
+    'profile-visits', porDia.map(x => ({ date: dayLabel(x.day), visits: x.visits, guests: x.guests, signed: x.signed, browsers: x.browsers, active: x.active }))),
+    franja('diag'),
+    conCsv(bloque(`Who · ${quienes ? n(quienes.length) : '…'}`, 'Signed-in players with a visit in the range, most recent first. First and last are any day; the rest is the range: days with a visit, visits, taps on 🎖️ badges, 🏅 rankings and ⚙️ settings, 👀 other players\' sheets, 🪞 «Ver cómo me ven los demás», 🏆→ «Ver mis logros» in an achievement window, and whether they signed in or created their account here.',
+      !quienes ? el('p', { class: 'empty' }, 'Loading…') : !quienes.length ? el('p', { class: 'empty' }, 'No signed-in player opened it in this range.')
+        : el('div', { class: 'pant-scroll' }, el('table', { class: 'pant perfil-quien' },
+          el('thead', {}, el('tr', {}, el('th', {}, 'Player'), el('th', {}, 'First'), el('th', {}, 'Last'), el('th', { class: 'num' }, 'Days'), ...COLUMNS.map(([, l]) => el('th', { class: 'num' }, l)))),
+          el('tbody', {}, ...quienes.map(r => el('tr', {},
+            el('th', { scope: 'row' }, r.name), el('td', {}, r.first.slice(5)), el('td', {}, r.last.slice(5)), el('td', { class: 'num' }, n(r.days)),
+            ...COLUMNS.map(([c]) => el('td', { class: 'num' }, r[c] ? n(r[c]) : '')))))))),
+    'profile-who', csvQuien),
+    el('div', { class: 'grid2' },
+      conCsv(bloque('What is used', 'Taps in the range, guests and players. The achievement window counts on any page; the rest only on the profile.',
+        lista(USES.map(([k, l]) => bar(l, [seg(C_SIGNED, usos[k] || 0)], maxU)), 'Nothing yet.', 'bars')),
+      'profile-use', USES.map(([k, l]) => ({ what: l, taps: usos[k] || 0 }))),
+      conCsv(bloque('Way in', 'Where each visit came from: the pill, its bubble or an achievement window leave a mark in the tab; otherwise a link on the site or straight in.',
+        lista(VIAS.map(([k, l]) => bar(l, [seg(C_PROFILE, usos[k] || 0)], maxVia)), 'Nothing yet.', 'bars')),
+      'profile-way-in', VIAS.map(([k, l]) => ({ way: l, visits: usos[k] || 0 })))),
+    franja('tend'),
+    conCsv(bloque('Moving the needle: accounts', `Per day on average, ${n(ba.before.days)} whole days before the launch against ${n(ba.after.days)} after (the launch day and today left out). Created counts every account by its creation date, wherever it was made. Created and signed in by place (the profile or elsewhere: home, covers, One a Day, rankings, La Copa) are counted only since this version: before it they are unknown, not zero.`,
+      el('div', { class: 'pant-scroll' }, el('table', { class: 'pant' },
+        el('thead', {}, el('tr', {}, el('th', {}, 'Per day'), el('th', { class: 'num' }, 'Before'), el('th', { class: 'num' }, 'After'))),
+        el('tbody', {}, ...[['created', 'Accounts created'], ['createProfile', '… on the profile'], ['createOther', '… elsewhere'], ['signinProfile', 'Sign-ins on the profile'], ['signinOther', 'Sign-ins elsewhere']].map(([k, l]) =>
+          el('tr', {}, el('th', { scope: 'row' }, l), el('td', { class: 'num' }, k === 'created' ? promedio(ba.before[k]) : '—'), el('td', { class: 'num' }, promedio(ba.after[k]))))))),
+      el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_OTHER}` }, '■'), ' created (all) · ', el('span', { style: `color:${C_PROFILE}` }, '■'), ' on the profile · ', el('span', { style: `color:${C_SIGNED}` }, '■'), ' signed in on the profile · ', el('span', { style: `color:${C_GUEST}` }, '■'), ' signed in elsewhere'),
+      lista(enRango.map(c => el('div', {}, bar(dayLabel(c.day), [seg(C_OTHER, c.created)], maxC, { sub: c.counted ? `${n(c.createProfile)} on the profile` : '' }),
+        c.counted ? bar('', [seg(C_SIGNED, c.signinProfile), seg(C_GUEST, c.signinOther)], maxC, { detail: `sign-ins: ${n(c.signinProfile)} profile · ${n(c.signinOther)} elsewhere` }) : null)), 'Nothing yet.', 'bars')),
+    'profile-accounts', cuentas.map(c => ({ date: dayLabel(c.day), created: c.created, created_profile: c.counted ? c.createProfile : '', created_elsewhere: c.counted ? c.createOther : '', signin_profile: c.counted ? c.signinProfile : '', signin_elsewhere: c.counted ? c.signinOther : '' }))),
+    bloque('Moving the needle: coming back', 'Of the browsers active on a day of the range, those that opened the profile that day against those that did not: active again the next day, and on any of the next 7. Only days whose window is over. Those who open the profile were already more engaged, so a gap here is a hint, not proof that the profile brings them back.',
+      el('div', { class: 'pant-scroll' }, el('table', { class: 'pant' },
+        el('thead', {}, el('tr', {}, el('th', {}, ''), el('th', { class: 'num' }, 'Next day'), el('th', { class: 'num' }, 'Within 7 days'))),
+        el('tbody', {}, ...[['visitors', 'Opened the profile'], ['others', 'Did not']].map(([k, l]) => el('tr', {}, el('th', { scope: 'row' }, l),
+          ...['next', 'week'].map(w => el('td', { class: 'num' }, vuelta[k][w].of ? `${pctPerfil(vuelta[k][w].rate)} of ${n(vuelta[k][w].of)}` : '—')))))))),
+  ];
+}
+
 /*
  * On a phone, five tabs and ☰ More (lab: #seccion-panel-nav-more): the rest open in a sheet, in groups.
  * A computer keeps the whole column.
  */
 const NAV_TABS = ['resumen', 'wbr', 'timeline', 'feedback'];
-const NAV_GROUPS = [['Players', ['grupo', 'individuales', 'usuarios']], ['Games', ['reporte', 'torneo', 'unoaldia']], ['Owner', ['trafico', 'pantallas', 'salud', 'campanas', 'llaves', 'labs']]];
+const NAV_GROUPS = [['Players', ['grupo', 'individuales', 'usuarios', 'perfil']], ['Games', ['reporte', 'torneo', 'unoaldia']], ['Owner', ['trafico', 'pantallas', 'salud', 'campanas', 'llaves', 'labs']]];
 // Every section is on the bar or under ☰ More: one left out of both could not be reached on a phone
 for (const sec of SECCIONES) if (!NAV_TABS.includes(sec) && !NAV_GROUPS.some(([, secs]) => secs.includes(sec))) console.error(`panel: ${sec} is neither a tab nor under More`);
 flag('panel-nav-more').then(on => { S.navMore = on; if (S.user) render(); }).catch(() => {});
@@ -2515,6 +2619,7 @@ function render() {
   else if (sec === 'trafico') nodos = vistaTrafico(now);
   else if (sec === 'salud') nodos = vistaSalud(now);
   else if (sec === 'pantallas') nodos = vistaPantallas(now);
+  else if (sec === 'perfil') nodos = vistaPerfil(now);
   else if (sec === 'wbr') nodos = vistaWbr(now);
   else if (sec === 'reporte') nodos = vistaReporte(now);
   else if (sec === 'timeline') nodos = vistaTimeline(now);
@@ -2576,6 +2681,8 @@ function alCambiarRuta() {
   // A WBR week further back than what is downloaded asks for it (D-80)
   if (S.ruta.sec === 'wbr' && S.user && S.desdeDia !== null && trendStart(weekOf(S.ruta.args[0])) - 1 < S.desdeDia) { S.daysLoaded = false; listen(); }
   if (S.ruta.sec === 'reporte' && S.user && S.desdeDia !== null && reportStart(weekOf(S.ruta.args[0])) - 1 < S.desdeDia) { S.daysLoaded = false; listen(); }
+  // 🎖️ Profile compares with the weeks before its launch (D-615)
+  if (S.ruta.sec === 'perfil' && S.user && S.desdeDia !== null && LAUNCH_DAY - PERFIL_ANTES - 1 < S.desdeDia) { S.daysLoaded = false; listen(); }
   if (otra) {
     S.logPage = 1; S.sinRedTodas = false; S.erroresTodos = false; S.tlPeriod = null; S.tlAll = false;
     if (S.ruta.args[0] !== antes.args[0]) S.fichaTab = 'tabla';
@@ -2651,8 +2758,11 @@ $('#range').addEventListener('change', e => cambiarRango(e.target.value));
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, feedbackEstado = {}, splash = null, controls = {}, flags = {}, campTab = null, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, feedbackEstado = {}, splash = null, controls = {}, flags = {}, campTab = null, daysLoaded = true, perfilUso = {}, jugadores = {}, vista }) {
     stopListening();
+    // 🎖️ Profile (D-615): the named use and the players created, with their names
+    S.perfilUso = perfilUso; S.perfilJugadores = jugadores;
+    S.perfilNombres = Object.fromEntries(Object.entries(jugadores).filter(([, p]) => p?.n).map(([jid, p]) => [jid, p.n]));
     S.feedback = feedback;
     S.fbTodo = feedback; S.fbEstado = feedbackEstado;
     S.splash = splash;
