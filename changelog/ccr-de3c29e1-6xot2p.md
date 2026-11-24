@@ -1,6 +1,0 @@
-level: patch
-
-- **⚔️ Duels page** (lab, flag `rivals`): it is called «Duelos» and shows other players' recent duels («Ana 2–1 Beto», the game, who won or «En juego»), under your own when you have them. In ⚡ Quick duel the games come in two rows that slide sideways, the next column peeking. On a game's ranking the ⚔️ is smaller, and your own row keeps the same columns, so every row lines up.
-- **⚔️ Choosing a rival** (lab, flag `rivals`): the search is always there and finds players as you type the start of their name, without the keyboard jumping; the suggestions include the players of your cups and, so the list is never empty, the players active this week. Signed out, the sign-in card on /duels/ and in the new-duel sheet says «⚔️ Entra para tener duelos». The sheet closes with its ✕ alone (no ‹ Back).
-- **PR previews come with test data**: each browser that opens a preview gets, once, six made-up players with this week's scores in a few games and some duels between them, so rankings, suggestions and recent duels can be tried there. Never on localhost or the real site.
-- **⚔️ Duels page** (lab, flag `rivals`): your open duels in one list, no tabs: ▶ Jugar where it is your turn, «Esperando a …» where not; and your nemesis, with ⚔️ Revancha, under them.
