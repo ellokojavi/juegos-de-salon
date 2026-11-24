@@ -650,7 +650,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   wobbles/                    ⚖️ Tembleque: its cover and its two levels, easy/ and hard/, the owner's prototypes kept whole (D-601)
   labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422); launched.js moves a card whose flag is live for everyone into the Storeroom when the page opens (D-534); index-nav.js draws the index of the cards still being tried at the top; marquee/marquee.js, a news strip above the home page drawn into the real home page, six treatments that open the real splash
   records/                    Leaderboards (D-212)
-  profile/                    The player's profile, in the lab (flag `profile`): profile.js (card, badges, places, settings), badges.js (the badges and what earns each), texts.js (three languages, in assets/js/profile-texts.js)
+  profile/                    The player's profile, in the lab (flag `profile`): profile.js (card, badges, places, settings), badges.js (the badges and what earns each), badge-details.js (what a badge's detail sheet tells, lab flag `badge-details`), texts.js (three languages, in assets/js/profile-texts.js)
   duels/                      Every duel of a player, in the lab (flag `rivals`, D-603): duels-page.js (your turn, waiting, finished)
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
