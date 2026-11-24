@@ -30,9 +30,41 @@ function h(tag, attrs = {}, ...hijos) {
   return n;
 }
 
-/** One color per zone, in order; a zone with no rule is plain. */
+/** The zones' palette; a zone with no rule is plain. */
 // The zones' colors stay away from red, so a broken rule's red stands out (the owner, 2026-11-22)
-const COLORES = ['#2ee6d6', '#ffd23f', '#b98bff', '#9dff3a', '#4fa3ff', '#e0a85f', '#5fe0a0', '#c8d3e6'];
+const COLORES = ['#2ee6d6', '#ffd23f', '#b98bff', '#9dff3a', '#4fa3ff', '#ff8c42', '#c8d3e6'];
+/** A color in Oklab, where distance is how different two colors look. */
+function oklab(hex) {
+  const [r, g, b] = [1, 3, 5].map(k => { const v = parseInt(hex.slice(k, k + 2), 16) / 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  const [l, m, s] = [0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b, 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b, 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b].map(Math.cbrt);
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675778 * s];
+}
+const LAB = COLORES.map(oklab);
+const lejos = (a, b) => Math.hypot(...LAB[a].map((v, k) => v - LAB[b][k]));
+/**
+ * One color per zone, so zones that touch (side or corner) look as different as the palette allows:
+ * each zone takes the color farthest from its colored neighbours, then the least used (the owner, 2026-11-24).
+ */
+export function coloresDeZonas(t) {
+  const zonaDe = []; t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
+  const vecinas = t.zonas.map(() => new Set());
+  t.celdas.forEach((a, i) => t.celdas.forEach((b, j) => {
+    if (zonaDe[i] !== zonaDe[j] && Math.abs(a.r - b.r) <= 1 && Math.abs(a.c - b.c) <= 1) vecinas[zonaDe[i]].add(zonaDe[j]);
+  }));
+  const idx = t.zonas.map(() => null), uso = COLORES.map(() => 0);
+  t.zonas.forEach((z, k) => {
+    if (z.tipo === 'libre') return;
+    const usadas = [...vecinas[k]].map(v => idx[v]).filter(x => x !== null);
+    let mejor = 0, nota = -Infinity;
+    COLORES.forEach((_, c) => {
+      const d = usadas.length ? Math.min(...usadas.map(u => lejos(c, u))) : 1;
+      const n = d * 100 - uso[c];
+      if (n > nota) { nota = n; mejor = c; }
+    });
+    idx[k] = mejor; uso[mejor]++;
+  });
+  return idx.map(c => (c === null ? null : COLORES[c]));
+}
 
 /* ------------------------------------------------------------------ */
 /* Drawing dominoes and boards                                         */
@@ -54,8 +86,7 @@ function tableroVacio(t, { chico = false } = {}) {
   t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
   const en = (r, c) => t.celdas.findIndex(x => x.r === r && x.c === c);
   const g = h('div', { class: `dm-board${chico ? ' chico' : ''}`, style: `--w:${t.ancho};--h:${t.alto}`, 'data-tablero': 'dominorama' });
-  let color = 0;
-  const colorDe = t.zonas.map(z => (z.tipo === 'libre' ? null : COLORES[color++ % COLORES.length]));
+  const colorDe = coloresDeZonas(t);
   t.celdas.forEach((c, i) => {
     const z = zonaDe[i];
     const borde = [[-1, 0, 'bt'], [0, 1, 'br'], [1, 0, 'bb'], [0, -1, 'bl']].filter(([dr, dc]) => { const j = en(c.r + dr, c.c + dc); return j < 0 || zonaDe[j] !== z; }).map(x => x[2]);

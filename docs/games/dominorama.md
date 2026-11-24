@@ -64,7 +64,8 @@ as an empty box.
   the zone's cells get stripes and a solid edge in the zone's own color drawn over the dominoes (`.dm-mala`, no
   pointer events), so a broken zone can be seen even when dominoes cover it. A laid domino keeps square halves (2026-11-24): it leaves a 6 px gap along its long sides and 12 px at its ends, within
   its two cells, so the zone's color and dashed edge show around it; its edge is drawn inside it. The zones' colors stay away from
-  red (no pink, orange or coral), so a broken rule's red stands out. A laid domino settles with a squash
+  red (no pink or coral; the one orange, `#ff8c42`, is far from the red), so a broken rule's red stands out. Colors are picked by
+  `coloresDeZonas` in `ui.js`: each zone takes the palette color farthest (Oklab) from its already-colored neighbours, side or corner, then the least used. A laid domino settles with a squash
   and a ring spreads from its two cells (`.dm-onda`); both calm down with reduced motion.
   With every domino down and a zone broken: "❌ Una zona no cumple su regla: mueve alguna ficha."
 - **Solved:** every cell covered and every zone kept, in any arrangement (not only the engine's): the
