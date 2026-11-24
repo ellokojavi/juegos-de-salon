@@ -8,7 +8,10 @@ round uses (`gh` signed in with a token that can push, comment and merge), and p
 
 ---
 
-First run `node tools/agents/merge-queue.mjs doctor`. If it prints `NOTHING`, end the session at once
+You work in the repository ellokojavi/juegos-de-salon. If it is not already checked out here, first run
+`gh repo clone ellokojavi/juegos-de-salon && cd juegos-de-salon`. Follow its CLAUDE.md.
+
+Then run `node tools/agents/merge-queue.mjs doctor`. If it prints `NOTHING`, end the session at once
 without doing anything else.
 
 Otherwise each line is something wrong with the merge queue (D-586, D-618, D-619;
@@ -38,3 +41,5 @@ Never update more than one PR at a time with main (that is the avalanche the que
 prevent), never force-push, never touch a contributor's PR, never merge or tick a 🔴 PR. Comment on
 each PR you touched what you did and why. End by running `doctor` again and saying, in one line per
 problem, what you did and what is left.
+
+(The source of this prompt is tools/jobs/prompts/queue-doctor.md.)

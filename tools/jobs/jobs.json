@@ -284,6 +284,7 @@
       "where": "cloud",
       "cron": "45 * * * *",
       "prompt": "tools/jobs/prompts/queue-doctor.md",
+      "trigger": "trig_01EUEoQEdrD3rkiC9dMK5HZC",
       "what": "Every hour, a Claude Code cloud scheduled task: when `merge-queue.mjs doctor` finds the queue failing, slow or a PR stuck, fixes it on its own (the queue's code, a conflict, a hung check) and ships the fix with auto-merge. Ends at once when the queue is well.",
       "decisions": [
         "D-619"
