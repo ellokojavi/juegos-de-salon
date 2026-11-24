@@ -6647,7 +6647,11 @@
       "error": "❌ fourth-king-intro: 0.68 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part fourth-king, commit the PNG and push; on a PR the Visual refe",
       "signature": "9a8a6fc3fb",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6660,7 +6664,11 @@
       "error": "❌ zip-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part zip, commit the PNG and push; on a PR the Visual references workflow",
       "signature": "63a2a34888",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6673,7 +6681,11 @@
       "error": "✗ 390px: the top bar's buttons are as tall as the language toggle",
       "signature": "70d8e2fa96",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6686,7 +6698,11 @@
       "error": "❌ battleship-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part battleship, commit the PNG and push; on a PR the Visual refere",
       "signature": "ec25d8d629",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6699,7 +6715,11 @@
       "error": "❌ tango-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part tango, commit the PNG and push; on a PR the Visual references workf",
       "signature": "78aaebbcab",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6712,7 +6732,11 @@
       "error": "❌ agents-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part agents, commit the PNG and push; on a PR the Visual references wor",
       "signature": "8bbbb2df9d",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6725,7 +6749,11 @@
       "error": "❌ shinobi-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part shinobi, commit the PNG and push; on a PR the Visual references w",
       "signature": "cb8c83d62d",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6738,7 +6766,11 @@
       "error": "❌ cup-intro: 0.75 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part cup, commit the PNG and push; on a PR the Visual references workflow",
       "signature": "f621de6b78",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6751,7 +6783,11 @@
       "error": "❌ year-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part year, commit the PNG and push; on a PR the Visual references workflo",
       "signature": "a95e36271e",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6764,7 +6800,11 @@
       "error": "✗ opened, the steps show and the language toggle stays in view",
       "signature": "c9603e55e2",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6777,7 +6817,11 @@
       "error": "❌ connections-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part connections, commit the PNG and push; on a PR the Visual refe",
       "signature": "4c10557e08",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6790,7 +6834,11 @@
       "error": "❌ word-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part word, commit the PNG and push; on a PR the Visual references workflo",
       "signature": "fda99605df",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6803,7 +6851,11 @@
       "error": "❌ bridges-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges, commit the PNG and push; on a PR the Visual references w",
       "signature": "cb2b372dac",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6816,7 +6868,11 @@
       "error": "❌ timeline-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part timeline, commit the PNG and push; on a PR the Visual references",
       "signature": "c94a18dd9d",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6829,7 +6885,11 @@
       "error": "❌ liars-dice-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice, commit the PNG and push; on a PR the Visual refere",
       "signature": "7de80e2167",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6842,7 +6902,11 @@
       "error": "❌ bulls-and-cows-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bulls-and-cows, commit the PNG and push; on a PR the Visua",
       "signature": "10eea09285",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6855,7 +6919,11 @@
       "error": "❌ untangle-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part untangle, commit the PNG and push; on a PR the Visual references",
       "signature": "1fc9305d29",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6868,7 +6936,11 @@
       "error": "❌ queens-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part queens, commit the PNG and push; on a PR the Visual references wor",
       "signature": "a4a3fb1472",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6881,7 +6953,11 @@
       "error": "❌ case-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part case, commit the PNG and push; on a PR the Visual references workflo",
       "signature": "d6c040ecc4",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6894,7 +6970,11 @@
       "error": "❌ routes-intro: 0.49 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part routes, commit the PNG and push; on a PR the Visual references wor",
       "signature": "4588c9d540",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6907,7 +6987,11 @@
       "error": "❌ generala-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part generala, commit the PNG and push; on a PR the Visual references",
       "signature": "2c2713155c",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6920,7 +7004,11 @@
       "error": "❌ hangman-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part hangman, commit the PNG and push; on a PR the Visual references w",
       "signature": "460ab656b2",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6933,7 +7021,11 @@
       "error": "❌ paint-mines-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part paint-mines, commit the PNG and push; on a PR the Visual refe",
       "signature": "a3776b7a49",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6946,7 +7038,11 @@
       "error": "❌ plots-intro: 0.32 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part plots, commit the PNG and push; on a PR the Visual references workf",
       "signature": "e3bcc0a227",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6959,7 +7055,11 @@
       "error": "❌ julep-intro: 0.57 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part julep, commit the PNG and push; on a PR the Visual references workf",
       "signature": "a4fc4dfcba",
       "date": "2026-11-24T01:11:29.792Z",
-      "fix": null,
+      "fix": {
+        "commit": "e28157da952893625d680cab0b33ab7c36142013",
+        "date": "2026-11-24T01:39:31.498Z",
+        "stat": "1 file(s) +3 −0: tools/e2e/flags-held.json"
+      },
       "flaky": false
     },
     {
@@ -6973,7 +7073,7 @@
       "signature": "ca83c32340",
       "date": "2026-11-24T01:30:48.047Z",
       "fix": null,
-      "flaky": false
+      "flaky": true
     }
   ]
 }
