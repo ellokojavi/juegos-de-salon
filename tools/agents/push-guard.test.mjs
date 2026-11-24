@@ -132,3 +132,12 @@ test('a hook whose script blocks with exit 2 passes the 2 on to Claude Code (#15
   }
   assert.ok(checked >= 2, 'push-guard and stop-tests are checked');
 });
+
+// A page no footer script places stops the push, naming it (signature 03ba96abef)
+{
+  const err = "AssertionError [ERR_ASSERTION]: pages no script measures under the footer: /badges/.\nAdd each to PAGES";
+  const run = (cmd, args) => cmd === 'node' && args[0].includes('footer-bottom') ? { status: 1, stdout: '', stderr: err } : { status: 0, stdout: '' };
+  const hit = problems(process.cwd(), run).find(p => p.includes('D-599'));
+  assert.ok(hit && hit.includes('/badges/'), 'footer-bottom failure blocks the push');
+  assert.ok(!problems(process.cwd(), (cmd, args) => cmd === 'node' && args[0].includes('footer-bottom') ? { status: 1, stdout: '', stderr: 'boom' } : { status: 0, stdout: '' }).some(p => p.includes('D-599')), 'an unexpected crash lets it through');
+}

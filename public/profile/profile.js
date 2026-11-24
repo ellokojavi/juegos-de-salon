@@ -13,7 +13,7 @@ import { el, vibrationToggle } from '../assets/js/ui.js';
 import { withIcon } from '../assets/js/game-icon.js';
 import { getLang, langToggle, pickLang, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle } from '../assets/js/sound.js';
-import { ALL_GAMES } from '../assets/js/games.js';
+import { ALL_GAMES, PLAYABLE_GAMES } from '../assets/js/games.js';
 import { bloqueJugador, bloqueRanking, mmss, conBandera } from '../assets/js/ranking.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 import { TODOTERRENO, UAD_PUNTOS, SIEMPRE, semana, medallero, limpiarNombre, esPin } from '../assets/js/records.js';
@@ -41,7 +41,7 @@ const monthName = ms => new Intl.DateTimeFormat(lang, { month: 'long', year: 'nu
 const FIRST_POINTS_MONTH = '2026-10';
 
 /** The games a player can earn badges in: launched, not hidden. */
-const CATALOGUE = ALL_GAMES.filter(g => g.available !== false && !g.labs && !g.oculto);
+const CATALOGUE = PLAYABLE_GAMES;
 const gameOf = id => ALL_GAMES.find(g => g.id === id);
 
 /* ------------------------------------------------------------------ */
@@ -664,7 +664,7 @@ const TABS = ['badges', 'rankings', 'settings'];
 /** Draws the page in `root` for whoever is on this phone. Returns when the first draw is on screen. */
 /**
  * The profile's welcome (the owner, 2026-11-22): a card over the page that says what each tab holds, open by
- * itself only on the first visit; «Entendido» or ✕ closes it and a subtle ⓘ at the title's right opens it again.
+ * itself only on the first visit; «Entendido» or ✕ closes it (no button opens it again: the page explains itself, the owner, 2026-11-24).
  * Opening the profile also retires the bubble the top bar's pill shows until then (profile-hint.js).
  */
 async function welcome(root, sub) {
@@ -672,27 +672,18 @@ async function welcome(root, sub) {
   hint.demoReset();
   hint.mark(hint.BUBBLE_KEY);
   const first = (() => { try { return !localStorage.getItem(hint.INTRO_KEY); } catch (_) { return false; } })();
-  // A subtle ⓘ, raised like a superscript at the title's right: no line of its own (the owner, 2026-11-22)
-  const help = el('button', { type: 'button', class: 'pf-help', 'aria-controls': 'pf-intro', 'aria-expanded': 'false', 'aria-label': T.introHelp, title: T.introHelp }, 'ⓘ');
   const point = ([b, txt]) => el('li', {}, el('b', {}, b), el('span', {}, txt));
   const intro = el('section', { class: 'panel pf-intro', id: 'pf-intro', 'aria-labelledby': 'pf-intro-title', hidden: true },
     el('div', { class: 'pf-intro-head' },
       el('h2', { id: 'pf-intro-title' }, T.introTitle),
       el('button', { type: 'button', class: 'icon-btn pf-intro-x', 'aria-label': T.introClose, title: T.introClose }, '✕')),
     el('ul', { class: 'pf-intro-list' }, [T.introBadges, T.introRankings, T.introSettings].map(point)),
-    el('p', { class: 'muted pf-intro-again' }, T.introAgain),
     el('button', { type: 'button', class: 'btn btn--yellow pf-intro-ok' }, T.introOk));
   const show = (open, { focus = false } = {}) => {
     intro.hidden = !open;
-    help.setAttribute('aria-expanded', String(open));
     if (open && focus) { intro.scrollIntoView({ behavior: 'smooth', block: 'center' }); intro.querySelector('.pf-intro-ok').focus({ preventScroll: true }); }
-    if (!open && focus) help.focus({ preventScroll: true });
   };
-  help.addEventListener('click', () => { tap(); show(intro.hidden, { focus: true }); });
   for (const b of intro.querySelectorAll('.pf-intro-x, .pf-intro-ok')) b.addEventListener('click', () => { tap(); show(false, { focus: true }); });
-  const h1 = sub.parentElement?.querySelector('h1');
-  if (h1) { const row = el('div', { class: 'pf-title-row' }); h1.before(row); row.append(el('span', { 'aria-hidden': 'true' }), h1, help); }
-  else sub.after(help);
   root.before(intro);
   show(first);
   if (first) hint.mark(hint.INTRO_KEY);

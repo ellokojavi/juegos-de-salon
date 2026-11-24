@@ -587,6 +587,13 @@ export const SUELTOS = [
 export const ALL_GAMES = [...GAMES, ...SUELTOS];
 
 /**
+ * The games a player can collect, for every count of "games played" (Explorer, Collector, the profile's
+ * figures, the player peek): open to all and not a tournament. La Copa is a way of playing the games
+ * over days, not one more game (the owner, 2026-11-24), so it never counts as one.
+ */
+export const PLAYABLE_GAMES = ALL_GAMES.filter(g => g.available !== false && !g.labs && !g.oculto && !g.torneo);
+
+/**
  * The solo score tables of the games outside SUELTOS (game id → table), each a tab in Rankings
  * (/records/). SUELTOS get their tab on their own; a GAMES entry that records a score played alone
  * goes here, or its scores never show in Rankings (¡Al toque! launched without one, D-559).

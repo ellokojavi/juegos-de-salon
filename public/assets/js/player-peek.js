@@ -22,7 +22,7 @@
 import { el } from './ui.js';
 import { withIcon } from './game-icon.js';
 import { getLang, pickLang } from './i18n.js';
-import { ALL_GAMES, GAMES, SOLO_TABLES, FIRST_VARIANT_TABLES } from './games.js';
+import { ALL_GAMES, PLAYABLE_GAMES, GAMES, SOLO_TABLES, FIRST_VARIANT_TABLES } from './games.js';
 import { jugador, leerYo } from './jugador.js';
 import { TODOTERRENO, UAD_PUNTOS, SIEMPRE, medallero, bandera } from './records.js';
 import { recorrer, fechaLocal } from './uno-al-dia.js';
@@ -54,7 +54,7 @@ export function tableOf(id) {
 /** How many most played games the sheet lists. */
 export const SHOWN_GAMES = 3;
 
-const CATALOGUE = ALL_GAMES.filter(g => g.available !== false && !g.labs && !g.oculto);
+const CATALOGUE = PLAYABLE_GAMES;
 const gameOf = id => ALL_GAMES.find(g => g.id === id);
 
 /**
