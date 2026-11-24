@@ -2,7 +2,7 @@
 // The home page's ☁️ button (D-538): four states, read from what the phone keeps, and the sheet's
 // lines for each in es/en/pt.
 import assert from 'node:assert/strict';
-import { stateOf, linesOf, TEXTS, STALE_MS, readState, iconSvg } from './offline-ready.js';
+import { stateOf, linesOf, TEXTS, STALE_MS, readState, iconSvg, configKey } from './offline-ready.js';
 
 const now = 1_000_000;
 assert.equal(stateOf({ supported: false }).state, 'unsupported');
@@ -27,12 +27,14 @@ for (const l of ['es', 'en', 'pt']) {
 }
 for (const st of ['loading', 'ready', 'missing', 'unsupported']) assert.ok(iconSvg(st).includes('or-nube'), `${st}: the cloud`);
 
+// The config cache's keys are the worker's, from the site's root, whatever page reads them (a bare 'list' was /profile/list there)
+assert.equal(configKey('list'), new URL('../../list', import.meta.url).href);
 // readState counts the release's files one by one in its cache
 const caches = files => ({
   open: async name => ({
     match: async k => {
-      if (name === 'jds-config' && k === 'list') return new Response(JSON.stringify({ release: 'r1', urls: ['./', 'zip/', 'a.js'] }));
-      if (name === 'jds-config' && k === 'progress') return new Response(JSON.stringify({ storing: false, at: 0 }));
+      if (name === 'jds-config' && k === configKey('list')) return new Response(JSON.stringify({ release: 'r1', urls: ['./', 'zip/', 'a.js'] }));
+      if (name === 'jds-config' && k === configKey('progress')) return new Response(JSON.stringify({ storing: false, at: 0 }));
       if (name === 'jds-release-r1' && files.some(f => k.endsWith(f))) return new Response('x');
       return undefined;
     },
