@@ -7219,6 +7219,19 @@
       "date": "2026-11-24T11:52:31.927Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45389644779,
+      "check": "tests",
+      "pr": 1852,
+      "branch": "badge-details",
+      "commit": "abe2f2951e3a5ca18899274cf7c66d12947f5047",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/profile/badge-details.js",
+      "signature": "59142116d9",
+      "date": "2026-11-24T12:09:35.321Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
