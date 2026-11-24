@@ -1,11 +1,11 @@
 {
-  "checkedUpTo": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3",
+  "checkedUpTo": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
   "pending": [
     "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): need browser run and contact-sheet review; unattended round did not redo them",
     "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
     "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
     "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
-    "Dominorama/Memorice launched 2026-11-19 and Croc/Tembleque/Wobbles launch prep: og.mjs link card list does not name them, owner to say if it should; profile lab (flag profile) docs not reviewed"
+    "og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should; Duels (flag rivals) has no docs/games page, only D-603; profile lab docs not fully reviewed"
   ],
   "known": [],
   "rounds": [
@@ -417,6 +417,19 @@
         "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
         "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
         "Dominorama/Memorice launched 2026-11-19 and Croc/Tembleque/Wobbles launch prep: og.mjs link card list does not name them, owner to say if it should; profile lab (flag profile) docs not reviewed"
+      ]
+    },
+    {
+      "date": "2026-11-24",
+      "from": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3",
+      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): need browser run and contact-sheet review; unattended round did not redo them",
+        "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
+        "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
+        "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
+        "og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should; Duels (flag rivals) has no docs/games page, only D-603; profile lab docs not fully reviewed"
       ]
     }
   ],
