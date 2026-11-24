@@ -1,0 +1,1296 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Insignias: tratamientos</title><style>/* ==========================================================
+   Juegos de Salón — estilos base compartidos por todos los juegos
+   Tono: fiesta nocturna, neón, distendido. Mobile-first.
+   ========================================================== */
+/* The fonts, served from here (#851): Google's own woff2 files and unicode ranges for
+   `family=Bangers&family=Nunito:wght@400;700;900`, the latin subset (Spanish, English, Portuguese
+   and German, ß included) and latin-ext (names with other accents), which the browser fetches
+   only when a page shows one of its characters. Nunito is one variable file for every weight,
+   declared at 400, 700 and 900 as Google declared it, so an 800 still draws as the 900 it always
+   was. License: ../fonts/OFL.txt. The pages preload nunito-latin.woff2 (fonts-preload.test.mjs). */
+@font-face { font-family: 'Bangers'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/bangers-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Bangers'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/bangers-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/nunito-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/nunito-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('../../assets/fonts/nunito-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('../../assets/fonts/nunito-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  /* No faux bold or italic: a weight a font is not loaded in uses the nearest real one. WebKit's fake
+     bold thickens glyphs to the right without widening them and cut the countdown's last digit */
+  font-synthesis: none;
+  --bg1: #150726; --bg1-rgb: 21 7 38;
+  --bg2: #2a0a4a; --bg2-rgb: 42 10 74;
+  --bg3: #0b1e3f; --bg3-rgb: 11 30 63;
+  --pink: #ff2e88; --pink-rgb: 255 46 136;
+  --pink-deep: #c2185b;
+  --yellow: #ffd23f; --yellow-rgb: 255 210 63;
+  --cyan: #2ee6d6; --cyan-rgb: 46 230 214;
+  --lime: #9dff3a; --lime-rgb: 157 255 58;
+  --orange: #ff7a1a; --orange-rgb: 255 122 26;
+  --purple: #8a4dff; --purple-rgb: 138 77 255;
+  --ink: #ffffff; --ink-rgb: 255 255 255;
+  --muted: rgba(255, 255, 255, 0.72);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --card: #fffdf7;
+  --card-ink: #1a1a1a; --card-ink-rgb: 26 26 26;
+  --red: #e0243c; --red-rgb: 224 36 60;
+  /* --- The design system's scales (D-533, docs/DESIGN.md): every distance, radius and shadow a game
+     writes comes from here. Named by value, so `--s-12` is 12 px and no table is needed. --- */
+  /* Space: a 2 px grid up to 20, then steps of 4. Padding, gap and margin take one of these. */
+  --s-2: 2px; --s-4: 4px; --s-6: 6px; --s-8: 8px; --s-10: 10px; --s-12: 12px; --s-14: 14px; --s-16: 16px;
+  --s-18: 18px; --s-20: 20px; --s-24: 24px; --s-28: 28px; --s-32: 32px;
+  /* Corners: 8 (chips, cells, keys), 10 and 12 (inputs, cards in a panel), 14 (rows), 16 (sheets,
+     modals), 22 (the panel), pill (buttons). A circle is `50%`. */
+  --r-8: 8px; --r-10: 10px; --r-12: 12px; --r-14: 14px; --r-16: 16px; --r-22: 22px; --r-pill: 999px;
+  --radius: var(--r-22);
+  /* Shadows and the "edge" under a button, one per button colour (they were written by hand in .btn) */
+  --edge-pink: #7a0f3a; --edge-yellow: #9a4a00; --edge-cyan: #0b5f57;
+  --ink-on-yellow: #3a1200; --ink-on-cyan: #03302c;
+  /* Danger (phase 7, #1196, from La Copa): the red button's edge, and the soft pink of a ghost danger button's text */
+  --edge-red: #8a1024; --danger-soft: #ff8fbd;
+  /* A notice that went wrong: its pale pink text on the red tint; the snackbar's near-black (phase 7, from La Copa) */
+  --ink-bad: #ffd0d6; --snackbar-bg: #111111;
+  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* The well: a sunken surface on the dark background (rows, inputs, segmented controls), deeper for an input */
+  --well: rgba(0, 0, 0, 0.25); --well-rgb: 0 0 0; --well-deep: rgba(0, 0, 0, 0.3);
+  --placeholder: rgba(255, 255, 255, 0.35);
+  --line-faint: rgba(255, 255, 255, 0.35);
+  --shadow-text: 0 4px 0 rgba(0, 0, 0, 0.35);
+  /* Text sizes in hundredths of a rem: body is --fs-100; the steps every game picks from (titles use .display--xl…sm) */
+  --fs-75: 0.75rem; --fs-85: 0.85rem; --fs-90: 0.9rem; --fs-100: 1rem; --fs-110: 1.1rem; --fs-120: 1.2rem;
+  --fs-140: 1.4rem; --fs-160: 1.6rem; --fs-200: 2rem;
+  --font-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
+  /* Bangers' letters lean out of their box on the right: big display text keeps this much room so
+     Safari, which paints only the box on an animated layer, does not cut the last one */
+  --ink-overhang: 0.08em;
+  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  /* Cifras que el jugador lee o compara: en Bangers el 1 y el 7 son casi el mismo trazo */
+  --font-num: 'Nunito', system-ui, -apple-system, sans-serif;
+  /* El fondo de la app, sobre --bg1: también lo toma la capa del dado al irse (D-235) */
+  --fondo:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 46, 136, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(46, 230, 214, 0.22), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(138, 77, 255, 0.35), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+/* El `overscroll-behavior` del viewport se toma de <html>; desde <body> solo se propaga si
+   <html> vale `auto`, y de esa propagación no conviene depender: donde no ocurre, tirar hacia
+   abajo desde arriba dispara el "deslizar para actualizar" de Chrome y se lleva el gesto
+   puesto —y con él la partida, porque recarga la página (D-86)—. Va en los dos. */
+html, body { margin: 0; min-height: 100%; overscroll-behavior: none; }
+/* Lab flag no-double-tap-zoom (#1045): quick taps in a game never zoom the page on iPhone; pinch zoom still works */
+html.no-dtz, html.no-dtz body, html.no-dtz button, html.no-dtz a, html.no-dtz [role="button"] { touch-action: manipulation; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg1);
+  background-image: var(--fondo);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  min-height: 100dvh;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+/* Partículas / confeti de fondo animado */
+.bg-sparkles {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.bg-sparkles span {
+  position: absolute; display: block; border-radius: 50%;
+  background: var(--yellow); opacity: 0.35;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  from { transform: translateY(110vh) rotate(0deg); }
+  to   { transform: translateY(-10vh) rotate(720deg); }
+}
+
+.app {
+  position: relative; z-index: 1;
+  max-width: 560px; margin: 0 auto; padding: 16px 18px 32px;
+  /* `svh` y no `dvh`: el alto chico, el que queda cuando el navegador muestra toda su interfaz.
+     `dvh` es el de este instante y puede ser el grande —en un Android con la app instalada
+     medimos dvh 1016 y svh 960—, así que al dimensionar con él la pantalla se arma 56 px más
+     larga que lo que se ve y lo que se apoya abajo, la barra de apostar de Dudo, queda fuera:
+     alcanzable deslizando, pero fuera (D-77). Con `svh` puede sobrar un poco de fondo abajo,
+     que no se ve porque el `body` sigue pintando `100dvh`; lo que nunca pasa es que falte.
+     Las muescas se descuentan porque el `body` ya las reservó con su padding (D-75). */
+  min-height: 100vh;   /* respaldo: un navegador que no entienda `svh` se queda con el alto de siempre */
+  min-height: calc(100svh - var(--safe-top) - var(--safe-bottom));
+  display: flex; flex-direction: column;
+}
+
+/* --- Tipografía --- */
+.display {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin: 0;
+  /* room for the letters' lean, given back by the margin so the layout does not move */
+  padding-inline: var(--ink-overhang); margin-inline: calc(-1 * var(--ink-overhang));
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--pink-rgb) / 0.45);
+}
+.display--xl { font-size: clamp(2.6rem, 12vw, 4.4rem); }
+.display--lg { font-size: clamp(2rem, 9vw, 3.2rem); }
+.display--md { font-size: clamp(1.5rem, 6.5vw, 2.2rem); }
+.display--sm { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+/*
+ * El degradado se pinta dentro de la caja del texto, y con line-height 0.95 los acentos sobre
+ * mayúscula quedan fuera: la Ó de SALÓN y la Ã de SALÃO salían cortadas, y en alemán se perdían
+ * las diéresis de casi cada título (Ä, Ö, Ü). El relleno arriba agranda la caja pintada y el
+ * margen negativo deja el título donde estaba (D-191). The same on the right: the display font
+ * slants, so a title's last letter (the O of ALETAZO) went past the painted box and was cut; each
+ * game used to add that right padding on its own title. It goes on both sides, so a centered
+ * title stays centered.
+ */
+.rainbow {
+  padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0;
+  background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 6s linear infinite;
+  text-shadow: none;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.35));
+}
+@keyframes shimmer { to { background-position: 300% 0; } }
+
+p { line-height: 1.5; margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.center { text-align: center; }
+.lead { font-size: 1.1rem; font-weight: 700; }
+
+/* --- Botones --- */
+.btn {
+  appearance: none; border: 0; cursor: pointer;
+  font-family: var(--font-display); font-size: 1.45rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink);
+  padding: 16px 24px; border-radius: 999px;
+  background: linear-gradient(180deg, var(--pink), var(--pink-deep));
+  box-shadow: 0 6px 0 var(--edge-pink), 0 12px 24px rgb(var(--pink-rgb) / 0.35);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s;
+  width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  text-align: center; text-decoration: none; user-select: none; min-height: 60px;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--edge-pink), 0 6px 12px rgb(var(--pink-rgb) / 0.35); }
+.btn:disabled { filter: grayscale(0.6) brightness(0.7); cursor: not-allowed; box-shadow: none; transform: none; }
+.btn--yellow { background: linear-gradient(180deg, var(--yellow), var(--orange)); color: var(--ink-on-yellow); box-shadow: 0 6px 0 var(--edge-yellow), 0 12px 24px rgb(var(--yellow-rgb) / 0.35); }
+.btn--yellow:active { box-shadow: 0 2px 0 var(--edge-yellow), 0 6px 12px rgb(var(--yellow-rgb) / 0.35); }
+.btn--cyan { background: linear-gradient(180deg, var(--cyan), #14a89b); color: var(--ink-on-cyan); box-shadow: 0 6px 0 var(--edge-cyan), 0 12px 24px rgb(var(--cyan-rgb) / 0.35); }
+.btn--cyan:active { box-shadow: 0 2px 0 var(--edge-cyan), 0 6px 12px rgb(var(--cyan-rgb) / 0.35); }
+.btn--ghost {
+  background: var(--glass); border: 2px solid var(--glass-border); box-shadow: none; color: var(--ink);
+  font-size: 1.15rem; min-height: 50px; padding: 12px 18px;
+}
+.btn--ghost:active { transform: translateY(2px); box-shadow: none; }
+.btn--sm { font-size: 1.05rem; min-height: 44px; padding: 10px 16px; width: auto; }
+/* Danger (phase 7, #1196): red only to confirm a destructive step (deleting a cup); as a ghost, the soft
+   pink of a step that turns something off (silencing the notifications). Never a game action. */
+.btn--danger { background: var(--red); color: var(--ink); box-shadow: 0 4px 0 var(--edge-red); }
+.btn--ghost.btn--danger { background: rgb(var(--pink-rgb) / 0.16); color: var(--danger-soft); border-color: transparent; box-shadow: none; }
+/* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
+.btn.room-local { margin: 4px 0 18px; }
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn { flex: 1; }
+/* A row whose buttons go down a line when they do not fit side by side (at 320 px, or a long language) */
+.btn-row--wrap { flex-wrap: wrap; }
+/* A link inside a line of text: cyan, underlined, still 44 px to tap */
+.link-inline { appearance: none; border: 0; background: none; color: var(--cyan); font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 var(--s-6); }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* --- Aire entre el tablero y sus botones (D-309, U-11) ---
+   Todo tablero de juego lleva data-tablero: el primer botón de abajo queda a --aire-tablero de su
+   borde, en todos los juegos igual. Lo que ya separa se descuenta: el gap del contenedor
+   (--gap-contenedor; el .stack, 12 px) y el relleno de la barra de botones de abajo (--aire-ya, que
+   declara el juego en su tablero). Gana sobre el margen propio del juego (!important): es la
+   medida de todos. Cada captura de los guiones lo mide (tools/e2e/spacing-common.mjs), y look.mjs
+   lo informa. */
+:root { --aire-tablero: 28px; }
+.stack { --gap-contenedor: 12px; }
+[data-tablero] { margin-bottom: max(0px, calc(var(--aire-tablero) - var(--gap-contenedor, 0px) - var(--aire-ya, 0px))) !important; }
+[data-tablero] [data-tablero] { margin-bottom: 0 !important; } /* uno dentro de otro: el aire lo pone el de afuera */
+
+/* --- The game shell (D-533, phase 4 of #1188): what every game's screens are made of ---
+   Until November 2026 each game copied these from the one before (eleven copies of .screen, eight
+   of .field and .form-error, seven of .mode, .code-big, .qr, .or and .result-hero, six of .switch,
+   five of .player-row and .lobby-players, three of .toggle-row). They live here once, on the
+   tokens; a game keeps only what is its own. The components page (/labs/design/) shows them. */
+/* Screens: one visible at a time, sliding up when it enters */
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+/* The cover's hero: the emoji glowing above the title; `.icon--cyan` for a sea or a number game */
+.intro-hero { text-align: center; padding: var(--s-6) 0 var(--s-8); }
+.intro-hero .icon { font-size: 4.2rem; display: block; animation: bounce 2.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
+.intro-hero .icon--cyan { filter: drop-shadow(0 0 18px rgb(var(--cyan-rgb) / 0.6)); }
+/* A dark emoji (〰️, 🕵️) gets the light outline of .emoji-claro on top of the hero's golden glow */
+.intro-hero .icon.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 18px rgb(var(--yellow-rgb) / 0.6)); }
+/* A mode to pick on the cover: title, a line under it and the › */
+.modes { display: grid; gap: var(--s-10); }
+.mode {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--s-10); text-align: left;
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: var(--s-14) var(--s-16);
+  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s, border-color 0.2s;
+}
+.mode:active { transform: scale(0.98); }
+.mode:disabled { opacity: 0.5; cursor: not-allowed; }
+.mode b { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+.mode small { color: var(--muted); font-weight: 700; }
+.mode .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+.mode .soon { font-weight: 900; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--glass-border); border-radius: var(--r-pill); padding: var(--s-4) var(--s-8); white-space: nowrap; }
+/* A form field: label in small caps, the input in a well; `.name` big and centred, `.code` a room code */
+.field { display: grid; gap: var(--s-6); margin-bottom: var(--s-12); }
+.field label { font-weight: 900; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.field input {
+  width: 100%; font: 900 1.1rem var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: var(--r-14); padding: var(--s-12) var(--s-14); outline: none;
+}
+.field input:focus { border-color: var(--cyan); }
+.field input::placeholder { color: var(--placeholder); }
+.field input.name { font: 900 1.5rem var(--font-body); text-align: center; padding: var(--s-14) var(--s-12); border-color: var(--glass-border); }
+.field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
+.field .sub { color: var(--muted); font-size: 0.78rem; font-weight: 700; margin: 0; }
+.field .sub.warn { color: var(--yellow); }
+/* A PIN: its digits spaced and centred; `.pin-row` puts a 👁 (`.pin-show`) beside it */
+.field input.pin { letter-spacing: 0.5em; text-align: center; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.pin-row { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: var(--s-6); }
+.pin-show { min-height: 44px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); color: var(--ink); font-size: var(--fs-110); cursor: pointer; }
+.pin-show[aria-pressed="true"] { border-color: var(--cyan); }
+/* How many characters of the most (D-119): under the input, at the right; yellow when full */
+.field .counter { display: block; text-align: right; margin-top: var(--s-4); font-size: 0.8rem; }
+.field .counter.full { color: var(--yellow); }
+/* A date: the phone's own picker, in the dark scheme */
+.field input[type="date"] { min-height: 48px; border-radius: var(--r-12); border: 1px solid var(--glass-border); background: var(--well); font: 800 var(--fs-100) var(--font-body); padding: var(--s-8) var(--s-12); color-scheme: dark; }
+.field input[type="date"]:focus { border-color: var(--cyan); }
+.form-error { color: var(--yellow); font-weight: 800; text-align: center; min-height: 1.4em; margin: var(--s-6) 0; }
+/* A segmented control: one of two or three, the chosen one in yellow */
+.seg { display: flex; gap: var(--s-6); background: var(--well-deep); border-radius: var(--r-14); padding: var(--s-4); }
+.seg button { flex: 1; border: 0; background: transparent; color: var(--muted); font: 900 0.95rem var(--font-body); padding: var(--s-10) var(--s-4); border-radius: var(--r-10); cursor: pointer; min-height: 44px; }
+.seg button.on { background: var(--yellow); color: var(--ink-on-yellow); }
+/* Choice buttons (La Copa's, D-425): two or three side by side, the chosen one outlined in yellow */
+.opciones { display: grid; gap: var(--s-8); }
+.opciones.dos { grid-template-columns: 1fr 1fr; }
+.opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
+.opciones.dos .opcion, .opciones.tres .opcion { text-align: center; }
+.opciones.tres .opcion { padding-left: var(--s-6); padding-right: var(--s-6); }
+.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
+@media (max-width: 374px) { .opciones.tres .opcion { padding-left: var(--s-4); padding-right: var(--s-4); } .opciones.tres .opcion b { font-size: 0.95rem; } }
+.opcion {
+  text-align: left; background: var(--well); border: 2px solid var(--glass-border); border-radius: var(--r-16); padding: var(--s-12) var(--s-14);
+  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
+}
+.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion .opcion-emoji { display: block; }
+.opcion small { color: var(--muted); font-weight: 700; }
+.opcion.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+/* A player's row in the setup: number, name, ✕; `.cpu` for a bot */
+.player-row { display: grid; grid-template-columns: 28px 1fr auto; gap: var(--s-8); align-items: center; background: var(--well); border-radius: var(--r-14); padding: var(--s-6) var(--s-10); margin-bottom: var(--s-6); }
+.player-row .num { font-family: var(--font-display); font-size: 1.2rem; color: var(--yellow); text-align: center; }
+/* A row without a seat number (one player alone): the name starts at the row's own left edge */
+.player-row.no-num { grid-template-columns: 1fr auto; padding-left: var(--s-14); }
+.player-row input { background: transparent; border: 0; padding: var(--s-10) 0; color: var(--ink); font: 800 1rem var(--font-body); width: 100%; }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; } /* 44: a finger fits (U-10); the games had 32 × 36 */
+.player-row .del:disabled { opacity: 0.2; }
+.player-row.cpu .cpu-name { font-weight: 900; color: var(--cyan); padding: var(--s-10) 0; }
+/* A row with a switch: the text (`.txt` with a <b> and a <small>) and the switch at the right */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-12); background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); }
+.toggle-row .txt b { display: block; font-size: 0.95rem; }
+.toggle-row .txt small { color: var(--muted); font-weight: 700; font-size: 0.76rem; line-height: 1.25; display: block; }
+.switch { flex: 0 0 auto; width: 58px; height: 34px; border-radius: var(--r-pill); border: 2px solid var(--glass-border); background: rgba(0, 0, 0, 0.4); position: relative; cursor: pointer; padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.15s, background 0.15s; }
+.switch.on { background: rgb(var(--yellow-rgb) / 0.3); border-color: var(--yellow); }
+.switch.on::after { transform: translateX(24px); background: var(--yellow); }
+/* U-10: the switch is drawn 34 px tall; an invisible band takes its tap area to 44 px without moving anything. */
+.switch::before { content: ''; position: absolute; inset: -7px -2px; }
+/* A link that is a button (the small way out under a form) */
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+/* A room: the code big, the QR on a card, the players as pills, "or", waiting… */
+.code-big { font-family: var(--font-display); font-size: clamp(3rem, 20vw, 5rem); letter-spacing: 0.25em; text-align: center; color: var(--yellow); text-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 0 30px rgb(var(--yellow-rgb) / 0.6); margin: var(--s-2) 0; padding-left: 0.25em; }
+.qr { display: grid; place-items: center; margin: var(--s-8) auto; background: var(--ink); border-radius: var(--r-16); padding: var(--s-8); width: fit-content; }
+.qr svg { display: block; width: min(46vw, 190px); height: auto; }
+.or { text-align: center; color: var(--muted); font-weight: 900; margin: var(--s-6) 0; }
+.lobby-players { display: flex; flex-wrap: wrap; gap: var(--s-6); justify-content: center; margin: var(--s-10) 0; }
+.lobby-players .p { display: flex; align-items: center; gap: var(--s-6); padding: var(--s-6) var(--s-12); border-radius: var(--r-pill); background: var(--well); font-weight: 800; font-size: 0.9rem; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.lobby-players .p.me { background: var(--cyan); color: var(--ink-on-cyan); }
+.lobby-players .p.off { opacity: 0.45; }
+.waiting { text-align: center; color: var(--muted); font-weight: 800; }
+.waiting--screen { padding: var(--s-32) 0; }
+.waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+/* Whose turn, over the board: the name glowing cyan and a line under it */
+.status { text-align: center; margin: var(--s-2) 0 var(--s-6); }
+.status .who { font-family: var(--font-display); font-size: clamp(1.4rem, 6.5vw, 2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 0 24px rgb(var(--cyan-rgb) / 0.5); }
+.status .sub { color: var(--muted); font-weight: 800; font-size: 0.85rem; min-height: 1.2em; }
+/* A notice: one line that tells the player something, in a glass box; --good in lime, --bad on a red tint (phase 7, from La Copa) */
+.notice { text-align: center; font-weight: 800; padding: var(--s-10) var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.notice--good { background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); }
+.notice--bad { background: rgb(var(--red-rgb) / 0.22); color: var(--ink-bad); }
+.notice--warn { background: rgb(var(--yellow-rgb) / 0.16); color: var(--yellow); }
+/* The snackbar: a short message floating at the bottom for a moment ("Copiado"); centred without a
+   transform, because the entering animation would override it and push it to the right */
+.snackbar { position: fixed; left: var(--s-16); right: var(--s-16); margin: 0 auto; width: fit-content; bottom: calc(var(--s-24) + var(--safe-bottom)); background: var(--snackbar-bg); border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; padding: var(--s-12) var(--s-18); border-radius: var(--r-14); z-index: 50; animation: slideUp 0.25s both; }
+/* The result's hero: the trophy popping above the title */
+.result-hero { text-align: center; padding: var(--s-2) 0 var(--s-6); }
+/* As wide as the emoji, centred: a full-width block grown by the pop's overshoot spilled past the screen for a moment (C-8) */
+.result-hero .trophy { font-size: 4.2rem; display: block; width: fit-content; margin-inline: auto; animation: pop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+
+/* --- Tarjetas de vidrio --- */
+.panel {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); padding: 18px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-panel);
+}
+/* A panel around a destructive step (deleting a cup): its border in red */
+.panel--danger { border-color: rgb(var(--red-rgb) / 0.55); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 0.95rem;
+  background: rgb(var(--ink-rgb) / 0.12); border: 1px solid var(--glass-border);
+}
+.chip--hot { background: var(--pink); border-color: transparent; }
+.chip--gold { background: var(--yellow); color: var(--ink-on-yellow); border-color: transparent; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* A chip in the colour of the second meaning (La Copa's final ×2, D-151): cyan, as `--gold` is gold */
+.chip--cyan { background: var(--cyan); color: var(--ink-on-cyan); border-color: transparent; }
+/* A chip that is a choice (phase 7, #1196): a pill to tap, one or more on; on is yellow like .opcion.on (yellow is the choice) */
+.chip-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--s-6) var(--s-12);
+  border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--well); color: var(--ink);
+  font: 800 var(--fs-85) var(--font-body); cursor: pointer;
+}
+/* A sheet's head: its title and the ✕ */
+.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); }
+.hoja-cabeza h3 { margin: 0; font-size: var(--fs-110); font-weight: 900; }
+.chip-btn.on { border-color: var(--yellow); background: rgb(var(--yellow-rgb) / 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+
+/* --- Panel desplegable --- */
+details.panel summary { cursor: pointer; font-weight: 900; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center; position: relative; }
+/* U-10: the summary is only its text's height (~25 px); an invisible band takes its tap area to 44 px without moving anything */
+details.panel summary::before { content: ''; position: absolute; left: 0; right: 0; top: min(0px, calc(50% - 22px)); bottom: min(0px, calc(50% - 22px)); }
+details.panel summary::after { content: '▾'; font-size: 1.3rem; transition: transform 0.2s; }
+details.panel[open] summary::after { transform: rotate(180deg); }
+details.panel[open] summary { margin-bottom: 12px; }
+details.panel summary::-webkit-details-marker { display: none; }
+
+/* --- Cabecera compartida --- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+/*
+ * A 320 px el nombre del juego no cabe siempre en la barra ("⚓ Batalla Naval", y en alemán
+ * "🪢 Galgenmännchen"): partía el chip en dos líneas y arrastraba a "‹ Menú". El menú no se
+ * achica y el chip se corta con "…": el nombre entero está en el título de la pantalla (D-191).
+ */
+.topbar .tools { min-width: 0; }
+.topbar .tools > :not(.chip) { flex: none; }
+.topbar .tools .chip { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .back {
+  flex: none; white-space: nowrap;
+  color: var(--ink); text-decoration: none; font-weight: 900; font-size: 1rem;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 999px; padding: 8px 14px;
+  position: relative;
+}
+/* U-10: the pill is drawn 40 px tall; an invisible band takes its tap area to 44 px without moving anything. */
+.topbar .back::before { content: ''; position: absolute; inset: -3px -1px; }
+
+/* --- Animaciones reutilizables --- */
+@keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); } }
+.pop { animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.wiggle { animation: wiggle 1.2s ease-in-out infinite; display: inline-block; }
+.bounce { animation: bounce 1.4s ease-in-out infinite; display: inline-block; }
+.slide-up { animation: slideUp 0.35s ease-out both; }
+.shake { animation: shake 0.6s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* Confeti (canvas) */
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+/* --- Language toggle (D-231): only the flag on each button; the name is in title/aria-label --- */
+.lang-toggle {
+  display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+}
+.lang-toggle button {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; cursor: pointer; border-radius: 999px; padding: 6px 10px;
+  min-height: 44px; min-width: 44px; /* C-8: a finger fits, like every button */
+  line-height: 1; background: transparent;
+  transition: background 0.15s, transform 0.1s;
+}
+.lang-toggle .flag { font-size: 1.4rem; }
+.lang-toggle button.on { background: var(--yellow); transform: scale(1.04); }
+.lang-toggle button:active { transform: scale(0.96); }
+.topbar .tools:has(> #lang-slot) { flex-wrap: wrap; justify-content: flex-end; }
+/* The top bar's language button on game covers (D-537): the flag, and the toggle under it */
+.lang-btn { position: relative; display: inline-flex; }
+.lang-btn .flag { font-size: 1.25rem; line-height: 1; }
+.lang-pop { position: absolute; top: calc(100% + 6px); right: 0; z-index: 30; }
+.lang-pop .lang-toggle { background: var(--bg2); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+
+/* --- Botones redondos de la barra de arriba (sonido, rankings, compartir) --- */
+.sound-toggle, .icon-btn {
+  border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink);
+  width: 44px; height: 44px; border-radius: 999px; font-size: 1.25rem; cursor: pointer; display: grid; place-items: center;
+  transition: transform 0.1s; text-decoration: none;
+}
+.sound-toggle:active, .icon-btn:active { transform: scale(0.92); }
+.topbar .tools { display: flex; gap: 8px; align-items: center; }
+/* With the cover's share button (cover-share.js) a 320 px bar has no room for the game's chip: the
+   cover's title right below names the game, so the chip steps aside there */
+@media (max-width: 359px) { .topbar:has(#btn-share-cover:not([hidden])) .tools .chip { display: none; } }
+/* Lab flag profile (lab: #seccion-profile, profile-button.js): every top bar ends in the player's pill (flag,
+   name, ›) that opens /profile/, and its language is one flag with a ▾; a signed-in player's cover drops its
+   «🏅 <name>» button (the PIN is in the profile's ⚙️), and Instrucciones takes the whole row */
+html.pf-on .topbar .tools, html.pf-on .topbar .tools:has(> #lang-slot) { flex-wrap: nowrap; }
+html.pf-on .topbar .tools .chip { flex-shrink: 100; }
+html.pf-on .topbar .tools .pf-home { width: auto; max-width: 9rem; min-width: 44px; flex: 0 1 auto; justify-content: center; display: inline-flex; align-items: center; gap: var(--s-6); padding: 0 var(--s-12); font: 900 var(--fs-100) var(--font-body); }
+html.pf-on .topbar .pf-home-flag { flex: none; }
+html.pf-on .topbar .pf-home-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.pf-on .topbar .pf-home-go { flex: none; color: var(--muted); font-size: var(--fs-120); line-height: 1; }
+html.pf-on .topbar .pf-lang .icon-btn { width: auto; display: inline-flex; align-items: center; gap: var(--s-4); padding: 0 var(--s-10); }
+html.pf-on .topbar .pf-lang-caret { font-size: var(--fs-85); color: var(--muted); }
+/* The bar's language now sits mid-bar: its three flags open centred under it, never past the screen's left edge */
+html.pf-on .topbar:not(.portada-barra) .pf-lang .lang-pop { left: 50%; right: auto; transform: translateX(-50%); }
+.pf-home-icon { display: none; }
+/* Lab flag settings-in-profile (tester-boot.js, lab: #seccion-settings-in-profile): sound and language only in
+   the profile's ⚙️; every other page's bar and cover drop 🔊 and the flags. The home page keeps its language
+   (the owner 2026-11-23): a first visitor must find it without an account */
+html.settings-in-profile #sound-slot, html.settings-in-profile .sound-toggle, html.settings-in-profile .cover-lang,
+html.settings-in-profile :is(.lang-btn, #lang-slot, .lang-toggle):not(.portada-barra *) { display: none !important; }
+html.pf-on .topbar #lang-slot:not(:has(.lang-btn, .lang-toggle)) { display: none; }
+/* A narrow phone keeps every button: the pill shows the flag only, the language loses its ▾ */
+@media (max-width: 374px) {
+  html.pf-on .topbar { gap: var(--s-8); }
+  html.pf-on .topbar .tools { gap: var(--s-6); }
+  html.pf-on .topbar .tools .pf-home { padding: 0; }
+  html.pf-on .topbar .pf-home-flag, html.pf-on .topbar .pf-home-name, html.pf-on .topbar .pf-home-go, html.pf-on .topbar .pf-lang-caret { display: none; }
+  html.pf-on .topbar .pf-home-icon { display: inline; font-size: var(--fs-120); }
+  html.pf-on .topbar .pf-lang .icon-btn { padding: 0; width: 44px; justify-content: center; }
+}
+html.pf-signed #btn-cuenta { display: none; }
+html.pf-signed .opciones.dos.portada-acciones { grid-template-columns: minmax(0, 1fr); }
+
+/* --- Transición entre turnos (overlay compartido: salud / pásale el celular) --- */
+.handoff {
+  position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px;
+  background:
+    radial-gradient(700px 500px at 50% 20%, rgb(var(--pink-rgb) / 0.45), transparent 65%),
+    radial-gradient(600px 500px at 50% 110%, rgb(var(--cyan-rgb) / 0.35), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3));
+  animation: fadeIn 0.25s ease-out both; text-align: center;
+  /* En un celular bajo (320 × 568) el veredicto con su dato y el pase no caben: se desplaza, y el
+     botón de seguir se alcanza (U-11) */
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.handoff.leaving { animation: fadeOut 0.3s ease-in both; pointer-events: none; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+.handoff .stage { width: 100%; max-width: 480px; display: grid; gap: 14px; justify-items: center; }
+.handoff .stage.pop { animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.cheers { font-size: 5.5rem; line-height: 1; display: flex; gap: 0; }
+.cheers span { display: inline-block; }
+.cheers .l { animation: clinkL 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; transform-origin: bottom right; }
+.cheers .r { animation: clinkR 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) infinite; transform-origin: bottom left; }
+@keyframes clinkL { 0%, 100% { transform: rotate(-18deg) translateX(-6px); } 45% { transform: rotate(10deg) translateX(6px); } }
+@keyframes clinkR { 0%, 100% { transform: rotate(18deg) translateX(6px) scaleX(-1); } 45% { transform: rotate(-10deg) translateX(-6px) scaleX(-1); } }
+.handoff .title { font-family: var(--font-display); font-size: clamp(2.6rem, 14vw, 4.2rem); letter-spacing: 0.04em; text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgb(var(--yellow-rgb) / 0.6); line-height: 0.95; }
+.handoff .title.gold { color: var(--yellow); }
+.handoff .drinkers { margin: 0; }
+.handoff .drinkers .chip { font-size: 1.2rem; padding: 10px 18px; }
+.handoff .hint { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
+.handoff .phone { font-size: 4.5rem; line-height: 1; animation: passPhone 1.4s ease-in-out infinite; }
+@keyframes passPhone { 0%, 100% { transform: translateX(-14px) rotate(-8deg); } 50% { transform: translateX(14px) rotate(8deg); } }
+.handoff .next-name { font-family: var(--font-display); font-size: clamp(3rem, 16vw, 4.8rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 0 36px rgb(var(--cyan-rgb) / 0.7); line-height: 0.95; }
+.handoff .btn { max-width: 420px; }
+
+/* --- Pantalla opaca compartida: "pásale el celular", toca para ver (modo un celular) --- */
+.cover {
+  position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; text-align: center; padding: 24px;
+  background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3)); animation: fadeIn 0.2s both;
+}
+.cover .big { font-family: var(--font-display); font-size: clamp(2.2rem, 12vw, 3.6rem); color: var(--cyan); letter-spacing: 0.04em; text-shadow: 0 5px 0 rgba(0,0,0,0.4); }
+.cover .eye { font-size: 4rem; animation: bounce 1.6s infinite; }
+
+
+/* --- Chat de sala compartido (canon C-15): burbuja + hoja inferior --- */
+/* Vive fuera de las pantallas del juego y por debajo de .handoff (z-index 30),
+   así el veredicto de una jugada siempre lo tapa. */
+.chat { position: fixed; inset: 0; z-index: 20; pointer-events: none; --kb: 0px; }
+.chat > * { pointer-events: auto; }
+/* The bubble lives in a strip of its own at the bottom: with the chat on, every room screen ends
+   above it, so it never covers the last button of a bar (¡CALZO!, ¡A JUGAR!, Revancha). */
+body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+
+.chat-fab {
+  position: absolute; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--glass-border);
+  background: linear-gradient(180deg, rgb(var(--purple-rgb) / 0.95), rgba(42, 10, 74, 0.95));
+  color: var(--ink); font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  display: grid; place-items: center; animation: pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+.chat-fab:active { transform: scale(0.94); }
+.chat-fab.has-unread { border-color: var(--pink); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgb(var(--pink-rgb) / 0.6); }
+.chat-badge {
+  position: absolute; top: -3px; right: -3px; min-width: 22px; height: 22px; padding: 0 var(--s-6);
+  border-radius: 999px; background: var(--pink); color: var(--ink); font: 900 0.72rem var(--font-body);
+  display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Etiqueta que se asoma al lado de la burbuja con el mensaje recién llegado. Deja pasar los
+   toques: lo que está debajo ("Revancha", el tablero) hace lo suyo; solo la burbuja abre el chat (dilema #48). */
+.chat > .chat-peek { pointer-events: none; }
+.chat-peek {
+  position: absolute; right: 74px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  max-width: min(64vw, 260px); min-height: 54px;
+  display: flex; flex-direction: column; justify-content: center; gap: 1px; text-align: left;
+  padding: 8px 12px; border-radius: 16px 16px 4px 16px;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.97), rgba(21, 7, 38, 0.97));
+  border: 2px solid var(--glass-border); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  color: var(--ink); font-family: var(--font-body);
+}
+.chat-peek .who { font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; }
+/* Un mensaje largo se corta en dos líneas: la etiqueta es un aviso, no el chat */
+.chat-peek .txt { font-size: 0.85rem; font-weight: 700; line-height: 1.25; overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.chat-peek.in { animation: peekIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.chat-peek.leaving { animation: peekOut 0.28s ease-in both; }
+@keyframes peekIn { from { opacity: 0; transform: translateX(16px) scale(0.92); } to { opacity: 1; transform: none; } }
+@keyframes peekOut { to { opacity: 0; transform: translateX(10px) scale(0.96); } }
+/* El mismo aviso para lectores de pantalla: siempre presente (una región viva que aparece no se anuncia) */
+.chat > .chat-live {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+  clip-path: inset(50%); white-space: nowrap; pointer-events: none;
+}
+
+.chat-sheet { position: absolute; inset: 0; display: grid; align-items: end; }
+.chat-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
+.chat-panel {
+  position: relative; width: 100%; max-width: 560px; margin: 0 auto;
+  height: min(62dvh, 520px); display: grid; grid-template-rows: auto 1fr auto;
+  border-radius: 22px 22px 0 0; border: 2px solid var(--glass-border); border-bottom: 0;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  transform: translateY(calc(-1 * var(--kb))); transition: transform 0.15s ease-out;
+  animation: slideUp 0.25s ease-out both;
+}
+.chat-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; border-bottom: 1px solid var(--glass-border); }
+.chat-head b { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.05em; }
+.chat-x { border: 0; background: transparent; color: var(--muted); font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; }
+.chat-list { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 12px; display: flex; flex-direction: column; gap: var(--s-8); }
+/* Los mensajes se apoyan abajo, pegados al campo de texto, como en cualquier chat */
+.chat-list > :first-child { margin-top: auto; }
+.chat-empty { color: var(--muted); font-weight: 800; text-align: center; margin: auto 0; font-size: 0.9rem; }
+.chat-msg {
+  max-width: 84%; align-self: flex-start; padding: var(--s-8) var(--s-12); border-radius: 14px;
+  background: var(--glass); border: 1px solid var(--glass-border); animation: pop 0.2s ease-out both;
+}
+.chat-msg.mine { align-self: flex-end; background: rgb(var(--cyan-rgb) / 0.16); border-color: rgb(var(--cyan-rgb) / 0.4); }
+.chat-msg.grouped { margin-top: -4px; }
+.chat-msg .who { display: block; font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 1px; }
+.chat-msg .txt { font-size: 0.92rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.chat-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--glass-border); }
+/* 16px exactos: con menos, iOS hace zoom al enfocar el campo */
+.chat-form input { width: 100%; font: 700 16px var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.35); border: 2px solid transparent; border-radius: 999px; padding: var(--s-12) var(--s-16); outline: none; }
+.chat-form input:focus { border-color: var(--cyan); }
+.chat-form input::placeholder { color: var(--placeholder); }
+.chat-send { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--cyan); color: var(--ink-on-cyan); font-size: 1.2rem; cursor: pointer; }
+.chat-send:active { transform: scale(0.94); }
+
+/* Un emoji casi negro (〰️) sobre el fondo morado: contorno claro, el mismo emoji (ui.js, EMOJI_OSCUROS) */
+.emoji-claro { filter: drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 1px var(--ink)) drop-shadow(0 0 5px rgb(var(--ink-rgb) / 0.55)); }
+
+/*
+ * En alemán las palabras compuestas son largas y no caben en una columna angosta: se cortan
+ * con guion, según el diccionario del navegador (necesita el lang del <html>, que pone
+ * setLang), y si igual no caben se parten antes que desbordar la pantalla (D-191).
+ */
+html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-word; }
+
+/* --- Un idioma en el laboratorio (D-191, assets/js/labs-idioma.js) --- */
+.labs-tabs { position: fixed; left: 0; top: 46%; z-index: 40; display: grid; gap: 6px; }
+.labs-tab {
+  width: 34px; height: 44px; display: grid; place-items: center; font-size: 1.1rem; text-decoration: none;
+  border: 1px solid rgb(var(--orange-rgb) / 0.6); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer;
+  background: rgba(42, 10, 74, 0.92); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); color: var(--ink);
+}
+.labs-tab:active { transform: scale(0.94); }
+.labs-capa {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: end center;
+  background: rgba(10, 2, 20, 0.6); padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.labs-caja {
+  width: 100%; max-width: 480px; max-height: calc(100svh - 24px); overflow-y: auto;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.99), rgba(21, 7, 38, 0.99)); animation: slideUp 0.25s ease-out both;
+}
+.labs-caja h2 { margin: 0; }
+/* Behind flag('keyboard-lift'): the layer ends where the iOS keyboard starts, so Send stays above it */
+.labs-capa.sigue-teclado { padding-bottom: calc(12px + max(var(--kb, 0px), env(safe-area-inset-bottom, 0px))); }
+.labs-capa.sigue-teclado .labs-caja { max-height: calc(100svh - 24px - var(--kb, 0px)); }
+/* With the page pinned behind it, scrolling the card never carries over */
+.fondo-fijo .labs-caja { overscroll-behavior: contain; }
+.labs-texto, .labs-nombre {
+  width: 100%; font: 700 16px/1.4 var(--font-body); color: var(--ink); background: var(--well-deep);
+  border: 2px solid transparent; border-radius: 14px; padding: 12px 14px; outline: none;
+}
+.labs-texto { resize: vertical; }
+.labs-texto:focus, .labs-nombre:focus { border-color: var(--cyan); }
+.labs-error { color: var(--pink); font-weight: 800; min-height: 1em; }
+.labs-error:empty { display: none; }
+.labs-aviso { margin: 0; font-weight: 800; line-height: 1.5; }
+.topbar .labs-bicho { flex: none; border-color: rgb(var(--orange-rgb) / 0.6); font-size: 1.1rem; }
+
+/* The inbox at the end of the experience (D-345, U-38): a quiet link, below everything */
+.buzon-pie { margin-top: 18px; text-align: center; }
+.buzon-pie > .panel { text-align: start; }
+.buzon-link { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 8px; }
+.buzon-tipos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+@media (min-width: 440px) { .buzon-tipos { grid-template-columns: repeat(4, auto); justify-content: start; } }
+.buzon-tipo {
+  font: 800 0.8rem var(--font-body); color: var(--ink); background: var(--well-deep); cursor: pointer;
+  border: 2px solid transparent; border-radius: 999px; padding: 6px 8px; min-height: 44px; white-space: nowrap;
+}
+.buzon-tipo[aria-pressed="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.15); }
+.footer-buzon { display: inline-block; }
+
+/* Mientras los textos del idioma elegido no están puestos, no se pinta nada (D-194) */
+html.i18n-pendiente body { visibility: hidden; }
+
+/* --- La hoja de abajo (D-223, D-232): pasos y avisos sobre el morado oscuro de la hoja del chat
+   (.chat-panel). Sobre el fondo de la app, un blanco encandila (lo pidió el dueño al ver el
+   diseño). La usan los avisos de La Copa y el globo de agregar a inicio de la portada. */
+.hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; overscroll-behavior: contain; }
+.hoja-fondo { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
+.hoja {
+  position: relative; width: 100%; max-width: 560px; margin: 0 auto; box-sizing: border-box;
+  max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px;
+  padding: 10px 20px calc(22px + var(--safe-bottom));
+  border-radius: 22px 22px 0 0; border: 2px solid var(--glass-border); border-bottom: 0;
+  background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6); animation: slideUp 0.25s ease-out both;
+}
+.hoja-asa { align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.3); }
+/* A game's cover with dialogs (flag cover-dialogs, lab: #seccion-cover-dialogs; cover-dialogs.js):
+   the top bar without the game's name chip and ‹ Menú as tall as its icons, the row of two buttons
+   under the start action, and the two dialogs centred over the page */
+body.portada-v2 .topbar .tools > .chip { display: none; }
+body.portada-v2 .topbar .back { display: inline-flex; align-items: center; box-sizing: border-box; height: 44px; }
+.portada-ventana .hoja-cabeza h2 { font-size: var(--fs-200); }
+.opciones.dos.portada-acciones { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.portada-acciones .opcion { padding: var(--s-14) var(--s-8); text-align: center; }
+/* One line, the two halves equal: a long name (up to 20 letters) ends in … instead of widening its half */
+.portada-acciones .opcion b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Under 375 px «📖 Instrucciones» fits its half only a little smaller, and the dialog's title on one line */
+@media (max-width: 374px) {
+  .portada-acciones .opcion { padding-left: var(--s-2); padding-right: var(--s-2); }
+  .portada-acciones .opcion b { font-size: var(--fs-100); }
+  .portada-ventana .hoja-cabeza h2 { font-size: var(--fs-160); }
+}
+.portada-acciones .opcion.portada-entrar { border-color: var(--cyan); }
+.hoja-capa.portada-ventana { align-items: center; padding: var(--s-16); }
+.portada-ventana .hoja { border-radius: var(--r-22); border-bottom: 2px solid var(--glass-border); padding: var(--s-18); }
+/* The steps, numbered in pink circles */
+/* (ol.como: the shared cover's own list, whose indent in cup/style.css would push the circles in) */
+.portada-pasos ol, .portada-pasos ol.como { counter-reset: paso; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-12); }
+/* The circle sits beside the text, not in a grid: a step with bold words stays one flowing line */
+.portada-pasos ol > li { counter-increment: paso; position: relative; min-height: 32px; padding-left: calc(32px + var(--s-12)); }
+.portada-pasos ol > li::before { content: counter(paso); position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--pink); color: var(--ink); font-weight: 900; display: grid; place-items: center; }
+/* The ranking's own sign-in block, inside its dialog: always open, without its folded title or card */
+.portada-cuenta .rk-jugador summary { display: none; }
+.portada-cuenta .rk-jugador details.panel { background: none; border: 0; box-shadow: none; padding: 0; }
+.hoja h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: 0.04em; color: var(--yellow); margin: 0; }
+.hoja p { margin: 0; line-height: 1.45; }
+.hoja-paso { display: grid; grid-template-columns: 32px 1fr 44px; gap: 12px; align-items: center; }
+.hoja-paso small { display: block; margin-top: 2px; }
+.hoja-num { width: 32px; height: 32px; border-radius: 999px; background: var(--pink); color: var(--ink); font-weight: 900; display: grid; place-items: center; }
+.hoja-icono { width: 44px; height: 44px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.1); display: grid; place-items: center; font-size: 1.3rem; color: var(--ink); font-weight: 900; }
+.hoja-link, .hoja-caja { background: var(--glass); border-radius: 14px; padding: 12px 14px; overflow-wrap: anywhere; }
+.hoja .btn-row { flex-wrap: wrap; }
+/* Cada botón mide lo que su texto en una línea: si los dos no caben lado a lado, el segundo baja
+   entero en vez de partir la palabra ("YA LA / AGREGUÉ", "BE-SCHEID"; U-17) */
+.hoja .btn-row .btn { flex: 1 0 auto; width: auto; max-width: 100%; -webkit-hyphens: manual; hyphens: manual; }
+
+/* --- La hoja de compartir de la portada: el video arriba (su miniatura con ▶ hasta que lo tocan)
+   y dos opciones con el mismo dibujo que los modos de cada juego (.mode): título, nota y › */
+.hoja-video { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #000;
+  box-shadow: 0 0 0 2px var(--glass-border), 0 12px 30px rgba(0, 0, 0, 0.45); }
+.hoja-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* The vertical Short (D-410): as tall as the screen allows, centered, under its two tabs */
+.hoja-video--vertical { aspect-ratio: 9 / 16; width: auto; height: min(46dvh, 520px); max-width: 100%; margin: 0 auto; flex-shrink: 0; }
+.hoja-pestanas { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--glass); border: 2px solid var(--glass-border); }
+.hoja-pestana { flex: 1; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--muted);
+  font-family: var(--font-body); font-weight: 900; font-size: 0.95rem; cursor: pointer; }
+.hoja-pestana.on { background: linear-gradient(180deg, var(--yellow), #ff9a1a); color: var(--ink-on-yellow); }
+.hoja-pestana:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.hoja .opcion { flex-shrink: 0; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; width: 100%;
+  background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 12px 16px; min-height: 44px;
+  color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }
+.hoja .opcion:active { transform: scale(0.98); }
+.hoja .opcion b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.3rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.hoja .opcion small { color: var(--muted); font-weight: 700; }
+.hoja .opcion .go { font-family: var(--font-display); font-size: 2rem; color: var(--yellow); }
+
+/* --- El globo de agregar a inicio (D-232): flota sobre el pie de la portada, con el ícono de la
+   app, y se va con la ✕ para siempre. El borde dorado es el de La Copa: invita, no avisa. */
+.globo-instalar {
+  position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
+  max-width: 520px; margin: 0 auto; box-sizing: border-box;
+  display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px 12px;
+  padding: 12px; border-radius: var(--r-22);
+  border: 2px solid rgb(var(--yellow-rgb) / 0.55);
+  background: linear-gradient(135deg, #3a0e62, #1a082e);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgb(var(--yellow-rgb) / 0.18);
+  animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.globo-instalar.fuera { transform: translateY(24px); opacity: 0; }
+.globo-icono { width: 48px; height: 48px; border-radius: 12px; display: block; }
+.globo-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; padding-right: 30px; }
+.globo-texto b { font-weight: 900; }
+.globo-texto span { color: var(--muted); font-size: 0.88rem; font-weight: 700; }
+.globo-agregar { white-space: nowrap; grid-column: 1 / -1; }
+.globo-cerrar {
+  position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; border: 0; border-radius: 999px;
+  background: none; color: var(--muted); font: 900 1rem var(--font-body); cursor: pointer;
+}
+.globo-cerrar:active { transform: scale(0.9); }
+/* En un celular el botón va en su propia fila, de borde a borde; con espacio, al lado del texto */
+@media (min-width: 480px) {
+  .globo-instalar { grid-template-columns: 48px 1fr auto; padding-right: 48px; }
+  .globo-texto { padding-right: 0; }
+  .globo-agregar { grid-column: auto; }
+}
+@keyframes globoSube { from { transform: translateY(110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .globo-instalar { animation: fadeIn 0.2s both; } }
+/* Mientras está, el pie de la página sube sobre él: al final de la lista no tapa nada */
+body:has(> .globo-instalar:not(.globo-instalar--arriba)) main.app { padding-bottom: 170px; }
+
+/* --- The new invitation (flag install-invite): iridescent. A border that turns through the brand's
+   colours, a sheen that crosses the card now and then, the icon in a glowing ring. Its sheet shares
+   the border, iPhone's steps draw Safari's own buttons, and an arrow points at Safari's toolbar. */
+@property --tornasol { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.globo-instalar--tornasol, .hoja--tornasol {
+  --borde-tornasol: conic-gradient(from var(--tornasol), var(--pink), var(--yellow), var(--lime), var(--cyan), var(--purple), var(--pink));
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #3a0e62, #1a082e) padding-box, var(--borde-tornasol) border-box;
+  animation: globoSube 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both, tornasolGira 6s linear infinite;
+}
+.hoja--tornasol { border-bottom: 0; animation: slideUp 0.3s both, tornasolGira 6s linear infinite; }
+.globo-instalar--tornasol {
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 28px rgb(var(--pink-rgb) / 0.22), 0 0 28px rgb(var(--cyan-rgb) / 0.18);
+}
+/* The sheen: a soft band of light that sweeps across every few seconds */
+.globo-instalar--tornasol::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.16) 45%, rgb(var(--cyan-rgb) / 0.14) 50%, rgb(var(--pink-rgb) / 0.12) 55%, transparent 65%);
+  background-size: 250% 100%; background-position: 150% 0;
+  animation: tornasolBrillo 4.5s ease-in-out 1s infinite;
+}
+.globo-instalar--tornasol .globo-marco {
+  display: block; padding: 2px; border-radius: 14px; background: var(--borde-tornasol);
+  animation: tornasolGira 3s linear infinite, globoFlota 3s ease-in-out infinite;
+}
+.globo-instalar--tornasol .globo-texto b {
+  background: linear-gradient(90deg, var(--ink), var(--yellow), var(--ink)); background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+.globo-instalar--tornasol .globo-agregar, .globo-instalar--tornasol .globo-cerrar { position: relative; z-index: 1; }
+.globo-instalar--tornasol .globo-cerrar { position: absolute; }
+/* After a game, from the top: it does not cover the end screen's buttons */
+.globo-instalar--arriba { bottom: auto; top: calc(12px + env(safe-area-inset-top, 0px)); animation-name: globoBaja, tornasolGira; }
+.globo-instalar--arriba.fuera { transform: translateY(-24px); }
+.hoja--flecha { padding-bottom: calc(76px + var(--safe-bottom)); }
+.hoja--tornasol .hoja-lead { margin: -4px 0 0; font-weight: 700; }
+.hoja--tornasol .hoja-icono { color: var(--ink); }
+.glifo-mas { display: inline-grid; place-items: center; width: 26px; height: 26px; border: 2px solid currentColor; border-radius: var(--r-8); font: 900 1.1rem/1 var(--font-body); }
+.hoja--tornasol .hoja-paso { grid-template-columns: 32px 1fr auto; }
+.hoja--tornasol .hoja-icono { min-width: 44px; width: auto; padding: 0 6px; box-sizing: border-box; }
+.glifo-agregar { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #0a84ff; color: var(--ink); font: 800 0.85rem var(--font-body); }
+/* The arrow at the bottom of the screen, over Safari's toolbar: in the middle (Share) or, from iOS 26, at the right (⋯) */
+.instalar-flecha {
+  position: fixed; z-index: 61; bottom: calc(4px + var(--safe-bottom)); left: 50%; translate: -50% 0;
+  display: grid; justify-items: center; pointer-events: none;
+  font: 900 0.8rem var(--font-body); color: var(--ink); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  animation: fadeIn 0.3s 0.4s both;
+}
+.instalar-flecha--derecha { left: auto; right: 14px; translate: none; }
+.instalar-flecha b {
+  font-size: 2.4rem; line-height: 1;
+  background: linear-gradient(180deg, var(--yellow), var(--pink), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 8px rgb(var(--pink-rgb) / 0.7));
+  animation: bounce 1s ease-in-out infinite;
+}
+@keyframes tornasolGira { to { --tornasol: 360deg; } }
+@keyframes tornasolBrillo { 0%, 55% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+@keyframes globoFlota { 50% { translate: 0 -2px; } }
+@keyframes globoBaja { from { transform: translateY(-110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .globo-instalar--tornasol, .hoja--tornasol, .globo-instalar--tornasol .globo-marco, .globo-instalar--tornasol .globo-texto b, .instalar-flecha b { animation: fadeIn 0.2s both; }
+  .globo-instalar--tornasol::after { animation: none; }
+}
+
+/* --- El dado de Juego al azar (D-188), que también tira Uno al día (D-230) desde cualquier página.
+   La página del juego repite la capa al llegar (llegada.js, D-237), así el cambio no se ve --- */
+body.azar-abierto { overflow: hidden; }
+.azar-capa {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: calc(min(38vw, 150px) * 0.55 + 20px);
+  background: radial-gradient(circle at 50% 45%, rgba(40, 12, 70, 0.9), rgba(10, 3, 20, 0.97));
+  animation: fadeIn 0.3s ease-out both; cursor: pointer;
+  outline: none;
+}
+.azar-escena { --lado: min(38vw, 150px); width: var(--lado); height: var(--lado); position: relative; }
+.azar-salto { position: absolute; inset: 0; will-change: transform; }
+/* El lienzo mide el doble que el dado: así cabe entero cuando gira de esquina */
+.azar-lienzo { position: absolute; width: 200%; height: 200%; left: -50%; top: -50%; }
+.azar-sin-3d { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--lado) * 0.8); animation: pop 0.4s ease-out both; }
+.azar-sombra {
+  position: absolute; left: 8%; right: 8%; bottom: calc(var(--lado) * -0.42); height: 18%; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.75), transparent 70%); opacity: 0;
+}
+.azar-capa.listo .azar-escena { animation: azarLatido 0.7s cubic-bezier(0.3, 0, 0.3, 1); }
+@keyframes azarLatido { 45% { transform: scale(1.07); } }
+.azar-nombre { min-height: 4.6em; text-align: center; display: grid; gap: 4px; padding: 0 16px; }
+.azar-nombre small { color: var(--muted); font-weight: 800; font-size: 1rem; }
+.azar-nombre b { font: 400 clamp(2rem, 9vw, 2.8rem) var(--font-display); letter-spacing: 0.04em; color: var(--yellow); line-height: 1.05; }
+.azar-capa.listo .azar-nombre > * { animation: pop 0.4s ease-out both; }
+.azar-capa.listo .azar-nombre b { animation-delay: 0.08s; }
+/* Al llegar al juego, la misma escena, quieta (`.velo`): se desvanece cuando el juego está dibujado */
+/* `visible`: en inglés, portugués o alemán el body espera oculto sus textos (D-194), y el dado no */
+.azar-capa.velo { animation: none; cursor: default; pointer-events: none; transition: opacity 0.45s ease-in-out; visibility: visible; }
+.azar-capa.velo .azar-sombra { opacity: 0.6; }
+.azar-capa.velo .azar-sin-3d { animation: none; }
+.azar-capa.velo .azar-escena { transition: transform 0.45s ease-in; }
+.azar-capa.velo.saliendo { opacity: 0; }
+.azar-capa.velo.saliendo .azar-escena { transform: scale(0.85); }
+
+/* Uno al día (D-230): la tarjeta bajo el resultado */
+.uad-tarjeta { display: grid; gap: 8px; text-align: center; border-color: rgb(var(--orange-rgb) / 0.5); background: linear-gradient(160deg, rgb(var(--orange-rgb) / 0.16), rgb(var(--pink-rgb) / 0.12)); }
+.uad-racha { margin: 0; font: 400 1.7rem/1.1 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
+.uad-acciones { display: grid; gap: 10px; margin-top: 4px; }
+.uad-red { display: grid; gap: 10px; }
+.uad-red:empty, .uad-arriba:empty { display: none; }
+.uad-arriba { text-align: left; }
+.uad-duelo { margin: 4px 0 0; font: 400 1.35rem/1.15 var(--font-display); letter-spacing: 0.04em; color: var(--yellow); }
+.uad-comodin { margin: 0; font-weight: 800; color: var(--cyan); }
+.uad-invitar { display: grid; gap: 8px; text-align: center; }
+/* Los interruptores de las hojas (los avisos de La Copa y de Uno al día) */
+.hoja-switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 56px; padding-bottom: 10px; border-bottom: 1px solid rgb(var(--ink-rgb) / 0.12); cursor: pointer; }
+.hoja-switch span { display: flex; flex-direction: column; gap: 2px; }
+.hoja-switch input { appearance: none; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.2); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; }
+.hoja-switch input::after { content: ''; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 999px; background: #fff; transition: transform 0.15s; }
+.hoja-switch input:checked { background: var(--pink); }
+.hoja-switch input:checked::after { transform: translateX(20px); }
+.hoja-switch input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.uad-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.uad-horas .btn { min-width: 0; font-size: 0.9rem; padding: 10px 4px; line-height: 1.15; }
+.uad-oferta, .uad-avisos { display: grid; gap: 10px; text-align: center; }
+.uad-hora { display: grid; gap: 8px; margin-bottom: 8px; }
+/* "Repetir el de hoy": el mismo enlace discreto de La Copa (cup/style.css), también en los juegos de grupo */
+.uad-tarjeta .link-btn, #uad-hoy .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+/* The exits of an end screen (C-19, fin.js): two quiet buttons side by side, compact so they fit
+   above the fold at 320 px in every language (C-8) */
+.fin-salidas .btn { min-width: 0; font-size: 0.95rem; padding: 8px 10px; line-height: 1.15; gap: 6px; }
+/* Today's Uno al día under the exits of a game played on its own (lab flag solo-result-today-card, #1597):
+   one quiet cyan line, not a second yellow button (C-19); on a narrow phone a long name takes a second line, never cut */
+.uad-fin { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: var(--s-6); min-height: 44px; padding: var(--s-8) var(--s-14); text-align: center; line-height: 1.25;
+  border: 1px solid rgb(var(--cyan-rgb) / 0.45); border-radius: var(--r-pill); background: rgb(var(--cyan-rgb) / 0.08);
+  color: var(--ink); font: 700 var(--fs-90) var(--font-body); text-decoration: none; }
+.uad-fin-txt { min-width: 0; }
+.uad-fin-ir { flex: none; white-space: nowrap; color: var(--cyan); font-weight: 900; }
+@media (max-width: 359px) { .uad-fin { font-size: var(--fs-85); padding-inline: var(--s-10); } }
+
+/* Cuenta regresiva antes de jugar (D-105), de assets/js/cuenta-regresiva.js: La Copa y el laboratorio */
+.cuenta {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: rgba(20, 8, 40, 0.88); backdrop-filter: blur(4px); color: var(--ink);
+}
+.cuenta-juego { margin: 0; font-size: 1.2rem; opacity: .8; }
+.cuenta-num { font-family: var(--font-display, inherit); font-size: clamp(5rem, 30vw, 9rem); font-weight: 400; line-height: 1; padding-inline: var(--ink-overhang); color: var(--yellow); text-align: center; }
+.cuenta-num.late { animation: cuenta-late .9s ease-out both; }
+.cuenta.ya .cuenta-num { font-size: clamp(3rem, 16vw, 5.5rem); }
+.cuenta.ya { animation: cuenta-fuera .9s ease-in forwards; pointer-events: none; }
+@keyframes cuenta-late { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.85); opacity: .9; } }
+@keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
+/* --- The site's footer: the home page's, and the one site-footer.js puts on the screens outside a game --- */
+.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgb(var(--ink-rgb) / 0.28), transparent); }
+.pie-sitio { margin-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+.footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
+.footer-msg.out { opacity: 0; transform: translateY(6px); }
+/* The footer's options. One alone is a quiet link; two or more (today the inbox and the coffee)
+   become a quiet grid of two columns, outlined and unfilled, so they read as the site's corner and
+   not as more game cards. A new option is one more child. */
+.footer-links { margin: 1em 0; }
+.footer-links.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto 1em; }
+.footer-links.tiles::before {
+  content: '🎲'; content: '🎲' / ''; grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 8px; font-size: 0.9rem; opacity: 0.55;
+  background: linear-gradient(var(--glass-border), var(--glass-border)) left center / calc(50% - 18px) 1px no-repeat,
+  linear-gradient(var(--glass-border), var(--glass-border)) right center / calc(50% - 18px) 1px no-repeat;
+  justify-content: center;
+}
+.footer-links.tiles > * {
+  display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; margin: 0;
+  border: 1px solid rgb(var(--ink-rgb) / 0.12); border-radius: 14px; background: none;
+  color: var(--muted); font: 700 0.8rem/1.25 var(--font-body); text-decoration: none; text-align: center; text-wrap: balance;
+}
+.footer-links.tiles > *:active { background: rgb(var(--ink-rgb) / 0.05); }
+.footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--yellow-rgb) / 0.3); }
+.footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
+   phrase in white. Its options are chips, each tinted with its own color and its color circle on the left (variant C2,
+   the owner, 2026-11-09): the pill of the cards' tags, so the corner reads as part of the app and not as more game cards */
+/* It reaches the very bottom of the screen: past the column's padding and past the room <body> keeps for the phone's
+   gesture bar (--safe-bottom), which otherwise showed as a dark band of the page's background under the sunset */
+footer.atardecer { margin: 0 -18px calc(-1 * var(--s-32) - var(--safe-bottom)); padding: 28px 18px calc(var(--s-32) + var(--safe-bottom)); background: linear-gradient(180deg, transparent, rgb(var(--purple-rgb) / 0.28) 45%, rgb(var(--pink-rgb) / 0.32)); }
+/* On a screen shorter than the phone the sunset rests on the bottom edge: pushed down, its gradient ends where the page does, no dark band below */
+.screen > footer.atardecer:last-child { margin-top: auto; }
+/* Nothing under the sunset, ever (the owner, 2026-11-21): its last color carries on down to the bottom edge of the screen. The
+   space it covers is the browser's hidden bar: .app is built for the small height (svh, D-77), so when Android hides its
+   address bar the page is taller than the column, and on covers whose footer sits in a wrapper (Reinas) or is not pushed
+   down, that space showed as a dark band of the page's background. A shadow and not a box: it paints without making the
+   page any longer, and the clip keeps it to the footer's width and below it. Same tint over the same fixed background,
+   so it reads as the footer going on */
+footer.atardecer { position: relative; }
+footer.atardecer::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 0; pointer-events: none; box-shadow: 0 100vh 0 100vh rgb(var(--pink-rgb) / 0.32); clip-path: inset(0 0 -200vh 0); }
+footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
+footer.atardecer .footer-links.tiles::before, .footer-links.tiles.chips::before { content: none; }
+footer.atardecer .footer-links.tiles, .footer-links.tiles.chips { display: flex; flex-wrap: wrap; justify-content: center; max-width: none; gap: 8px; margin-top: 18px; }
+footer.atardecer .footer-links.tiles > *, .footer-links.tiles.chips > * { flex-direction: row; gap: 6px; min-height: 44px; padding: var(--s-4) var(--s-14) var(--s-4) var(--s-4); border: 2px solid var(--glass-border); border-radius: var(--r-pill); background: var(--glass); color: var(--ink); font: 800 0.82rem/1.2 var(--font-body); }
+footer.atardecer .footer-links.tiles > :is(#btn-buzon-portada, .op-buzon) { border-color: rgb(var(--cyan-rgb) / 0.5); background: rgb(var(--cyan-rgb) / 0.1); }
+footer.atardecer .footer-links.tiles > :is(#btn-apoyo-portada, .op-apoyo) { border-color: rgb(var(--orange-rgb) / 0.55); background: rgb(var(--orange-rgb) / 0.12); }
+footer.atardecer .footer-links.tiles > *:active { filter: brightness(1.2); }
+/* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
+footer.atardecer .tiles .ic, .tiles.chips .ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: rgb(var(--lime-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-buzon-portada, .op-buzon) .ic { background: rgb(var(--cyan-rgb) / 0.35); }
+footer.atardecer .tiles :is(#btn-apoyo-portada, .op-apoyo) .ic { background: rgb(var(--orange-rgb) / 0.5); }
+/* `.footer-links.tiles.chips`: the same chips outside the footer, e.g. a game's comment under its board.
+   A screen's own options (La Copa's report and leave): violet, apart from the inbox and the coffee */
+footer.atardecer .footer-links.tiles > .op-propia, .footer-links.tiles.chips > .op-propia { border-color: rgb(var(--purple-rgb) / 0.5); background: rgb(var(--purple-rgb) / 0.1); }
+footer.atardecer .tiles .op-propia .ic, .tiles.chips .op-propia .ic { background: rgb(var(--purple-rgb) / 0.4); }
+footer.atardecer > .muted { color: rgb(var(--ink-rgb) / 0.8); }
+/* Offline, no coffee (the owner, 2026-11-09): paying needs Stripe, so its footer chip and the end-of-game invitation step aside until the signal is back */
+html.offline :is(#btn-apoyo-portada, .op-apoyo, #apoyo-pie) { display: none; }
+
+/* The offline palette, "Candlelight" (the owner, 2026-11-07; D-538, PR 8): while offline, every page
+   and every screen (home, Uno al día, /labs/, Rankings, the games' covers and their play screens, the
+   owner 2026-11-23) takes a quieter warm palette, so the player feels in the offline version.
+   offline-ui.js sets html.offline-shell, and each page's first inline script already sets it when the
+   phone is offline, so the first paint has it. Text contrast is checked by offline-palette.test.mjs (WCAG AA). */
+html.offline-shell {
+  --bg1: #1a120b; --bg1-rgb: 26 18 11;
+  --bg2: #2a1d12; --bg2-rgb: 42 29 18;
+  --bg3: #14100c; --bg3-rgb: 20 16 12;
+  --pink: #d9944a; --pink-rgb: 217 148 74;
+  --pink-deep: #9a5f26; --edge-pink: #9a5f26;
+  --yellow: #f0d39a; --yellow-rgb: 240 211 154;
+  /* Orange and cyan keep apart from the amber accent and the creams, so what a game tells by colour
+     still reads offline (Batalla Naval's hit, sunk and water; Generala's kept dice and boxes; D-609) */
+  --orange: #d8643c; --orange-rgb: 216 100 60;
+  --cyan: #8fb8a8; --cyan-rgb: 143 184 168;
+  --purple: #8c6a4a; --purple-rgb: 140 106 74;
+  --lime: #c8c08a; --lime-rgb: 200 192 138;
+  --fondo:
+    radial-gradient(1200px 600px at 10% -10%, rgba(230, 150, 70, 0.20), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(240, 200, 120, 0.08), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(150, 90, 40, 0.25), transparent 60%),
+    linear-gradient(160deg, #1a120b, #2a1d12 55%, #14100c) !important;
+}
+/* Sheets take the palette too (their purple is hard-coded); the offline sheet always does, even
+   opened online from the tester tab */
+html.offline-shell .hoja, .hoja.hoja-offline {
+  --yellow: #f0d39a; --yellow-rgb: 240 211 154; --orange: #d8643c; --orange-rgb: 216 100 60;
+  --pink: #d9944a; --pink-rgb: 217 148 74; --pink-deep: #9a5f26;
+  background: linear-gradient(180deg, rgba(42, 29, 18, 0.985), rgba(20, 16, 12, 0.99));
+  border-color: rgb(217 148 74 / 0.35);
+}
+
+/* A player's public profile at a glance (player-peek.js, lab flag profile): the sheet a tap on a name in any
+ * ranking opens, and what makes that name look tappable. The medals' metals are the profile's own colours
+ * (DESIGN.md §4), here so every page with a ranking can draw them; profile.css builds on this file. */
+:root {
+  --pf-oro-luz: #fff3b0; --pf-oro: #ffc93c; --pf-oro-hondo: #c98a00; --pf-oro-aro: #ffe48a;
+  --pf-plata-luz: #ffffff; --pf-plata: #cfd8e3; --pf-plata-hondo: #8a97a8; --pf-plata-aro: #e6edf5;
+  --pf-bronce-luz: #ffd9b8; --pf-bronce: #d98a4e; --pf-bronce-hondo: #8f4f22; --pf-bronce-aro: #f0b483;
+  --pf-tinta-medalla: #3a2a00; /* the place's ink on a metal medal */
+}
+
+.pf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); margin-top: var(--s-14); }
+.pf-stat { background: var(--well); border-radius: var(--r-12); padding: var(--s-10) var(--s-6); text-align: center; }
+.pf-stat b { display: block; font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-stat > span { font-size: var(--fs-75); color: var(--muted); font-weight: 800; }
+
+.pf-medal { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-160); margin-bottom: var(--s-2); }
+.pf-badge--gold .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-oro-luz), var(--pf-oro) 45%, var(--pf-oro-hondo)); box-shadow: 0 0 0 3px var(--pf-oro-aro), 0 6px 16px rgb(var(--yellow-rgb) / 0.45); }
+.pf-badge--silver .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata-luz), var(--pf-plata) 45%, var(--pf-plata-hondo)); box-shadow: 0 0 0 3px var(--pf-plata-aro); }
+/* 🥟 El canapé: a pale dumpling on pale silver, so its medal is the deep end of the silver and the emoji gets a dark rim */
+.pf-badge--silver[data-badge="party"]:not(.pf-badge--locked) .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata), var(--pf-plata-hondo) 55%, rgb(var(--card-ink-rgb) / 0.85)); text-shadow: 1px 0 rgb(var(--card-ink-rgb) / 0.8), -1px 0 rgb(var(--card-ink-rgb) / 0.8), 0 1px rgb(var(--card-ink-rgb) / 0.8), 0 -1px rgb(var(--card-ink-rgb) / 0.8); }
+.pf-badge--bronze .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-bronce-luz), var(--pf-bronce) 45%, var(--pf-bronce-hondo)); box-shadow: 0 0 0 3px var(--pf-bronce-aro); }
+
+/* A name that opens its player's sheet: any ranking's row (ranking.js) and a Cup's (cup/game.js) */
+.rk-fila[data-peek], .fila[data-peek] { cursor: pointer; }
+.rk-fila[data-peek]:active, .fila[data-peek]:active { background: rgb(var(--ink-rgb) / 0.14); }
+/* A fine, faint line under the name says it opens something without weighing on the table (the owner, 2026-11-22) */
+.rk-fila[data-peek] .rk-n, .fila[data-peek] .quien b { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: rgb(var(--ink-rgb) / 0.18); text-underline-offset: 4px; }
+.pf-peek-who { min-width: 0; }
+.pf-peek-kicker { margin: 0; color: var(--cyan); font-weight: 900; font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.08em; }
+.hoja .pf-peek-name { font-size: var(--fs-160); overflow-wrap: anywhere; }
+/* One's own sheet from a ranking: «(tú)» after the name, quieter, and a link to the profile under it (44 px to tap) */
+.pf-peek-you { color: var(--muted); font-family: var(--font-body); text-transform: none; font-size: var(--fs-100); font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+.pf-peek-mine { display: inline-flex; align-items: center; min-height: 44px; color: var(--cyan); font-weight: 900; text-decoration: none; }
+.pf-peek-body { display: grid; gap: var(--s-20); }
+.hoja .pf-peek-line { font-size: var(--fs-85); }
+.pf-peek-stats { margin-top: 0; }
+.pf-peek-part { display: grid; gap: var(--s-10); }
+.pf-peek-part h3 { margin: 0; font-size: var(--fs-100); font-weight: 900; }
+.pf-peek-games { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-6); }
+.pf-peek-games li { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); background: var(--well); border-radius: var(--r-12); padding: var(--s-8) var(--s-12); }
+.pf-peek-game { font-weight: 900; min-width: 0; }
+.pf-peek-games small { color: var(--muted); font-weight: 800; white-space: nowrap; }
+.pf-peek-badges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-8); }
+.pf-peek-badges li { display: grid; justify-items: center; gap: var(--s-4); text-align: center; }
+.pf-peek-badges .pf-medal { width: 44px; height: 44px; font-size: var(--fs-140); margin: 0; }
+.pf-peek-badges small { font-size: var(--fs-75); font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.pf-peek-more .pf-medal { background: rgb(var(--ink-rgb) / 0.1); font: 900 var(--fs-100) var(--font-num); }
+@media (max-width: 359px) { .pf-peek-badges { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Where it was tapped (the owner, 2026-11-23, option A): their place in a medal (the badges' metals on the podium,
+   a plain ring from 4th on), the table and tab over what the row counts with its unit, their all-time place as a tag */
+.pf-peek-here { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--s-14);
+  background: var(--well); border-radius: var(--r-14); padding: var(--s-12) var(--s-14); margin-bottom: var(--s-14); }
+.pf-peek-here-medal .pf-medal { width: 64px; height: 64px; margin: 0; font: 900 var(--fs-140) var(--font-num); color: var(--pf-tinta-medalla); }
+.pf-peek-here-medal.pf-badge--plain .pf-medal { background: rgb(var(--ink-rgb) / 0.08); box-shadow: 0 0 0 3px rgb(var(--ink-rgb) / 0.2); color: var(--ink); }
+.pf-peek-here-txt { display: grid; gap: var(--s-4); min-width: 0; grid-column: -2; }
+.pf-peek-here-label { color: var(--cyan); font-weight: 900; font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.06em; overflow-wrap: anywhere; }
+.pf-peek-here-vals { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--s-14); row-gap: var(--s-2); }
+.pf-peek-here-vals b { font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-peek-here-vals small { margin-left: var(--s-4); color: var(--muted); font-weight: 800; font-size: var(--fs-75); }
+.pf-peek-here-all { justify-self: start; background: rgb(var(--ink-rgb) / 0.1); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10); font-weight: 800; font-size: var(--fs-75); }
+.pf-peek-here-all:empty { display: none; }
+/* Lab (ranking-peek, the owner, 2026-11-23): the badges in a card like the games' rows, bigger medals with a thin ring
+   of their metal, quieter names; CERRAR stays at the bottom, 24 px under the content, over a fade */
+.pf-peek--card .pf-peek-part:has(> .pf-peek-badges) { gap: var(--s-12); }
+.pf-peek--card .pf-peek-badges { background: var(--well); border-radius: var(--r-12); padding: var(--s-16); row-gap: var(--s-20); column-gap: var(--s-8); }
+.pf-peek--card .pf-peek-badges li { gap: var(--s-8); align-content: start; }
+.pf-peek--card .pf-peek-badges .pf-medal { width: 56px; height: 56px; font-size: var(--fs-160); }
+.pf-peek--card .pf-peek-badges li.pf-badge--gold .pf-medal { box-shadow: 0 0 0 2px var(--pf-oro-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--silver .pf-medal { box-shadow: 0 0 0 2px var(--pf-plata-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--bronze .pf-medal { box-shadow: 0 0 0 2px var(--pf-bronce-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges small { font-size: var(--fs-75); font-weight: 600; opacity: 0.75; line-height: 1.2; max-width: 76px; overflow-wrap: normal;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.pf-peek--card .btn-row { position: sticky; bottom: calc(-22px - var(--safe-bottom)); z-index: 1; background: var(--bg1);
+  margin: var(--s-12) 0 calc(-22px - var(--safe-bottom)); padding-bottom: calc(22px + var(--safe-bottom)); }
+.pf-peek--card .btn-row::before { content: ''; position: absolute; inset: auto 0 100% 0; height: var(--s-24); pointer-events: none;
+  background: linear-gradient(to top, var(--bg1), rgb(var(--bg1-rgb) / 0)); }
+/* The player's profile (lab flag profile). The medals' metals are the page's own colours (DESIGN.md §4). */
+:root {
+  --pf-tinta-lima: #123012;
+}
+
+.pf-page { display: grid; gap: var(--s-12); }
+.pf-hero-icon { display: block; font-size: var(--fs-200); line-height: 1.1; }
+.pf-tab { display: grid; gap: var(--s-12); }
+.pf-tab[hidden] { display: none; }
+
+/* The player's card: flag and name, since when; three figures */
+.pf-who { display: grid; text-align: center; }
+.pf-player { margin: 0; font-weight: 900; font-size: var(--fs-140); line-height: 1.2; overflow-wrap: anywhere; }
+.pf-since { margin: var(--s-2) 0 0; font-size: var(--fs-90); }
+/* Until the server's figure arrives, three dots hop where the number goes; then the number pops in (the owner, 2026-11-23) */
+.pf-dots { display: inline-flex; gap: 0.16em; vertical-align: middle; }
+.pf-dots i { width: 0.22em; height: 0.22em; border-radius: var(--r-pill); background: var(--yellow); animation: pf-hop 0.9s ease-in-out infinite; }
+.pf-dots i:nth-child(2) { animation-delay: 0.15s; }
+.pf-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pf-hop { 0%, 60%, 100% { transform: translateY(0); opacity: 0.45; } 30% { transform: translateY(-0.28em); opacity: 1; } }
+.pf-stat b.pf-pop { animation: pf-pop 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+@keyframes pf-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* The three tabs: always in view while scrolling */
+/* Sticky over the badges: nearly opaque in the page's own colour, blurred behind and edged, so it reads as a bar
+   above what scrolls under it, not as part of it (the owner, 2026-11-22) */
+.pf-tabs { position: sticky; top: var(--s-8); z-index: 3; box-shadow: var(--shadow-panel);
+  background: rgb(var(--bg2-rgb) / 0.92); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.pf-tabs button { white-space: nowrap; }
+
+/* A group of badges */
+.pf-group-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-8); margin: 0 0 var(--s-12); }
+.pf-group-head small { color: var(--muted); font-weight: 800; font-size: var(--fs-85); white-space: nowrap; }
+.pf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-10); overflow-x: clip; } /* a reveal's rays never widen the page */
+.pf-group .pf-duel-pills { margin: 0 0 0 auto; flex-wrap: nowrap; }
+.pf-group-head:has(.pf-duel-pills) { align-items: center; }
+@media (max-width: 359px) { .pf-group .pf-duel-pills { display: none; } }
+.pf-group .pf-duels-go, .pf-group .pf-group-go { margin-top: var(--s-12); width: 100%; }
+.pf-badge {
+  position: relative; display: grid; justify-items: center; align-content: start; gap: var(--s-4);
+  text-align: center; padding: var(--s-12) var(--s-4) var(--s-10); border-radius: var(--r-14); background: var(--well);
+}
+/* Still to earn: grey, a dashed ring, its progress under it */
+.pf-badge--locked .pf-medal { background: rgb(var(--ink-rgb) / 0.08); box-shadow: none; outline: 2px dashed rgb(var(--ink-rgb) / 0.3); filter: grayscale(1); opacity: 0.55; color: var(--muted); font: 900 var(--fs-160) var(--font-body); }
+.pf-badge--locked .pf-name { color: var(--muted); }
+.pf-name { font-weight: 900; font-size: var(--fs-85); line-height: 1.15; }
+/* At 320 px a long one-word name (Coleccionista, Todoterreno) fits its medal's column: a step smaller, a tighter card */
+@media (max-width: 359px) { .pf-grid { gap: var(--s-6); } .pf-badge { padding-left: var(--s-2); padding-right: var(--s-2); } .pf-name { font-size: var(--fs-75); } }
+.pf-desc { font-size: var(--fs-75); color: var(--muted); line-height: 1.2; }
+.pf-times { position: absolute; top: var(--s-6); right: var(--s-6); font: 900 var(--fs-75) var(--font-num); background: var(--pink); color: var(--ink); border-radius: var(--r-pill); padding: 0 var(--s-6); }
+.pf-bar { width: 80%; height: 6px; border-radius: var(--r-pill); background: rgb(var(--ink-rgb) / 0.12); overflow: hidden; margin-top: var(--s-2); }
+.pf-bar i { display: block; height: 100%; background: var(--cyan); }
+.pf-badge--new { box-shadow: 0 0 0 2px var(--lime) inset; }
+.pf-new { position: absolute; top: calc(-1 * var(--s-8)); left: 50%; transform: translateX(-50%); background: var(--lime); color: var(--pf-tinta-lima); font: 900 var(--fs-75) var(--font-body); border-radius: var(--r-pill); padding: 0 var(--s-8); white-space: nowrap; }
+.pf-note { margin: var(--s-12) 0 0; text-align: center; }
+/* A badge new since the last visit (the owner, 2026-11-22): its medal turns from grey to its metal with a flash and
+   rays, once, after `--pf-d` (profile.js `revealDelay`, negative when a redraw catches it midway); then «¡Nueva!»
+   pops and its card glows for a few beats */
+.pf-badge--reveal .pf-medal { position: relative; animation: pf-unlock 0.9s var(--pf-d, 0s) both; }
+.pf-badge--reveal .pf-medal::before, .pf-badge--reveal .pf-medal::after { content: ''; position: absolute; inset: calc(-1 * var(--s-12)); border-radius: 50%; pointer-events: none; opacity: 0; }
+.pf-badge--reveal .pf-medal::before { background: repeating-conic-gradient(rgb(var(--yellow-rgb) / 0.85) 0 10deg, transparent 10deg 30deg); mask: radial-gradient(circle, transparent 38%, var(--ink) 40%, transparent 70%); animation: pf-rays 1.1s calc(var(--pf-d, 0s) + 0.3s) backwards; }
+.pf-badge--reveal .pf-medal::after { background: radial-gradient(circle, var(--card) 0 30%, rgb(var(--yellow-rgb) / 0.7) 45%, transparent 70%); animation: pf-flash 0.7s calc(var(--pf-d, 0s) + 0.3s) backwards; }
+.pf-badge--reveal .pf-new { animation: pf-tag 0.4s calc(var(--pf-d, 0s) + 0.75s) both; }
+.pf-badge--reveal { animation: pf-glow 1.2s calc(var(--pf-d, 0s) + 0.9s) 3 ease-in-out; }
+@keyframes pf-unlock {
+  0%, 30% { filter: grayscale(1); opacity: 0.55; transform: scale(0.9); }
+  55% { filter: grayscale(0); opacity: 1; transform: scale(1.28); }
+  75% { transform: scale(0.94); }
+  100% { filter: none; opacity: 1; transform: scale(1); }
+}
+@keyframes pf-flash { 0% { opacity: 0; transform: scale(0.3); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes pf-rays { 0% { opacity: 0; transform: scale(0.5) rotate(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5) rotate(40deg); } }
+@keyframes pf-tag { 0% { opacity: 0; transform: translateX(-50%) scale(0.3); } 70% { transform: translateX(-50%) scale(1.2); } 100% { opacity: 1; transform: translateX(-50%) scale(1); } }
+@keyframes pf-glow { 50% { box-shadow: 0 0 0 2px var(--lime) inset, 0 0 var(--s-16) rgb(var(--lime-rgb) / 0.6); } }
+@media (prefers-reduced-motion: reduce) { .pf-badge--reveal, .pf-badge--reveal .pf-medal, .pf-badge--reveal .pf-new, .pf-badge--reveal .pf-medal::before, .pf-badge--reveal .pf-medal::after { animation: none; } }
+
+/* The 🏅 tab: the player's places, their games */
+.pf-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); margin: var(--s-4) 0 var(--s-10); }
+.pf-place { border-radius: var(--r-12); padding: var(--s-8) var(--s-4); text-align: center; background: var(--well); border: 2px solid transparent; }
+.pf-place i { display: block; font-style: normal; font-size: var(--fs-140); line-height: 1.2; min-height: 1.2em; }
+.pf-place i:empty { display: none; }
+.pf-place b { display: block; font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; }
+.pf-place span { font-size: var(--fs-75); color: var(--muted); font-weight: 800; }
+/* The place's metal (the owner, 2026-11-22): the badges' gold, silver and bronze, 🔥 for the top 10; it pops in when it arrives */
+.pf-place[class*='pf-place--'] i, .pf-place[class*='pf-place--'] b { animation: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+.pf-place--gold { background: linear-gradient(180deg, rgb(var(--yellow-rgb) / 0.28), rgb(var(--yellow-rgb) / 0.08)); border-color: var(--pf-oro); box-shadow: 0 6px 18px rgb(var(--yellow-rgb) / 0.3); }
+.pf-place--gold b { color: var(--pf-oro); }
+.pf-place--silver { background: linear-gradient(180deg, rgb(var(--ink-rgb) / 0.16), rgb(var(--ink-rgb) / 0.04)); border-color: var(--pf-plata); }
+.pf-place--silver b { color: var(--pf-plata); }
+.pf-place--bronze { background: linear-gradient(180deg, rgb(var(--orange-rgb) / 0.24), rgb(var(--orange-rgb) / 0.06)); border-color: var(--pf-bronce); }
+.pf-place--bronze b { color: var(--pf-bronce-aro); }
+.pf-place--top { border-color: rgb(var(--orange-rgb) / 0.6); }
+.pf-place--top b { color: var(--orange); }
+.pf-place--rest b { color: var(--yellow); }
+@media (prefers-reduced-motion: reduce) { .pf-place i, .pf-place b { animation: none; } }
+.pf-game-list { display: grid; gap: var(--s-6); }
+.pf-game {
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'name place' 'sub place'; align-items: center; column-gap: var(--s-10);
+  width: 100%; min-height: 44px; padding: var(--s-10) var(--s-12); border: 0; border-radius: var(--r-12); background: var(--well);
+  color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+}
+.pf-game[hidden] { display: none; }
+.pf-game[aria-expanded='true'] { box-shadow: 0 0 0 2px var(--yellow) inset; }
+.pf-game-name { grid-area: name; font-weight: 900; }
+.pf-game-sub { grid-area: sub; font-size: var(--fs-75); color: var(--muted); font-weight: 700; }
+.pf-game-place { grid-area: place; text-align: right; font: 900 var(--fs-110) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-game-place small { display: block; font: 800 var(--fs-75) var(--font-body); color: var(--cyan); }
+.pf-game-table:empty { display: none; }
+.pf-game-table .panel { padding: var(--s-10) 0 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* The ⚙️ tab */
+.pf-settings { display: grid; gap: var(--s-8); }
+.pf-settings .rk-titulo { margin-bottom: var(--s-4); }
+.pf-name-now { font-weight: 900; white-space: nowrap; }
+/* 👤 Your account: each row's value and its «Cambiar», its form under it; «Salir de tu cuenta» asks once */
+/* Each row is one card with its form inside it, so the form reads as that row's */
+.pf-account-item { display: grid; gap: var(--s-8); background: var(--well); border-radius: var(--r-14); padding: var(--s-10) var(--s-14); }
+.pf-account-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-12); }
+.pf-account-row .txt small { color: var(--muted); font-weight: 700; font-size: var(--fs-75); line-height: 1.25; display: block; }
+.pf-account-row .txt { min-width: 0; display: grid; gap: var(--s-2); }
+.pf-account-row .pf-account-label { text-transform: uppercase; letter-spacing: 0.08em; font-weight: 900; }
+.pf-account-row .pf-name-now, .pf-account-row .pf-pin-dots { display: block; font-size: var(--fs-110); white-space: normal; overflow-wrap: anywhere; }
+.pf-account-row .pf-change { flex: none; }
+.pf-pin-dots { letter-spacing: 0.15em; }
+.pf-form { display: grid; gap: var(--s-8); padding: var(--s-4) 0 var(--s-4); }
+.pf-form[hidden], .pf-logout-ask[hidden], .pf-logout[hidden] { display: none; }
+.pf-form .btn { justify-self: center; }
+.pf-logout { justify-self: center; margin-top: var(--s-6); }
+.pf-logout-ask { display: grid; gap: var(--s-8); text-align: center; }
+.pf-logout-ask p { margin: 0; }
+.pf-more { justify-self: center; margin-top: var(--s-10); }
+
+/* 🏆 Your cups: the place (a medal on the podium) on the left, the name, dates and who won, a › to the cup */
+.pf-cup-list { display: grid; gap: var(--s-6); }
+.pf-cup { display: grid; grid-template-columns: 3.2rem 1fr auto; align-items: center; column-gap: var(--s-10); min-height: 44px;
+  padding: var(--s-10) var(--s-12); border-radius: var(--r-12); background: var(--well); border: 2px solid transparent; color: var(--ink); text-decoration: none; }
+.pf-cup-place { text-align: center; line-height: 1.1; }
+.pf-cup-place b { display: block; font: 900 var(--fs-140) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-cup-place small { display: block; font-size: var(--fs-75); color: var(--muted); font-weight: 800; }
+.pf-cup-txt { min-width: 0; display: grid; gap: var(--s-2); }
+.pf-cup-name { font-weight: 900; overflow-wrap: anywhere; }
+.pf-cup-txt small { font-size: var(--fs-75); color: var(--muted); font-weight: 700; }
+.pf-cup-txt .pf-cup-champ { color: var(--ink); font-weight: 800; }
+.pf-cup .go { color: var(--muted); font-size: var(--fs-120); }
+.pf-cup--gold { border-color: var(--pf-oro); background: linear-gradient(180deg, rgb(var(--yellow-rgb) / 0.2), rgb(var(--yellow-rgb) / 0.05)); }
+.pf-cup--silver { border-color: var(--pf-plata); }
+.pf-cup--bronze { border-color: var(--pf-bronce); }
+.pf-cup--live { border-color: rgb(var(--cyan-rgb) / 0.6); }
+.pf-cup-list .pf-more { margin-top: var(--s-4); }
+/* 👁️ Your public profile in ⚙️: the switch is 44 px tall to the finger; how others see you under it */
+.pf-public .switch::before { content: ''; position: absolute; inset: -7px -2px; }
+.pf-public .switch:disabled { opacity: 0.6; }
+.pf-public .pf-see-public { justify-self: center; }
+
+/* The welcome (the owner, 2026-11-22): open by itself on the first visit only; a subtle ⓘ at the title's right opens it
+   again, in the title's row (an empty cell of its width on the left keeps the title centred) */
+.pf-title-row { display: grid; grid-template-columns: 44px auto 44px; justify-content: center; align-items: center; gap: var(--s-2); }
+.pf-title-row h1 { margin: 0; }
+/* The ⓘ: a small muted glyph at the cell's top-left, like a superscript; the whole 44 px cell is its tap area */
+.pf-help { align-self: stretch; width: 44px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: flex-start; justify-content: flex-start; margin-left: calc(-1 * var(--s-4)); color: var(--muted); font: 700 var(--fs-110) var(--font-body); line-height: 1; }
+.pf-help:hover, .pf-help[aria-expanded='true'] { color: var(--yellow); }
+.pf-intro[hidden] { display: none; }
+.pf-intro { display: grid; gap: var(--s-10); margin-bottom: var(--s-12); border: 2px solid rgb(var(--yellow-rgb) / 0.55); animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+.pf-intro-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s-8); }
+.pf-intro-x { flex: none; width: 44px; height: 44px; }
+.pf-intro-head h2 { margin: 0; font-size: var(--fs-120); font-weight: 900; }
+.pf-intro-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); }
+.pf-intro-list li { display: grid; gap: var(--s-2); background: var(--well); border-radius: var(--r-12); padding: var(--s-10) var(--s-12); }
+.pf-intro-list b { font-weight: 900; }
+.pf-intro-list span { color: var(--muted); font-weight: 700; font-size: var(--fs-90); line-height: 1.35; }
+.pf-intro-again { margin: 0; text-align: center; font-size: var(--fs-85); }
+.pf-intro-ok { justify-self: center; }
+@media (prefers-reduced-motion: reduce) { .pf-intro { animation: none; } }
+/* 🎮 Your games played (the owner, 2026-11-23, from /records/): one bar per game, as long as its share of the most
+   played one, the name over it and the number at its end; five show, the rest open below */
+.pf-plays { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-6); }
+.pf-play { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s-10);
+  min-height: 40px; padding: 0 var(--s-12); border-radius: var(--r-12); background: var(--well); overflow: hidden; }
+.pf-play[hidden] { display: none; }
+.pf-play::before { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--yellow) 32%, transparent), color-mix(in srgb, var(--yellow) 12%, transparent));
+  transform-origin: left; animation: pf-play-grow 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.pf-play:nth-child(2)::before { animation-delay: 0.06s; }
+.pf-play:nth-child(3)::before { animation-delay: 0.12s; }
+.pf-play:nth-child(4)::before { animation-delay: 0.18s; }
+.pf-play:nth-child(5)::before { animation-delay: 0.24s; }
+@keyframes pf-play-grow { from { transform: scaleX(0); } }
+.pf-play-name, .pf-play b { position: relative; }
+.pf-play-name { font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-play b { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+.pf-plays-panel .pf-more { margin-top: var(--s-10); justify-self: center; }
+@media (prefers-reduced-motion: reduce) { .pf-play::before { animation: none; } }
+.pf-plays-panel { display: grid; }
+.t-b .pf-badge[data-badge="party"] .pf-medal{background:radial-gradient(circle at 35% 30%,var(--pf-plata-luz),var(--pf-plata) 45%,var(--pf-plata-hondo))!important;text-shadow:none!important}.t-c .pf-badge[data-badge="party"] .pf-medal{background:radial-gradient(circle at 35% 30%,var(--pf-plata-luz),var(--pf-plata) 45%,var(--pf-plata-hondo))!important}.t-c .pf-medal{text-shadow:1px 0 rgb(26 26 26/.8),-1px 0 rgb(26 26 26/.8),0 1px rgb(26 26 26/.8),0 -1px rgb(26 26 26/.8)!important}.t-d .pf-badge--gold .pf-medal{background:radial-gradient(circle at 35% 30%,var(--pf-oro),var(--pf-oro-hondo) 55%,#5a3d00)!important}.t-d .pf-badge--silver .pf-medal{background:radial-gradient(circle at 35% 30%,var(--pf-plata),var(--pf-plata-hondo) 55%,#3c4552)!important;text-shadow:none!important}.t-d .pf-badge--bronze .pf-medal{background:radial-gradient(circle at 35% 30%,var(--pf-bronce),var(--pf-bronce-hondo) 55%,#4a2510)!important}.t-e .pf-badge .pf-medal{text-shadow:none!important;border:4px solid transparent;background:radial-gradient(circle at 40% 32%,#3b3350,#1c1726 70%) padding-box,linear-gradient(150deg,var(--l),var(--m) 45%,var(--h)) border-box!important}.t-e .pf-badge--gold{--l:var(--pf-oro-luz);--m:var(--pf-oro);--h:var(--pf-oro-hondo)}.t-e .pf-badge--silver{--l:var(--pf-plata-luz);--m:var(--pf-plata);--h:var(--pf-plata-hondo)}.t-e .pf-badge--bronze{--l:var(--pf-bronce-luz);--m:var(--pf-bronce);--h:var(--pf-bronce-hondo)}body{padding:16px}.cols{display:flex;gap:24px;overflow-x:auto;align-items:flex-start}.col{flex:0 0 390px;width:390px}.col>h2{font:400 28px Bangers,sans-serif;letter-spacing:.5px;margin:0 0 4px;color:var(--yellow)}.col>p{margin:0 0 12px;color:var(--muted);font-size:14px;min-height:60px}.pf-group{margin-bottom:12px}.pf-group h3{margin:0}.lead{max-width:900px;margin:0 0 16px}</style></head><body><h1 style="margin:0 0 6px">Insignias del perfil: 5 tratamientos</h1><p class="lead muted">Las 40 insignias reales con el CSS del sitio, a 390 px. Halloween se muestra bloqueada como referencia. Desliza a la derecha para comparar.</p><div class="cols"><div class="col t-a"><h2>A · Hoy</h2><p>Solo El canapé lleva plata honda y borde oscuro. Es la excepción que se nota.</p><section class="panel pf-group"><div class="pf-group-head"><h3>Uno al día</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="streak-10"><span class="pf-medal">🔥</span><span class="pf-name">10 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="streak-30"><span class="pf-medal">🔥</span><span class="pf-name">30 seguidos</span></div><div class="pf-badge pf-badge--gold" data-badge="streak-100"><span class="pf-medal">🔥</span><span class="pf-name">100 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="month-full"><span class="pf-medal">🗓️</span><span class="pf-name">Mes completo</span></div><div class="pf-badge pf-badge--bronze" data-badge="month-podium"><span class="pf-medal">🏅</span><span class="pf-name">Podio del mes</span></div><div class="pf-badge pf-badge--gold" data-badge="month-champion"><span class="pf-medal">👑</span><span class="pf-name">Campeón del mes</span></div><div class="pf-badge pf-badge--silver" data-badge="early-bird"><span class="pf-medal">🌅</span><span class="pf-name">Madrugador</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Copas</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="cup-first"><span class="pf-medal">🎟️</span><span class="pf-name">Primera copa</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-five"><span class="pf-medal">🎪</span><span class="pf-name">Copero</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-host"><span class="pf-medal">🎤</span><span class="pf-name">Anfitrión</span></div><div class="pf-badge pf-badge--bronze" data-badge="cup-podium"><span class="pf-medal">🥉</span><span class="pf-name">Podio de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="cup-champion"><span class="pf-medal">🏆</span><span class="pf-name">Campeón de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="climber"><span class="pf-medal">🧗</span><span class="pf-name">El Alpinista</span></div><div class="pf-badge pf-badge--silver" data-badge="party"><span class="pf-medal">🥟</span><span class="pf-name">El canapé</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Duelos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="duel-first"><span class="pf-medal">🤺</span><span class="pf-name">Primer duelo</span></div><div class="pf-badge pf-badge--bronze" data-badge="duel-win"><span class="pf-medal">⚔️</span><span class="pf-name">Primera victoria</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rivals"><span class="pf-medal">🤝</span><span class="pf-name">Retador</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-wins"><span class="pf-medal">🛡️</span><span class="pf-name">Duelista</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-run"><span class="pf-medal">🗡️</span><span class="pf-name">Invicto</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rival-run"><span class="pf-medal">🔁</span><span class="pf-name">De hijo</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-champion"><span class="pf-medal">🐉</span><span class="pf-name">Mata gigantes</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Juegos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="explorer"><span class="pf-medal">🧭</span><span class="pf-name">Explorador</span></div><div class="pf-badge pf-badge--gold" data-badge="collector"><span class="pf-medal">🧩</span><span class="pf-name">Coleccionista</span></div><div class="pf-badge pf-badge--bronze" data-badge="plays-100"><span class="pf-medal">🎲</span><span class="pf-name">100 partidas</span></div><div class="pf-badge pf-badge--gold" data-badge="plays-1000"><span class="pf-medal">🎲</span><span class="pf-name">1.000 partidas</span></div><div class="pf-badge pf-badge--silver" data-badge="obsession"><span class="pf-medal">😬</span><span class="pf-name">Se llama obsesión</span></div><div class="pf-badge pf-badge--silver" data-badge="specialist"><span class="pf-medal">🎓</span><span class="pf-name">Especialista</span></div><div class="pf-badge pf-badge--bronze" data-badge="premiere"><span class="pf-medal">🎬</span><span class="pf-name">De estreno</span></div><div class="pf-badge pf-badge--silver" data-badge="regular"><span class="pf-medal">🏠</span><span class="pf-name">De la casa</span></div><div class="pf-badge pf-badge--silver" data-badge="weekends"><span class="pf-medal">🛋️</span><span class="pf-name">Finde a tope</span></div><div class="pf-badge pf-badge--bronze" data-badge="mondays"><span class="pf-medal">☕</span><span class="pf-name">Odio los lunes</span></div><div class="pf-badge pf-badge--gold" data-badge="number-one"><span class="pf-medal">🥇</span><span class="pf-name">Número 1</span></div><div class="pf-badge pf-badge--silver" data-badge="all-rounder"><span class="pf-medal">🎯</span><span class="pf-name">Todoterreno</span></div><div class="pf-badge pf-badge--silver" data-badge="night-owl"><span class="pf-medal">🦉</span><span class="pf-name">Noctámbulo</span></div><div class="pf-badge pf-badge--gold" data-badge="triple-crown"><span class="pf-medal">💎</span><span class="pf-name">Triple corona</span></div><div class="pf-badge pf-badge--gold" data-badge="one-year"><span class="pf-medal">🎂</span><span class="pf-name">Un año</span></div><div class="pf-badge pf-badge--bronze" data-badge="fiestas"><span class="pf-medal">🪁</span><span class="pf-name">Dieciochero</span></div><div class="pf-badge pf-badge--bronze pf-badge--locked" data-badge="halloween"><span class="pf-medal">?</span><span class="pf-name">Noche de brujas</span></div><div class="pf-badge pf-badge--bronze" data-badge="xmas"><span class="pf-medal">🎅</span><span class="pf-name">Viejito Pascuero</span></div><div class="pf-badge pf-badge--bronze" data-badge="new-year"><span class="pf-medal">🎆</span><span class="pf-name">Año nuevo</span></div></div></section></div><div class="col t-b"><h2>B · Sin excepción</h2><p>Las 40 iguales, sin tratamiento. Coherente, pero 🥟 y otros emojis claros se pierden en la plata.</p><section class="panel pf-group"><div class="pf-group-head"><h3>Uno al día</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="streak-10"><span class="pf-medal">🔥</span><span class="pf-name">10 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="streak-30"><span class="pf-medal">🔥</span><span class="pf-name">30 seguidos</span></div><div class="pf-badge pf-badge--gold" data-badge="streak-100"><span class="pf-medal">🔥</span><span class="pf-name">100 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="month-full"><span class="pf-medal">🗓️</span><span class="pf-name">Mes completo</span></div><div class="pf-badge pf-badge--bronze" data-badge="month-podium"><span class="pf-medal">🏅</span><span class="pf-name">Podio del mes</span></div><div class="pf-badge pf-badge--gold" data-badge="month-champion"><span class="pf-medal">👑</span><span class="pf-name">Campeón del mes</span></div><div class="pf-badge pf-badge--silver" data-badge="early-bird"><span class="pf-medal">🌅</span><span class="pf-name">Madrugador</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Copas</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="cup-first"><span class="pf-medal">🎟️</span><span class="pf-name">Primera copa</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-five"><span class="pf-medal">🎪</span><span class="pf-name">Copero</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-host"><span class="pf-medal">🎤</span><span class="pf-name">Anfitrión</span></div><div class="pf-badge pf-badge--bronze" data-badge="cup-podium"><span class="pf-medal">🥉</span><span class="pf-name">Podio de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="cup-champion"><span class="pf-medal">🏆</span><span class="pf-name">Campeón de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="climber"><span class="pf-medal">🧗</span><span class="pf-name">El Alpinista</span></div><div class="pf-badge pf-badge--silver" data-badge="party"><span class="pf-medal">🥟</span><span class="pf-name">El canapé</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Duelos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="duel-first"><span class="pf-medal">🤺</span><span class="pf-name">Primer duelo</span></div><div class="pf-badge pf-badge--bronze" data-badge="duel-win"><span class="pf-medal">⚔️</span><span class="pf-name">Primera victoria</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rivals"><span class="pf-medal">🤝</span><span class="pf-name">Retador</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-wins"><span class="pf-medal">🛡️</span><span class="pf-name">Duelista</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-run"><span class="pf-medal">🗡️</span><span class="pf-name">Invicto</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rival-run"><span class="pf-medal">🔁</span><span class="pf-name">De hijo</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-champion"><span class="pf-medal">🐉</span><span class="pf-name">Mata gigantes</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Juegos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="explorer"><span class="pf-medal">🧭</span><span class="pf-name">Explorador</span></div><div class="pf-badge pf-badge--gold" data-badge="collector"><span class="pf-medal">🧩</span><span class="pf-name">Coleccionista</span></div><div class="pf-badge pf-badge--bronze" data-badge="plays-100"><span class="pf-medal">🎲</span><span class="pf-name">100 partidas</span></div><div class="pf-badge pf-badge--gold" data-badge="plays-1000"><span class="pf-medal">🎲</span><span class="pf-name">1.000 partidas</span></div><div class="pf-badge pf-badge--silver" data-badge="obsession"><span class="pf-medal">😬</span><span class="pf-name">Se llama obsesión</span></div><div class="pf-badge pf-badge--silver" data-badge="specialist"><span class="pf-medal">🎓</span><span class="pf-name">Especialista</span></div><div class="pf-badge pf-badge--bronze" data-badge="premiere"><span class="pf-medal">🎬</span><span class="pf-name">De estreno</span></div><div class="pf-badge pf-badge--silver" data-badge="regular"><span class="pf-medal">🏠</span><span class="pf-name">De la casa</span></div><div class="pf-badge pf-badge--silver" data-badge="weekends"><span class="pf-medal">🛋️</span><span class="pf-name">Finde a tope</span></div><div class="pf-badge pf-badge--bronze" data-badge="mondays"><span class="pf-medal">☕</span><span class="pf-name">Odio los lunes</span></div><div class="pf-badge pf-badge--gold" data-badge="number-one"><span class="pf-medal">🥇</span><span class="pf-name">Número 1</span></div><div class="pf-badge pf-badge--silver" data-badge="all-rounder"><span class="pf-medal">🎯</span><span class="pf-name">Todoterreno</span></div><div class="pf-badge pf-badge--silver" data-badge="night-owl"><span class="pf-medal">🦉</span><span class="pf-name">Noctámbulo</span></div><div class="pf-badge pf-badge--gold" data-badge="triple-crown"><span class="pf-medal">💎</span><span class="pf-name">Triple corona</span></div><div class="pf-badge pf-badge--gold" data-badge="one-year"><span class="pf-medal">🎂</span><span class="pf-name">Un año</span></div><div class="pf-badge pf-badge--bronze" data-badge="fiestas"><span class="pf-medal">🪁</span><span class="pf-name">Dieciochero</span></div><div class="pf-badge pf-badge--bronze pf-badge--locked" data-badge="halloween"><span class="pf-medal">?</span><span class="pf-name">Noche de brujas</span></div><div class="pf-badge pf-badge--bronze" data-badge="xmas"><span class="pf-medal">🎅</span><span class="pf-name">Viejito Pascuero</span></div><div class="pf-badge pf-badge--bronze" data-badge="new-year"><span class="pf-medal">🎆</span><span class="pf-name">Año nuevo</span></div></div></section></div><div class="col t-c"><h2>C · Borde para todas</h2><p>El mismo borde oscuro de 1 px en cada emoji, sobre los metales de siempre. Uniforme, pero el borde ensucia los emojis oscuros.</p><section class="panel pf-group"><div class="pf-group-head"><h3>Uno al día</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="streak-10"><span class="pf-medal">🔥</span><span class="pf-name">10 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="streak-30"><span class="pf-medal">🔥</span><span class="pf-name">30 seguidos</span></div><div class="pf-badge pf-badge--gold" data-badge="streak-100"><span class="pf-medal">🔥</span><span class="pf-name">100 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="month-full"><span class="pf-medal">🗓️</span><span class="pf-name">Mes completo</span></div><div class="pf-badge pf-badge--bronze" data-badge="month-podium"><span class="pf-medal">🏅</span><span class="pf-name">Podio del mes</span></div><div class="pf-badge pf-badge--gold" data-badge="month-champion"><span class="pf-medal">👑</span><span class="pf-name">Campeón del mes</span></div><div class="pf-badge pf-badge--silver" data-badge="early-bird"><span class="pf-medal">🌅</span><span class="pf-name">Madrugador</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Copas</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="cup-first"><span class="pf-medal">🎟️</span><span class="pf-name">Primera copa</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-five"><span class="pf-medal">🎪</span><span class="pf-name">Copero</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-host"><span class="pf-medal">🎤</span><span class="pf-name">Anfitrión</span></div><div class="pf-badge pf-badge--bronze" data-badge="cup-podium"><span class="pf-medal">🥉</span><span class="pf-name">Podio de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="cup-champion"><span class="pf-medal">🏆</span><span class="pf-name">Campeón de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="climber"><span class="pf-medal">🧗</span><span class="pf-name">El Alpinista</span></div><div class="pf-badge pf-badge--silver" data-badge="party"><span class="pf-medal">🥟</span><span class="pf-name">El canapé</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Duelos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="duel-first"><span class="pf-medal">🤺</span><span class="pf-name">Primer duelo</span></div><div class="pf-badge pf-badge--bronze" data-badge="duel-win"><span class="pf-medal">⚔️</span><span class="pf-name">Primera victoria</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rivals"><span class="pf-medal">🤝</span><span class="pf-name">Retador</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-wins"><span class="pf-medal">🛡️</span><span class="pf-name">Duelista</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-run"><span class="pf-medal">🗡️</span><span class="pf-name">Invicto</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rival-run"><span class="pf-medal">🔁</span><span class="pf-name">De hijo</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-champion"><span class="pf-medal">🐉</span><span class="pf-name">Mata gigantes</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Juegos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="explorer"><span class="pf-medal">🧭</span><span class="pf-name">Explorador</span></div><div class="pf-badge pf-badge--gold" data-badge="collector"><span class="pf-medal">🧩</span><span class="pf-name">Coleccionista</span></div><div class="pf-badge pf-badge--bronze" data-badge="plays-100"><span class="pf-medal">🎲</span><span class="pf-name">100 partidas</span></div><div class="pf-badge pf-badge--gold" data-badge="plays-1000"><span class="pf-medal">🎲</span><span class="pf-name">1.000 partidas</span></div><div class="pf-badge pf-badge--silver" data-badge="obsession"><span class="pf-medal">😬</span><span class="pf-name">Se llama obsesión</span></div><div class="pf-badge pf-badge--silver" data-badge="specialist"><span class="pf-medal">🎓</span><span class="pf-name">Especialista</span></div><div class="pf-badge pf-badge--bronze" data-badge="premiere"><span class="pf-medal">🎬</span><span class="pf-name">De estreno</span></div><div class="pf-badge pf-badge--silver" data-badge="regular"><span class="pf-medal">🏠</span><span class="pf-name">De la casa</span></div><div class="pf-badge pf-badge--silver" data-badge="weekends"><span class="pf-medal">🛋️</span><span class="pf-name">Finde a tope</span></div><div class="pf-badge pf-badge--bronze" data-badge="mondays"><span class="pf-medal">☕</span><span class="pf-name">Odio los lunes</span></div><div class="pf-badge pf-badge--gold" data-badge="number-one"><span class="pf-medal">🥇</span><span class="pf-name">Número 1</span></div><div class="pf-badge pf-badge--silver" data-badge="all-rounder"><span class="pf-medal">🎯</span><span class="pf-name">Todoterreno</span></div><div class="pf-badge pf-badge--silver" data-badge="night-owl"><span class="pf-medal">🦉</span><span class="pf-name">Noctámbulo</span></div><div class="pf-badge pf-badge--gold" data-badge="triple-crown"><span class="pf-medal">💎</span><span class="pf-name">Triple corona</span></div><div class="pf-badge pf-badge--gold" data-badge="one-year"><span class="pf-medal">🎂</span><span class="pf-name">Un año</span></div><div class="pf-badge pf-badge--bronze" data-badge="fiestas"><span class="pf-medal">🪁</span><span class="pf-name">Dieciochero</span></div><div class="pf-badge pf-badge--bronze pf-badge--locked" data-badge="halloween"><span class="pf-medal">?</span><span class="pf-name">Noche de brujas</span></div><div class="pf-badge pf-badge--bronze" data-badge="xmas"><span class="pf-medal">🎅</span><span class="pf-name">Viejito Pascuero</span></div><div class="pf-badge pf-badge--bronze" data-badge="new-year"><span class="pf-medal">🎆</span><span class="pf-name">Año nuevo</span></div></div></section></div><div class="col t-d"><h2>D · Metales hondos</h2><p>Los tres metales bajan de tono (brillo arriba, oscuro abajo). Todo emoji contrasta, sin borde. Oro y bronce se ven más "antiguos".</p><section class="panel pf-group"><div class="pf-group-head"><h3>Uno al día</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="streak-10"><span class="pf-medal">🔥</span><span class="pf-name">10 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="streak-30"><span class="pf-medal">🔥</span><span class="pf-name">30 seguidos</span></div><div class="pf-badge pf-badge--gold" data-badge="streak-100"><span class="pf-medal">🔥</span><span class="pf-name">100 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="month-full"><span class="pf-medal">🗓️</span><span class="pf-name">Mes completo</span></div><div class="pf-badge pf-badge--bronze" data-badge="month-podium"><span class="pf-medal">🏅</span><span class="pf-name">Podio del mes</span></div><div class="pf-badge pf-badge--gold" data-badge="month-champion"><span class="pf-medal">👑</span><span class="pf-name">Campeón del mes</span></div><div class="pf-badge pf-badge--silver" data-badge="early-bird"><span class="pf-medal">🌅</span><span class="pf-name">Madrugador</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Copas</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="cup-first"><span class="pf-medal">🎟️</span><span class="pf-name">Primera copa</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-five"><span class="pf-medal">🎪</span><span class="pf-name">Copero</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-host"><span class="pf-medal">🎤</span><span class="pf-name">Anfitrión</span></div><div class="pf-badge pf-badge--bronze" data-badge="cup-podium"><span class="pf-medal">🥉</span><span class="pf-name">Podio de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="cup-champion"><span class="pf-medal">🏆</span><span class="pf-name">Campeón de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="climber"><span class="pf-medal">🧗</span><span class="pf-name">El Alpinista</span></div><div class="pf-badge pf-badge--silver" data-badge="party"><span class="pf-medal">🥟</span><span class="pf-name">El canapé</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Duelos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="duel-first"><span class="pf-medal">🤺</span><span class="pf-name">Primer duelo</span></div><div class="pf-badge pf-badge--bronze" data-badge="duel-win"><span class="pf-medal">⚔️</span><span class="pf-name">Primera victoria</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rivals"><span class="pf-medal">🤝</span><span class="pf-name">Retador</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-wins"><span class="pf-medal">🛡️</span><span class="pf-name">Duelista</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-run"><span class="pf-medal">🗡️</span><span class="pf-name">Invicto</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rival-run"><span class="pf-medal">🔁</span><span class="pf-name">De hijo</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-champion"><span class="pf-medal">🐉</span><span class="pf-name">Mata gigantes</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Juegos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="explorer"><span class="pf-medal">🧭</span><span class="pf-name">Explorador</span></div><div class="pf-badge pf-badge--gold" data-badge="collector"><span class="pf-medal">🧩</span><span class="pf-name">Coleccionista</span></div><div class="pf-badge pf-badge--bronze" data-badge="plays-100"><span class="pf-medal">🎲</span><span class="pf-name">100 partidas</span></div><div class="pf-badge pf-badge--gold" data-badge="plays-1000"><span class="pf-medal">🎲</span><span class="pf-name">1.000 partidas</span></div><div class="pf-badge pf-badge--silver" data-badge="obsession"><span class="pf-medal">😬</span><span class="pf-name">Se llama obsesión</span></div><div class="pf-badge pf-badge--silver" data-badge="specialist"><span class="pf-medal">🎓</span><span class="pf-name">Especialista</span></div><div class="pf-badge pf-badge--bronze" data-badge="premiere"><span class="pf-medal">🎬</span><span class="pf-name">De estreno</span></div><div class="pf-badge pf-badge--silver" data-badge="regular"><span class="pf-medal">🏠</span><span class="pf-name">De la casa</span></div><div class="pf-badge pf-badge--silver" data-badge="weekends"><span class="pf-medal">🛋️</span><span class="pf-name">Finde a tope</span></div><div class="pf-badge pf-badge--bronze" data-badge="mondays"><span class="pf-medal">☕</span><span class="pf-name">Odio los lunes</span></div><div class="pf-badge pf-badge--gold" data-badge="number-one"><span class="pf-medal">🥇</span><span class="pf-name">Número 1</span></div><div class="pf-badge pf-badge--silver" data-badge="all-rounder"><span class="pf-medal">🎯</span><span class="pf-name">Todoterreno</span></div><div class="pf-badge pf-badge--silver" data-badge="night-owl"><span class="pf-medal">🦉</span><span class="pf-name">Noctámbulo</span></div><div class="pf-badge pf-badge--gold" data-badge="triple-crown"><span class="pf-medal">💎</span><span class="pf-name">Triple corona</span></div><div class="pf-badge pf-badge--gold" data-badge="one-year"><span class="pf-medal">🎂</span><span class="pf-name">Un año</span></div><div class="pf-badge pf-badge--bronze" data-badge="fiestas"><span class="pf-medal">🪁</span><span class="pf-name">Dieciochero</span></div><div class="pf-badge pf-badge--bronze pf-badge--locked" data-badge="halloween"><span class="pf-medal">?</span><span class="pf-name">Noche de brujas</span></div><div class="pf-badge pf-badge--bronze" data-badge="xmas"><span class="pf-medal">🎅</span><span class="pf-name">Viejito Pascuero</span></div><div class="pf-badge pf-badge--bronze" data-badge="new-year"><span class="pf-medal">🎆</span><span class="pf-name">Año nuevo</span></div></div></section></div><div class="col t-e"><h2>E · Esmalte</h2><p>El metal es el aro (4 px) y el centro es un esmalte oscuro igual para todas. Cualquier emoji contrasta siempre y el metal sigue diciendo oro, plata o bronce.</p><section class="panel pf-group"><div class="pf-group-head"><h3>Uno al día</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="streak-10"><span class="pf-medal">🔥</span><span class="pf-name">10 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="streak-30"><span class="pf-medal">🔥</span><span class="pf-name">30 seguidos</span></div><div class="pf-badge pf-badge--gold" data-badge="streak-100"><span class="pf-medal">🔥</span><span class="pf-name">100 seguidos</span></div><div class="pf-badge pf-badge--silver" data-badge="month-full"><span class="pf-medal">🗓️</span><span class="pf-name">Mes completo</span></div><div class="pf-badge pf-badge--bronze" data-badge="month-podium"><span class="pf-medal">🏅</span><span class="pf-name">Podio del mes</span></div><div class="pf-badge pf-badge--gold" data-badge="month-champion"><span class="pf-medal">👑</span><span class="pf-name">Campeón del mes</span></div><div class="pf-badge pf-badge--silver" data-badge="early-bird"><span class="pf-medal">🌅</span><span class="pf-name">Madrugador</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Copas</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="cup-first"><span class="pf-medal">🎟️</span><span class="pf-name">Primera copa</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-five"><span class="pf-medal">🎪</span><span class="pf-name">Copero</span></div><div class="pf-badge pf-badge--silver" data-badge="cup-host"><span class="pf-medal">🎤</span><span class="pf-name">Anfitrión</span></div><div class="pf-badge pf-badge--bronze" data-badge="cup-podium"><span class="pf-medal">🥉</span><span class="pf-name">Podio de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="cup-champion"><span class="pf-medal">🏆</span><span class="pf-name">Campeón de copa</span></div><div class="pf-badge pf-badge--gold" data-badge="climber"><span class="pf-medal">🧗</span><span class="pf-name">El Alpinista</span></div><div class="pf-badge pf-badge--silver" data-badge="party"><span class="pf-medal">🥟</span><span class="pf-name">El canapé</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Duelos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="duel-first"><span class="pf-medal">🤺</span><span class="pf-name">Primer duelo</span></div><div class="pf-badge pf-badge--bronze" data-badge="duel-win"><span class="pf-medal">⚔️</span><span class="pf-name">Primera victoria</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rivals"><span class="pf-medal">🤝</span><span class="pf-name">Retador</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-wins"><span class="pf-medal">🛡️</span><span class="pf-name">Duelista</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-run"><span class="pf-medal">🗡️</span><span class="pf-name">Invicto</span></div><div class="pf-badge pf-badge--silver" data-badge="duel-rival-run"><span class="pf-medal">🔁</span><span class="pf-name">De hijo</span></div><div class="pf-badge pf-badge--gold" data-badge="duel-champion"><span class="pf-medal">🐉</span><span class="pf-name">Mata gigantes</span></div></div></section><section class="panel pf-group"><div class="pf-group-head"><h3>Juegos</h3></div><div class="pf-grid"><div class="pf-badge pf-badge--bronze" data-badge="explorer"><span class="pf-medal">🧭</span><span class="pf-name">Explorador</span></div><div class="pf-badge pf-badge--gold" data-badge="collector"><span class="pf-medal">🧩</span><span class="pf-name">Coleccionista</span></div><div class="pf-badge pf-badge--bronze" data-badge="plays-100"><span class="pf-medal">🎲</span><span class="pf-name">100 partidas</span></div><div class="pf-badge pf-badge--gold" data-badge="plays-1000"><span class="pf-medal">🎲</span><span class="pf-name">1.000 partidas</span></div><div class="pf-badge pf-badge--silver" data-badge="obsession"><span class="pf-medal">😬</span><span class="pf-name">Se llama obsesión</span></div><div class="pf-badge pf-badge--silver" data-badge="specialist"><span class="pf-medal">🎓</span><span class="pf-name">Especialista</span></div><div class="pf-badge pf-badge--bronze" data-badge="premiere"><span class="pf-medal">🎬</span><span class="pf-name">De estreno</span></div><div class="pf-badge pf-badge--silver" data-badge="regular"><span class="pf-medal">🏠</span><span class="pf-name">De la casa</span></div><div class="pf-badge pf-badge--silver" data-badge="weekends"><span class="pf-medal">🛋️</span><span class="pf-name">Finde a tope</span></div><div class="pf-badge pf-badge--bronze" data-badge="mondays"><span class="pf-medal">☕</span><span class="pf-name">Odio los lunes</span></div><div class="pf-badge pf-badge--gold" data-badge="number-one"><span class="pf-medal">🥇</span><span class="pf-name">Número 1</span></div><div class="pf-badge pf-badge--silver" data-badge="all-rounder"><span class="pf-medal">🎯</span><span class="pf-name">Todoterreno</span></div><div class="pf-badge pf-badge--silver" data-badge="night-owl"><span class="pf-medal">🦉</span><span class="pf-name">Noctámbulo</span></div><div class="pf-badge pf-badge--gold" data-badge="triple-crown"><span class="pf-medal">💎</span><span class="pf-name">Triple corona</span></div><div class="pf-badge pf-badge--gold" data-badge="one-year"><span class="pf-medal">🎂</span><span class="pf-name">Un año</span></div><div class="pf-badge pf-badge--bronze" data-badge="fiestas"><span class="pf-medal">🪁</span><span class="pf-name">Dieciochero</span></div><div class="pf-badge pf-badge--bronze pf-badge--locked" data-badge="halloween"><span class="pf-medal">?</span><span class="pf-name">Noche de brujas</span></div><div class="pf-badge pf-badge--bronze" data-badge="xmas"><span class="pf-medal">🎅</span><span class="pf-name">Viejito Pascuero</span></div><div class="pf-badge pf-badge--bronze" data-badge="new-year"><span class="pf-medal">🎆</span><span class="pf-name">Año nuevo</span></div></div></section></div></div></body></html>
