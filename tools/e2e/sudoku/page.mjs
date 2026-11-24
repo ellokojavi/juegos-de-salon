@@ -87,7 +87,7 @@ await waitFor(`document.querySelectorAll('.sd-demo .sd-dcell').length === 81`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 await waitFor(`document.querySelectorAll('#sd-board .sd-cell').length === 81 && !document.getElementById('cuenta')`, 9000);
 ok(await ev(`(() => { const r = k => document.getElementById('sd-key-' + k).getBoundingClientRect(); return r(6).top > r(5).top && r(1).top === r(5).top && Math.abs((r(6).left + r(9).right) / 2 - (r(1).left + r(5).right) / 2) < 2; })()`), 'with its flag the pad is five keys, then four centred under them');
-ok(await ev(`document.getElementById('sd-key-1').getBoundingClientRect().height >= 52`), 'and each key is at least 52 px tall');
+ok(await ev(`document.getElementById('sd-key-1').getBoundingClientRect().height >= 48`), 'and each key is at least 48 px tall');
 await b.shot('05-big-keys');
 
 // The languages

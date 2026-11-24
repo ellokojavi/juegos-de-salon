@@ -92,11 +92,11 @@ body.sd-hard .sd-board { box-shadow: 0 0 0 2px rgb(var(--red-rgb) / 0.6), 0 0 18
 .sd-key:active { transform: scale(0.94); }
 .sd-key.full { opacity: 0.4; }
 /* Big keys on two rows (flag sudoku-big-keys, 9×9 only): five keys, then four centred under them (ten half columns,
-   each key two of them, the sixth starting on the second); each key at least 52 px tall */
-.sd-pad--big { grid-template-columns: repeat(10, 1fr); gap: var(--s-8); }
-.sd-pad--big .sd-key { grid-column: span 2; min-height: 52px; align-content: center; }
+   each key two of them, the sixth starting on the second); each key at least 48 px tall, the pad narrower than the one-row one */
+.sd-pad--big { grid-template-columns: repeat(10, 1fr); gap: var(--s-8); width: min(100%, 360px); }
+.sd-pad--big .sd-key { grid-column: span 2; min-height: 48px; padding: var(--s-4) 0; align-content: center; }
 .sd-pad--big .sd-key:nth-child(6) { grid-column: 2 / span 2; }
-.sd-pad--big .sd-key b { font-size: var(--fs-200); }
+.sd-pad--big .sd-key b { font-size: var(--fs-160); }
 
 .sd-tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-8); width: min(100%, 460px); margin: 0 auto; }
 .sd-tools .btn { width: 100%; min-width: 0; padding-left: var(--s-4); padding-right: var(--s-4); }
