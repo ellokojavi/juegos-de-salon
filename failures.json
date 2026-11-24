@@ -7087,6 +7087,19 @@
       "date": "2026-11-24T03:20:21.399Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45317346619,
+      "check": "end-to-end",
+      "pr": 1834,
+      "branch": "cloud-arrive-consistent",
+      "commit": "dc0f96eb7612c93a19f4e876f3d3eb390701180f",
+      "test": "home/cloud-quiet.mjs",
+      "error": "✗ 390: it shows on share's left; share and the pill do not move",
+      "signature": "ec8bb95c2a",
+      "date": "2026-11-24T03:23:41.283Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
