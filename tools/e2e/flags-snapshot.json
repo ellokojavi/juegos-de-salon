@@ -11,6 +11,9 @@
   "browser-lang": {
     "state": "all"
   },
+  "cloud-quiet": {
+    "state": "all"
+  },
   "compact-lang": {
     "state": "all"
   },
@@ -59,7 +62,13 @@
   "cup-talk-push": {
     "state": "all"
   },
+  "cup-zone-phone": {
+    "state": "all"
+  },
   "dominorama": {
+    "state": "all"
+  },
+  "extended-offline": {
     "state": "all"
   },
   "flap-tiebreak": {
@@ -110,7 +119,16 @@
   "profile": {
     "state": "all"
   },
+  "profile-plays": {
+    "state": "all"
+  },
+  "ranking-peek": {
+    "state": "all"
+  },
   "routes-hint": {
+    "state": "all"
+  },
+  "settings-in-profile": {
     "state": "all"
   },
   "stack": {

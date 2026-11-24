@@ -1131,6 +1131,31 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "footer-page-unplaced",
+      "what": "CI tests: tools/e2e/footer-bottom.test.mjs · ",
+      "seen": [
+        {
+          "date": "2026-11-23T15:35:26.577Z",
+          "what": "#1809 tests: tools/e2e/footer-bottom.test.mjs",
+          "commit": "6d63d264c27abd7abdc7746e08b0284512c4904f"
+        },
+        {
+          "date": "2026-11-24T11:52:31.927Z",
+          "what": "#1851 tests: tools/e2e/footer-bottom.test.mjs",
+          "commit": "83944ffc69f7909245fa37425d2a1fb8ff6060fa"
+        },
+        {
+          "date": "2026-11-24T12:09:49.255Z",
+          "what": "#1851 tests: tools/e2e/footer-bottom.test.mjs",
+          "commit": "cfaa4bedd9f4a5aaa31f1922042f4e8d09ed3965"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "03ba96abef"
+      ]
     }
   ],
   "mechanisms": [
@@ -1347,12 +1372,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-23",
-      "to": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3"
+      "date": "2026-11-24",
+      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4"
     },
     "usability": {
-      "date": "2026-11-23",
-      "to": "b6723811b91ad0e0f8d7d27a78b88edd6cf0ecc3"
+      "date": "2026-11-24",
+      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4"
     },
     "ideas": {
       "date": "2026-11-18",
