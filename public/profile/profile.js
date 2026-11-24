@@ -210,6 +210,19 @@ async function ranksOf(J, f, onGame) {
   return f;
 }
 
+/**
+ * How many duels the player won against a game's champion: the rival is 1st ever in the table of one
+ * of the duel's games (the owner, 2026-11-24: «si le ganaste al campeón vigente… te lo llevas»). Read
+ * when the profile opens, so the champion is the reigning one; the badge stays earned once seen.
+ */
+async function champsOf(J, wins = []) {
+  const champ = {};
+  const of = g => (champ[g] ||= J.tabla(tableOf(g).t, SIEMPRE, { top: 1, reciente: 60000 }).then(v => v?.top?.[0]?.jid || null).catch(() => null));
+  let c = 0;
+  for (const w of wins) if ((await Promise.all(w.games.map(of))).includes(w.rival)) c++;
+  return c;
+}
+
 /* ------------------------------------------------------------------ */
 /* Drawing                                                             */
 /* ------------------------------------------------------------------ */
@@ -688,6 +701,7 @@ export async function drawProfile(root, { sub }) {
         DU = ui;
         duelList = await D.mios();
         duelF = du.duelFacts(duelList, yo.jid);
+        duelF.champs = await champsOf(J, duelF.wins).catch(() => 0);
       }).catch(() => {});
     show(tab);
     revealIntoView(badgesBox);

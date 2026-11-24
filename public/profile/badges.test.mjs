@@ -120,3 +120,9 @@ for (const [id, k] of [['fiestas', 'fiestas'], ['halloween', 'halloween'], ['xma
   assert.equal(withAnnounced(list, done, new Set(['premiere']), { premiere: 1 }).find(b => b.id === 'premiere').new, false, 'shown before: not new');
 }
 console.log('profile badges: ok');
+
+// Duels (the owner, 2026-11-24): three in a row against one rival, and a win against a game's champion
+assert.deepEqual(of({ now: NOW, duels: { rivalRun: 2 } })['duel-rival-run'].progress, [2, 3]);
+assert.ok(of({ now: NOW, duels: { rivalRun: 3 } })['duel-rival-run'].got);
+assert.ok(!of({ now: NOW, duels: { champs: 0 } })['duel-champion'].got);
+assert.deepEqual([of({ now: NOW, duels: { champs: 2 } })['duel-champion'].got, of({ now: NOW, duels: { champs: 2 } })['duel-champion'].count], [true, 2]);
