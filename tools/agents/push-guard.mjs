@@ -12,6 +12,8 @@
 //     each) → node tools/e2e/landing-fold.mjs --only <game> (tools/e2e/landing-stamp.mjs)
 //   - a /labs/ card over its word limit            → node public/labs/short-cards.test.mjs
 //     (signature 97c0b5ca90: red `tests` on #1696, #1699, #1667, each after bringing main in, D-594)
+//   - a page under public/ that no footer script measures or excuses (D-599)
+//     → node tools/e2e/footer-bottom.test.mjs (signature 03ba96abef: red `tests` on #1809, #1851)
 //   - a branch that brings changes but no changelog/<branch>.md entry (D-300)
 //     → node tools/release/changelog.mjs new [patch|minor]
 // Exit 2 blocks the push and tells the session what to run; anything unexpected lets it through.
@@ -65,6 +67,11 @@ export function problems(cwd, run = (cmd, args) => spawnSync(cmd, args, { cwd, e
     const r = run('node', ['public/labs/short-cards.test.mjs']);
     const long = `${r.stdout || ''}${r.stderr || ''}`.split('\n').filter(l => /^\s+#seccion-/.test(l)).map(l => l.trim());
     if (r.status === 1 && long.length) out.push(`a /labs/ card is over its word limit (D-594): shorten it in public/labs/index.html, then commit it\n  ${long.join('\n  ')}`);
+  }
+  if (existsSync(join(cwd, 'tools/e2e/footer-bottom.test.mjs'))) {
+    const r = run('node', ['tools/e2e/footer-bottom.test.mjs']);
+    const why = `${r.stdout || ''}${r.stderr || ''}`.split('\n').find(l => /pages no script measures|entries for pages that do not exist|measured and excused at once/.test(l));
+    if (r.status === 1 && why) out.push(`a page is not placed for the footer check (D-599): add it to PAGES or NO_FOOTER in tools/e2e/pages-footer-bottom.mjs, then commit it\n  ${why.replace(/^.*?(pages no|entries|measured)/, '$1').trim()}`);
   }
   out.push(...missingChangelog(run));
   return out;
