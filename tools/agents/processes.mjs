@@ -171,7 +171,8 @@ export function waits(pr, now = Date.now()) {
   if (pr.isDraft) return m;
   if (pr.baseRefName !== 'main') m.push(`stacked on ${pr.baseRefName}: it does not reach main until that one does`);
   if (pr.mergeable === 'CONFLICTING') m.push('conflicts with its base');
-  const red = (pr.statusCheckRollup || []).filter(c => ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion)).map(c => c.name);
+  // a cancelled run is not red (D-618): the merge queue cancels a behind PR's end-to-end and runs it after the update
+  const red = (pr.statusCheckRollup || []).filter(c => ['FAILURE', 'TIMED_OUT'].includes(c.conclusion)).map(c => c.name);
   if (red.length) m.push(`red: ${[...new Set(red)].join(', ')}`);
   if (!pr.autoMergeRequest && days >= 1) m.push(`no auto-merge for ${days} day${days === 1 ? '' : 's'}`);
   return m;

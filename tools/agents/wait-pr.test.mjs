@@ -9,6 +9,7 @@ assert.equal(outcome(open([{ name: 'tests', conclusion: null }, { name: 'end-to-
 assert.equal(outcome(open([{ name: 'tests', conclusion: 'SUCCESS' }, { name: 'end-to-end', conclusion: 'FAILURE' }])), 'failed: end-to-end');
 assert.equal(outcome(open([{ name: 'g03 · cup/out.mjs', conclusion: 'FAILURE' }])), null, 'a group failing on its first try is not the verdict: end-to-end is');
 assert.equal(outcome(open([], 'CONFLICTING')), 'conflict');
+assert.equal(outcome(open([{ name: 'tests', conclusion: 'SUCCESS' }, { name: 'end-to-end', conclusion: 'CANCELLED' }])), null, 'D-618: a cancelled run is not red: a newer push or the merge queue runs it again');
 assert.equal(outcome(open([{ name: 'tests', conclusion: 'SUCCESS' }, { name: 'end-to-end', conclusion: 'SUCCESS' }])), null, 'green and open: auto-merge is about to merge it');
 // D-441: the REST API gives the same verdicts where `gh pr view` is refused
 const runs = [{ name: 'tests', conclusion: 'success' }, { name: 'end-to-end', conclusion: 'failure' }];
