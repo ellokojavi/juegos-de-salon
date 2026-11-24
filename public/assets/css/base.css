@@ -471,9 +471,10 @@ html.pf-on .topbar .pf-lang-caret { font-size: var(--fs-85); color: var(--muted)
 html.pf-on .topbar:not(.portada-barra) .pf-lang .lang-pop { left: 50%; right: auto; transform: translateX(-50%); }
 .pf-home-icon { display: none; }
 /* Lab flag settings-in-profile (tester-boot.js, lab: #seccion-settings-in-profile): sound and language only in
-   the profile's ⚙️; every other page's bar and cover drop 🔊 and the flags */
-html.settings-in-profile #sound-slot, html.settings-in-profile .sound-toggle, html.settings-in-profile .lang-btn,
-html.settings-in-profile .cover-lang, html.settings-in-profile #lang-slot, html.settings-in-profile .lang-toggle { display: none !important; }
+   the profile's ⚙️; every other page's bar and cover drop 🔊 and the flags. The home page keeps its language
+   (the owner 2026-11-23): a first visitor must find it without an account */
+html.settings-in-profile #sound-slot, html.settings-in-profile .sound-toggle, html.settings-in-profile .cover-lang,
+html.settings-in-profile :is(.lang-btn, #lang-slot, .lang-toggle):not(.portada-barra *) { display: none !important; }
 html.pf-on .topbar #lang-slot:not(:has(.lang-btn, .lang-toggle)) { display: none; }
 /* A narrow phone keeps every button: the pill shows the flag only, the language loses its ▾ */
 @media (max-width: 374px) {
