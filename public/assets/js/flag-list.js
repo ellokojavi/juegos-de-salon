@@ -47,8 +47,9 @@ export const FLAGS = {
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'word-in-words': '🔤 Home page: Toque y Fama: Palabra gets its own card under the 🔤 Palabras filter (only there: with no filter, Toque y Fama\'s page still picks the number or the word, #767)',
   'cover-share': '📤 Game covers: a share button in the top bar sends the game\'s link with one line about it',
+  'vibration-setting': '📳 Profile: a «Vibración» switch in ⚙️ Preferencias that turns vibration off in every game, on this phone',
   'cloud-quiet': '☁️ Offline mode: the home page\'s cloud shows only while storing or when files are missing; the profile\'s ⚙️ always has a «Juegos sin señal» row with the state',
-  'settings-in-profile': '⚙️ Sound and language only in the profile\'s ⚙️: game covers, the home page and every other bar drop 🔊 and the flags',
+  'settings-in-profile': '⚙️ Sound and language only in the profile\'s ⚙️: game covers and every other bar drop 🔊 and the flags (the home page keeps its language)',
   'extended-offline': '📴 Extended offline mode: on the home page a still plate, 📴 over «SIN CONEXIÓN», takes the place of the dancing emoji (a tap opens the offline sheet) and a line at the bottom says how many games wait to upload; every other page has no sticker, only the Candlelight palette',
   'offline': '📴 Offline mode: the app stores the offline-capable games on the phone and opens them with no signal (D-538, PR 2 of 8)',
   'news-once': '📣 Each piece of news told once: no home window on a visit from a notification, no splash for games already played, an ended cup seen on its board is not recapped again (D-546)',
@@ -71,7 +72,7 @@ export const FLAGS = {
  * still being tried. Not a launched flag (*all*), which already has none (D-567). `public/labs/listed.test.mjs`
  * keeps it equal to the 💤 cards of La Bodega that have a row in FLAGS.
  */
-export const PARKED = new Set(['bn-salva', 'lab-ready']);
+export const PARKED = new Set(['bn-salva', 'lab-ready', 'home-carousels-sheet']);
 
 /**
  * When a flag in *lab* is ready to publish (D-528): at least `completions` finished loads by at least

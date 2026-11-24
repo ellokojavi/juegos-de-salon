@@ -16,6 +16,8 @@ const cloudIs = state => `${cloud} && document.querySelector('#offline-ready-slo
 const slotGone = `getComputedStyle(document.getElementById('offline-ready-slot')).display === 'none'`;
 // Where share and the pill sit: the cloud comes and goes on share's left, so they never move (the owner, 2026-11-23)
 const fixed = `JSON.stringify(['share-slot', 'btn-rankings'].map(id => Math.round(document.getElementById(id).getBoundingClientRect().left)))`;
+// The arrival (the slot opens, then the cloud grows): over once none of its classes is left
+const arrived = `!document.querySelector('#offline-ready-slot.or-abre, #offline-ready-slot .or-llega, #offline-ready-slot .or-crece')`;
 const leftOfShare = `document.querySelector('#offline-ready-slot .offline-ready').getBoundingClientRect().right <= document.getElementById('share-slot').getBoundingClientRect().left`;
 const TITLES = { ready: 'Listo para jugar sin señal', missing: 'Faltan algunos juegos', unsupported: 'Este navegador no guarda juegos', loading: 'Preparando los juegos' };
 
@@ -59,7 +61,11 @@ for (const width of [390, 320]) {
   await fold();
 
   ok(await pretend('missing') && await waitFor(cloudIs('missing')), `${width}: missing: the amber ☁️ shows on the bar`);
-  ok(await ev(leftOfShare) && await ev(fixed) === still, `${width}: it shows on share's left; share and the pill do not move`);
+  // Share and the pill hold still while the cloud arrives, too; where it lands is read once it has landed
+  // (mid-opening the button is wider than its slot, hidden by the slot's overflow)
+  const during = await ev(fixed);
+  ok(await waitFor(arrived, 3000), `${width}: the arrival ends`);
+  ok(await ev(leftOfShare) && during === still && await ev(fixed) === still, `${width}: it shows on share's left; share and the pill do not move`);
   await b.shot(`${width}-3-home-missing`);
   // The sheet is the one it always was: opened once
   if (width === 390) {
@@ -80,8 +86,12 @@ for (const width of [390, 320]) {
     // It floats away (the owner's variant 3): the cloud rises out of its button, which fades where it is (rising, the
     // screen's top edge would cut it); then its slot narrows, with no jump
     ok(await waitFor(`!!document.querySelector('#offline-ready-slot .offline-ready.or-se-va')`, 4000), `${width}: then it floats up and fades`);
-    await sleep(300);
-    ok(await ev(`(b => Math.round(b.getBoundingClientRect().top) === ${btnTop} && b.querySelector('.or-icono').getBoundingClientRect().top < b.getBoundingClientRect().top + 12 && b.querySelector('.or-icono').getBoundingClientRect().top > 0)(document.querySelector('#offline-ready-slot .offline-ready'))`), `${width}: only the cloud rises, inside the screen; its button stays`);
+    // Read while it rises (its 0.6 s, before the slot narrows), not at one instant a slow frame can miss
+    const rises = `(b => Math.round(b.getBoundingClientRect().top) === ${btnTop} && b.querySelector('.or-icono').getBoundingClientRect().top < b.getBoundingClientRect().top + 12 && b.querySelector('.or-icono').getBoundingClientRect().top > 0)(document.querySelector('#offline-ready-slot .offline-ready'))`;
+    let rose = false;
+    for (let t = 0; t < 550 && !rose; t += 50) { rose = await ev(rises); if (!rose) await sleep(50); }
+    if (!rose) console.log('   rise:', await ev(`JSON.stringify((b => ({ btn: b.getBoundingClientRect().top, icon: b.querySelector('.or-icono').getBoundingClientRect().top, cls: b.className }))(document.querySelector('#offline-ready-slot .offline-ready')))`), 'btnTop', btnTop);
+    ok(rose, `${width}: only the cloud rises, inside the screen; its button stays`);
     ok(await waitFor(`document.getElementById('offline-ready-slot').classList.contains('or-cierra')`, 1500), `${width}: and its slot narrows to nothing`);
     ok(await waitFor(`!${cloud} && ${slotGone}`, 2000), `${width}: then it leaves the bar`);
     ok(await ev(fixed) === still, `${width}: share and the pill end where they were`);

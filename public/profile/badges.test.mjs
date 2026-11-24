@@ -78,7 +78,7 @@ assert.equal(weekendsOf(days3, ['2026-11-07']), 3, 'a weekend counts once');
 // ☕ Odio los lunes: 4 Mondays before 8
 assert.ok(got('mondays', { marks: { mon: ['2026-11-02', '2026-11-09', '2026-11-16', '2026-11-23'] } }).got);
 assert.deepEqual(got('mondays', { marks: { mon: ['2026-11-02'] } }).progress, [1, 4]);
-// 🥂 El canapé: 3 cups within 7 days
+// 🥟 El canapé: 3 cups within 7 days
 const D = 86400000;
 assert.equal(cupsInAWeek([{ at: NOW }, { at: NOW + 3 * D }, { at: NOW + 6.9 * D }]), 3);
 assert.equal(cupsInAWeek([{ at: NOW }, { at: NOW + 3 * D }, { at: NOW + 7 * D }]), 2, 'the seventh day after is another week');
@@ -120,3 +120,9 @@ for (const [id, k] of [['fiestas', 'fiestas'], ['halloween', 'halloween'], ['xma
   assert.equal(withAnnounced(list, done, new Set(['premiere']), { premiere: 1 }).find(b => b.id === 'premiere').new, false, 'shown before: not new');
 }
 console.log('profile badges: ok');
+
+// Duels (the owner, 2026-11-24): three in a row against one rival, and a win against a game's champion
+assert.deepEqual(of({ now: NOW, duels: { rivalRun: 2 } })['duel-rival-run'].progress, [2, 3]);
+assert.ok(of({ now: NOW, duels: { rivalRun: 3 } })['duel-rival-run'].got);
+assert.ok(!of({ now: NOW, duels: { champs: 0 } })['duel-champion'].got);
+assert.deepEqual([of({ now: NOW, duels: { champs: 2 } })['duel-champion'].got, of({ now: NOW, duels: { champs: 2 } })['duel-champion'].count], [true, 2]);
