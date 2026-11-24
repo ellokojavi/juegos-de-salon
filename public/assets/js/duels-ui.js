@@ -10,6 +10,7 @@ import { SUELTOS } from './games.js';
 import { jugador, leerYo } from './jugador.js';
 import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS } from './duels.js';
 import { TEXTS } from './duels-texts.js';
+import { slotRoll } from './slot-roll.js';
 
 const lang = getLang();
 export const T = TEXTS[lang] || TEXTS.es;
@@ -166,7 +167,7 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   const centrado = !!rival && !!juego;
   let modo = centrado || rival ? 'quick' : 'menu', paso = 1, editando = -1;
   let elegido = rival, formato = FORMATOS[f0] ? f0 : 'bo3', g = juego && duelGame(juego) ? juego : DUEL_GAMES[0]?.id;
-  let gr = [];
+  let gr = [], rodar = false, pararRueda = () => {};
   const ponerRondas = () => { const n = FORMATOS[formato]; gr = Array.from({ length: n }, (_, k) => gr[k] || g); };
   const titulo = el(centrado ? 'h2' : 'h3', { id: 'dl-titulo', class: centrado ? 'display display--md' : '' });
   const cerrarBtn = el('button', { type: 'button', class: 'icon-btn', 'aria-label': '✕' }, '✕');
@@ -276,12 +277,12 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
       ponerRondas();
       return [cabeza,
         el('div', { class: 'dl-head' }, label(T.stepGames), el('button', { type: 'button', class: 'chip-btn', id: 'dl-mezclar', onClick: tap(() => {
-          const pool = [...DUEL_GAMES].sort(() => Math.random() - 0.5); gr = gr.map((_, k) => pool[k % pool.length].id); editando = -1;
+          const pool = [...DUEL_GAMES].sort(() => Math.random() - 0.5); gr = gr.map((_, k) => pool[k % pool.length].id); editando = -1; rodar = true;
         }) }, T.mix)),
         ...gr.map((id, k) => {
           const x = duelGame(id);
           const fila = el('button', { type: 'button', class: `dl-ronda${editando === k ? ' on' : ''}`, 'data-ronda': k, onClick: tap(() => { editando = editando === k ? -1 : k; }) },
-            el('span', { class: 'dl-nota' }, fmt(T.roundN, { i: k + 1 })), el('span', { class: 'dl-ic', 'aria-hidden': 'true' }, x ? gameIcon(x) : ''), el('b', {}, x ? nombreJuego(x) : id), el('span', { class: 'dl-nota' }, '›'));
+            el('span', { class: 'dl-nota' }, fmt(T.roundN, { i: k + 1 })), el('span', { class: 'dl-ic slot-reel', 'aria-hidden': 'true' }, x ? gameIcon(x) : ''), el('b', { class: 'slot-reel' }, x ? nombreJuego(x) : id), el('span', { class: 'dl-nota' }, '›'));
           return editando === k ? el('div', { class: 'stack' }, fila, tiles(id, v => { gr[k] = v; editando = -1; })) : fila;
         }),
         el('p', { class: 'dl-nota' }, T.how), error, enviarBtn()];
@@ -291,6 +292,22 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
     cuerpo.removeAttribute('aria-busy');
     titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'quick' ? T.quickTitle : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
     cuerpo.replaceChildren(...vistas[modo]().filter(Boolean));
+    pararRueda();
+    if (rodar) { rodar = false; rodarRondas(); }
+  }
+  /**
+   * 🎲 Mix rolls the rounds like La Copa's week (D-425, slot-roll.js): the real draw is already painted,
+   * each row runs through random duel games and stops on its own, top to bottom.
+   */
+  function rodarRondas() {
+    const reales = new Map();
+    pararRueda = slotRoll([...cuerpo.querySelectorAll('.dl-ronda')], DUEL_GAMES.map(x => x.id), (f, id) => {
+      const ic = f.querySelector('.dl-ic'), b = f.querySelector('b');
+      if (!reales.has(f)) reales.set(f, [[...ic.childNodes], b.textContent]);
+      const x = id === null ? null : duelGame(id);
+      if (!x) { const [n, t] = reales.get(f); ic.replaceChildren(...n); b.textContent = t; return; }
+      ic.replaceChildren(gameIcon(x)); b.textContent = nombreJuego(x);
+    });
   }
   async function enviar() {
     if (!elegido) return;
