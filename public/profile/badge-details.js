@@ -1,8 +1,8 @@
 /**
  * A badge's detail (lab flag `badge-details`, lab: #seccion-badge-details; the owner approved the proposal 2026-11-24):
  * a tap on a badge whose card hides something opens a sheet with what it hid (which games are left, which one is
- * in its premiere week, the month as a calendar…) and the way to earn it. Badges whose bar says it all, and the
- * secret ones, open nothing.
+ * in its premiere week, the month as a calendar…) and the way to earn it. Badges whose bar says it all, the secret
+ * ones and a sheet that would only say «not yet» (`hasDetail`) open nothing.
  *
  * `detailOf(id, f, ctx)` is pure (node tests it): `f` the profile's facts, `ctx` `{ T, lang, games, places, general,
  * today }`. It returns `{ lead, rows: [{ label, right, href }], more, cal, note, go: [href, label] }` or null.
@@ -20,6 +20,18 @@ const noon = d => Date.parse(`${d}T12:00:00Z`);
 export const DETAILED = new Set(['collector', 'explorer', 'premiere', 'specialist', 'number-one', 'all-rounder',
   'streak-10', 'streak-30', 'streak-100', 'month-full', 'early-bird', 'weekends', 'mondays', 'party',
   'month-podium', 'month-champion', 'cup-podium', 'cup-champion']);
+
+/**
+ * Whether a badge opens its sheet: a sheet that would only say «not yet» (an unearned podium, a badge with no
+ * progress at all) adds nothing to the card's own line, so it opens nothing (the owner, 2026-11-24).
+ * Earned badges always open: they show which months, cups or days.
+ */
+export function hasDetail(id, got, f = {}, ctx = {}) {
+  if (!DETAILED.has(id)) return false;
+  if (got) return true;
+  const d = detailOf(id, f, ctx);
+  return !!d && !d.empty;
+}
 
 export function detailOf(id, f = {}, ctx = {}) {
   const { T, lang = 'es', games = [], places = {}, general = {}, today = f.today || isoDay(Date.now()) } = ctx;
@@ -50,7 +62,7 @@ export function detailOf(id, f = {}, ctx = {}) {
     }
     case 'specialist': {
       const top = (f.byGame || []).filter(g => byId[g.id]).slice(0, 3);
-      if (!top.length) return { lead: D.noGames, go: ['../', T.gamesGo] };
+      if (!top.length) return { empty: true, lead: D.noGames, go: ['../', T.gamesGo] };
       return list(top.map(g => ({ label: label(byId[g.id]), right: `${Math.min(g.n, SPECIALIST)} / ${SPECIALIST}`, href: href(byId[g.id]) })), D.mostPlayed);
     }
     case 'number-one': {
@@ -93,22 +105,23 @@ export function detailOf(id, f = {}, ctx = {}) {
       const last = (f.cupList || []).filter(c => Number(c?.at) > now - 7 * DAY).length;
       return { lead: fmt(D.partyNow, { n: last, goal: PARTY_CUPS, best: cupsInAWeek(f.cupList) }), go: ['../cup/', T.cupGo] };
     }
+    // Unearned, these list nothing: only earned months count
     case 'month-podium': case 'month-champion': {
       const ms = (f.months || []).filter(x => x.place >= 1 && x.place <= (id === 'month-champion' ? 1 : 3));
       const nm = p => new Date(noon(`${p.slice(1)}-15`)).toLocaleDateString(lang, { month: 'long', year: 'numeric', timeZone: 'UTC' });
-      if (!ms.length) return { lead: D.monthsNone, go: daily };
+      if (!ms.length) return { empty: true, lead: D.monthsNone, go: daily };
       return list(ms.map(x => ({ label: nm(x.period), right: place(x.place) })), D.monthsWon, { go: daily });
     }
     case 'cup-podium': case 'cup-champion': {
       const ps = (f.podiums || []).filter(x => x.l >= 1 && x.l <= (id === 'cup-champion' ? 1 : 3));
-      if (!ps.length) return { lead: D.cupsNone, go: ['../cup/', T.cupGo] };
+      if (!ps.length) return { empty: true, lead: D.cupsNone, go: ['../cup/', T.cupGo] };
       return list(ps.map(x => ({ label: `${['', '🥇', '🥈', '🥉'][x.l]} ${x.name || x.code}`, right: x.end ? date(isoDay(x.end)) : '' })), D.cupsWon, { go: ['../cup/', T.cupGo] });
     }
     default: return null;
   }
 
   function dates(ds, lead, none, n = ds.length) {
-    if (!ds.length) return { lead: none, go: ['../', T.gamesGo] };
+    if (!ds.length) return { empty: true, lead: none, go: ['../', T.gamesGo] };
     return list(ds.map(d => ({ label: date(d), right: '✓' })), fmt(lead, { n }));
   }
 }
