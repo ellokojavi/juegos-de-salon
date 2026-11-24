@@ -8,7 +8,7 @@ import { gameIcon } from './game-icon.js';
 import { getLang } from './i18n.js';
 import { SUELTOS } from './games.js';
 import { jugador, leerYo } from './jugador.js';
-import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS } from './duels.js';
+import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS, esPuntos, formatoDe } from './duels.js';
 import { TEXTS } from './duels-texts.js';
 import { slotRoll } from './slot-roll.js';
 
@@ -36,7 +36,9 @@ export const hrefDuelos = () => `${RAIZ}duels/`;
 
 const puntos = e => e.rondas.map(r => el('span', { class: `dl-punto${r ? ` ${r}` : ''}`, 'aria-hidden': 'true' }));
 const marcador = e => `${e.puntos[0]}–${e.puntos[1]}`;
-export const titulo = d => { const g = duelGame(d.g); return `${d.gr ? T.customTitle : g ? `${g.emoji} ${nombreJuego(g)}` : d.g} · ${T[d.f] || ''}`; };
+/** A format's name: «Mejor de 7», «Más puntos», «Más puntos en 6 rondas». */
+export const nombreFormato = f => (T[f] || (esPuntos(f) ? fmt(T.ptsN, { n: FORMATOS[f] }) : FORMATOS[f] ? fmt(T.bestOfN, { n: FORMATOS[f] }) : ''));
+export const titulo = d => { const g = duelGame(d.g); return `${d.gr ? T.customTitle : g ? `${g.emoji} ${nombreJuego(g)}` : d.g} · ${nombreFormato(d.f)}`; };
 
 /** A duel as a card (the profile's row). */
 export function duelCard(d, me, { alTocar = () => {} } = {}) {
@@ -149,23 +151,24 @@ export const inviteHref = d => `${RAIZ}duels/?d=${d.id}`;
 export async function shareInvite(d, btn) {
   const { compartir } = await import('./compartir.js');
   const g = duelGame(d.g);
-  const texto = fmt(T.inviteText, { a: d.an, juego: d.gr ? T.customTitle.replace(/^\S+\s/, '') : (g ? nombreJuego(g) : d.g), formato: T[d.f] });
+  const texto = fmt(T.inviteText, { a: d.an, juego: d.gr ? T.customTitle.replace(/^\S+\s/, '') : (g ? nombreJuego(g) : d.g), formato: nombreFormato(d.f) });
   const r = await compartir({ titulo: T.inviteTitle, texto, url: inviteHref(d), que: 'duelo' });
   if (r === 'copied' && btn) { const antes = btn.textContent; btn.textContent = T.copied; setTimeout(() => { btn.textContent = antes; }, 2000); }
 }
 
 /**
  * The new-duel sheet (the owner, 2026-11-23: a quick duel and a custom one, step by step, always to
- * one rival). From a ranking's ⚔️ (`rival` and `juego`) it opens centred as a quick duel with both
- * chosen; from the profile it first asks ⚡ Quick or 🛠️ Custom. Quick: the rival, one game, best of
- * 3 or 5. Custom: 1 who, 2 how to win, 3 each round's game. Once sent, the challenger sends the
+ * one rival). It always opens on the quick duel (from a ranking's ⚔️, centred, with `rival` and `juego`
+ * chosen): the rival, best of 3 or 5 or most points, one game; under its button, 🛠️ a custom duel
+ * (the owner, 2026-11-24): 1 who, 2 how to win (best of 3, 5, 7 or 9, or most points), 3 each round's game. Once sent, the challenger sends the
  * invite to that rival and can play round 1.
  */
 export async function abrirNuevo({ rival = null, juego = null, formato: f0 = null, lista = null, alTocar = () => {} } = {}) {
   cargarCss();
   const yo = leerYo();
   const centrado = !!rival && !!juego;
-  let modo = centrado || rival ? 'quick' : 'menu', paso = 1, editando = -1;
+  // Always the quick duel first; the custom one is a link under its button (the owner, 2026-11-24)
+  let modo = 'quick', paso = 1, editando = -1;
   let elegido = rival, formato = FORMATOS[f0] ? f0 : 'bo3', g = juego && duelGame(juego) ? juego : DUEL_GAMES[0]?.id;
   let gr = [], rodar = false, pararRueda = () => {};
   const ponerRondas = () => { const n = FORMATOS[formato]; gr = Array.from({ length: n }, (_, k) => gr[k] || g); };
@@ -254,25 +257,35 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   const versus = () => el('div', { class: 'dl-versus' }, el('div', {}, el('b', {}, yo.n)), el('span', { class: 'display display--md' }, 'VS'), el('div', {}, el('b', {}, elegido.n)));
   const enviarBtn = () => el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-enviar', disabled: !elegido, onClick: enviar }, elegido ? fmt(T.send, { n: elegido.n }) : T.pickRival);
 
+  const volverRapido = () => el('button', { type: 'button', class: 'link-btn', id: 'dl-rapido', onClick: tap(() => { modo = 'quick'; editando = -1; if (!['bo3', 'bo5', 'pts'].includes(formato)) formato = 'bo3'; }) }, T.quickLink);
   const vistas = {
-    menu: () => [
-      el('button', { type: 'button', class: 'opcion dl-modo', id: 'dl-rapido', onClick: tap(() => { modo = 'quick'; }) }, el('b', {}, T.quickTitle), el('span', { class: 'dl-nota' }, T.quickSub)),
-      el('button', { type: 'button', class: 'opcion dl-modo', id: 'dl-medida', onClick: tap(() => { modo = 'custom'; paso = 1; }) }, el('b', {}, T.customTitle), el('span', { class: 'dl-nota' }, T.customSub))],
     quick: () => [
       centrado ? versus() : rivales(),
       // How many rounds first, then the game (the owner, 2026-11-24), with most points too
       el('div', { class: 'stack' }, label(T.format), chips([['bo3', T.bo3], ['bo5', T.bo5], ['pts', T.pts]], formato, v => { formato = v; })),
       // From a ranking the game comes chosen, and can be changed (the owner, 2026-11-23)
       el('div', { class: 'stack' }, label(T.game), tiles(g, v => { g = v; }, centrado ? juego : null)),
-      el('p', { class: 'dl-nota' }, T.how), error, enviarBtn()],
+      el('p', { class: 'dl-nota' }, T.how), error, enviarBtn(),
+      el('button', { type: 'button', class: 'link-btn', id: 'dl-medida', onClick: tap(() => { modo = 'custom'; paso = 1; if (!FORMATOS[formato]) formato = 'bo3'; }) }, T.customLink)],
     custom: () => {
       const cabeza = el('div', { class: 'dl-pasos' }, el('span', { class: 'dl-nota' }, fmt(T.stepOf, { n: paso })),
         el('span', { class: 'dl-puntos' }, [1, 2, 3].map(k => el('span', { class: `dl-punto${k <= paso ? ' w' : ''}`, 'aria-hidden': 'true' }))));
       if (paso === 1) return [cabeza, label(T.stepWho), rivales(),
-        el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-siguiente', disabled: !elegido, onClick: tap(() => { paso = 2; }) }, elegido ? T.next : T.pickRival)];
+        el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-siguiente', disabled: !elegido, onClick: tap(() => { paso = 2; }) }, elegido ? T.next : T.pickRival), volverRapido()];
+      // First how to win, then how many rounds (the owner, 2026-11-24): most rounds won takes an odd
+      // number, 3 to 9, so there is always a winner; most points any number, 2 to 9
+      const puntosModo = esPuntos(formato), n = FORMATOS[formato];
+      const ponerModo = m => { const k = m === 'pts' ? n : (n % 2 ? Math.max(3, n) : n + 1); formato = formatoDe(m, Math.min(9, k)); };
+      const modoBtn = (m, titulo, sub) => el('button', { type: 'button', class: `opcion dl-modo${(m === 'pts') === puntosModo ? ' on' : ''}`, 'data-modo': m, 'aria-pressed': String((m === 'pts') === puntosModo), onClick: tap(() => ponerModo(m)) },
+        el('b', {}, titulo), el('span', { class: 'dl-nota' }, sub));
+      const cuantas = puntosModo ? [2, 3, 4, 5, 6, 7, 8, 9] : [3, 5, 7, 9];
       if (paso === 2) return [cabeza, label(T.stepHow),
-        ...['bo3', 'bo5', 'pts'].map(f => el('button', { type: 'button', class: `opcion dl-modo${f === formato ? ' on' : ''}`, 'data-f': f, onClick: tap(() => { formato = f; }) },
-          el('b', {}, T[f]), el('span', { class: 'dl-nota' }, T[`${f}How`]))),
+        modoBtn('bo', T.winsTitle, T.winsSub), modoBtn('pts', T.ptsTitle, T.ptsSub),
+        el('div', { class: 'stack', id: 'dl-rondas' }, label(T.roundsLabel),
+          el('div', { class: 'dl-chips', role: 'group', 'aria-label': T.roundsLabel }, cuantas.map(k => el('button', {
+            type: 'button', class: `chip-btn${k === n ? ' on' : ''}`, 'data-n': k, 'aria-pressed': String(k === n), onClick: tap(() => { formato = formatoDe(puntosModo ? 'pts' : 'bo', k); }),
+          }, String(k)))),
+          el('p', { class: 'dl-nota' }, puntosModo ? fmt(T.ptsHowN, { n }) : fmt(T.winsHowN, { k: Math.floor(n / 2) + 1, n }))),
         el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-siguiente', onClick: tap(() => { ponerRondas(); editando = -1; paso = 3; }) }, T.next)];
       ponerRondas();
       return [cabeza,
@@ -285,12 +298,12 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
             el('span', { class: 'dl-nota' }, fmt(T.roundN, { i: k + 1 })), el('span', { class: 'dl-ic slot-reel', 'aria-hidden': 'true' }, x ? gameIcon(x) : ''), el('b', { class: 'slot-reel' }, x ? nombreJuego(x) : id), el('span', { class: 'dl-nota' }, '›'));
           return editando === k ? el('div', { class: 'stack' }, fila, tiles(id, v => { gr[k] = v; editando = -1; })) : fila;
         }),
-        el('p', { class: 'dl-nota' }, T.how), error, enviarBtn()];
+        el('p', { class: 'dl-nota' }, T.how), error, enviarBtn(), volverRapido()];
     },
   };
   function pintar() {
     cuerpo.removeAttribute('aria-busy');
-    titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'quick' ? T.quickTitle : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
+    titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
     cuerpo.replaceChildren(...vistas[modo]().filter(Boolean));
     pararRueda();
     if (rodar) { rodar = false; rodarRondas(); }

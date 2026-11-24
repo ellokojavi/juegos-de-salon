@@ -16,6 +16,7 @@ const ALLOWED = {
   'assets/js/buzon.js': 'the one quiet inbox link of a result screen',
   'assets/js/uno-al-dia-avisos.js': '«Ahora no» inside the reminder card',
   'assets/js/uno-al-dia-ui.js': 'repeat today\'s game, on the result',
+  'assets/js/duels-ui.js': 'the new-duel sheet\'s way between the quick and the custom duel, under its button (the owner, 2026-11-24)',
   'labs/artifacts/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/code/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
   'labs/transfer/game.js': 'the game\'s 💬 comment while playing; on the cover it is the footer\'s option (footerInto)',
