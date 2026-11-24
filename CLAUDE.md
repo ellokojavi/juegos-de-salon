@@ -42,6 +42,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | Launching a game to everyone (prepare, splash, schedule, check live, clean up) | [docs/LAUNCH.md](docs/LAUNCH.md), the playbook with every past miss; the `launch-game` skill walks it, `tools/agents/launch-check.mjs <id> [--screens] [--live]` checks every place a launched game shows | Before preparing or scheduling any launch, and after the hour |
 | Each game | `docs/games/<folder>.md`, with its exceptions to the canons | Before touching it |
 | What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
+| The player profile, another player's sheet, settings, duel badges | [docs/PROFILE.md](docs/PROFILE.md) | Before touching `public/profile/` or `player-peek.js` |
 | Owner panel | [docs/PANEL.md](docs/PANEL.md) | When touching signals or the panel |
 | README, screenshots, link cards | the `readme-and-cards` skill (`.claude/skills/readme-and-cards/`) | Before touching them, and on "Actualiza el README" |
 | Panel, Cup reports, rankings code | the `owner-tools` skill (`.claude/skills/owner-tools/`) | Before touching them |

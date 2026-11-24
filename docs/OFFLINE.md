@@ -186,6 +186,13 @@ would miss what `sw.js` wrote at the root.
      jumps; a repeated ready does not cut it; the owner's pick of five, 2026-11-23); ready and
      unsupported live in a «Juegos sin señal» row of ⚙️ Preferencias (`offlineReadyRow`), which opens the same
      sheet. ⚙️ is for players with an account, so a guest still gets the cloud whenever something needs them.
+     Its way in is the mirror of the way out (the owner, 2026-11-23): the slot opens to the cloud's width with
+     nothing in it (`QUIET_OPEN_MS`, 250 ms), then the cloud grows from a point past its size and back
+     (`QUIET_GROW_MS`, 450 ms); a progress tick while it is already there changes nothing.
+     Every view reads the same caches and must agree: a read that started earlier never overwrites a later one,
+     while a view says loading it reads again every `POLL_MS` (3 s) so a missed progress message cannot leave it
+     loading, and the worker's keys are absolute from the site's root (`configKey`, `syncKey`) so `/profile/` and
+     `/cup/` find what `sw.js` wrote (2026-11-24).
      The «T» tab's cloud states go with the flag's own row while it is in the lab, on both pages
      (`tools/e2e/home/cloud-quiet.mjs`).
    - **Extended offline mode** (flag `extended-offline`, in Labs, the owner, 2026-11-23, D-614): on the home page
