@@ -63,6 +63,23 @@ html.cloud-quiet .portada-barra .tools > span:has(> .offline-ready[hidden]) { di
   .or-cierra { transition: none; }
 }
 @keyframes or-se-apaga { to { opacity: 0; } }
+/* Its way in (offlineReadyButton's arrive, the mirror of the way out): the slot opens empty from the swallowed gap to
+   the cloud's width (QUIET_OPEN_MS), then the cloud grows from its centre, a little past its size and back
+   (QUIET_GROW_MS), the glass fading in under it */
+.offline-ready.or-llega { visibility: hidden; }
+.or-abre { overflow: hidden; margin-inline-end: calc(-1 * var(--s-6)); transition: width 0.25s ease-out, margin-inline-end 0.25s ease-out; }
+.or-abre.or-abierto { margin-inline-end: 0; }
+.offline-ready.or-crece { animation: or-vidrio-llega 0.45s ease-out both; }
+.offline-ready.or-crece .or-icono, .offline-ready.or-crece .or-anillo { animation: or-crece 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.offline-ready.or-crece .or-anillo { animation-name: or-anillo-crece; }
+@keyframes or-vidrio-llega { from { background-color: transparent; border-color: transparent; } }
+@keyframes or-crece { from { opacity: 0; transform: scale(0.2); } 40% { opacity: 1; } }
+@keyframes or-anillo-crece { from { opacity: 0; transform: rotate(-90deg) scale(0.2); } 40% { opacity: 1; } to { transform: rotate(-90deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .or-abre { transition: none; }
+  .offline-ready.or-crece .or-icono, .offline-ready.or-crece .or-anillo { animation: or-se-enciende 0.3s ease-out both; }
+}
+@keyframes or-se-enciende { from { opacity: 0; } }
 /* …and it comes and goes on the left of share (the owner, 2026-11-23): share and the pill never move, the cloud takes
    the empty room toward the language */
 html.cloud-quiet .portada-barra .tools > #offline-ready-slot { order: -1; }
