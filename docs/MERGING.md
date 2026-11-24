@@ -78,6 +78,11 @@ for the owner's tick first; when the tick finds it behind, `approve.mjs` turns o
 queue takes it (its next step also starts the Publish run such a merge does not wake). Sessions change
 nothing: auto-merge on, `wait-pr.mjs` as before.
 
+- **Order** (D-619): a PR that changes the queue itself goes first, then one that changes nothing under
+  `public/` (its end-to-end takes minutes), then the rest; within each, the oldest auto-merge first.
+- **The doctor** (D-619): every 5 minutes the heartbeat runs `node tools/agents/merge-queue.mjs doctor --heal --alarm`
+  (a deleted label is made again, a missed step started, and the issue "Merge queue needs a look" lists the
+  rest); every hour the cloud task `queue-doctor` fixes what it lists on its own (`tools/jobs/prompts/queue-doctor.md`).
 - Needs the `MERGE_QUEUE_TOKEN` secret (a push with the workflow token re-runs no checks); without it the queue does nothing.
 - **Planned replacement**: GitHub's own merge queue (batches, tests ahead), after moving the repo to an organization: [ORG-MIGRATION.md](ORG-MIGRATION.md), not started.
 - **Off switch**: `gh variable set MERGE_QUEUE --body off`, and strict off:

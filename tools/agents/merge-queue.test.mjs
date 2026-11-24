@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { pick, stale, queueWait, quantile, isMainMerge, summarize, LABEL } from './merge-queue.mjs';
+import { pick, stale, rank, diagnose, SLOW_MIN, STUCK_MIN, SILENT_MIN, queueWait, quantile, isMainMerge, summarize, LABEL } from './merge-queue.mjs';
 
 const ok = [{ name: 'tests', conclusion: 'SUCCESS' }, { name: 'end-to-end', conclusion: 'SUCCESS' }];
 const pr = (number, o = {}) => ({ number, isDraft: false, isCrossRepository: false, baseRefName: 'main', labels: [], headRefOid: `h${number}`,
@@ -23,6 +23,37 @@ const flying = pr(5, { labels: [{ name: LABEL }], mergeStateStatus: 'BLOCKED', s
 assert.equal(pick([pr(1), flying]).action, 'wait', 'while the updated PR runs its checks, the rest wait: no avalanche');
 assert.equal(pick([pr(1), { ...flying, statusCheckRollup: [{ name: 'tests', conclusion: 'FAILURE' }] }]).pr.number, 1, 'a red one no longer holds the line');
 assert.equal(pick([pr(1), pr(2)], new Set(['1@h1'])).pr.number, 2, 'a conflicting head is skipped');
+
+// D-619: which go first
+const files = (...f) => ({ files: f.map(path => ({ path })), changedFiles: f.length });
+assert.equal(rank(pr(1, files('tools/agents/merge-queue.mjs', 'changelog/x.md'))), 0, 'a fix to the queue itself goes first');
+assert.equal(rank(pr(1, files('tools/agents/x.mjs', 'docs/X.md'))), 1, 'nothing under public/: fast');
+assert.equal(rank(pr(1, files('public/hangman/x.js', 'docs/X.md'))), 2);
+assert.equal(rank(pr(1, { files: [{ path: 'docs/X.md' }], changedFiles: 150 })), 2, 'a list cut short counts as slow');
+assert.equal(rank(pr(1)), 2, 'no file list: slow');
+assert.deepEqual([pr(1, files('public/a.js')), pr(2, files('docs/a.md')), pr(3, files('tools/agents/merge-queue.mjs'))]
+  .map(p => pick([p, pr(9, files('public/b.js'))]).pr.number), [1, 2, 3], 'within a rank, the oldest first');
+assert.equal(pick([pr(1, files('public/a.js')), pr(2, files('docs/a.md'))]).pr.number, 2, 'a fast PR passes an older slow one');
+assert.equal(pick([pr(1, files('docs/a.md')), pr(2, files('tools/agents/merge-queue.mjs'))]).pr.number, 2, 'the queue fix passes everyone');
+
+// D-619: the doctor
+const now = Date.parse('2026-11-24T15:00:00Z');
+const ago = m => new Date(now - m * 60e3).toISOString();
+const run = (conclusion, m, id = m) => ({ databaseId: id, status: 'completed', conclusion, createdAt: ago(m) });
+const kinds = o => diagnose({ prs: [], runs: [run('success', 1)], labelExists: true, now, ...o }).map(f => f.kind);
+assert.deepEqual(kinds({}), [], 'all well');
+assert.deepEqual(kinds({ labelExists: false }), ['label']);
+assert.deepEqual(kinds({ runs: [run('failure', 1), run('cancelled', 2), run('failure', 3)] }), ['failing'], 'two failed steps in a row, cancelled ones aside');
+assert.deepEqual(kinds({ runs: [run('failure', 1), run('success', 3)] }), [], 'one failure is not an alarm');
+const fresh = { autoMergeRequest: { enabledAt: ago(10) } };
+assert.deepEqual(kinds({ prs: [pr(1, fresh)], runs: [run('success', SILENT_MIN + 5)] }), ['silent'], 'one waits and the queue has not stepped');
+assert.deepEqual(kinds({ prs: [pr(1, fresh)], runs: [run('success', 5)] }), [], 'the queue stepped lately: it will take it');
+const inFlight = (m) => pr(1, { ...fresh, labels: [{ name: LABEL }], mergeStateStatus: 'BLOCKED', statusCheckRollup: [ok[0], { name: 'end-to-end', status: 'IN_PROGRESS', startedAt: ago(m) }] });
+assert.deepEqual(kinds({ prs: [inFlight(SLOW_MIN + 5)] }), ['slow']);
+assert.deepEqual(kinds({ prs: [inFlight(10)] }), []);
+assert.deepEqual(kinds({ prs: [pr(1, { autoMergeRequest: { enabledAt: ago(STUCK_MIN + 5) }, mergeStateStatus: 'BLOCKED' })] }), ['stuck']);
+assert.deepEqual(kinds({ prs: [pr(1, { autoMergeRequest: { enabledAt: ago(STUCK_MIN + 5) }, mergeStateStatus: 'BLOCKED', labels: [{ name: 'needs-owner' }] })] }), [], 'a 🔴 PR waits for the owner, not stuck');
+assert.ok(diagnose({ prs: [], runs: [], labelExists: false, now }).every(f => f.kind !== 'label' || f.heal === 'label'), 'the label heals without a model');
 
 assert.equal(quantile([5, 1, 3, 2, 4], 0.5), 3);
 assert.equal(quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.9), 9);
