@@ -7115,7 +7115,11 @@
       "error": "✗ the cup saves the week as shown, with its version (memory,linea,dominorama,tango:time,pintaminas:hard,stick,final)",
       "signature": "cfb27a56e8",
       "date": "2026-11-24T03:48:03.916Z",
-      "fix": null,
+      "fix": {
+        "commit": "7fd6be36c2c74d13f52b5d1a11457573d6b9b840",
+        "date": "2026-11-24T04:43:02.444Z",
+        "stat": "5 file(s) +252 −24: changelog/create-week-tango-time.md, changelog/croc-river-visuals.md, docs/games/croc.md, public/cup/games/croc/scene.js, tools/e2e/cup/create-week.mjs"
+      },
       "flaky": false
     }
   ]
