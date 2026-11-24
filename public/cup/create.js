@@ -9,6 +9,7 @@ import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { SFX } from '../assets/js/sound.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
+import { slotRoll } from '../assets/js/slot-roll.js';
 import { esNuevo, gameById } from '../assets/js/games.js';
 import { flag, loadFlags } from '../assets/js/flags.js';
 import { leerYo } from '../assets/js/jugador.js';
@@ -223,37 +224,18 @@ function armarSemana() {
    * the pool and stops on its own, top to bottom, in under a second. The week is already drawn and
    * painted underneath (each card's `data-juego` is the real one), so a tap meanwhile acts on it.
    */
-  let rueda = null;
+  let parar = () => {};
   function barajar() {
-    clearInterval(rueda);
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const cartas = [...lista.querySelectorAll('.semana-dia')].map(f => {
+    parar();
+    const reales = new Map();
+    const cartas = [...lista.querySelectorAll('.semana-dia')];
+    parar = slotRoll(cartas, POZO, (f, id) => {
       const em = f.querySelector('.em'), b = f.querySelector('.semana-juego b'), small = f.querySelector('.semana-juego small');
-      return { f, em, b, small, real: [em, b.textContent, small.textContent], quieta: false };
+      if (!reales.has(f)) reales.set(f, [em, b.textContent, small.textContent]);
+      if (id === null) { const r = reales.get(f); em.replaceWith(r[0]); [b.textContent, small.textContent] = r.slice(1); return; }
+      const G = JUEGOS_COPA[id];
+      em.replaceWith(gameIcon(G, { class: 'em slot-reel' })); b.textContent = G.nombre; small.textContent = G.habilidad;
     });
-    // Each card keeps the height of the game it lands on: a longer name passing by does not wrap
-    // and push the rows below (it is cut on one line while it spins, C-8)
-    cartas.forEach(c => { c.f.style.height = `${c.f.offsetHeight}px`; });
-    const t0 = performance.now();
-    const paso = () => {
-      const t = performance.now() - t0;
-      let giran = 0;
-      cartas.forEach((c, i) => {
-        if (c.quieta) return;
-        if (t >= 300 + i * 90) {
-          c.em.replaceWith(c.real[0]); c.em = c.real[0]; [c.b.textContent, c.small.textContent] = c.real.slice(1);
-          c.f.classList.remove('baraja'); c.f.style.height = ''; c.f.classList.add('cae'); c.quieta = true;
-          return;
-        }
-        giran++;
-        const G = JUEGOS_COPA[POZO[Math.floor(Math.random() * POZO.length)]];
-        const em = gameIcon(G, { class: 'em' }); c.em.replaceWith(em); c.em = em; c.b.textContent = G.nombre; c.small.textContent = G.habilidad;
-        c.f.classList.add('baraja');
-      });
-      if (!giran) clearInterval(rueda);
-    };
-    paso();
-    rueda = setInterval(paso, 70);
   }
   /** A change by hand: the week no longer matches a style, and the die goes back to the last one. */
   const aMano = w => { cal = conFinal() ? [...w, 'final'] : [...w]; estilo = null; };
@@ -268,8 +250,8 @@ function armarSemana() {
     const J = JUEGOS_COPA[id];
     const sub = [J.habilidad, nombreVariante(id)].filter(Boolean).join(' · ');
     return el('div', { class: `semana-dia${arrastrando && sel === id ? ' hueco' : ''}${destino === `m${i}` ? ' on' : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `m${i}` },
-      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(J, { class: 'em' })),
-      el('button', { type: 'button', class: 'semana-juego', onClick: () => { SFX.tap(); hoja(i); } }, el('b', {}, J.nombre), el('small', {}, sub)),
+      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), gameIcon(J, { class: 'em slot-reel' })),
+      el('button', { type: 'button', class: 'semana-juego', onClick: () => { SFX.tap(); hoja(i); } }, el('b', { class: 'slot-reel' }, J.nombre), el('small', { class: 'slot-reel' }, sub)),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿'));
   }
   function pintar() {

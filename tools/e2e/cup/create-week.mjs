@@ -64,15 +64,15 @@ try {
   // The roll: the cards run through random games and land one after the other, on the real week
   {
     await click('#btn-dado'); await sleep(40);
-    const spinning = await ev(`document.querySelectorAll('#semana-dias .semana-dia.baraja').length`);
+    const spinning = await ev(`document.querySelectorAll('#semana-dias .semana-dia.slot-spin').length`);
     ok(spinning === 6, `pressing 🎲, the six cards spin (${spinning})`);
     await sleep(500);
-    const midway = await ev(`document.querySelectorAll('#semana-dias .semana-dia.baraja').length`);
+    const midway = await ev(`document.querySelectorAll('#semana-dias .semana-dia.slot-spin').length`);
     ok(midway > 0 && midway < 6, `and they land one after the other (${6 - midway} landed at ~0.5 s)`);
     await sleep(600);
     const landed = await ev(`(async()=>{const {juegosCopa}=await import('/cup/rules.js');const J=juegosCopa('es');
       const f=[...document.querySelectorAll('#semana-dias .semana-dia')];
-      return !document.querySelector('#semana-dias .baraja') && f.every(x=>x.querySelector('.semana-juego b').textContent===J[x.dataset.juego].nombre)})()`);
+      return !document.querySelector('#semana-dias .slot-spin') && f.every(x=>x.querySelector('.semana-juego b').textContent===J[x.dataset.juego].nombre)})()`);
     ok(landed, 'in under a second every card is still and shows the week drawn');
   }
   // On a small phone (320×640) the week starts below the 🎲: rolling scrolls it into view
