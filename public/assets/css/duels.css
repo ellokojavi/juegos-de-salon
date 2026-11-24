@@ -152,3 +152,4 @@
 .dl-h2h.t { color: var(--muted); }
 .dl-fin-col { display: grid; justify-items: end; gap: var(--s-4); }
 .dl-revancha { white-space: nowrap; }
+#dl-mejor-de .chip-btn { min-width: 44px; }   /* a one-digit chip still 44 px wide (U-10) */
