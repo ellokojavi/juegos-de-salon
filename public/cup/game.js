@@ -51,6 +51,7 @@ import { PANTALLAS, redibujarCon } from './screens.js';
 import { coverWithDialogs, gameTopBar } from '../assets/js/cover-dialogs.js';
 import { setTesterContext } from '../assets/js/tester-ribbon.js';
 import { MAX_COMMENT, cleanComment, commentProblem, canTalk, talkDay, rowTalk } from './talk.js';
+import { abrirTab } from '../assets/js/bulls-and-cows-tabs.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -2142,10 +2143,10 @@ function selectorVariante(id, variante, cambiar) {
   return o.nodo;
 }
 
-/** 🔢 Número or 🔤 Palabra on /word/, like a variant: the number is Toque y Fama's own page (#767). */
+/** 🔢 Número or 🔤 Palabra on /word/, like a variant: the number is Toque y Fama's own page (#767), swapped in as a tab. */
 function selectorTyf() {
   const o = opciones([{ valor: 'numero', titulo: T.tyfNumber }, { valor: 'palabra', titulo: T.tyfWord }],
-    v => { if (v === 'numero') location.href = '../bulls-and-cows/'; }, { inicial: 'palabra' });
+    v => { if (v === 'numero') abrirTab('numero'); }, { inicial: 'palabra' });
   o.nodo.classList.add('dos', 'variantes');
   o.nodo.id = 'selector-variante';
   return o.nodo;

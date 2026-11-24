@@ -30,6 +30,7 @@ import { codigoAlAzar } from '../cup/code.js';
 import * as numero from '../cup/games/number/engine.js';
 import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
+import { abrirTab } from '../assets/js/bulls-and-cows-tabs.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
@@ -753,7 +754,7 @@ function renderModes() {
   // 🔢 Número or 🔤 Palabra, like a game's variants (D-331): one home card for both (#767)
   $('#variant-slot').replaceChildren(el('div', { class: 'opciones dos variantes', id: 'selector-variante' },
     el('button', { type: 'button', class: 'opcion on', 'aria-pressed': 'true' }, el('b', {}, T.variantNumber)),
-    el('button', { type: 'button', class: 'opcion', 'aria-pressed': 'false', onClick: () => { SFX.tap(); location.href = '../word/'; } }, el('b', {}, T.variantWord))));
+    el('button', { type: 'button', class: 'opcion', 'aria-pressed': 'false', onClick: () => { SFX.tap(); abrirTab('palabra'); } }, el('b', {}, T.variantWord))));
 }
 
 function renderResumeSlot() {
