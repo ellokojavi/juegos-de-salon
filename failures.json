@@ -7102,7 +7102,11 @@
       "error": "✗ 390: it shows on share's left; share and the pill do not move",
       "signature": "ec8bb95c2a",
       "date": "2026-11-24T03:23:41.283Z",
-      "fix": null,
+      "fix": {
+        "commit": "3f80731ac6c9388dd228e078e0c1aeb45570adef",
+        "date": "2026-11-24T05:37:23.065Z",
+        "stat": "32 file(s) +558 −83: .claude/agents/contributions.md, .github/workflows/notifications.yml, CONTRIBUTING.md, changelog/ccr-e5bc5cc8-8onnox.md, changelog/contributor-stalls.md, …"
+      },
       "flaky": false
     },
     {
