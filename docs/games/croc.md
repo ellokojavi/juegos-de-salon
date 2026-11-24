@@ -36,7 +36,7 @@ player; the trial (D-103) is a 15-row track with its own seed.
 
 ## Flow
 
-On reaching the pond the frog dances for 1.8 s (three hops with a wiggle; none with reduced motion). Scenery: the start row and the rest rows (11, 21) are a grass verge between curbs (lamp, bin, bench, butterfly); the finish is a wetland up to the top of the screen (reeds, heron, duck, dragonfly, lily pads).
+On reaching the pond the frog dances for 1.8 s (three hops with a wiggle; none with reduced motion). Scenery: the start row and the rest rows (11, 21) are a grass verge between curbs (lamp, bin, bench, butterfly); the water canal (`row 22`) has a river depth gradient, wavy banks with shoreline foam, riverbed stones, caustics, swaying seaweed, swimming and jumping fish, curved moving waves, and passing boats with Kelvin V-wakes and animated stern foam; the finish is a wetland up to the top of the screen (reeds, heron, duck, dragonfly, lily pads).
 
 Waiting room (La Copa's, `cup/game.js`): the cover is the real game playing itself on a random track, slower
 (55 %) and with a finger showing each swipe and each Dash, in the lever's traffic; a still frame of a fixed track
