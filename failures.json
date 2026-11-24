@@ -7153,7 +7153,11 @@
       "error": "✗ 390: flag off: the sticker on the title as before, no plate",
       "signature": "ca83c32340",
       "date": "2026-11-24T06:01:11.734Z",
-      "fix": null,
+      "fix": {
+        "commit": "309c5961268f6b6492b76f2b521609d2146d7479",
+        "date": "2026-11-24T07:08:57.601Z",
+        "stat": "11 file(s) +34 −14: changelog/bodega-home-carousels-sheet.md, changelog/canape-dumpling.md, changelog/home-lang-back.md, public/assets/css/base.css, public/assets/css/player-peek.css, …"
+      },
       "flaky": false
     }
   ]
