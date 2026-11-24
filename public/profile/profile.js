@@ -830,8 +830,19 @@ async function celebrateHere(list) {
   if (firstLook(list)) return;
   const done = announced();
   const b = list.find(x => x.secret && x.got && !done[x.id]);
-  if (!b || document.querySelector('.splash-capa')) return;
-  const { showAchievement } = await import('../assets/js/achievement-window.js');
+  if (document.querySelector('.splash-capa')) return;
+  const { showAchievement, TEXTS: AW } = await import('../assets/js/achievement-window.js');
+  if (!b) {
+    // A badge the profile finds new that no game told (counted from the server, all phones: 🧩 Coleccionista
+    // when this phone's own list missed a game) gets its window here too, once
+    const words = (AW[lang] || AW.es).badges;
+    const o = list.find(x => !x.secret && x.got && x.new && !done[x.id] && words[x.id]);
+    if (!o) return;
+    markAnnounced(o.id);
+    const [name, text] = words[o.id];
+    showAchievement({ id: o.id, tier: o.tier, icon: o.icon, name, text }, { lang, secret: null, profileHref: '#badges' });
+    return;
+  }
   markAnnounced(b.id);
   const now = announced();
   const secrets = list.filter(x => x.secret);
