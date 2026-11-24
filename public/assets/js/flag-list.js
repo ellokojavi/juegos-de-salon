@@ -70,7 +70,7 @@ export const FLAGS = {
  * still being tried. Not a launched flag (*all*), which already has none (D-567). `public/labs/listed.test.mjs`
  * keeps it equal to the 💤 cards of La Bodega that have a row in FLAGS.
  */
-export const PARKED = new Set(['bn-salva', 'lab-ready']);
+export const PARKED = new Set(['bn-salva', 'lab-ready', 'home-carousels-sheet']);
 
 /**
  * When a flag in *lab* is ready to publish (D-528): at least `completions` finished loads by at least
