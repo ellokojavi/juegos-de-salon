@@ -66,6 +66,15 @@ button.dm-ficha:active { transform: scale(0.94); }
 .dm-board.foco .dm-celda:not(.encendida), .dm-board.foco .dm-regla:not(.encendida) { opacity: 0.45; }
 .dm-board .dm-celda.encendida:not(.libre) { background: color-mix(in srgb, var(--z) 55%, transparent); box-shadow: 0 0 14px var(--z); }
 .dm-board .dm-regla.encendida { transform: rotate(45deg) scale(1.25); }
+/* Lab (flag dominorama-corner-labels): the rule fills the zone's corner, in its color, with a big number */
+.dm-board.dm-esquinas .dm-regla {
+  margin: 1px; width: calc(var(--s) * 0.5); height: calc(var(--s) * 0.5); transform: none; border: 0;
+  border-radius: var(--r-8) 0 var(--r-8) 0; box-shadow: -1px -1px 0 rgb(var(--well-rgb) / 0.5);
+}
+.dm-board.dm-esquinas .dm-regla > span { transform: none; font-size: calc(var(--s) * 0.26); }
+.dm-board.chico.dm-esquinas .dm-regla { margin: 1px; }
+.dm-board.dm-esquinas .dm-regla.ok { box-shadow: inset 0 0 0 3px var(--lime); }
+.dm-board.dm-esquinas .dm-regla.encendida { transform: scale(1.12); transform-origin: bottom right; }
 /* Dragging: the cells it would land on (red when taken), the domino that follows the finger */
 .dm-celda.destino { outline: 3px solid var(--ink); outline-offset: -3px; }
 .dm-celda.destino.no { outline-color: var(--red); }
