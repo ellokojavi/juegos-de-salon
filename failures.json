@@ -7193,6 +7193,32 @@
         "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45387859452,
+      "check": "tests",
+      "pr": 1851,
+      "branch": "badge-look",
+      "commit": "83944ffc69f7909245fa37425d2a1fb8ff6060fa",
+      "test": "public/assets/js/labs-puerta.test.mjs",
+      "error": "",
+      "signature": "0f6b2d2de6",
+      "date": "2026-11-24T11:52:31.927Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45387859452,
+      "check": "tests",
+      "pr": 1851,
+      "branch": "badge-look",
+      "commit": "83944ffc69f7909245fa37425d2a1fb8ff6060fa",
+      "test": "tools/e2e/footer-bottom.test.mjs",
+      "error": "",
+      "signature": "03ba96abef",
+      "date": "2026-11-24T11:52:31.927Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
