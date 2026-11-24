@@ -1,7 +1,7 @@
 // A badge's detail (lab flag badge-details): what each sheet says, pure.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { detailOf, DETAILED } from './badge-details.js';
+import { detailOf, DETAILED, hasDetail } from './badge-details.js';
 import { BADGES } from './badges.js';
 import { TEXTS } from './texts.js';
 
@@ -48,4 +48,16 @@ test('a list longer than six keeps the rest for «Ver más»', () => {
   const many = Array.from({ length: 9 }, (_, i) => ({ id: `g${i}`, name: `G${i}`, path: `g${i}/` }));
   const d = detailOf('collector', {}, { ...ctx, games: many });
   assert.equal(d.rows.length, 6); assert.equal(d.more.length, 3);
+});
+
+test('a sheet that would only say «not yet» opens nothing; earned badges and real progress always open', () => {
+  for (const id of ['month-champion', 'month-podium', 'cup-champion', 'cup-podium', 'early-bird', 'weekends', 'mondays', 'specialist'])
+    assert.equal(hasDetail(id, false, {}, ctx), false, id);
+  assert.equal(hasDetail('month-champion', false, { months: [{ period: 's2026-10', place: 2 }] }, ctx), false);
+  assert.equal(hasDetail('month-podium', false, { months: [{ period: 's2026-10', place: 2 }] }, ctx), true);
+  assert.equal(hasDetail('month-champion', true, { months: [{ period: 's2026-10', place: 1 }] }, ctx), true);
+  assert.equal(hasDetail('mondays', false, { marks: { mon: ['2026-11-23'] } }, ctx), true);
+  for (const id of ['collector', 'explorer', 'premiere', 'streak-10', 'month-full', 'party', 'all-rounder', 'number-one'])
+    assert.equal(hasDetail(id, false, {}, ctx), true, id);
+  assert.equal(hasDetail('plays-100', false, {}, ctx), false);
 });
