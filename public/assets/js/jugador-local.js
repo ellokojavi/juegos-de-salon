@@ -163,6 +163,12 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       return p.length === 3 && b === u && leerEn(viejo, ruta) == null && !!x && !sentado(viejo, a) && typeof x.d === 'number'
         && (x.j === undefined || (/^[a-z0-9]{8}$/.test(x.j) && x.j !== a)) && Object.keys(x).every(k => ['d', 'at', 'j'].includes(k));
     }
+    // How a player used the profile (D-615): their own counters, one up at a time, capped, by a seated phone
+    if (rama === 'perfilUso') {
+      const x = leerEn(nuevo, ruta), antes = leerEn(viejo, ruta);
+      return p.length === 4 && /^[a-z0-9]{8}$/.test(a || '') && /^20[0-9]{2}-[0-9]{2}-[0-9]{2}$/.test(b || '') && /^[vbrspowic]$/.test(c || '')
+        && sentado(viejo, a) && x === (antes || 0) + 1 && x <= 200;
+    }
     // A podium is the nightly job's (D-499); a phone only signs its own place on one, once (D-358)
     if (rama === 'torneoPodios') return p.length === 5 && b === 'p' && p[4] === 'j' && leerEn(viejo, `torneoPodios/${a}`) != null && leerEn(viejo, ruta) == null;
     // Los avisos de Uno al día (D-230): la suscripción la escribe su celular, y lo de Uno al día solo

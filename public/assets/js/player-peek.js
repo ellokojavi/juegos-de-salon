@@ -23,7 +23,7 @@ import { el } from './ui.js';
 import { withIcon } from './game-icon.js';
 import { getLang, pickLang } from './i18n.js';
 import { ALL_GAMES, GAMES, SOLO_TABLES, FIRST_VARIANT_TABLES } from './games.js';
-import { jugador } from './jugador.js';
+import { jugador, leerYo } from './jugador.js';
 import { TODOTERRENO, UAD_PUNTOS, SIEMPRE, medallero, bandera } from './records.js';
 import { recorrer, fechaLocal } from './uno-al-dia.js';
 import { earned } from './badges.js';
@@ -33,6 +33,8 @@ import { loadCss } from './load-css.js';
 const conBandera = (co, n) => [bandera(co), n].filter(Boolean).join('\u00a0');
 /** The sheet's styles (and the tappable name's), shared by every page with a ranking. */
 const CSS = new URL('../css/player-peek.css', import.meta.url).href;
+const PROFILE = new URL('../../profile/', import.meta.url).href;
+const onProfile = (pathname = globalThis.location?.pathname) => /\/profile\/?(index\.html)?$/.test(String(pathname || ''));
 
 /** The achievements that public data can tell: the rest live on the player's own phone. */
 export const PUBLIC_BADGES = new Set(['streak-10', 'streak-30', 'streak-100', 'month-full', 'month-podium', 'month-champion',
@@ -114,34 +116,60 @@ const nextMonth = m => { const [y, mo] = m.split('-').map(Number); return mo ===
 
 /**
  * Where a ranking row was tapped, read from what the screen shows (pure for node: `r` only needs
- * `closest` and `querySelector`): `label` the table's title and its tab, `place` the row's (a medal or a
- * number), `value` the rest of it (score, time or medals, as drawn), `allTime` the table to read their all-time place from, only from a tab that is
- * not already all-time (a week's or friends').
+ * `closest`, `querySelector` and `dataset`): `label` the table's title and its tab, `place` the row's place
+ * (a number when it has one, else what it shows), `values` what the row counts, each with the key of its unit
+ * (`pts`, `time`, `wins`, `plays`, `streak`, or none), `allTime` the table to read their all-time place from,
+ * only from a tab that is not already all-time (a week's or friends').
  */
 export function rowContext(r) {
   const box = r.closest?.('.rk-ranking, .rk-campeones');
   const txt = x => (x?.textContent || '').replace(/\s+/g, ' ').trim();
   const on = box?.querySelector('.rk-seg .on');
   const tab = on?.dataset?.p || box?.dataset?.pestana || '';
-  const place = txt(r.querySelector('.rk-puesto'));
-  const value = ['.rk-puntos', '.rk-tiempo', '.rk-medallas'].map(c => txt(r.querySelector(c))).filter(Boolean);
+  const shown = txt(r.querySelector('.rk-puesto'));
+  const place = /^\d+$/.test(String(r.dataset?.puesto ?? '')) ? String(r.dataset.puesto) : shown === '·' ? '' : shown;
+  const s = txt(r.querySelector('.rk-puntos')), second = txt(r.querySelector('.rk-tiempo'));
+  const k = r.dataset?.k || (r.querySelector('.rk-medallas') ? 'medals' : 'score');
+  const values = {
+    score: [{ v: s, unit: 'pts' }, { v: second, unit: 'time' }],
+    wins: [{ v: s, unit: 'wins' }],
+    plays: [{ v: s, unit: 'plays' }],
+    streak: [{ v: `🔥 ${s}`, unit: 'streak' }],
+    points: [{ v: s, unit: 'pts' }, { v: second.replace(/^🔥\s*/, '🔥 '), unit: 'streak' }],
+    medals: [{ v: txt(r.querySelector('.rk-medallas')) }],
+  }[k] || [{ v: s }];
   const table = box?.dataset?.tabla;
   return {
     label: [txt(box?.querySelector('.rk-titulo')), txt(on)].filter(Boolean).join(' · '),
-    place: place === '·' ? '' : place,
-    value: value.join(' · '),
+    place,
+    values: values.filter(x => x.v && x.v !== '🔥 '),
     // The overall table's all-time place is already the sheet's own line (peekPlace)
     allTime: ['semana', 'amigos'].includes(tab) && table && table !== TODOTERRENO ? table : null,
   };
 }
 
+/** The word after a figure in the sheet's header: singular for exactly 1 («1 victoria», «🔥 1 día seguido»), never «1 victorias». */
+export function unitWord(T, unit, v) {
+  const one = /^(🔥\s*)?1$/.test(String(v).trim());
+  return ({
+    pts: T.peekUnitPts, time: T.peekUnitTime,
+    wins: one ? T.peekUnitWin : T.peekUnitWins,
+    plays: one ? T.peekUnitPlay : T.peekUnitPlays,
+    streak: one ? T.peekUnitStreakOne : T.statStreak,
+  })[unit] || '';
+}
+
 /**
  * Opens the sheet for `jid`; `hint` (`{ n, co }`) is what the tapped row showed, drawn while the rest loads;
- * `context` (`{ label, place, value, allTime }`, from `rowContext`) says where it was tapped.
+ * `context` (`{ label, place, values, allTime }`, from `rowContext`) says where it was tapped: a medal with their
+ * place (gold, silver and bronze on the podium, the badges' metals), the table and tab over what the row counts,
+ * each with its unit, and their all-time place there as a tag (the owner's pick, option A, 2026-11-23).
  */
 export async function peekPlayer(jid, { hint = {}, context = null, lang = getLang(), doc = document, onTap = () => {} } = {}) {
   if (!jid || doc.getElementById('pf-peek')) return null;
   loadCss(CSS);
+  // Another player's sheet opened on the profile (D-615); one's own is «see how others see me», counted there
+  if (jid !== leerYo()?.jid) import('./profile-usage.js').then(m => m.isProfilePath() && m.trackProfile(['peek'])).catch(() => {});
   const T = TEXTS[lang] || TEXTS.es;
   const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
   const num = x => new Intl.NumberFormat(lang).format(x);
@@ -157,19 +185,30 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
     doc.removeEventListener('keydown', onKey);
   };
   const onKey = e => { if (e.key === 'Escape') close(); };
-  const who = el('h2', { id: 'pf-peek-name', class: 'pf-peek-name' }, conBandera(hint.co, hint.n || '…'));
+  // One's own sheet from a ranking (not on the profile, where it is «how others see me»): «(tú)» after the
+  // name and a link to their profile (the owner, 2026-11-23)
+  const self = jid === leerYo()?.jid && !onProfile(doc.defaultView?.location?.pathname);
+  const who = el('h2', { id: 'pf-peek-name', class: 'pf-peek-name' });
+  const name = (co, n) => who.replaceChildren(conBandera(co, n), ...(self ? [' ', el('span', { class: 'pf-peek-you' }, `(${T.peekYou})`)] : []));
+  name(hint.co, hint.n || '…');
   const placeOf = n => (lang === 'en' ? `#${n}` : `${n}.º`);
   // Where it was tapped, first: the table and tab, the row as it showed, and (filled in below) their all-time place
   const allTime = el('small', { class: 'pf-peek-here-all' });
-  const here = context && (context.label || context.place || context.value) ? el('div', { class: 'pf-peek-here' },
-    context.label ? el('small', { class: 'pf-peek-here-label' }, context.label) : null,
-    context.place || context.value ? el('b', {}, [/^\d+$/.test(context.place || '') ? placeOf(context.place) : context.place, context.value].filter(Boolean).join(/^\d+$/.test(context.place || '') ? ' · ' : ' ')) : null,
-    allTime) : null;
+  const n = /^\d+$/.test(context?.place || '') ? Number(context.place) : null;
+  const tier = n === 1 ? 'gold' : n === 2 ? 'silver' : n === 3 ? 'bronze' : 'plain';
+  const vals = context?.values || [];
+  const here = context && (context.label || context.place || vals.length) ? el('div', { class: 'pf-peek-here' },
+    context.place ? el('div', { class: `pf-peek-here-medal pf-badge--${tier}` }, el('span', { class: 'pf-medal' }, n ? placeOf(n) : context.place)) : null,
+    el('div', { class: 'pf-peek-here-txt' },
+      context.label ? el('small', { class: 'pf-peek-here-label' }, context.label) : null,
+      vals.length ? el('div', { class: 'pf-peek-here-vals' }, vals.map(x => el('span', {}, el('b', {}, x.v), unitWord(T, x.unit, x.v) ? el('small', {}, unitWord(T, x.unit, x.v)) : null))) : null,
+      allTime)) : null;
   const body = el('div', { class: 'pf-peek-body' }, el('p', { class: 'muted pf-peek-wait' }, T.peekLoading));
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
     el('div', { class: 'hoja-cabeza' },
-      el('div', { class: 'pf-peek-who' }, who),
+      el('div', { class: 'pf-peek-who' }, who,
+        self ? el('a', { class: 'pf-peek-mine', href: PROFILE }, T.peekMyProfile) : null),
       el('button', { type: 'button', class: 'icon-btn', 'aria-label': T.peekClose, title: T.peekClose, onClick: close }, '✕')),
     here, body,
     el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--yellow pf-peek-ok', onClick: close }, T.peekClose)));
@@ -191,12 +230,12 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   } catch (_) { f = null; }
   if (!layer) return null;
   if (!f) { body.replaceChildren(el('p', { class: 'muted pf-peek-wait' }, T.peekError)); return panel; }
-  who.textContent = conBandera(f.co, f.n);
+  name(f.co, f.n);
   const line = [f.since ? fmt(T.since, { month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(f.since)) }) : null,
     f.allRounder ? fmt(T.peekPlace, { place: placeOf(f.allRounder) }) : null].filter(Boolean);
   const stat = (b, s) => el('div', { class: 'pf-stat' }, el('b', {}, b), el('span', {}, s));
   const badges = peekBadges(f);
-  const name = b => (T.badges[b.id] || [b.id])[0];
+  const badgeName = b => (T.badges[b.id] || [b.id])[0];
   const fav = f.byGame.slice(0, SHOWN_GAMES);
   body.replaceChildren(...[
     line.length ? el('p', { class: 'muted pf-peek-line' }, line.join(' · ')) : null,
@@ -214,7 +253,7 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
       badges.length
         ? el('ul', { class: 'pf-peek-badges' },
           badges.slice(0, SHOWN_BADGES).map(b => el('li', { class: `pf-badge--${b.tier}`, 'data-badge': b.id },
-            el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.icon), el('small', {}, name(b)))),
+            el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.icon), el('small', {}, badgeName(b)))),
           badges.length > SHOWN_BADGES ? el('li', { class: 'pf-peek-more' }, el('span', { class: 'pf-medal' }, `+${badges.length - SHOWN_BADGES}`)) : null)
         : el('p', { class: 'muted' }, T.peekNoBadges)),
   ].filter(Boolean));

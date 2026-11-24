@@ -67,6 +67,19 @@ export function crearAlmacenFirebase({ fetchFn = (...a) => globalThis.fetch(...a
       return rest(ruta, { auth });
     },
     async update(cambios) { return (await s()).update(cambios); },
+    /**
+     * A small multi-path write over REST with the anonymous session's ID token (D-615): counters that
+     * should not open the websocket only for themselves (D-470). The rules decide as for `update`.
+     */
+    async sumar(cambios) {
+      let auth;
+      try { auth = await (await s()).token(); } catch (e) { throw e?.code ? e : traducir(e); }
+      let r;
+      try { r = await fetchFn(`${base}/.json?auth=${encodeURIComponent(auth)}`, { method: 'PATCH', body: JSON.stringify(cambios), keepalive: true }); }
+      catch (e) { throw traducir(e); }
+      if (r.status === 401 || r.status === 403) throw falla('permiso');
+      if (!r.ok) throw falla('offline');
+    },
     async top(t, periodo, n) {
       return filasRest(await rest(`records/${t}/${periodo}`, { orderBy: '"k"', limitToFirst: n })).slice(0, n);
     },

@@ -125,6 +125,8 @@ export function bloqueJugador({ abierto = false, destacado = false, compacto = f
       if (!limpiarNombre(nombre.value)) { err.textContent = T.errName; return; }
       if (!esPin(pin.value)) { err.textContent = T.errPin; return; }
       ocupado(true);
+      // A sign-in started on the profile, for the owner's 🎖️ Profile (D-615); how it ends is counted by jugador.js
+      import('./profile-usage.js').then(m => m.isProfilePath() && m.trackProfile(['signin-start'], { withName: false })).catch(() => {});
       try {
         const J = await jugador();
         const r = await J.entrar(nombre.value, pin.value);
@@ -220,7 +222,9 @@ function guardarVisto(k, v) { try { localStorage.setItem(k, JSON.stringify({ ...
 function fila(f, yo, victorias = false, campeon = null) {
   const T = R();
   const mia = yo && f.jid === yo;
-  return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid },
+  // What the row counts and its place as a number, for the player's sheet it opens (player-peek.js rowContext)
+  const k = victorias === 'partidas' ? 'plays' : victorias === 'racha' ? 'streak' : victorias === 'puntos' ? 'points' : victorias ? 'wins' : 'score';
+  return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid, 'data-k': k, 'data-puesto': f.puesto ?? '' },
     el('span', { class: 'rk-puesto' }, f.puesto == null ? '·' : MEDALLA[f.puesto - 1] || `${f.puesto}`),
     // El "(tú)" va fuera del recorte: un nombre largo se corta, pero se sigue viendo cuál es el propio
     el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')),
@@ -424,7 +428,7 @@ export function bloqueCampeones({ max = 5, enlace = true, ultimas = 3, alTocar =
       const yo = leerYo()?.jid;
       lista.replaceChildren();
       if (!filas.length) { lista.append(el('p', { class: 'muted rk-centro' }, T.noChampions)); return; }
-      lista.append(...filas.map(f => el('div', { class: 'rk-fila' + (yo && f.jid === yo ? ' yo' : ''), 'data-jid': f.jid },
+      lista.append(...filas.map(f => el('div', { class: 'rk-fila' + (yo && f.jid === yo ? ' yo' : ''), 'data-jid': f.jid, 'data-k': 'medals', 'data-puesto': f.puesto },
         el('span', { class: 'rk-puesto' }, `${f.puesto}`),
         el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n))),
         el('span', { class: 'rk-medallas' }, `🥇${f.oro} 🥈${f.plata} 🥉${f.bronce}`))));

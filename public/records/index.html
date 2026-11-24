@@ -100,6 +100,7 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
+    import { flag } from '../assets/js/flags.js';
     import { TODOTERRENO, PARTIDAS, UAD_PUNTOS } from '../assets/js/records.js';
     import { VARIANTES } from '../cup/engine.js';
     import { juegosCopa } from '../cup/rules.js';
@@ -128,6 +129,8 @@
     async function dibujarPerfil() {
       perfil.replaceChildren();
       if (!leerYo()) return;
+      // In the lab it moved to the profile (flag profile-plays, the owner, 2026-11-23)
+      if (await flag('profile-plays').catch(() => false)) return;
       try {
         const p = await (await jugador()).perfil();
         const filas = Object.entries(p?.juegos || {}).sort((a, b2) => b2[1].n - a[1].n);

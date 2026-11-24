@@ -13,6 +13,13 @@ const pf = () => import('./profile-button.js').then(m => m.profileEverywhere());
 if (flagGuess('profile')) pf().catch(() => {});
 else flag('profile').then(on => on && pf()).catch(() => {});
 
+// Sound and language live only in the profile's ⚙️ (flag settings-in-profile, the owner 2026-11-23). lab: #seccion-settings-in-profile
+// A class on <html>: base.css hides 🔊 and the language everywhere else, before the first paint when this phone saw it on
+const notProfile = !/\/profile\/?$/.test(location.pathname);
+const settingsOff = on => { if (on && notProfile) document.documentElement.classList.add('settings-in-profile'); };
+if (flagGuess('settings-in-profile')) settingsOff(true);
+flag('settings-in-profile').then(settingsOff).catch(() => {});
+
 if (await labAccess().catch(() => false)) {
   const { testerRibbon } = await import('./tester-ribbon.js');
   const lang = (document.documentElement.lang || 'es').slice(0, 2);

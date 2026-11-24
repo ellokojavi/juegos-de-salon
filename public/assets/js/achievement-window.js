@@ -163,6 +163,10 @@ export function showAchievement(badge, { lang = 'es', secret = { n: 1, total: 8 
   layer.append(card, el('canvas', 'aw-confeti'));
   if (extra) layer.append(extra);
   document.body.append(layer);
+  // For the owner's 🎖️ Profile (D-615): shown, and «Ver mis logros» tapped; the demo records nothing
+  const counts = !/[?&]achievement=demo/.test(globalThis.location?.search || '');
+  const usage = f => { if (counts) import('./profile-usage.js').then(f).catch(() => {}); };
+  usage(m => m.trackProfile(['aw-shown'], { withName: false }));
   // The medal turns over at 1.55 s: confetti bursts out of it then, and the fireworks follow behind the card.
   // A badge that is not secret has nothing to turn over: its confetti comes as the card lands.
   const at = secret ? 1550 : 600;
@@ -187,7 +191,10 @@ export function showAchievement(badge, { lang = 'es', secret = { n: 1, total: 8 
     document.addEventListener('keydown', onKey);
     x.addEventListener('click', () => close('close'));
     later.addEventListener('click', () => close('close'));
-    go.addEventListener('click', () => res('go'));
+    go.addEventListener('click', () => {
+      usage(m => { if (!m.isProfilePath()) m.markVia('window'); m.trackProfile(['aw-go']); });
+      res('go');
+    });
   });
 }
 

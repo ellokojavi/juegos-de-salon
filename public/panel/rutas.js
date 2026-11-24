@@ -12,6 +12,7 @@
  *   #/individual                 individual games: solo and their real difficulty (D-348)
  *   #/cup                        La Copa: cifras, juegos y la lista de copas
  *   #/daily                      Uno al día (D-348)
+ *   #/profile                    the player profile: who opens it, what they use, whether it moves sign-ins and returns (D-615)
  *   #/users                      active browsers, cohorts, frequency, where from and languages (D-348, D-349)
  *   #/cup/OFICI                  la ficha de una copa
  *   #/game/<juego>               la ficha de un juego, con su nombre en la URL (`hangman`; el id del registro también sirve)
@@ -31,7 +32,7 @@
 import { slugDe, idDeSlug } from '../assets/js/games.js';
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['resumen', 'wbr', 'reporte', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'pantallas', 'salud', 'feedback', 'campanas', 'llaves'];
+export const SECCIONES = ['resumen', 'wbr', 'reporte', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'perfil', 'trafico', 'pantallas', 'salud', 'feedback', 'campanas', 'llaves'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'grupo', sala: 'grupo' };
@@ -42,7 +43,7 @@ const SUELTAS = { ahora: 'resumen' };
 /** Cómo se escribe cada sección en la URL (D-266). */
 const EN_URL = {
   resumen: 'summary', wbr: 'wbr', reporte: 'game-report', timeline: 'timeline', ahora: 'now', grupo: 'group', individuales: 'individual', torneo: 'cup', unoaldia: 'daily',
-  usuarios: 'users', trafico: 'traffic', pantallas: 'screens', salud: 'health', feedback: 'feedback', campanas: 'campaigns', llaves: 'lab-keys', juego: 'game', sala: 'room',
+  usuarios: 'users', perfil: 'profile', trafico: 'traffic', pantallas: 'screens', salud: 'health', feedback: 'feedback', campanas: 'campaigns', llaves: 'lab-keys', juego: 'game', sala: 'room',
 };
 /** The sections before D-348 open the one that took their place. */
 const DE_URL = { ...Object.fromEntries(Object.entries(EN_URL).map(([es, en]) => [en, es])), games: 'grupo', juegos: 'grupo', audience: 'usuarios', audiencia: 'usuarios' };

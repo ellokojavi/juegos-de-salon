@@ -746,6 +746,22 @@
                 }
               }
             },
+            "perfilPt": {
+              "$pday": {
+                "$ev": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $pday.matches(/^[0-9]{5}$/) && $ev.matches(/^(visit-guest|visit-signed|via-(pill|bubble|window|link|direct)|tab-(badges|rankings|settings)|peek|public|aw-(shown|go)|signin-start|(signin|create)-(profile|other))$/)",
+                  ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                }
+              }
+            },
+            "perfilIdPt": {
+              "$pday": {
+                "$id": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $pday.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/)",
+                  ".validate": "newData.isNumber() && newData.val() == 1"
+                }
+              }
+            },
             "entradasPt": {
               "$pday": {
                 "$entrada": {
@@ -1112,6 +1128,8 @@
       }
     },
     "jugadores": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".indexOn": ["at"],
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$jid": {
         ".read": "$jid.matches(/^[a-z0-9]{8}$/)",
@@ -1772,6 +1790,18 @@
           },
           "$other": {
             ".validate": false
+          }
+        }
+      }
+    },
+    "perfilUso": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        "$day": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $day.matches(/^20[0-9]{2}-[0-9]{2}-[0-9]{2}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+          ".validate": "newData.hasChildren()",
+          "$k": {
+            ".validate": "$k.matches(/^[vbrspowic]$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1 && newData.val() <= 200"
           }
         }
       }

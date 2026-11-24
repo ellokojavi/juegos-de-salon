@@ -123,3 +123,22 @@
 
 /* The rival search: the form's field, a line under the chips */
 .dl-campo { margin: 0; }
+
+/* The stats, the rivalries and the rematch of /duels/ */
+.dl-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-8); }
+.dl-stat {
+  display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-10) var(--s-4); min-width: 0;
+  border-radius: var(--r-12); background: var(--well); text-align: center;
+}
+.dl-stat.ancho { grid-column: 1 / -1; }
+.dl-stat b { font: 900 var(--fs-140) var(--font-num); color: var(--yellow); }
+.dl-stat span { color: var(--muted); font: 800 var(--fs-75) var(--font-body); }
+.dl-destacados { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--s-10); }
+.dl-destacado { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); text-align: center; }
+.dl-destacado.arch { border-color: var(--yellow); }
+.dl-destacado.nemesis { border-color: var(--pink); }
+.dl-h2h.w { color: var(--lime); }
+.dl-h2h.l { color: var(--pink); }
+.dl-h2h.t { color: var(--muted); }
+.dl-fin-col { display: grid; justify-items: end; gap: var(--s-4); }
+.dl-revancha { white-space: nowrap; }

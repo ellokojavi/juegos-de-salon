@@ -32,7 +32,7 @@ for (const W of [320, 390]) {
   const row = `document.querySelector('.tabla .fila[data-pid="${other}"]')`;
   ok(await ev(`${row}?.getAttribute('role') === 'button' && !document.querySelector('.tabla .fila.yo[data-peek]')`), `${W}: the named seat's row is a button; a seat with no name of its own is not`);
   await ev(`(() => { const r = ${row}; r.scrollIntoView({ block: 'center' }); r.querySelector('.quien b').click(); })()`); await sleep(1500);
-  ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!p && p.querySelector('.pf-peek-name').textContent.includes('Cata') && !!h && h.querySelector('.pf-peek-here-label').textContent.startsWith('🏆') && /\\d.*pts/.test(h.querySelector('b').textContent) && !h.querySelector('.pf-peek-here-all').textContent; })()`), `${W}: the sheet starts with this Cup, her place and points in it`);
+  ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!p && p.querySelector('.pf-peek-name').textContent.includes('Cata') && !!h && h.querySelector('.pf-peek-here-label').textContent.startsWith('🏆') && !!h.querySelector('.pf-peek-here-medal .pf-medal') && /\\d\\s*pts/.test(h.querySelector('.pf-peek-here-vals').textContent) && !h.querySelector('.pf-peek-here-all').textContent; })()`), `${W}: the sheet starts with this Cup, her place and points in it`);
   ok(await ev(`(() => { const p = document.getElementById('pf-peek').getBoundingClientRect(); return p.left >= 0 && p.right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: the sheet fits the screen`);
   await b.shot(`cup-peek-${W}`);
   await ev(`document.querySelector('#pf-peek .pf-peek-ok').click()`); await sleep(300);

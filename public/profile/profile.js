@@ -26,6 +26,7 @@ import { TEXTS } from './texts.js';
 import { tableOf } from '../assets/js/player-peek.js';
 import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
 import { announced } from '../assets/js/secret-achievements.js';
+import { trackProfile, trackProfileVisit } from '../assets/js/profile-usage.js';
 
 const lang = getLang();
 const T = TEXTS[lang] || TEXTS.es;
@@ -224,6 +225,38 @@ function badgeEl(b, { reveal = false } = {}) {
     el('span', { class: 'pf-name' }, name),
     el('span', { class: 'pf-desc' }, b.progress ? `${desc} · ${num(b.progress[0])} / ${num(b.progress[1])}` : desc),
     b.progress ? el('span', { class: 'pf-bar', 'aria-hidden': 'true' }, el('i', { style: `width:${Math.round(100 * b.progress[0] / b.progress[1])}%` })) : null);
+}
+
+/**
+ * 🎮 Your games (the owner, 2026-11-23: moved here from /records/, in the lab: flag profile-plays): how many times the player finished each game, as
+ * bars, the most played first. Five show; the rest open below, so it never takes the whole screen.
+ */
+const PLAYS_SHOWN = 5;
+// In the lab (flag profile-plays; lab: #seccion-profile-plays): drawn once the flag answers
+let playsOn = false;
+flag('profile-plays').then(on => { if (on) { playsOn = true; globalThis.__profile?.redraw?.(); } }).catch(() => {});
+function playsPanel(f) {
+  const rows = (f.byGame || []).filter(g => gameOf(g.id));
+  if (!rows.length) return null;
+  const top = rows[0].n || 1, total = rows.reduce((s, g) => s + g.n, 0);
+  const bar = (g, i) => el('li', { class: 'pf-play', 'data-game': g.id, hidden: i >= PLAYS_SHOWN, style: `--w: ${Math.max(6, Math.round((g.n / top) * 100))}%` },
+    el('span', { class: 'pf-play-name' }, withIcon(gameOf(g.id), pickLang(gameOf(g.id).name, lang))),
+    el('b', {}, num(g.n)));
+  const list = el('ol', { class: 'pf-plays' }, rows.map(bar));
+  const box = el('section', { class: 'panel pf-plays-panel' },
+    el('p', { class: 'lead pf-group-head' }, el('span', {}, T.myPlays), el('small', {}, total === 1 ? T.playsOne : fmt(T.plays, { n: num(total) }))),
+    list);
+  if (rows.length > PLAYS_SHOWN) {
+    const more = el('button', { type: 'button', class: 'btn btn--ghost btn--sm pf-more', 'aria-expanded': 'false', onClick: () => {
+      tap();
+      const open = more.getAttribute('aria-expanded') !== 'true';
+      list.querySelectorAll('.pf-play').forEach((li, i) => { li.hidden = !open && i >= PLAYS_SHOWN; });
+      more.setAttribute('aria-expanded', String(open));
+      more.textContent = open ? T.fewerGames : fmt(T.moreGames, { n: rows.length - PLAYS_SHOWN });
+    } }, fmt(T.moreGames, { n: rows.length - PLAYS_SHOWN }));
+    box.append(more);
+  }
+  return box;
 }
 
 function badgePanels(list, { only = null, reveal = false, duels = null } = {}) {
@@ -532,7 +565,7 @@ function accountPanel(yo) {
  * hide (D-605): the sheet shows where someone stands, not how much they play.
  */
 function publicPanel(yo) {
-  const see = el('button', { type: 'button', class: 'btn btn--ghost pf-see-public', onClick: () => { tap(); import('../assets/js/player-peek.js').then(m => m.peekPlayer(yo.jid, { hint: yo, onTap: tap })); } }, T.seePublic);
+  const see = el('button', { type: 'button', class: 'btn btn--ghost pf-see-public', onClick: () => { tap(); trackProfile(['public']); import('../assets/js/player-peek.js').then(m => m.peekPlayer(yo.jid, { hint: yo, onTap: tap })); } }, T.seePublic);
   return el('section', { class: 'panel pf-settings pf-public' }, el('p', { class: 'lead rk-titulo' }, T.publicTitle),
     el('p', { class: 'muted rk-hint' }, T.publicHint), see);
 }
@@ -599,6 +632,8 @@ async function welcome(root, sub) {
 
 export async function drawProfile(root, { sub }) {
   welcome(root, sub).catch(() => {});
+  // This visit, for the owner's 🎖️ Profile (D-615): not the achievements' demo, which records nothing
+  if (!/[?&]achievement=demo/.test(location.search)) trackProfileVisit();
   const J = await jugador();
   let turn = 0;
   const draw = async () => {
@@ -629,7 +664,7 @@ export async function drawProfile(root, { sub }) {
     const badgesBox = el('div', { class: 'pf-tab' });
     const cardSlot = el('div', {});
     const seg = el('div', { class: 'seg pf-tabs', role: 'tablist' }, TABS.map(id => el('button', {
-      type: 'button', role: 'tab', 'data-tab': id, onClick: () => { tap(); show(id); },
+      type: 'button', role: 'tab', 'data-tab': id, onClick: ev => { tap(); if (!ev.currentTarget.classList.contains('on')) trackProfile([`tab-${id}`]); show(id); },
     }, T[`tab${id[0].toUpperCase()}${id.slice(1)}`])));
     const panes = { badges: badgesBox, rankings: el('div', {}), settings: settingsTab(yo) };
     function show(id) {
@@ -641,7 +676,7 @@ export async function drawProfile(root, { sub }) {
     let ready = false;
     const repaint = list => {
       cardSlot.replaceChildren(card(yo, f, list, ready));
-      badgesBox.replaceChildren(...badgePanels(list, { reveal, duels: duelsExtra }).filter(Boolean));
+      badgesBox.replaceChildren(...[...badgePanels(list, { reveal, duels: duelsExtra }), playsOn ? playsPanel(f) : null].filter(Boolean));
       if (badgesBox.isConnected) revealIntoView(badgesBox);
     };
     repaint(paint());

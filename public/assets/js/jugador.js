@@ -102,7 +102,9 @@ export const LEER = 100;
 export const PAUSA_INTENTOS = 5500;
 const dormir = ms => new Promise(r => setTimeout(r, ms));
 
-export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [], pais = () => '', esperar = dormir } = {}) {
+export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [], pais = () => '', esperar = dormir, alSentar = () => {} } = {}) {
+  // Signed in or created here: the page counts it (profile-usage.js, D-615); never in the way
+  const sentado = kind => { try { alSentar(kind); } catch (_) { /* best effort */ } };
   const leer = (k, def) => { try { return JSON.parse(storage.getItem(k)) ?? def; } catch (_) { return def; } };
   const escribir = (k, v) => { try { if (v === null) storage.removeItem(k); else storage.setItem(k, JSON.stringify(v)); } catch (_) { /* sin memoria */ } };
   const oyentes = new Set();
@@ -244,6 +246,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         return { estado: 'nuevo', otros: candidatos.length - (heredado ? 1 : 0), ...de };
       }
       await quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || n);
+      sentado('signin');
       return { estado: 'dentro', jid };
     },
 
@@ -253,7 +256,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!n) throw falla('nombre');
       if (!esPin(pin)) throw falla('pin-forma');
       const ya = await buscar(n, pin);
-      if (ya.jid) return quedar(ya.jid, (await almacen.get(`jugadores/${ya.jid}/n`)) || n);
+      if (ya.jid) { const r = await quedar(ya.jid, (await almacen.get(`jugadores/${ya.jid}/n`)) || n); sentado('signin'); return r; }
       const uid = await almacen.listo();
       const jid = nuevoJid();
       const h = await hashPinJugador(jid, pin);
@@ -263,7 +266,9 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         [`jugadorKeys/${jid}`]: h,
         [`jugadorSeats/${jid}/${uid}`]: h,
       });
-      return quedar(jid, n);
+      const r = await quedar(jid, n);
+      sentado('create');
+      return r;
     },
 
     /**
@@ -276,7 +281,9 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       const uid = await almacen.listo();
       const h = await hashPinJugador(jid, pin);
       await almacen.update({ [`jugadorKeys/${jid}`]: h, [`jugadorSeats/${jid}/${uid}`]: h, [`jugadores/${jid}/legado`]: null });
-      return quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || '?');
+      const r = await quedar(jid, (await almacen.get(`jugadores/${jid}/n`)) || '?');
+      sentado('create');
+      return r;
     },
 
     /** Salir en este celular. Los récords quedan; se vuelve a entrar con el mismo nombre y PIN. */
@@ -355,6 +362,17 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!yo) throw falla('sin-jugador');
       if (!esPin(pin)) throw falla('pin-forma');
       await intentar(yo.jid, await hashPinJugador(yo.jid, pin));
+    },
+
+    /**
+     * How this player used the profile today (D-615): `perfilUso/<jid>/<day>/<field>` counters, only
+     * this player's, over REST where the store can (no websocket, D-470). Best effort.
+     */
+    async usoPerfil(cambios) {
+      const yo = api.yo();
+      const mios = Object.fromEntries(Object.entries(cambios || {}).filter(([k]) => yo && k.startsWith(`perfilUso/${yo.jid}/`)));
+      if (!Object.keys(mios).length) return;
+      await (almacen.sumar ? almacen.sumar(mios) : almacen.update(mios));
     },
 
     async perfil(jid = api.yo()?.jid) {
@@ -784,7 +802,8 @@ async function crear() {
     : (await import('./jugador-firebase.js')).crearAlmacenFirebase();
   const { SUELTOS } = await import('./games.js');
   const pais = () => { try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; } };
-  const J = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
+  const alSentar = kind => import('./profile-usage.js').then(m => m.trackAccount(kind)).catch(() => {});
+  const J = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais, alSentar });
   J.completarPais().catch(() => {});
   J.refrescarNombre().catch(() => {});
   // Games the network did not let save (`guardarPendiente`): sent now, and again when the signal is back
