@@ -192,8 +192,8 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
         const n = s => typeof s === 'string' && s.length >= 1 && s.length <= 20;
         const sd = x.sd || {}, k = Object.keys(sd);
         return sentado(viejo, x.a) && /^[a-z0-9]{8}$/.test(x.b || '') && x.b !== x.a && leerEn(viejo, `jugadores/${x.a}`) != null && leerEn(viejo, `jugadores/${x.b}`) != null
-          && n(x.an) && n(x.bn) && /^(bo3|bo5|bo7|bo9|pts)$/.test(x.f) && /^[a-z][a-z0-9-]{1,24}$/.test(x.g || '') && x.at === t
-          && k.length === ({ bo5: 5, bo7: 7, bo9: 9 }[x.f] || 3) && k.every(i => /^[0-8]$/.test(i) && /^[A-HJ-NP-Z]{5}$/.test(sd[i]))
+          && n(x.an) && n(x.bn) && /^(bo[3579]|pts[2-9]?)$/.test(x.f) && /^[a-z][a-z0-9-]{1,24}$/.test(x.g || '') && x.at === t
+          && k.length === (Number(x.f.slice(-1)) || 3) && k.every(i => /^[0-8]$/.test(i) && /^[A-HJ-NP-Z]{5}$/.test(sd[i]))
           && (x.gr === undefined || (Object.keys(x.gr).every(i => sd[i] !== undefined && /^[a-z][a-z0-9-]{1,24}$/.test(x.gr[i]))))
           && Object.keys(x).every(c => ['a', 'b', 'an', 'bn', 'f', 'g', 'sd', 'gr', 'at'].includes(c));
       }

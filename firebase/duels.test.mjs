@@ -12,7 +12,7 @@ const A = 'aaaa1111', B = 'bbbb2222', C = 'cccc3333', DID = 'duel000001';
 const ok = (r, msg, db) => assert.equal(r, true, `${msg} (${db?.why?.join(', ')})`);
 const no = (r, msg) => assert.equal(r, false, msg);
 const SEMILLAS = ['ABCDE', 'FGHJK', 'LMNPQ', 'RSTUV', 'WXYZA', 'BCDEF', 'GHJKL', 'MNPQR', 'STUVW'];
-const duelo = (f = 'bo3') => ({ a: A, b: B, an: 'Ana', bn: 'Beto', f, g: 'desenredo', sd: SEMILLAS.slice(0, ({ bo5: 5, bo7: 7, bo9: 9 })[f] || 3), at: { '.sv': 'timestamp' } });
+const duelo = (f = 'bo3') => ({ a: A, b: B, an: 'Ana', bn: 'Beto', f, g: 'desenredo', sd: SEMILLAS.slice(0, Number(f.slice(-1)) || 3), at: { '.sv': 'timestamp' } });
 const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${DID}`]: { '.sv': 'timestamp' }, [`jugadorDuelos/${B}/${DID}`]: { '.sv': 'timestamp' }, [`duelosRecientes/${DID}`]: { '.sv': 'timestamp' } });
 
 {
@@ -29,6 +29,10 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   no(w('ua', crear({ ...duelo('bo7'), sd: SEMILLAS.slice(0, 5) })), 'best of seven carries seven seeds');
   no(w('ua', crear({ ...duelo('bo9'), sd: SEMILLAS.slice(0, 8) })), 'best of nine carries nine seeds');
   no(w('ua', crear({ ...duelo('bo5'), sd: SEMILLAS.slice(0, 7) })), 'and best of five no more than five');
+  no(w('ua', crear({ ...duelo(), f: 'bo4' })), 'most rounds won takes an odd number of rounds');
+  no(w('ua', crear({ ...duelo(), f: 'pts1' })), 'most points takes two rounds or more');
+  no(w('ua', crear({ ...duelo('pts6'), sd: SEMILLAS.slice(0, 5) })), 'most points in six rounds carries six seeds');
+  no(w('ua', crear({ ...duelo('pts'), sd: SEMILLAS.slice(0, 4) })), 'plain most points is three rounds');
   no(w('ua', crear({ ...duelo('bo5'), sd: ['ABCDE', 'FGHJK', 'LMNPQ'] })), 'best of five carries five seeds');
   no(w('ua', crear({ ...duelo(), r: { [A]: { 0: { s: 100, ms: 1, at: T0 } } } })), 'a duel is born with no results');
   no(w('uc', { [`jugadorDuelos/${C}/${DID}`]: { '.sv': 'timestamp' } }), 'no stray entry in a list');
@@ -54,6 +58,9 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   ok(w('ua', { [`duelos/${D9}`]: duelo('bo9'), [`jugadorDuelos/${A}/${D9}`]: { '.sv': 'timestamp' }, [`jugadorDuelos/${B}/${D9}`]: { '.sv': 'timestamp' }, [`duelosRecientes/${D9}`]: { '.sv': 'timestamp' } }), 'a best of nine is created with nine seeds', db);
   ok(w('ub', { [`duelos/${D9}/e/${B}/8`]: { '.sv': 'timestamp' } }), 'and its ninth round is played', db);
   no(w('ub', { [`duelos/${D9}/e/${B}/9`]: { '.sv': 'timestamp' } }), 'but no tenth');
+  // Most points over an even number of rounds
+  for (const [id, f] of [['duel000006', 'pts6'], ['duel000002', 'pts2']])
+    ok(w('ua', { [`duelos/${id}`]: duelo(f), [`jugadorDuelos/${A}/${id}`]: { '.sv': 'timestamp' }, [`jugadorDuelos/${B}/${id}`]: { '.sv': 'timestamp' }, [`duelosRecientes/${id}`]: { '.sv': 'timestamp' } }), `most points in ${f.slice(3)} rounds`, db);
 }
 
 {
@@ -90,6 +97,9 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   const n7 = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo7', gr: ['zip', 'tango', 'zip', 'reinas', 'zip', 'tango', 'desenredo'] });
   assert.equal(Object.keys((await D.leer(n7.id)).sd).length, 7, 'a best of seven has seven rounds');
   assert.equal(await D.empezar(n7.id, 6), true, 'and its seventh is played');
+  const p4 = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'pts4' });
+  assert.equal(Object.keys((await D.leer(p4.id)).sd).length, 4, 'most points in four rounds has four');
+  await assert.rejects(D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo4' }), 'no best of an even number');
 }
 
 {
@@ -115,6 +125,8 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   assert.deepEqual([e.n, e.termino], [7, false], 'best of seven is not over at three');
   e = estado(d('bo9', { 0: r(9), 1: r(9), 2: r(9), 3: r(9), 4: r(9) }, { 0: r(1), 1: r(1), 2: r(1), 3: r(1), 4: r(1) }), A, at + 1);
   assert.deepEqual([e.n, e.termino, e.gano], [9, true, 1], 'best of nine ends at five');
+  e = estado(d('pts4', { 0: r(9), 1: r(9), 2: r(9), 3: r(9) }, { 0: r(50), 1: r(1), 2: r(1), 3: r(1) }), A, at + 1);
+  assert.deepEqual([e.n, e.termino, e.gano, e.puntos], [4, true, -1, [36, 53]], 'most points in four rounds adds all four');
   e = estado(d('pts', { 0: r(90), 1: r(10), 2: r(10) }, { 0: r(40), 1: r(40), 2: r(40) }), A, at + 1);
   assert.deepEqual([e.termino, e.gano, e.puntos], [true, -1, [110, 120]], 'most points adds every round');
   const lista = [

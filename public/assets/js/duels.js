@@ -4,7 +4,7 @@
  * their own pace, and the duel lasts three days at most (the owner, 2026-11-22).
  *
  *   duelos/<did>                { a, b, an, bn, f, g, sd: { 0: CODE, … }, gr?: { 0: game, … }, at }
- *                               a challenged b to game `g` in format `f` (bo3, bo5, bo7, bo9, pts), written once;
+ *                               a challenged b to game `g` in format `f` (FORMATOS: bo3…bo9, pts, pts2…pts9), written once;
  *                               a custom duel's `gr` names each round's game (round i plays gr[i] or g)
  *   duelos/<did>/e/<jid>/<i>    when jid began round i, once: a round begun and left counts as 0
  *   duelos/<did>/r/<jid>/<i>    { s, ms, at }: jid's result in round i, once, after it began
@@ -18,7 +18,14 @@
 import { esJid, claveNombre, S_MAX, MS_MAX, TODOTERRENO, SIEMPRE, semana } from './records.js';
 
 export const DURACION = 3 * 86400000;
-export const FORMATOS = { bo3: 3, bo5: 5, bo7: 7, bo9: 9, pts: 3 };
+/**
+ * A duel's format: `bo<n>` best of n rounds (odd, 3 to 9), or most points over `pts<n>` rounds (2 to 9;
+ * `pts` alone is 3, as the quick duel's). The custom duel picks how to win, then how many rounds (the owner, 2026-11-24).
+ */
+export const FORMATOS = { bo3: 3, bo5: 5, bo7: 7, bo9: 9, pts2: 2, pts: 3, pts4: 4, pts5: 5, pts6: 6, pts7: 7, pts8: 8, pts9: 9 };
+export const esPuntos = f => /^pts\d?$/.test(f || '');
+/** The format for a way to win (`'bo'` or `'pts'`) and a number of rounds. */
+export const formatoDe = (modo, n) => (modo === 'pts' ? (n === 3 ? 'pts' : `pts${n}`) : `bo${n}`);
 export const DID = /^[a-z0-9]{10}$/;
 export const esDid = d => typeof d === 'string' && DID.test(d);
 const HORA = { '.sv': 'timestamp' };
@@ -70,7 +77,7 @@ export function estado(d, me, t = Date.now()) {
   const msSuma = a => a.reduce((x, r) => x + (r && !r.dejada ? r.ms : 0), 0);
   const todas = mias.every(Boolean) && suyas.every(Boolean);
   let termino, gano = null, puntos;
-  if (d.f === 'pts') {
+  if (esPuntos(d.f)) {
     puntos = [suma(mias), suma(suyas)];
     termino = vencido || todas;
     if (termino) gano = puntos[0] !== puntos[1] ? Math.sign(puntos[0] - puntos[1]) : Math.sign(msSuma(suyas) - msSuma(mias));

@@ -1263,13 +1263,13 @@
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20"
         },
         "f": {
-          ".validate": "newData.isString() && newData.val().matches(/^(bo3|bo5|bo7|bo9|pts)$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^(bo[3579]|pts[2-9]?)$/)"
         },
         "g": {
           ".validate": "newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{1,24}$/)"
         },
         "sd": {
-          ".validate": "newData.hasChildren(['0', '1', '2']) && (newData.parent().child('f').val() === 'bo5' || newData.parent().child('f').val() === 'bo7' || newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['3', '4']) && (newData.parent().child('f').val() === 'bo7' || newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['5', '6']) && (newData.parent().child('f').val() === 'bo9') === newData.hasChildren(['7', '8'])",
+          ".validate": "newData.hasChildren(['0', '1']) && newData.hasChild('2') === (newData.parent().child('f').val().matches(/^(bo|pts)[3-9]$/) || newData.parent().child('f').val() === 'pts') && newData.hasChild('3') === newData.parent().child('f').val().matches(/^(bo|pts)[4-9]$/) && newData.hasChild('4') === newData.parent().child('f').val().matches(/^(bo|pts)[5-9]$/) && newData.hasChild('5') === newData.parent().child('f').val().matches(/^(bo|pts)[6-9]$/) && newData.hasChild('6') === newData.parent().child('f').val().matches(/^(bo|pts)[7-9]$/) && newData.hasChild('7') === newData.parent().child('f').val().matches(/^(bo|pts)[8-9]$/) && newData.hasChild('8') === newData.parent().child('f').val().matches(/^(bo|pts)[9-9]$/)",
           "$i": {
             ".validate": "$i.matches(/^[0-8]$/) && newData.isString() && newData.val().matches(/^[A-HJ-NP-Z]{5}$/)"
           }

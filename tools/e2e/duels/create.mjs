@@ -1,5 +1,6 @@
 // The new-duel sheet of Duels (lab flag rivals): it opens straight on the quick duel, with 🛠️ the custom
-// duel as a link under its button; the custom duel wins at best of 3, 5, 7 or 9 or by points; its last step, each round's game, and
+// duel as a link under its button; the custom duel first picks how to win (most rounds won, most points),
+// then how many rounds: odd for rounds won (3–9), any for points (2–9); its last step, each round's game, and
 // 🎲 Mix rolling the rounds with La Copa's slot machine (D-425, assets/js/slot-roll.js): the real draw
 // is painted underneath at once, every row spins through duel games, they stop on their own top to
 // bottom, each row keeps its height meanwhile, a tap during the roll acts on the real game, and with
@@ -24,7 +25,7 @@ async function toRounds() {
   await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
   await click('#dl-rivales .chip-btn');
   await click('#dl-siguiente'); await sleep(200);
-  await click('#dl-mejor-de [data-f="bo5"]'); await sleep(100);
+  await click('#dl-rondas [data-n="5"]'); await sleep(100);
   await click('#dl-siguiente');
   await b.until(`document.querySelectorAll('.dl-ronda').length === 5`, 3000);
 }
@@ -42,9 +43,18 @@ try {
   await click('#dl-medida');
   await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
   await click('#dl-rivales .chip-btn'); await click('#dl-siguiente'); await sleep(200);
-  ok(JSON.stringify(await ev(`JSON.stringify([...document.querySelectorAll('#dl-mejor-de [data-f]')].map(x=>x.textContent))`).then(JSON.parse)) === '["3","5","7","9"]', 'the custom duel: best of 3, 5, 7 or 9');
-  await click('#dl-mejor-de [data-f="bo7"]'); await sleep(100);
-  ok(/4 rondas/.test(await ev(`document.getElementById('dl-mejor-de').textContent`)), 'best of 7 says it takes 4 rounds');
+  const nums = () => ev(`JSON.stringify([...document.querySelectorAll('#dl-rondas [data-n]')].map(x=>x.textContent))`);
+  ok(await ev(`document.querySelector('[data-modo="bo"]').classList.contains('on')`), 'how to win comes first: most rounds won by default');
+  ok(await nums() === '["3","5","7","9"]', 'most rounds won: 3, 5, 7 or 9 rounds');
+  await click('#dl-rondas [data-n="7"]'); await sleep(100);
+  ok(/4 de 7/.test(await ev(`document.getElementById('dl-rondas').textContent`)), 'seven rounds: whoever wins 4 of 7');
+  await click('[data-modo="pts"]'); await sleep(100);
+  ok(await nums() === '["2","3","4","5","6","7","8","9"]', 'most points: any number, 2 to 9');
+  await click('#dl-rondas [data-n="6"]'); await sleep(100);
+  ok(/6 rondas/.test(await ev(`document.getElementById('dl-rondas').textContent`)), 'most points in six rounds');
+  await b.shot('points-390');
+  await click('[data-modo="bo"]'); await sleep(100);
+  ok(await ev(`document.querySelector('#dl-rondas .on')?.dataset.n`) === '7', 'back to rounds won, six becomes seven (odd)');
   await b.shot('best-of-390');
   await click('#dl-siguiente');
   await b.until(`document.querySelectorAll('.dl-ronda').length === 7`, 3000);
