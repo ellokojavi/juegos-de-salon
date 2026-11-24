@@ -7170,7 +7170,11 @@
       "error": "✗ 320: every badge's name fits inside its card (duel-champion)",
       "signature": "8e1cc4528f",
       "date": "2026-11-24T07:43:48.421Z",
-      "fix": null,
+      "fix": {
+        "commit": "c0cabb1fad52dd3e89cf218aa7c9b6e1aa70e943",
+        "date": "2026-11-24T08:04:41.228Z",
+        "stat": "2 file(s) +3 −3: changelog/ccr-a8281ea6-v0e34x.md, public/assets/js/profile-texts.js"
+      },
       "flaky": false
     }
   ]
