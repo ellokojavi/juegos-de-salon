@@ -181,9 +181,31 @@
 .pf-play:nth-child(4)::before { animation-delay: 0.18s; }
 .pf-play:nth-child(5)::before { animation-delay: 0.24s; }
 @keyframes pf-play-grow { from { transform: scaleX(0); } }
-.pf-play-name, .pf-play b { position: relative; }
+.pf-play { isolation: isolate; }
+.pf-play::before { z-index: -1; }
+.pf-play b { position: relative; }
 .pf-play-name { font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pf-play b { font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+/* The link's overlay covers the whole row: anchored to the row, since the name clips its own box */
+.pf-play-name { color: inherit; text-decoration: none; }
+.pf-play-name::after { content: ''; position: absolute; inset: 0; }
+.pf-play b { pointer-events: none; font: 900 var(--fs-100) var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .pf-plays-panel .pf-more { margin-top: var(--s-10); justify-self: center; }
 @media (prefers-reduced-motion: reduce) { .pf-play::before { animation: none; } }
 .pf-plays-panel { display: grid; }
+
+/* A badge's detail (lab flag badge-details): a tappable badge, and its sheet */
+button.pf-badge--tap { font: inherit; color: inherit; border: 0; cursor: pointer; width: 100%; }
+.pf-badge--tap::after { content: 'ⓘ'; position: absolute; top: var(--s-4); left: var(--s-6); font-size: var(--fs-75); color: var(--muted); }
+.pf-dt .pf-badge { padding: var(--s-12); }
+.pf-dt-x { width: 44px; min-height: 44px; padding: 0; }
+.pf-dt-lead, .pf-dt-when { margin: 0; }
+.pf-dt-when { color: var(--lime); font-weight: 900; text-align: center; }
+.pf-dt-note { margin: 0; font-size: var(--fs-85); }
+.pf-dt-rows { display: grid; gap: var(--s-8); }
+.pf-dt-row { display: flex; justify-content: space-between; align-items: center; gap: var(--s-10); min-height: 44px; box-sizing: border-box; padding: var(--s-8) var(--s-14); border-radius: var(--r-14); background: var(--glass); color: inherit; text-decoration: none; font-weight: 900; }
+.pf-dt-row b { color: var(--yellow); white-space: nowrap; }
+.pf-dt-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--s-6); text-align: center; font-weight: 900; padding: var(--s-12); border-radius: var(--r-14); background: var(--glass); }
+.pf-dt-on { color: var(--lime); }
+.pf-dt-miss { color: var(--pink); text-decoration: line-through; }
+.pf-dt-today { color: var(--yellow); outline: 2px solid var(--yellow); border-radius: var(--r-pill); }
+.pf-dt-next { color: var(--muted); }

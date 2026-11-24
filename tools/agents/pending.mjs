@@ -125,10 +125,10 @@ const api = (path, ...args) => JSON.parse(execFileSync('gh', ['api', ...args, pa
 /** Every page of a list (by number: `--paginate` follows links some proxies refuse). */
 const pages = path => { const all = []; for (let n = 1; ; n++) { const p = api(`${path}?per_page=100&page=${n}`); all.push(...p); if (p.length < 100) return all; } };
 
-/** The required checks that failed on a commit. */
+/** The required checks that failed on a commit. A cancelled run is not a verdict (D-618): another follows. */
 export function redChecks(sha) {
   return [...new Set(api(`repos/${REPO}/commits/${sha}/check-runs?per_page=100`).check_runs
-    .filter(c => REQUIRED.includes(c.name) && ['failure', 'cancelled', 'timed_out', 'action_required'].includes(c.conclusion))
+    .filter(c => REQUIRED.includes(c.name) && ['failure', 'timed_out', 'action_required'].includes(c.conclusion))
     .map(c => c.name))];
 }
 
