@@ -7159,6 +7159,19 @@
         "stat": "11 file(s) +34 −14: changelog/bodega-home-carousels-sheet.md, changelog/canape-dumpling.md, changelog/home-lang-back.md, public/assets/css/base.css, public/assets/css/player-peek.css, …"
       },
       "flaky": false
+    },
+    {
+      "run": 45347616195,
+      "check": "end-to-end",
+      "pr": 1844,
+      "branch": "ccr-a8281ea6-v0e34x",
+      "commit": "7662a8aae245da4b80bf18034b692ee8652ed24b",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: every badge's name fits inside its card (duel-champion)",
+      "signature": "8e1cc4528f",
+      "date": "2026-11-24T07:43:48.421Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
