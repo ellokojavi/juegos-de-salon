@@ -105,6 +105,7 @@ export const TEXTS = {
     prefs: '🎛️ Preferencias',
     language: 'Idioma',
     sound: 'Sonido',
+    vibration: 'Vibración',
     badges: {
       'streak-10': ['10 seguidos', 'Racha de 10 días en Uno al día'],
       'streak-30': ['30 seguidos', 'Racha de 30 días en Uno al día'],
@@ -250,6 +251,7 @@ export const TEXTS = {
     prefs: '🎛️ Preferences',
     language: 'Language',
     sound: 'Sound',
+    vibration: 'Vibration',
     badges: {
       'streak-10': ['10 in a row', 'A 10-day One a Day streak'],
       'streak-30': ['30 in a row', 'A 30-day One a Day streak'],
@@ -395,6 +397,7 @@ export const TEXTS = {
     prefs: '🎛️ Preferências',
     language: 'Idioma',
     sound: 'Som',
+    vibration: 'Vibração',
     badges: {
       'streak-10': ['10 seguidos', 'Sequência de 10 dias no Um por dia'],
       'streak-30': ['30 seguidos', 'Sequência de 30 dias no Um por dia'],

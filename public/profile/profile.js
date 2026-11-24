@@ -9,7 +9,7 @@
  * tables they are in. A badge earned once stays earned on this phone (`earned`'s `seen`), so a
  * first place lost this week keeps its badge.
  */
-import { el } from '../assets/js/ui.js';
+import { el, vibrationToggle } from '../assets/js/ui.js';
 import { withIcon } from '../assets/js/game-icon.js';
 import { getLang, langToggle, pickLang, COMMON } from '../assets/js/i18n.js';
 import { SFX, soundToggle } from '../assets/js/sound.js';
@@ -587,6 +587,8 @@ function settingsTab(yo) {
   const row = (label, hint, control) => el('div', { class: 'toggle-row' }, el('span', { class: 'txt' }, el('b', {}, label), hint ? el('small', {}, hint) : null), control);
   const prefs = el('section', { class: 'panel pf-settings' }, el('p', { class: 'lead rk-titulo' }, T.prefs),
     row(T.language, null, langToggle()), row(T.sound, null, soundToggle()));
+  // 📳 Vibration off for every game (flag vibration-setting). lab: #seccion-vibration-setting
+  flag('vibration-setting').then(on => on && 'vibrate' in navigator && prefs.append(row(T.vibration, null, vibrationToggle()))).catch(() => {});
   // ☁️ Games with no signal: where the phone stands, always here; the home page's bar shows the cloud only when it asks for something
   // (flag cloud-quiet, offline-ready.js). lab: #seccion-cloud-quiet
   Promise.all([flag('offline'), flag('cloud-quiet')])
