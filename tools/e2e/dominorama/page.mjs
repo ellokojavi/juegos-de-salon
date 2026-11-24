@@ -46,6 +46,7 @@ ok(await ev(`document.querySelector('#dm-bandeja .dm-ficha[data-f="0"]').classLi
 const placed = await ev(`(() => { for (const c of document.querySelectorAll('#dm-tablero .dm-celda')) { c.click(); if (document.querySelector('#dm-tablero .dm-puesta[data-f="0"]')) return true; } return false; })()`);
 ok(placed, 'and a tap on a cell lays it');
 ok(await ev(`${P}.state().puestas.filter(Boolean).length === 1`), 'the laid domino is saved');
+ok(await ev(`[...document.querySelectorAll('#dm-tablero .dm-puesta .dm-mitad')].every(m => { const r = m.getBoundingClientRect(); return Math.abs(r.width - r.height) < 1; })`), 'a laid domino is two squares, not stretched');
 await ev(`document.getElementById('btn-ayuda').click(); 1`);
 ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-ayuda').textContent`)), 'the help asks twice');
 await ev(`document.getElementById('btn-ayuda').click(); 1`);
