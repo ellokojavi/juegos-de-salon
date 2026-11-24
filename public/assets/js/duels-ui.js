@@ -206,9 +206,10 @@ export async function abrirNuevo({ rival = null, juego = null, lista = null, alT
       el('button', { type: 'button', class: 'opcion dl-modo', id: 'dl-medida', onClick: tap(() => { modo = 'custom'; paso = 1; }) }, el('b', {}, T.customTitle), el('span', { class: 'dl-nota' }, T.customSub))],
     quick: () => [
       centrado ? versus() : rivales(),
+      // How many rounds first, then the game (the owner, 2026-11-24), with most points too
+      el('div', { class: 'stack' }, label(T.format), chips([['bo3', T.bo3], ['bo5', T.bo5], ['pts', T.pts]], formato, v => { formato = v; })),
       // From a ranking the game comes chosen, and can be changed (the owner, 2026-11-23)
       el('div', { class: 'stack' }, label(T.game), tiles(g, v => { g = v; }, centrado ? juego : null)),
-      el('div', { class: 'stack' }, label(T.format), chips([['bo3', T.bo3], ['bo5', T.bo5]], formato, v => { formato = v; })),
       el('p', { class: 'dl-nota' }, T.how), error, enviarBtn()],
     custom: () => {
       const cabeza = el('div', { class: 'dl-pasos' }, el('span', { class: 'dl-nota' }, fmt(T.stepOf, { n: paso })),
