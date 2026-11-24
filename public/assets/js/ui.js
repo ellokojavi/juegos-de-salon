@@ -73,9 +73,9 @@ export function vibrate(pattern = 30) {
   try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (_) { /* sin soporte */ }
 }
 
-/** The 📳/📴 switch of the profile's settings. */
+/** The 📳 switch of the profile's settings: greyed out when off (base.css). */
 export function vibrationToggle() {
-  const paint = b => { b.textContent = vibrationOff ? '📴' : '📳'; b.setAttribute('aria-pressed', vibrationOff ? 'false' : 'true'); };
+  const paint = b => { b.textContent = '📳'; b.setAttribute('aria-pressed', vibrationOff ? 'false' : 'true'); };
   const btn = el('button', { type: 'button', class: 'sound-toggle vibration-toggle', title: 'Vibración / Vibration / Vibração' });
   paint(btn);
   btn.addEventListener('click', () => { setVibrationOff(!vibrationOff); paint(btn); vibrate(30); });
