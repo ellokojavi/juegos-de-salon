@@ -464,10 +464,12 @@
     html.filtrado .uad-card { display: none !important; }
     html.filtrado .fila-alta:has(.uad-card-mes) { margin-top: 0; }
     .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
-    /* Duels (flag rivals): the row slides with a third card peeking from the right edge; its badge is One a Day's month's */
+    /* Duels (flag rivals): the row slides with a third card peeking from the right edge; its badge is One a Day's month's.
+       Where there is room (a desktop, a wide phone) two and a half cards show; never more than two whole ones and a
+       34px peek of the next, so the narrowest phone still sees that the row slides (the owner, 2026-11-24) */
     .fila-alta.con-duelos { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 2px; margin-right: -16px; padding: 12px 16px 6px 0; }
     .fila-alta.con-duelos::-webkit-scrollbar { display: none; }
-    .fila-alta.con-duelos > * { flex: 0 0 max(124px, calc((100% - 20px - 34px) / 2)); min-width: 0; scroll-snap-align: start; }
+    .fila-alta.con-duelos > * { flex: 0 0 max(124px, min(156px, calc((100% - 20px - 34px) / 2)), calc((100% - 20px) / 2.5)); min-width: 0; scroll-snap-align: start; }
     .duelos-card { position: relative; overflow: visible; }
     .duelos-card h2 { white-space: nowrap; }
     html.filtrado .duelos-card { display: none !important; }
