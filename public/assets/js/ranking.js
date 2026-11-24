@@ -230,8 +230,9 @@ function fila(f, yo, victorias = false, campeon = null) {
     el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')),
       campeon && f.jid === campeon ? el('span', { class: 'rk-campeon', title: T.champion, 'aria-label': T.champion }, '🏆') : null, mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
-    // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta
-    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias === 'racha' ? '🔥' : victorias === 'puntos' ? `🔥${f.r || 0}` : victorias ? '🏆' : mmss(f.ms)));
+    // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta. En la de puntos de Uno al día,
+    // nada: su `r` es el multiplicador del bono, con tope en 10 (RACHA_TOPE), no la racha real
+    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias === 'racha' ? '🔥' : victorias === 'puntos' ? '' : victorias ? '🏆' : mmss(f.ms)));
 }
 
 /**
