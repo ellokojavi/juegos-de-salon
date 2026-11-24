@@ -174,12 +174,24 @@ function step(argv) {
     const p = next.pr;
     console.log(`merge-queue: updating #${p.number} (${next.behindIt} behind it)`);
     if (dry) return 0;
-    if (update(R, p)) { gh('pr', 'edit', String(p.number), '--add-label', LABEL); return 0; }
+    if (update(R, p)) { mark(p.number); return 0; }
     skip.add(`${p.number}@${p.headRefOid}`);
     const mark = `${CONFLICT_MARK}${p.headRefOid} -->`;
     const said = gh('api', `repos/${R}/issues/${p.number}/comments`, '--paginate', '--jq', '.[].body').includes(mark);
     if (!said) gh('pr', 'comment', String(p.number), '--body', `${mark}\nMerge queue (D-586): this PR is next in line but merging \`main\` into it conflicts, so the queue skips it. Its session fixes it with \`node tools/agents/sync-pr.mjs\` (or by hand) and pushes; the PR then joins the line again.`);
   }
+}
+
+/**
+ * Labels the PR the queue just updated. If the label was deleted, it is made again first: without it
+ * the queue loses track of the PR in flight and updates another on every run (2026-11-24, an hour of
+ * failed steps and six PRs testing at once).
+ */
+function mark(n) {
+  try { gh('pr', 'edit', String(n), '--add-label', LABEL); return; }
+  catch (e) { if (!/not found/i.test(String(e.stderr || e.message))) throw e; }
+  gh('label', 'create', LABEL, '--force', '--color', '5319e7', '--description', 'The merge queue brought this PR up to date (D-586)');
+  gh('pr', 'edit', String(n), '--add-label', LABEL);
 }
 
 /** Merges main into the PR: GitHub's update-branch, then sync-pr.mjs for generated-file conflicts. */
