@@ -32,7 +32,9 @@ jobs:
   preview:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Above the 10 minutes preview-ready.mjs waits, plus the build: when the previews repo's Pages is slow, the job
+    # still writes its ⚠️ in the comment instead of being cut off with the ⏳ left there
+    timeout-minutes: 15
     steps:
       - id: key
         env:
