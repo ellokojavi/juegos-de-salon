@@ -7262,6 +7262,19 @@
       "date": "2026-11-24T12:09:49.255Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45423489020,
+      "check": "tests",
+      "pr": 1863,
+      "branch": "merge-queue-doctor",
+      "commit": "62b6c7f7316a0ed5a74d5faa50de3b990cb9f7db",
+      "test": "Run node tools/agents/lanes.mjs ci",
+      "error": "Set by:\n.github/workflows/notifications.yml  (.github/**: workflows: secrets, permissions, publishing)\nGraphQL: Something went wrong while executing your query on 2026-11-24T15:23:13Z. Please include `A0BE:396813:53801C:828312:6B05ABE1` when reporting this issue.",
+      "signature": "1bd6e7fd2e",
+      "date": "2026-11-24T15:23:30.833Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
