@@ -145,7 +145,7 @@ export const TEXTS = {
       'duel-wins': ['Duelista', 'Ganaste 10 duelos'],
       'duel-run': ['Invicto', 'Ganaste 5 duelos seguidos'],
       'duel-rival-run': ['De hijo', 'Le ganaste 3 duelos seguidos al mismo rival'],
-      'duel-champion': ['Matagigantes', 'Le ganaste un duelo al campeón de un juego'],
+      'duel-champion': ['Mata gigantes', 'Le ganaste un duelo al campeón de un juego'],
     },
   },
   en: {
@@ -435,7 +435,7 @@ export const TEXTS = {
       'duel-wins': ['Duelista', 'Você venceu 10 duelos'],
       'duel-run': ['Invicto', 'Você venceu 5 duelos seguidos'],
       'duel-rival-run': ['Freguês', 'Você venceu o mesmo rival 3 duelos seguidos'],
-      'duel-champion': ['Mata-gigantes', 'Você venceu o campeão de um jogo num duelo'],
+      'duel-champion': ['Mata gigantes', 'Você venceu o campeão de um jogo num duelo'],
     },
   },
 };
