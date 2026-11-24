@@ -26,6 +26,9 @@
 .pf-peek-who { min-width: 0; }
 .pf-peek-kicker { margin: 0; color: var(--cyan); font-weight: 900; font-size: var(--fs-75); text-transform: uppercase; letter-spacing: 0.08em; }
 .hoja .pf-peek-name { font-size: var(--fs-160); overflow-wrap: anywhere; }
+/* One's own sheet from a ranking: «(tú)» after the name, quieter, and a link to the profile under it (44 px to tap) */
+.pf-peek-you { color: var(--muted); font-family: var(--font-body); text-transform: none; font-size: var(--fs-100); font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+.pf-peek-mine { display: inline-flex; align-items: center; min-height: 44px; color: var(--cyan); font-weight: 900; text-decoration: none; }
 .pf-peek-body { display: grid; gap: var(--s-20); }
 .hoja .pf-peek-line { font-size: var(--fs-85); }
 .pf-peek-stats { margin-top: 0; }
