@@ -7176,6 +7176,19 @@
         "stat": "2 file(s) +3 −3: changelog/ccr-a8281ea6-v0e34x.md, public/assets/js/profile-texts.js"
       },
       "flaky": false
+    },
+    {
+      "run": 45359269922,
+      "check": "tests",
+      "pr": 1847,
+      "branch": "ccr-84d35b5d-murun3",
+      "commit": "efcdc8e4c9547ca71f04256d44788e695ae5b4e4",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/bulls-and-cows-tabs.js",
+      "signature": "cf7d3a8584",
+      "date": "2026-11-24T08:49:24.716Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
