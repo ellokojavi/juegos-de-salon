@@ -301,12 +301,29 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
         el('p', { class: 'dl-nota' }, T.how), error, enviarBtn(), volverRapido()];
     },
   };
+  /**
+   * Redraws the sheet. When what it holds grows or shrinks (a step, the rounds' chips, a round opened),
+   * the sheet eases from its old height to the new one instead of jumping, and a new step fades in
+   * (the owner, 2026-11-24: smoother size changes). With reduced motion it just redraws.
+   */
+  let vista = null, alto = null;
   function pintar() {
+    const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches && panel.isConnected;
+    const h0 = suave ? panel.getBoundingClientRect().height : 0;
     cuerpo.removeAttribute('aria-busy');
     titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
     cuerpo.replaceChildren(...vistas[modo]().filter(Boolean));
     pararRueda();
     if (rodar) { rodar = false; rodarRondas(); }
+    const clave = `${modo}${paso}`, nueva = vista !== null && clave !== vista;
+    vista = clave;
+    if (!suave) return;
+    alto?.cancel(); // an easing still running pins the old height: drop it before measuring the new one
+    const h1 = panel.getBoundingClientRect().height;
+    if (Math.abs(h1 - h0) > 1) {
+      alto = panel.animate([{ height: `${h0}px`, overflow: 'hidden' }, { height: `${h1}px`, overflow: 'hidden' }], { duration: 260, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+    }
+    if (nueva) cuerpo.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' });
   }
   /**
    * 🎲 Mix rolls the rounds like La Copa's week (D-425, slot-roll.js): the real draw is already painted,
