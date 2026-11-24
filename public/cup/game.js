@@ -118,7 +118,7 @@ const SEMILLA = (param('seed') || '').toUpperCase();
  * from a duel, `?seed=<the round's>&duel=<id>&round=<i>`, plays that seed and saves the result in the
  * duel. The round counts from its start, once: `ok` is whether this phone began it now.
  */
-const DUELO = SUELTO && /^[A-HJ-NP-Z]{5}$/.test(SEMILLA) && /^[a-z0-9]{10}$/.test(param('duel') || '') && /^[0-4]$/.test(param('round') || '')
+const DUELO = SUELTO && /^[A-HJ-NP-Z]{5}$/.test(SEMILLA) && /^[a-z0-9]{10}$/.test(param('duel') || '') && /^[0-8]$/.test(param('round') || '')
   ? { did: param('duel'), i: Number(param('round')), ok: null } : null;
 /**
  * Uno al día (D-230): `?today` juega el desafío de hoy, el mismo para todos. La fecha y el juego los
