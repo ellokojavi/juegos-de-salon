@@ -16,6 +16,8 @@
 .pf-medal { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-160); margin-bottom: var(--s-2); }
 .pf-badge--gold .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-oro-luz), var(--pf-oro) 45%, var(--pf-oro-hondo)); box-shadow: 0 0 0 3px var(--pf-oro-aro), 0 6px 16px rgb(var(--yellow-rgb) / 0.45); }
 .pf-badge--silver .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata-luz), var(--pf-plata) 45%, var(--pf-plata-hondo)); box-shadow: 0 0 0 3px var(--pf-plata-aro); }
+/* 🥟 El canapé: a pale dumpling on pale silver, so its medal is the deep end of the silver and the emoji gets a dark rim */
+.pf-badge--silver[data-badge="party"]:not(.pf-badge--locked) .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-plata), var(--pf-plata-hondo) 55%, rgb(var(--card-ink-rgb) / 0.85)); text-shadow: 1px 0 rgb(var(--card-ink-rgb) / 0.8), -1px 0 rgb(var(--card-ink-rgb) / 0.8), 0 1px rgb(var(--card-ink-rgb) / 0.8), 0 -1px rgb(var(--card-ink-rgb) / 0.8); }
 .pf-badge--bronze .pf-medal { background: radial-gradient(circle at 35% 30%, var(--pf-bronce-luz), var(--pf-bronce) 45%, var(--pf-bronce-hondo)); box-shadow: 0 0 0 3px var(--pf-bronce-aro); }
 
 /* A name that opens its player's sheet: any ranking's row (ranking.js) and a Cup's (cup/game.js) */
@@ -57,3 +59,18 @@
 .pf-peek-here-vals small { margin-left: var(--s-4); color: var(--muted); font-weight: 800; font-size: var(--fs-75); }
 .pf-peek-here-all { justify-self: start; background: rgb(var(--ink-rgb) / 0.1); border-radius: var(--r-pill); padding: var(--s-2) var(--s-10); font-weight: 800; font-size: var(--fs-75); }
 .pf-peek-here-all:empty { display: none; }
+/* Lab (ranking-peek, the owner, 2026-11-23): the badges in a card like the games' rows, bigger medals with a thin ring
+   of their metal, quieter names; CERRAR stays at the bottom, 24 px under the content, over a fade */
+.pf-peek--card .pf-peek-part:has(> .pf-peek-badges) { gap: var(--s-12); }
+.pf-peek--card .pf-peek-badges { background: var(--well); border-radius: var(--r-12); padding: var(--s-16); row-gap: var(--s-20); column-gap: var(--s-8); }
+.pf-peek--card .pf-peek-badges li { gap: var(--s-8); align-content: start; }
+.pf-peek--card .pf-peek-badges .pf-medal { width: 56px; height: 56px; font-size: var(--fs-160); }
+.pf-peek--card .pf-peek-badges li.pf-badge--gold .pf-medal { box-shadow: 0 0 0 2px var(--pf-oro-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--silver .pf-medal { box-shadow: 0 0 0 2px var(--pf-plata-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges li.pf-badge--bronze .pf-medal { box-shadow: 0 0 0 2px var(--pf-bronce-aro), 0 4px 10px rgb(var(--well-rgb) / 0.35); }
+.pf-peek--card .pf-peek-badges small { font-size: var(--fs-75); font-weight: 600; opacity: 0.75; line-height: 1.2; max-width: 76px; overflow-wrap: normal;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.pf-peek--card .btn-row { position: sticky; bottom: calc(-22px - var(--safe-bottom)); z-index: 1; background: var(--bg1);
+  margin: var(--s-12) 0 calc(-22px - var(--safe-bottom)); padding-bottom: calc(22px + var(--safe-bottom)); }
+.pf-peek--card .btn-row::before { content: ''; position: absolute; inset: auto 0 100% 0; height: var(--s-24); pointer-events: none;
+  background: linear-gradient(to top, var(--bg1), rgb(var(--bg1-rgb) / 0)); }

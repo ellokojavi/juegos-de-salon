@@ -78,7 +78,7 @@ assert.equal(weekendsOf(days3, ['2026-11-07']), 3, 'a weekend counts once');
 // ☕ Odio los lunes: 4 Mondays before 8
 assert.ok(got('mondays', { marks: { mon: ['2026-11-02', '2026-11-09', '2026-11-16', '2026-11-23'] } }).got);
 assert.deepEqual(got('mondays', { marks: { mon: ['2026-11-02'] } }).progress, [1, 4]);
-// 🥂 El canapé: 3 cups within 7 days
+// 🥟 El canapé: 3 cups within 7 days
 const D = 86400000;
 assert.equal(cupsInAWeek([{ at: NOW }, { at: NOW + 3 * D }, { at: NOW + 6.9 * D }]), 3);
 assert.equal(cupsInAWeek([{ at: NOW }, { at: NOW + 3 * D }, { at: NOW + 7 * D }]), 2, 'the seventh day after is another week');

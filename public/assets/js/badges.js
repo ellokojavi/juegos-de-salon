@@ -129,7 +129,7 @@ export const BADGES = [
   { id: 'cup-podium', group: 'cup', tier: 'bronze', icon: '🥉', check: f => { const m = f.medals || {}; const c = n(m.gold) + n(m.silver) + n(m.bronze); return { got: c > 0, count: c }; } },
   { id: 'cup-champion', group: 'cup', tier: 'gold', icon: '🏆', check: f => { const c = n(f.medals?.gold); return { got: c > 0, count: c }; } },
   { id: 'climber', group: 'cup', tier: 'gold', icon: '🧗', check: f => { const c = n(f.climbs); return { got: c > 0, count: c }; } },
-  { id: 'party', group: 'cup', tier: 'silver', icon: '🥂', check: f => progress(cupsInAWeek(f.cupList), PARTY_CUPS) },
+  { id: 'party', group: 'cup', tier: 'silver', icon: '🥟', check: f => progress(cupsInAWeek(f.cupList), PARTY_CUPS) },
   // Games
   { id: 'duel-first', group: 'duels', tier: 'bronze', icon: '🤺', check: f => ({ got: n(f.duels?.played) >= 1 }) },
   { id: 'duel-win', group: 'duels', tier: 'bronze', icon: '⚔️', check: f => ({ got: n(f.duels?.won) >= 1 }) },
