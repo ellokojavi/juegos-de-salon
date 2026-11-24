@@ -15,7 +15,7 @@
 # ends (GitHub left 3-hour holes between relays), so the cron is only the backup. Every round is measured (tools/push/heartbeat.mjs: rounds and
 # the longest gap of each Pacific day), the panel shows it and round-watch.yml opens an issue when it
 # falls behind. Since D-569 it also uploads the 🐞 feedback as issues every round and weighs the lab
-# flags' readiness every hour, which the Mac mini did before; since D-573 it nudges red PRs their session left, each hour. All on GitHub (owner, D-564): the repo is public, the minutes are free. A manual run
+# flags' readiness every hour, which the Mac mini did before; since D-573 it nudges red PRs their session left, each hour. Since D-619 it also runs the merge queue's doctor every round (merge-queue.mjs doctor --heal --alarm). All on GitHub (owner, D-564): the repo is public, the minutes are free. A manual run
 # checks once.
 
 name: Notifications
