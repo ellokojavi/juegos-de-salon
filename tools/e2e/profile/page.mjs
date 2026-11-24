@@ -36,7 +36,7 @@ const small = b => b.evaluate(`[...document.querySelectorAll('main button, main 
 for (const W of [320, 390]) {
   const b = await launch({ dir: `${OUT}/p${W}`, out: OUT, width: W, height: W === 320 ? 640 : 844, clock: true });
   // The home page as the owner sees it in Labs: its icon view (flag home-carousels), with the profile's pill
-  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all' });
+  b.flags({ profile: 'all', 'profile-chips': 'all', 'home-carousels': 'all', 'ranking-peek': 'all', 'profile-plays': 'all', 'badge-details': 'all' });
   const ev = e => b.evaluate(e);
   // A guest (a clean phone, so the script can run again)
   await b.go(`${SITE}/profile/?test`, 1500);
@@ -65,6 +65,14 @@ for (const W of [320, 390]) {
   const s0 = await small(b);
   ok(!s0, `${W}: guest, every tappable thing is 44 px or more${s0 ? ` (${s0})` : ''}`);
   await full(b, `guest-${W}`, W);
+  // 🎖️ A badge's detail (lab flag badge-details): a tap on Explorador opens its sheet with the games left, each a link
+  await ev(`document.querySelector('.pf-badge--tap[data-badge="explorer"]').click()`); await sleep(500);
+  ok(await ev(`(() => { const h = document.querySelector('.pf-dt'); return !!h && h.querySelectorAll('a.pf-dt-row').length >= 1 && h.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 🎖️ a tap on Explorador opens its detail, the games left as links`);
+  const sd = await small(b);
+  ok(!sd, `${W}: 🎖️ the detail, every tappable thing is 44 px or more${sd ? ` (${sd})` : ''}`);
+  await b.shot(`detail-${W}`);
+  await ev(`document.querySelector('.pf-dt-x').click()`); await sleep(300);
+  ok(await ev(`!document.querySelector('.pf-dt')`), `${W}: 🎖️ ✕ closes the detail`);
   // Seeded away from the profile: an open profile page would redraw for the new player and note its badges as seen
   await b.go(`${SITE}/privacy/?test`, 1500);
   // A player: two rivals, then the player with games, a 14-day streak and four early mornings
