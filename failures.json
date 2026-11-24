@@ -7085,7 +7085,11 @@
       "error": "✗ the cup saves the week as shown, with its version (loteo,reinas,agentes,tango:time,pintaminas:hard,numero,final)",
       "signature": "d5f3225488",
       "date": "2026-11-24T03:20:21.399Z",
-      "fix": null,
+      "fix": {
+        "commit": "c934b0300e284d5f94da1d83ea633c1a972d8fab",
+        "date": "2026-11-24T04:24:04.282Z",
+        "stat": "13 file(s) +290 −32: changelog/create-week-tango-time.md, changelog/croc-river-visuals.md, changelog/profile-plays-below-badges.md, changelog/ranking-peek-self.md, docs/games/croc.md, …"
+      },
       "flaky": false
     },
     {
