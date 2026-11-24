@@ -292,7 +292,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-240](decisions/D-240.md) | The home page has its canon: C-17 | current |
 | [D-241](decisions/D-241.md) | ⭐ Favoritos joins the types row when it fits | current |
 | [D-242](decisions/D-242.md) | The home page share button uses the operating systems' icon | amended by D-243 |
-| [D-243](decisions/D-243.md) | The share icon goes in the page's colors | amended by a later change (2026-11-24, see below) |
+| [D-243](decisions/D-243.md) | The share icon goes in the page's colors | current |
 | [D-244](decisions/D-244.md) | Spanish goes with the flag of Spain | current |
 | [D-245](decisions/D-245.md) | The ¿Dónde queda? globe waits for the satellite image | current |
 | [D-246](decisions/D-246.md) | Generala: the dice game, with dice in the open and the served hand that wins | current |
