@@ -16,6 +16,11 @@ export const routeOf = key => gameById(key)?.path
 /** Uno al día (D-414): six days played up to yesterday on this phone, then the page again. */
 const UAD_SEED = `(()=>{const d={},f=k=>{const t=new Date(Date.now()-k*86400000);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};for(let k=1;k<=6;k++)d[f(k)]={j:'reinas',s:50+k*7,ms:60000,at:Date.now(),n:1};localStorage.setItem('juegos-de-salon:uno-al-dia',JSON.stringify({dias:d}));location.reload();return 1})()`;
 
+/** Duels: a rival and the player, signed in on this phone, then the page again. */
+const DUELS_SEED = `import('/assets/js/jugador.js').then(async ({ jugador }) => { const J = await jugador(); await J.crear('Cata', '1111'); await J.anotar({ juego: 'reinas', s: 90, ms: 50000 }); J.salir(); await J.crear('Javi', '1234'); location.reload(); })`;
+const DUELS_CUSTOM = [`document.getElementById('dl-medida').click()`, `1`, `1`, `document.querySelector('#dl-rivales .chip-btn').click()`,
+  `document.getElementById('dl-siguiente').click()`, `document.getElementById('dl-siguiente').click()`];
+
 /* --- Path pieces for Batalla Naval (see the comment on its entry) --- */
 const BS_CPU = [
   `document.querySelectorAll('.mode')[2].click()`,
@@ -751,6 +756,15 @@ export const PATHS = {
     hub: [`document.querySelector('[data-ir="hub"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
     rules: [`document.querySelector('[data-ir="hub"]').click(); 1`, `document.querySelector('[data-ir="reglas"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
     champion: [`document.querySelector('[data-ir="hub"]').click(); 1`, `[...document.querySelectorAll('button')].find(b => /Campe/.test(b.textContent))?.click(); document.getElementById('telefono').scrollIntoView(); 1`],
+  },
+  /**
+   * Duels (lab flag rivals): a player with no duel gets the new-duel sheet on arrival. `custom` is the
+   * custom duel's last step, each round's game; `mix` right after 🎲 Mix, whose rows roll like La Copa's week (D-425).
+   */
+  duels: {
+    intro: [DUELS_SEED, `1`, `1`],
+    custom: [DUELS_SEED, `1`, `1`, ...DUELS_CUSTOM],
+    mix: [DUELS_SEED, `1`, `1`, ...DUELS_CUSTOM, `document.getElementById('dl-mezclar').click()`, `1`],
   },
   // Uno al día with its points (D-414): the page as a first visit sees it (its landing: Jugar is
   // checked above the fold, U-39), with a week played (seeded, then reloaded), the rules, a day's
