@@ -23,7 +23,7 @@ import { leer as leerDia, recorrer } from '../assets/js/uno-al-dia.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { BADGES, GROUPS, DUELS_FLAG, earned, lastOnDay, withAnnounced } from './badges.js';
 import { TEXTS } from './texts.js';
-import { DETAILED, detailOf } from './badge-details.js';
+import { hasDetail, detailOf } from './badge-details.js';
 import { tableOf } from '../assets/js/player-peek.js';
 import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
 import { announced } from '../assets/js/secret-achievements.js';
@@ -267,7 +267,8 @@ function openDetail(b) {
 function badgeEl(b, { reveal = false, plain = false } = {}) {
   const [name, desc] = b.secret && !b.got ? [T.secretName, T.secretDesc] : T.badges[b.id] || [b.id, ''];
   const show = reveal && b.new && b.got && !calm();
-  const tappable = !plain && detailsOn && DETAILED.has(b.id) && !(b.secret && !b.got);
+  const tappable = !plain && detailsOn && !(b.secret && !b.got)
+    && hasDetail(b.id, b.got, { ...detail.f, playedIds: playedHere() }, { T, lang, games: CATALOGUE, places: detail.places, general: detail.general });
   return el(tappable ? 'button' : 'div', { class: `pf-badge pf-badge--${b.tier}${b.got ? '' : ' pf-badge--locked'}${b.new ? ' pf-badge--new' : ''}${show ? ' pf-badge--reveal' : ''}${tappable ? ' pf-badge--tap' : ''}`, 'data-badge': b.id,
     ...(tappable ? { type: 'button', onClick: () => openDetail(b) } : {}),
     ...(show ? { style: `--pf-d:${revealDelay(b.id)}ms` } : {}) },
