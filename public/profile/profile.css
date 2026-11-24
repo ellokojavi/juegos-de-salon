@@ -199,6 +199,9 @@ button.pf-badge--tap { font: inherit; color: inherit; border: 0; cursor: pointer
 .pf-badge--tap::after { content: 'ⓘ'; position: absolute; top: var(--s-4); right: var(--s-6); font-size: var(--fs-75); color: var(--muted); opacity: 0.55; }
 /* The ×N pill yields the top-right to the ⓘ on a tappable badge */
 .pf-badge--tap .pf-times { right: auto; left: var(--s-6); }
+/* The sheet's title in the games' display type: yellow with a purple drop, a step under a game's (the owner, 2026-11-24, variant A2) */
+.pf-dt .hoja-cabeza h3 { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-160); letter-spacing: 0.04em; line-height: 1; text-transform: uppercase; color: var(--yellow);
+  text-shadow: 0 3px 0 rgb(var(--purple-rgb) / 0.9), 0 0 18px rgb(var(--pink-rgb) / 0.35); }
 .pf-dt .pf-badge { padding: var(--s-12); }
 .pf-dt-x { width: 44px; min-height: 44px; padding: 0; }
 .pf-dt-lead, .pf-dt-when { margin: 0; }
