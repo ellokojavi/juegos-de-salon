@@ -7074,6 +7074,19 @@
       "date": "2026-11-24T01:30:48.047Z",
       "fix": null,
       "flaky": true
+    },
+    {
+      "run": 45316703817,
+      "check": "end-to-end",
+      "pr": 1826,
+      "branch": "ccr-e5bc5cc8-8onnox",
+      "commit": "535e04a082c69ae0c7855047c2174ff445017b41",
+      "test": "cup/create-week.mjs",
+      "error": "✗ the cup saves the week as shown, with its version (loteo,reinas,agentes,tango:time,pintaminas:hard,numero,final)",
+      "signature": "d5f3225488",
+      "date": "2026-11-24T03:20:21.399Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
