@@ -7789,6 +7789,97 @@
         "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
       },
       "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:untangle",
+      "error": "✗ untangle: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "ecfdc0f574",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:tango",
+      "error": "✗ tango: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "abaee02c0c",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:agents",
+      "error": "✗ agents: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (164 px under the footer in another color (rgb 139,40,60 against the footer's 122,34,67))",
+      "signature": "cc4d66c314",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:zip",
+      "error": "✗ zip: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "15081a45cf",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:year",
+      "error": "✗ year: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "595738549d",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:queens",
+      "error": "✗ queens: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "6c9867bb65",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
+    },
+    {
+      "run": 45688107986,
+      "check": "end-to-end",
+      "pr": 1909,
+      "branch": "thanksgiving-no-corner",
+      "commit": "ab6668828cf44d6bd7a2021ab23372ea42a66e1a",
+      "test": "cup-games/footer-bottom.mjs:connections",
+      "error": "✗ connections: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
+      "signature": "838bd7a5d0",
+      "date": "2026-11-25T19:59:04.919Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
