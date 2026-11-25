@@ -24,6 +24,8 @@ export function cardDuelos(fila, { lang = 'es', tap = () => {} } = {}) {
     jugador().then(J => J.duelos()).then(D => D.mios()).then(lista => {
       const n = lista.filter(d => !estado(d, yo.jid).termino).length;
       if (n) insignia.textContent = n === 1 ? T.badgeOne : T.badgeMany.replace('{n}', n);
+      // ⚔️ A new duel someone else started: the «you've been challenged» screen, once per duel
+      import('./duel-challenge.js').then(m => import('./duels-ui.js').then(u => m.maybeChallenge(lista, yo, d => ({ T, info: u.titulo(d), href: u.hrefRonda(d, 0) })))).catch(() => {});
     }).catch(() => {});
   }
   return card;
