@@ -14,6 +14,8 @@
  *   motes      emojis that replace one background particle in three
  *   flyby      an emoji that crosses the home page once per visit
  *   peek       { emoji, chance }: now and then it peeks from the bottom edge of the home page
+ *   fall       { emojis, count, pace, sway }: they keep falling behind the page, pace [min, max] s, sway px
+ *   strut      { emoji, count, every }: a line of them walks across the bottom of the home page, behind it
  *   corner     true: a decoration in the top right corner, drawn by the template's css
  *   scares     emojis for a big fright on the home page, a different one every 40 s: 💀 looms from a side, 🕷️
  *              scuttles across, 👀 stare and blink from the dark, 🧟 shambles in from below
@@ -32,5 +34,18 @@ export const TEMPLATES = {
     peek: { emoji: '👻', chance: 1 / 15 },
     corner: true,
     scares: ['💀', '🕷️', '👀', '🧟'],
+  },
+  // Thanksgiving (the fourth Thursday of November, always between the 22nd and the 28th)
+  thanksgiving: {
+    from: '11-22', to: '11-28',
+    public: false, // in the lab until the owner says it goes out to everyone
+    built: '2026-11-25',
+    css: new URL('thanksgiving.css', import.meta.url).href,
+    icon: { emoji: '🦃', colors: ['#ff8a2a', '#1b2460'] },
+    hero: ['🦃', '🍂', '🥧', '🌰', '🍁'],
+    fall: { emojis: ['🍂', '🍁', '🍂'], count: 7, pace: [15, 24], sway: 10 },
+    strut: { emoji: '🦃', count: 1, every: 40000 },
+    peek: { emoji: '🦃', chance: 1 / 6 },
+    corner: true,
   },
 };
