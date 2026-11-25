@@ -24,7 +24,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Topic | Today's rule | Decisions |
 |---|---|---|
 | Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434, D-468, D-479, D-480, D-498, D-509, D-510, D-511, D-515, D-516, D-517, D-528, D-529, D-532, D-534, D-535, D-542, D-550, D-556, D-567, D-579, D-588, D-591, D-592, D-593, D-594, D-601, D-606, D-617 |
-| Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533, D-535, D-570, D-576, D-594, D-622 |
+| Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324, D-457, D-488, D-533, D-535, D-570, D-576, D-594, D-622, D-623 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442, D-583 |
 | 🖌️ Pintaminas, the lab's colour Minesweeper (drawings and their colours, brushes, no-guess board, hard mode, help, giving up) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
@@ -37,7 +37,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404, D-514, D-524, D-536, D-537, D-549 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491, D-495, D-552 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477, D-502, D-505, D-507, D-517, D-529, D-545, D-546, D-547, D-548, D-556, D-557, D-601, D-622 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477, D-502, D-505, D-507, D-517, D-529, D-545, D-546, D-547, D-548, D-556, D-557, D-601, D-622, D-623 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473, D-475, D-482, D-485, D-499, D-500, D-508, D-517, D-525, D-526, D-563, D-581, D-598 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474, D-499, D-512, D-539 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465, D-595, D-603 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529, D-591 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538, D-544, D-545, D-546, D-564, D-565, D-571, D-574, D-609, D-614 |
 
-## In force (604)
+## In force (605)
 
 | D | Title | Status |
 |---|---|---|
@@ -502,7 +502,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
-| [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | amended by D-622 |
+| [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | amended by D-622, D-623 |
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | amended by D-502 |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
@@ -663,6 +663,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-620](decisions/D-620.md) | Every share text is built by a template of share-templates.js | current |
 | [D-621](decisions/D-621.md) | No alert dot on the panel's Health tab | current |
 | [D-622](decisions/D-622.md) | A skin dresses every page of the site, the games included | current |
+| [D-623](decisions/D-623.md) | A skin in the lab shows only in its preview, never by its dates | current |
 
 ## No longer in force (14)
 

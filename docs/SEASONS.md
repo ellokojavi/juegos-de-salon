@@ -23,7 +23,7 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 | Field | Example | What it does |
 |---|---|---|
 | `from`, `to` | `'10-26'`, `'10-31'` | the days it is on, `MM-DD`, both included, on the player's calendar; may cross New Year (`'12-31'` → `'01-01'`) |
-| `public` | `false` | `false`: only lab key holders see it (D-395, D-409). Going out to everyone is `true` |
+| `public` | `false` | `false`: in the lab, it never turns on by its dates, not even for a lab key; only its preview (`?season=<id>`, the panel's Live Preview) shows it, to a lab key holder (D-623). Going out to everyone is `true` |
 | `built` | `'2026-10-26'` | the lab bar's order (D-399) |
 | `css` | `new URL('halloween.css', import.meta.url).href` | its stylesheet, written as a literal `new URL` so the e2e scope follows it (D-391) |
 | `icon` | `{ emoji: '🎃', colors: ['#ff7a1a', '#5b1fb8'] }` | the tab's favicon, drawn in place like `assets/icon.svg` (the installed app's icon does not change) |
