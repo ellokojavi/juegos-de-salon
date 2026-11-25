@@ -1196,7 +1196,11 @@
           "commit": "ccc2d0495bd05981cebde9332119c5f64751c5e6"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-25",
+        "what": "flags-snapshot.test.mjs fails on a flag of FLAGS with no state the tests know (not in the snapshot nor in flags-held.json)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1899"
+      },
       "signatures": [
         "915b0ecda5",
         "70d8e2fa96"
@@ -1407,6 +1411,12 @@
       "key": "footer-page-unplaced",
       "what": "push-guard.mjs runs footer-bottom.test.mjs and stops a push with an unplaced page (push-guard.test.mjs)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1857"
+    },
+    {
+      "date": "2026-11-25",
+      "key": "e2e-new-flag-on-everywhere",
+      "what": "flags-snapshot.test.mjs fails on a flag of FLAGS with no state the tests know (not in the snapshot nor in flags-held.json)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1899"
     }
   ],
   "queueDone": [
