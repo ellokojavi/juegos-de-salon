@@ -12,7 +12,7 @@
 // Small pieces other games use too, in modules of their own so a page that needs only them does not
 // load La Copa (D-377): the cup code and a random one, and the active-time clock
 import { cryptoRand } from './code.js';
-import { ALL_GAMES } from '../assets/js/games.js';
+import { ALL_GAMES, GAME_VARIANTS } from '../assets/js/games.js';
 import { cachedFlags, stateOf } from '../assets/js/flags.js';
 export { LETRAS, CODIGO, esCodigo, codigoAlAzar } from './code.js';
 export { reloj, pausaDeLectura, mmss } from './clock.js';
@@ -62,7 +62,8 @@ export const POZO_FIJO = POZO.filter(id => !LANZADOS.some(g => g.id === id));
  */
 // Sudoku's levels (D-517's way): easy, the 6×6 mini, is the default a cup day and Uno al día play
 // Croc!'s traffic (D-517's way): normal is the default a cup day and Uno al día play, hard the heavy traffic
-export const VARIANTES = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'], sudoku: ['easy', 'hard'], croc: ['normal', 'hard'] };
+// The list lives in games.js (GAME_VARIANTS) so pages outside La Copa read it too (a duel locks one, duels-ui.js)
+export const VARIANTES = GAME_VARIANTS;
 /**
  * A game's new rule, for the cups created from then on (D-607): not the admin's choice like VARIANTES,
  * but the rule the game is played by everywhere else. A cup is created with it while its flag is on

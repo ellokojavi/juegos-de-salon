@@ -5,7 +5,9 @@
  *
  *   duelos/<did>                { a, b, an, bn, f, g, sd: { 0: CODE, … }, gr?: { 0: game, … }, at }
  *                               a challenged b to game `g` in format `f` (FORMATOS: bo3…bo9, pts, pts2…pts9), written once;
- *                               a custom duel's `gr` names each round's game (round i plays gr[i] or g)
+ *                               a custom duel's `gr` names each round's game (round i plays gr[i] or g);
+ *                               `lv` locks the level of each round whose game has levels (Sudoku 🟢/🔴…),
+ *                               chosen by the challenger, so both play the same one (the owner, 2026-11-25)
  *   duelos/<did>/e/<jid>/<i>    when jid began round i, once: a round begun and left counts as 0
  *   duelos/<did>/r/<jid>/<i>    { s, ms, at }: jid's result in round i, once, after it began
  *   jugadorDuelos/<jid>/<did>   when the duel was created: each player's list of duels
@@ -44,6 +46,8 @@ export function nuevoDid(rand = Math.random) {
 export const rondas = d => FORMATOS[d?.f] || 3;
 /** The game round i is played in: the custom duel's own for that round, or the duel's. */
 export const roundGame = (d, i) => d?.gr?.[i] || d?.g;
+/** The level round i is played at (a game's variant, D-331), or null: the game has none, or the duel is from before `lv`. */
+export const roundLevel = (d, i) => d?.lv?.[i] || null;
 export const otro = (d, jid) => (d.a === jid ? d.b : d.a);
 export const nombreDe = (d, jid) => (d.a === jid ? d.an : d.bn);
 
@@ -179,7 +183,8 @@ export function estadisticas(lista, me, t = Date.now()) {
 /** The game page of a duel's round: the game's own page with the round's seed. */
 export function linkRonda(d, i, raiz, path) {
   // `path` is the page of round i's game (roundGame)
-  return `${raiz}${path}?seed=${d.sd[i]}&duel=${d.id}&round=${i}`;
+  const v = roundLevel(d, i);
+  return `${raiz}${path}?seed=${d.sd[i]}&duel=${d.id}&round=${i}${v ? `&mode=${v}` : ''}`;
 }
 
 /**
@@ -203,8 +208,8 @@ export function crearDuelos({ almacen, yo, now = () => Date.now(), rand = Math.r
       const ids = Object.entries(idx).sort((a, b) => b[1] - a[1]).map(([k]) => k).filter(esDid);
       return (await Promise.all(ids.map(leer))).filter(Boolean);
     },
-    /** Challenge `b` (a jid) to `g` in format `f`. Returns the duel. */
-    async retar({ b, bn, g, f, gr = null }) {
+    /** Challenge `b` (a jid) to `g` in format `f`; `lv`: each round's level (null where its game has none). Returns the duel. */
+    async retar({ b, bn, g, f, gr = null, lv = null }) {
       const me = yo();
       if (!me || !esJid(b) || b === me.jid || !FORMATOS[f]) throw Object.assign(new Error('duelo'), { code: 'duelo' });
       const id = nuevoDid(rand);
@@ -212,6 +217,11 @@ export function crearDuelos({ almacen, yo, now = () => Date.now(), rand = Math.r
       const d = { a: me.jid, b, an: me.n, bn: String(bn || '').slice(0, 20) || '?', f, g, sd, at: HORA };
       // A custom duel: each round's game, only when they are not all the same
       if (Array.isArray(gr) && gr.length === sd.length && gr.some(x => x !== g)) d.gr = gr;
+      // The level of each round whose game has levels, locked for both players
+      if (Array.isArray(lv) && lv.length === sd.length) {
+        const niveles = Object.fromEntries(lv.map((v, i) => [i, v]).filter(([, v]) => typeof v === 'string' && /^[a-z]{2,12}$/.test(v)));
+        if (Object.keys(niveles).length) d.lv = niveles;
+      }
       await almacen.update({ [`duelos/${id}`]: d, [`jugadorDuelos/${me.jid}/${id}`]: HORA, [`jugadorDuelos/${b}/${id}`]: HORA, [`duelosRecientes/${id}`]: HORA });
       return { id, ...d, at: now() };
     },

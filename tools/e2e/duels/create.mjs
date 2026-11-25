@@ -93,6 +93,7 @@ try {
   const real = await ev(`(async()=>{const {DUEL_GAMES}=await import('/assets/js/duels-ui.js');return JSON.stringify(DUEL_GAMES.map(g=>g.id))})()`).then(JSON.parse);
   ok(still && names.length === 5 && new Set(names).size === 5, `in under a second every row is still, five different games (${names.join(', ')})`);
   ok(real.length > 5, `the pool is the duel games (${real.length})`);
+  ok(await ev(`[...document.querySelectorAll('.dl-ronda-nivel')].every(x => !x.classList.contains('falta'))`), 'a mixed round with levels gets one, written under its game');
   await b.shot('mix-landed-320');
 
   await click('#dl-mezclar'); await sleep(40);
@@ -110,6 +111,29 @@ try {
   ok(await ev(`!document.querySelector('.slot-spin')`), 'with reduced motion, 🎲 Mix draws without a roll');
   await click('.dl-ronda[data-ronda="0"]'); await sleep(40);
   ok(await ev(`document.querySelector('#dl-hoja .hoja').getAnimations().filter(a => !(a instanceof CSSAnimation)).length === 0`), 'with reduced motion, the sheet changes size without easing');
+
+  // A game with levels (the owner, 2026-11-25): its level is picked right under it, never for the player,
+  // and the duel locks it for both: the round's page plays it and offers no picker
+  await b.send('Emulation.setEmulatedMedia', { features: [] });
+  await b.resize(390, 844);
+  await b.go(`${SITE}/duels/`, 1500);
+  await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
+  await click('#dl-rivales .chip-btn');
+  ok(await ev(`!document.querySelector('.dl-juego.on[data-g="pintaminas"]') && !document.getElementById('dl-niveles')`), 'a game without levels shows no level step');
+  await click('#dl-hoja [data-g="pintaminas"]'); await sleep(150);
+  ok(await ev(`JSON.stringify([...document.querySelectorAll('#dl-niveles [data-nivel]')].map(x=>x.dataset.nivel))`) === '["easy","hard"]', 'Pintaminas: 🟢 easy or 🔴 hard, under the game');
+  ok(await ev(`!document.querySelector('#dl-niveles .on') && document.getElementById('dl-enviar').disabled && /nivel/i.test(document.getElementById('dl-enviar').textContent)`), 'none is picked for the player: the button asks for the level');
+  await click('#dl-niveles [data-nivel="hard"]'); await sleep(150);
+  ok(await ev(`!document.getElementById('dl-enviar').disabled`), 'with 🔴 hard picked, the challenge can be sent');
+  await b.shot('quick-level-390');
+  await click('#dl-enviar');
+  await b.until(`!!document.getElementById('dl-jugar')`, 6000);
+  const ronda = await ev(`document.getElementById('dl-jugar').getAttribute('href')`);
+  ok(/\/paint-mines\/\?.*&mode=hard$/.test(ronda), `round 1's link carries the level (${ronda.replace(/^.*\?/, '?')})`);
+  await b.go(ronda, 2500);
+  await b.until(`/Difícil/.test(document.getElementById('duelo-nivel')?.textContent || '')`, 6000);
+  ok(await ev(`/🔒.*Difícil/.test(document.getElementById('duelo-nivel')?.textContent || '') && !document.getElementById('selector-variante')`), 'the round says its level, 🔴 Difícil, and offers no picker');
+  await b.shot('round-level-390');
 } catch (e) {
   console.log('✗', e.message); process.exitCode = 1;
 } finally {

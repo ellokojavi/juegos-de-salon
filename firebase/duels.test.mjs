@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { createDb } from '../tools/firebase/rules-sim.mjs';
 import { crearAlmacenLocal } from '../public/assets/js/jugador-local.js';
 import { crearJugador } from '../public/assets/js/jugador.js';
-import { estado, record, duelFacts, nemesis, rivalidades, archirrival, estadisticas, sugeridos, ganaRonda, roundGame, DURACION } from '../public/assets/js/duels.js';
+import { estado, record, duelFacts, nemesis, rivalidades, archirrival, estadisticas, sugeridos, ganaRonda, roundGame, roundLevel, linkRonda, DURACION } from '../public/assets/js/duels.js';
 
 const T0 = 1_800_000_000_000;
 const A = 'aaaa1111', B = 'bbbb2222', C = 'cccc3333', DID = 'duel000001';
@@ -38,6 +38,8 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   no(w('uc', { [`jugadorDuelos/${C}/${DID}`]: { '.sv': 'timestamp' } }), 'no stray entry in a list');
   no(w('ua', crear({ ...duelo(), gr: ['reinas', 'tango', 'zip', 'anio'] })), 'a custom duel names a game only for the rounds it has');
   no(w('ua', crear({ ...duelo(), gr: ['Reinas!', 'tango', 'zip'] })), "a round's game is a game id");
+  no(w('ua', crear({ ...duelo(), lv: { 3: 'hard' } })), 'a level only for the rounds there are');
+  no(w('ua', crear({ ...duelo(), lv: { 0: 'Hard!' } })), "a round's level is a variant id");
   ok(w('ua', crear()), 'the challenger creates the duel and both lists', db);
   no(w('ua', crear()), 'a duel is written once');
   no(w('ua', { [`duelosRecientes/${DID}`]: { '.sv': 'timestamp' } }), 'the recent list takes a duel only with its creation');
@@ -97,6 +99,12 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   const n7 = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo7', gr: ['zip', 'tango', 'zip', 'reinas', 'zip', 'tango', 'desenredo'] });
   assert.equal(Object.keys((await D.leer(n7.id)).sd).length, 7, 'a best of seven has seven rounds');
   assert.equal(await D.empezar(n7.id, 6), true, 'and its seventh is played');
+  // The level is locked by the challenger, round by round (the owner, 2026-11-25): both play the same
+  const lv = await D.retar({ b: beto.jid, bn: 'Beto', g: 'sudoku', f: 'pts', gr: ['sudoku', 'zip', 'croc'], lv: ['hard', null, 'normal'] });
+  const lv2 = await D.leer(lv.id);
+  assert.deepEqual([0, 1, 2].map(i => roundLevel(lv2, i)), ['hard', null, 'normal'], 'each round keeps its level, none where the game has none');
+  assert.match(linkRonda(lv2, 0, '/', 'sudoku/'), /&mode=hard$/, "a round's link carries its level");
+  assert.doesNotMatch(linkRonda(lv2, 1, '/', 'zip/'), /mode=/, 'a game without levels carries none');
   const p4 = await D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'pts4' });
   assert.equal(Object.keys((await D.leer(p4.id)).sd).length, 4, 'most points in four rounds has four');
   await assert.rejects(D.retar({ b: beto.jid, bn: 'Beto', g: 'zip', f: 'bo4' }), 'no best of an even number');
@@ -150,4 +158,13 @@ const crear = (d = duelo()) => ({ [`duelos/${DID}`]: d, [`jugadorDuelos/${A}/${D
   ff = duelFacts([gana(1), gana(2), pierde(3), gana(4)], A, at + 10);
   assert.equal(ff.rivalRun, 2, 'a loss to that rival breaks the run');
   assert.deepEqual(sugeridos(lista, A, { [C]: 'Caro', [B]: 'Beto' }).map(x => x.jid), [B, C], 'rivals first, then cup friends, once each');
+}
+
+// Every level a duel can lock has its explicit name in the three languages (the owner, 2026-11-25: «easy or hard» must be said)
+{
+  const { GAME_VARIANTS } = await import('../public/assets/js/games.js');
+  const { TEXTS } = await import('../public/assets/js/duels-texts.js');
+  for (const [lang, T] of Object.entries(TEXTS)) for (const [id, vs] of Object.entries(GAME_VARIANTS)) for (const v of vs) {
+    assert.ok(T.levels?.[v], `${lang}: the level ${id}:${v} has a name for duels (duels-texts.js levels)`);
+  }
 }

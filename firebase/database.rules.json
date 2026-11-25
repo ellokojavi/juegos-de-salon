@@ -1282,6 +1282,11 @@
             ".validate": "$i.matches(/^[0-8]$/) && newData.parent().parent().child('sd/' + $i).exists() && newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{1,24}$/)"
           }
         },
+        "lv": {
+          "$i": {
+            ".validate": "$i.matches(/^[0-8]$/) && newData.parent().parent().child('sd/' + $i).exists() && newData.isString() && newData.val().matches(/^[a-z]{2,12}$/)"
+          }
+        },
         "e": {
           "$jid": {
             "$i": {
