@@ -7675,6 +7675,19 @@
       "date": "2026-11-25T15:01:26.168Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45642652123,
+      "check": "end-to-end",
+      "pr": 1903,
+      "branch": "ranking-default-always",
+      "commit": "a9d75e270c00c9a50eda29035d023c1e335d7c1f",
+      "test": "profile/page.mjs",
+      "error": "✗ 320: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it",
+      "signature": "ed9ba5cce2",
+      "date": "2026-11-25T15:33:08.273Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
