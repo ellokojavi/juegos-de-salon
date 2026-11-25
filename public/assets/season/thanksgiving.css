@@ -4,7 +4,7 @@
   --fondo:
     radial-gradient(1200px 600px at 10% -10%, rgba(80, 110, 220, 0.28), transparent 60%),
     radial-gradient(900px 500px at 110% 10%, rgba(255, 170, 70, 0.14), transparent 60%),
-    radial-gradient(900px 650px at 50% 120%, rgba(255, 120, 40, 0.52), transparent 62%),
+    radial-gradient(1400px 1100px at 50% 150%, rgba(255, 120, 40, 0.42), transparent 70%),
     linear-gradient(170deg, #0b1230, #251436 55%, #3a1a14);
 }
 .season-thanksgiving .season-corner {
