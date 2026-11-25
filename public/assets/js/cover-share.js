@@ -7,7 +7,7 @@
  */
 import { el, ICONO_COMPARTIR } from './ui.js';
 import { getLang, COMMON } from './i18n.js';
-import { compartir, cabecera } from './compartir.js';
+import { compartir, cabecera, taglineLine } from './compartir.js';
 
 /** `🪢 El Ahorcado` → { emoji: '🪢', name: 'El Ahorcado' }; a chip without an emoji gets 🎲. */
 export function gameOfChip(text = '') {
@@ -16,8 +16,14 @@ export function gameOfChip(text = '') {
   return /\p{Extended_Pictographic}/u.test(first) && rest.length ? { emoji: first, name: rest.join(' ') } : { emoji: '🎲', name: t };
 }
 
-/** The message: the header with the game's name and the invitation line (the link goes after it). */
-export const coverShareText = ({ C, emoji, name }) => [cabecera({ emoji, titulo: name }), C.shareGameCta].join('\n\n');
+/** The message: the header with the game's name, what the game is about (`bajada`, lab flag share-tagline) and the invitation line (the link goes after it). */
+export const coverShareText = ({ C, emoji, name, bajada = '' }) => [cabecera({ emoji, titulo: name }), [bajada, C.shareGameCta].filter(Boolean).join('\n')].join('\n\n');
+
+/** The game whose page this is, by its path (`hangman/` for /hangman/), or null. */
+export async function gameOfPage(loc = globalThis.location) {
+  const { ALL_GAMES } = await import('./games.js');
+  return ALL_GAMES.find(g => g.path && loc.pathname.endsWith(`/${g.path}`)) || null;
+}
 
 /** The page's own link, without search or hash. */
 export const coverUrl = (loc = globalThis.location) => `${loc.origin}${loc.pathname}`;
@@ -33,7 +39,8 @@ export function mountCoverShare({ cover = null, doc = document, lang = getLang()
   btn.innerHTML = ICONO_COMPARTIR;
   btn.addEventListener('click', async () => {
     const { emoji, name } = gameOfChip(tools.querySelector('.chip')?.textContent || doc.title);
-    const r = await compartir({ titulo: name, texto: coverShareText({ C, emoji, name }), url: coverUrl(), que: 'cover' });
+    const g = await gameOfPage().catch(() => null);
+    const r = await compartir({ titulo: name, texto: coverShareText({ C, emoji, name, bajada: taglineLine(g?.tagline, lang) }), url: coverUrl(), que: 'cover' });
     // A title is never seen on a phone: the icon turns into a check while the message is copied
     if (r === 'copied') {
       btn.textContent = '✓'; btn.title = C.shareCopied; btn.setAttribute('aria-label', C.shareCopied);

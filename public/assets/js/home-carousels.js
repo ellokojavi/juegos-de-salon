@@ -16,7 +16,7 @@ import { TIPOS, SOLO_TABLES, FIRST_VARIANT_TABLES, SUELTOS, rangoJugadores, esNu
 import { el, ICONO_COMPARTIR } from './ui.js';
 import { gameIcon } from './game-icon.js';
 import { pickLang, homeUrl } from './i18n.js';
-import { compartir } from './compartir.js';
+import { compartir, taglineLine } from './compartir.js';
 import { coverShareText } from './cover-share.js';
 import { favoritos, alternarFavorito } from './favoritos.js';
 import { loadCss } from './load-css.js';
@@ -168,7 +168,7 @@ export async function drawCarousels({ lang, T, games, tap = () => {}, doc = docu
     share.innerHTML = ICONO_COMPARTIR;
     share.addEventListener('click', async () => {
       tap();
-      const r = await compartir({ titulo: name, texto: coverShareText({ C: T, emoji: g.emoji, name }), url: sheetUrl(g, lang), que: 'cover' });
+      const r = await compartir({ titulo: name, texto: coverShareText({ C: T, emoji: g.emoji, name, bajada: taglineLine(g.tagline, lang) }), url: sheetUrl(g, lang), que: 'cover' });
       // Without a share menu the message is copied: the icon turns into a check for a moment
       if (r === 'copied') {
         share.textContent = '✓'; share.title = T.shareCopied; share.setAttribute('aria-label', T.shareCopied);

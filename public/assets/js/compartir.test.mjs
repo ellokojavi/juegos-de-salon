@@ -146,4 +146,27 @@ await caso('compartir en una prueba no escribe en la base', async () => {
   assert.deepEqual(escritos.filter(e => /firebaseio|firebasedatabase/.test(e)), []);
 });
 
+// A game's share says what it is about (flag share-tagline): one line with its tagline, in the language
+await caso('taglineLine: the tagline in its language, only with the flag on', async () => {
+  const { taglineLine, textoResultadoSolo } = await import('./compartir.js');
+  const { gameById, ALL_GAMES } = await import('./games.js');
+  const tag = { es: 'Adivina tu palabra.', en: 'Crack your word.', pt: 'Descubra sua palavra.' };
+  assert.equal(taglineLine(tag, 'en', true), '🎮 Crack your word.');
+  assert.equal(taglineLine(tag, 'de', true), '🎮 Adivina tu palabra.');
+  assert.equal(taglineLine(tag, 'es', false), '');
+  assert.equal(taglineLine(null, 'es', true), '');
+  const C = { shareSoloContext: 'Jugando solo', shareSoloCta: '🤔 ¿Me ganas?' };
+  assert.equal(textoResultadoSolo({ C, emoji: '🔢', juego: 'Toque y Fama', bajada: '🎮 X.' }), '🔢 *Toque y Fama* · Jugando solo\n\n🎮 X.\n🤔 ¿Me ganas?');
+  assert.equal(textoResultadoSolo({ C, emoji: '🔢', juego: 'Toque y Fama' }), '🔢 *Toque y Fama* · Jugando solo\n\n🤔 ¿Me ganas?');
+  // Every game that can be shared has a tagline in the three languages, short enough for one or two lines
+  for (const g of ALL_GAMES.filter(x => x.available && !x.bodega)) {
+    for (const l of ['es', 'en', 'pt']) {
+      const t = g.tagline?.[l];
+      assert.ok(t, `${g.id} has no ${l} tagline`);
+      assert.ok(t.length <= 120, `${g.id} ${l} tagline is too long for a share line: ${t.length}`);
+    }
+  }
+  assert.ok(gameById('ahorcado')?.tagline?.es);
+});
+
 console.log(`compartir: ${n} casos en verde`);
