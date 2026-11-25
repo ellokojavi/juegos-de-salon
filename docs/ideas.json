@@ -40,6 +40,11 @@
       "date": "2026-11-18",
       "what": "On a fix for a published game with a clear loss (Broken Routes' 30% finish), the owner checked «Yes, and publish», not Labs: for existing-game fixes backed by a big number, offer publishing as the recommendation",
       "from": "https://github.com/ellokojavi/juegos-de-salon/issues/1381"
+    },
+    {
+      "date": "2026-11-25",
+      "what": "Telling the cup admin who dropped out was declined too (no comment), after the self-service comeback (#556): La Copa's dropout (D-347) is settled twice; leave it unless players ask",
+      "from": "https://github.com/ellokojavi/juegos-de-salon/issues/1597"
     }
   ],
   "ideas": [
@@ -111,7 +116,7 @@
       "proof": "In the lab, a finish rate of 50% or more with 20+ starts within 3 weeks; after graduating, 40+ plays in its first 4 weeks (Zip's level).",
       "recommendation": "Yes, after the two above: it fits the house exactly, but it is the most expensive.",
       "inspiration": "Pips, NYT Games (launched 2025): https://www.nytimes.com/games/pips",
-      "status": "prototyped",
+      "status": "graduated",
       "date": "2026-10-19",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
       "history": [
@@ -132,9 +137,15 @@
           "status": "prototyped",
           "why": "Landed in the lab as D-381 (PR #560, refined in #568, #569, #571, #574); no lab plays in the check range yet, its proof (50%+ finish with 20+ starts) is read next round",
           "link": "https://github.com/ellokojavi/juegos-de-salon/pull/560"
+        },
+        {
+          "date": "2026-11-25",
+          "status": "graduated",
+          "why": "Launched to everyone as 🎲 Dominorama on 2026-11-19 (flags/dominorama all); proof not read yet: 23 started, 8 finished (35%), median 20/100 in 2026-10-25 to 2026-11-21, mostly lab and the first launch days; read again with four weeks after the launch",
+          "link": null
         }
       ],
-      "why": "Landed in the lab as D-381 (PR #560, refined in #568, #569, #571, #574); no lab plays in the check range yet, its proof (50%+ finish with 20+ starts) is read next round",
+      "why": "Launched to everyone as 🎲 Dominorama on 2026-11-19 (flags/dominorama all); proof not read yet: 23 started, 8 finished (35%), median 20/100 in 2026-10-25 to 2026-11-21, mostly lab and the first launch days; read again with four weeks after the launch",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/560"
     },
     {
@@ -218,7 +229,7 @@
       "prototype": "Behind its flag in /labs/ (D-395), Spanish only: lab browsers see the 💡 button on /routes/ (not in La Copa until it is published).",
       "proof": "Broken Routes one-player finish rate from 31% to 45% or more with 100+ starts, read two rounds after it lands, with the La Copa average not falling.",
       "recommendation": "Yes, in Labs: it targets the biggest loss among popular games, and a hint that costs points is how the house already helps (D-292, D-310).",
-      "status": "prototyped",
+      "status": "graduated",
       "date": "2026-11-11",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1381",
       "history": [
@@ -239,9 +250,15 @@
           "status": "prototyped",
           "why": "Built in #1417 (merged 2026-11-12) behind flag routes-hint, on its /labs/ card; the owner publishes it with the card's switch (D-498). Proof read once it is on for everyone: Broken Routes one-player finish 30% (191 started, 57 finished, 2026-10-18 to 2026-11-14) to 45%+",
           "link": "https://github.com/ellokojavi/juegos-de-salon/pull/1417"
+        },
+        {
+          "date": "2026-11-25",
+          "status": "graduated",
+          "why": "flags/routes-hint is all (Firebase, checked 2026-11-25), so the hint is on for everyone; Broken Routes one-player finish 32% (199 started, 63 finished, 2026-10-25 to 2026-11-21) against 30% before and a 45%+ target, but the range is only partly after the flip: read again next round with a full range",
+          "link": null
         }
       ],
-      "why": "Built in #1417 (merged 2026-11-12) behind flag routes-hint, on its /labs/ card; the owner publishes it with the card's switch (D-498). Proof read once it is on for everyone: Broken Routes one-player finish 30% (191 started, 57 finished, 2026-10-18 to 2026-11-14) to 45%+",
+      "why": "flags/routes-hint is all (Firebase, checked 2026-11-25), so the hint is on for everyone; Broken Routes one-player finish 32% (199 started, 63 finished, 2026-10-25 to 2026-11-21) against 30% before and a 45%+ target, but the range is only partly after the flip: read again next round with a full range",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1417"
     },
     {
@@ -254,7 +271,7 @@
       "proof": "Uno al día games from 124 to 160+ per four weeks (+30%) once it is on for everyone, with next-day return staying at 85% or more, read two rounds after it is published.",
       "recommendation": "Yes, in Labs: it routes players we already have into the habit that keeps them best, at the cost of one shared card.",
       "question": "Try «Uno al día al terminar un juego suelto» in the lab?",
-      "status": "proposed",
+      "status": "prototyped",
       "date": "2026-11-18",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1597",
       "history": [
@@ -263,8 +280,22 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1597"
+        },
+        {
+          "date": "2026-11-25",
+          "status": "approved",
+          "why": "Owner checked «Yes, in Labs» on #1597",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1597"
+        },
+        {
+          "date": "2026-11-25",
+          "status": "prototyped",
+          "why": "Built in #1644 (merged 2026-11-19) behind flag solo-result-today-card, on its /labs/ card «📅 Al terminar un juego, el Uno al día de hoy»; proof read once it is on for everyone: Uno al día 131 games in 2026-10-25 to 2026-11-21 → 170+ per four weeks, next-day return 85%+",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/pull/1644"
         }
-      ]
+      ],
+      "why": "Built in #1644 (merged 2026-11-19) behind flag solo-result-today-card, on its /labs/ card «📅 Al terminar un juego, el Uno al día de hoy»; proof read once it is on for everyone: Uno al día 131 games in 2026-10-25 to 2026-11-21 → 170+ per four weeks, next-day return 85%+",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1644"
     },
     {
       "id": "cup-out-tell-admin",
@@ -276,7 +307,7 @@
       "proof": "At least 1 in 4 players left out brought back by their admin (from 0 of 7), and day 7 participation from 76% to 80% or more, read two rounds after it is published.",
       "recommendation": "Yes, in Labs: it keeps the rule the owner chose (only the admin brings back) and fixes that the admin never hears about it.",
       "question": "Try «La Copa: avisar al administrador quién quedó fuera» in the lab?",
-      "status": "proposed",
+      "status": "discarded",
       "date": "2026-11-18",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1597",
       "history": [
@@ -285,6 +316,58 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1597"
+        },
+        {
+          "date": "2026-11-25",
+          "status": "discarded",
+          "why": "Owner checked No on #1597, no comment",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1597"
+        }
+      ],
+      "why": "Owner checked No on #1597, no comment"
+    },
+    {
+      "id": "bridges-paid-hint",
+      "title": "Tren en Vilo: a 💡 hint that costs points",
+      "lane": "existing",
+      "evidence": "check, 2026-10-25 to 2026-11-21: 🚅 Train on the Edge playing alone 108 → 60 finished (56%), 48 abandoned, median 36/100 in 4:36, the longest median time of any one-player game and, among those with 100+ starts, the lowest finish after Broken Routes (32%); in La Copa it averages 48/100, the lowest of the puzzle games (only Flap 31 and Shinobi 32, both skill games, are lower). Today a player stuck on a stage can only keep trying or give up, and sees how it could be crossed only on the result. The same fix for Rutas rotas (a hint that costs 3 points, #1381) is now on for everyone; its proof is read next round, before this one would leave the lab.",
+      "cost": "One PR in public/cup/games/bridges/: a 💡 Pista button beside Undo that lays one beam of the known bridge for the current stage (the catalog already stores it, solutions in catalog.json), ghosted until the player keeps it, −3 points per hint and a breakdown line («💡 2 pistas: −6.»), like Rutas rotas. Only on the game's own page: not in La Copa or Uno al día, where everyone plays the same. Three languages (texts.js), an engine test for the beam it picks, the bridges e2e script measured at 390 and 320 px with look.mjs. No Firebase change.",
+      "prototype": "Behind its flag bridges-hint in /labs/ (D-395), with its card in Mejoras en prueba: lab browsers see the button when they play Tren en Vilo on its own page.",
+      "proof": "Train on the Edge one-player finish from 56% (108 started, 60 finished) to 66% or more, with abandons under 40 per four weeks, read two rounds after it is on for everyone.",
+      "recommendation": "Yes, in Labs: among the games with 100+ starts it has the lowest finish after Rutas rotas, and the Rutas rotas hint's number, read next round, says whether to publish it.",
+      "question": "Try «Tren en Vilo: a 💡 hint that costs points» in the lab?",
+      "status": "proposed",
+      "date": "2026-11-25",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1900",
+      "history": [
+        {
+          "date": "2026-11-25",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1900"
+        }
+      ]
+    },
+    {
+      "id": "sumbreak-merge-numbers",
+      "title": "A daily puzzle that merges twin numbers, inspired by LinkedIn's Sumbreak",
+      "lane": "new-game",
+      "evidence": "check, 2026-10-25 to 2026-11-21: the three games the house took from LinkedIn's daily wave are among its strongest: ☀️ Tango 239 finished (4th on the home page), 👑 Queens 169 (5th), 〰️ Zip 63, with one-player finish rates of 69%, 75% and 85%, and in La Copa Zip averages 89/100, Tango 69, Queens 60. Sumbreak is the wave's newest: drag a number onto an equal neighbor and they merge into their sum (8 + 8 = 16), until one number is left. No words, so the three languages cost only the cover and the rules; 1 to 3 minutes; one fixed board a day. LinkedIn's other new games are covered or costly: Patches is Shikaku, which the house has as 📐 Loteo, and Wend is a word game. In the lab, 💥 Números explosivos (Number Match) is a different family: it clears pairs that add to 10 on a long board that refills. No player asked for it (check: no game-idea reports).",
+      "cost": "The whole of docs/ADD-GAME.md: an engine and a generator that build each board backwards from one number (so every board has a solution) and keep only boards a solver can reason through, with tests; solo mode with the daily seed and ?seed=; a 0-to-100 score by time like Queens, with ↩ Undo free and a 💡 hint that costs points (the owner's rule, D-292); the panel signal, the result screen, end-to-end scripts, its document, three languages, README and social card; then La Copa's pool (not the Gran Final, D-332) and Uno al día. Three to four PRs; its name is the owner's pick, as with Pintaminas and Loteo.",
+      "prototype": "A Spanish-only solo lab game in 🎲 Juegos en prueba (D-304), one board a day, its cover crediting «Inspirado en Sumbreak, de LinkedIn.» with the link (D-288: never on the result screen).",
+      "proof": "In the lab, 60% or more of its starts finished with 20+ starts within three weeks; once launched, 60+ finished in its first four weeks (Zip's 63) with a one-player finish rate of 75% or more (Queens').",
+      "recommendation": "Yes, in Labs: the LinkedIn wave already gave the house two of its top five games, and this one needs no words.",
+      "inspiration": "Sumbreak, LinkedIn Games (its ninth game and first numbers game, launched 2026-11-18; puzzles by its puzzlemaster Thomas Snyder): https://www.linkedin.com/games/sumbreak",
+      "question": "Try «a daily puzzle that merges twin numbers (inspired by Sumbreak)» in the lab?",
+      "status": "proposed",
+      "date": "2026-11-25",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1900",
+      "history": [
+        {
+          "date": "2026-11-25",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/1900"
         }
       ]
     }
@@ -320,6 +403,14 @@
       "ideas": [
         "solo-result-today-card",
         "cup-out-tell-admin"
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/1900",
+      "ideas": [
+        "bridges-paid-hint",
+        "sumbreak-merge-numbers"
       ]
     }
   ]
