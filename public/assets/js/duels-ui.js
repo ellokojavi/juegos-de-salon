@@ -141,19 +141,46 @@ export function panelRivalidades(lista, me, { alTocar = () => {} } = {}) {
     nem && nem.jid !== arch?.jid ? destacado(nem, `💀 ${T.nemesis}`, 'nemesis', fmt(T.nemesisNote, { p: nem.p })) : null,
   ].filter(Boolean);
   const etiqueta = x => (x.jid === arch?.jid && x.jid === nem?.jid ? `🔥 ${T.archTag} · 💀 ${T.nemesisTag}` : x.jid === arch?.jid ? `🔥 ${T.archTag}` : x.jid === nem?.jid ? `💀 ${T.nemesisTag}` : '');
+  // Each rival's record by game, the same bars as «📈 Your progress» (the owner, 2026-11-25); the
+  // rematch is a ⚔️ at the end of each game's bar: that rival, that game, the last format you played it in.
+  const fin = lista.map(d => ({ d, e: estado(d, me) })).filter(q => q.e.termino).sort((a, b) => a.d.at - b.d.at);
   return el('div', { class: 'stack' },
     tarjetas.length ? el('div', { class: 'dl-destacados' }, tarjetas) : null,
     el('section', { class: 'panel', id: 'dl-rivalidades' },
       el('p', { class: 'lead' }, T.rivalsTitle),
       todos.slice(0, 12).map(x => {
         const tono = x.g > x.p ? 'w' : x.g < x.p ? 'l' : 't';
-        return el('div', { class: 'dl-row', 'data-rival': x.jid },
-          el('div', { class: 'dl-row-txt' },
-            el('b', {}, x.n),
-            el('small', {}, [fmt(T.rivalLine, { t: x.total }), etiqueta(x)].filter(Boolean).join(' · ')),
-            el('div', { class: `dl-row-sc dl-h2h ${tono}` }, `${x.g}–${x.p}${x.e ? `–${x.e}` : ''}`)),
-          revancha(x));
+        const suyos = fin.filter(q => q.e.rival === x.jid);
+        const filas = barrasPorJuego(suyos, (k, z) => {
+          const jg = duelGame(k);
+          return el('button', { type: 'button', class: 'dl-pj-ir', 'data-rival': x.jid, 'aria-label': fmt(T.rematchWith, { n: x.n, g: jg ? nombreJuego(jg) : T.customTitle }),
+            onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: x.jid, n: x.n }, juego: jg ? k : null, formato: z.f, alTocar }); } }, '⚔️');
+        });
+        return el('div', { class: 'dl-rv', 'data-rival': x.jid },
+          el('div', { class: 'dl-head' },
+            el('div', { class: 'dl-row-txt' },
+              el('b', {}, x.n),
+              el('small', {}, [fmt(T.rivalLine, { t: x.total }), etiqueta(x)].filter(Boolean).join(' · '))),
+            el('b', { class: `dl-h2h ${tono}` }, `${x.g}–${x.p}${x.e ? `–${x.e}` : ''}`)),
+          el('div', { class: 'dl-pjs' }, filas));
       })));
+}
+
+/**
+ * The record by game as bars (won in lime, lost in pink), most played first; `fin` is the finished
+ * duels as { d, e }, oldest first. `extra(k, z)` adds an element at the end of each row.
+ */
+function barrasPorJuego(fin, extra = null) {
+  const por = {};
+  for (const { d, e } of fin) { const k = d.gr ? 'custom' : d.g; const z = (por[k] ||= { g: 0, p: 0, f: null }); if (e.gano === 1) z.g++; else if (e.gano === -1) z.p++; z.f = d.f; }
+  return Object.entries(por).sort((a, b) => b[1].g + b[1].p - (a[1].g + a[1].p)).map(([k, z]) => {
+    const jg = duelGame(k), tot = Math.max(1, z.g + z.p);
+    return el('div', { class: `dl-pj${extra ? ' con-ir' : ''}` },
+      el('span', { class: 'dl-pj-g' }, jg ? [el('span', { 'aria-hidden': 'true' }, gameIcon(jg)), ` ${nombreJuego(jg)}`] : T.customTitle),
+      el('div', { class: 'dl-pj-barra', title: fmt(T.gameLine, z) }, el('span', { class: 'w', style: `width:${(100 * z.g) / tot}%` }), el('span', { class: 'l', style: `width:${(100 * z.p) / tot}%` })),
+      el('small', {}, `${z.g}–${z.p}`),
+      extra ? extra(k, z) : null);
+  });
 }
 
 /** The invite link a challenger sends: the duel's own page, where the rival accepts (duels-page.js). */
@@ -592,15 +619,7 @@ export function panelProgress(lista, me) {
     ...puntos.map((q, i) => svg('circle', { cx: x(i), cy: y(q.pct), r: i === puntos.length - 1 ? 5 : 3.5, class: `dl-prog-punto ${resultado(q.e)}` },
       svg('title', {}, `${q.e.rivalN} ${q.e.puntos[0]}–${q.e.puntos[1]} · ${Math.round(q.pct)}%`))));
   const forma = fin.slice(-10).map(({ e }) => { const r = resultado(e); return el('span', { class: `dl-forma ${r}`, title: e.rivalN }, r === 'w' ? '✓' : r === 'l' ? '✗' : '='); });
-  const porJuego = {};
-  for (const { d, e } of fin) { const k = d.gr ? 'custom' : d.g; const z = (porJuego[k] ||= { g: 0, p: 0 }); if (e.gano === 1) z.g++; else if (e.gano === -1) z.p++; }
-  const filas = Object.entries(porJuego).sort((a, b) => b[1].g + b[1].p - (a[1].g + a[1].p)).map(([k, z]) => {
-    const jg = duelGame(k), tot = Math.max(1, z.g + z.p);
-    return el('div', { class: 'dl-pj' },
-      el('span', { class: 'dl-pj-g' }, jg ? [el('span', { 'aria-hidden': 'true' }, gameIcon(jg)), ` ${nombreJuego(jg)}`] : T.customTitle),
-      el('div', { class: 'dl-pj-barra', title: fmt(T.gameLine, z) }, el('span', { class: 'w', style: `width:${(100 * z.g) / tot}%` }), el('span', { class: 'l', style: `width:${(100 * z.p) / tot}%` })),
-      el('small', {}, `${z.g}–${z.p}`));
-  });
+  const filas = barrasPorJuego(fin);
   return el('section', { class: 'panel', id: 'dl-progreso' },
     el('div', { class: 'dl-head' }, el('p', { class: 'lead' }, T.progressTitle), el('b', { class: 'dl-prog-pct' }, `${ultimo}%`)),
     el('p', { class: 'dl-nota' }, T.progressNote),

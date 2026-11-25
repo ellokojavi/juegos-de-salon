@@ -67,15 +67,12 @@ export function flagStatusOf(state, at, lista = null, { inBodega = true } = {}) 
   const card = inBodega ? 'Su tarjeta ya está en La Bodega' : 'Su tarjeta pasa a La Bodega la próxima vez que abras esta página';
   if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, `${card}; más adelante, un PR de limpieza quita la puerta del código.`], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
   if (state === 'off') return { tone: 'bad', lines: [`⚪ Apagado para todos${since}, también en el laboratorio.`], to: [['lab', '🧪 Encender en el laboratorio']] };
-  return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.', ...readyLines(lista)], ready: !!lista?.ready, to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar para todos']] };
+  // the usage numbers are not shown (the owner, 2026-11-25): a flag lab-ready.mjs finds ready only turns its box green
+  return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.'], ready: !!lista?.ready, to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar para todos']] };
 }
 
-/** What lab-ready.mjs measured for a flag in lab (D-528): ✅ Listo para 🚀 with its evidence, or what is missing. */
-export function readyLines(l) {
-  if (!l) return [];
-  const nums = `${l.completions} usos completos de ${l.exposures} aperturas, ${l.keys} llave(s), ${l.days} día(s), ${l.errors} con error`;
-  return l.ready ? [`✅ Listo para 🚀: ${nums}.`] : [`📊 Uso en el laboratorio: ${nums}. Falta: ${(l.missing || []).join(', ')}.`];
-}
+/** The flag's id as a label (`cup-best-day-all` → Cup-Best-Day-All): its name in code, Firebase and the tester tab. */
+export const tagOf = f => f.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
 
 /** The confirmation for a flagged card: immediate, no note, no PR. */
 export function askFlag(card, f) {
@@ -172,6 +169,9 @@ export function render(r = requests, fl = flags, li = listas) {
           // 📦 only while the flag is not live: on *all* the card moves to La Bodega on its own (D-534)
           inBodega || stateOf(flags, f) === 'all' ? null : toBodega())));
       ($('.detalle', card) || card).append(box);
+      // the flag's label at the end of the title, no line of its own
+      const h2 = $('h2', card);
+      if (h2 && !$('.lab-etiqueta', h2)) h2.append(' ', el('span', { class: 'lab-etiqueta' }, tagOf(f)));
       continue;
     }
     const e = requests[card.id];
@@ -197,7 +197,7 @@ export function start() {
   let stop = null;
   const owner = $('#publicar-dueno');
   onAuthStateChanged(auth, user => {
-    stop?.(); stop = null; requests = {}; flags = {}; listas = {}; $$('.publicar').forEach(n => n.remove());
+    stop?.(); stop = null; requests = {}; flags = {}; listas = {}; $$('.publicar, .lab-etiqueta').forEach(n => n.remove());
     if (owner) owner.hidden = !!user;
     if (!user) return;
     // a read the rules refuse means this is not the owner: nothing is shown
