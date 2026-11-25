@@ -48,7 +48,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
-| Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
+| Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): every page dresses up for a date (D-457, D-622) | Before adding a date or touching `season.js` |
 | What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in three languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
 | Big files (videos, recordings) | [docs/REPO-WEIGHT.md](docs/REPO-WEIGHT.md): nothing over 5 MB enters git, `repo-weight.test.mjs` (D-494) | Before committing media |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
