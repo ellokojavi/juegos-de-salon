@@ -2169,6 +2169,10 @@
       "title": "Working in parallel sessions"
     },
     {
+      "path": "docs/SHARING.md",
+      "title": "Sharing: every share button, its template and its review"
+    },
+    {
       "path": "docs/TEST-SCOPE.md",
       "title": "Test scope: which tests a change runs, and how the system learns it (D-391, D-392)"
     },
