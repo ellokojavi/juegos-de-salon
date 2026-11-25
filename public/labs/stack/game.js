@@ -12,11 +12,12 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { onScreen } from '../../assets/js/on-screen.js';
 import { COMMON, SITIO } from '../../assets/js/i18n.js';
 import { footerInto } from '../../assets/js/site-footer.js';
-import { botonResultadoSolo } from '../../assets/js/compartir.js';
+import { botonResultadoSolo, taglineLine } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { newGame, drop, perfectTime, pause, score, top, card } from './engine.js';
 import { escena, soltar, momento } from './scene.js';
+import { gameById } from '../../assets/js/games.js';
 
 trackVisit();   // the site's traffic (D-208)
 
@@ -236,7 +237,7 @@ function resultado() {
     el('div', { class: 'score-big', id: 'puntaje' }, String(n)),
     record ? null : el('p', { class: 'muted', style: 'margin:0', id: 'mejor' }, fmt(T.mejor, { n: Math.max(antes, n) })),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
-    botonResultadoSolo({ C: COMMON.en, emoji: '🗼', juego: T.nombre, puntaje: `🗼 ${n}`, tiempo: '', tarjeta: card(S.kinds), url: `${SITIO}labs/stack/`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ bajada: taglineLine(gameById(GAME_ID)?.tagline, 'en'), C: COMMON.en, emoji: '🗼', juego: T.nombre, puntaje: `🗼 ${n}`, tiempo: '', tarjeta: card(S.kinds), url: `${SITIO}labs/stack/`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); jugar(); } }, T.otraVez),
     salidasFin('lab', { raiz: '../../' }),
     el('hr', { class: 'divisor' }),

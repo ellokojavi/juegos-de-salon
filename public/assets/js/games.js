@@ -767,7 +767,8 @@ export const LAB_NAMES = {
   clave: { emoji: '🔐', name: { es: 'La clave', en: 'The Code', pt: 'A senha' } },
   camaleon: { emoji: '🦎', name: { es: 'El Camaleón', en: 'Chameleon', pt: 'Camaleão' } },
   transfer: { emoji: '🚉', name: { es: 'Transbordo', en: 'Transfer', pt: 'Baldeação' } },
-  'numeros-explosivos': { emoji: '💥', name: { es: 'Números explosivos', en: 'Exploding Numbers', pt: 'Números explosivos' } },
+  'numeros-explosivos': { emoji: '💥', name: { es: 'Números explosivos', en: 'Exploding Numbers', pt: 'Números explosivos' },
+    tagline: { es: 'Junta pares iguales o que suman 10 hasta limpiar el tablero.', en: 'Match equal pairs or pairs that add up to 10 until the board is clear.', pt: 'Junte pares iguais ou que somam 10 até limpar o tabuleiro.' } },
 };
 
 export function gameLabel(id, lang = 'es') {

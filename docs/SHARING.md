@@ -49,6 +49,10 @@ what the game is about: `🎮 {tagline}`, the game's own tagline (`tagline` in i
 `compartir.js` (over `taglineOf()` in `share-templates.js`) (the owner, 2026-11-24). Never in Uno al día, whose share must not name the game
 (#215), nor in a custom duel (it mixes games). `compartir.test.mjs` checks every playable game has a
 tagline in the three languages, short enough for one or two lines (≤ 120 characters).
+Every game carries it, the lab's too (Memorice, Transbordo, Críptico, Sudoku, Blackjack, Dominorama,
+Babel, Números explosivos) and La Copa's result of the day; `share-templates.test.mjs` fails a room
+invite, solo result or result in a game's folder that does not pass it. La clave (`labs/code`) is
+parked and has no tagline.
 
 ## Inventory
 
