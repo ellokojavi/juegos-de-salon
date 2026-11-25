@@ -39,7 +39,7 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 2. Look at it any day with `?season=<id>` (the home page's lab bar has a box per template); the rare
    touches (the peek) show every time there. While the template is `public: false` the parameter still
    needs a lab key (localhost counts as one); `?season=off` turns today's template off.
-3. A card in `/labs/` already names `#seccion-temporadas`; update its text for the new date.
+3. A card in `/labs/` for the template (`#seccion-<id>`, in *Mejoras en prueba*, with a button to `../?season=<id>`; Halloween's launched one is `#seccion-temporadas`), with its dates and what it does.
 4. When the owner approves it, `public: true`. It turns itself on and off every year from then on.
 
 ## Moving or skipping one without a PR (D-477)
