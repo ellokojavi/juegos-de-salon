@@ -885,10 +885,12 @@ function vistaTabla(filas, { dias, meta, now }) {
     ? el('div', { class: 'charla-pista', role: 'note' }, el('span', {}, T.talkHint),
       el('button', { type: 'button', class: 'charla-pista-x', 'aria-label': T.talkHintClose, onClick: () => { SFX.tap(); cerrarPista(); tableroEnSuSitio(); } }, '✕'))
     : null;
-  const tablaNodo = el('div', { class: 'tabla' + (conCharla ? ' con-charla' : '') + (conCambio ? ' con-cambio' : '') }, pista, ...filas.flatMap(f => [el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') + (f.fuera ? ' fuera' : ''), 'data-pid': f.pid },
+  const tablaNodo = el('div', { class: 'tabla' + (conCharla ? ' con-charla' : '') + (conCambio ? ' con-cambio' + (dias.length > 8 ? '' : ' mov-lado') : '') }, pista, ...filas.flatMap(f => [el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') + (f.fuera ? ' fuera' : ''), 'data-pid': f.pid },
     // Out of the cup (D-347): a door instead of a place, and faded (D-376)
     el('span', { class: 'lugar', title: f.fuera ? fmt(T.outAdmin, { a: f.fuera.desde, b: f.fuera.hasta }) : null }, f.fuera ? '🚪' : String(f.lugar)),
-    conCambio ? null : el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
+    // The big-cup board: the places moved beside the place, as before, when the day blocks still fit on one line (ladoOSeguido picks this one or the one after the name)
+    conCambio ? (dias.length > 8 ? null : el('span', { class: 'flecha mov-izq ' + (f.cambioAyer > 0 ? 'sube' : f.cambioAyer < 0 ? 'baja' : '') }, f.cambioAyer ? `${f.cambioAyer > 0 ? '▲' : '▼'}${Math.abs(f.cambioAyer)}` : ''))
+      : el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
       el('b', {}, f.name,
         f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null,
@@ -905,7 +907,29 @@ function vistaTabla(filas, { dias, meta, now }) {
     ...(() => { const cs = charla ? comentariosEnFila(f.pid, now) : []; return cs.length ? [el('div', { class: 'fila-comentarios' }, cs)] : []; })()),
   conCharla ? cajonCharla(f.pid, now) : null].filter(Boolean)));
   fichasEnTabla(tablaNodo);
+  if (conCambio && dias.length <= 8) ladoOSeguido(tablaNodo);
   return recortarTabla(tablaNodo, filas.length);
+}
+
+/**
+ * The big-cup board: the places moved go in their own column beside the place while every row's day blocks
+ * still fit on one line; with too many days or a narrow screen, after the name (the owner, 2026-11-25).
+ * Measured again only when the table's width changes, so the switch itself never loops.
+ */
+function ladoOSeguido(tabla) {
+  let ancho = -1;
+  const medir = () => {
+    const w = tabla.clientWidth;
+    if (!w || w === ancho) return;
+    ancho = w;
+    tabla.classList.add('mov-lado');
+    const parte = [...tabla.querySelectorAll('.fila .puntitos')].some(p => {
+      const hijos = [...p.children];
+      return hijos.length > 1 && hijos.at(-1).offsetTop > hijos[0].offsetTop;
+    });
+    if (parte) tabla.classList.remove('mov-lado');
+  };
+  if (typeof ResizeObserver === 'function') new ResizeObserver(medir).observe(tabla);
 }
 
 /**
