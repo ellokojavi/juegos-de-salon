@@ -11,7 +11,7 @@ import { jugador, leerYo } from '../assets/js/jugador.js';
 import { bloqueJugador } from '../assets/js/ranking.js';
 import { estado, record, esDid, rondas } from '../assets/js/duels.js';
 import { demoOn } from '../assets/js/duels-demo.js';
-import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, duelView, lookOf, lookPicker, listaCartas, listaLinea, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
+import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, duelView, lookOf, lookPicker, listCards, listTimeline, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
 
 export { T };
 const tap = () => SFX.tap();
@@ -102,8 +102,8 @@ export async function drawDuels(root, { sub }) {
     const hechos = orden.filter(d => es(d).termino);
     // Three looks to compare (the owner, 2026-11-25): A rows, B cards and tiles, C tickets and a line by date
     const look = lookOf();
-    const [actuales, historia] = look === 'b' ? listaCartas(abiertos, hechos, yo.jid, { alTocar: tap })
-      : look === 'c' ? listaLinea(abiertos, hechos, yo.jid, { alTocar: tap })
+    const [actuales, historia] = look === 'b' ? listCards(abiertos, hechos, yo.jid, { alTocar: tap })
+      : look === 'c' ? listTimeline(abiertos, hechos, yo.jid, { alTocar: tap })
         : [abiertos.length ? el('section', { class: 'panel', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle), abiertos.map(d => fila(d, yo.jid, { alTocar: tap }))) : null,
           hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), hechos.map(d => fila(d, yo.jid, { alTocar: tap, lista }))) : null];
     root.replaceChildren(...[demoOn() ? lookPicker(() => draw()) : null, nuevo,

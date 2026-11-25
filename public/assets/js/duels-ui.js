@@ -534,7 +534,7 @@ function rondasCartas(d, e, alTocar) {
 }
 
 /** Look B, the list: the open duels as cards to swipe, the finished ones as a grid of tiles. */
-export function listaCartas(abiertos, hechos, me, { alTocar = () => {} } = {}) {
+export function listCards(abiertos, hechos, me, { alTocar = () => {} } = {}) {
   const tile = d => {
     const e = estado(d, me), r = resultado(e), g = duelGame(d.g);
     return el('a', { class: `dl-tile ${r}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
@@ -553,7 +553,7 @@ export function listaCartas(abiertos, hechos, me, { alTocar = () => {} } = {}) {
 }
 
 /** Look C, the list: the open duels as tickets, the finished ones on a line by date, won or lost on its dot. */
-export function listaLinea(abiertos, hechos, me, { alTocar = () => {} } = {}) {
+export function listTimeline(abiertos, hechos, me, { alTocar = () => {} } = {}) {
   const ticket = d => {
     const e = estado(d, me), turno = e.turno >= 0;
     const yoN = d.a === me ? d.an : d.bn;
