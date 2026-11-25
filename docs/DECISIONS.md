@@ -502,7 +502,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
-| [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | current |
+| [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | amended by D-622 |
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | amended by D-502 |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
