@@ -147,7 +147,8 @@ The usability agent runs the lint first, never re-reports what it covers, and sp
 
 - 👁 **U-30 · Formato de los mensajes:** cabecera `{emoji} *{título}* · {contexto}` (en la copa,
   "La Copa: {nombre}"), una idea por línea con su emoji al inicio, y el link solo en la última
-  línea ("🔗 …"). Vale para todo lo que se comparte, también las salas (D-165).
+  línea ("🔗 …"). Vale para todo lo que se comparte, también las salas (D-165). 🤖 Each text is built by its
+  template in `share-templates.js`, checked by `share-templates.test.mjs` (D-620, docs/SHARING.md).
 - 👁 **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
   abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).

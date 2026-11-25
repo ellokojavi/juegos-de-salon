@@ -13,7 +13,8 @@ import { crearArrastre } from '../assets/js/arrastre.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { showWaiting } from '../assets/js/waiting.js';
 import { applyStatic, COMMON, SITIO, LANGS, getLang, coverLangToggle, withLang } from '../assets/js/i18n.js';
-import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, taglineLine, MARCO } from '../assets/js/compartir.js';
+import { compartir as compartirAlChat, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, taglineLine, MARCO } from '../assets/js/compartir.js';
+import { message } from '../assets/js/share-templates.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
@@ -1458,8 +1459,8 @@ const G = () => {
 /** La cabecera de todo lo que la copa comparte, la misma en el texto y en la imagen (D-165). */
 const cabCopa = (emoji, contexto) => ({ emoji, titulo: fmt(G().T.shareHead, { copa: L().meta.name }), contexto });
 
-/** El mensaje entero: la cabecera y, separado por una línea, lo que dice. */
-const mensajeCopa = (cab, ...partes) => [cabecera(cab), ...partes].filter(Boolean).join('\n\n');
+/** The whole message, by its template (share-templates.js): the header and its paragraphs. `cab.kind` says which (an invite unless told). */
+const mensajeCopa = (cab, ...partes) => message({ kind: cab.kind || 'invite', head: { emoji: cab.emoji, title: cab.titulo, context: cab.contexto }, paragraphs: partes });
 
 /** Un botón que arma algo antes de compartir (una imagen tarda): se apaga mientras tanto. */
 async function conBoton(ev, fn) {
@@ -1578,7 +1579,7 @@ function mensajeTabla() {
   const filas = tabla(Lc, S.yo, now);
   const falta = faltan(Lc, d, now);
   // La cabecera lleva el último día que muestra la tabla; el aviso de abajo, el día que corre (#67)
-  return mensajeCopa(cabTabla(Lc, filas, now), falta.length ? fmt(falta.length === 1 ? G().T.shareTableMissingOne : G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
+  return mensajeCopa({ ...cabTabla(Lc, filas, now), kind: 'table' }, falta.length ? fmt(falta.length === 1 ? G().T.shareTableMissingOne : G().T.shareTableMissing, { d, names: falta.map(j => j.name).join(', ') }) : '');
 }
 
 /** "Tomario (-1J)": el nombre con cuántos juegos menos lleva (D-126). */
@@ -1612,7 +1613,7 @@ function mensajeFinal() {
     m.remontada && `${G().T.medalComeback}: ${m.remontada.filas.map(f => f.name).join(', ')}`,
     m.farolito && `${G().T.medalLast}: ${m.farolito.map(f => f.name).join(', ')}`,
   ].filter(Boolean).join('\n');
-  return mensajeCopa(cabCopa('🏁', G().T.ctxFinal), extras);
+  return mensajeCopa({ ...cabCopa('🏁', G().T.ctxFinal), kind: 'table' }, extras);
 }
 
 /* ------------------------------------------------------------------ */

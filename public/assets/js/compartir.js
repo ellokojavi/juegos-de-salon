@@ -4,7 +4,7 @@
  *
  * - **El texto** abre con una cabecera — `{emoji} *{título}* · {contexto}` —, sigue con una idea
  *   por línea, cada una con su emoji, y cierra con el link solo en su línea ("🔗 …", D-124).
- *   `cabecera()` la arma; `compartir()` le pega el link.
+ *   The text of every share is built by its template in `share-templates.js` (docs/SHARING.md); `compartir()` le pega el link.
  * - **La imagen**, cuando hay (un resultado, una tabla), lleva arriba la misma cabecera del texto
  *   —el título y, debajo, el contexto—, y abajo el mismo link: quien la ve suelta en el grupo
  *   sabe de qué copa o de qué juego es y adónde ir. `lamina()` dibuja ese marco; lo de adentro es
@@ -21,6 +21,7 @@
  */
 import { tiene } from './parametros.js';
 import { flag, flagGuess } from './flags.js';
+import { appInvite, soloResult, taglineOf, header } from './share-templates.js';
 
 /**
  * A game's share says what the game is about (the owner, 2026-11-24): one line under the header with
@@ -30,11 +31,7 @@ import { flag, flagGuess } from './flags.js';
  */
 // Asked once on a page, so the tester tab lists its switch; the messages read the saved answer
 if (typeof document !== 'undefined') flag('share-tagline').catch(() => {});
-export function taglineLine(tagline, lang = 'es', on = flagGuess('share-tagline')) {
-  if (!on || !tagline) return '';
-  const t = typeof tagline === 'string' ? tagline : (tagline[lang] || tagline.es || '');
-  return t ? `🎮 ${t}` : '';
-}
+export const taglineLine = (tagline, lang = 'es', on = flagGuess('share-tagline')) => (on ? taglineOf(tagline, lang) : '');
 
 /**
  * Emojis que se dibujan casi negros (〰️, el de Zip): sobre el fondo morado no se ven, así que en
@@ -62,7 +59,7 @@ function conHalo(c, texto, dibujar) {
 export const canShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
 /** La primera línea de todo mensaje: `🏆 *La Copa: Valdenenas* · Día 3 de 7`. */
-export const cabecera = ({ emoji, titulo, contexto }) => `${emoji} *${titulo}*${contexto ? ` · ${contexto}` : ''}`;
+export const cabecera = ({ emoji, titulo, contexto }) => header({ emoji, title: titulo, context: contexto }); // the old name of header() (share-templates.js)
 
 /**
  * Un link del sitio que sale compartido lleva `from=link` (D-208; `de=link` antes de D-266). WhatsApp y casi todas las apps
@@ -167,10 +164,7 @@ export function compartirApp({ C, lang, juegos }) {
     .then(r => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
     .then(b => new File([b], nombreArchivo(C.appTitle).replace(/\.png$/, '.jpg'), { type: 'image/jpeg' }))
     .catch(() => { pedido = null; return null; }));
-  const texto = [
-    cabecera({ emoji: '🎲', titulo: C.appTitle, contexto: C.shareApp.context.replace('{n}', juegos) }),
-    C.shareApp.lines.join('\n'),
-  ].join('\n\n');
+  const texto = appInvite({ C, games: juegos });
   return { titulo: C.appTitle, texto, imagen, src };
 }
 
@@ -188,14 +182,14 @@ function descargar(archivo) {
  * donde no, copia y el botón dice "¡Copiado!" dos segundos. `texto` es una función porque el
  * nombre de quien invita puede llegar después de dibujar la sala.
  */
-export function botonInvitar({ T, titulo, texto, url, alTocar, bajada = '' }) {
+export function botonInvitar({ T, titulo, texto, url, alTocar }) {
   const rotulo = () => (canShare() ? T.shareLink : T.copyLink);
   const btn = document.createElement('button');
   btn.className = 'btn btn--cyan btn--sm'; btn.style.cssText = 'width:100%;max-width:320px';
   btn.textContent = rotulo();
   btn.addEventListener('click', async () => {
     alTocar?.();
-    const r = await compartir({ titulo, texto: [texto(), bajada].filter(Boolean).join('\n'), url, que: 'invita' });
+    const r = await compartir({ titulo, texto: texto(), url, que: 'invita' });
     if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = rotulo(); }, 2000); }
   });
   return btn;
@@ -228,7 +222,7 @@ export function botonCompartir({ rotulo, clase = 'btn btn--cyan', id, armar, alT
 export const puntajeYTiempo = (puntaje, tiempo, tarjeta = '') => [puntaje, tiempo && !String(tarjeta).includes('⏱') ? `⏱ ${tiempo}` : ''].filter(Boolean).join(' · ');
 
 /** El texto del resultado jugando solo: la cabecera y el reto. El resto lo dice la imagen (D-171). */
-export const textoResultadoSolo = ({ C, emoji, juego, bajada = '' }) => [cabecera({ emoji, titulo: juego, contexto: C.shareSoloContext }), [bajada, C.shareSoloCta].filter(Boolean).join('\n')].join('\n\n');
+export const textoResultadoSolo = ({ C, emoji, juego, bajada = '' }) => soloResult({ C, emoji, game: juego, tagline: bajada });
 
 /**
  * El resultado de jugar solo un juego (D-165), suelto o dentro de un juego: la imagen con la

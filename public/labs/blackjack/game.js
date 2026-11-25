@@ -23,7 +23,9 @@ import { bloqueJugador, conBandera, avisoPartida, bloqueTabla, finDePartida } fr
 import { ponerBuzon } from '../../assets/js/buzon.js';
 import { leerYo, rankingsVisibles } from '../../assets/js/jugador.js';
 import { salidasFin } from '../../assets/js/fin.js';
-import { botonCompartir, botonInvitar, cabecera } from '../../assets/js/compartir.js';
+import { botonCompartir, botonInvitar } from '../../assets/js/compartir.js';
+import { result } from '../../assets/js/share-templates.js';
+import { roomInvite } from '../../assets/js/share-templates.js';
 import {
   GAME_ID, MIN_PLAYERS, MAX_PLAYERS, ROLES, DEFAULT_CONFIG,
   DECK_OPTIONS, ROUND_OPTIONS, COIN_OPTIONS, LOCALES,
@@ -434,7 +436,7 @@ function renderLobby() {
   const M = online.match;
   const url = withLang(`${location.origin}${location.pathname}?room=${online.code}`);
   const joined = ROLES.filter(r => M.names[r]);
-  const inviteText = () => fmt(C.invite, { emoji: manifest.emoji, name: M.names[online.role] || '', game: T.title, code: online.code });
+  const inviteText = () => roomInvite({ C, emoji: manifest.emoji, game: T.title, code: online.code, name: M.names[online.role] });
 
   $('#lobby-box').replaceChildren(
     el('div', { class: 'muted', style: 'font-weight:800' }, T.lobbyCode),
@@ -1309,7 +1311,7 @@ function renderResult() {
       armar: async () => ({
         titulo: T.title,
         url: location.origin + location.pathname,
-        texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: shareCtx }), shareBody].join('\n\n'),
+        texto: result({ head: { emoji: manifest.emoji, title: T.title, context: shareCtx }, paragraphs: [shareBody] }),
       }),
     }),
     // Change mode (C-19): back to the cover's modes

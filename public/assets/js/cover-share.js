@@ -7,7 +7,8 @@
  */
 import { el, ICONO_COMPARTIR } from './ui.js';
 import { getLang, COMMON } from './i18n.js';
-import { compartir, cabecera, taglineLine } from './compartir.js';
+import { compartir, taglineLine } from './compartir.js';
+import { gameLink } from './share-templates.js';
 
 /** `🪢 El Ahorcado` → { emoji: '🪢', name: 'El Ahorcado' }; a chip without an emoji gets 🎲. */
 export function gameOfChip(text = '') {
@@ -17,7 +18,7 @@ export function gameOfChip(text = '') {
 }
 
 /** The message: the header with the game's name, what the game is about (`bajada`, lab flag share-tagline) and the invitation line (the link goes after it). */
-export const coverShareText = ({ C, emoji, name, bajada = '' }) => [cabecera({ emoji, titulo: name }), [bajada, C.shareGameCta].filter(Boolean).join('\n')].join('\n\n');
+export const coverShareText = ({ C, emoji, name, bajada = '' }) => gameLink({ C, emoji, name, tagline: bajada });
 
 /** The game whose page this is, by its path (`hangman/` for /hangman/), or null. */
 export async function gameOfPage(loc = globalThis.location) {
