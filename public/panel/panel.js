@@ -1245,6 +1245,7 @@ function vistaAudiencia(now) {
 /* ------------------------------------------------------------------ */
 /* Screens: which viewport sizes play (screen-bands.js)                */
 /* ------------------------------------------------------------------ */
+const svgEl = (tag, attrs = {}) => { const x = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [k, v] of Object.entries(attrs)) x.setAttribute(k, v); return x; };
 const C_ANCHO = { w320: 'var(--red)', w360: 'var(--pink-deep)', w375: 'var(--pink)', w400: 'var(--orange)', w430: 'var(--yellow)', w600: 'var(--lime)', w900: 'var(--cyan)', w1200: 'var(--purple)' };
 /** Below this share over the range, a band is not worth a design of its own. */
 const RARO = 0.01;
@@ -1276,6 +1277,8 @@ function vistaPantallas() {
       tile(pct(p.orient.h || 0), 'played sideways'),
       tile(`${raros.length} of ${WIDTH_BANDS.length}`, `width bands under ${RARO * 100}% each: not worth a design of their own (greyed below)`),
     ),
+    bloque('Width curve', 'Visits along real pixels (log scale), each block\'s area its share. Shaded: the middle 80%. ▲ the most common width. Dashed: our 320 px floor. Tap a block to find its row below.',
+      curvaAnchos(p.ancho, p.total)),
     bloque('Width', 'Share of visits per band, and from the narrowest up how many a design for that width and wider would leave out.',
       tablaBandas(p.ancho, p.total, new Set(prioridad.map(b => b.id)))),
     bloque({ dia: 'Width per day', semana: 'Width per week', mes: 'Width per month' }[rango.grano],
@@ -1290,6 +1293,54 @@ function vistaPantallas() {
   ];
 }
 
+/** The width bands as a density curve over real pixels, log scale: area = share of visits. */
+function curvaAnchos(ancho, total) {
+  const X0 = 300, X1 = 2000, W = 420, H = 190, T = 30, B = 30, PAD = 10;
+  const lx = v => PAD + (Math.log(v / X0) / Math.log(X1 / X0)) * (W - 2 * PAD);
+  const tramos = WIDTH_BANDS.map((b, i) => {
+    const lo = Math.max(X0, b.min), hi = WIDTH_BANDS[i + 1]?.min ?? X1;
+    const share = total ? (ancho[b.id] || 0) / total : 0;
+    return { b, lo, hi, share, dens: share / Math.log(hi / lo) };
+  });
+  const maxD = Math.max(1e-9, ...tramos.map(t => t.dens));
+  const ly = d => T + (H - T - B) * (1 - d / maxD);
+  // A width at a cumulative share, spread evenly (on the log axis) inside its band
+  const pctl = q => { let a = 0; for (const t of tramos) { if (t.share && a + t.share >= q) return t.lo * (t.hi / t.lo) ** ((q - a) / t.share); a += t.share; } return X1; };
+  const svg = svgEl('svg', { class: 'pant-curva', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Distribution of visits by screen width' });
+  const p10 = pctl(0.1), p90 = pctl(0.9);
+  svg.append(svgEl('rect', { class: 'pant-curva-80', x: lx(p10), y: T - 14, width: lx(p90) - lx(p10), height: H - B - T + 14 }));
+  const t80 = svgEl('text', { class: 'pant-curva-txt', x: lx(p90) - 4, y: T + 12, 'text-anchor': 'end' }); t80.textContent = `80%: ${Math.round(p10)}–${Math.round(p90)} px`; svg.append(t80);
+  for (const t of tramos) {
+    const r = svgEl('rect', { class: `pant-curva-b${t.share < RARO ? ' pant-raro' : ''}`, 'data-band': t.b.id, x: lx(t.lo) + 0.5, y: ly(t.dens), width: Math.max(0, lx(t.hi) - lx(t.lo) - 1), height: H - B - ly(t.dens), fill: C_ANCHO[t.b.id] });
+    const ti = svgEl('title', {}); ti.textContent = `${t.b.label}: ${(t.share * 100).toFixed(1)}%`; r.append(ti);
+    r.addEventListener('click', () => {
+      document.querySelectorAll('table.pant tr.pant-foco').forEach(x => x.classList.remove('pant-foco'));
+      const fila = document.querySelector(`table.pant tr[data-band="${t.b.id}"]`);
+      if (fila) { fila.classList.add('pant-foco'); fila.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    });
+    svg.append(r);
+  }
+  // A smooth line through the middle of each band's top
+  const pts = tramos.map(t => [lx(Math.sqrt(t.lo * t.hi)), ly(t.dens)]);
+  pts.unshift([lx(X0), H - B]); pts.push([lx(X1), pts.at(-1)[1]]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2; d += ` C${mx},${y0} ${mx},${y1} ${x1},${y1}`; }
+  svg.append(svgEl('path', { class: 'pant-curva-l', d }));
+  // The peak
+  const top = tramos.reduce((a, t) => (t.dens > a.dens ? t : a));
+  const tp = svgEl('text', { class: 'pant-curva-txt pant-curva-pico', x: Math.min(W - 60, Math.max(60, lx(Math.sqrt(top.lo * top.hi)))), y: ly(top.dens) - 4, 'text-anchor': 'middle' });
+  tp.textContent = `▲ ${top.b.label} · ${Math.round(top.share * 100)}%`; if (top.share) svg.append(tp);
+  // The 320 px floor
+  svg.append(svgEl('line', { class: 'pant-curva-min', x1: lx(320), x2: lx(320), y1: T, y2: H - B }));
+  // Axis
+  svg.append(svgEl('line', { class: 'pant-curva-eje', x1: PAD, x2: W - PAD, y1: H - B, y2: H - B }));
+  for (const v of [320, 390, 600, 900, 1200, 1920]) {
+    svg.append(svgEl('line', { class: 'pant-curva-eje', x1: lx(v), x2: lx(v), y1: H - B, y2: H - B + 4 }));
+    const tx = svgEl('text', { class: 'pant-curva-txt', x: lx(v), y: H - B + 16, 'text-anchor': 'middle' }); tx.textContent = v; svg.append(tx);
+  }
+  return el('div', { class: 'pant-curva-caja' }, svg);
+}
+
 /** Every width band with its examples; with counts, its share and the share left out below it. */
 function tablaBandas(ancho, total, primero = new Set()) {
   let debajo = 0;
@@ -1298,7 +1349,7 @@ function tablaBandas(ancho, total, primero = new Set()) {
     const fuera = total ? `${(debajo / total * 100).toLocaleString(LOCALE, { maximumFractionDigits: 1 })}%` : '';
     debajo += v;
     const share = total ? v / total : 0;
-    return el('tr', { class: total && share < RARO ? 'pant-raro' : null },
+    return el('tr', { 'data-band': b.id, class: total && share < RARO ? 'pant-raro' : null },
       el('th', { scope: 'row' }, el('span', { style: `color:${C_ANCHO[b.id]}` }, '■ '), b.label, primero.has(b.id) ? el('span', { title: 'Test this first: among the bands that hold 80% of visits' }, ' ★') : null),
       el('td', {}, b.eg),
       total ? el('td', { class: 'num' }, n(v)) : null,
