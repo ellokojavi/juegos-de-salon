@@ -2187,7 +2187,7 @@ function archivada(s, nombre, desarchivar) {
   const abrir = el('button', { type: 'button', class: 'campana-archivada-abrir', 'aria-expanded': abierta ? 'true' : 'false', 'aria-label': `${abierta ? 'Close' : 'Preview'} ${nombre}`, onClick: alternar },
     el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
     el('strong', { class: 'campana-titulo' }, nombre),
-    el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, abierta ? '⌄' : '›'));
+    el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, '›'));
   if (!abierta) return el('div', { class: 'campana-archivada', id: `campana-${s.id}` }, abrir, volver);
   return el('article', { class: 'campana campana--con-vista campana--archivada', id: `campana-${s.id}` },
     el('header', { class: 'campana-cabeza' }, abrir),
