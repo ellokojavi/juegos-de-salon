@@ -2221,13 +2221,32 @@ function vistaSplash(today) {
     resumen, tira, bloqueResultados(todas), tarjetas,
     archivadas.length ? el('section', { class: 'campanas-archivadas', 'aria-label': 'Archived campaigns' },
       el('h3', {}, `🗄️ Archived (${archivadas.length})`),
-      el('p', { class: 'muted small' }, 'Off for good and out of the queue. Bring one back to switch it on again; it returns off, at the end of the list.'),
-      archivadas.map(s => el('div', { class: 'campana-archivada', id: `campana-${s.id}` },
-        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, CAMPAIGNS[s.id].emoji || '📣'),
-        el('strong', { class: 'campana-titulo' }, nombreDe(s.id)),
-        el('button', { type: 'button', class: 'campana-preview campana-desarchivar', 'aria-label': `Unarchive ${nombreDe(s.id)}`,
-          onClick: () => guardarCampanas(archive(todas, s.id, false)) }, '↩︎ Unarchive')))) : null,
+      el('p', { class: 'muted small' }, 'Off for good and out of the queue. Tap one to preview it; bring it back to switch it on again, and it returns off, at the end of the list.')) : null,
+    // Each archived campaign is a row that opens into its preview (the owner's request). The rows sit at the
+    // top level of the view, like the queue's cards, so an open preview survives the redraws (pintarVista)
+    ...archivadas.map(s => archivada(s, nombreDe(s.id), () => { S.campOpen.delete(s.id); guardarCampanas(archive(todas, s.id, false)); })),
   ];
+}
+
+/* An archived campaign: folded to its emoji, title and ↩︎ Unarchive; a tap on the title opens it into
+   the same still preview the queue's cards have (▶ plays it) and its Live Preview link */
+function archivada(s, nombre, desarchivar) {
+  const c = CAMPAIGNS[s.id];
+  const abierta = S.campOpen.has(s.id);
+  const alternar = () => { if (abierta) S.campOpen.delete(s.id); else S.campOpen.add(s.id); render(); };
+  const volver = el('button', { type: 'button', class: 'campana-preview campana-desarchivar', 'aria-label': `Unarchive ${nombre}`, onClick: desarchivar }, '↩︎ Unarchive');
+  const abrir = el('button', { type: 'button', class: 'campana-archivada-abrir', 'aria-expanded': abierta ? 'true' : 'false', 'aria-label': `${abierta ? 'Close' : 'Preview'} ${nombre}`, onClick: alternar },
+    el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
+    el('strong', { class: 'campana-titulo' }, nombre),
+    el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, '›'));
+  if (!abierta) return el('div', { class: 'campana-archivada', id: `campana-${s.id}` }, abrir, volver);
+  return el('article', { class: 'campana campana--con-vista campana--archivada', id: `campana-${s.id}` },
+    el('header', { class: 'campana-cabeza' }, abrir),
+    el('footer', { class: 'campana-pie' },
+      el('span', { class: 'campana-vistas' },
+        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
+      volver),
+    vistazo(s.id, nombre, S.campPeek.has(s.id)));
 }
 
 /* A look at a splash without leaving the panel, in a column at the card's right (the owner's request):
@@ -2583,8 +2602,6 @@ function renderNav(now) {
   const actual = seccionDe(S.ruta);
   // Un punto verde en Ahora cuando hay algo en juego: se ve desde cualquier sección
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
-  // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
-  const noArranca = salud(ptDays(), { from: pacificDay(now) - 1, to: pacificDay(now) }).total.arranque > 0;
   // The bottom bar's real height, so the page leaves that much room below its last line
   const nav = $('#nav');
   if (!nav.dataset.sized && typeof ResizeObserver === 'function') {
@@ -2595,8 +2612,7 @@ function renderNav(now) {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null, ...extra },
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
-      sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null,
-      sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday' }) : null);
+      sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null);
   };
   const labs = (extra = {}) => el('a', { href: '../labs/', ...extra },
     el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs'),
@@ -2614,9 +2630,7 @@ function renderNav(now) {
   nav.replaceChildren(
     ...SECCIONES.map(sec => tab(sec, NAV_TABS.includes(sec) ? {} : { class: 'nav-extra' })), labs({ class: 'nav-extra' }),
     el('button', { class: 'nav-mas-btn', type: 'button', 'aria-haspopup': 'dialog', 'aria-current': enMas ? 'page' : null, onClick: () => abrirMas(true) },
-      el('span', { class: 'ico', 'aria-hidden': 'true' }, icoMas), el('span', { class: 'nombre' }, enMas ? nombreMas : 'More'),
-      // Health's alert stays in sight when Health is under More
-      !NAV_TABS.includes('salud') && actual !== 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday: see Health' }) : null),
+      el('span', { class: 'ico', 'aria-hidden': 'true' }, icoMas), el('span', { class: 'nombre' }, enMas ? nombreMas : 'More')),
     sheet);
 }
 

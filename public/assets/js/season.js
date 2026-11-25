@@ -18,6 +18,7 @@
  * The panel's 🎨 Skins (D-477, controls.js) can move a template to other days or switch it off,
  * with no PR: `controls/skins/<id>`, read before deciding.
  * lab: #seccion-temporadas
+ * lab: #seccion-thanksgiving (the template on trial)
  */
 import { param, tiene } from './parametros.js';
 import { labAccess } from './lab-access.js';
@@ -76,12 +77,13 @@ const deco = (cls, text = '') => {
   d.setAttribute('aria-hidden', 'true');
   return d;
 };
-const once = el => el.addEventListener('animationend', e => { if (e.target === el && /season-(fly|hide|loom|scuttle|stare|shamble)/.test(e.animationName)) el.remove(); });
+const once = el => el.addEventListener('animationend', e => { if (e.target === el && /season-(fly|hide|loom|scuttle|stare|shamble|strut)$/.test(e.animationName)) el.remove(); });
 
 /** The touches a template names. `forced` (?season=<id>): the rare ones show every time, to look at them. */
 function decorate(t, forced) {
   if (t.corner) document.body.append(deco('season-corner'));
   if (t.motes?.length) motes(t.motes);
+  if (t.fall?.emojis?.length && !still()) fall(t.fall);
   const home = !!document.getElementById('hero-emoji');
   if (!home || still()) return;
   if (t.flyby) { const f = deco('season-flyby', t.flyby); once(f); document.body.append(f); }
@@ -90,6 +92,41 @@ function decorate(t, forced) {
     setTimeout(() => document.body.append(p), 4000);
   }
   if (t.scares?.length) scares(t.scares);
+  if (t.strut) strut(t.strut);
+}
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+/**
+ * Things that never stop falling, behind the page (season.css): `{ emojis, count, pace, sway }` drops
+ * `count` at a time, each from a random column, taking `pace` [min, max] seconds to cross the screen
+ * and swaying `sway` px to each side, at its own rhythm, so they never fall in step.
+ */
+function fall({ emojis, count = 14, pace = [9, 17], sway = 18 }) {
+  const box = deco('season-fall');
+  for (let i = 0; i < count; i++) {
+    const e = Object.assign(document.createElement('span'), { textContent: pickOne(emojis) });
+    const dur = rnd(...pace);
+    e.style.cssText = `left:${rnd(0, 96).toFixed(1)}%;font-size:${rnd(16, 28).toFixed(0)}px;--sway:${sway}px;--spin:${Math.round(sway * 1.4)}deg;animation-duration:${dur.toFixed(1)}s,${(rnd(2.4, 4) * (sway < 18 ? 1.5 : 1)).toFixed(1)}s;animation-delay:-${rnd(0, dur).toFixed(1)}s,-${rnd(0, 3).toFixed(1)}s`;
+    box.append(e);
+  }
+  document.body.append(box);
+}
+
+/**
+ * Turkeys walking across the bottom of the home page, right to left (the 🦃 faces left):
+ * `{ emoji, count, every }`, a line of `count` the first time at 3 s and then every `every` ms.
+ */
+function strut({ emoji = '🦃', count = 1, every = 25000 }) {
+  const go = () => {
+    if (document.hidden) return;
+    for (let i = 0; i < count; i++) {
+      const s = deco('season-strut', emoji); once(s);
+      s.style.animationDelay = `${(i * 0.55).toFixed(2)}s, ${(i * 0.55).toFixed(2)}s`;
+      if (i) s.style.fontSize = `${Math.round(54 - i * 10)}px`;
+      document.body.append(s);
+    }
+  };
+  setTimeout(() => { go(); setInterval(go, every); }, 3000);
 }
 
 /** How each scare moves (season.css); an emoji not listed looms. */

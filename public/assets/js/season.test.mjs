@@ -37,6 +37,8 @@ for (const [id, t] of days) {
   if (t.css) assert.ok(existsSync(fileURLToPath(t.css)), `${id}: ${t.css} is missing`);
   if (t.icon) { assert.ok(t.icon.emoji && t.icon.colors?.length === 2, `${id}.icon: { emoji, colors: [a, b] }`); }
   for (const f of ['hero', 'motes']) if (t[f]) emojis(id, f, t[f]);
+  if (t.fall) { emojis(id, 'fall.emojis', t.fall.emojis); assert.ok(!t.fall.count || (t.fall.count > 0 && t.fall.count <= 30), `${id}.fall.count: 1 to 30, a light fall`); if (t.fall.pace) assert.ok(t.fall.pace.length === 2 && t.fall.pace[0] >= 4 && t.fall.pace[0] <= t.fall.pace[1], `${id}.fall.pace: [min, max] seconds`); }
+  if (t.strut) assert.ok(t.strut.emoji && t.strut.count >= 1 && t.strut.count <= 4 && t.strut.every >= 10000, `${id}.strut: { emoji, count 1–4, every ≥ 10 s }`);
   if (t.peek) assert.ok(t.peek.emoji && t.peek.chance > 0 && t.peek.chance <= 1, `${id}.peek: { emoji, chance }`);
   if (t.corner) assert.ok(t.css && readFileSync(fileURLToPath(t.css), 'utf8').includes('.season-corner'), `${id}.corner: its css draws .season-corner`);
 }
