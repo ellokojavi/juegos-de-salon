@@ -10,7 +10,8 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { createSessionStore } from '../../assets/js/session.js';
 import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/stats.js';
 import { salidasFin } from '../../assets/js/fin.js';
-import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
+import { botonCompartir } from '../../assets/js/compartir.js';
+import { result } from '../../assets/js/share-templates.js';
 import { mmss } from '../../assets/js/time-format.js';
 import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
 import { rankingsVisibles } from '../../assets/js/jugador.js';
@@ -462,7 +463,7 @@ function renderResult({ fresh = false } = {}) {
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
       armar: async () => ({
         titulo: T.title, url: location.origin + location.pathname,
-        texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.shareText, { level: level.toLowerCase(), time, score: points })].join('\n\n'),
+        texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, paragraphs: [fmt(T.shareText, { level: level.toLowerCase(), time, score: points })] }),
       }),
     })]),
     el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderModes(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));

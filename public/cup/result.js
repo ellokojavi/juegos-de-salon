@@ -7,7 +7,7 @@ import { $, el } from '../assets/js/ui.js';
 import { SFX } from '../assets/js/sound.js';
 import { abierto, activos, cerrado, comodinEfectivo, diaActual, diaDeCal, esFinal, finalRounds, juegoDelDia, mmss, multiplicador, posicionesDelDia, tabla, terminada, tieneFinal } from './engine.js';
 import { juegosCopa } from './rules.js';
-import { cabecera, laminaResultado, nombreArchivo, puntajeYTiempo } from '../assets/js/compartir.js';
+import { laminaResultado, nombreArchivo, puntajeYTiempo } from '../assets/js/compartir.js';
 
 let c;
 let CON_RONDAS, G, L, S, T, ahora, avisos, bajoElPuntaje, botonReporte, cabCopa, claseX2, compartir, conBoton, detalle, explicacion, fmt, juegoDia, mensajeCopa, mostrar, nombreDe, ord, poner, tablero, urlPublica;
@@ -96,7 +96,7 @@ async function compartirResultado(d) {
   const cab = cabCopa('🏆', fmt(G().T.ctxDay, { d, n: meta.days }));
   const puntaje = mio.r || String(mio.s), tiempo = mmss(mio.ms);
   // El juego, quién, el puntaje, el tiempo y la tarjeta van en la imagen: el texto no los repite (D-171)
-  const texto = mensajeCopa(cab);
+  const texto = mensajeCopa({ ...cab, kind: 'result' });
   const imagen = await laminaResultado({
     cab, url: urlPublica(S.code), juego: J, nombre: nombreDe(S.yo), puntaje,
     detalle: puntajeYTiempo('', tiempo, mio.t), tarjeta: mio.t,

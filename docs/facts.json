@@ -14,7 +14,7 @@
     "en": 150,
     "pt": 150
   },
-  "commonKeys": 52,
+  "commonKeys": 54,
   "games": [
     {
       "id": "copa",
@@ -1331,6 +1331,7 @@
     "public/assets/js/secret-achievements.js",
     "public/assets/js/session.js",
     "public/assets/js/share-grid.js",
+    "public/assets/js/share-templates.js",
     "public/assets/js/site-footer.js",
     "public/assets/js/slot-roll.js",
     "public/assets/js/sobre.js",
@@ -1682,6 +1683,7 @@
     "public/assets/js/search.test.mjs",
     "public/assets/js/season.test.mjs",
     "public/assets/js/share-grid.test.mjs",
+    "public/assets/js/share-templates.test.mjs",
     "public/assets/js/site-footer.test.mjs",
     "public/assets/js/splash.test.mjs",
     "public/assets/js/support.test.mjs",

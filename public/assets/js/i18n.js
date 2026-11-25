@@ -198,8 +198,8 @@ export const COMMON = {
     },
     // La invitación a una sala: quién invita, a qué y adónde. Es el texto que más se lee de
     // toda la app, porque llega por WhatsApp a gente que todavía no la conoce.
-    // Con la cabecera de todo lo que se comparte (D-165): "🃏 *Julepe* · Sala WFBN"
-    invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te invita a jugar en juegosdesalon.cl.',
+    // Built by roomInvite() in share-templates.js (D-165): "🃏 *Julepe* · Sala WFBN"; without a name, roomLineNoName
+    roomContext: 'Sala {code}', roomLine: '👋 {name} te invita a jugar en juegosdesalon.cl.', roomLineNoName: '👋 Te invitaron a jugar en juegosdesalon.cl.',
     // El resultado de jugar solo un juego (D-165): el texto y la imagen dicen lo mismo
     shareResult: '📤 Compartir mi resultado',
     shareSoloContext: 'Jugando solo',
@@ -479,7 +479,7 @@ export const COMMON = {
       videoContext: 'Watch the video',
       videoLines: ['🎲 Classic party games on your phone, free and with no account.', '🏆 In a group, solo, in a week-long tournament or with a new challenge every day.'],
     },
-    invite: '{emoji} *{game}* · Room {code}\n\n👋 {name} invites you to play at juegosdesalon.cl.',
+    roomContext: 'Room {code}', roomLine: '👋 {name} invites you to play at juegosdesalon.cl.', roomLineNoName: '👋 You\'re invited to play at juegosdesalon.cl.',
     shareResult: '📤 Share my result',
     shareSoloContext: 'Playing solo',
     shareSoloCta: '🤔 Can you beat me? It\'s free to play on your phone:',
@@ -752,7 +752,7 @@ export const COMMON = {
       videoContext: 'Veja o vídeo',
       videoLines: ['🎲 Os jogos de sempre, no celular, grátis e sem conta.', '🏆 Em grupo, sozinho, num torneio de uma semana ou com um desafio novo todo dia.'],
     },
-    invite: '{emoji} *{game}* · Sala {code}\n\n👋 {name} te convida pra jogar em juegosdesalon.cl.',
+    roomContext: 'Sala {code}', roomLine: '👋 {name} te convida pra jogar em juegosdesalon.cl.', roomLineNoName: '👋 Você foi convidado pra jogar em juegosdesalon.cl.',
     shareResult: '📤 Compartilhar resultado',
     shareSoloContext: 'Jogando sozinho',
     shareSoloCta: '🤔 Consegue me vencer? É grátis e se joga pelo celular:',

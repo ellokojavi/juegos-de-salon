@@ -14,7 +14,8 @@
  * upload is changed here. The sheet opens in every language (it replaces D-254).
  */
 import { el } from './ui.js';
-import { compartir, comparteArchivos, cabecera, conLink } from './compartir.js';
+import { compartir, comparteArchivos, conLink } from './compartir.js';
+import { videoShare } from './share-templates.js';
 
 /** The Shorts, by tab: its YouTube id and the tab's label, in its own language (D-410). */
 export const SHORTS = {
@@ -30,7 +31,7 @@ const embebido = id => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&
 /** El mensaje del video (U-30): cabecera, una idea por línea y el link de YouTube al final. */
 export function textoVideo({ C, trailer = TRAILER }) {
   const t = C.shareSheet;
-  return conLink([cabecera({ emoji: '🎬', titulo: C.appTitle, contexto: t.videoContext }), t.videoLines.join('\n')].join('\n\n'), urlTrailer(trailer.youtube));
+  return conLink(videoShare({ C }), urlTrailer(trailer.youtube));
 }
 
 /**

@@ -149,12 +149,14 @@ export const inviteHref = d => `${RAIZ}duels/?d=${d.id}`;
 
 /** Sends the invite to that one rival (the system's share menu; the link copied where there is none). */
 export async function shareInvite(d, btn) {
-  const { compartir, taglineLine } = await import('./compartir.js');
+  const [{ compartir, taglineLine }, { invite }] = await Promise.all([import('./compartir.js'), import('./share-templates.js')]);
   const g = duelGame(d.g);
-  const texto = fmt(T.inviteText, { a: d.an, juego: d.gr ? T.customTitle.replace(/^\S+\s/, '') : (g ? nombreJuego(g) : d.g), formato: nombreFormato(d.f) });
-  // What the game is about (lab flag share-tagline); a custom duel mixes games, so it has none
-  const bajada = d.gr ? '' : taglineLine(g?.tagline, lang);
-  const r = await compartir({ titulo: T.inviteTitle, texto: [texto, bajada].filter(Boolean).join('\n'), url: inviteHref(d), que: 'duelo' });
+  const juego = d.gr ? T.customTitle.replace(/^\S+\s/, '') : (g ? nombreJuego(g) : d.g);
+  // Its template (share-templates.js): "⚔️ *Sudoku* · al mejor de 3", what the game is about (lab flag
+  // share-tagline; a custom duel mixes games, so it has none) and who challenges
+  const texto = invite({ head: { emoji: '⚔️', title: juego, context: nombreFormato(d.f) },
+    tagline: d.gr ? '' : taglineLine(g?.tagline, lang), lines: [fmt(T.inviteText, { a: d.an, juego, formato: nombreFormato(d.f) })] });
+  const r = await compartir({ titulo: T.inviteTitle, texto, url: inviteHref(d), que: 'duelo' });
   if (r === 'copied' && btn) { const antes = btn.textContent; btn.textContent = T.copied; setTimeout(() => { btn.textContent = antes; }, 2000); }
 }
 

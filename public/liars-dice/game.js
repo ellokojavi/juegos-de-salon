@@ -9,6 +9,7 @@
 import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { taglineLine, botonInvitar } from '../assets/js/compartir.js';
+import { roomInvite } from '../assets/js/share-templates.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, coverLangToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
@@ -1128,11 +1129,11 @@ function renderLobby() {
  * link (D-72, D-173).
  */
 function textoInvitacion() {
-  return fmt(COMMON[lang].invite, { emoji: gameById(GAME_ID)?.emoji || '🎲', name: M.names[S.role] || '', game: T.title, code: S.code });
+  return roomInvite({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🎲', game: T.title, code: S.code, name: M.names[S.role], tagline: taglineLine(gameById(GAME_ID)?.tagline, lang) });
 }
 
 function shareButton(url) {
-  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, bajada: taglineLine(gameById(GAME_ID)?.tagline, lang), alTocar: () => SFX.tap() });
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
 }
 
 

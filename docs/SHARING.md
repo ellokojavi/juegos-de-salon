@@ -23,7 +23,13 @@ spoiler-free emoji grid).
 
 ## The templates
 
-Every share is one of six kinds. A new share picks one; it does not invent a seventh without a D-n.
+Every share is one of these kinds, and its text is built by its template in
+`public/assets/js/share-templates.js` (D-620): `roomInvite`, `appInvite`, `videoShare`, `gameLink`,
+`soloResult`, and `invite` / `result` / `table` for the rest, all on top of one `message({ kind, head,
+tagline, lines, paragraphs })`. A page never writes a header or joins lines itself. A new share picks a
+kind; a new kind needs a D-n. `share-templates.test.mjs` runs every template in the three languages and
+for every game through `formatProblems()` (header, blank line, no empty name, no link inside, no
+placeholder left), and fails any page that calls `cabecera()` or writes a `{emoji} *{title}*` of its own.
 
 | Kind | Header (`{emoji} *{title}* · {context}`) | Body | Image | Link | `que` |
 |---|---|---|---|---|---|
@@ -40,7 +46,7 @@ Every share is one of six kinds. A new share picks one; it does not invent a sev
 Every share about one game (T1, T4, T5 and a duel) carries, right after the header, one line with
 what the game is about: `🎮 {tagline}`, the game's own tagline (`tagline` in its manifest or in
 `games.js`, the one its card shows), in the message's language, built by `taglineLine()` in
-`compartir.js` (the owner, 2026-11-24). Never in Uno al día, whose share must not name the game
+`compartir.js` (over `taglineOf()` in `share-templates.js`) (the owner, 2026-11-24). Never in Uno al día, whose share must not name the game
 (#215), nor in a custom duel (it mixes games). `compartir.test.mjs` checks every playable game has a
 tagline in the three languages, short enough for one or two lines (≤ 120 characters).
 
@@ -48,22 +54,22 @@ tagline in the three languages, short enough for one or two lines (≤ 120 chara
 
 | # | Where (player sees) | Button | Kind | Code |
 |---|---|---|---|---|
-| 1 | Home, top bar | 📤 → sheet: «💬 Invitar a jugar» | T3 | `compartir-portada.js`, `index.html` |
-| 2 | Home, same sheet | «🎬 Compartir el video» (tab ES/EN) | video | `compartir-portada.js` `textoVideo` |
-| 3 | Home, a game's sheet (carousels) | 📤 icon | T4 | `home-carousels.js` |
-| 4 | A game's cover (lab flag `cover-share`) | 📤 icon | T4 | `cover-share.js` |
-| 5 | Room lobby of every group game (Ahorcado, Batalla Naval, Toque y Fama, Generala, Dudo, Línea de tiempo, Julepe, Blackjack) | «Compartir link» / «Copiar link» | T1 | `botonInvitar()`, each `game.js` `shareButton(url)` |
-| 6 | End of a solo game (Toque y Fama, Línea de tiempo, labs: Memoria, Code, Dominorama, Números explosivos, Torre) | «📤 Compartir mi resultado» | T5 | `botonResultadoSolo()` |
-| 7 | Labs with their own result (Transfer, Críptico, Sudoku, Blackjack) | own label | T5 | `botonCompartir()` in each `game.js` |
-| 8 | La Copa: invite | «Invitar» | T2 | `cup/game.js` `mensajeInvitacion` |
-| 9 | La Copa: my result of the day | 📤 | T5 | `cup/result.js` |
-| 10 | La Copa: table (partial and final, podium) | 📤 | T6 | `cup/game.js` `compartirTabla`, `table-image.js` |
-| 11 | La Copa: admin messages (today, reminders, final) | small buttons | T2 / T6 | `cup/admin.js` |
+| 1 | Home, top bar | 📤 → sheet: «💬 Invitar a jugar» | T3 | `compartir-portada.js`, `appInvite()` |
+| 2 | Home, same sheet | «🎬 Compartir el video» (tab ES/EN) | video | `compartir-portada.js`, `videoShare()` |
+| 3 | Home, a game's sheet (carousels) | 📤 icon | T4 | `home-carousels.js`, `gameLink()` |
+| 4 | A game's cover (lab flag `cover-share`) | 📤 icon | T4 | `cover-share.js`, `gameLink()` |
+| 5 | Room lobby of every group game (Ahorcado, Batalla Naval, Toque y Fama, Generala, Dudo, Línea de tiempo, Julepe, Blackjack) | «Compartir link» / «Copiar link» | T1 | `botonInvitar()`, each `game.js` `shareButton(url)`, built by `roomInvite()` |
+| 6 | End of a solo game (Toque y Fama, Línea de tiempo, labs: Memoria, Code, Dominorama, Números explosivos, Torre) | «📤 Compartir mi resultado» | T5 | `botonResultadoSolo()`, `soloResult()` |
+| 7 | Labs with their own result (Transfer, Críptico, Sudoku, Blackjack) | own label | T5 | `botonCompartir()` in each `game.js`, `result()` |
+| 8 | La Copa: invite | «Invitar» | T2 | `cup/game.js` `mensajeInvitacion`, `message()` |
+| 9 | La Copa: my result of the day | 📤 | T5 | `cup/result.js`, `message()` |
+| 10 | La Copa: table (partial and final, podium) | 📤 | T6 | `cup/game.js` `compartirTabla`, `table-image.js`, `message()` |
+| 11 | La Copa: admin messages (today, reminders, final) | small buttons | T2 / T6 | `cup/admin.js`, `message()` |
 | 12 | La Copa: a game played loose inside it | «📤 Compartir mi resultado» | T5 | `cup/game.js:2515` |
-| 13 | Uno al día: result | «📤 Compartir mi resultado» | T5 + grid | `uno-al-dia-ui.js` (≈ line 199) |
-| 14 | Uno al día: invite a friend (+10) | «Invitar» | T2 | `uno-al-dia-ui.js` (≈ line 285) |
-| 15 | Uno al día: ranking on /today/ | «📤 Compartir la tabla» | T6 | `botonCompartirRanking()` |
-| 16 | Duels: challenge a rival | «Retar» | T2 | `duels-ui.js` `shareInvite` |
+| 13 | Uno al día: result | «📤 Compartir mi resultado» | T5 + grid | `uno-al-dia-ui.js`, `result()` |
+| 14 | Uno al día: invite a friend (+10) | «Invitar» | T2 | `uno-al-dia-ui.js`, `invite()` |
+| 15 | Uno al día: ranking on /today/ | «📤 Compartir la tabla» | T6 | `botonCompartirRanking()`, `table()` |
+| 16 | Duels: challenge a rival | «Retar» | T2 | `duels-ui.js` `shareInvite`, `invite()` |
 
 ## Review
 
@@ -74,14 +80,14 @@ tagline in the three languages, short enough for one or two lines (≤ 120 chara
 | 1 | ⚠️ | Fits T3, but the message is **ten lines** (header + eight `LO_PRINCIPAL` lines): in a WhatsApp group it is a wall, and the card already says the essentials. U-35 asks it to name everything; it does not ask it to be long. See «Home» below. |
 | 2 | ✅ | Short, own header, YouTube makes the preview. |
 | 3, 4 | ✅ | Same text (`coverShareText`), header without context, one CTA line. Only 2 lines: the friend does not learn what the game is about (no one-line description). |
-| 5 | ⚠️ | Header ok. «👋 {name} te invita a jugar en juegosdesalon.cl.» names the domain and then the link repeats it. If `name` is empty the line reads «👋  te invita…». Two parallel helpers: each game defines its own `shareButton(url)` wrapping `botonInvitar` (same code ×8). |
+| 5 | ⚠️ | Header ok. «👋 {name} te invita a jugar en juegosdesalon.cl.» names the domain and then the link repeats it. ~~If `name` is empty the line reads «👋  te invita…»~~ fixed: `roomLineNoName` (D-620). Two parallel helpers: each game defines its own `shareButton(url)` wrapping `botonInvitar` (same code ×8). |
 | 6 | ✅ | Reference implementation of T5. |
 | 7 | ⚠️ | Each lab builds its own `botonCompartir` text: to be checked against T5 when each leaves the lab. |
 | 8–12 | ✅ | `mensajeCopa()` keeps the blank line after the header; image and text share `cabCopa`. |
-| 13–15 | ❌ U-30 | The text joins header and body with a single `\n`: every other share leaves a blank line after the header. |
-| 16 | ❌ U-30 | **No header line**: it opens with «⚔️ {a} te reta…», so it is the only share without `{emoji} *{title}* · {context}`. |
+| 13–15 | ✅ fixed (D-620) | The text joins header and body with a single `\n`: every other share leaves a blank line after the header. |
+| 16 | ✅ fixed (D-620): `⚔️ *{game}* · {format}`, the line opens with 👋 | **No header line**: it opens with «⚔️ {a} te reta…», so it is the only share without `{emoji} *{title}* · {context}`. |
 | — | ⚠️ | `compartir.js` has an orphan doc comment («Dibuja con halo claro…») above `cargarIcono`; it belongs to `conHalo`. |
-| — | ⚠️ | No central list: each caller assembles its text, so U-30 is only checked by eye (👁). A template module would let a test check it (🤖). |
+| — | ✅ done (D-620) | No central list: each caller assembles its text, so U-30 is only checked by eye (👁). A template module would let a test check it (🤖). |
 
 ## Home: what to improve
 

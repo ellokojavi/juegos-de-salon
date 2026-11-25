@@ -8,7 +8,8 @@ import { COMMON, SITIO, withLang } from './i18n.js';
 import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js';
 import { tiene } from './parametros.js';
 import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
-import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
+import { invite, result, table } from './share-templates.js';
+import { botonCompartir, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel, settleStarted, unfinished, forfeit, markStarted, GRUPO, todayPending } from './uno-al-dia.js';
 import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
@@ -202,7 +203,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss, grid = '' }) {
     armar: async () => ({
       titulo, url,
       // The spoiler-free grid (#889, D-482), for everyone since D-485
-      texto: [cabecera(cab), grid, textoRacha(estado().racha, lang)].filter(Boolean).join('\n'),
+      texto: result({ head: { emoji: cab.emoji, title: cab.titulo }, lines: [grid, textoRacha(estado().racha, lang)] }),
       imagen: await laminaResultado({ cab, url, puntaje: fmt(C.uad.puntos, { s: dia.s }), detalle: dia.ms ? `⏱ ${mmss(dia.ms)}` : '', pie: C.shareSoloImage, archivo: nombreArchivo('uno-al-dia', String(numeroDel(fecha))) }),
     }),
   });
@@ -295,7 +296,7 @@ export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = nul
       const red = await import('./uno-al-dia-red.js');
       await nombres();
       const [datos, url] = await Promise.all([red.misDatos(), red.linkInvitar(withLang(URL_HOY, lang))]);
-      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: T.invCab }), `🔥 ${frase(datos, { lang })}. ${T.atreves}`].join('\n');
+      const texto = invite({ head: { emoji: '📅', title: T.nombre, context: T.invCab }, lines: [`🔥 ${frase(datos, { lang })}. ${T.atreves}`] });
       await compartir({ titulo: T.nombre, texto, url, que: 'uno-al-dia' });
     } catch (_) { /* sin compartir no hay nada que avisar */ } finally { b.disabled = false; }
   });
@@ -564,8 +565,8 @@ export function botonCompartirRanking({ lang, caja, alTocar }) {
       const red = await import('./uno-al-dia-red.js');
       const url = await red.linkInvitar(withLang(URL_HOY, lang)).catch(() => withLang(URL_HOY, lang));
       const mia = d && [...d.top, ...d.vecinos].find(f => d.yo && f.jid === d.yo);
-      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: contextoRanking(T, lang, d) }),
-        mia?.puesto ? fmt(T.rkCompVoy, { p: mia.puesto }) : T.rkCompSin].join('\n');
+      const texto = table({ head: { emoji: '📅', title: T.nombre, context: contextoRanking(T, lang, d) },
+        lines: [mia?.puesto ? fmt(T.rkCompVoy, { p: mia.puesto }) : T.rkCompSin] });
       return { titulo: T.nombre, texto, url, que: 'uno-al-dia-ranking', imagen: d && d.top.length ? await laminaRanking({ lang, d, url }) : null };
     },
   });

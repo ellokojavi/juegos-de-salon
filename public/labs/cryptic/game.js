@@ -12,7 +12,8 @@ import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/s
 import { salidasFin } from '../../assets/js/fin.js';
 import { coverWithDialogs } from '../../assets/js/cover-dialogs.js';
 import { finDePartida } from '../../assets/js/ranking.js';
-import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
+import { botonCompartir } from '../../assets/js/compartir.js';
+import { result } from '../../assets/js/share-templates.js';
 import { GAME_ID, CLUE_LANG, LOCALES } from './rules.js';
 import { CLUES } from './clues.js';
 import * as E from './engine.js';
@@ -291,7 +292,7 @@ const shareMark = r => `${LEVEL[BANK[r.index].l].split(' ')[0]} ${!r.solved ? 'ð
 function shareText() {
   const contexto = state.practice ? T.practiceLabel : fmt(T.shareContext, { n: E.numberOf(state.date) });
   const line = `${state.clues.map(shareMark).join('  ')}\n${E.score(state, BANK)}/100`;
-  return [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto }), state.practice ? state.clues.map(shareMark).join('') : line].join('\n\n');
+  return result({ head: { emoji: manifest.emoji, title: T.title, context: contexto }, paragraphs: [state.practice ? state.clues.map(shareMark).join('') : line] });
 }
 
 function renderResult() {
