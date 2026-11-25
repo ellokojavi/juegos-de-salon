@@ -7398,6 +7398,19 @@
         "stat": "2 file(s) +5 −5: public/assets/js/duels-ui.js, public/duels/duels-page.js"
       },
       "flaky": false
+    },
+    {
+      "run": 45536295504,
+      "check": "tests",
+      "pr": 1887,
+      "branch": "share-tagline-line",
+      "commit": "d97a7f390b136bbc597b8feaad4267d8b0dc39fa",
+      "test": "README up to date",
+      "error": "ERROR · appeared documents: {\"path\": \"docs/SHARING.md\", \"title\": \"Sharing: every share b",
+      "signature": "b126d0b702",
+      "date": "2026-11-25T02:56:19.248Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
