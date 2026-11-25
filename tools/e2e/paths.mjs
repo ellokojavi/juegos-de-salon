@@ -675,6 +675,9 @@ export const PATHS = {
     'campaigns-peek': [SEED_PANEL('/campaigns'), ...Array(6).fill(PEEK), `1`, `1`],
     // Where an owner's release notification lands (D-504): that campaign open, ringed and in view
     'campaigns-link': [SEED_PANEL('/campaigns/splash/stack-pronto')],
+    // 🗄️ Archived campaigns: the first one tapped open into its still preview
+    'campaigns-archived': [SEED_PANEL('/campaigns'), `window.__panel.seed({splash:{'tres-juegos-demo':{on:false,order:0,archived:true},'tren-en-vilo-ya':{on:false,order:1,archived:true}},vista:'/campaigns'}); 1`, `1`,
+      `document.querySelector('.campana-archivada-abrir')?.click(); 1`, `document.querySelector('.campana--archivada')?.scrollIntoView({block:'start'}); 1`],
     // A campaign's end day being edited: the field sits under its label, the old value hidden
     'campaigns-date-focus': [SEED_PANEL('/campaigns'), `1`, `1`, `const i = document.querySelector('.campana-dia:last-of-type input'); i.scrollIntoView({block:'center'}); i.focus(); 1`],
     // 🎮 Games: a second game's toggle turned on, its weekly card in view
