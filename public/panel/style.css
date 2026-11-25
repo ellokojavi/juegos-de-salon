@@ -551,6 +551,16 @@ table.pant th[scope="row"] { white-space: nowrap; }
 table.pant .num { text-align: right; white-space: nowrap; }
 table.pant .pant-barra { display: inline-block; height: 0.6em; vertical-align: middle; }
 table.pant tr.pant-raro { opacity: 0.45; }
+table.pant tr.pant-foco { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.pant-curva { display: block; width: 100%; max-width: 640px; height: auto; margin-inline: auto; }
+.pant-curva-b { opacity: 0.85; cursor: pointer; }
+.pant-curva-b.pant-raro { opacity: 0.3; }
+.pant-curva-80 { fill: rgb(var(--ink-rgb) / 0.07); }
+.pant-curva-l { fill: none; stroke: var(--ink); stroke-width: 2; }
+.pant-curva-min { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.pant-curva-eje { stroke: rgb(var(--ink-rgb) / 0.4); }
+.pant-curva-txt { fill: var(--ink); font-size: 13px; font-family: var(--font-num); }
+.pant-curva-pico { font-weight: 900; }
 table.pant-cruce td { text-align: center; }
 /* 🎮 Games, the report by game: the trend reads as one line, and each game's card sits apart */
 table.wbr td.reporte-spark { font-family: ui-monospace, monospace; letter-spacing: 1px; text-align: left; }
