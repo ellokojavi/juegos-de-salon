@@ -237,7 +237,8 @@ function fila(f, yo, victorias = false, campeon = null) {
 
 /**
  * Un ranking con sus pestañas. `juego` es la tabla (el id del juego, o 'todoterreno').
- * `pestanas` elige cuáles se muestran y en qué orden; la primera es la que se ve al abrir.
+ * `pestanas` elige cuáles se muestran y en qué orden. Opens on «Siempre» when it is there, so a quiet
+ * week never shows an empty table; otherwise on the first one.
  * Devuelve el nodo, con `.recargar()` para después de anotar una partida.
  * `rapido` (lab, D-436): the table and last month's champion are read at once, a reload keeps the
  * list on screen until the new one arrives, a read the page just made is reused, the list drawn last
@@ -246,7 +247,7 @@ function fila(f, yo, victorias = false, campeon = null) {
  */
 export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['semana', 'siempre', 'amigos'], alTocar = () => {}, rapido = false, ajustar = null }) {
   const T = R();
-  let actual = pestanas[0];
+  let actual = pestanas.includes('siempre') ? 'siempre' : pestanas[0];
   const lista = el('div', { class: 'rk-lista', 'aria-live': 'polite' });
   const seg = pestanas.length > 1 ? el('div', { class: 'rk-seg', role: 'tablist' }, pestanas.map(p => el('button', {
     type: 'button', role: 'tab', 'data-p': p, class: p === actual ? 'on' : '', 'aria-selected': String(p === actual),

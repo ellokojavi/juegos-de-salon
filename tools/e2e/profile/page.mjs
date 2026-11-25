@@ -248,6 +248,8 @@ for (const W of [320, 390]) {
   ok(await ev(`!document.getElementById('pf-peek')`), `${W}: 👀 Escape closes it`);
   // Every ranking, not only the profile's (the owner, 2026-11-23): a game's cover, its week tab, headed by that table
   await b.go(`${SITE}/queens/?test`, 3000);
+  // Rankings open on «Siempre» (owner, 2026-11-25): tap the week tab first
+  await ev(`document.querySelector('.rk-ranking .rk-seg button[data-p="semana"]').click()`); await sleep(1500);
   ok(await ev(`(() => { const r = [...document.querySelectorAll('.rk-ranking .rk-fila[data-peek]')].find(x => x.textContent.includes('Cata')); if (!r) return false; r.scrollIntoView({ block: 'center' }); r.click(); return true; })()`), `${W}: 👀 on a game's cover, a name in its ranking opens the sheet too`);
   await sleep(1500);
   ok(await ev(`(() => { const p = document.getElementById('pf-peek'), h = p?.querySelector('.pf-peek-here'); return !!h && /Reinas|Queens/.test(h.textContent) && /semana/i.test(h.querySelector('.pf-peek-here-label').textContent) && /95\\s*pts/.test(h.querySelector('.pf-peek-here-vals').textContent) && /tiempo/.test(h.querySelector('.pf-peek-here-vals').textContent) && /histórico/.test(h.querySelector('.pf-peek-here-all').textContent) && !!h.querySelector('.pf-peek-here-medal.pf-badge--silver, .pf-peek-here-medal.pf-badge--gold, .pf-peek-here-medal.pf-badge--plain') && p.getBoundingClientRect().right <= ${W} && document.documentElement.scrollWidth <= ${W}; })()`), `${W}: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it`);
