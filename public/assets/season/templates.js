@@ -32,7 +32,6 @@ export const TEMPLATES = {
     motes: ['🦇', '👻'],
     flyby: '🦇',
     peek: { emoji: '👻', chance: 1 / 15 },
-    corner: true,
     scares: ['💀', '🕷️', '👀', '🧟'],
   },
   // Thanksgiving (the fourth Thursday of November, always between the 22nd and the 28th) and its weekend
