@@ -7409,7 +7409,11 @@
       "error": "ERROR · appeared documents: {\"path\": \"docs/SHARING.md\", \"title\": \"Sharing: every share b",
       "signature": "b126d0b702",
       "date": "2026-11-25T02:56:19.248Z",
-      "fix": null,
+      "fix": {
+        "commit": "ef261976e8214104beb36c4b6f7f0c18e3cf7f46",
+        "date": "2026-11-25T03:06:21.433Z",
+        "stat": "1 file(s) +4 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
