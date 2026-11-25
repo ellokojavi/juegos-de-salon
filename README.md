@@ -760,6 +760,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Rules for making rules (D-541)](docs/RULES.md)
 - [Seasonal templates (D-457)](docs/SEASONS.md)
 - [Working in parallel sessions](docs/SESSIONS.md)
+- [Sharing: every share button, its template and its review](docs/SHARING.md)
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
