@@ -75,7 +75,7 @@ A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en
 URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
 lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/cup?r=30d&e=dev`).
 Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
-On a phone the bar holds 📊 Summary, WBR, 🕑 Timeline, Feedback and ☰ More; the rest, 🩺 Health included, is under More, and a Health alert shows on ☰.
+On a phone the bar holds 📊 Summary, WBR, 🕑 Timeline, Feedback and ☰ More; the rest, 🩺 Health included, is under More.
 
 | Dirección | Qué muestra |
 |---|---|
@@ -134,7 +134,7 @@ blanco. En `stats/<env>/days/<día>`:
   las que no, nunca llegaron ahí. Cargas = vistas + no arrancaron. Salud solo muestra tasas sobre eso.
 - **Un error viejo sale en gris** con "no se ve desde la X" cuando la versión más nueva del rango
   (de los errores, las salas y las partidas sin red) no lo tuvo.
-- **Un punto rosado en 🩺 Salud** dice que hoy o ayer (días Pacific) alguna página no arrancó.
+- 🩺 Salud no lleva punto en la navegación: una falla suelta es normal y no pide nada (D-621).
 - **Qué no se anota:** extensiones del navegador, "Script error." sin archivo, `ResizeObserver loop`,
   fetch cancelados, lo que pasa después de cerrar la pestaña, imágenes y audio que no cargaron, ni
   más de diez errores por carga. Las direcciones van sin `?` ni `#` (ahí van los códigos de sala y
