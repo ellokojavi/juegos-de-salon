@@ -60,6 +60,21 @@ try {
     ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: a finished duel, no sideways scroll`);
     await b.shot(`lost-${W}`);
   }
+  // The three looks (🎨 A B C, the owner, 2026-11-25): the list and a duel in each, at 390 and 320
+  for (const k of ['a', 'b', 'c']) {
+    await ev(`localStorage.setItem('juegos-de-salon:duels-look', '${k}'); 1`);
+    for (const [url, name, sel] of [['/duels/', 'list', '#dl-terminados'], ['/duels/?d=demo000001', 'duel', '#dl-rondas']]) {
+      await b.go(`${SITE}${url}`, 1500);
+      await b.until(`!!document.querySelector('${sel}')`, 8000);
+      ok(await ev(`!!document.querySelector('#dl-looks [data-look="${k}"].on')`), `${name} ${k.toUpperCase()}: the 🎨 picker marks it`);
+      for (const W of [390, 320]) {
+        await b.resize(W, 844); await sleep(300);
+        ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${name} ${k.toUpperCase()} ${W}: no sideways scroll`);
+        await b.shot(`look-${k}-${name}-${W}`);
+      }
+      await b.resize(390, 844);
+    }
+  }
 } finally {
   await b.close();
 }

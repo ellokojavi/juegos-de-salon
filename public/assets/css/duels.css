@@ -215,8 +215,11 @@ a.dl-card-g { text-decoration: none; }
 .dl-paso-n { font: 900 var(--fs-140) var(--font-num); min-width: 1.6em; text-align: center; }
 .dl-paso-guion { color: var(--muted); }
 .dl-paso small { color: var(--muted); font-weight: 700; text-align: right; }
-.dl-paso-accion { display: grid; justify-items: end; gap: var(--s-4); grid-column: 2 / -1; }
-.dl-paso.ahora { grid-template-columns: 36px minmax(0, 1fr); background: rgb(var(--yellow-rgb) / .1); outline: 2px solid var(--yellow); outline-offset: -2px; padding-left: 0; }
+.dl-paso-accion { display: grid; justify-items: start; gap: var(--s-4); grid-column: 2 / -1; }
+.dl-paso-accion small { text-align: left; }
+/* The round to play: no box (the owner, 2026-11-25), only its ball glowing and the button under its name */
+.dl-paso.ahora { grid-template-columns: 36px minmax(0, 1fr); }
+.dl-paso.ahora .dl-paso-r { color: var(--yellow); }
 .dl-paso.ahora .dl-paso-bola { border: 0; background: var(--yellow); color: var(--ink-on-yellow); animation: dl-pulso 1.4s ease-in-out infinite; }
 .dl-paso.hecho .dl-paso-bola { border: 0; color: var(--ink-on-yellow); }
 .dl-paso.hecho.w .dl-paso-bola { background: var(--lime); }
@@ -229,3 +232,91 @@ a.dl-card-g { text-decoration: none; }
 .dl-paso-n.espera { font-size: var(--fs-110); }
 @keyframes dl-pulso { 50% { box-shadow: 0 0 0 6px rgb(var(--yellow-rgb) / .25); } }
 @media (prefers-reduced-motion: reduce) { .dl-paso.ahora .dl-paso-bola { animation: none; } }
+
+/* Three looks to compare (🎨 A B C, a tester's while the test duels are on) */
+.dl-looks { display: flex; justify-content: center; align-items: center; gap: var(--s-8); }
+.dl-looks .chip-btn.on { border-color: var(--yellow); color: var(--yellow); }
+
+/* Look B: open duels as cards to swipe, finished ones as tiles */
+.dl-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--s-8); }
+.dl-tile {
+  position: relative; display: grid; justify-items: center; gap: var(--s-4); min-width: 0; padding: var(--s-10) var(--s-6) var(--s-8);
+  border-radius: var(--r-14); background: var(--well); color: var(--ink); text-decoration: none; border-top: 4px solid var(--muted);
+}
+.dl-tile.w { border-top-color: var(--lime); }
+.dl-tile.l { border-top-color: var(--pink); }
+.dl-tile b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-85); }
+.dl-tile .dl-cara { width: 40px; height: 40px; font-size: var(--fs-110); }
+.dl-tile-sc { font: 900 var(--fs-120) var(--font-num); color: var(--yellow); }
+.dl-tile-g { position: absolute; top: var(--s-6); right: var(--s-6); font-size: var(--fs-100); line-height: 1; }
+.dl-tile .dl-fin { font-size: var(--fs-75); }
+
+/* Look C: open duels as tickets, finished ones on a line by date */
+.dl-ticket {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-10);
+  padding: var(--s-14); border-radius: var(--r-22); color: var(--ink); text-decoration: none;
+  background: linear-gradient(90deg, rgb(var(--cyan-rgb) / .16), var(--glass) 35%, var(--glass) 65%, rgb(var(--pink-rgb) / .2));
+  border: 2px solid var(--glass-border);
+}
+.dl-ticket.turno { border-color: var(--yellow); box-shadow: 0 0 22px rgb(var(--yellow-rgb) / .2); }
+.dl-ticket-mid { display: grid; justify-items: center; gap: var(--s-4); text-align: center; min-width: 0; }
+.dl-ticket-mid small { color: var(--muted); font-weight: 800; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-ticket-mid small.dl-ticket-turno { color: var(--yellow); }
+.dl-cara.yo { border-color: var(--cyan); }
+.dl-cara.el { border-color: var(--pink); }
+.dl-linea { list-style: none; margin: 0; padding: 0 0 0 var(--s-20); position: relative; display: grid; gap: var(--s-12); }
+.dl-linea::before { content: ''; position: absolute; left: 6px; top: var(--s-6); bottom: var(--s-6); width: 2px; background: var(--glass-border); }
+.dl-hito { position: relative; }
+.dl-hito::before {
+  content: ''; position: absolute; left: calc(-1 * var(--s-20)); top: var(--s-6); width: 14px; height: 14px; border-radius: 50%;
+  background: var(--muted); box-shadow: 0 0 0 3px var(--well);
+}
+.dl-hito.w::before { background: var(--lime); }
+.dl-hito.l::before { background: var(--pink); }
+.dl-hito a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--s-8); color: var(--ink); text-decoration: none; }
+.dl-hito-f { grid-column: 1 / -1; color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
+.dl-hito b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-hito-sc { color: var(--yellow); font-family: var(--font-num); }
+.dl-hito small { color: var(--muted); grid-column: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-hito .dl-fin { grid-column: 2; grid-row: 2 / 4; align-self: center; }
+
+/* Look B, a duel's rounds: a tug of war per round */
+.dl-barras { display: grid; gap: var(--s-14); }
+.dl-barras-fila { display: grid; gap: var(--s-6); justify-items: center; }
+.dl-barras-fila.apagada { opacity: .5; }
+.dl-barras-g { display: flex; align-items: center; gap: var(--s-6); color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
+.dl-barras-g .dl-ic { font-size: var(--fs-110); }
+.dl-barras-duo { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+.dl-barra { position: relative; height: 30px; border-radius: var(--r-8); background: var(--well); overflow: hidden; display: flex; align-items: center; }
+.dl-barra span { position: absolute; top: 0; bottom: 0; opacity: .45; }
+.dl-barra.yo { justify-content: flex-start; }
+.dl-barra.yo span { right: 0; background: var(--cyan); border-radius: var(--r-8) 0 0 var(--r-8); }
+.dl-barra.el { justify-content: flex-end; }
+.dl-barra.el span { left: 0; background: var(--pink); border-radius: 0 var(--r-8) var(--r-8) 0; }
+.dl-barra.gana span { opacity: 1; }
+.dl-barra b { position: relative; padding: 0 var(--s-8); font: 900 var(--fs-100) var(--font-num); }
+
+/* Look C, a duel's rounds: one card per round to swipe */
+.dl-cartas { display: flex; gap: var(--s-10); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: var(--s-4) 0 var(--s-8); }
+.dl-cartas::-webkit-scrollbar { display: none; }
+.dl-carta {
+  position: relative; flex: 0 0 132px; scroll-snap-align: start; display: grid; justify-items: center; align-content: start; gap: var(--s-6);
+  padding: var(--s-14) var(--s-8); border-radius: var(--r-16); background: var(--well); border: 2px solid var(--glass-border); text-align: center; overflow: hidden;
+}
+.dl-carta.w { border-color: var(--lime); }
+.dl-carta.l { border-color: var(--pink); }
+.dl-carta.ahora { border-color: var(--yellow); box-shadow: 0 0 18px rgb(var(--yellow-rgb) / .3); }
+.dl-carta.apagada { opacity: .55; }
+.dl-carta-n { color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
+.dl-carta-ic { font-size: var(--fs-200); line-height: 1; }
+.dl-carta-g { font-weight: 800; font-size: var(--fs-85); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-carta-sc { display: flex; align-items: baseline; gap: var(--s-6); }
+.dl-carta-sc b { font: 900 var(--fs-140) var(--font-num); }
+.dl-carta-sc i { color: var(--muted); font-size: var(--fs-75); }
+.dl-carta small { color: var(--muted); font-weight: 700; }
+.dl-sello {
+  position: absolute; top: var(--s-8); right: calc(-1 * var(--s-4)); padding: 0 var(--s-10); transform: rotate(14deg);
+  font: 900 var(--fs-100) var(--font-body); color: var(--ink-on-yellow); background: var(--muted);
+}
+.dl-sello.w { background: var(--lime); }
+.dl-sello.l { background: var(--pink); color: var(--ink); }

@@ -464,9 +464,10 @@ export function duelView(d, me, { lista = [], alTocar = () => {} } = {}) {
         el('span', { class: 'dl-paso-g' }, g ? [el('span', { 'aria-hidden': 'true' }, gameIcon(g)), ` ${nombreJuego(g)}`] : roundGame(d, i))),
       cuerpo);
   });
-  const track = el('section', { class: 'panel', id: 'dl-rondas' },
-    el('p', { class: 'lead' }, T.roundsTitle),
-    el('ol', { class: 'dl-track' }, pasos));
+  const look = lookOf();
+  const cuerpoRondas = look === 'b' ? rondasBarras(d, e, alTocar) : look === 'c' ? rondasCartas(d, e, alTocar) : el('ol', { class: 'dl-track' }, pasos);
+  const track = el('section', { class: `panel dl-look-${look}`, id: 'dl-rondas' },
+    el('p', { class: 'lead' }, T.roundsTitle), cuerpoRondas);
 
   // Head to head with this rival, over the finished duels, and their tag
   const h2h = rivalidades(lista, me).find(x => x.jid === e.rival);
@@ -480,3 +481,103 @@ export function duelView(d, me, { lista = [], alTocar = () => {} } = {}) {
   return [hero, track];
 }
 export const hrefDuelo = d => `${RAIZ}duels/?d=${d.id}`;
+
+/* ------------------------------------------------------------------ */
+/* Three looks to compare (the owner, 2026-11-25), a tester's 🎨 A B C on /duels/ while the test duels are on */
+const LOOK_KEY = 'juegos-de-salon:duels-look';
+export function lookOf() { try { const v = localStorage.getItem(LOOK_KEY); return /^[abc]$/.test(v || '') ? v : 'a'; } catch (_) { return 'a'; } }
+export function lookPicker(alCambiar) {
+  const actual = lookOf();
+  return el('div', { class: 'dl-looks', id: 'dl-looks', role: 'group', 'aria-label': '🎨' },
+    el('span', { 'aria-hidden': 'true' }, '🎨'),
+    ['a', 'b', 'c'].map(k => el('button', { type: 'button', class: `chip-btn${k === actual ? ' on' : ''}`, 'data-look': k, 'aria-pressed': String(k === actual),
+      onClick: () => { try { localStorage.setItem(LOOK_KEY, k); } catch (_) { /* stays */ } alCambiar(); } }, k.toUpperCase())));
+}
+
+const resultado = e => (e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null);
+const inicial = n => (n || '?').trim().charAt(0).toUpperCase();
+const juegoDe = (d, i) => duelGame(roundGame(d, i));
+const icono = g => (g ? el('span', { class: 'dl-ic', 'aria-hidden': 'true' }, gameIcon(g)) : null);
+
+/** Look B, the rounds: a tug of war per round, my bar out to the left, theirs to the right. */
+function rondasBarras(d, e, alTocar) {
+  const max = Math.max(1, ...e.mias.map(x => x?.s || 0), ...e.suyas.map(x => x?.s || 0));
+  return el('div', { class: 'dl-barras' }, Array.from({ length: e.n }, (_, i) => {
+    const g = juegoDe(d, i), r = e.rondas[i], m = e.mias[i], s = e.suyas[i];
+    const oculto = !r && !m && !!s;
+    const barra = (x, lado, gana) => el('div', { class: `dl-barra ${lado}${gana ? ' gana' : ''}` },
+      el('span', { style: `width:${x && !oculto ? Math.max(4, Math.round((100 * x.s) / max)) : 0}%` }),
+      el('b', {}, oculto && lado === 'el' ? '🙈' : x ? String(x.s) : r || e.termino ? '0' : '·'));
+    const ahora = !e.termino && i === e.turno;
+    return el('div', { class: `dl-barras-fila${r ? ` ${r}` : ''}${!r && !ahora && (e.termino || !m) ? ' apagada' : ''}`, 'data-round': i },
+      el('div', { class: 'dl-barras-g' }, icono(g), el('span', {}, fmt(T.roundN, { i: i + 1 })), r === 'w' ? ' ✓' : r === 'l' ? ' ✗' : ''),
+      el('div', { class: 'dl-barras-duo' }, barra(m, 'yo', r === 'w'), barra(s, 'el', r === 'l')),
+      ahora ? el('a', { class: 'btn btn--yellow btn--sm', href: hrefRonda(d, i), onClick: alTocar, 'data-round': i }, fmt(T.roundGo, { i: i + 1 })) : null);
+  }));
+}
+
+/** Look C, the rounds: one card per round to swipe, a stamp on the decided ones. */
+function rondasCartas(d, e, alTocar) {
+  return el('div', { class: 'dl-cartas' }, Array.from({ length: e.n }, (_, i) => {
+    const g = juegoDe(d, i), r = e.rondas[i], m = e.mias[i], s = e.suyas[i];
+    const ahora = !e.termino && i === e.turno;
+    const num = (x, oculto) => el('b', {}, oculto ? '🙈' : x ? String(x.s) : '–');
+    return el('div', { class: `dl-carta${r ? ` ${r}` : ''}${ahora ? ' ahora' : ''}${!r && !ahora ? ' apagada' : ''}`, 'data-round': i },
+      el('span', { class: 'dl-carta-n' }, fmt(T.roundN, { i: i + 1 })),
+      el('span', { class: 'dl-carta-ic', 'aria-hidden': 'true' }, g ? gameIcon(g) : '🎲'),
+      el('span', { class: 'dl-carta-g' }, g ? nombreJuego(g) : ''),
+      el('div', { class: 'dl-carta-sc' }, num(m), el('i', {}, 'vs'), num(s, !r && !!s)),
+      r ? el('span', { class: `dl-sello ${r}` }, r === 'w' ? '✓' : r === 'l' ? '✗' : '=') : null,
+      ahora ? el('a', { class: 'btn btn--yellow btn--sm', href: hrefRonda(d, i), onClick: alTocar, 'data-round': i }, T.play)
+        : !r ? el('small', {}, e.termino ? T.roundNotNeeded : m ? '⏳' : `🔒 ${T.roundAhead}`) : null);
+  }));
+}
+
+/** Look B, the list: the open duels as cards to swipe, the finished ones as a grid of tiles. */
+export function listaCartas(abiertos, hechos, me, { alTocar = () => {} } = {}) {
+  const tile = d => {
+    const e = estado(d, me), r = resultado(e), g = duelGame(d.g);
+    return el('a', { class: `dl-tile ${r}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
+      el('span', { class: 'dl-cara' }, inicial(e.rivalN)),
+      el('b', {}, e.rivalN),
+      el('span', { class: 'dl-tile-sc' }, `${e.puntos[0]}–${e.puntos[1]}`),
+      el('span', { class: 'dl-tile-g', 'aria-hidden': 'true' }, d.gr ? '🛠️' : g ? gameIcon(g) : ''),
+      el('span', { class: `dl-fin ${r}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[r]]));
+  };
+  return [
+    abiertos.length ? el('section', { class: 'dl-seccion', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle),
+      el('div', { class: 'dl-fila' }, abiertos.map(d => duelCard(d, me, { alTocar })))) : null,
+    hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone),
+      el('div', { class: 'dl-tiles' }, hechos.map(tile))) : null,
+  ];
+}
+
+/** Look C, the list: the open duels as tickets, the finished ones on a line by date, won or lost on its dot. */
+export function listaLinea(abiertos, hechos, me, { alTocar = () => {} } = {}) {
+  const ticket = d => {
+    const e = estado(d, me), turno = e.turno >= 0;
+    const yoN = d.a === me ? d.an : d.bn;
+    return el('a', { class: `dl-ticket${turno ? ' turno' : ''}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
+      el('span', { class: 'dl-cara yo' }, inicial(yoN)),
+      el('div', { class: 'dl-ticket-mid' },
+        el('small', {}, titulo(d)),
+        el('b', { class: 'dl-marcador' }, `${e.puntos[0]}–${e.puntos[1]}`),
+        el('div', { class: 'dl-puntos' }, puntos(e)),
+        el('small', { class: turno ? 'dl-ticket-turno' : '' }, turno ? T.yourTurn : fmt(T.waitingFor, { n: e.rivalN }))),
+      el('span', { class: 'dl-cara el' }, inicial(e.rivalN)));
+  };
+  const fecha = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' });
+  const hito = d => {
+    const e = estado(d, me), r = resultado(e);
+    return el('li', { class: `dl-hito ${r}` },
+      el('a', { href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
+        el('span', { class: 'dl-hito-f' }, fecha.format(new Date(d.at))),
+        el('b', {}, `${e.rivalN} `, el('span', { class: 'dl-hito-sc' }, `${e.puntos[0]}–${e.puntos[1]}`)),
+        el('small', {}, titulo(d)),
+        el('span', { class: `dl-fin ${r}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[r]])));
+  };
+  return [
+    abiertos.length ? el('section', { class: 'dl-seccion stack', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle), abiertos.map(ticket)) : null,
+    hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), el('ol', { class: 'dl-linea' }, hechos.map(hito))) : null,
+  ];
+}

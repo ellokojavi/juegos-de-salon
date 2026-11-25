@@ -50,7 +50,7 @@ export function demoDuels(me, t = Date.now()) {
     // Open: a custom duel, a different game each round, Ana already played round 2
     duelo('ana', 'pts4', 'tango', 8, [[85, 85], [null, 90], [null, null], [null, null]], { gr: ['tango', 'zip', 'reinas', 'desenredo'], yoReto: false }),
     // Open: I played everything I could, waiting for Caro
-    duelo('caro', 'bo3', 'zip', 30, [[77, 60], [88, null], [null, null]]),
+    duelo('caro', 'bo3', 'zip', 30, [[77, 60], [88, null], [90, null]]),
     // Finished: the nemesis, Ana, beats me again and again
     duelo('ana', 'bo3', 'desenredo', 50, [[60, 90], [75, 82], [null, null]]),
     duelo('ana', 'pts', 'zip', 130, [[70, 95], [90, 60], [55, 88]], { yoReto: false }),
