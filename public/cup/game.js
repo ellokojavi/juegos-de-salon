@@ -2145,6 +2145,17 @@ function varianteSuelta(id) {
   try { guardada = localStorage.getItem(claveVariante(id)); } catch (_) { /* sin almacenamiento: la de siempre */ }
   return vs.includes(guardada) ? guardada : vs[0];
 }
+/** The locked level's line in a duel round's waiting room, in place of the picker (texts in duels-texts.js). */
+function nivelDuelo(v) {
+  const p = el('p', { class: 'notice', id: 'duelo-nivel' });
+  import('../assets/js/duels-texts.js').then(({ TEXTS }) => { const TD = TEXTS[LANG] || TEXTS.es; p.textContent = fmt(TD.duelLevel, { v: TD.levels[v] || v }); }).catch(() => {});
+  return p;
+}
+/** A duel round's level: the link's, else the default one (a duel from before levels were locked). Never remembered. */
+function varianteDuelo(id) {
+  const vs = JUEGOS[id]?.variantes;
+  return vs ? (vs.includes(param('mode')) ? param('mode') : vs[0]) : null;
+}
 function guardarVariante(id, v) { try { localStorage.setItem(claveVariante(id), v); } catch (_) { /* solo esta vez */ } }
 /**
  * The ranking table of a variant (D-331): the default one is the game's own, the others go apart. Sudoku
@@ -2182,7 +2193,9 @@ function practica(id, varianteElegida = null) {
   const mod = JUEGOS[id];
   if (!JUEGOS_COPA[id] || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   // Uno al día is the same challenge for everyone (D-334): always the default variant, without the picker
-  const variante = HOY ? (mod.variantes?.[0] ?? null) : varianteElegida || varianteSuelta(id);
+  // A duel's round is played at the level its challenger locked (the link's `mode`, duels.js `lv`), never the
+  // one this phone remembers, and it cannot be changed: both players get the same (the owner, 2026-11-25)
+  const variante = HOY ? (mod.variantes?.[0] ?? null) : DUELO ? varianteDuelo(id) : varianteElegida || varianteSuelta(id);
   const J = conVariante(JUEGOS_COPA[id], variante);
   // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
   if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
@@ -2226,7 +2239,8 @@ function practica(id, varianteElegida = null) {
       tituloAntesala(id, J),
       el('div', { style: 'margin-top:6px' }, coverLangToggle())),
     // The variant is picked here, before the steps, which are the variant's (D-331)
-    variante && !HOY ? selectorVariante(id, variante, v => { guardarVariante(id, v); SFX.tap(); practica(id, v); }) : null,
+    variante && DUELO ? nivelDuelo(variante) : null,
+    variante && !HOY && !DUELO ? selectorVariante(id, variante, v => { guardarVariante(id, v); SFX.tap(); practica(id, v); }) : null,
     // Toque y Fama: Palabra shares Toque y Fama's home card (#767): 🔢 Número goes back to it
     id === 'letras' && SUELTO && !HOY ? selectorTyf() : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
@@ -2476,7 +2490,7 @@ async function avisoDuelo(caja, r, salida = caja) {
         msg = fmt(TD.roundSaved, { i: DUELO.i + 1, n: duelos.rondas(d), r: duelos.nombreDe(d, duelos.otro(d, yo)) });
         // The next round, the screen's main action: that round's game page (a custom duel changes game) with its seed
         const t = duelos.estado(d, yo).turno;
-        if (t >= 0) sigue = el('a', { class: 'btn btn--yellow', id: 'btn-ronda', href: `${gameById(duelos.roundGame(d, t))?.path ? RAIZ + gameById(duelos.roundGame(d, t)).path : location.pathname}?seed=${d.sd[t]}&duel=${d.id}&round=${t}` }, fmt(TD.playRound, { i: t + 1 }));
+        if (t >= 0) sigue = el('a', { class: 'btn btn--yellow', id: 'btn-ronda', href: `${gameById(duelos.roundGame(d, t))?.path ? RAIZ + gameById(duelos.roundGame(d, t)).path : location.pathname}?seed=${d.sd[t]}&duel=${d.id}&round=${t}${duelos.roundLevel(d, t) ? `&mode=${duelos.roundLevel(d, t)}` : ''}` }, fmt(TD.playRound, { i: t + 1 }));
       } catch (_) { msg = TD.roundLate; }
     }
     caja.append(...[el('p', { class: 'notice', id: 'duelo-aviso' }, msg), sigue].filter(Boolean));
