@@ -10,7 +10,7 @@ import { SFX } from '../assets/js/sound.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 import { bloqueJugador } from '../assets/js/ranking.js';
 import { estado, record, esDid, rondas } from '../assets/js/duels.js';
-import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
+import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, duelView, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
 
 export { T };
 const tap = () => SFX.tap();
@@ -33,10 +33,16 @@ async function drawInvite(root, { sub, h1, did, J }) {
     root.replaceChildren(versus, bloqueJugador({ abierto: true, destacado: true, titulo: T.signInToPlay, alTocar: tap }));
     return;
   }
-  if (yo.jid === d.a) {
+  // One of its two players: the duel's own page, its card and round by round (the owner, 2026-11-25)
+  const deB = yo.jid === d.b && (Object.keys(d.e?.[d.b] || {}).length > 0 || estado(d, d.b).termino);
+  if (yo.jid === d.a || deB) {
     h1.textContent = T.pageTitle;
-    const invitar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-invitar', onClick: () => { tap(); shareInvite(d, invitar); } }, fmt(T.shareInvite, { n: d.bn }));
-    root.replaceChildren(el('section', { class: 'panel' }, fila(d, yo.jid, { alTocar: tap })), estado(d, yo.jid).termino ? null : invitar, todos);
+    sub.textContent = ''; // the card's chip says the game and format
+    const lista = await D.mios().catch(() => []);
+    const e = estado(d, yo.jid);
+    const invitar = yo.jid === d.a && !e.termino && !Object.keys(d.e?.[d.b] || {}).length
+      ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'dl-invitar', onClick: () => { tap(); shareInvite(d, invitar); } }, fmt(T.shareInvite, { n: d.bn })) : null;
+    root.replaceChildren(...duelView(d, yo.jid, { lista, alTocar: tap }), invitar, todos);
     return;
   }
   if (yo.jid !== d.b) { root.replaceChildren(versus, el('p', { class: 'notice' }, fmt(T.forOther, { n: d.bn })), todos); return; }

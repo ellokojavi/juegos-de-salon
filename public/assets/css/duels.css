@@ -153,3 +153,79 @@
 .dl-fin-col { display: grid; justify-items: end; gap: var(--s-4); }
 .dl-revancha { white-space: nowrap; }
 #dl-rondas .chip-btn { min-width: 44px; }   /* a one-digit chip still 44 px wide (U-10) */
+
+/* A duel's own page (/duels/?d=…): the big card, then the round track */
+.dl-row-link { color: inherit; text-decoration: none; }
+a.dl-card-g { text-decoration: none; }
+.dl-hero {
+  position: relative; overflow: hidden; display: grid; gap: var(--s-12); text-align: center;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgb(var(--cyan-rgb) / .18), transparent 60%),
+    radial-gradient(120% 80% at 100% 0%, rgb(var(--pink-rgb) / .22), transparent 60%),
+    var(--glass);
+}
+.dl-hero.turno { border-color: var(--yellow); box-shadow: 0 0 0 1px rgb(var(--yellow-rgb) / .35), 0 0 28px rgb(var(--yellow-rgb) / .22); }
+.dl-hero.fin-w { border-color: var(--lime); box-shadow: 0 0 28px rgb(var(--lime-rgb) / .25); }
+.dl-hero.fin-l { border-color: var(--pink); }
+.dl-hero-top { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-6); }
+.dl-chip {
+  display: inline-flex; align-items: center; min-height: 28px; padding: var(--s-2) var(--s-10);
+  border-radius: var(--r-pill); background: var(--well); color: var(--muted);
+  font: 800 var(--fs-75) var(--font-body); text-transform: uppercase;
+}
+.dl-chip--demo { color: var(--ink-on-yellow); background: var(--yellow); }
+.dl-hero-vs { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--s-8); }
+.dl-lado { position: relative; display: grid; justify-items: center; gap: var(--s-6); min-width: 0; }
+.dl-lado b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-cara--xl { width: 64px; height: 64px; font-size: var(--fs-200); }
+.dl-cara.yo { border-color: var(--cyan); box-shadow: 0 0 16px rgb(var(--cyan-rgb) / .4); }
+.dl-cara.el { border-color: var(--pink); box-shadow: 0 0 16px rgb(var(--pink-rgb) / .4); }
+.dl-corona { position: absolute; top: calc(-1 * var(--s-14)); font-size: var(--fs-140); line-height: 1; transform: rotate(-12deg); }
+.dl-hero-sc { display: grid; justify-items: center; gap: var(--s-6); }
+.dl-marcador--xl { font-size: var(--fs-200); text-shadow: 0 2px 0 var(--edge-yellow); }
+.dl-hero-estado { margin: 0; font: 900 var(--fs-110) var(--font-body); color: var(--yellow); }
+.dl-hero-estado.w { color: var(--lime); }
+.dl-hero-estado.l { color: var(--pink); }
+.dl-hero-estado.t { color: var(--muted); }
+.dl-reloj { display: grid; gap: var(--s-4); }
+.dl-reloj-barra { height: 6px; border-radius: var(--r-pill); background: var(--well); overflow: hidden; }
+.dl-reloj-barra span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--pink), var(--yellow)); }
+.dl-reloj small { color: var(--muted); font-weight: 800; }
+.dl-hero-pie { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--s-8); }
+.dl-pill--tag { border-color: var(--pink); }
+
+/* The rounds as steps on a line: done ones lit, the one to play glowing, the rest dim */
+.dl-track { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-10); position: relative; }
+.dl-track::before {
+  content: ''; position: absolute; left: 17px; top: var(--s-18); bottom: var(--s-18); width: 2px;
+  background: linear-gradient(var(--line-faint), var(--glass-border));
+}
+.dl-paso {
+  position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: var(--s-10);
+  padding: var(--s-10) var(--s-12) var(--s-10) 0; border-radius: var(--r-14);
+}
+.dl-paso-bola {
+  position: relative; z-index: 1; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; box-sizing: border-box;
+  background: var(--well); border: 2px dashed var(--line-faint); font: 900 var(--fs-100) var(--font-num); color: var(--muted);
+}
+.dl-paso-txt { display: grid; gap: var(--s-2); min-width: 0; }
+.dl-paso-r { color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
+.dl-paso-g { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-paso-sc { display: flex; align-items: baseline; gap: var(--s-4); }
+.dl-paso-n { font: 900 var(--fs-140) var(--font-num); min-width: 1.6em; text-align: center; }
+.dl-paso-guion { color: var(--muted); }
+.dl-paso small { color: var(--muted); font-weight: 700; text-align: right; }
+.dl-paso-accion { display: grid; justify-items: end; gap: var(--s-4); grid-column: 2 / -1; }
+.dl-paso.ahora { grid-template-columns: 36px minmax(0, 1fr); background: rgb(var(--yellow-rgb) / .1); outline: 2px solid var(--yellow); outline-offset: -2px; padding-left: 0; }
+.dl-paso.ahora .dl-paso-bola { border: 0; background: var(--yellow); color: var(--ink-on-yellow); animation: dl-pulso 1.4s ease-in-out infinite; }
+.dl-paso.hecho .dl-paso-bola { border: 0; color: var(--ink-on-yellow); }
+.dl-paso.hecho.w .dl-paso-bola { background: var(--lime); }
+.dl-paso.hecho.l .dl-paso-bola { background: var(--pink); color: var(--ink); }
+.dl-paso.hecho.t .dl-paso-bola { background: var(--muted); }
+.dl-paso.hecho.w .dl-paso-sc .dl-paso-n:first-child { color: var(--lime); }
+.dl-paso.hecho.l .dl-paso-sc .dl-paso-n:last-child { color: var(--pink); }
+.dl-paso.medio .dl-paso-bola { border-style: solid; border-color: var(--cyan); color: var(--cyan); }
+.dl-paso.futuro, .dl-paso.nada { opacity: .55; }
+.dl-paso-n.espera { font-size: var(--fs-110); }
+@keyframes dl-pulso { 50% { box-shadow: 0 0 0 6px rgb(var(--yellow-rgb) / .25); } }
+@media (prefers-reduced-motion: reduce) { .dl-paso.ahora .dl-paso-bola { animation: none; } }

@@ -769,7 +769,16 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     /** The duels (lab flag rivals, duels.js), on this same store: loaded only by the pages that ask. */
     async duelos() {
       const { crearDuelos } = await import('./duels.js');
-      return (duelosApi ||= crearDuelos({ almacen, yo: api.yo, now }));
+      const D = (duelosApi ||= crearDuelos({ almacen, yo: api.yo, now }));
+      // A tester's made-up duels (duels-demo.js, a switch on /labs/): added to mine, never written
+      const demo = await import('./duels-demo.js');
+      if (!demo.demoOn(storage)) return D;
+      const falsos = () => demo.demoDuels(api.yo(), now());
+      return {
+        ...D,
+        leer: did => (demo.isDemo(did) ? Promise.resolve(falsos().find(d => d.id === did) || null) : D.leer(did)),
+        mios: async (jid = api.yo()?.jid) => { const reales = await D.mios(jid).catch(() => []); return jid && jid === api.yo()?.jid ? [...reales, ...falsos()] : reales; },
+      };
     },
   };
   let duelosApi = null;
