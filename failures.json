@@ -7783,7 +7783,11 @@
       "error": "✗ /duels: the footer reaches the bottom edge, also with the browser's bar hidden (56 px) (128 px under the footer in another color (rgb 152,47,61 against the footer's 126,36,66))",
       "signature": "60607c9a88",
       "date": "2026-11-25T18:48:13.735Z",
-      "fix": null,
+      "fix": {
+        "commit": "77248aa8425927e65f6608a8641a7492f50f32cf",
+        "date": "2026-11-25T19:08:35.352Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     }
   ]
