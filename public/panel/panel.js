@@ -1277,7 +1277,7 @@ function vistaPantallas() {
       tile(pct(p.orient.h || 0), 'played sideways'),
       tile(`${raros.length} of ${WIDTH_BANDS.length}`, `width bands under ${RARO * 100}% each: not worth a design of their own (greyed below)`),
     ),
-    bloque('Width curve', 'Visits along real pixels (log scale), each block\'s area its share. Shaded: the middle 80%. ▲ the most common width. Dashed: our 320 px floor. Tap a block to find its row below.',
+    bloque('Width curve', 'Visits along real pixels (log scale), each block\'s area its share. Shaded: the middle 80%. ▲ the most common width. Dashed: our 320 px floor. Tap a block to find its row below. The table: how narrow a design must go to cover 50, 80, 90 or 99% of visits (by whole bands, so it covers at least that).',
       curvaAnchos(p.ancho, p.total)),
     bloque('Width', 'Share of visits per band, and from the narrowest up how many a design for that width and wider would leave out.',
       tablaBandas(p.ancho, p.total, new Set(prioridad.map(b => b.id)))),
@@ -1338,7 +1338,23 @@ function curvaAnchos(ancho, total) {
     svg.append(svgEl('line', { class: 'pant-curva-eje', x1: lx(v), x2: lx(v), y1: H - B, y2: H - B + 4 }));
     const tx = svgEl('text', { class: 'pant-curva-txt', x: lx(v), y: H - B + 16, 'text-anchor': 'middle' }); tx.textContent = v; svg.append(tx);
   }
-  return el('div', { class: 'pant-curva-caja' }, svg);
+  return el('div', { class: 'pant-curva-caja' }, svg, total ? tablaCobertura(tramos) : null);
+}
+
+/** For each coverage target, the narrowest band a design must still fit so that share of visits (or more) is covered. */
+function tablaCobertura(tramos) {
+  const f = v => `${(v * 100).toLocaleString(LOCALE, { maximumFractionDigits: 1 })}%`;
+  const filas = [0.5, 0.8, 0.9, 0.99].map(meta => {
+    let cubre = 0, banda = tramos[0];
+    for (let i = tramos.length - 1; i >= 0; i--) { cubre += tramos[i].share; banda = tramos[i]; if (cubre >= meta - 1e-9) break; }
+    return el('tr', {},
+      el('th', { scope: 'row' }, `P${Math.round(meta * 100)}`),
+      el('td', { class: 'num', title: banda.b.label }, el('span', { style: `color:${C_ANCHO[banda.b.id]}` }, '■ '), banda.b.min ? `${banda.b.min} px` : '320 px'),
+      el('td', { class: 'num' }, f(Math.min(1, cubre))));
+  });
+  return el('div', { class: 'pant-scroll' }, el('table', { class: 'pant pant-cobertura' },
+    el('thead', {}, el('tr', {}, el('th', {}, 'Cover'), el('th', { class: 'num', title: 'Design down to this width: the narrowest band it must still fit' }, 'Down to'), el('th', { class: 'num' }, 'Covered'))),
+    el('tbody', {}, ...filas)));
 }
 
 /** Every width band with its examples; with counts, its share and the share left out below it. */

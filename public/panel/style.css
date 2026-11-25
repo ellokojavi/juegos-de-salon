@@ -552,6 +552,7 @@ table.pant .num { text-align: right; white-space: nowrap; }
 table.pant .pant-barra { display: inline-block; height: 0.6em; vertical-align: middle; }
 table.pant tr.pant-raro { opacity: 0.45; }
 table.pant tr.pant-foco { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.pant-curva-caja { display: grid; gap: var(--s-12); }
 .pant-curva { display: block; width: 100%; max-width: 640px; height: auto; margin-inline: auto; }
 .pant-curva-b { opacity: 0.85; cursor: pointer; }
 .pant-curva-b.pant-raro { opacity: 0.3; }
