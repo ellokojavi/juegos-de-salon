@@ -227,8 +227,9 @@
         </section>
         <section class="panel seccion" id="seccion-rivals">
           <h2>⚔️ Duelos</h2>
-          <p class="muted" style="margin:0">Reta a otro jugador a rondas de un juego: mismos niveles, 3 días para jugar. Desde tu perfil, la portada o ⚔️ en un ranking.</p>
+          <p class="muted" style="margin:0">Reta a otro jugador a rondas de un juego: mismos niveles, 3 días. 🧪 suma duelos inventados, solo en este teléfono.</p>
           <a class="btn btn--yellow" id="btn-rivals" href="../duels/">⚔️ Ver tus duelos</a>
+          <button type="button" class="btn btn--ghost btn--sm" id="btn-duels-demo" aria-pressed="false">🧪 Duelos de prueba: no</button>
         </section>
         <section class="panel seccion" id="seccion-home-carousels">
           <h2>🎠 Vista de íconos</h2>
@@ -1069,6 +1070,14 @@
     moved.then(() => import('./index-nav.js')).then(m => m.draw()).catch(() => {});
     moved.then(() => import('./bodega.js')).then(m => m.start());
     moved.then(() => import('./publish.js')).then(m => m.start());
+    // Duels' test data (duels-demo.js): made-up duels added to this phone's own, never written
+    import('../assets/js/duels-demo.js').then(({ demoOn, setDemo }) => {
+      const b = document.getElementById('btn-duels-demo');
+      if (!b) return;
+      const pintar = () => { const on = demoOn(); b.textContent = `🧪 Duelos de prueba: ${on ? 'sí' : 'no'}`; b.setAttribute('aria-pressed', String(on)); };
+      pintar();
+      b.addEventListener('click', () => { setDemo(!demoOn()); pintar(); });
+    });
     // Install invitation: forget this phone's ✕, «ya la instalé», snooze and weekly mark, so it shows again
     document.getElementById('btn-install-invite-reset')?.addEventListener('click', e => {
       for (const k of ['no', 'luego', 'tras']) { try { localStorage.removeItem(`juegos-de-salon:instalar:${k}`); } catch (_) { /* nothing kept */ } }

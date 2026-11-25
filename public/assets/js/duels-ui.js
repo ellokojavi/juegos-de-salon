@@ -8,7 +8,7 @@ import { gameIcon } from './game-icon.js';
 import { getLang } from './i18n.js';
 import { SUELTOS } from './games.js';
 import { jugador, leerYo } from './jugador.js';
-import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS, esPuntos, formatoDe } from './duels.js';
+import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, FORMATOS, esPuntos, formatoDe, DURACION } from './duels.js';
 import { TEXTS } from './duels-texts.js';
 import { slotRoll } from './slot-roll.js';
 
@@ -45,7 +45,7 @@ export function duelCard(d, me, { alTocar = () => {} } = {}) {
   const e = estado(d, me);
   const turno = e.turno >= 0;
   return el('div', { class: `panel dl-card${turno ? ' turno' : ''}`, 'data-duel': d.id },
-    el('p', { class: 'dl-card-g' }, titulo(d)),
+    el('a', { class: 'dl-card-g', href: hrefDuelo(d), onClick: alTocar }, `${titulo(d)} ›`),
     el('div', { class: 'dl-vs' }, el('span', {}, leerYo()?.n || ''), el('b', { class: 'dl-marcador' }, marcador(e)), el('span', {}, e.rivalN)),
     el('div', { class: 'dl-puntos' }, puntos(e)),
     turno
@@ -59,8 +59,8 @@ export function fila(d, me, { alTocar = () => {}, lista = null } = {}) {
   const fin = e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null;
   const h = Math.max(1, Math.ceil((e.vence - Date.now()) / 3600000));
   return el('div', { class: 'dl-row', 'data-duel': d.id },
-    el('div', { class: 'dl-row-txt' },
-      el('b', {}, e.rivalN),
+    el('a', { class: 'dl-row-txt dl-row-link', href: hrefDuelo(d), onClick: alTocar },
+      el('b', {}, `${e.rivalN} ›`),
       el('small', {}, titulo(d) + (e.termino ? '' : ` · ${fmt(T.hoursLeft, { h })}`)),
       el('div', { class: 'dl-row-sc' }, el('span', { class: 'dl-puntos' }, puntos(e)), marcador(e))),
     fin ? el('div', { class: 'dl-fin-col' }, el('span', { class: `dl-fin ${fin}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[fin]]),
@@ -404,4 +404,172 @@ export function panelRecientes(lista) {
           el('small', {}, titulo(d))),
         el('span', { class: `dl-fin${e.termino ? '' : ' t'}` }, fin));
     }));
+}
+
+/**
+ * A duel's own page (/duels/?d=…, for its two players; the owner, 2026-11-25): the duel as a big
+ * card (both faces, the score, how it stands and the clock), then every round as a step on a track:
+ * decided, played by one, your turn, still to play, or not needed. A rival's score stays hidden until
+ * you play that round, so nobody plays knowing the number to beat.
+ */
+export function duelView(d, me, { lista = [], alTocar = () => {} } = {}) {
+  const e = estado(d, me);
+  const yoN = (d.a === me ? d.an : d.bn) || T.you;
+  const fin = e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null;
+  const cara = (n, cls) => el('div', { class: `dl-cara dl-cara--xl ${cls}` }, (n || '?').trim().charAt(0).toUpperCase());
+  const lado = (n, cls, corona) => el('div', { class: `dl-lado ${cls}` }, cara(n, cls), corona ? el('span', { class: 'dl-corona', 'aria-hidden': 'true' }, '👑') : null, el('b', {}, n));
+  const quedan = Math.max(0, e.vence - Date.now());
+  const estadoTxt = fin ? T[{ w: 'won', l: 'lost', t: 'draw' }[fin]]
+    : e.turno >= 0 ? T.yourTurn : fmt(T.waitingFor, { n: e.rivalN });
+  const hero = el('section', { class: `panel dl-hero${fin ? ` fin-${fin}` : e.turno >= 0 ? ' turno' : ''}`, id: 'dl-hero' },
+    el('div', { class: 'dl-hero-top' },
+      el('span', { class: 'dl-chip' }, titulo(d)),
+      d.id?.startsWith('demo') ? el('span', { class: 'dl-chip dl-chip--demo' }, T.demoTag) : null),
+    el('div', { class: 'dl-hero-vs' },
+      lado(yoN, 'yo', fin === 'w'),
+      el('div', { class: 'dl-hero-sc' }, el('b', { class: 'dl-marcador dl-marcador--xl' }, `${e.puntos[0]}–${e.puntos[1]}`), el('div', { class: 'dl-puntos' }, puntos(e))),
+      lado(e.rivalN, 'el', fin === 'l')),
+    // Your turn: the button to play it right on the card, and whether the rival already did (the owner, 2026-11-25)
+    e.turno >= 0 ? el('div', { class: 'dl-hero-jugar' },
+      el('a', { class: 'btn btn--yellow', id: 'dl-jugar', href: hrefRonda(d, e.turno), onClick: alTocar }, fmt(T.roundGo, { i: e.turno + 1 })),
+      e.suyas[e.turno] ? el('small', {}, `🙈 ${fmt(T.roundTheyPlayed, { n: e.rivalN })} · ${T.roundHidden}`) : null)
+      : el('p', { class: `dl-hero-estado${fin ? ` ${fin}` : ''}` }, estadoTxt),
+    e.termino ? null : el('div', { class: 'dl-reloj' },
+      el('div', { class: 'dl-reloj-barra', 'aria-hidden': 'true' }, el('span', { style: `width:${Math.round((100 * quedan) / DURACION)}%` })),
+      el('small', {}, fmt(T.hoursLeft, { h: Math.max(1, Math.ceil(quedan / 3600000)) }))));
+
+  const pasos = Array.from({ length: e.n }, (_, i) => {
+    const g = duelGame(roundGame(d, i));
+    const m = e.mias[i], s = e.suyas[i], r = e.rondas[i];
+    let tipo, cuerpo;
+    const num = (x, oculto) => el('b', { class: 'dl-paso-n' }, oculto ? '🙈' : x ? String(x.s) : '–');
+    if (r) {
+      tipo = `hecho ${r}`;
+      cuerpo = el('div', { class: 'dl-paso-sc' }, num(m), el('span', { class: 'dl-paso-guion' }, '–'), num(s));
+    } else if (e.termino) {
+      tipo = 'nada';
+      cuerpo = el('small', {}, T.roundNotNeeded);
+    } else if (i === e.turno) {
+      tipo = 'ahora';
+      cuerpo = el('a', { class: 'dl-paso-ir', href: hrefRonda(d, i), onClick: alTocar, 'data-round': i }, s ? `🙈 ${T.yourTurn}` : T.yourTurn);
+    } else if (m) {
+      tipo = 'medio';
+      cuerpo = el('div', { class: 'dl-paso-sc' }, num(m), el('span', { class: 'dl-paso-guion' }, '–'), el('b', { class: 'dl-paso-n espera' }, '⏳'));
+    } else {
+      tipo = 'futuro';
+      cuerpo = el('small', {}, s ? fmt(T.roundTheyPlayed, { n: e.rivalN }) : `🔒 ${T.roundAhead}`);
+    }
+    return el('li', { class: `dl-paso ${tipo}`, 'data-round': i },
+      el('span', { class: 'dl-paso-bola', 'aria-hidden': 'true' }, r === 'w' ? '✓' : r === 'l' ? '✗' : r === 't' ? '=' : String(i + 1)),
+      el('div', { class: 'dl-paso-txt' },
+        el('span', { class: 'dl-paso-r' }, fmt(T.roundN, { i: i + 1 })),
+        el('span', { class: 'dl-paso-g' }, g ? [el('span', { 'aria-hidden': 'true' }, gameIcon(g)), ` ${nombreJuego(g)}`] : roundGame(d, i))),
+      cuerpo);
+  });
+  const track = el('section', { class: 'panel', id: 'dl-rondas' },
+    el('p', { class: 'lead' }, T.roundsTitle), el('ol', { class: 'dl-track' }, pasos));
+
+  // Head to head with this rival, over the finished duels, and their tag
+  const h2h = rivalidades(lista, me).find(x => x.jid === e.rival);
+  const arch = archirrival(lista, me), nem = nemesis(lista, me);
+  const tags = [arch?.jid === e.rival ? `🔥 ${T.archTag}` : null, nem?.jid === e.rival ? `💀 ${T.nemesisTag}` : null].filter(Boolean);
+  const pie = h2h || tags.length || e.termino ? el('div', { class: 'dl-hero-pie' },
+    h2h ? el('span', { class: 'dl-pill' }, fmt(T.h2hLine, { g: h2h.g, p: h2h.p })) : null,
+    tags.map(x => el('span', { class: 'dl-pill dl-pill--tag' }, x)),
+    e.termino ? el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'dl-revancha', onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: e.rival, n: e.rivalN }, juego: duelGame(d.g) ? d.g : null, formato: d.f, alTocar }); } }, T.rematch) : null) : null;
+  if (pie) hero.append(pie);
+  return [hero, track];
+}
+export const hrefDuelo = d => `${RAIZ}duels/?d=${d.id}`;
+
+const resultado = e => (e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null);
+const inicial = n => (n || '?').trim().charAt(0).toUpperCase();
+
+/**
+ * The /duels/ list (the owner picked it, 2026-11-25): the open duels as tickets, the finished ones on a
+ * line by date, won or lost on its dot. A tap on one opens its details: the rounds, the head to head,
+ * See the duel and ⚔️ Rematch.
+ */
+export function listTimeline(abiertos, hechos, me, { alTocar = () => {}, lista = [] } = {}) {
+  const ticket = d => {
+    const e = estado(d, me), turno = e.turno >= 0;
+    const yoN = d.a === me ? d.an : d.bn;
+    return el('a', { class: `dl-ticket${turno ? ' turno' : ''}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
+      el('span', { class: 'dl-cara yo' }, inicial(yoN)),
+      el('div', { class: 'dl-ticket-mid' },
+        el('small', {}, titulo(d)),
+        el('b', { class: 'dl-marcador' }, `${e.puntos[0]}–${e.puntos[1]}`),
+        el('div', { class: 'dl-puntos' }, puntos(e)),
+        el('small', { class: turno ? 'dl-ticket-turno' : '' }, turno ? T.yourTurn : fmt(T.waitingFor, { n: e.rivalN }))),
+      el('span', { class: 'dl-cara el' }, inicial(e.rivalN)));
+  };
+  const fecha = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' });
+  const h2h = rivalidades(lista, me);
+  const hito = d => {
+    const e = estado(d, me), r = resultado(e);
+    const x = h2h.find(y => y.jid === e.rival);
+    const rondasTxt = Array.from({ length: e.n }, (_, i) => (e.rondas[i] ? el('span', { class: `dl-mini ${e.rondas[i]}` },
+      el('span', { 'aria-hidden': 'true' }, juegoIcono(d, i)), ` ${e.mias[i]?.s ?? 0}–${e.suyas[i]?.s ?? 0}`) : null)).filter(Boolean);
+    return el('li', { class: `dl-hito ${r}`, 'data-duel': d.id },
+      el('details', {},
+        el('summary', { onClick: alTocar },
+          el('span', { class: 'dl-hito-f' }, fecha.format(new Date(d.at))),
+          el('b', {}, `${e.rivalN} `, el('span', { class: 'dl-hito-sc' }, `${e.puntos[0]}–${e.puntos[1]}`)),
+          el('small', {}, titulo(d)),
+          el('span', { class: `dl-fin ${r}` }, T[{ w: 'won', l: 'lost', t: 'draw' }[r]])),
+        el('div', { class: 'dl-hito-mas' },
+          el('div', { class: 'dl-minis' }, rondasTxt),
+          x ? el('small', {}, fmt(T.h2hLine, { g: x.g, p: x.p })) : null,
+          el('div', { class: 'dl-hito-btns' },
+            el('a', { class: 'chip-btn', href: hrefDuelo(d), onClick: alTocar }, T.seeDuel),
+            el('button', { type: 'button', class: 'chip-btn dl-revancha', 'data-rematch': d.id, onClick: () => { alTocar(); abrirNuevo({ lista, rival: { jid: e.rival, n: e.rivalN }, juego: duelGame(d.g) ? d.g : null, formato: d.f, alTocar }); } }, T.rematch)))));
+  };
+  return [
+    abiertos.length ? el('section', { class: 'dl-seccion stack', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle), abiertos.map(ticket)) : null,
+    hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), el('ol', { class: 'dl-linea' }, hechos.map(hito))) : null,
+  ];
+}
+
+const juegoIcono = (d, i) => { const g = duelGame(roundGame(d, i)); return g ? gameIcon(g) : '🎲'; };
+
+/**
+ * «📈 Your progress» on /duels/ (the owner, 2026-11-25): the win rate after each finished duel as one
+ * line (a dot per duel, its result in the tooltip), the latest ten as W/L pills, and the record by game.
+ */
+export function panelProgress(lista, me) {
+  const fin = lista.map(d => ({ d, e: estado(d, me) })).filter(x => x.e.termino).sort((a, b) => a.d.at - b.d.at);
+  if (fin.length < 2) return null;
+  let g = 0, p = 0;
+  const puntos = fin.map(({ d, e }) => { if (e.gano === 1) g++; else if (e.gano === -1) p++; return { pct: g + p ? (100 * g) / (g + p) : 50, d, e }; });
+  const W = 320, H = 110, PX = 8, PY = 10;
+  const x = i => PX + (i * (W - 2 * PX)) / (puntos.length - 1);
+  const y = v => PY + ((100 - v) * (H - 2 * PY)) / 100;
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = (tag, a = {}, ...hijos) => { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(a)) n.setAttribute(k, v); n.append(...hijos); return n; };
+  const linea = puntos.map((q, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(q.pct).toFixed(1)}`).join(' ');
+  const ultimo = Math.round(puntos.at(-1).pct);
+  const grafico = svg('svg', { viewBox: `0 0 ${W} ${H}`, class: 'dl-prog-svg', role: 'img', 'aria-label': `${T.progressNote}: ${ultimo}%` },
+    ...[0, 50, 100].map(v => svg('line', { x1: PX, x2: W - PX, y1: y(v), y2: y(v), class: v === 50 ? 'dl-prog-mitad' : 'dl-prog-grid' })),
+    svg('path', { d: `${linea} L${x(puntos.length - 1)},${H - PY} L${x(0)},${H - PY} Z`, class: 'dl-prog-area' }),
+    svg('path', { d: linea, class: 'dl-prog-linea' }),
+    ...puntos.map((q, i) => svg('circle', { cx: x(i), cy: y(q.pct), r: i === puntos.length - 1 ? 5 : 3.5, class: `dl-prog-punto ${resultado(q.e)}` },
+      svg('title', {}, `${q.e.rivalN} ${q.e.puntos[0]}–${q.e.puntos[1]} · ${Math.round(q.pct)}%`))));
+  const forma = fin.slice(-10).map(({ e }) => { const r = resultado(e); return el('span', { class: `dl-forma ${r}`, title: e.rivalN }, r === 'w' ? '✓' : r === 'l' ? '✗' : '='); });
+  const porJuego = {};
+  for (const { d, e } of fin) { const k = d.gr ? 'custom' : d.g; const z = (porJuego[k] ||= { g: 0, p: 0 }); if (e.gano === 1) z.g++; else if (e.gano === -1) z.p++; }
+  const filas = Object.entries(porJuego).sort((a, b) => b[1].g + b[1].p - (a[1].g + a[1].p)).map(([k, z]) => {
+    const jg = duelGame(k), tot = Math.max(1, z.g + z.p);
+    return el('div', { class: 'dl-pj' },
+      el('span', { class: 'dl-pj-g' }, jg ? [el('span', { 'aria-hidden': 'true' }, gameIcon(jg)), ` ${nombreJuego(jg)}`] : T.customTitle),
+      el('div', { class: 'dl-pj-barra', title: fmt(T.gameLine, z) }, el('span', { class: 'w', style: `width:${(100 * z.g) / tot}%` }), el('span', { class: 'l', style: `width:${(100 * z.p) / tot}%` })),
+      el('small', {}, `${z.g}–${z.p}`));
+  });
+  return el('section', { class: 'panel', id: 'dl-progreso' },
+    el('div', { class: 'dl-head' }, el('p', { class: 'lead' }, T.progressTitle), el('b', { class: 'dl-prog-pct' }, `${ultimo}%`)),
+    el('p', { class: 'dl-nota' }, T.progressNote),
+    grafico,
+    el('p', { class: 'dl-label' }, T.formTitle),
+    el('div', { class: 'dl-formas' }, forma),
+    el('p', { class: 'dl-label' }, T.byGameTitle),
+    el('div', { class: 'dl-pjs' }, filas));
 }
