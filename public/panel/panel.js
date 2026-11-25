@@ -2532,8 +2532,6 @@ function renderNav(now) {
   const actual = seccionDe(S.ruta);
   // Un punto verde en Ahora cuando hay algo en juego: se ve desde cualquier sección
   const algo = liveLocal(S.days, now).length > 0 || copasEnCurso(S.torneos, now).some(c => c.jugando.length) || salasVivas(now).propias.some(r => r.active);
-  // Un punto rojo en Salud si hoy o ayer alguna página no arrancó (D-251)
-  const noArranca = salud(ptDays(), { from: pacificDay(now) - 1, to: pacificDay(now) }).total.arranque > 0;
   // The bottom bar's real height, so the page leaves that much room below its last line
   const nav = $('#nav');
   if (!nav.dataset.sized && typeof ResizeObserver === 'function') {
@@ -2544,8 +2542,7 @@ function renderNav(now) {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null, ...extra },
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
-      sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null,
-      sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday' }) : null);
+      sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null);
   };
   const labs = (extra = {}) => el('a', { href: '../labs/', ...extra },
     el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs'),
@@ -2563,9 +2560,7 @@ function renderNav(now) {
   nav.replaceChildren(
     ...SECCIONES.map(sec => tab(sec, NAV_TABS.includes(sec) ? {} : { class: 'nav-extra' })), labs({ class: 'nav-extra' }),
     el('button', { class: 'nav-mas-btn', type: 'button', 'aria-haspopup': 'dialog', 'aria-current': enMas ? 'page' : null, onClick: () => abrirMas(true) },
-      el('span', { class: 'ico', 'aria-hidden': 'true' }, icoMas), el('span', { class: 'nombre' }, enMas ? nombreMas : 'More'),
-      // Health's alert stays in sight when Health is under More
-      !NAV_TABS.includes('salud') && actual !== 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday: see Health' }) : null),
+      el('span', { class: 'ico', 'aria-hidden': 'true' }, icoMas), el('span', { class: 'nombre' }, enMas ? nombreMas : 'More')),
     sheet);
 }
 

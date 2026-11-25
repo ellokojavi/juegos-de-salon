@@ -268,7 +268,6 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgb(var(
 .idioma { display: inline-block; padding: 1px var(--s-8); border-radius: var(--r-8); font-size: var(--fs-75); font-weight: 900; letter-spacing: 0.06em; vertical-align: middle; background: rgb(var(--lime-rgb) / 0.14); color: var(--lime); white-space: nowrap; }
 
 /* Salud (D-251): los errores, juntados por qué son */
-.nav-panel .vivo--alerta { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
 .errs { display: flex; flex-direction: column; gap: var(--s-6); }
 .err-row {
   display: grid; grid-template-columns: 28px 1fr auto; gap: var(--s-10); align-items: start; padding: var(--s-10) var(--s-12);
