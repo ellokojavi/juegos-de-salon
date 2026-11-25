@@ -7772,6 +7772,19 @@
         "stat": "1 file(s) +2 −0: tools/e2e/profile/page.mjs"
       },
       "flaky": false
+    },
+    {
+      "run": 45676527361,
+      "check": "end-to-end",
+      "pr": 1905,
+      "branch": "thanksgiving-skin",
+      "commit": "c2c9c89be732b261cae3e60fb9902376d17ffb8f",
+      "test": "pages-footer-bottom.mjs",
+      "error": "✗ /duels: the footer reaches the bottom edge, also with the browser's bar hidden (56 px) (128 px under the footer in another color (rgb 152,47,61 against the footer's 126,36,66))",
+      "signature": "60607c9a88",
+      "date": "2026-11-25T18:48:13.735Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
