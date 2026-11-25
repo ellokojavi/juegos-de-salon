@@ -19,7 +19,8 @@ born (`tools/generators/new-game.test.mjs` proves it on a fresh one, untouched):
   `instalable.js`, and the first-paint offline script so Candlelight shows from the first frame, `offline-first-paint.test.mjs`; D-221, D-222, D-251, D-281, D-609), `style.css` on the tokens only, `rules.js` with
   `LOCALES = { es, en, pt }` (same keys), `engine.js` a pure state machine with `engine.test.mjs`, and
   `game.js` with the session store (C-6), the panel signal `trackStart` / `trackFinish` (C-7, D-210),
-  the result's exits from `fin.js` (C-19) and its share through `compartir.js`.
+  the result's exits from `fin.js` (C-19) and its share through `compartir.js`, its text from a template of
+  `share-templates.js` with the game's tagline line (D-620, [SHARING.md](SHARING.md)).
 - `public/assets/js/manifests/labs/<id>.js`, the manifest as a module (`game.js` reads it).
 - Its card in `public/labs/index.html`, first in 🎲 Juegos en prueba (D-409), its title opening with the game's drawing (or its emoji), which the lab's index pill shows too (`index-nav.test.mjs`).
 - `docs/games/<id>.md` with C-13's sections, `tools/e2e/<id>/game.mjs`, a script that plays it to the result, and `tools/e2e/<id>/languages.mjs`.
@@ -33,7 +34,14 @@ The game inside is a placeholder (a race to ten). Replace it, keeping what surro
 - **Texts** in `LOCALES` in `rules.js` (C-3, parity test); instructions per U-18; `node tools/agents/usability-lint.mjs` must stay green.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`; list them in `game.json` (`modes`, `ai`, `firebasePaths`).
-- **Memory, sharing, the pass screen** with the shared modules: `session.js` (C-6), `compartir.js`,
+- **Sharing** (C-7, D-620, [SHARING.md](SHARING.md)): every message the game shares is built by its template in
+  `share-templates.js`, never by hand: a room invite with `roomInvite()` (through `botonInvitar`), a result
+  played alone with `botonResultadoSolo()` (`soloResult`), any other result with `result()`; each passes
+  `tagline: taglineLine(<the game's tagline>, lang)`, so whoever receives it reads in one line what the game
+  is about (the line shows while the lab flag `share-tagline` is on). The game's link from its cover and the
+  home page needs nothing from the game: it reads `tagline` from the manifest. `share-templates.test.mjs`
+  checks every game's room, link and result messages in three languages and fails a hand-built header.
+- **Memory, the pass screen** with the shared modules: `session.js` (C-6), `compartir.js`,
   `handoff.js`, `chat.js`, `sound.js`, `arrastre.js` (C-4, C-7, C-8, C-9, C-15); the board carries
   `data-tablero` (D-309).
 - **The result screen** (C-19): exits from `fin.js` for each context, looked at 390×812 and 320 px. In One a Day it is the only screen after the last move (D-581).
@@ -118,7 +126,8 @@ search, One a Day, La Copa's pool and the e2e scope read the same shape as alway
 old debt in `docs/manifest-debt.json`, which only shrinks; an old entry moves with
 `node tools/generators/manifests.mjs migrate <folder> --modes …`.
 
-- `id`, `path`, `emoji`, `name`, `tagline`, `tipos` (keys of `TIPOS`, D-214), `players` as `{ min, max }`,
+- `id`, `path`, `emoji`, `name`, `tagline` (es, en and pt, at most 120 characters: its card's line and the line
+  every share message of the game carries, D-620; `compartir.test.mjs`), `tipos` (keys of `TIPOS`, D-214), `players` as `{ min, max }`,
   `duration`, `nuevoDesde: 'YYYY-MM-DD'` (D-333), and its place in `POPULARIDAD` in games.js (D-255);
   a new mode goes in `MODES`. The rest the home page asks is in C-17 (`games.test.mjs`).
 - `keywords`: es, en and pt, at least three each (D-404; `search.test.mjs`); a lab game may go without.

@@ -67,6 +67,11 @@ for (const r of files) {
   if (/`\$\{[^}`]+\} \*\$\{/.test(src)) hand.push(`${r}: builds a "{emoji} *{title}*" header by hand`);
   if (/\{emoji\} \*\{/.test(src)) hand.push(`${r}: a text with its own "{emoji} *{…}*" header`);
 }
+// The new-game generator writes a new game's game.js: what it writes follows the same rule (D-620)
+const gen = readFileSync(join(root, '../tools/generators/new-game.mjs'), 'utf8');
+if (/\bcabecera\(/.test(gen)) hand.push('tools/generators/new-game.mjs: the generated game.js calls cabecera()');
+if (!/share-templates\.js/.test(gen)) hand.push('tools/generators/new-game.mjs: the generated game.js does not use share-templates.js');
+if (!/taglineLine\(manifest\.tagline/.test(gen)) hand.push('tools/generators/new-game.mjs: the generated share has no tagline line');
 assert.deepEqual(hand, [], 'every share text goes through share-templates.js (docs/SHARING.md)');
 
 console.log(`share-templates: ${n} messages in the U-30 format, ${files.length} files with no hand-built header`);
