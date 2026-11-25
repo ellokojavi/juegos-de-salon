@@ -304,3 +304,15 @@ a.dl-card-g { text-decoration: none; }
 .dl-pj-barra .w { background: var(--lime); }
 .dl-pj-barra .l { background: var(--pink); }
 .dl-pj small { color: var(--muted); font: 800 var(--fs-85) var(--font-num); }
+/* Each rival on /duels/: name and head to head, then their bars by game, each ending in a ⚔️ rematch */
+.dl-rv { display: grid; gap: var(--s-8); padding: var(--s-12) 0; border-bottom: 1px solid var(--glass-border); }
+.dl-rv:last-child { border-bottom: 0; padding-bottom: 0; }
+.dl-rv .dl-head { align-items: center; }
+.dl-rv .dl-h2h { font: 900 var(--fs-100) var(--font-num); }
+.dl-rv .dl-head { margin: 0; flex-wrap: nowrap; }
+.dl-pj.con-ir { grid-template-columns: minmax(0, 7em) minmax(0, 1fr) auto 44px; }
+.dl-pj-ir {
+  width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+  border: 1px solid var(--glass-border); background: var(--well); font-size: var(--fs-100); cursor: pointer;
+}
+.dl-pj-ir:active { transform: scale(.94); }
