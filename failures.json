@@ -7908,6 +7908,19 @@
         "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
       },
       "flaky": false
+    },
+    {
+      "run": 45697048849,
+      "check": "tests",
+      "pr": 1912,
+      "branch": "season-no-flash",
+      "commit": "d60194faedec144adffb5fd15f748a8b574af4ba",
+      "test": "tools/agents/architecture.test.mjs",
+      "error": "",
+      "signature": "ea485401a9",
+      "date": "2026-11-25T20:41:13.619Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
