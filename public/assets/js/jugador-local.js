@@ -195,7 +195,8 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
           && n(x.an) && n(x.bn) && /^(bo[3579]|pts[2-9]?)$/.test(x.f) && /^[a-z][a-z0-9-]{1,24}$/.test(x.g || '') && x.at === t
           && k.length === (Number(x.f.slice(-1)) || 3) && k.every(i => /^[0-8]$/.test(i) && /^[A-HJ-NP-Z]{5}$/.test(sd[i]))
           && (x.gr === undefined || (Object.keys(x.gr).every(i => sd[i] !== undefined && /^[a-z][a-z0-9-]{1,24}$/.test(x.gr[i]))))
-          && Object.keys(x).every(c => ['a', 'b', 'an', 'bn', 'f', 'g', 'sd', 'gr', 'at'].includes(c));
+          && (x.lv === undefined || (Object.keys(x.lv).every(i => sd[i] !== undefined && /^[a-z]{2,12}$/.test(x.lv[i]))))
+          && Object.keys(x).every(c => ['a', 'b', 'an', 'bn', 'f', 'g', 'sd', 'gr', 'lv', 'at'].includes(c));
       }
       const [, , rama2, jid, i] = p;
       if (p.length !== 5 || !d || !['e', 'r'].includes(rama2) || leerEn(viejo, ruta) != null || x == null) return false;

@@ -120,7 +120,9 @@
 }
 .dl-ronda.on { border-color: var(--yellow); }
 .dl-ronda .dl-ic { font-size: var(--fs-140); line-height: 1; }
-.dl-ronda > b { min-width: 0; }   /* cut on one line while it rolls (slot-roll.js) */
+.dl-ronda-txt { display: flex; flex-direction: column; min-width: 0; }
+.dl-ronda-txt > b { min-width: 0; }   /* cut on one line while it rolls (slot-roll.js) */
+.dl-ronda-nivel.falta { color: var(--danger-soft); }   /* a round with levels and none picked yet: it blocks sending */
 
 /* The invite's page: someone challenged you */
 .dl-invita .dl-versus b { font-size: var(--fs-120); }

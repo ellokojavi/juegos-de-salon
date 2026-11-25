@@ -624,6 +624,12 @@ export const SOLO_LEVELS = {
  * game's page (cup/game.js), Rankings and the home page's game sheet. `rankings-coverage.test.mjs` checks each
  * value against the game's first variant.
  */
+/**
+ * The variants a game can be played in (D-331), the first one being the default: La Copa's VARIANTES
+ * (cup/engine.js) and the level a duel locks for both players (duels-ui.js, the owner, 2026-11-25).
+ */
+export const GAME_VARIANTS = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'], sudoku: ['easy', 'hard'], croc: ['normal', 'hard'] };
+
 export const FIRST_VARIANT_TABLES = { sudoku: 'sudoku_easy' };
 
 /**
