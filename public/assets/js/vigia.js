@@ -239,11 +239,11 @@
   // while today is in its days. season.js then confirms it, or forgets it. Not with ?test or ?season=
   try {
     if (w.top === w && w.location.pathname.indexOf('/panel/') < 0 && !/[?&](test|season)(=|&|$)/.test(w.location.search)) {
-      var sg = JSON.parse(w.localStorage.getItem('jds-season-guess') || 'null');
+      var sg = JSON.parse(w.localStorage.getItem('juegos-de-salon:season-guess') || 'null');
       if (sg && sg.fondo) {
         var hoy = new Date(), md = ('0' + (hoy.getMonth() + 1)).slice(-2) + '-' + ('0' + hoy.getDate()).slice(-2);
         if (sg.from <= sg.to ? (sg.from <= md && md <= sg.to) : (md >= sg.from || md <= sg.to)) d.documentElement.style.setProperty('--fondo', sg.fondo);
-        else w.localStorage.removeItem('jds-season-guess');
+        else w.localStorage.removeItem('juegos-de-salon:season-guess');
       }
     }
   } catch (_) { /* a guess never stops the watcher */ }

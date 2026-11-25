@@ -80,7 +80,7 @@ async function start() {
  * vigia.js, a plain script in every page's <head>, puts it on <html> before the first paint while
  * today is in its days. A page with no skin today forgets it.
  */
-export const GUESS_KEY = 'jds-season-guess';
+export const GUESS_KEY = 'juegos-de-salon:season-guess';
 function remember(id, t) {
   try {
     const fondo = getComputedStyle(document.documentElement).getPropertyValue('--fondo').trim();
