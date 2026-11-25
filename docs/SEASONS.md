@@ -1,7 +1,10 @@
 # Seasonal templates (D-457)
 
-Small nods to a date (Halloween, Christmas, New Year, Fiestas Patrias…) on the pages players move
-around in: the home page and Rankings. **Never the games**: they look the same all year.
+Small nods to a date (Halloween, Thanksgiving, Christmas, New Year, Fiestas Patrias…) that dress **every
+page of the site, the games included** (D-622, amending D-457): the palette, the favicon and
+what falls reach every page; what moves across the screen (`flyby`, `peek`, `strut`, `scares`) stays on
+the home page, where nobody is mid-play. Every page gets it from `tester-boot.js`, which `vigia.js`
+already puts on every page but the panel: a new page or game needs nothing to take the skin.
 
 ## The pieces
 
@@ -11,7 +14,7 @@ around in: the home page and Rankings. **Never the games**: they look the same a
 | `public/assets/season/<id>.css` | that date's palette (`--fondo`) and the drawing of its corner (`.season-<id> .season-corner`) |
 | `public/assets/js/season.js` | the engine: picks today's template, puts `season season-<id>` on `<html>`, loads the css, draws the favicon and the touches |
 | `public/assets/css/season.css` | the touches every template shares: where each one sits and how it moves |
-| `public/assets/js/season.test.mjs` | checks the dates, the fields, that no two templates share a day, and that no game loads `season.js` |
+| `public/assets/js/season.test.mjs` | checks the dates, the fields, that no two templates share a day, and that `tester-boot.js` loads `season.js` (every page) |
 
 ## A template's fields
 
@@ -31,7 +34,7 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 | `peek` | `{ emoji: '👻', chance: 1 / 15 }` | now and then rises from the bottom left edge of the home page and hides |
 | `fall` | `{ emojis: ['🍂', '🍁'], count: 7, pace: [15, 24], sway: 10 }` | things that never stop falling, behind the page (they never cross a text or a button), on the home page and Rankings: `count` at a time, `pace` seconds from top to bottom, swaying `sway` px |
 | `strut` | `{ emoji: '🦃', count: 1, every: 40000 }` | a line of `count` walks along the bottom of the home page, right to left, behind the page (seen through the cards, never over a game's icon, the owner's call), 3 s after it opens and then every `every` ms |
-| `corner` | `true` | a decoration in the top right corner, drawn by the template's css |
+| `corner` | `true` (no template uses it: the top bar's pills sit there on every page, D-622) | a decoration in the top right corner, drawn by the template's css |
 
 ## Adding one
 

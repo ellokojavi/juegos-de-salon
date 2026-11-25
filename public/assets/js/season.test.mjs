@@ -1,5 +1,5 @@
-// The seasonal templates (D-457): which days each one is on, what the address forces, that each
-// template's fields are well formed, and that only the navigation pages load season.js, never a game.
+// The seasonal templates (D-457, D-622): which days each one is on, what the address forces, that each
+// template's fields are well formed, and that every page loads season.js, the games included.
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -52,7 +52,8 @@ for (let m = 1; m <= 12; m++) for (let d = 1; d <= 31; d++) {
 // Only the pages players move around in: the games look the same all year (the owner's call)
 const site = new URL('../../', import.meta.url);
 for (const page of ['index.html', 'records/index.html']) assert.match(readFileSync(new URL(page, site), 'utf8'), /season\.js/, `${page} should load season.js`);
-for (const shared of ['ui.js', 'i18n.js', 'sound.js', 'fin.js']) assert.doesNotMatch(readFileSync(new URL(shared, import.meta.url), 'utf8'), /season\.js/, `${shared} is loaded by the games: season.js does not go there`);
+// Every page, the games included (D-622): tester-boot.js, which vigia.js puts on every page but the panel, loads it
+assert.match(readFileSync(new URL('tester-boot.js', import.meta.url), 'utf8'), /import '\.\/season\.js'/, 'tester-boot.js should load season.js, so a skin dresses every page');
 // start() runs while the module loads, and a public template reaches decorate() with no await on
 // the way: every top-level const it uses must be declared before `season` (D-457: on launch day
 // it threw "Cannot access 'deco' before initialization" and only the palette showed).
