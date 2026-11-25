@@ -51,6 +51,11 @@ every script. A lab treatment that replaces a whole page (the home page as carou
 screen every game shares (the Uno al día line under a result, `solo-result-today-card`), is listed
 there at *off*, on top of the snapshot, so the scripts that open that page keep testing what players see; its own
 script (`home/carousels.mjs`, `queens/today-card.mjs`) turns it on with `browser.flags()`. The row leaves in the PR that removes the gate.
+**Every new flag gets a row** until Firebase knows it: a flag missing from the snapshot is *lab*, so on in every
+script, and four PRs went red on scripts that never asked for one (#1662, #1777, #1812, #1829). So
+`flags-snapshot.test.mjs` fails on a flag of `FLAGS` that is neither in the snapshot nor here: its row says
+*off* (it changes a page or a screen other scripts open; its own script turns it on) or *lab* (every script may
+see it). A *lab* row lasts until the snapshot knows the flag; `flags-snapshot.mjs refresh` drops it then.
 
 ## Test levels (D-346)
 
