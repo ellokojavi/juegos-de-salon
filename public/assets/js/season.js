@@ -14,7 +14,8 @@
  *   ?season=off    turns it off
  *   ?test          off, so the scripts and the screenshots see the site as always
  *
- * While a template is in the lab (`public: false`) it turns on only for a lab key holder (D-395).
+ * While a template is in the lab (`public: false`) it never turns on by its dates: only its preview,
+ * `?season=<id>` (the panel's Live Preview), shows it, and only to a lab key holder (D-395, D-623).
  * The panel's 🎨 Skins (D-477, controls.js) can move a template to other days or switch it off,
  * with no PR: `controls/skins/<id>`, read before deciding.
  * lab: #seccion-temporadas
@@ -44,8 +45,9 @@ export function chooseSeason({ search = globalThis.location?.search ?? '', date 
   if (asked === 'off') return null;
   if (asked && templates[asked]) return { id: asked, lab: !templates[asked].public, forced: true };
   if (tiene('test', search)) return null;
+  // A skin in the lab never turns on by its dates, not even for a lab key: only its preview shows it (D-623)
   const id = seasonOf(date, templates, controls);
-  return id ? { id, lab: !templates[id].public, forced: false } : null;
+  return id && templates[id].public ? { id, lab: false, forced: false } : null;
 }
 
 /** A favicon drawn from an emoji on a two-colour square, like the site's own (assets/icon.svg). */
