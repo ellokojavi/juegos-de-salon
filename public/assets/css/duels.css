@@ -218,7 +218,7 @@ a.dl-card-g { text-decoration: none; }
 .dl-paso-accion { display: grid; justify-items: start; gap: var(--s-4); grid-column: 2 / -1; }
 .dl-paso-accion small { text-align: left; }
 /* The round to play: no box (the owner, 2026-11-25), only its ball glowing and the button under its name */
-.dl-paso.ahora { grid-template-columns: 36px minmax(0, 1fr); }
+.dl-paso.ahora { grid-template-columns: 36px minmax(0, 1fr) auto; }
 .dl-paso.ahora .dl-paso-r { color: var(--yellow); }
 .dl-paso.ahora .dl-paso-bola { border: 0; background: var(--yellow); color: var(--ink-on-yellow); animation: dl-pulso 1.4s ease-in-out infinite; }
 .dl-paso.hecho .dl-paso-bola { border: 0; color: var(--ink-on-yellow); }
@@ -233,25 +233,7 @@ a.dl-card-g { text-decoration: none; }
 @keyframes dl-pulso { 50% { box-shadow: 0 0 0 6px rgb(var(--yellow-rgb) / .25); } }
 @media (prefers-reduced-motion: reduce) { .dl-paso.ahora .dl-paso-bola { animation: none; } }
 
-/* Three looks to compare (🎨 A B C, a tester's while the test duels are on) */
-.dl-looks { display: flex; justify-content: center; align-items: center; gap: var(--s-8); }
-.dl-looks .chip-btn.on { border-color: var(--yellow); color: var(--yellow); }
-
-/* Look B: open duels as cards to swipe, finished ones as tiles */
-.dl-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--s-8); }
-.dl-tile {
-  position: relative; display: grid; justify-items: center; gap: var(--s-4); min-width: 0; padding: var(--s-10) var(--s-6) var(--s-8);
-  border-radius: var(--r-14); background: var(--well); color: var(--ink); text-decoration: none; border-top: 4px solid var(--muted);
-}
-.dl-tile.w { border-top-color: var(--lime); }
-.dl-tile.l { border-top-color: var(--pink); }
-.dl-tile b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-85); }
-.dl-tile .dl-cara { width: 40px; height: 40px; font-size: var(--fs-110); }
-.dl-tile-sc { font: 900 var(--fs-120) var(--font-num); color: var(--yellow); }
-.dl-tile-g { position: absolute; top: var(--s-6); right: var(--s-6); font-size: var(--fs-100); line-height: 1; }
-.dl-tile .dl-fin { font-size: var(--fs-75); }
-
-/* Look C: open duels as tickets, finished ones on a line by date */
+/* /duels/: open duels as tickets, finished ones on a line by date (the owner's pick, 2026-11-25) */
 .dl-ticket {
   position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-10);
   padding: var(--s-14); border-radius: var(--r-22); color: var(--ink); text-decoration: none;
@@ -273,50 +255,52 @@ a.dl-card-g { text-decoration: none; }
 }
 .dl-hito.w::before { background: var(--lime); }
 .dl-hito.l::before { background: var(--pink); }
-.dl-hito a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--s-8); color: var(--ink); text-decoration: none; }
+.dl-hito summary { display: grid; cursor: pointer; list-style: none; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--s-8); color: var(--ink); text-decoration: none; }
 .dl-hito-f { grid-column: 1 / -1; color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
 .dl-hito b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-hito-sc { color: var(--yellow); font-family: var(--font-num); }
 .dl-hito small { color: var(--muted); grid-column: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-hito .dl-fin { grid-column: 2; grid-row: 2 / 4; align-self: center; }
 
-/* Look B, a duel's rounds: a tug of war per round */
-.dl-barras { display: grid; gap: var(--s-14); }
-.dl-barras-fila { display: grid; gap: var(--s-6); justify-items: center; }
-.dl-barras-fila.apagada { opacity: .5; }
-.dl-barras-g { display: flex; align-items: center; gap: var(--s-6); color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
-.dl-barras-g .dl-ic { font-size: var(--fs-110); }
-.dl-barras-duo { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
-.dl-barra { position: relative; height: 30px; border-radius: var(--r-8); background: var(--well); overflow: hidden; display: flex; align-items: center; }
-.dl-barra span { position: absolute; top: 0; bottom: 0; opacity: .45; }
-.dl-barra.yo { justify-content: flex-start; }
-.dl-barra.yo span { right: 0; background: var(--cyan); border-radius: var(--r-8) 0 0 var(--r-8); }
-.dl-barra.el { justify-content: flex-end; }
-.dl-barra.el span { left: 0; background: var(--pink); border-radius: 0 var(--r-8) var(--r-8) 0; }
-.dl-barra.gana span { opacity: 1; }
-.dl-barra b { position: relative; padding: 0 var(--s-8); font: 900 var(--fs-100) var(--font-num); }
+.dl-hito summary::-webkit-details-marker { display: none; }
+.dl-hito details[open] summary b { color: var(--yellow); }
+/* A finished duel, tapped: its rounds, the head to head, See the duel and ⚔️ Rematch */
+.dl-hito-mas { display: grid; gap: var(--s-8); margin-top: var(--s-8); padding: var(--s-10) var(--s-12); border-radius: var(--r-12); background: var(--well); }
+.dl-minis { display: flex; flex-wrap: wrap; gap: var(--s-6); }
+.dl-mini { padding: var(--s-2) var(--s-8); border-radius: var(--r-pill); border: 2px solid var(--glass-border); font: 800 var(--fs-85) var(--font-num); }
+.dl-mini.w { border-color: var(--lime); }
+.dl-mini.l { border-color: var(--pink); }
+.dl-hito-mas small { color: var(--muted); font-weight: 800; }
+.dl-hito-btns { display: flex; flex-wrap: wrap; gap: var(--s-8); }
+.dl-hito-btns .chip-btn { text-decoration: none; }
 
-/* Look C, a duel's rounds: one card per round to swipe */
-.dl-cartas { display: flex; gap: var(--s-10); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: var(--s-4) 0 var(--s-8); }
-.dl-cartas::-webkit-scrollbar { display: none; }
-.dl-carta {
-  position: relative; flex: 0 0 132px; scroll-snap-align: start; display: grid; justify-items: center; align-content: start; gap: var(--s-6);
-  padding: var(--s-14) var(--s-8); border-radius: var(--r-16); background: var(--well); border: 2px solid var(--glass-border); text-align: center; overflow: hidden;
+/* A duel's card: the round to play right on it, and whether the rival already did */
+.dl-hero-jugar { display: grid; justify-items: center; gap: var(--s-6); }
+.dl-hero-jugar small { color: var(--muted); font-weight: 700; }
+.dl-paso-ir { color: var(--yellow); font-weight: 900; text-decoration: none; white-space: nowrap; }
+
+/* 📈 Your progress: the win rate duel by duel, the latest ten, the record by game */
+.dl-prog-pct { font: 900 var(--fs-160) var(--font-num); color: var(--yellow); }
+.dl-prog-svg { display: block; width: 100%; height: auto; margin: var(--s-8) 0 var(--s-12); overflow: visible; }
+.dl-prog-grid { stroke: var(--glass-border); stroke-width: 1; }
+.dl-prog-mitad { stroke: var(--line-faint); stroke-width: 1; stroke-dasharray: 4 4; }
+.dl-prog-area { fill: rgb(var(--cyan-rgb) / .14); }
+.dl-prog-linea { fill: none; stroke: var(--cyan); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.dl-prog-punto { fill: var(--muted); stroke: var(--well-deep); stroke-width: 2; }
+.dl-prog-punto.w { fill: var(--lime); }
+.dl-prog-punto.l { fill: var(--pink); }
+#dl-progreso .dl-label { margin: var(--s-4) 0 var(--s-6); }
+.dl-formas { display: flex; flex-wrap: wrap; gap: var(--s-4); margin-bottom: var(--s-12); }
+.dl-forma {
+  width: 26px; height: 26px; border-radius: var(--r-8); display: grid; place-items: center;
+  font: 900 var(--fs-75) var(--font-body); background: var(--muted); color: var(--ink-on-yellow);
 }
-.dl-carta.w { border-color: var(--lime); }
-.dl-carta.l { border-color: var(--pink); }
-.dl-carta.ahora { border-color: var(--yellow); box-shadow: 0 0 18px rgb(var(--yellow-rgb) / .3); }
-.dl-carta.apagada { opacity: .55; }
-.dl-carta-n { color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
-.dl-carta-ic { font-size: var(--fs-200); line-height: 1; }
-.dl-carta-g { font-weight: 800; font-size: var(--fs-85); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dl-carta-sc { display: flex; align-items: baseline; gap: var(--s-6); }
-.dl-carta-sc b { font: 900 var(--fs-140) var(--font-num); }
-.dl-carta-sc i { color: var(--muted); font-size: var(--fs-75); }
-.dl-carta small { color: var(--muted); font-weight: 700; }
-.dl-sello {
-  position: absolute; top: var(--s-8); right: calc(-1 * var(--s-4)); padding: 0 var(--s-10); transform: rotate(14deg);
-  font: 900 var(--fs-100) var(--font-body); color: var(--ink-on-yellow); background: var(--muted);
-}
-.dl-sello.w { background: var(--lime); }
-.dl-sello.l { background: var(--pink); color: var(--ink); }
+.dl-forma.w { background: var(--lime); }
+.dl-forma.l { background: var(--pink); color: var(--ink); }
+.dl-pjs { display: grid; gap: var(--s-8); }
+.dl-pj { display: grid; grid-template-columns: minmax(0, 7em) minmax(0, 1fr) auto; align-items: center; gap: var(--s-8); }
+.dl-pj-g { font-weight: 800; font-size: var(--fs-85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-pj-barra { display: flex; gap: 2px; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--well); }
+.dl-pj-barra .w { background: var(--lime); }
+.dl-pj-barra .l { background: var(--pink); }
+.dl-pj small { color: var(--muted); font: 800 var(--fs-85) var(--font-num); }

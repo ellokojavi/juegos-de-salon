@@ -28,15 +28,24 @@ try {
   await b.until(`!!document.getElementById('dl-rivalidades')`, 8000);
   ok(await ev(`!!document.getElementById('dl-arch') && /Beto/.test(document.getElementById('dl-arch').textContent)`), 'Beto is the arch rival');
   ok(await ev(`!!document.getElementById('dl-nemesis') && /Ana/.test(document.getElementById('dl-nemesis').textContent)`), 'Ana is the nemesis');
-  ok(await ev(`document.querySelectorAll('#dl-mios .dl-row-link').length === 3`), 'three open duels, each a link to its page');
-  await b.shot('list-390');
+  ok(await ev(`document.querySelectorAll('#dl-mios .dl-ticket[href*="?d=demo"]').length === 3`), 'three open duels as tickets, each a link to its page');
+  ok(await ev(`!!document.querySelector('#dl-progreso svg circle') && document.querySelectorAll('#dl-progreso .dl-forma').length === 10`), '📈 progress: the win-rate line and the latest ten');
+  // A finished duel on the line opens its details: rounds, See the duel and ⚔️ Rematch
+  await ev(`document.querySelector('.dl-hito summary').click(); 1`); await sleep(200);
+  ok(await ev(`(()=>{const h=document.querySelector('.dl-hito details[open]');return !!h && !!h.querySelector('a[href*="?d=demo"]') && !!h.querySelector('[data-rematch]')})()`), 'a history row opens with See the duel and ⚔️ Rematch');
+  for (const W of [390, 320]) {
+    await b.resize(W, 844); await sleep(300);
+    ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: the list, no sideways scroll`);
+    await b.shot(`list-${W}`);
+  }
+  await b.resize(390, 844);
 
   // My turn: round 3 of a best of 5 against Beto
   await b.go(`${SITE}/duels/?d=demo000001`, 1500);
   await b.until(`!!document.getElementById('dl-hero')`, 8000);
   ok(await ev(`document.querySelectorAll('.dl-paso').length === 5`), 'five rounds on the track');
   ok(await ev(`document.querySelector('.dl-paso[data-round="0"]').classList.contains('w') && document.querySelector('.dl-paso[data-round="1"]').classList.contains('l')`), 'round 1 won, round 2 lost');
-  ok(await ev(`(()=>{const p=document.querySelector('.dl-paso[data-round="2"]');return p.classList.contains('ahora') && !!p.querySelector('a[href*="seed=DEMOC"]') && !/95/.test(p.textContent)})()`), "round 3 is mine to play, the rival's 95 hidden");
+  ok(await ev(`(()=>{const p=document.querySelector('.dl-paso[data-round="2"]');return p.classList.contains('ahora') && !!document.querySelector('#dl-jugar[href*="seed=DEMOC"]') && !/95/.test(document.getElementById('dl-rondas').textContent)})()`), "round 3 is mine to play from the card, the rival's 95 hidden");
   ok(await ev(`document.querySelectorAll('.dl-paso.futuro').length === 2`), 'rounds 4 and 5 still to play');
   ok(await ev(`/arch|Beto/i.test(document.querySelector('.dl-hero-pie')?.textContent || '')`), 'the head to head with Beto under the card');
   for (const W of [390, 320]) {
@@ -59,21 +68,6 @@ try {
     await b.resize(W, 844); await sleep(300);
     ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: a finished duel, no sideways scroll`);
     await b.shot(`lost-${W}`);
-  }
-  // The three looks (🎨 A B C, the owner, 2026-11-25): the list and a duel in each, at 390 and 320
-  for (const k of ['a', 'b', 'c']) {
-    await ev(`localStorage.setItem('juegos-de-salon:duels-look', '${k}'); 1`);
-    for (const [url, name, sel] of [['/duels/', 'list', '#dl-terminados'], ['/duels/?d=demo000001', 'duel', '#dl-rondas']]) {
-      await b.go(`${SITE}${url}`, 1500);
-      await b.until(`!!document.querySelector('${sel}')`, 8000);
-      ok(await ev(`!!document.querySelector('#dl-looks [data-look="${k}"].on')`), `${name} ${k.toUpperCase()}: the 🎨 picker marks it`);
-      for (const W of [390, 320]) {
-        await b.resize(W, 844); await sleep(300);
-        ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${name} ${k.toUpperCase()} ${W}: no sideways scroll`);
-        await b.shot(`look-${k}-${name}-${W}`);
-      }
-      await b.resize(390, 844);
-    }
   }
 } finally {
   await b.close();

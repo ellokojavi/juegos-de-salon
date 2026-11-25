@@ -10,8 +10,7 @@ import { SFX } from '../assets/js/sound.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 import { bloqueJugador } from '../assets/js/ranking.js';
 import { estado, record, esDid, rondas } from '../assets/js/duels.js';
-import { demoOn } from '../assets/js/duels-demo.js';
-import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, duelView, lookOf, lookPicker, listCards, listTimeline, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
+import { T, fmt, fila, ordenar, abrirNuevo, titulo, hrefRonda, hrefDuelos, shareInvite, duelView, listTimeline, panelProgress, panelRecientes, panelEstadisticas, panelRivalidades } from '../assets/js/duels-ui.js';
 
 export { T };
 const tap = () => SFX.tap();
@@ -43,7 +42,7 @@ async function drawInvite(root, { sub, h1, did, J }) {
     const e = estado(d, yo.jid);
     const invitar = yo.jid === d.a && !e.termino && !Object.keys(d.e?.[d.b] || {}).length
       ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'dl-invitar', onClick: () => { tap(); shareInvite(d, invitar); } }, fmt(T.shareInvite, { n: d.bn })) : null;
-    root.replaceChildren(...[demoOn() ? lookPicker(() => drawInvite(root, { sub, h1, did, J })) : null, ...duelView(d, yo.jid, { lista, alTocar: tap }), invitar, todos].filter(Boolean));
+    root.replaceChildren(...[...duelView(d, yo.jid, { lista, alTocar: tap }), invitar, todos].filter(Boolean));
     return;
   }
   if (yo.jid !== d.b) { root.replaceChildren(versus, el('p', { class: 'notice' }, fmt(T.forOther, { n: d.bn })), todos); return; }
@@ -100,15 +99,12 @@ export async function drawDuels(root, { sub }) {
     // One list, no tabs (the owner, 2026-11-23: few duels each): your turn first, with ▶ Play; then «Waiting for …»
     const abiertos = orden.filter(d => !es(d).termino);
     const hechos = orden.filter(d => es(d).termino);
-    // Three looks to compare (the owner, 2026-11-25): A rows, B cards and tiles, C tickets and a line by date
-    const look = lookOf();
-    const [actuales, historia] = look === 'b' ? listCards(abiertos, hechos, yo.jid, { alTocar: tap })
-      : look === 'c' ? listTimeline(abiertos, hechos, yo.jid, { alTocar: tap })
-        : [abiertos.length ? el('section', { class: 'panel', id: 'dl-mios' }, el('p', { class: 'lead' }, T.mineTitle), abiertos.map(d => fila(d, yo.jid, { alTocar: tap }))) : null,
-          hechos.length ? el('section', { class: 'panel', id: 'dl-terminados' }, el('p', { class: 'lead' }, T.tabDone), hechos.map(d => fila(d, yo.jid, { alTocar: tap, lista }))) : null];
-    root.replaceChildren(...[demoOn() ? lookPicker(() => draw()) : null, nuevo,
+    // Open duels as tickets, then your numbers and progress, your rivals, and the history on a line by date (the owner, 2026-11-25)
+    const [actuales, historia] = listTimeline(abiertos, hechos, yo.jid, { alTocar: tap, lista });
+    root.replaceChildren(...[nuevo,
       actuales,
       panelEstadisticas(lista, yo.jid),
+      panelProgress(lista, yo.jid),
       panelRivalidades(lista, yo.jid, { alTocar: tap }),
       historia,
       otros].filter(Boolean));
