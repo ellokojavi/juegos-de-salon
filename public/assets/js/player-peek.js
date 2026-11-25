@@ -210,7 +210,8 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   if (here && n && tier !== 'plain') flag('podium-shine').then(on => {
     if (!on) return;
     here.classList.add('pf-peek-here--shine');
-    here.querySelector('.pf-medal').textContent = String(n);
+    // The number engraved in the medal, the light crossing it and the raised ring (the owner's pick A5-B5, 2026-11-25)
+    here.querySelector('.pf-medal').replaceChildren(el('b', {}, String(n)));
   }).catch(() => {});
   const body = el('div', { class: 'pf-peek-body' }, el('p', { class: 'muted pf-peek-wait' }, T.peekLoading));
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
