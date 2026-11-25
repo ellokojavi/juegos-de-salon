@@ -19,7 +19,7 @@
  * each turn adds 1 or 2 (a pure state machine in engine.js). Around it is everything the canons ask:
  * the lab's door and noindex, the shared shell and tokens only (DESIGN.md), LOCALES es/en/pt with the
  * same keys, the session store (C-6), the panel signal (C-7), the result's exits from fin.js (C-19)
- * and its share through compartir.js. tools/generators/new-game.test.mjs proves it passes, untouched.
+ * and its share text from its template in share-templates.js, with the game's tagline line (D-620). tools/generators/new-game.test.mjs proves it passes, untouched.
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -366,7 +366,8 @@ import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/s
 import { salidasFin } from '../../assets/js/fin.js';
 import { coverWithDialogs } from '../../assets/js/cover-dialogs.js';
 import { finDePartida } from '../../assets/js/ranking.js';
-import { botonCompartir, cabecera } from '../../assets/js/compartir.js';
+import { botonCompartir, taglineLine } from '../../assets/js/compartir.js';
+import { result } from '../../assets/js/share-templates.js';
 import { GAME_ID, MIN_PLAYERS, MAX_PLAYERS, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import * as E from './engine.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
@@ -461,7 +462,7 @@ function renderResult() {
     botonCompartir({
       rotulo: T.shareRotulo, id: 'btn-share', alTocar: () => SFX.tap(),
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
-      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: [cabecera({ emoji: manifest.emoji, titulo: T.title, contexto: T.shareContext }), fmt(T.winner, { name })].join('\\n\\n') }),
+      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, tagline: taglineLine(manifest.tagline, lang), lines: ["🏆 " + fmt(T.winner, { name })] }) }),
     }));
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   // The result in the rankings (C-19): a played game counts for the signed-in player

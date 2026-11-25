@@ -121,7 +121,7 @@ A lab game passes this whole list before its first PR merges, not before it leav
 - [ ] Engine tests and `node public/assets/js/games.test.mjs` green, and a full game tested in each mode, with screenshots reviewed (C-12).
 - [ ] What changed, in `changelog/<rama>.md` without a number (`node tools/release/changelog.mjs new`); published and checked at the public URL by `publish.yml` (C-11, D-205, D-300).
 - [ ] If it has several phones, the room chat uses the shared module and dies with the room (C-15).
-- [ ] What it shares (room, result) comes from `compartir.js`, with the standard header, and a result goes with its image (C-7, D-165).
+- [ ] What it shares (room, result) comes from `compartir.js`, its text from a template of `share-templates.js` with the game's tagline line (`taglineLine`), never a header by hand, and a result goes with its image (C-7, D-165, D-620; `share-templates.test.mjs`).
 - [ ] Registered in the menu, README, spec, requirements and decisions (C-2, C-13). On the home page, with its type, it enters the dice and the favorites and fits at 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333) and its search keywords in the three languages (D-404).
 - [ ] The exceptions to the canons are written in its spec (C-13).
 - [ ] A change meant for the games reached all of them, through `ALL_GAMES`, not only those in `GAMES` or only La Copa's (C-21).
