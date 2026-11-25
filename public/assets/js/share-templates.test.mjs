@@ -67,6 +67,19 @@ for (const r of files) {
   if (/`\$\{[^}`]+\} \*\$\{/.test(src)) hand.push(`${r}: builds a "{emoji} *{title}*" header by hand`);
   if (/\{emoji\} \*\{/.test(src)) hand.push(`${r}: a text with its own "{emoji} *{…}*" header`);
 }
+// Every game's share carries its tagline line (the owner, 2026-11-25): in a game's own folder, each room
+// invite, solo result and result passes `tagline` (or `bajada`). La clave (labs/code) is parked: no tagline.
+const PARKED = new Set(['labs/code/game.js']);
+for (const r of files) {
+  if (r.startsWith('assets/') || PARKED.has(r) || !/game\.js$|result\.js$/.test(r)) continue;
+  const src = readFileSync(join(root, r), 'utf8');
+  for (const m of src.matchAll(/\b(roomInvite|botonResultadoSolo|result|mensajeCopa)\(\{/g)) {
+    if (m[1] === 'mensajeCopa' && !/kind: 'result'/.test(src.slice(m.index, m.index + 80))) continue;
+    const call = src.slice(m.index, m.index + 600);
+    if (!/\b(tagline|bajada)\b|taglineLine\(/.test(call)) hand.push(`${r}: ${m[1]}() without the game's tagline line`);
+  }
+}
+
 // The new-game generator writes a new game's game.js: what it writes follows the same rule (D-620)
 const gen = readFileSync(join(root, '../tools/generators/new-game.mjs'), 'utf8');
 if (/\bcabecera\(/.test(gen)) hand.push('tools/generators/new-game.mjs: the generated game.js calls cabecera()');

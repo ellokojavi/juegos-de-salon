@@ -10,12 +10,13 @@ import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { COMMON, SITIO } from '../../assets/js/i18n.js';
 import { footerInto } from '../../assets/js/site-footer.js';
-import { botonResultadoSolo } from '../../assets/js/compartir.js';
+import { botonResultadoSolo, taglineLine } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { mmss } from '../../assets/js/time-format.js';
+import { LAB_NAMES } from '../../assets/js/games.js';
 import {
   generar, nuevaPartida, une, quitar, agregar, pares, indice, quedan, avance, puntaje, tarjeta,
   COLUMNAS, MAS, MAXIMO, PUNTOS_LIMPIO, PUNTOS_MAS, RESTA_AYUDA,
@@ -399,7 +400,7 @@ function resultado() {
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${MAXIMO}`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, ...conMas(x)))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
-    botonResultadoSolo({ C: COMMON.es, emoji: '💥', juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta(p), url: `${SITIO}labs/exploding-numbers/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ bajada: taglineLine(LAB_NAMES[GAME_ID]?.tagline, 'es'), C: COMMON.es, emoji: '💥', juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta(p), url: `${SITIO}labs/exploding-numbers/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
     salidasFin('lab', { raiz: '../../' }),

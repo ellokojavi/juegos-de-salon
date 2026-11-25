@@ -10,7 +10,7 @@ import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { getLang, langToggle, COMMON, SITIO } from '../../assets/js/i18n.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
-import { botonResultadoSolo } from '../../assets/js/compartir.js';
+import { botonResultadoSolo, taglineLine } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { salidasFin } from '../../assets/js/fin.js';
@@ -18,6 +18,7 @@ import { mmss } from '../../assets/js/time-format.js';
 import { LIVES, newGame, currentRound, newPlay, tap, endRound, makeRound } from './engine.js';
 import { spriteSvg } from './sprites.js';
 import { GAME_ID, LOCALES } from './rules.js';
+import { gameById } from '../../assets/js/games.js';
 
 trackVisit();   // the site's traffic (D-208)
 
@@ -320,7 +321,7 @@ function result() {
       el('li', {}, fmt(T.found, { n: g.found })),
       el('li', {}, fmt(T.reached, { n: g.level })),
       el('li', {}, fmt(T.time, { t: mmss(ms) }))),
-    botonResultadoSolo({ C, emoji: '👀', juego: T.name, puntaje: scoreText, tiempo: mmss(ms), url: `${SITIO}labs/memory/${link(g.seed)}`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ bajada: taglineLine(gameById(GAME_ID)?.tagline, lang), C, emoji: '👀', juego: T.name, puntaje: scoreText, tiempo: mmss(ms), url: `${SITIO}labs/memory/${link(g.seed)}`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); start(newSeed()); } }, T.again),
     salidasFin('lab', { lang, raiz: '../../' }),
     // A line sets the game apart from the comment for those trying it, as in the other lab games

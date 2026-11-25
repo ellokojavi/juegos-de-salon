@@ -10,7 +10,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { createSessionStore } from '../../assets/js/session.js';
 import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/stats.js';
 import { salidasFin } from '../../assets/js/fin.js';
-import { botonCompartir } from '../../assets/js/compartir.js';
+import { botonCompartir, taglineLine } from '../../assets/js/compartir.js';
 import { result } from '../../assets/js/share-templates.js';
 import { mmss } from '../../assets/js/time-format.js';
 import { bloqueTabla, avisoPartida } from '../../assets/js/ranking.js';
@@ -20,6 +20,7 @@ import { onScreen } from '../../assets/js/on-screen.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { GAME_ID, LEVELS, LEVEL_EMOJI, LOCALES } from './rules.js';
 import * as E from './engine.js';
+import { gameById } from '../../assets/js/games.js';
 // The game's facts are its entry in games.js since it left the lab (D-517's way); the prototype keeps its emoji here
 const manifest = { emoji: '#️⃣' };
 
@@ -463,7 +464,7 @@ function renderResult({ fresh = false } = {}) {
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
       armar: async () => ({
         titulo: T.title, url: location.origin + location.pathname,
-        texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, paragraphs: [fmt(T.shareText, { level: level.toLowerCase(), time, score: points })] }),
+        texto: result({ tagline: taglineLine(gameById(GAME_ID)?.tagline, lang), head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, paragraphs: [fmt(T.shareText, { level: level.toLowerCase(), time, score: points })] }),
       }),
     })]),
     el('button', { class: 'btn btn--ghost', id: 'btn-levels', onClick: () => { SFX.tap(); renderModes(); renderResumeSlot(); showScreen('screen-intro'); } }, T.otherLevel));

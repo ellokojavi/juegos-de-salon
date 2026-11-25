@@ -9,7 +9,7 @@ import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { createSessionStore } from '../../assets/js/session.js';
 import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/stats.js';
 import { salidasFin } from '../../assets/js/fin.js';
-import { botonCompartir } from '../../assets/js/compartir.js';
+import { botonCompartir, taglineLine } from '../../assets/js/compartir.js';
 import { result } from '../../assets/js/share-templates.js';
 import { footerInto } from '../../assets/js/site-footer.js';
 import { abrirComentario } from '../../assets/js/labs-idioma.js';
@@ -584,7 +584,7 @@ function renderResult() {
     botonCompartir({
       rotulo: T.shareRotulo, id: 'btn-share', alTocar: () => SFX.tap(),
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
-      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, paragraphs: [title, state.stars.map((s, i) => CITIES[LV()[i].city].emoji + ' ' + (s ? '⭐'.repeat(s) : '▫️')).join('\n')] }) }),
+      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: result({ tagline: taglineLine(manifest.tagline, lang), head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, paragraphs: [title, state.stars.map((s, i) => CITIES[LV()[i].city].emoji + ' ' + (s ? '⭐'.repeat(s) : '▫️')).join('\n')] }) }),
     }));
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   if (stars) confetti();
