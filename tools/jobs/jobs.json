@@ -33,7 +33,7 @@
     {
       "id": "lab-ready",
       "where": "github",
-      "what": "Every hour, inside the heartbeat (notifications.yml), without Claude: weighs each lab flag's real use by lab key holders (labsUso/) against its threshold and writes flagsListas/, so its /labs/ card says ✅ Listo para 🚀 with the evidence.",
+      "what": "Every hour, inside the heartbeat (notifications.yml), without Claude: weighs each lab flag's real use by lab key holders (labsUso/) against its threshold and writes flagsListas/, so its /labs/ card turns green when ready.",
       "decisions": [
         "D-528",
         "D-569"
