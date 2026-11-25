@@ -29,6 +29,7 @@ try {
   ok(await ev(`!!document.getElementById('dl-arch') && /Beto/.test(document.getElementById('dl-arch').textContent)`), 'Beto is the arch rival');
   ok(await ev(`!!document.getElementById('dl-nemesis') && /Ana/.test(document.getElementById('dl-nemesis').textContent)`), 'Ana is the nemesis');
   ok(await ev(`document.querySelectorAll('#dl-mios .dl-ticket[href*="?d=demo"]').length === 3`), 'three open duels as tickets, each a link to its page');
+  ok(await ev(`(()=>{const r=document.querySelector('#dl-rivalidades .dl-rv');return !!r && r.querySelectorAll('.dl-pj-barra').length>0 && r.querySelectorAll('.dl-pj-ir').length===r.querySelectorAll('.dl-pj').length})()`), 'each rival: their bars by game, each with a ⚔️ rematch');
   ok(await ev(`!!document.querySelector('#dl-progreso svg circle') && document.querySelectorAll('#dl-progreso .dl-forma').length === 10`), '📈 progress: the win-rate line and the latest ten');
   // A finished duel on the line opens its details: rounds, See the duel and ⚔️ Rematch
   await ev(`document.querySelector('.dl-hito summary').click(); 1`); await sleep(200);
