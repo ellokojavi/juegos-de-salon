@@ -7392,7 +7392,11 @@
       "error": "",
       "signature": "965641ffe6",
       "date": "2026-11-25T02:12:10.238Z",
-      "fix": null,
+      "fix": {
+        "commit": "edebc3a58316687cc24505c21fc6e00d16cb2f9b",
+        "date": "2026-11-25T02:15:35.760Z",
+        "stat": "2 file(s) +5 −5: public/assets/js/duels-ui.js, public/duels/duels-page.js"
+      },
       "flaky": false
     }
   ]
