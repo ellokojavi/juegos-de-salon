@@ -54,6 +54,10 @@ async function drawInvite(root, { sub, h1, did, J }) {
     el('p', { class: 'dl-nota center' }, fmt(T.acceptNote, { n: d.an })), todos);
 }
 
+function challenge(lista, yo) {
+  import('../assets/js/duel-challenge.js').then(m => m.maybeChallenge(lista, yo, d => ({ T, info: titulo(d), href: hrefRonda(d, 0) }))).catch(() => {});
+}
+
 export async function drawDuels(root, { sub }) {
   const J = await jugador();
   // A challenge's link: its invite, drawn again when the visitor signs in
@@ -86,6 +90,8 @@ export async function drawDuels(root, { sub }) {
     try { lista = await (await J.duelos()).mios(); leida = true; } catch (_) { /* offline: nothing to show */ }
     const otros = await recientes();
     if (mine !== turn) return;
+    // ⚔️ Once per new duel someone else started: the «you've been challenged» screen (duel-challenge.js)
+    if (leida) challenge(lista, yo);
     const r = record(lista, yo.jid);
     sub.textContent = r.g + r.p ? `${fmt(T.pageSub, { g: r.g, p: r.p })} · ${r.pct}%` : '';
     if (!lista.length) {

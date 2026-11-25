@@ -104,6 +104,7 @@ export const TEXTS = {
     language: 'Idioma',
     sound: 'Sonido',
     vibration: 'Vibración',
+    duelAlerts: 'Avisos de duelos',
     detail: {
       close: 'Cerrar', play: 'Jugar ›', more: 'Ver {n} más', earnedOn: 'La ganaste el {date}.',
       left: 'Te faltan {n} juegos. Empieza por estos:', leftOne: 'Te falta 1 juego:', allPlayed: 'Ya jugaste todos los juegos.',
@@ -265,6 +266,7 @@ export const TEXTS = {
     language: 'Language',
     sound: 'Sound',
     vibration: 'Vibration',
+    duelAlerts: 'Duel alerts',
     detail: {
       close: 'Close', play: 'Play ›', more: 'See {n} more', earnedOn: 'You earned it on {date}.',
       left: '{n} games to go. Start with these:', leftOne: '1 game to go:', allPlayed: 'You have played every game.',
@@ -426,6 +428,7 @@ export const TEXTS = {
     language: 'Idioma',
     sound: 'Som',
     vibration: 'Vibração',
+    duelAlerts: 'Avisos de duelos',
     detail: {
       close: 'Fechar', play: 'Jogar ›', more: 'Ver mais {n}', earnedOn: 'Você ganhou em {date}.',
       left: 'Faltam {n} jogos. Comece por estes:', leftOne: 'Falta 1 jogo:', allPlayed: 'Você já jogou todos os jogos.',
