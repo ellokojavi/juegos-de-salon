@@ -5,7 +5,8 @@
     "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
     "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
     "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
-    "Duels (flag rivals, lab) has no docs/games page, only D-603 and the e2e README; write it when it launches. og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should"
+    "Duels (flag rivals, lab) has no docs/games page, only D-603 (with dated Later notes) and the e2e README; write it when it launches. og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should",
+    "Profile docs: only README, C-4 and decisions describe it (no docs page); settings-in-profile and profile-chips checked against README/C-4/flag-list, a dedicated profile doc is still missing"
   ],
   "known": [],
   "rounds": [
@@ -442,7 +443,8 @@
         "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
         "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
         "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
-        "Duels (flag rivals, lab) has no docs/games page, only D-603 and the e2e README; write it when it launches. og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should"
+        "Duels (flag rivals, lab) has no docs/games page, only D-603 (with dated Later notes) and the e2e README; write it when it launches. og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should",
+        "Profile docs: only README, C-4 and decisions describe it (no docs page); settings-in-profile and profile-chips checked against README/C-4/flag-list, a dedicated profile doc is still missing"
       ]
     }
   ],
