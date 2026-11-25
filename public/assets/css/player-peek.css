@@ -6,6 +6,7 @@
   --pf-plata-luz: #ffffff; --pf-plata: #cfd8e3; --pf-plata-hondo: #8a97a8; --pf-plata-aro: #e6edf5;
   --pf-bronce-luz: #ffd9b8; --pf-bronce: #d98a4e; --pf-bronce-hondo: #8f4f22; --pf-bronce-aro: #f0b483;
   --pf-tinta-medalla: #3a2a00; /* the place's ink on a metal medal */
+  --pf-oro-grabado: #7a4f00; --pf-plata-grabado: #4f5c6e; --pf-bronce-grabado: #5a2c0e; /* the floor of a number cut into the metal */
 }
 
 .pf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); margin-top: var(--s-14); }
@@ -101,7 +102,23 @@
   animation: pf-destello 3s ease-in-out infinite; }
 .pf-peek-here--shine .pf-medal::after { border-radius: 50%; }
 .pf-peek-here--shine::after { background-image: linear-gradient(105deg, transparent 40%, rgb(var(--ink-rgb) / 0.1) 50%, transparent 60%); animation-delay: -0.4s; }
+/* The number engraved (the owner's pick A5-B5, 2026-11-25): cut into the metal, darker in the cut's shadowed top and lit at
+   its floor, a lip of light under it; a raised ring inside the rim; the gleam crosses the number, then runs round the ring */
+.pf-peek-here--shine .pf-badge--gold { --pf-g-luz: var(--pf-oro-luz); --pf-g-medio: var(--pf-oro); --pf-g-hondo: var(--pf-oro-hondo); --pf-g-tinta: var(--pf-oro-grabado); }
+.pf-peek-here--shine .pf-badge--silver { --pf-g-luz: var(--pf-plata-luz); --pf-g-medio: var(--pf-plata); --pf-g-hondo: var(--pf-plata-hondo); --pf-g-tinta: var(--pf-plata-grabado); }
+.pf-peek-here--shine .pf-badge--bronze { --pf-g-luz: var(--pf-bronce-luz); --pf-g-medio: var(--pf-bronce); --pf-g-hondo: var(--pf-bronce-hondo); --pf-g-tinta: var(--pf-bronce-grabado); }
+.pf-peek-here--shine .pf-medal { box-shadow: 0 0 0 3px var(--pf-aro), inset 0 0 0 5px var(--pf-g-medio), inset 0 0 0 6px var(--pf-g-luz),
+  inset 2px 3px 6px rgb(var(--card-ink-rgb) / 0.25), 0 0 22px 4px rgb(var(--pf-brillo) / 0.6); }
+.pf-peek-here--shine .pf-medal > b { font: 900 36px/1 var(--font-num); color: transparent; -webkit-background-clip: text; background-clip: text;
+  background-image: linear-gradient(115deg, transparent 40%, var(--pf-g-luz) 50%, transparent 60%), linear-gradient(180deg, var(--pf-g-tinta), var(--pf-g-hondo) 55%, var(--pf-g-medio));
+  background-size: 300% 100%, 100% 100%; background-repeat: no-repeat; animation: pf-destello 3s ease-in-out infinite;
+  filter: drop-shadow(0 1px 0 var(--pf-g-luz)) drop-shadow(0 -1px 0 rgb(var(--card-ink-rgb) / 0.45)); }
+.pf-peek-here--shine .pf-medal::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; padding: 2px; pointer-events: none;
+  background: conic-gradient(transparent 0 70%, var(--pf-g-luz) 80%, transparent 90%);
+  -webkit-mask: linear-gradient(var(--card-ink) 0 0) content-box exclude, linear-gradient(var(--card-ink) 0 0); mask: linear-gradient(var(--card-ink) 0 0) content-box exclude, linear-gradient(var(--card-ink) 0 0);
+  animation: pf-aro-luz 3s linear infinite; }
+@keyframes pf-aro-luz { to { transform: rotate(360deg); } }
 @keyframes pf-rayos { to { transform: rotate(30deg); } }
 @keyframes pf-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 @keyframes pf-destello { 0% { background-position: 120% 0; } 45%, 100% { background-position: -30% 0; } }
-@media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before, .pf-peek-here--shine .pf-medal::before { animation: none; } }
