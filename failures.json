@@ -7800,7 +7800,11 @@
       "error": "✗ untangle: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "ecfdc0f574",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7813,7 +7817,11 @@
       "error": "✗ tango: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "abaee02c0c",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7826,7 +7834,11 @@
       "error": "✗ agents: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (164 px under the footer in another color (rgb 139,40,60 against the footer's 122,34,67))",
       "signature": "cc4d66c314",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7839,7 +7851,11 @@
       "error": "✗ zip: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "15081a45cf",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7852,7 +7868,11 @@
       "error": "✗ year: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "595738549d",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7865,7 +7885,11 @@
       "error": "✗ queens: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "6c9867bb65",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     },
     {
@@ -7878,7 +7902,11 @@
       "error": "✗ connections: the sunset reaches the bottom edge, also with the browser's bar hidden (56 px) (178 px under the footer in another color (rgb 139,40,60 against the footer's 120,33,67))",
       "signature": "838bd7a5d0",
       "date": "2026-11-25T19:59:04.919Z",
-      "fix": null,
+      "fix": {
+        "commit": "9b2b8e1be6802b58ff71df2c53ed788e425f4f32",
+        "date": "2026-11-25T20:16:08.558Z",
+        "stat": "1 file(s) +1 −1: public/assets/season/thanksgiving.css"
+      },
       "flaky": false
     }
   ]
