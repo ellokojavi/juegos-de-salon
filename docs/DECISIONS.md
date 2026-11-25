@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505, D-529, D-591 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504, D-538, D-544, D-545, D-546, D-564, D-565, D-571, D-574, D-609, D-614 |
 
-## In force (603)
+## In force (604)
 
 | D | Title | Status |
 |---|---|---|
@@ -661,8 +661,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-618](decisions/D-618.md) | The merge queue runs end-to-end once per PR: a behind PR's run is cancelled and only `tests` lets it in line | current |
 | [D-619](decisions/D-619.md) | The merge queue has a doctor: a free check every 5 minutes, a cloud agent that fixes it on its own, and fast PRs first | current |
 | [D-620](decisions/D-620.md) | Every share text is built by a template of share-templates.js | current |
-| [D-622](decisions/D-622.md) | A skin dresses every page of the site, the games included | current |
 | [D-621](decisions/D-621.md) | No alert dot on the panel's Health tab | current |
+| [D-622](decisions/D-622.md) | A skin dresses every page of the site, the games included | current |
 
 ## No longer in force (14)
 
