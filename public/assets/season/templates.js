@@ -46,6 +46,5 @@ export const TEMPLATES = {
     fall: { emojis: ['🍂', '🍁', '🍂'], count: 7, pace: [15, 24], sway: 10 },
     strut: { emoji: '🦃', count: 1, every: 40000 },
     peek: { emoji: '🦃', chance: 1 / 6 },
-    corner: true,
   },
 };
