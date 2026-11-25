@@ -490,9 +490,9 @@ export function duelView(d, me, { lista = [], alTocar = () => {} } = {}) {
       el('span', { class: 'dl-chip' }, titulo(d)),
       d.id?.startsWith('demo') ? el('span', { class: 'dl-chip dl-chip--demo' }, T.demoTag) : null),
     el('div', { class: 'dl-hero-vs' },
-      lado(yoN, 'yo', fin === 'w'),
+      lado(yoN, `yo${halos(e.puntos)[0]}`, fin === 'w'),
       el('div', { class: 'dl-hero-sc' }, el('b', { class: 'dl-marcador dl-marcador--xl' }, `${e.puntos[0]}–${e.puntos[1]}`), el('div', { class: 'dl-puntos' }, puntos(e))),
-      lado(e.rivalN, 'el', fin === 'l')),
+      lado(e.rivalN, `el${halos(e.puntos)[1]}`, fin === 'l')),
     // Your turn: the button to play it right on the card, and whether the rival already did (the owner, 2026-11-25)
     e.turno >= 0 ? el('div', { class: 'dl-hero-jugar' },
       el('a', { class: 'btn btn--yellow', id: 'dl-jugar', href: hrefRonda(d, e.turno), onClick: alTocar }, fmt(T.roundGo, { i: e.turno + 1 })),
@@ -548,6 +548,8 @@ export const hrefDuelo = d => `${RAIZ}duels/?d=${d.id}`;
 
 const resultado = e => (e.termino ? (e.gano === 1 ? 'w' : e.gano === -1 ? 'l' : 't') : null);
 const inicial = n => (n || '?').trim().charAt(0).toUpperCase();
+/** Each face's halo by the score (the owner, 2026-11-25): lit for who leads, both dimmed when level. */
+const halos = p => (p[0] === p[1] ? [' parejo', ' parejo'] : p[0] > p[1] ? [' gana', ' pierde'] : [' pierde', ' gana']);
 
 /**
  * The /duels/ list (the owner picked it, 2026-11-25): the open duels as tickets, the finished ones on a
@@ -559,13 +561,13 @@ export function listTimeline(abiertos, hechos, me, { alTocar = () => {}, lista =
     const e = estado(d, me), turno = e.turno >= 0;
     const yoN = d.a === me ? d.an : d.bn;
     return el('a', { class: `dl-ticket${turno ? ' turno' : ''}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
-      el('span', { class: 'dl-cara yo' }, inicial(yoN)),
+      el('span', { class: `dl-cara yo${halos(e.puntos)[0]}` }, inicial(yoN)),
       el('div', { class: 'dl-ticket-mid' },
         el('small', {}, titulo(d)),
         el('b', { class: 'dl-marcador' }, `${e.puntos[0]}–${e.puntos[1]}`),
         el('div', { class: 'dl-puntos' }, puntos(e)),
         el('small', { class: turno ? 'dl-ticket-turno' : '' }, turno ? T.yourTurn : fmt(T.waitingFor, { n: e.rivalN }))),
-      el('span', { class: 'dl-cara el' }, inicial(e.rivalN)));
+      el('span', { class: `dl-cara el${halos(e.puntos)[1]}` }, inicial(e.rivalN)));
   };
   const fecha = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' });
   const h2h = rivalidades(lista, me);
