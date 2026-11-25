@@ -25,6 +25,11 @@ const nombreJuego = g => g.name?.[lang] || g.name?.es || g.id;
 export const levelsOf = id => GAME_VARIANTS[id] || null;
 /** A level's name, explicit: «🔴 Difícil». */
 export const nombreNivel = v => T.levels?.[v] || v;
+/** A level as its dot and its word, the word hidden by CSS when the row has no room for it: «🔴 Difícil» → «🔴». */
+const nivelCorto = v => {
+  const [, dot, word] = nombreNivel(v).match(/^([\p{Extended_Pictographic}\uFE0F\u200D]+)\s+(.+)$/u) || [null, '', nombreNivel(v)];
+  return el('span', { class: 'dl-nota dl-ronda-nivel', title: nombreNivel(v) }, dot, el('span', { class: 'dl-nivel-txt' }, ` ${word}`));
+};
 
 export function cargarCss() {
   if (document.querySelector('link[data-duels]')) return;
@@ -321,8 +326,9 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
         ...gr.map((id, k) => {
           const x = duelGame(id);
           const fila = el('button', { type: 'button', class: `dl-ronda${editando === k ? ' on' : ''}`, 'data-ronda': k, onClick: tap(() => { editando = editando === k ? -1 : k; }) },
-            el('span', { class: 'dl-nota' }, fmt(T.roundN, { i: k + 1 })), el('span', { class: 'dl-ic slot-reel', 'aria-hidden': 'true' }, x ? gameIcon(x) : ''), el('span', { class: 'dl-ronda-txt' }, el('b', { class: 'slot-reel' }, x ? nombreJuego(x) : id),
-              levelsOf(id) ? el('span', { class: `dl-nota dl-ronda-nivel${lvs[k] ? '' : ' falta'}` }, lvs[k] ? nombreNivel(lvs[k]) : T.pickLevel) : null),
+            el('span', { class: 'dl-nota' }, fmt(T.roundN, { i: k + 1 })), el('span', { class: 'dl-ic slot-reel', 'aria-hidden': 'true' }, x ? gameIcon(x) : ''), el('span', { class: `dl-ronda-txt${levelsOf(id) && !lvs[k] ? ' falta' : ''}` }, el('b', { class: 'slot-reel' }, x ? nombreJuego(x) : id),
+              // The level after the game, on the same line; with no room, only its dot (the owner, 2026-11-25)
+              levelsOf(id) ? (lvs[k] ? nivelCorto(lvs[k]) : el('span', { class: 'dl-nota dl-ronda-nivel falta' }, T.pickLevel)) : null),
             el('span', { class: 'dl-nota' }, '›'));
           // Picking a game with levels keeps the round open on its levels; any other closes it
           return editando === k ? el('div', { class: 'stack' }, fila, tiles(id, v => { if (v !== gr[k]) lvs[k] = null; gr[k] = v; if (!levelsOf(v)) editando = -1; }),
