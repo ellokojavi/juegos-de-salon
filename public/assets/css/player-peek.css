@@ -121,4 +121,5 @@
 @keyframes pf-rayos { to { transform: rotate(30deg); } }
 @keyframes pf-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 @keyframes pf-destello { 0% { background-position: 120% 0; } 45%, 100% { background-position: -30% 0; } }
-@media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before, .pf-peek-here--shine .pf-medal::before { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before, .pf-peek-here--shine .pf-medal::before,
+  .pf-peek-here--shine .pf-medal, .pf-peek-here--shine .pf-medal > b, .pf-peek-here--shine .pf-medal::after { animation: none; } }
