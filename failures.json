@@ -7426,7 +7426,11 @@
       "error": "❌ queens-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part queens, commit the PNG and push; on a PR the Visual references wor",
       "signature": "b20a328367",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7439,7 +7443,11 @@
       "error": "❌ bridges-intro: 2.18 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bridges, commit the PNG and push; on a PR the Visual references w",
       "signature": "7afe3924ee",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7452,7 +7460,11 @@
       "error": "❌ untangle-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part untangle, commit the PNG and push; on a PR the Visual references",
       "signature": "547daee13a",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7465,7 +7477,11 @@
       "error": "❌ agents-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part agents, commit the PNG and push; on a PR the Visual references wor",
       "signature": "ba32ff429a",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7478,7 +7494,11 @@
       "error": "❌ tango-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part tango, commit the PNG and push; on a PR the Visual references workf",
       "signature": "05ff364dad",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7491,7 +7511,11 @@
       "error": "❌ generala-intro: 2.82 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part generala, commit the PNG and push; on a PR the Visual references",
       "signature": "b62d7a14c4",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7504,7 +7528,11 @@
       "error": "❌ year-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part year, commit the PNG and push; on a PR the Visual references workflo",
       "signature": "67234a618f",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7517,7 +7545,11 @@
       "error": "❌ paint-mines-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part paint-mines, commit the PNG and push; on a PR the Visual refe",
       "signature": "327c798623",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7530,7 +7562,11 @@
       "error": "❌ bulls-and-cows-intro: 2.82 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part bulls-and-cows, commit the PNG and push; on a PR the Visua",
       "signature": "1a31b60f86",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7543,7 +7579,11 @@
       "error": "❌ zip-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part zip, commit the PNG and push; on a PR the Visual references workflow",
       "signature": "f2f9c3a0f6",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7556,7 +7596,11 @@
       "error": "❌ liars-dice-intro: 1.05 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part liars-dice, commit the PNG and push; on a PR the Visual refere",
       "signature": "75d780c6cc",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7569,7 +7613,11 @@
       "error": "❌ hangman-intro: 2.94 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part hangman, commit the PNG and push; on a PR the Visual references w",
       "signature": "8ce24cf9ca",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7582,7 +7630,11 @@
       "error": "❌ battleship-intro: 2.82 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part battleship, commit the PNG and push; on a PR the Visual refere",
       "signature": "289ee13d72",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7595,7 +7647,11 @@
       "error": "❌ timeline-intro: 2.82 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part timeline, commit the PNG and push; on a PR the Visual references",
       "signature": "a630dfefa2",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7608,7 +7664,11 @@
       "error": "❌ plots-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part plots, commit the PNG and push; on a PR the Visual references workf",
       "signature": "b6b39a628b",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7621,7 +7681,11 @@
       "error": "✗ 320: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it",
       "signature": "ed9ba5cce2",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7634,7 +7698,11 @@
       "error": "❌ shinobi-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part shinobi, commit the PNG and push; on a PR the Visual references w",
       "signature": "c13e1e1f89",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7647,7 +7715,11 @@
       "error": "❌ connections-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part connections, commit the PNG and push; on a PR the Visual refe",
       "signature": "aa91331a06",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7660,7 +7732,11 @@
       "error": "❌ routes-intro: 2.10 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part routes, commit the PNG and push; on a PR the Visual references wor",
       "signature": "2d273569ef",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7673,7 +7749,11 @@
       "error": "❌ word-intro: 2.18 % of the pixels changed (more than 0.3 %). If it is meant, approve it: node tools/e2e/visual.mjs --update --part word, commit the PNG and push; on a PR the Visual references workflo",
       "signature": "5e0850966c",
       "date": "2026-11-25T15:01:26.168Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "24 file(s) +2 −0: tools/e2e/profile/page.mjs, tools/e2e/visual/ref/agents-intro.png, tools/e2e/visual/ref/battleship-intro.png, tools/e2e/visual/ref/bridges-intro.png, tools/e2e/visual/ref/bulls-and-cows-intro.png, …"
+      },
       "flaky": false
     },
     {
@@ -7686,7 +7766,11 @@
       "error": "✗ 320: 👀 from a game's week ranking the sheet says that game and week, their place in a medal, points and time with their units, and their all-time place in it",
       "signature": "ed9ba5cce2",
       "date": "2026-11-25T15:33:08.273Z",
-      "fix": null,
+      "fix": {
+        "commit": "7bef46797be1ea195549054169690300d8fec1dc",
+        "date": "2026-11-25T15:55:16.676Z",
+        "stat": "1 file(s) +2 −0: tools/e2e/profile/page.mjs"
+      },
       "flaky": false
     }
   ]
