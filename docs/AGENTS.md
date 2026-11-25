@@ -133,7 +133,7 @@ or any other here), launch it and report what it found; do not ask the owner fir
   a failure and distinct keys (aggregate, `labsUso/`, `public/assets/js/lab-usage.js`; a page may call `flagDone(id)`
   when its flagged path is used to the end). The heartbeat's hourly `lab-ready` job (notifications.yml, D-569) (`node tools/agents/lab-ready.mjs check | list | news`)
   weighs them against `READY` / `READY_BY` in `flag-list.js` (default ≥5 finished by ≥2 keys over ≥3 days, 0 errors,
-  since the flag was last switched) and writes `flagsListas/`; the card then says **✅ Listo para 🚀** with the numbers.
+  since the flag was last switched) and writes `flagsListas/`; the card's box then turns green (the numbers are no longer shown on the card, 2026-11-25); each flagged card also shows its id as a label at the end of its title.
   The processes round tells the owner once (`news`); the owner still presses 🚀.
 - **Home page order and lab experiments** (D-361, D-547): `node tools/agents/popularity.mjs check | update`; every Monday the Weekly popularity workflow (`.github/workflows/popularity.yml`) runs `update`, opens the PR, runs its checks and merges it
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
