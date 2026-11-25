@@ -6,6 +6,7 @@
 export const FLAGS = {
   'badge-details': '🎖️ Profile: a tap on a badge whose card hides something opens a sheet with it (the games left, the premiere, the month as a calendar…)',
   'profile-chips': '🎖️ Profile: «Jugando desde…» and the badges count as two chips under the name, not a sentence; a player\'s sheet: since when and the overall place',
+  'podium-shine': '🥇 A player\'s sheet: 1st, 2nd and 3rd place in a shining medal of its metal (rays turning behind, the card framed in it), only the number inside',
   'profile-plays': '🎮 Profile: «Tus partidas» moves from Rankings to the profile\'s Logros tab, as one bar per game, five shown',
   'panel-nav-more': '📊 Panel on a phone: five tabs and ☰ More at the bottom, the other sections in a sheet by group',
   'cup-footer': '🏆 La Copa: the board ends with the site footer, its report and leave links as tiles (U-38)',
