@@ -637,12 +637,28 @@ function publicPanel(yo) {
     el('p', { class: 'muted rk-hint' }, T.publicHint), see);
 }
 
+/** 🔔/🔕 the duels' «you've been challenged» screen (duel-challenge.js), drawn like the sound switch. */
+function duelAlertsToggle(m) {
+  const btn = el('button', { type: 'button', class: 'sound-toggle duel-alerts-toggle', title: T.duelAlerts });
+  const paint = () => { const on = m.alertsOn(); btn.textContent = on ? '🔔' : '🔕'; btn.setAttribute('aria-pressed', String(on)); };
+  paint();
+  btn.addEventListener('click', () => { tap(); m.setAlerts(!m.alertsOn()); paint(); });
+  return btn;
+}
+
 function settingsTab(yo) {
   const row = (label, hint, control) => el('div', { class: 'toggle-row' }, el('span', { class: 'txt' }, el('b', {}, label), hint ? el('small', {}, hint) : null), control);
   const prefs = el('section', { class: 'panel pf-settings' }, el('p', { class: 'lead rk-titulo' }, T.prefs),
     row(T.language, null, langToggle()), row(T.sound, null, soundToggle()));
   // 📳 Vibration off for every game (flag vibration-setting). lab: #seccion-vibration-setting
-  flag('vibration-setting').then(on => on && 'vibrate' in navigator && prefs.append(row(T.vibration, null, vibrationToggle()))).catch(() => {});
+  // 📳 Vibration off for every game (flag vibration-setting), then ⚔️ duel alerts right under it (flag rivals,
+  // duel-challenge.js: the «you've been challenged» screen on or off); each waits in its own place, so the order
+  // does not depend on which answers first. lab: #seccion-vibration-setting, #seccion-rivals
+  const slot = () => el('div', { class: 'pf-slot' });
+  const vibrationSlot = slot(), duelSlot = slot();
+  prefs.append(vibrationSlot, duelSlot);
+  flag('vibration-setting').then(on => on && 'vibrate' in navigator && vibrationSlot.replaceWith(row(T.vibration, null, vibrationToggle()))).catch(() => {});
+  flag('rivals').then(on => on && import('../assets/js/duel-challenge.js').then(m => duelSlot.replaceWith(row(T.duelAlerts, null, duelAlertsToggle(m))))).catch(() => {});
   // ☁️ Games with no signal: where the phone stands, always here; the home page's bar shows the cloud only when it asks for something
   // (flag cloud-quiet, offline-ready.js). lab: #seccion-cloud-quiet
   Promise.all([flag('offline'), flag('cloud-quiet')])

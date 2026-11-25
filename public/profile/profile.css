@@ -114,6 +114,8 @@
 /* The ⚙️ tab */
 .pf-settings { display: grid; gap: var(--s-8); }
 .pf-settings .rk-titulo { margin-bottom: var(--s-4); }
+/* A row still loading (its flag answers later): it takes its place without a gap until it is drawn */
+.pf-slot { display: none; }
 .pf-name-now { font-weight: 900; white-space: nowrap; }
 /* 👤 Your account: each row's value and its «Cambiar», its form under it; «Salir de tu cuenta» asks once */
 /* Each row is one card with its form inside it, so the form reads as that row's */
