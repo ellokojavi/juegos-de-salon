@@ -7375,7 +7375,11 @@
       "error": "ERROR · appeared modules: public/assets/js/duels-demo.js",
       "signature": "0c863fb7f0",
       "date": "2026-11-25T01:47:36.090Z",
-      "fix": null,
+      "fix": {
+        "commit": "4507faf93b897e179ce51692c00ed7fad9462f30",
+        "date": "2026-11-25T01:49:12.404Z",
+        "stat": "3 file(s) +4 −1: README.md, docs/facts.json, tools/e2e/README.md"
+      },
       "flaky": false
     }
   ]
