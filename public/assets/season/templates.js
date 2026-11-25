@@ -35,10 +35,10 @@ export const TEMPLATES = {
     corner: true,
     scares: ['💀', '🕷️', '👀', '🧟'],
   },
-  // Thanksgiving (the fourth Thursday of November, always between the 22nd and the 28th)
+  // Thanksgiving (the fourth Thursday of November, always between the 22nd and the 28th) and its weekend
   thanksgiving: {
-    from: '11-22', to: '11-28',
-    public: false, // in the lab until the owner says it goes out to everyone
+    from: '11-22', to: '11-29', // to the Sunday after Thanksgiving (the owner, 2026-11-25)
+    public: true, // the owner launched it on 2026-11-25
     built: '2026-11-25',
     css: new URL('thanksgiving.css', import.meta.url).href,
     icon: { emoji: '🦃', colors: ['#ff8a2a', '#1b2460'] },

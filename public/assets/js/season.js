@@ -1,12 +1,12 @@
 /**
- * Seasonal touches (D-457): small nods to a date —Halloween first— that dress the site for a few
+ * Seasonal touches (D-457, D-622): small nods to a date —Halloween first— that dress the site for a few
  * days and take nothing away from the games. This is the engine; the dates and what each one shows
  * are templates, one row each in ../season/templates.js (adding one: docs/SEASONS.md). On a
  * template's days the page gets `season-<id>` on <html> and the touches the template names; the
  * day after its last one it goes away by itself, with no PR.
  *
- * Only the pages players move around in import it —the home page and Rankings—, never a game: the
- * games look the same all year (the owner's call). It never covers a button, takes a tap or
+ * Every page loads it, the games included (D-622): tester-boot.js, which vigia.js puts on every page
+ * but the panel, imports it. What moves across the screen stays on the home page. It never covers a button, takes a tap or
  * changes a text the player reads: the decorations are `aria-hidden`, and with
  * `prefers-reduced-motion` nothing moves.
  *
@@ -18,7 +18,6 @@
  * The panel's 🎨 Skins (D-477, controls.js) can move a template to other days or switch it off,
  * with no PR: `controls/skins/<id>`, read before deciding.
  * lab: #seccion-temporadas
- * lab: #seccion-thanksgiving (the template on trial)
  */
 import { param, tiene } from './parametros.js';
 import { labAccess } from './lab-access.js';

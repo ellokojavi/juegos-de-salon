@@ -5,6 +5,8 @@
  * Being on every page, it also carries what every page's top bar gets while in the lab.
  */
 import { labAccess } from './lab-access.js';
+// The season's skin dresses every page, the games included (D-622): this module is on all of them
+import './season.js';
 import { flag, flagGuess } from './flags.js';
 
 // The profile's pill and the compact language on every page's top bar (profile-button.js). lab: #seccion-profile

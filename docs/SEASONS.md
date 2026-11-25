@@ -1,7 +1,10 @@
 # Seasonal templates (D-457)
 
-Small nods to a date (Halloween, Christmas, New Year, Fiestas Patrias…) on the pages players move
-around in: the home page and Rankings. **Never the games**: they look the same all year.
+Small nods to a date (Halloween, Thanksgiving, Christmas, New Year, Fiestas Patrias…) that dress **every
+page of the site, the games included** (D-622, amending D-457): the palette, the favicon, the corner and
+what falls reach every page; what moves across the screen (`flyby`, `peek`, `strut`, `scares`) stays on
+the home page, where nobody is mid-play. Every page gets it from `tester-boot.js`, which `vigia.js`
+already puts on every page but the panel: a new page or game needs nothing to take the skin.
 
 ## The pieces
 
@@ -11,7 +14,7 @@ around in: the home page and Rankings. **Never the games**: they look the same a
 | `public/assets/season/<id>.css` | that date's palette (`--fondo`) and the drawing of its corner (`.season-<id> .season-corner`) |
 | `public/assets/js/season.js` | the engine: picks today's template, puts `season season-<id>` on `<html>`, loads the css, draws the favicon and the touches |
 | `public/assets/css/season.css` | the touches every template shares: where each one sits and how it moves |
-| `public/assets/js/season.test.mjs` | checks the dates, the fields, that no two templates share a day, and that no game loads `season.js` |
+| `public/assets/js/season.test.mjs` | checks the dates, the fields, that no two templates share a day, and that `tester-boot.js` loads `season.js` (every page) |
 
 ## A template's fields
 
