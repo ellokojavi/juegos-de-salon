@@ -10,7 +10,7 @@
  *              so it says "another tester", never who
  *
  * Aggregate counts only, no player data. `tools/agents/lab-ready.mjs check` reads them, and a flag it finds ready
- * turn its /labs/ card green. Counting is itself in the lab (D-395): its own flag,
+ * turns its /labs/ card green. Counting is itself in the lab (D-395): its own flag,
  * lab: #seccion-lab-ready. Not counted on localhost or Tailscale (the scripts, the owner's Mac).
  * Best effort: never throws, at most one write of each kind per load and flag.
  */
