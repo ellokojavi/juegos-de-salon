@@ -59,16 +59,39 @@ export function iconUrl({ emoji, colors: [a, b] }) {
 async function start() {
   try {
     const pick = chooseSeason({ controls: tiene('test') ? {} : await loadControls() });
-    if (!pick || (pick.lab && !(await labAccess()))) return null;
+    if (!pick || (pick.lab && !(await labAccess()))) { if (!param('season') && !tiene('test')) forget(); return null; }
     const t = TEMPLATES[pick.id];
     document.documentElement.classList.add('season', `season-${pick.id}`);
-    for (const href of [BASE_CSS, t.css].filter(Boolean)) document.head.append(Object.assign(document.createElement('link'), { rel: 'stylesheet', href }));
+    for (const href of [BASE_CSS, t.css].filter(Boolean)) {
+      const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href });
+      // Its palette, remembered for the next page's first paint (vigia.js): a public skin on its own days only
+      if (href === t.css && !pick.forced && !pick.lab) link.addEventListener('load', () => remember(pick.id, t), { once: true });
+      document.head.append(link);
+    }
     const icon = document.querySelector('link[rel="icon"]');
     if (icon && t.icon) { icon.type = 'image/svg+xml'; icon.href = iconUrl(t.icon); }
     if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
     decorate(t, pick.forced);
     return { id: pick.id, ...t };
   } catch (_) { return null; } // a decoration never stops a page
+}
+
+/**
+ * The first paint (D-457): this module runs after the page is drawn, so a skin's background came in a
+ * fraction of a second late and the old one flashed. The palette it draws is kept on the phone and
+ * vigia.js, a plain script in every page's <head>, puts it on <html> before the first paint while
+ * today is in its days. A page with no skin today forgets it.
+ */
+export const GUESS_KEY = 'juegos-de-salon:season-guess';
+function remember(id, t) {
+  try {
+    const fondo = getComputedStyle(document.documentElement).getPropertyValue('--fondo').trim();
+    if (fondo) localStorage.setItem(GUESS_KEY, JSON.stringify({ id, from: t.from, to: t.to, fondo }));
+  } catch (_) {}
+}
+function forget() {
+  try { localStorage.removeItem(GUESS_KEY); } catch (_) {}
+  document.documentElement.style.removeProperty('--fondo');
 }
 
 const still = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;

@@ -64,4 +64,7 @@ assert.match(readFileSync(new URL('tester-boot.js', import.meta.url), 'utf8'), /
 const engine = readFileSync(new URL('season.js', import.meta.url), 'utf8');
 const startsAt = engine.indexOf('export const season');
 for (const [, name] of engine.matchAll(/^const (\w+)/gm)) assert.ok(engine.indexOf(`const ${name}`) < startsAt, `season.js: const ${name} is declared after \`season = start()\``);
+// The first paint (no flash of the old background): vigia.js reads the palette season.js keeps, under the same key
+const { GUESS_KEY } = await import('./season.js');
+assert.ok(readFileSync(new URL('vigia.js', import.meta.url), 'utf8').includes(`'${GUESS_KEY}'`), `vigia.js should read ${GUESS_KEY} before the first paint`);
 console.log(`✓ seasons: ${Object.keys(TEMPLATES).join(', ')}`);
