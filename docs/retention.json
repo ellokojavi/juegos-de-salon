@@ -6,7 +6,35 @@
       "pct": 42.7,
       "players": 40,
       "verdict": "no-history"
+    },
+    {
+      "week": "2026-11-15",
+      "pct": 57.8,
+      "players": 39,
+      "verdict": "drop"
     }
   ],
-  "proposals": []
+  "proposals": [
+    {
+      "week": "2026-11-15",
+      "issue": 1895,
+      "metric": "next-day return, any game",
+      "weeks": {
+        "2026-11-08": 42.7,
+        "2026-11-15": 57.8
+      },
+      "band": {
+        "mean": 62.9,
+        "sd": 3.6,
+        "floor": 59.3
+      },
+      "hypothesis": "Launch weeks (Sudoku, ¡Al toque!) pulled one-off play to the new game and nothing called players back the next day; a morning reminder to yesterday's players restores next-day return.",
+      "action": "push: morning 'Your Uno al día is ready' to subscribed players who played the day before (panel 📣)",
+      "verdictRule": "worked if next-day return (any game) >= 59.3% both weeks after it ships; secondary Uno al día d1",
+      "status": "awaiting-owner",
+      "shipped": null,
+      "verdictDate": null,
+      "verdict": null
+    }
+  ]
 }
