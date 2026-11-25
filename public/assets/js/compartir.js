@@ -20,6 +20,21 @@
  * copiado, listo para pegarlo junto a ella. Solo importa `parametros.js`: lo usa `ui.js`.
  */
 import { tiene } from './parametros.js';
+import { flag, flagGuess } from './flags.js';
+
+/**
+ * A game's share says what the game is about (the owner, 2026-11-24): one line under the header with
+ * the game's tagline (the one its card shows), so whoever gets the message knows what they are opening.
+ * Behind the lab flag `share-tagline` until it is on for all (lab: #seccion-share-tagline). `tagline` is the game's `{ es, en, pt }`
+ * (or a string); gives '' with no tagline or with the flag off.
+ */
+// Asked once on a page, so the tester tab lists its switch; the messages read the saved answer
+if (typeof document !== 'undefined') flag('share-tagline').catch(() => {});
+export function taglineLine(tagline, lang = 'es', on = flagGuess('share-tagline')) {
+  if (!on || !tagline) return '';
+  const t = typeof tagline === 'string' ? tagline : (tagline[lang] || tagline.es || '');
+  return t ? `🎮 ${t}` : '';
+}
 
 /**
  * Emojis que se dibujan casi negros (〰️, el de Zip): sobre el fondo morado no se ven, así que en
@@ -173,14 +188,14 @@ function descargar(archivo) {
  * donde no, copia y el botón dice "¡Copiado!" dos segundos. `texto` es una función porque el
  * nombre de quien invita puede llegar después de dibujar la sala.
  */
-export function botonInvitar({ T, titulo, texto, url, alTocar }) {
+export function botonInvitar({ T, titulo, texto, url, alTocar, bajada = '' }) {
   const rotulo = () => (canShare() ? T.shareLink : T.copyLink);
   const btn = document.createElement('button');
   btn.className = 'btn btn--cyan btn--sm'; btn.style.cssText = 'width:100%;max-width:320px';
   btn.textContent = rotulo();
   btn.addEventListener('click', async () => {
     alTocar?.();
-    const r = await compartir({ titulo, texto: texto(), url, que: 'invita' });
+    const r = await compartir({ titulo, texto: [texto(), bajada].filter(Boolean).join('\n'), url, que: 'invita' });
     if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = rotulo(); }, 2000); }
   });
   return btn;
@@ -213,14 +228,14 @@ export function botonCompartir({ rotulo, clase = 'btn btn--cyan', id, armar, alT
 export const puntajeYTiempo = (puntaje, tiempo, tarjeta = '') => [puntaje, tiempo && !String(tarjeta).includes('⏱') ? `⏱ ${tiempo}` : ''].filter(Boolean).join(' · ');
 
 /** El texto del resultado jugando solo: la cabecera y el reto. El resto lo dice la imagen (D-171). */
-export const textoResultadoSolo = ({ C, emoji, juego }) => [cabecera({ emoji, titulo: juego, contexto: C.shareSoloContext }), C.shareSoloCta].join('\n\n');
+export const textoResultadoSolo = ({ C, emoji, juego, bajada = '' }) => [cabecera({ emoji, titulo: juego, contexto: C.shareSoloContext }), [bajada, C.shareSoloCta].filter(Boolean).join('\n')].join('\n\n');
 
 /**
  * El resultado de jugar solo un juego (D-165), suelto o dentro de un juego: la imagen con la
  * cabecera —"🔢 *Toque y Fama* · Jugando solo"—, el puntaje, el tiempo y la tarjeta de colores, y
  * el texto con la misma cabecera y el reto. `C` son los textos comunes del idioma (`COMMON[lang]`).
  */
-export function botonResultadoSolo({ C, emoji, juego, puntaje, tiempo, tarjeta = '', url, alTocar }) {
+export function botonResultadoSolo({ C, emoji, juego, puntaje, tiempo, tarjeta = '', url, alTocar, bajada = '' }) {
   const cab = { emoji, titulo: juego, contexto: C.shareSoloContext };
   const detalle = puntajeYTiempo('', tiempo, tarjeta);
   return botonCompartir({
@@ -228,7 +243,7 @@ export function botonResultadoSolo({ C, emoji, juego, puntaje, tiempo, tarjeta =
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo: juego, url,
-      texto: textoResultadoSolo({ C, emoji, juego }),
+      texto: textoResultadoSolo({ C, emoji, juego, bajada }),
       imagen: await laminaResultado({ cab, url, puntaje, detalle, tarjeta, pie: C.shareSoloImage, archivo: nombreArchivo(juego, 'resultado') }),
     }),
   });

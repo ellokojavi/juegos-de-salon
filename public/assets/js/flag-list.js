@@ -50,6 +50,7 @@ export const FLAGS = {
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'word-in-words': '🔤 Home page: Toque y Fama: Palabra gets its own card under the 🔤 Palabras filter (only there: with no filter, Toque y Fama\'s page still picks the number or the word, #767)',
+  'share-tagline': '🎮 Share messages: a game\'s invite, link or result adds one line with the game\'s tagline, so whoever gets it knows what the game is about',
   'cover-share': '📤 Game covers: a share button in the top bar sends the game\'s link with one line about it',
   'vibration-setting': '📳 Profile: a «Vibración» switch in ⚙️ Preferencias that turns vibration off in every game, on this phone',
   'cloud-quiet': '☁️ Offline mode: the home page\'s cloud shows only while storing or when files are missing; the profile\'s ⚙️ always has a «Juegos sin señal» row with the state',

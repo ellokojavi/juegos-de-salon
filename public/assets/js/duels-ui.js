@@ -149,10 +149,12 @@ export const inviteHref = d => `${RAIZ}duels/?d=${d.id}`;
 
 /** Sends the invite to that one rival (the system's share menu; the link copied where there is none). */
 export async function shareInvite(d, btn) {
-  const { compartir } = await import('./compartir.js');
+  const { compartir, taglineLine } = await import('./compartir.js');
   const g = duelGame(d.g);
   const texto = fmt(T.inviteText, { a: d.an, juego: d.gr ? T.customTitle.replace(/^\S+\s/, '') : (g ? nombreJuego(g) : d.g), formato: nombreFormato(d.f) });
-  const r = await compartir({ titulo: T.inviteTitle, texto, url: inviteHref(d), que: 'duelo' });
+  // What the game is about (lab flag share-tagline); a custom duel mixes games, so it has none
+  const bajada = d.gr ? '' : taglineLine(g?.tagline, lang);
+  const r = await compartir({ titulo: T.inviteTitle, texto: [texto, bajada].filter(Boolean).join('\n'), url: inviteHref(d), que: 'duelo' });
   if (r === 'copied' && btn) { const antes = btn.textContent; btn.textContent = T.copied; setTimeout(() => { btn.textContent = antes; }, 2000); }
 }
 

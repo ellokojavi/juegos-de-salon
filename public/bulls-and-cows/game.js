@@ -10,7 +10,7 @@
  */
 import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
+import { taglineLine, botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, coverLangToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
@@ -405,7 +405,7 @@ function textoInvitacion() {
 }
 
 function shareButton(url) {
-  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, bajada: taglineLine(gameById(GAME_ID)?.tagline, lang), alTocar: () => SFX.tap() });
 }
 
 
@@ -732,7 +732,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       uiNumero.tableroFin(el, estado, { largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
     el('div', { class: 'stack', id: 'solo-actions' },
       // El mismo resultado que el juego de La Copa, con su imagen (D-165)
-      botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),
+      botonResultadoSolo({ bajada: taglineLine(gameById(GAME_ID)?.tagline, lang), C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
       salidasFin('suelto', { lang })),

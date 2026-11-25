@@ -8,7 +8,7 @@
  */
 import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { botonInvitar } from '../assets/js/compartir.js';
+import { taglineLine, botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, coverLangToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
@@ -528,7 +528,7 @@ function textoInvitacion() {
 }
 
 function shareButton(url) {
-  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
+  return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, bajada: taglineLine(gameById(GAME_ID)?.tagline, lang), alTocar: () => SFX.tap() });
 }
 
 
