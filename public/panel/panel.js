@@ -2374,7 +2374,7 @@ function vistaSkins(today) {
           el('strong', { class: 'campana-titulo' }, nombre),
           el('span', { class: `campana-estado estado-${s.status}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
           el('span', { class: 'campana-langs' }, `Its days: ${mmddCorto(s.yearly.from)} – ${mmddCorto(s.yearly.to)}, every year`),
-          s.public ? null : el('span', { class: 'campana-langs' }, '🧪 In the lab: only lab key holders see it'))),
+          s.public ? null : el('span', { class: 'campana-langs' }, '🧪 In the lab: off until you open its Live Preview'))),
       el('div', { class: 'campana-segmento', role: 'group', 'aria-label': 'When' },
         ...MODO_SKIN.map(([m, l]) => el('button', { type: 'button', 'aria-pressed': String(s.mode === m), onClick: () => elegir(m) }, l))),
       s.mode === 'dates' ? el('div', { class: 'campana-dias' }, dia('from', 'Starts', 'Today'), el('span', { class: 'campana-flecha', 'aria-hidden': 'true' }, '→'), dia('until', 'Ends', 'Never')) : null,

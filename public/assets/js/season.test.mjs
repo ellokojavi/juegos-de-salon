@@ -25,6 +25,10 @@ assert.equal(chooseSeason({ search: '?test', date: oct }), null, '?test keeps th
 assert.equal(chooseSeason({ search: '?season=off', date: oct }), null);
 assert.deepEqual(chooseSeason({ search: '?test&season=halloween', date: may }), { id: 'halloween', lab: !TEMPLATES.halloween.public, forced: true });
 assert.equal(chooseSeason({ search: '?season=nope', date: may }), null);
+// A skin in the lab never turns on by its dates, not even for a lab key: only its preview (D-623)
+const labT = { trial: { from: '05-01', to: '05-31', public: false } };
+assert.equal(chooseSeason({ search: '', date: may, templates: labT }), null, 'a lab skin does not turn on by its dates');
+assert.deepEqual(chooseSeason({ search: '?season=trial', date: may, templates: labT }), { id: 'trial', lab: true, forced: true }, 'its preview shows it, to a lab key');
 
 assert.match(decodeURIComponent(iconUrl({ emoji: '🎃', colors: ['#000', '#fff'] })), /^data:image\/svg\+xml,<svg .*🎃/);
 
