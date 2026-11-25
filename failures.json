@@ -7381,6 +7381,19 @@
         "stat": "3 file(s) +4 −1: README.md, docs/facts.json, tools/e2e/README.md"
       },
       "flaky": false
+    },
+    {
+      "run": 45531114309,
+      "check": "tests",
+      "pr": 1886,
+      "branch": "ccr-792e7168-y47erc",
+      "commit": "681663541bbf8a9dcadea85a7ffc43eeb40a6fae",
+      "test": "tools/agents/identifiers.test.mjs",
+      "error": "",
+      "signature": "965641ffe6",
+      "date": "2026-11-25T02:12:10.238Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
