@@ -2170,13 +2170,32 @@ function vistaSplash(today) {
     resumen, tira, bloqueResultados(todas), tarjetas,
     archivadas.length ? el('section', { class: 'campanas-archivadas', 'aria-label': 'Archived campaigns' },
       el('h3', {}, `🗄️ Archived (${archivadas.length})`),
-      el('p', { class: 'muted small' }, 'Off for good and out of the queue. Bring one back to switch it on again; it returns off, at the end of the list.'),
-      archivadas.map(s => el('div', { class: 'campana-archivada', id: `campana-${s.id}` },
-        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, CAMPAIGNS[s.id].emoji || '📣'),
-        el('strong', { class: 'campana-titulo' }, nombreDe(s.id)),
-        el('button', { type: 'button', class: 'campana-preview campana-desarchivar', 'aria-label': `Unarchive ${nombreDe(s.id)}`,
-          onClick: () => guardarCampanas(archive(todas, s.id, false)) }, '↩︎ Unarchive')))) : null,
+      el('p', { class: 'muted small' }, 'Off for good and out of the queue. Tap one to preview it; bring it back to switch it on again, and it returns off, at the end of the list.')) : null,
+    // Each archived campaign is a row that opens into its preview (the owner's request). The rows sit at the
+    // top level of the view, like the queue's cards, so an open preview survives the redraws (pintarVista)
+    ...archivadas.map(s => archivada(s, nombreDe(s.id), () => { S.campOpen.delete(s.id); guardarCampanas(archive(todas, s.id, false)); })),
   ];
+}
+
+/* An archived campaign: folded to its emoji, title and ↩︎ Unarchive; a tap on the title opens it into
+   the same still preview the queue's cards have (▶ plays it) and its Live Preview link */
+function archivada(s, nombre, desarchivar) {
+  const c = CAMPAIGNS[s.id];
+  const abierta = S.campOpen.has(s.id);
+  const alternar = () => { if (abierta) S.campOpen.delete(s.id); else S.campOpen.add(s.id); render(); };
+  const volver = el('button', { type: 'button', class: 'campana-preview campana-desarchivar', 'aria-label': `Unarchive ${nombre}`, onClick: desarchivar }, '↩︎ Unarchive');
+  const abrir = el('button', { type: 'button', class: 'campana-archivada-abrir', 'aria-expanded': abierta ? 'true' : 'false', 'aria-label': `${abierta ? 'Close' : 'Preview'} ${nombre}`, onClick: alternar },
+    el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
+    el('strong', { class: 'campana-titulo' }, nombre),
+    el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, '›'));
+  if (!abierta) return el('div', { class: 'campana-archivada', id: `campana-${s.id}` }, abrir, volver);
+  return el('article', { class: 'campana campana--con-vista campana--archivada', id: `campana-${s.id}` },
+    el('header', { class: 'campana-cabeza' }, abrir),
+    el('footer', { class: 'campana-pie' },
+      el('span', { class: 'campana-vistas' },
+        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')),
+      volver),
+    vistazo(s.id, nombre, S.campPeek.has(s.id)));
 }
 
 /* A look at a splash without leaving the panel, in a column at the card's right (the owner's request):
