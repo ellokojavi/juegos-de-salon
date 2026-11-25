@@ -29,6 +29,8 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 | `flyby` | `'🦇'` | crosses the home page once per visit, right to left (the emoji faces left) |
 | `scares` | `['💀', '🕷️', '👀', '🧟']` | a big fright on the home page 8 s after it opens and then every 40 s, a random one but never the same twice in a row: 💀 looms from the right, 🕷️ scuttles across, 👀 blink in the dark, 🧟 shambles up from below |
 | `peek` | `{ emoji: '👻', chance: 1 / 15 }` | now and then rises from the bottom left edge of the home page and hides |
+| `fall` | `{ emojis: ['🍂', '🍁'], count: 7, pace: [15, 24], sway: 10 }` | things that never stop falling, behind the page (they never cross a text or a button), on the home page and Rankings: `count` at a time, `pace` seconds from top to bottom, swaying `sway` px |
+| `strut` | `{ emoji: '🦃', count: 1, every: 40000 }` | a line of `count` walks along the bottom of the home page, right to left, behind the page (seen through the cards, never over a game's icon, the owner's call), 3 s after it opens and then every `every` ms |
 | `corner` | `true` | a decoration in the top right corner, drawn by the template's css |
 
 ## Adding one

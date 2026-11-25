@@ -1,0 +1,15 @@
+/* Thanksgiving (templates.js, D-457): a November sunset, warm orange
+   low on the page fading into a deep blue sky, and a branch of oak with acorns in the corner. */
+:root.season-thanksgiving {
+  --fondo:
+    radial-gradient(1200px 600px at 10% -10%, rgba(80, 110, 220, 0.28), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(255, 170, 70, 0.14), transparent 60%),
+    radial-gradient(900px 650px at 50% 120%, rgba(255, 120, 40, 0.52), transparent 62%),
+    linear-gradient(170deg, #0b1230, #251436 55%, #3a1a14);
+}
+.season-thanksgiving .season-corner {
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100 6 Q60 10 30 38' fill='none' stroke='%23a0704a' stroke-width='2'/%3E%3Cpath d='M62 12 C58 4 46 4 44 12 C40 10 36 16 40 20 C36 24 42 30 48 26 C52 30 60 24 58 18 C64 18 66 14 62 12Z' fill='%23d9822a'/%3E%3Cpath d='M86 8 C84 0 74 0 72 6 C68 4 64 10 68 14 C66 18 72 22 76 18 C80 22 88 16 84 12Z' fill='%23b5521f'/%3E%3Cg transform='translate(44 36)'%3E%3Cellipse cx='0' cy='6' rx='5' ry='6.5' fill='%23c08a50'/%3E%3Cpath d='M-6 2 Q0 -4 6 2Z' fill='%236a4024'/%3E%3C/g%3E%3Cg transform='translate(32 44)'%3E%3Cellipse cx='0' cy='6' rx='4.5' ry='6' fill='%23c08a50'/%3E%3Cpath d='M-5.5 2 Q0 -3.5 5.5 2Z' fill='%236a4024'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* The turkey that peeks goes behind the page too, like the ones that walk by: never over a game's icon */
+.season-thanksgiving .season-peek { z-index: -1; }

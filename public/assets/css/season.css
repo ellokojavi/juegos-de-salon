@@ -97,7 +97,27 @@
   100% { transform: translateY(100%) rotate(0); opacity: 0; }
 }
 
+/* The fall (`fall`): leaves and the like drift down without end behind the page (z-index -1, like the
+   corner), so they never cross a text or a button; each sways on its own (season.js gives the pace) */
+.season-fall { inset: 0; z-index: -1; overflow: hidden; }
+.season-fall span {
+  position: absolute; top: 0; line-height: 1; opacity: 0.7;
+  animation: season-drop linear infinite, season-sway ease-in-out infinite alternate;
+}
+@keyframes season-drop { from { transform: translateY(-8vh); } to { transform: translateY(108vh); } }
+@keyframes season-sway { from { margin-left: calc(-1 * var(--sway, 18px)); rotate: calc(-1 * var(--spin, 25deg)); } to { margin-left: var(--sway, 18px); rotate: var(--spin, 25deg); } }
+
+/* The strut (`strut`): a turkey walks along the bottom, right to left, bobbing at every step. Behind
+   the page (z-index -1, the owner's call): seen through the see-through cards, never over a game's icon */
+.season-strut {
+  z-index: -1; right: 0; bottom: calc(var(--safe-bottom, 0px) + 6px); font-size: 54px; line-height: 1;
+  animation: season-strut 7s linear both, season-step .35s ease-in-out infinite alternate;
+}
+@keyframes season-strut { from { right: -70px; } to { right: calc(100vw + 70px); } }
+@keyframes season-step { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-6px) rotate(4deg); } }
+
 @media (prefers-reduced-motion: reduce) {
+  .season-fall, .season-strut,
   .season-flyby, .season-peek, .season-loom, .season-scuttle, .season-stare, .season-shamble { display: none; }
   .bg-sparkles span.season-mote { animation: none; }
 }
