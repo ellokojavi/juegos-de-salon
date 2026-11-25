@@ -46,7 +46,7 @@ placeholder left), and fails any page that calls `cabecera()` or writes a `{emoj
 Every share about one game (T1, T4, T5 and a duel) carries, right after the header, one line with
 what the game is about: `🎮 {tagline}`, the game's own tagline (`tagline` in its manifest or in
 `games.js`, the one its card shows), in the message's language, built by `taglineLine()` in
-`compartir.js` (the owner, 2026-11-24). Never in Uno al día, whose share must not name the game
+`compartir.js` (over `taglineOf()` in `share-templates.js`) (the owner, 2026-11-24). Never in Uno al día, whose share must not name the game
 (#215), nor in a custom duel (it mixes games). `compartir.test.mjs` checks every playable game has a
 tagline in the three languages, short enough for one or two lines (≤ 120 characters).
 
@@ -54,22 +54,22 @@ tagline in the three languages, short enough for one or two lines (≤ 120 chara
 
 | # | Where (player sees) | Button | Kind | Code |
 |---|---|---|---|---|
-| 1 | Home, top bar | 📤 → sheet: «💬 Invitar a jugar» | T3 | `compartir-portada.js`, `index.html` |
-| 2 | Home, same sheet | «🎬 Compartir el video» (tab ES/EN) | video | `compartir-portada.js` `textoVideo` |
-| 3 | Home, a game's sheet (carousels) | 📤 icon | T4 | `home-carousels.js` |
-| 4 | A game's cover (lab flag `cover-share`) | 📤 icon | T4 | `cover-share.js` |
-| 5 | Room lobby of every group game (Ahorcado, Batalla Naval, Toque y Fama, Generala, Dudo, Línea de tiempo, Julepe, Blackjack) | «Compartir link» / «Copiar link» | T1 | `botonInvitar()`, each `game.js` `shareButton(url)` |
-| 6 | End of a solo game (Toque y Fama, Línea de tiempo, labs: Memoria, Code, Dominorama, Números explosivos, Torre) | «📤 Compartir mi resultado» | T5 | `botonResultadoSolo()` |
-| 7 | Labs with their own result (Transfer, Críptico, Sudoku, Blackjack) | own label | T5 | `botonCompartir()` in each `game.js` |
-| 8 | La Copa: invite | «Invitar» | T2 | `cup/game.js` `mensajeInvitacion` |
-| 9 | La Copa: my result of the day | 📤 | T5 | `cup/result.js` |
-| 10 | La Copa: table (partial and final, podium) | 📤 | T6 | `cup/game.js` `compartirTabla`, `table-image.js` |
-| 11 | La Copa: admin messages (today, reminders, final) | small buttons | T2 / T6 | `cup/admin.js` |
+| 1 | Home, top bar | 📤 → sheet: «💬 Invitar a jugar» | T3 | `compartir-portada.js`, `appInvite()` |
+| 2 | Home, same sheet | «🎬 Compartir el video» (tab ES/EN) | video | `compartir-portada.js`, `videoShare()` |
+| 3 | Home, a game's sheet (carousels) | 📤 icon | T4 | `home-carousels.js`, `gameLink()` |
+| 4 | A game's cover (lab flag `cover-share`) | 📤 icon | T4 | `cover-share.js`, `gameLink()` |
+| 5 | Room lobby of every group game (Ahorcado, Batalla Naval, Toque y Fama, Generala, Dudo, Línea de tiempo, Julepe, Blackjack) | «Compartir link» / «Copiar link» | T1 | `botonInvitar()`, each `game.js` `shareButton(url)`, built by `roomInvite()` |
+| 6 | End of a solo game (Toque y Fama, Línea de tiempo, labs: Memoria, Code, Dominorama, Números explosivos, Torre) | «📤 Compartir mi resultado» | T5 | `botonResultadoSolo()`, `soloResult()` |
+| 7 | Labs with their own result (Transfer, Críptico, Sudoku, Blackjack) | own label | T5 | `botonCompartir()` in each `game.js`, `result()` |
+| 8 | La Copa: invite | «Invitar» | T2 | `cup/game.js` `mensajeInvitacion`, `message()` |
+| 9 | La Copa: my result of the day | 📤 | T5 | `cup/result.js`, `message()` |
+| 10 | La Copa: table (partial and final, podium) | 📤 | T6 | `cup/game.js` `compartirTabla`, `table-image.js`, `message()` |
+| 11 | La Copa: admin messages (today, reminders, final) | small buttons | T2 / T6 | `cup/admin.js`, `message()` |
 | 12 | La Copa: a game played loose inside it | «📤 Compartir mi resultado» | T5 | `cup/game.js:2515` |
-| 13 | Uno al día: result | «📤 Compartir mi resultado» | T5 + grid | `uno-al-dia-ui.js` (≈ line 199) |
-| 14 | Uno al día: invite a friend (+10) | «Invitar» | T2 | `uno-al-dia-ui.js` (≈ line 285) |
-| 15 | Uno al día: ranking on /today/ | «📤 Compartir la tabla» | T6 | `botonCompartirRanking()` |
-| 16 | Duels: challenge a rival | «Retar» | T2 | `duels-ui.js` `shareInvite` |
+| 13 | Uno al día: result | «📤 Compartir mi resultado» | T5 + grid | `uno-al-dia-ui.js`, `result()` |
+| 14 | Uno al día: invite a friend (+10) | «Invitar» | T2 | `uno-al-dia-ui.js`, `invite()` |
+| 15 | Uno al día: ranking on /today/ | «📤 Compartir la tabla» | T6 | `botonCompartirRanking()`, `table()` |
+| 16 | Duels: challenge a rival | «Retar» | T2 | `duels-ui.js` `shareInvite`, `invite()` |
 
 ## Review
 
