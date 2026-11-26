@@ -1,3 +1,3 @@
 level: patch
 
-- **Duels: the halo follows the score.** On each duel card the face of whoever is ahead glows brighter, the one behind loses its glow, and both dim when the score is level.
+- **Duels: a softer halo.** The glow that marks who is ahead in a duel is subtler, and the faces behind or level dim only a little.
