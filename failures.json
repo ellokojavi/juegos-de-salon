@@ -8036,6 +8036,19 @@
       "date": "2026-11-26T15:40:54.400Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45855026172,
+      "check": "tests",
+      "pr": 1934,
+      "branch": "labs-twins",
+      "commit": "72885a0a905e44ba8429777fd2309ac7e2f18e87",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/manifests/labs/twins.js, public/labs/twins/engine.js, public/labs/twins/game.js, public/labs/twins/rules.js\nERROR · appeared documents: {\"path\": \"docs/games/twins.md\", \"title\": \"🔢 Twins (Gemelos;",
+      "signature": "b89b2b258b",
+      "date": "2026-11-26T16:06:01.184Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
