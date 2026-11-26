@@ -27,6 +27,7 @@ import { hasDetail, detailOf } from './badge-details.js';
 import { tableOf } from '../assets/js/player-peek.js';
 import { phoneFacts, LOCAL_BADGES } from '../assets/js/phone-facts.js';
 import { announced } from '../assets/js/secret-achievements.js';
+import { syncTold, pushTold } from '../assets/js/told-sync.js';
 import { trackProfile, trackProfileVisit } from '../assets/js/profile-usage.js';
 
 const lang = getLang();
@@ -50,7 +51,12 @@ const gameOf = id => ALL_GAMES.find(g => g.id === id);
 
 const SEEN = jid => `juegos-de-salon:profile-badges:${jid || 'guest'}`;
 const readSeen = jid => { try { return JSON.parse(localStorage.getItem(SEEN(jid)) || '{}') || {}; } catch (_) { return {}; } };
-const writeSeen = (jid, v) => { try { localStorage.setItem(SEEN(jid), JSON.stringify(v)); } catch (_) { /* not kept */ } };
+const writeSeen = (jid, v) => {
+  const antes = readSeen(jid);
+  try { localStorage.setItem(SEEN(jid), JSON.stringify(v)); } catch (_) { /* not kept */ }
+  // On the player's account too: a badge shown once, on any phone, is not new again (told-sync.js)
+  if (jid) for (const [id, ms] of Object.entries(v)) if (antes[id] == null) pushTold('v', id, ms);
+};
 
 /**
  * What the profile had shown when this page opened, by player: a badge is new against it for the whole visit, so its
@@ -722,7 +728,8 @@ export async function drawProfile(root, { sub }) {
     let f = { ...localFacts(), byGame: [] };
     // A window only once every fact is in: the first look must note what the server knows too (💎, 🎂)
     // The duels' badges, with the record and the way to /duels/, only while the duels are on (lab flag rivals)
-    const duelsOn = await flag(DUELS_FLAG).catch(() => false);
+    // The account's told achievements first, so one told on another phone is not «¡Nueva!» here (told-sync.js)
+    const [duelsOn] = await Promise.all([flag(DUELS_FLAG).catch(() => false), syncTold()]);
     if (mine !== turn) return;
     let duelList = null, DU = null, duelF = null;
     const duelsExtra = () => {

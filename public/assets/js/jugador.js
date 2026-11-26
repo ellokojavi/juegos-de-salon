@@ -747,6 +747,24 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!yo) return;
       await almacen.update({ [`jugadorCopas/${yo.jid}/${code}`]: { p: pid, at: HORA } });
     },
+    /**
+     * The achievements already told to this player, on any phone (the owner: told once, on one phone, is told):
+     * `{ a: { id: ms }, v: { id: ms } }`, `a` the windows celebrated and `v` the badges shown on the profile.
+     */
+    async logrosContados() {
+      const yo = api.yo();
+      if (!yo) return { a: {}, v: {} };
+      const m = (await almacen.get(`jugadorLogros/${yo.jid}`)) || {};
+      return { a: m.a || {}, v: m.v || {} };
+    },
+    /** Notes on the account what was told here and the account does not have yet: `{ a: {id: ms}, v: {id: ms} }`. */
+    async anotarLogros(nuevos = {}) {
+      const yo = api.yo();
+      if (!yo) return;
+      const cambios = {};
+      for (const t of ['a', 'v']) for (const [id, ms] of Object.entries(nuevos[t] || {})) if (/^[a-z0-9-]{1,40}$/.test(id) && Number(ms) > 1700000000000) cambios[`jugadorLogros/${yo.jid}/${t}/${id}`] = Math.min(Number(ms), now());
+      if (Object.keys(cambios).length) await almacen.update(cambios);
+    },
     /** Sacar de la lista una copa que ya no existe (la borró su admin). */
     async olvidarCopa(code) {
       const yo = api.yo();

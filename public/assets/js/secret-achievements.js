@@ -26,6 +26,8 @@ export function announced(storage = globalThis.localStorage) {
 }
 export function markAnnounced(id, storage = globalThis.localStorage, now = Date.now()) {
   try { storage?.setItem(ANNOUNCED_KEY, JSON.stringify({ ...announced(storage), [id]: now })); } catch (_) { /* not kept */ }
+  // On the player's account too: told once, on any phone, is told (told-sync.js)
+  if (typeof window !== 'undefined' && storage === globalThis.localStorage) import('./told-sync.js').then(m => m.pushTold('a', id, now)).catch(() => {});
 }
 
 /** The phone's facts for the checks. */
