@@ -734,6 +734,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [☀️ Tango](docs/games/tango.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [🚉 Transbordo (Transfer, lab, in La Bodega)](docs/games/transfer.md)
+- [🔢 Twins (Gemelos; lab, in Juegos en prueba)](docs/games/twins.md)
 - [🧶 Untangle (Desenredo)](docs/games/untangle.md)
 - [📍 Where Is It? (¿Dónde queda?)](docs/games/where.md)
 - [⚖️ The Wobbles (Tembleque; /wobbles/, launched 2026-11-22, home page only)](docs/games/wobbles.md)
