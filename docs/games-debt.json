@@ -118,11 +118,6 @@
     },
     {
       "id": "puentes",
-      "check": "pruebas-del-motor",
-      "reason": "Its engine is tested with the other Cup games in public/cup/games/juegos.test.mjs (or by its other test files there), not in an engine.test.mjs of its own folder"
-    },
-    {
-      "id": "puentes",
       "check": "especificacion",
       "reason": "Its page predates the common template (C-13, D-213): it has its own sections and the Cup-wide ones live in docs/games/cup.md"
     },

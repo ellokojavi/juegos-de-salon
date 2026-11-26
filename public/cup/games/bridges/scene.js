@@ -213,7 +213,7 @@ const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
  * the train with its smoke. `sim` (while it runs) gives positions and tensions; without it, the
  * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
-export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null } = {}) {
+export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null, fantasma = null } = {}) {
   if (NEON) return dibujarNeon(c, e, arguments[2]);
   const r = c._r;
   if (!r) return;
@@ -403,6 +403,12 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
     r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, cuerpo(v), v.acero ? g + 1 : g);
   };
   for (const [p, q] of pasoPorEncima(vivas, nudos)) pieza(p, q);
+  // The 💡 hint's beam (flag bridges-hint): a white ghost until it is laid
+  if (fantasma) {
+    const [ax, ay] = A(...fantasma.a), [bx, by] = A(...fantasma.b);
+    r.linea(ax, ay, bx, by, 'rgba(255,255,255,0.55)', grosor + 1);
+    for (const [x, y] of [[ax, ay], [bx, by]]) r.circulo(x, y, 3, 'rgba(255,255,255,0.55)');
+  }
   // The beam being dragged: dashes, green if it can go, red if not
   if (arrastre) {
     const [ax, ay] = A(...arrastre.a), [bx, by] = A(...arrastre.b), col = arrastre.ok ? '#9dff3a' : '#ff2e88';

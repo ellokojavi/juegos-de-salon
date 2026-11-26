@@ -631,6 +631,8 @@ export const PATHS = {
   puentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`],
+    // The 💡 hint shown (flag bridges-hint: `--flags bridges-hint=all`): the four actions two by two, a ghost beam on the board
+    hint: [START, `1`, `1`, `1`, `1`, `document.getElementById('btn-pista')?.click()`, `1`],
   },
   tango: {
     intro: [],
