@@ -116,6 +116,10 @@ would miss what `sw.js` wrote at the root.
   Sound effects are precached.
 - **A new release downloads only what changed**: a `?h=` file is its content, so one an older release kept is
   copied into the new release's cache; only pages, unhashed files and changed files are fetched (`sw.test.mjs`).
+- **A stale page is never served offline, and a mixed one heals itself**: when the network fails, a page
+  comes only from a release cache, never from the runtime cache (`jds-runtime` pages are dropped on `activate`
+  and after each store). A `?h=` file the server answers with other content than its hash means the page is
+  from an older release: it is not kept, and the page reloads once (at most once a minute) (`sw.test.mjs`).
 - The Firebase SDK on gstatic is cached at runtime when used, for when the signal returns.
 - No update prompt is needed: pages are network-first and every module and stylesheet is content-hashed (D-467).
 - Big pictures (Dónde's satellite tiles, over 100 KB each) are cached the first time they are seen.

@@ -42,14 +42,15 @@ function worker({ site, seed = [] }) {
     return body != null ? new Response(body) : new Response('', { status: 404 });
   };
   const handlers = {};
+  const navigated = [];
   const self = {
     addEventListener: (t, f) => (handlers[t] ||= []).push(f),
     location: new URL(ORIGIN + '/sw.js'),
     registration: { scope: ORIGIN + '/', showNotification() {} },
-    clients: { claim: async () => {}, matchAll: async () => [] },
+    clients: { claim: async () => {}, matchAll: async () => [], get: async id => ({ url: ORIGIN + '/cup/', navigate: async u => { navigated.push([id, u]); } }) },
     skipWaiting() {},
   };
-  vm.runInNewContext(SRC, { self, Response, caches, fetch, Response, URL, Promise, setTimeout, JSON, console });
+  vm.runInNewContext(SRC, { self, Response, caches, fetch, URL, Promise, setTimeout, JSON, console, crypto: globalThis.crypto, Uint8Array });
   const event = (type, data) => {
     let waited = null, responded = null;
     const e = { ...data, waitUntil: p => { waited = p; }, respondWith: p => { responded = p; } };
@@ -57,10 +58,11 @@ function worker({ site, seed = [] }) {
     return { waited, responded };
   };
   return {
-    store, net,
+    store, net, navigated,
+    async activate() { await event('activate', {}).waited; },
     async tell(msg) { await event('message', { data: msg }).waited; },
-    async get(path, mode = 'no-cors', method = 'GET') {
-      const { responded } = event('fetch', { request: { url: new URL(path, ORIGIN + '/').href, method, mode } });
+    async get(path, mode = 'no-cors', method = 'GET', clientId = 'tab') {
+      const { responded } = event('fetch', { clientId, resultingClientId: mode === 'navigate' ? clientId : '', request: { url: new URL(path, ORIGIN + '/').href, method, mode } });
       if (!responded) return 'UNTOUCHED';
       const r = await responded;
       if (r.type === 'error') return 'ERROR';
@@ -174,6 +176,44 @@ await w.tell({ type: 'offline', on: true, release: '0.2.0-def', forced: false })
   await w3.ready();
   w3.net.up = false;
   assert.equal(await w3.get('/assets/css/x.css'), 'css v2', 'and without signal the last one kept is served');
+}
+
+// A page an older worker kept in the runtime cache is never served again: it told its old release, so
+// nothing was stored and the old page mixed its modules with today's (La Copa on an iPhone, 2026-11-25)
+{
+  const { createHash } = await import('node:crypto');
+  const h = t => createHash('sha256').update(t).digest('hex').slice(0, 8);
+  const s4 = { files: { '/cup/': 'cup new', '/assets/js/stats.js?h=00000000': 'stats new' }, list: { release: 'r', urls: [] } };
+  const seed = [
+    ['jds-config', new Map([[ORIGIN + '/config', JSON.stringify({ on: true, release: 'r' })]])],
+    ['jds-runtime', new Map([[ORIGIN + '/cup/', 'cup 1.4.3']])],
+    ['jds-release-r', new Map([[ORIGIN + '/cup/', 'cup r']])],
+  ];
+  const w4 = worker({ site: s4, seed });
+  await w4.ready();
+  w4.net.up = false;
+  assert.equal(await w4.get('/cup/', 'navigate'), 'cup r', 'without signal, the release\'s page, never the old runtime one');
+  await w4.activate();
+  assert.ok(!w4.store.get('jds-runtime').has(ORIGIN + '/cup/'), 'a new worker drops the pages an older one kept in the runtime cache');
+  // An old page asks a hash the server no longer has: the answer is not kept under it, and the page loads again once
+  w4.net.up = true;
+  s4.files['/assets/js/stats.js'] = 'stats new';
+  assert.equal(await w4.get('/assets/js/stats.js?h=00000000'), 'stats new');
+  await w4.ready();
+  assert.ok(!w4.store.get('jds-runtime').has(ORIGIN + '/assets/js/stats.js?h=00000000'), 'content that is not its hash is not cached under it');
+  assert.deepEqual(w4.navigated, [['tab', ORIGIN + '/cup/']], 'the stale page is loaded again');
+  await w4.get('/assets/js/stats.js?h=00000000');
+  await w4.ready();
+  assert.equal(w4.navigated.length, 1, 'once: never a loop');
+  // A module a game loads late (La Copa's result) never reloads a page mid-game, nor one this worker did not serve
+  await w4.get('/assets/js/stats.js?h=00000000', 'no-cors', 'GET', 'other-tab');
+  await w4.ready();
+  assert.equal(w4.navigated.length, 1, 'a tab this worker did not serve is not reloaded');
+  const good = h('ui ok');
+  s4.files['/assets/js/ui.js?h=' + good] = 'ui ok';
+  assert.equal(await w4.get('/assets/js/ui.js?h=' + good), 'ui ok');
+  await w4.ready();
+  assert.ok(w4.store.get('jds-runtime').has(ORIGIN + '/assets/js/ui.js?h=' + good), 'content that matches its hash is kept');
 }
 
 console.log('✓ sw: off changes nothing; on stores the release, pages network-first, ?h= from the cache, old releases go; a tester\'s cut answers only from the cache');
