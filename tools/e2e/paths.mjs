@@ -176,6 +176,13 @@ const TYF_RESULT = [
 ];
 
 export const PATHS = {
+  // Gemelos (lab): today's board, one with a 💡 hint showing, and the result once solved
+  twins: {
+    intro: [],
+    play: [`document.getElementById('btn-play').click()`],
+    hint: [`document.getElementById('btn-play').click()`, `document.getElementById('btn-hint').click()`],
+    result: [`document.getElementById('btn-play').click()`, `(()=>{for(const [a,b] of window.__twins.solve()) window.__twins.merge(a,b)})()`],
+  },
   // Críptico: today's first clue, a clue's answer between two (given up), and the day's score (the owner, 2026-11-20)
   'cryptic': {
     intro: [],

@@ -50,6 +50,8 @@ const START = {
   'labs/transfer': [`document.querySelector('.mode').click()`],
   // The yellow button opens today's clue, already saved
   'labs/cryptic': [`document.getElementById('btn-play').click()`],
+  // The yellow button opens today's board, already saved
+  'labs/twins': [`document.getElementById('btn-play').click()`],
 };
 
 const b = await launch({ port: 0, dir: `${OUT}/p`, out: OUT });
