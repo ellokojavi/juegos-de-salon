@@ -29,7 +29,7 @@ const ES = {
   },
   como: [
     '🎯 Junta los números hasta que quede uno solo.',
-    '👆 Arrastra un número sobre uno igual que esté a su lado, arriba o abajo: se suman, 8 + 8 = 16.',
+    '👆 Arrastra un número sobre uno igual que esté a su lado, arriba o abajo: se suman, 8\u00a0+\u00a08\u00a0=\u00a016.',
     '⏱ Mientras más rápido, más puntos. Deshacer es gratis y cada pista resta 10.',
   ],
 };
@@ -47,8 +47,8 @@ const EN = {
     boardLabel: 'Board #{n}', left: '{n} numbers left', leftOne: '1 number left',
     undo: '↩ Undo', hintBtn: '💡 Hint (−{cost})',
     hintSay: 'Drag the pulsing number onto its twin.',
-    hintUndid: 'That way could no longer reach one: I undid {n} moves. Drag the pulsing number onto its twin.',
-    hintUndidOne: 'That way could no longer reach one: I undid 1 move. Drag the pulsing number onto its twin.',
+    hintUndid: 'That way could no longer end in a single number: I undid {n} moves. Drag the pulsing number onto its twin.',
+    hintUndidOne: 'That way could no longer end in a single number: I undid 1 move. Drag the pulsing number onto its twin.',
     stuck: 'No moves left. Undo or ask for a hint.',
     scoreTitle: '{score} out of 100', solvedIn: 'You solved it in {time}.',
     hintsOne: '1 hint: −{cost}.', hintsMany: '{n} hints: −{cost}.', nextBoard: 'Another board tomorrow.',
@@ -56,7 +56,7 @@ const EN = {
   },
   como: [
     '🎯 Merge the numbers until only one is left.',
-    '👆 Drag a number onto an equal one right beside, above or below it: they add up, 8 + 8 = 16.',
+    '👆 Drag a number onto an equal one right beside, above or below it: they add up, 8\u00a0+\u00a08\u00a0=\u00a016.',
     '⏱ The faster, the more points. Undo is free and each hint takes 10 off.',
   ],
 };
@@ -83,7 +83,7 @@ const PT = {
   },
   como: [
     '🎯 Junte os números até sobrar um só.',
-    '👆 Arraste um número sobre um igual que esteja ao lado, acima ou abaixo: eles se somam, 8 + 8 = 16.',
+    '👆 Arraste um número sobre um igual que esteja ao lado, acima ou abaixo: eles se somam, 8\u00a0+\u00a08\u00a0=\u00a016.',
     '⏱ Quanto mais rápido, mais pontos. Desfazer é grátis e cada dica tira 10.',
   ],
 };
