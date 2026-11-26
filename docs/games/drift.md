@@ -37,7 +37,7 @@ One: alone (`solo`). `?test` plays the three-gate test stage instead of the real
 ## Flujo
 
 Cover (resume panel, «🏁 Jugar», how to play, the footer) → the shared 3, 2, 1 → the stage (the clock,
-the penalties, «Puerta n de N», ↺, and 🔧 with a lab key; the hint «👈 👉 Mantén un lado para girar»
+the penalties, «Puerta n de N», ↺, and 🔧 with a lab key; the hint «👈 👉 Mantén un lado para girar y los dos para frenar»
 until the first touch) → the result (the final time, the clock and penalties in one line, «Jugar otra
 vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 
