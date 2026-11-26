@@ -33,7 +33,7 @@ export const DEVICE = [
   // What was already told or shown (achievements, recaps, challenges, tables): never told again after
   // signing out and in (the owner's report); the badges seen are kept per player id
   'logros-anunciados', 'logros-base', 'profile-badges:*', 'uno-al-dia:temporada-vista', 'copa:resumen-visto', 'duels-challenged', 'rk-visto:*',
-  'profile-bubble', 'profile-intro', 'profile-seen-day', 'profile-via',
+  'profile-bubble', 'profile-intro', 'profile-seen-day', 'profile-via', 'drift:tuning',
   'prueba:*', 'buzon:prueba', 'vapid-prueba', 'copa:prueba', 'copa:prueba:*',
 ].map(k => P + k).concat(['labs:pildoras', 'copa:prueba:uid']);
 

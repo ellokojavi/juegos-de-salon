@@ -715,6 +715,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [La Copa](docs/games/cup.md)
 - [🎨 The components page (the design system, in the lab)](docs/games/design.md)
 - [🎲 Dominorama (La Copa game, launched 2026-11-19 18:54 Pacific; the lab prototype stays until the cleanup)](docs/games/dominorama.md)
+- [🏁 Derrape (Drift, lab, in Juegos en prueba)](docs/games/drift.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
 - [🐤 Aletazo (La Copa game, launched by flag; the lab prototype stays until the cleanup)](docs/games/flap.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)

@@ -176,6 +176,12 @@ const TYF_RESULT = [
 ];
 
 export const PATHS = {
+  // Derrape (lab, docs/rally/): its cover (landing-fold.mjs, D-579), the stage after the 3, 2, 1, and the result
+  'drift': {
+    intro: [],
+    stage: [`document.getElementById('btn-play').click()`, `1`, `1`, `1`, `1`, `1`],
+    result: [`document.getElementById('btn-play').click()`, `1`, `1`, `1`, `1`, `1`, `window.__drift.drive()`, `1`, `1`],
+  },
   // Gemelos (lab): today's board, one with a 💡 hint showing, and the result once solved
   twins: {
     intro: [],

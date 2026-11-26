@@ -7,16 +7,17 @@ in the other files.
 ## Now
 
 - **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md))
-- **Next phase**: 1.0 · Concept sign-off (ask the owner the decisions marked "before 1.1")
-- **Code**: none. No `public/labs/drift/` yet.
-- **Working name**: `rally`
+- **Next phase**: 1.1 · A grey-box drive, in the lab: built, waiting for the owner to drive it on a
+  phone (the last exit line). Then 1.2, the feel round, on the same preview.
+- **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928).
+- **Name**: Derrape / Drift / Derrapagem 🏁, id `drift` (decision 1)
 
 ## Phases
 
 | Phase | What | Status | PR |
 |---|---|---|---|
-| 1.0 | Concept sign-off | done | this PR |
-| 1.1 | Grey-box drive in the lab | not started | |
+| 1.0 | Concept sign-off | done | [#1926](https://github.com/ellokojavi/juegos-de-salon/pull/1926) |
+| 1.1 | Grey-box drive in the lab | in progress: built, the owner's drive pending | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | not started | |
 | 1.3 | Stages | not started | |
 | 1.4 | The look and the sound | not started | |
@@ -59,6 +60,10 @@ Nothing yet. A feature that tempts a phase beyond its exit list is written here 
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-25** · Phase 1.1 built: the grey-box drive in `/labs/drift/` (engine with 17 node tests,
+  scheme A and keys, the 2D scene, the tuning panel, e2e). Design changed in core.md section 3: the
+  plain grip model spun the car at full lock; the fix is described there and in `docs/games/drift.md`. The 1.0 PR had left this file's "Now" stale; fixed.
 
 - **2026-11-25** · Phase 1.0 done: the owner named the game Derrape / Drift / Derrapagem 🏁 (id
   `drift`, so every code path in these docs now says `drift`), declared the clip's source unknown

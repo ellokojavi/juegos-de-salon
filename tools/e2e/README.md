@@ -86,7 +86,7 @@ and are still run by hand. The ones in `OBSOLETE` test something that no longer 
 
 **In groups** (D-307): [`groups.mjs`](groups.mjs) splits the scripts into even groups based on
 how long each one actually took ([`durations.json`](durations.json), in seconds), so that none
-goes over ~7 min (`TARGET_S`, 420 s, D-611) and all fit at once in the 20 runners GitHub gives at a time. Each group is a
+goes over ~7 min (`TARGET_S`, 440 s, D-624) and all fit at once in the 20 runners GitHub gives at a time. Each group is a
 job that runs its scripts one after another (that they stay even and each script appears once is tested by
 `node tools/e2e/groups.test.mjs`); the run summary has the table with each script, its
 time and its result, and the `screenshots-g<n>` artifact has, in one folder per script, the screenshots of
@@ -235,6 +235,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `landing-stamp.test.mjs` | The landing-fold stamp the push guard reads (`landing-stamp.mjs`): which changed files reach a cover (the page files directly in its folder, not the engine or tests, and its `visual/ref` PNG), and when a touched cover counts as measured (same hash, both widths) |
 | `hangman/local.mjs` | Chain of three on one phone, buying a letter, resuming and solitaire |
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
+| `drift/game.mjs` | Derrape (lab, `/labs/drift/`): the test stage driven to the result by the autopilot through the page's real loop at 375 and 320 px, plus a touch that steers, pause and resume |
 | `liars-dice/local.mjs` | Duel against the phone and a three-player game on one phone, with resuming midway |
 | `liars-dice/online.mjs` | Three phones against real Firebase: room, verified reveal, reload midway and rematch |
 | `liars-dice/rooms-classic.mjs` | The 📜 classic rules (D-490, D-495) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; with `SICILIANA=1` it doubts the game's first bid and checks every phone shows the siciliana line and the same two-dice loss; `NOLAB_SITE` makes the last guest a player without a lab key (since D-495 the rules need none). Every phone leaves for good at the end, so the room is deleted |
@@ -320,6 +321,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `lang-from-url.mjs` | The language that comes in the link, in each language: `?lang=`, the gates (`/en/`, `/pt/`; the old `/de/` opens English, D-514) and the invitations to a room and to a cup |
 | `room-cap.mjs` | Past the cap of rooms per phone, warns instantly and without touching the network |
 | `hangman/languages.mjs` | El Ahorcado in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `drift/languages.mjs` | Derrape in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `battleship/languages.mjs` | Batalla Naval in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `bulls-and-cows/languages.mjs` | Toque y Fama in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `timeline/languages.mjs` | Línea de Tiempo in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
