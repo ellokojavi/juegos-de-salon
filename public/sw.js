@@ -190,6 +190,11 @@ async function digest(r) {
 
 // The last time a stale page was sent to load again: once a minute at most, never a loop
 let reloadedAt = 0;
+// When each tab's page was served: a mismatch reloads only a page still starting, never one mid-game
+// (a module a game loads late, like La Copa's result, would lose the result). A tab this worker did not
+// serve (it was restarted since) is not reloaded either: only the hash check stays.
+const startedAt = new Map();
+const STARTING_MS = 10000;
 
 /**
  * A `?h=` file the server answers with other content: the page asking is from an older release (the
@@ -197,7 +202,8 @@ let reloadedAt = 0;
  * export, so the answer is not kept under that hash, and the page is loaded again, once.
  */
 async function stale(clientId, now = Date.now()) {
-  if (!clientId || now - reloadedAt < 60000) return;
+  const started = startedAt.get(clientId);
+  if (!clientId || started === undefined || now - started > STARTING_MS || now - reloadedAt < 60000) return;
   reloadedAt = now;
   await dropRuntimePages();
   const c = await self.clients.get?.(clientId);
@@ -256,6 +262,10 @@ function normal(req, clientId) {
 
 self.addEventListener('fetch', e => {
   const req = e.request;
+  if (req.mode === 'navigate' && e.resultingClientId) {
+    startedAt.set(e.resultingClientId, Date.now());
+    if (startedAt.size > 50) startedAt.delete(startedAt.keys().next().value);
+  }
   // The way out of a cut with nothing cached to show (offline-cut.js): this address goes through and ends it
   if (cortado !== false && req.mode === 'navigate' && req.url.includes('connection=online')) {
     cortado = false;

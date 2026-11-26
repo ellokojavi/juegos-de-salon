@@ -62,7 +62,7 @@ function worker({ site, seed = [] }) {
     async activate() { await event('activate', {}).waited; },
     async tell(msg) { await event('message', { data: msg }).waited; },
     async get(path, mode = 'no-cors', method = 'GET', clientId = 'tab') {
-      const { responded } = event('fetch', { clientId, request: { url: new URL(path, ORIGIN + '/').href, method, mode } });
+      const { responded } = event('fetch', { clientId, resultingClientId: mode === 'navigate' ? clientId : '', request: { url: new URL(path, ORIGIN + '/').href, method, mode } });
       if (!responded) return 'UNTOUCHED';
       const r = await responded;
       if (r.type === 'error') return 'ERROR';
@@ -205,6 +205,10 @@ await w.tell({ type: 'offline', on: true, release: '0.2.0-def', forced: false })
   await w4.get('/assets/js/stats.js?h=00000000');
   await w4.ready();
   assert.equal(w4.navigated.length, 1, 'once: never a loop');
+  // A module a game loads late (La Copa's result) never reloads a page mid-game, nor one this worker did not serve
+  await w4.get('/assets/js/stats.js?h=00000000', 'no-cors', 'GET', 'other-tab');
+  await w4.ready();
+  assert.equal(w4.navigated.length, 1, 'a tab this worker did not serve is not reloaded');
   const good = h('ui ok');
   s4.files['/assets/js/ui.js?h=' + good] = 'ui ok';
   assert.equal(await w4.get('/assets/js/ui.js?h=' + good), 'ui ok');
