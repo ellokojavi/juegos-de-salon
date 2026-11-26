@@ -271,6 +271,8 @@ export const PUNTOS_SOLIDEZ = 3;      // per stage passed, all of it with a brid
 export const MARGEN_SOLIDO = 0.15;    // how much lower the peak strain must be than the known bridge's for all of it
 export const BONO_RAPIDEZ = 10;       // all of it in 1:30 or less, none when time runs out; scaled by stages passed
 export const RAPIDO_S = 90;
+/** What each 💡 hint costs (like Rutas rotas', #1381): only the game's own page offers it, never La Copa nor Uno al día. */
+export const COSTO_PISTA = 3;
 
 const entre01 = x => Math.min(1, Math.max(0, x));
 
@@ -287,7 +289,7 @@ export function picoReferencia(e) {
  * peak strain of each of those bridges. Saving wood and building solid pull against each other:
  * the known bridge is the cheapest, so being more solid than it costs wood.
  */
-export function puntajePartida(usadas, segundos, lista = ETAPAS, picos = []) {
+export function puntajePartida(usadas, segundos, lista = ETAPAS, picos = [], pistas = 0) {
   const pasadas = usadas.length;
   const etapas = PUNTOS_ETAPA * pasadas;
   const ahorros = usadas.map((n, k) => {
@@ -302,5 +304,7 @@ export function puntajePartida(usadas, segundos, lista = ETAPAS, picos = []) {
   const solidez = Math.round(ahorros.reduce((s, a) => s + a.puntosSolidez, 0));
   const fraccionTiempo = entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S));
   const rapidez = Math.round(BONO_RAPIDEZ * fraccionTiempo * (pasadas / lista.length));
-  return { pasadas, etapas, ahorros, ahorro, solidez, fraccionTiempo, rapidez, total: etapas + ahorro + solidez + rapidez };
+  // Each 💡 hint (only on the game's own page, flag bridges-hint) takes COSTO_PISTA off, the last layer, never below 0
+  const bruto = etapas + ahorro + solidez + rapidez, n = Math.max(0, pistas | 0), ptsPistas = Math.min(bruto, COSTO_PISTA * n);
+  return { pasadas, etapas, ahorros, ahorro, solidez, fraccionTiempo, rapidez, pistas: n, ptsPistas, total: bruto - ptsPistas };
 }
