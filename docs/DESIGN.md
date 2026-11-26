@@ -175,7 +175,7 @@ of `.field` and `.form-error`, seven of `.mode`, `.code-big`, `.qr`, `.or` and `
 | A player's row | `.player-row`, `.num`, `input`, `.del`, `.cpu .cpu-name` | |
 | A row with a switch | `.toggle-row`, `.txt`, `.switch`, `.switch.on` | the switch is drawn 58 × 34 px; an invisible `::before` band makes its tap area 44 px tall (U-10); a `<button role="switch">` keeps `aria-checked` and `.on` in step (La Copa's 🏁 final) |
 | A link that is a button | `.link-btn`, `.link-inline` | `.link-btn` the small way out under a form; `.link-inline` a cyan link inside a line of text |
-| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.waiting--screen`, `.dots` | `--screen` gives a waiting line the room of a whole screen; `showWaiting()` in `assets/js/waiting.js` draws it, or the failure with Retry and a way home (from La Copa, phase 7) |
+| The room | `.code-big`, `.qr`, `.or`, `.lobby-players .p`, `.waiting`, `.waiting--screen`, `.waiting--center`, `.dots` | `--screen` gives a waiting line the room of a whole screen; `--center` fixes the spinner and its line in the middle of the screen over a page that shows only its title (La Copa's «…», the stall guard), taps pass through, and the fun line shows only after 2.5 s; `showWaiting()` in `assets/js/waiting.js` draws it, or the failure with Retry and a way home (from La Copa, phase 7) |
 | A notice | `.notice`, `.notice--good`, `.notice--bad` | one line that tells the player something, in a glass box; lime when it went well, a red tint when not (from La Copa, phase 7) |
 | A snackbar | `.snackbar` | a short message floating at the bottom for a moment ("Copiado"), `role="status"` |
 | Whose turn | `.status`, `.who`, `.sub` | |
