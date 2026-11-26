@@ -28,7 +28,7 @@ const ES = {
   como: [
     '🏁 Cruza todas las puertas hasta la meta en el menor tiempo.',
     '👈 👉 El auto acelera solo: mantén un lado de la pantalla para girar y los dos para frenar.',
-    '⏱️ Saltarte una puerta suma 10 segundos.',
+    '⏱️ Saltarte una puerta suma 10 segundos, y volver al camino con el botón, 5.',
   ],
 };
 
@@ -43,7 +43,7 @@ const EN = {
     resumeTitle: '⏯ There is a game in progress', resume: 'Continue', delete: 'Delete',
     resultTitle: 'Your time', clean: 'No penalties: every gate on the first try.',
     withPenalty: '{clock} on the clock and {s} s of penalties.',
-    again: '🏁 Play again', shareRotulo: '📤 Share', shareContext: 'Time trial', shareLine: '⏱️ I did {time} in Drift.',
+    again: '🏁 Play again', shareRotulo: '📤 Share', shareContext: 'Time trial', shareLine: '⏱️ I clocked {time} in Drift.',
     tuneOpen: 'Car settings', tuneTitle: '🔧 Car settings', tuneCamera: 'Camera',
     camFollow: 'Turns with the car', camFixed: 'Fixed map', tuneAhead: 'Road in view (m)',
     tuneCopy: '📋 Copy values', tuneCopied: 'Copied', tuneDefaults: 'Back to the defaults',
@@ -52,7 +52,7 @@ const EN = {
   como: [
     '🏁 Drive through every gate to the finish in the shortest time.',
     '👈 👉 The car speeds up by itself: hold one side of the screen to steer and both to brake.',
-    '⏱️ Missing a gate adds 10 seconds.',
+    '⏱️ Missing a gate adds 10 seconds, and getting back on the road with the button, 5.',
   ],
 };
 
@@ -76,7 +76,7 @@ const PT = {
   como: [
     '🏁 Passe por todos os portões até a chegada no menor tempo.',
     '👈 👉 O carro acelera sozinho: segure um lado da tela para virar e os dois para frear.',
-    '⏱️ Pular um portão soma 10 segundos.',
+    '⏱️ Pular um portão soma 10 segundos, e voltar à estrada com o botão, 5.',
   ],
 };
 
