@@ -28,7 +28,7 @@ const ES = {
   como: [
     '🏁 Cruza todas las puertas hasta la meta en el menor tiempo.',
     '👈 👉 El auto acelera solo: mantén un lado de la pantalla para girar y los dos para frenar.',
-    '⏱️ Saltarte una puerta suma 10 segundos, y volver al camino con el botón, 5.',
+    '⏱️ Saltarte una puerta suma 10 segundos. Si te sales, ↺ te devuelve al camino por 5 segundos.',
   ],
 };
 
@@ -52,7 +52,7 @@ const EN = {
   como: [
     '🏁 Drive through every gate to the finish in the shortest time.',
     '👈 👉 The car speeds up by itself: hold one side of the screen to steer and both to brake.',
-    '⏱️ Missing a gate adds 10 seconds, and getting back on the road with the button, 5.',
+    '⏱️ Missing a gate adds 10 seconds. If you go off, ↺ puts you back on the road for 5 seconds.',
   ],
 };
 
@@ -76,7 +76,7 @@ const PT = {
   como: [
     '🏁 Passe por todos os portões até a chegada no menor tempo.',
     '👈 👉 O carro acelera sozinho: segure um lado da tela para virar e os dois para frear.',
-    '⏱️ Pular um portão soma 10 segundos, e voltar à estrada com o botão, 5.',
+    '⏱️ Pular um portão soma 10 segundos. Se você sair, ↺ te leva de volta à estrada por 5 segundos.',
   ],
 };
 

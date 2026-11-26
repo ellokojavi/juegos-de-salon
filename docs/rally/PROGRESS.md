@@ -9,7 +9,7 @@ in the other files.
 - **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md))
 - **Next phase**: 1.1 · A grey-box drive, in the lab: built, waiting for the owner to drive it on a
   phone (the last exit line). Then 1.2, the feel round, on the same preview.
-- **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from the `drift-greybox` PR.
+- **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928).
 - **Name**: Derrape / Drift / Derrapagem 🏁, id `drift` (decision 1)
 
 ## Phases
@@ -17,7 +17,7 @@ in the other files.
 | Phase | What | Status | PR |
 |---|---|---|---|
 | 1.0 | Concept sign-off | done | [#1926](https://github.com/ellokojavi/juegos-de-salon/pull/1926) |
-| 1.1 | Grey-box drive in the lab | in progress: built, the owner's drive pending | `drift-greybox` |
+| 1.1 | Grey-box drive in the lab | in progress: built, the owner's drive pending | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | not started | |
 | 1.3 | Stages | not started | |
 | 1.4 | The look and the sound | not started | |
