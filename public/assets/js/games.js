@@ -768,6 +768,7 @@ export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_D
  */
 export const LAB_NAMES = {
   'drift': { emoji: '🏁', name: { es: 'Derrape', en: 'Drift', pt: 'Derrapagem' } },
+  twins: { emoji: '🔢', name: { es: 'Gemelos', en: 'Twins', pt: 'Gêmeos' } },
   'cryptic': { emoji: '🗝️', name: { es: 'Críptico', en: 'Cryptic', pt: 'Críptico' } },
   blackjack: { emoji: '♠️', name: { es: 'Blackjack', en: 'Blackjack', pt: 'Blackjack' } },
   artifacts: { emoji: '⚙️', name: { es: 'Artefactos', en: 'Artifacts', pt: 'Artefatos' } },

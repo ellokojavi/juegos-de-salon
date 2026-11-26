@@ -1,0 +1,57 @@
+{
+  "id": "twins",
+  "path": "labs/twins/",
+  "emoji": "🔢",
+  "name": {
+    "es": "Gemelos",
+    "en": "Twins",
+    "pt": "Gêmeos"
+  },
+  "tagline": {
+    "es": "Suma números gemelos hasta dejar uno solo: un tablero nuevo cada día.",
+    "en": "Add up twin numbers until only one is left: a new board every day.",
+    "pt": "Some números gêmeos até sobrar um só: um tabuleiro novo a cada dia."
+  },
+  "keywords": {
+    "es": [
+      "números",
+      "sumar",
+      "diario",
+      "lógica"
+    ],
+    "en": [
+      "numbers",
+      "adding",
+      "daily",
+      "logic"
+    ],
+    "pt": [
+      "números",
+      "somar",
+      "diário",
+      "lógica"
+    ]
+  },
+  "players": {
+    "min": 1,
+    "max": 1
+  },
+  "duration": "1–3",
+  "tipos": [
+    "logic"
+  ],
+  "labs": true,
+  "available": false,
+  "modes": [
+    "solo"
+  ],
+  "ai": false,
+  "memory": "juegos-de-salon:twins:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [],
+  "canonExceptions": []
+}

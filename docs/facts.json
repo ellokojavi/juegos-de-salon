@@ -1296,6 +1296,7 @@
     "public/assets/js/manifests/labs/fourth-king.js",
     "public/assets/js/manifests/labs/julep.js",
     "public/assets/js/manifests/labs/transfer.js",
+    "public/assets/js/manifests/labs/twins.js",
     "public/assets/js/manifests/liars-dice.js",
     "public/assets/js/manifests/timeline.js",
     "public/assets/js/manifests/wobbles.js",
@@ -1347,6 +1348,7 @@
     "public/assets/js/tester-boot.js",
     "public/assets/js/tester-ribbon.js",
     "public/assets/js/time-format.js",
+    "public/assets/js/told-sync.js",
     "public/assets/js/transport/best-effort.js",
     "public/assets/js/transport/cleanup.js",
     "public/assets/js/transport/dispose.js",
@@ -1570,6 +1572,9 @@
     "public/labs/transfer/engine.js",
     "public/labs/transfer/game.js",
     "public/labs/transfer/rules.js",
+    "public/labs/twins/engine.js",
+    "public/labs/twins/game.js",
+    "public/labs/twins/rules.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1610,6 +1615,7 @@
     "public/wobbles/rules.js"
   ],
   "tests": [
+    "firebase/achievements-told.test.mjs",
     "firebase/controls.test.mjs",
     "firebase/cup-rounds.test.mjs",
     "firebase/cup-talk.test.mjs",
@@ -1717,6 +1723,7 @@
     "public/cup/games/agents/engine.test.mjs",
     "public/cup/games/agents/palette.test.mjs",
     "public/cup/games/bridges/contrast.test.mjs",
+    "public/cup/games/bridges/engine.test.mjs",
     "public/cup/games/bridges/physics.test.mjs",
     "public/cup/games/croc/engine.test.mjs",
     "public/cup/games/deshacer.test.mjs",
@@ -1769,6 +1776,7 @@
     "public/labs/stack/engine.test.mjs",
     "public/labs/sudoku/engine.test.mjs",
     "public/labs/transfer/engine.test.mjs",
+    "public/labs/twins/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -2083,6 +2091,8 @@
     "timeline/tie.mjs",
     "timeline/verdict.mjs",
     "transfer/game.mjs",
+    "twins/game.mjs",
+    "twins/languages.mjs",
     "versioning.mjs",
     "visual-refs.test.mjs",
     "visual.mjs",
@@ -2354,6 +2364,10 @@
     {
       "path": "docs/games/transfer.md",
       "title": "🚉 Transbordo (Transfer, lab, in La Bodega)"
+    },
+    {
+      "path": "docs/games/twins.md",
+      "title": "🔢 Twins (Gemelos; lab, in Juegos en prueba)"
     },
     {
       "path": "docs/games/untangle.md",

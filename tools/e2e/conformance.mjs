@@ -52,6 +52,8 @@ const START = {
   'labs/cryptic': [`document.getElementById('btn-play').click()`],
   // «Jugar» opens the stage, and the run is saved as it starts
   'labs/drift': [`document.getElementById('btn-play').click()`],
+  // The yellow button opens today's board, already saved
+  'labs/twins': [`document.getElementById('btn-play').click()`],
 };
 
 const b = await launch({ port: 0, dir: `${OUT}/p`, out: OUT });
