@@ -119,10 +119,10 @@ ok(/práctica/.test(await text('#uad-intro')), "a second attempt's intro warns i
 /* ---------- The home page after playing ---------- */
 await b.go(`${SITE}/`, 1500);
 await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
-ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && /\d+\s*pts/.test(await text('#btn-uno-al-dia')) && /🔥 1/.test(await text('#btn-uno-al-dia')), `the button turns cyan, with the points and the streak (${(await text('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
+ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && !/\d+\s*pts/.test(await text('#btn-uno-al-dia')) && /🔥 1/.test(await text('#btn-uno-al-dia')), `the button turns cyan, with the streak and no points while signed out (${(await text('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
 ok(/Racha: 1 día/.test(await ev(`(document.querySelector('#btn-uno-al-dia .uad-card-link') || document.getElementById('btn-uno-al-dia')).getAttribute('aria-label')`)), 'and the streak in aria-label too');
 ok(!await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'and the dot no longer shines');
-ok(/\d+\s*pts/.test(await text('#btn-uad-chip')) && /today\/$/.test(await ev(`document.getElementById('btn-uad-chip').getAttribute('href') || ''`)), 'played, the chip shows the points of the month and opens /today/');
+ok(!/\d+\s*pts/.test(await text('#btn-uad-chip')) && /🔥 1/.test(await text('#btn-uad-chip')) && /today\/$/.test(await ev(`document.getElementById('btn-uad-chip').getAttribute('href') || ''`)), 'played and signed out, the chip shows the streak, no points, and opens /today/');
 await click('#btn-uad-abrir, button#btn-uno-al-dia');
 ok(await waitFor(`location.pathname === '/today/'`, 12), 'tapping it opens /today/ (no die)');
 
@@ -134,7 +134,7 @@ ok(await waitFor(`/🔥 1/.test(document.getElementById('uad-trio')?.textContent
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'the month calendar is titled "Calendario"');
 ok(await ev(`document.querySelectorAll('#uad-cal .hoy').length`) === 1 && /🧶/.test(await text('#uad-cal .hoy')), "the calendar marks today with the game's emoji");
 ok(/^\d+$/.test(await text('#uad-cal .hoy .cal-pts')), `and the points it added in a pill: the game plus the streak bonus (${await text('#uad-cal .hoy .cal-pts')})`);
-ok(/🔥 1 día · ✅ \+\d+ hoy/.test(await text('#uad-trio')), `the season box's line says the streak and what today added (${await text('#uad-trio')})`);
+ok(/🔥 1 día/.test(await text('#uad-trio')) && !/✅/.test(await text('#uad-trio')) && !await ev(`!!document.getElementById('uad-pts')`), `signed out, the season box says the streak and no points (${await text('#uad-trio')})`);
 ok(!await ev(`!!document.getElementById('uad-por-juego')`), 'no "Por juego" block (owner\'s request)');
 ok(!await ev(`!!document.getElementById('btn-compartir-uad')`), 'nor «Compartir mi resultado» on /today/ (owner\'s request)');
 
