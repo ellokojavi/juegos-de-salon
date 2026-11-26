@@ -185,13 +185,12 @@ a.dl-card-g { text-decoration: none; }
 .dl-cara--xl { width: 64px; height: 64px; font-size: var(--fs-200); }
 .dl-cara.yo { border-color: var(--cyan); box-shadow: 0 0 16px rgb(var(--cyan-rgb) / .4); }
 .dl-cara.el { border-color: var(--pink); box-shadow: 0 0 16px rgb(var(--pink-rgb) / .4); }
-/* The halo follows the score, softly (the owner, 2026-11-26): who leads keeps a slightly warmer glow, the one behind and a tie only dim a little */
+/* The halo follows the score (the owner, 2026-11-26): who leads keeps a slightly warmer glow, the one behind turns gray, a tie keeps both colours with a faint glow */
 .dl-cara.yo.gana { box-shadow: 0 0 20px rgb(var(--cyan-rgb) / .5); }
 .dl-cara.el.gana { box-shadow: 0 0 20px rgb(var(--pink-rgb) / .5); }
-.dl-cara.yo.pierde, .dl-cara.yo.parejo { box-shadow: 0 0 10px rgb(var(--cyan-rgb) / .25); }
-.dl-cara.el.pierde, .dl-cara.el.parejo { box-shadow: 0 0 10px rgb(var(--pink-rgb) / .25); }
-.dl-cara.pierde { opacity: .85; }
-.dl-cara.parejo { opacity: .92; }
+.dl-cara.yo.pierde, .dl-cara.el.pierde { border-color: var(--muted); box-shadow: none; color: var(--muted); }
+.dl-cara.yo.parejo { box-shadow: 0 0 10px rgb(var(--cyan-rgb) / .25); opacity: .92; }
+.dl-cara.el.parejo { box-shadow: 0 0 10px rgb(var(--pink-rgb) / .25); opacity: .92; }
 .dl-corona { position: absolute; top: calc(-1 * var(--s-14)); font-size: var(--fs-140); line-height: 1; transform: rotate(-12deg); }
 .dl-hero-sc { display: grid; justify-items: center; gap: var(--s-6); }
 .dl-marcador--xl { font-size: var(--fs-200); text-shadow: 0 2px 0 var(--edge-yellow); }
