@@ -47,7 +47,7 @@ Keep exactly this interface: path 2's scene implements the same one.
 
 One PR each. The exit list is what "done" means; the PR quotes it.
 
-### 1.0 · Concept sign-off (no code)
+### 1.0 · Concept sign-off (no code) · done 2026-11-25
 
 Ask the owner the decisions marked "before 1.1" in [PROGRESS.md](PROGRESS.md), as one-tap choices
 with the recommended default first. Record the answers there.
@@ -65,12 +65,12 @@ The first PR is a whole lab game (D-579), with the dullest possible look.
 - `input.js`: scheme A and the keyboard.
 - `scene.js`: flat ground, the road, gates, a rectangle for the car. No scenery, no particles.
 - `game.js`: the fixed-step loop, countdown, HUD (clock, gate count), pause when hidden, result
-  with the time. The hook `window.__rally` (`g`, and a way to switch on the autopilot under `?test`).
+  with the time. The hook `window.__drift` (`g`, and a way to switch on the autopilot under `?test`).
 - The tuning panel (core section 12), lab key only.
-- The spec `docs/games/rally.md` in C-13's sections; the card in `/labs/` (25 words at most).
+- The spec `docs/games/drift.md` in C-13's sections; the card in `/labs/` (25 words at most).
 
 **Exit**: every test green, `public/labs/canons.test.mjs` and `conformance.test.mjs` included;
-`tools/e2e/rally/game.mjs` drives the test stage to the result; `landing-fold` passes; cover, stage
+`tools/e2e/drift/game.mjs` drives the test stage to the result; `landing-fold` passes; cover, stage
 and result measured with `look.mjs` at 390 and 320; `design-lint` reports zero; the owner has a
 preview link and has driven it on a phone.
 
@@ -93,7 +93,7 @@ path 2 hoping 3D fixes it.
 
 ### 1.3 · Stages
 
-- `tools/generators/rally-tracks.mjs` and `tracks.js` (core section 4), with `tracks.test.mjs`.
+- `tools/generators/drift-tracks.mjs` and `tracks.js` (core section 4), with `tracks.test.mjs`.
   A first pool of at least 12 stages across the three settings.
 - The date-to-stage function, in Pacific time, with its test (week boundaries, year ends).
 - The co-driver's map. Corner signs before tight bends.

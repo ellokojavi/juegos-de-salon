@@ -84,7 +84,7 @@ reserve`) so nobody undoes it by accident.
 - **Battery and heat**: cap the canvas at 2× CSS size, stop the loop when the page is hidden or the
   cover is covered by a dialog.
 - **CI's Chrome draws WebGL in software.** It works and it is slow. e2e scripts assert on
-  `window.__rally.g` and on the HUD, and take screenshots; they never assert a frame rate.
+  `window.__drift.g` and on the HUD, and take screenshots; they never assert a frame rate.
 - **Visual references**: a moving canvas is never pixel-identical. Before adding one, read how
   `tools/e2e/visual.mjs` treats Flap's and Babel's covers and do the same.
 
@@ -101,7 +101,7 @@ deleted or folded into 2.1, not left in the lab.
 
 ### 2.1 · The second scene, grey
 
-- `scene3d.js` with path 1's interface; the flag `rally-3d` (its card in `/labs/`, its switch in the
+- `scene3d.js` with path 1's interface; the flag `drift-3d` (its card in `/labs/`, its switch in the
   tester tab, listed in `flag-list.js`). Off, nothing changes for anyone.
 - Road ribbon, flat ground, a box for the car, gates, the chase camera. No props, no fog.
 - Context loss handled; no-WebGL falls back to the 2D scene.
