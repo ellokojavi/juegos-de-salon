@@ -772,4 +772,13 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Piece 5 · Closing the hypothesis loop](docs/learning/05-hypothesis-loop.md)
 - [Piece 6 · Where the model lives: one judge in three places](docs/learning/06-model-placement.md)
 - [Piece 7 · The retention loop](docs/learning/07-retention-loop.md)
+- [Rally: where it stands](docs/rally/PROGRESS.md)
+- [The prompt that starts a session on Rally](docs/rally/PROMPT.md)
+- [Rally: a time-trial driving game, in three paths](docs/rally/README.md)
+- [What this site asks of a driving game](docs/rally/constraints.md)
+- [The core: what all three paths share](docs/rally/core.md)
+- [Path 1 · Top-down rally](docs/rally/path-1-top-down.md)
+- [Path 2 · Simple 3D](docs/rally/path-2-3d.md)
+- [Path 3 · Everything the clip shows](docs/rally/path-3-full.md)
+- [The reference clip](docs/rally/reference.md)
 <!-- /generated -->
