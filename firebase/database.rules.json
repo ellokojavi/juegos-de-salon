@@ -1225,6 +1225,18 @@
         }
       }
     },
+    "jugadorLogros": {
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".read": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+        "$tipo": {
+          "$id": {
+            ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && ($tipo === 'a' || $tipo === 'v') && $id.matches(/^[a-z0-9-]{1,40}$/) && !data.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+            ".validate": "newData.isNumber() && newData.val() > 1700000000000 && newData.val() <= now + 60000"
+          }
+        }
+      }
+    },
     "jugadorCopas": {
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       "$jid": {

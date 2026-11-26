@@ -182,6 +182,12 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       if (!sentado(viejo, a) || !/^[A-HJ-NP-Z]{5}$/.test(b || '') || p.length !== 3) return false;
       return x === null || (/^[a-z0-9]{6}$/.test(x.p) && typeof x.at === 'number' && Object.keys(x).every(k => k === 'p' || k === 'at'));
     }
+    // The achievements told to a player (told-sync.js): from a phone seated as `a`, once each, a past date
+    if (rama === 'jugadorLogros') {
+      const x = leerEn(nuevo, ruta);
+      return p.length === 4 && sentado(viejo, a) && (b === 'a' || b === 'v') && /^[a-z0-9-]{1,40}$/.test(p[3]) && leerEn(viejo, ruta) == null
+        && typeof x === 'number' && x > 1700000000000 && x <= t + 60000;
+    }
     // Duels (lab flag rivals, duels.js): created once by a phone seated as `a`, against another player;
     // each player begins a round once (`e`) and then writes its result once (`r`), within three days
     if (rama === 'duelos') {

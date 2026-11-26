@@ -1347,6 +1347,7 @@
     "public/assets/js/tester-boot.js",
     "public/assets/js/tester-ribbon.js",
     "public/assets/js/time-format.js",
+    "public/assets/js/told-sync.js",
     "public/assets/js/transport/best-effort.js",
     "public/assets/js/transport/cleanup.js",
     "public/assets/js/transport/dispose.js",
@@ -1606,6 +1607,7 @@
     "public/wobbles/rules.js"
   ],
   "tests": [
+    "firebase/achievements-told.test.mjs",
     "firebase/controls.test.mjs",
     "firebase/cup-rounds.test.mjs",
     "firebase/cup-talk.test.mjs",

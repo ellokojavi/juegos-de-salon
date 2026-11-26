@@ -239,6 +239,8 @@ export function dueBadge(list = [], local = new Set(), done = {}, seen = {}) {
 export async function celebrate({ lang = 'es', wait = 1200, storage = globalThis.localStorage } = {}) {
   const [{ earned }, { phoneFacts }] = await Promise.all([import('./badges.js'), import('./phone-facts.js')]);
   const list = earned(phoneFacts(storage), {}).list;
+  // The account's told achievements first: told on another phone is told here (told-sync.js)
+  if (storage === globalThis.localStorage) await import('./told-sync.js').then(m => m.syncTold()).catch(() => {});
   if (firstLook(list, storage)) return null;
   const id = dueSecret(readFacts(storage), announced(storage));
   if (!id) return celebrateBadge({ lang, wait, storage, list });
