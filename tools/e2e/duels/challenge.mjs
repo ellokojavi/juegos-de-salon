@@ -3,7 +3,7 @@
 // «Later» closes it and it does not come back; the profile's «Duel alerts» under Vibration turns it off.
 // At 390×844 and 320×568: no sideways scroll and the rival ends above the duel's line. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
-import { launch } from '../cdp.mjs';
+import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 
 const OUT = output('/tmp/duels-challenge');
@@ -19,9 +19,9 @@ for (const [width, height] of [[390, 844], [320, 568]]) {
     await b.go(`${SITE}/duels/`, 1500);
     await ev(`localStorage.clear(); sessionStorage.clear(); 1`);
     // Cata challenges Javi (Cata plays nothing yet), then Javi signs in on this phone
-    await ev(`import('/assets/js/jugador.js').then(async ({ jugador }) => { const J = await jugador(); await J.crear('Javi', '1234'); const javi = J.yo(); J.salir(); await J.crear('Cata', '1111'); const D = await J.duelos(); await D.retar({ b: javi.jid, bn: javi.n, g: 'reinas', f: 'bo3' }); J.salir(); await J.entrar('Javi', '1234'); return 1; }).catch(e => String(e))`);
+    await ev(`import('/assets/js/jugador.js').then(async ({ jugador }) => { const J = await jugador(); await J.crear('Javi', '1234'); const javi = J.yo(); J.salir(); await J.crear('Cata', '1111'); await J.anotar({ juego: 'reinas', s: 90, ms: 50000 }); const D = await J.duelos(); await D.retar({ b: javi.jid, bn: javi.n, g: 'reinas', f: 'bo3' }); J.salir(); await J.entrar('Javi', '1234'); return 1; }).catch(e => String(e))`);
     await b.go(`${SITE}/duels/`, 1500);
-    const shown = await b.until(`!!document.querySelector('.dc-capa')`, 6000).then(() => true, () => false);
+    const shown = await b.until(`!!document.querySelector('.dc-capa')`, 6000);
     ok(shown, `${width}: a new duel from Cata opens the challenge screen`);
     if (!shown) continue;
     // Measured at its last frame, in the same step it was found: the animations finished at once
@@ -45,6 +45,24 @@ for (const [width, height] of [[390, 844], [320, 568]]) {
       ok(i > 0 && (rows[i - 1] === 'Vibración' || rows[i - 1] === 'Sonido'), `the profile's «Avisos de duelos» sits under Vibración (${rows.join(' | ')})`);
       await ev(`document.querySelector('.duel-alerts-toggle').click(); 1`);
       ok(await ev(`localStorage.getItem('juegos-de-salon:duel-alerts') === 'off' && document.querySelector('.duel-alerts-toggle').textContent === '🔕'`), '🔕 turns the alerts off');
+      // The duel button left the ranking rows for the player's sheet: Cata's opens the new duel on Queens, mine has none
+      await ev(`import('/assets/js/jugador.js').then(async ({ jugador }) => { const J = await jugador(); await J.anotar({ juego: 'reinas', s: 70, ms: 60000 }); return 1; })`);
+      await b.go(`${SITE}/queens/`, 2500);
+      await b.until(`document.querySelectorAll('.rk-fila[data-jid]').length >= 2`, 8000).catch(() => {});
+      await sleep(2500); // the cover settles (it redraws once as the ranking and the player load)
+      ok(!(await ev(`!!document.querySelector('.dl-retar')`)), 'no ⚔️ on the ranking rows');
+      // Open Cata's sheet and tap its ⚔️ in one step: the cover may redraw once as the ranking loads, closing a sheet opened before it
+      let duel = false, opened = false;
+      for (let i = 0; i < 3 && !opened; i++) {
+        await ev(`document.getElementById('pf-peek') || [...document.querySelectorAll('.rk-fila[data-jid]')].find(r => /Cata/.test(r.textContent))?.click(); 1`);
+        opened = await b.until(`(() => { const x = document.querySelector('.pf-peek-duel'); if (!x) return false; x.click(); return true; })()`, 5000);
+        duel ||= opened;
+      }
+      ok(duel, 'Cata\'s sheet has «⚔️ Retar a duelo» next to Cerrar');
+      if (duel) {
+        const sheet = await b.until(`!!document.getElementById('dl-hoja')`, 6000);
+        ok(sheet && await ev(`!document.getElementById('pf-peek') && /Cata/.test(document.getElementById('dl-hoja').textContent)`), 'it closes and opens the new duel against Cata');
+      }
     }
   } finally { await b.close(); }
 }

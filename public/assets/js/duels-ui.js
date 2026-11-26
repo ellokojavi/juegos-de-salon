@@ -1,7 +1,7 @@
 /**
  * The duels' screens (lab flag rivals, duels.js): a duel as a card and as a row, the profile's
- * section, the new-duel sheet (also the ⚔️ of a ranking's row, with the rival and the game chosen)
- * and the ⚔️ itself. The styles are in `assets/css/duels.css`, which `cargarCss()` adds once.
+ * section and the new-duel sheet (also from a player's sheet in a ranking, player-peek.js, with the rival
+ * and the game chosen). The styles are in `assets/css/duels.css`, which `cargarCss()` adds once.
  */
 import { el } from './ui.js';
 import { gameIcon } from './game-icon.js';
@@ -213,7 +213,7 @@ export async function shareInvite(d, btn) {
 
 /**
  * The new-duel sheet (the owner, 2026-11-23: a quick duel and a custom one, step by step, always to
- * one rival). It always opens on the quick duel (from a ranking's ⚔️, centred, with `rival` and `juego`
+ * one rival). It always opens on the quick duel (from a player's sheet in a ranking, centred, with `rival` and `juego`
  * chosen): the rival, best of 3 or 5 or most points, one game; under its button, 🛠️ a custom duel
  * (the owner, 2026-11-24): 1 who, 2 how to win (best of 3, 5, 7 or 9, or most points), 3 each round's game. Once sent, the challenger sends the
  * invite to that rival and can play round 1.
@@ -432,34 +432,6 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
   const conRivales = () => capa.isConnected && ((modo === 'quick' && !centrado) || (modo === 'custom' && paso === 1));
   if (!centrado) cargarCandidatos().catch(() => []).then(cs => { candidatos = cs; if (conRivales()) pintar(); });
   return capa;
-}
-
-/**
- * The ⚔️ on every other player's row of a ranking whose table is a duel game: added to the rows
- * as they are drawn (a MutationObserver on `root`), it opens the challenge for that player and game.
- */
-export function retosEnRankings(root, { alTocar = () => {} } = {}) {
-  cargarCss();
-  const poner = () => {
-    const yo = leerYo()?.jid;
-    root.querySelectorAll('.rk-ranking[data-tabla]').forEach(caja => {
-      const id = String(caja.dataset.tabla).split('_')[0];
-      if (!duelGame(id)) return;
-      caja.querySelectorAll('.rk-fila[data-jid]:not(.dl-con)').forEach(f => {
-        if (!f.dataset.jid) return;
-        // Your own row: an empty cell where the ⚔️ would be, so the columns stay aligned
-        if (f.dataset.jid === yo || f.classList.contains('yo')) { f.classList.add('dl-con'); f.append(el('span', { class: 'dl-retar-vacio', 'aria-hidden': 'true' })); return; }
-        const n = f.querySelector('.rk-n')?.textContent?.replace(/^\p{RI}{2}\s*/u, '').trim() || '?';
-        f.classList.add('dl-con');
-        f.append(el('button', {
-          type: 'button', class: 'dl-retar', 'aria-label': fmt(T.challengeRow, { n }),
-          onClick: e => { e.stopPropagation(); alTocar(); abrirNuevo({ rival: { jid: f.dataset.jid, n }, juego: id, alTocar }); },
-        }, '⚔️'));
-      });
-    });
-  };
-  poner();
-  new MutationObserver(poner).observe(root, { childList: true, subtree: true });
 }
 
 /**

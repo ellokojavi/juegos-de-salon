@@ -145,6 +145,8 @@ export function rowContext(r) {
     label: [txt(box?.querySelector('.rk-titulo')), txt(on)].filter(Boolean).join(' · '),
     place,
     values: values.filter(x => x.v && x.v !== '🔥 '),
+    // The game the table is about (`reinas_…` → `reinas`), for the sheet's ⚔️ challenge to a duel in it
+    game: table ? String(table).split('_')[0] : null,
     // The overall table's all-time place is already the sheet's own line (peekPlace)
     allTime: ['semana', 'amigos'].includes(tab) && table && table !== TODOTERRENO ? table : null,
   };
@@ -221,7 +223,18 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
         self ? el('a', { class: 'pf-peek-mine', href: PROFILE }, T.peekMyProfile) : null),
       el('button', { type: 'button', class: 'icon-btn', 'aria-label': T.peekClose, title: T.peekClose, onClick: close }, '✕')),
     here, body,
-    el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--yellow pf-peek-ok', onClick: close }, T.peekClose)));
+    el('div', { class: 'btn-row pf-peek-acts' }, el('button', { type: 'button', class: 'btn btn--yellow pf-peek-ok', onClick: close }, T.peekClose)));
+  // ⚔️ Challenge another player to a duel from their sheet, in the table's game when it is a duel game (lab flag
+  // rivals, the owner 2026-11-26: it replaced the ⚔️ on every ranking row). lab: #seccion-rivals
+  if (leerYo()?.jid && jid !== leerYo().jid) flag('rivals').then(on => {
+    if (!on || !layer) return;
+    const duel = el('button', { type: 'button', class: 'btn btn--cyan pf-peek-duel', onClick: () => {
+      const rival = { jid, n: who.textContent.replace(/^\p{RI}{2}\s*/u, '').trim() };
+      close();
+      import('./duels-ui.js').then(m => m.abrirNuevo({ rival, juego: m.duelGame(context?.game) ? context.game : null, alTocar: onTap })).catch(() => {});
+    } }, T.peekDuel);
+    panel.querySelector('.pf-peek-acts')?.prepend(duel);
+  }).catch(() => {});
   // The badges in a card and CERRAR kept at the bottom (the owner, 2026-11-23); lab: #seccion-ranking-peek
   flag('ranking-peek').then(on => on && panel.classList.add('pf-peek--card')).catch(() => {});
   layer = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), panel);
