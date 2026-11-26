@@ -7987,7 +7987,11 @@
       "error": "",
       "signature": "a3c637f657",
       "date": "2026-11-26T07:04:09.920Z",
-      "fix": null,
+      "fix": {
+        "commit": "d7602d179d3d1e651389facc52b7a98b118ef408",
+        "date": "2026-11-26T07:30:06.358Z",
+        "stat": "40 file(s) +2029 −119: README.md, changelog/drift-greybox.md, changelog/uad-no-points-signed-out.md, docs/COSTS.md, docs/DECISIONS.md, …"
+      },
       "flaky": false
     },
     {
@@ -8000,7 +8004,11 @@
       "error": "",
       "signature": "a3c637f657",
       "date": "2026-11-26T07:14:29.181Z",
-      "fix": null,
+      "fix": {
+        "commit": "d7602d179d3d1e651389facc52b7a98b118ef408",
+        "date": "2026-11-26T07:30:06.358Z",
+        "stat": "40 file(s) +2029 −119: README.md, changelog/drift-greybox.md, changelog/uad-no-points-signed-out.md, docs/COSTS.md, docs/DECISIONS.md, …"
+      },
       "flaky": false
     }
   ]
