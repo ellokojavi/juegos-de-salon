@@ -7942,6 +7942,19 @@
         "stat": "6 file(s) +29 −5: README.md, changelog/loading-timeout.md, docs/facts.json, public/assets/css/base.css, public/assets/js/stall-guard.js, …"
       },
       "flaky": false
+    },
+    {
+      "run": 45762090608,
+      "check": "end-to-end",
+      "pr": 1923,
+      "branch": "uad-no-points-signed-out",
+      "commit": "6622bc3b1cb6f53e0618850e0b43ed3f70147365",
+      "test": "daily.mjs",
+      "error": "✗ the button turns cyan, with the points and the streak (OCT 2026 📅 UNO AL DÍA Cada día un juego sorpresa, el mismo desafío para todos. 🔥 1 racha)",
+      "signature": "135cd21113",
+      "date": "2026-11-26T05:54:50.688Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
