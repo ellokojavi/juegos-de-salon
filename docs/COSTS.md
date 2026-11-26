@@ -22,7 +22,7 @@ rule, or speed for players, and its PR shows the proof (same tests and counts, m
   cannot change. Connectors such as Gmail or Drive load on demand and add almost nothing.
 - **Tests:** `tests` went from ~2 min to ~1 (parallel runner, three slow files split, PRs #1470, #1471).
 - **End to end:** ~100–120 min of browser time when everything runs, split into up to 18 jobs; a full
-  run lasts as long as the target (420 s since D-611) or the longest script, plus ~1 min setup. `landing-fold.mjs`
+  run lasts as long as the target (440 s since D-624) or the longest script, plus ~1 min setup. `landing-fold.mjs`
   (~8 min whole) was split by phone width.
 
 ## The levers, in order of size

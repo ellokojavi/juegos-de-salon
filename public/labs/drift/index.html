@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#150726">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Derrape 🏁 · Juegos de Salón</title>
+  <!-- A lab game (D-395): behind the lab's door (D-281) and not indexed -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <!-- No language flash (D-194): the page waits for the chosen language's texts, 1.5 s at most -->
+  <script>
+    (function () {
+      try {
+        var u = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        var l = u || localStorage.getItem('juegos-de-salon:lang') || 'es';
+        if (l === 'es') return;
+        var h = document.documentElement, listo = function () { h.classList.remove('i18n-pendiente'); };
+        h.classList.add('i18n-pendiente');
+        document.addEventListener('DOMContentLoaded', listo);
+        setTimeout(listo, 1500);
+      } catch (_) { /* no storage: it paints as always */ }
+    })();
+    // Offline mode (D-538): a phone already offline paints its first frame in the offline palette,
+    // with no flash of the normal one (offline-ui.js takes over once the page has loaded)
+    (function () {
+      try {
+        var f = localStorage.getItem('juegos-de-salon:offline-forced');
+        if (localStorage.getItem('juegos-de-salon:offline-flag') === '1' && f !== '0' && (f === '1' || navigator.onLine === false)) document.documentElement.classList.add('offline', 'offline-shell');
+      } catch (_) { /* no storage: it paints as always */ }
+    })();
+  </script>
+  <meta name="description" content="Derrapa contra el reloj por un camino de tierra, puerta por puerta. Un jugador.">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <script>
+    // The chosen language's manifest, before the browser reads it (D-222)
+    (function () {
+      try {
+        var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
+        var m = document.querySelector('link[rel="manifest"]');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+      } catch (_) { /* the Spanish one stays */ }
+    })();
+  </script>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="preload" href="../../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/ranking.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="../../assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
+  <script type="module">import '../../assets/js/instalable.js';</script>
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <a class="back" href="../" id="btn-menu" data-i18n="menu">‹ Laboratorio</a>
+      <div class="tools"><span class="chip" data-i18n="gameChip">🏁 Derrape</span><span id="sound-slot"></span></div>
+    </div>
+
+    <!-- ============ INTRO ============ -->
+    <section class="screen stack active" id="screen-intro">
+      <div class="intro-hero">
+        <span class="icon">🏁</span>
+        <h1 class="display display--xl rainbow" data-i18n="title">Derrape</h1>
+        <p class="lead" data-i18n="lead"></p>
+        <div id="lang-slot"></div>
+      </div>
+      <div class="stack">
+        <div id="resume-slot"></div>
+        <button type="button" class="btn btn--yellow" id="btn-play" data-i18n="play"></button>
+        <!-- The rules go after the main action (U-39): the goal first and three points (U-18) -->
+        <div class="panel">
+          <p class="lead" data-i18n="howTitle"></p>
+          <ol class="how" id="how"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PLAY: the stage, the HUD over it, the edge buttons ============ -->
+    <section class="screen" id="screen-play">
+      <div class="dr-stage" id="stage" data-tablero="etapa">
+        <canvas class="dr-canvas" id="canvas" aria-hidden="true"></canvas>
+        <div class="dr-hud" aria-live="polite">
+          <div class="dr-clock"><span id="clock">0:00.000</span><span class="dr-penalty" id="penalty" hidden></span></div>
+          <div class="dr-gate" id="gate"></div>
+        </div>
+        <div class="dr-edge">
+          <button type="button" class="icon-btn" id="btn-tune" hidden>🔧</button>
+          <button type="button" class="icon-btn" id="btn-reset">↺</button>
+        </div>
+        <p class="dr-hint" id="hint" data-i18n="hint"></p>
+        <div class="dr-pause" id="pause" hidden>
+          <span class="display display--lg" data-i18n="paused"></span>
+          <span data-i18n="tapToGo"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESULT (C-19) ============ -->
+    <section class="screen stack" id="screen-result">
+      <div class="result-hero">
+        <span class="trophy">🏁</span>
+        <p class="lead" data-i18n="resultTitle"></p>
+        <div class="display display--xl dr-time" id="result-time">—</div>
+        <p class="muted center" id="result-detail"></p>
+      </div>
+      <div class="stack" id="result-actions"></div>
+      <div id="result-exits"></div>
+    </section>
+  </main>
+
+  <script type="module">import './game.js';</script>
+  <!-- The cover ends with the site footer (C-17, site-footer.test.mjs) -->
+  <script type="module">import('../../assets/js/site-footer.js').then(m => m.mountFooter(document.getElementById('screen-intro'), { screen: 'drift-cover' }));</script>
+</body>
+</html>

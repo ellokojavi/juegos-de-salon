@@ -1,0 +1,60 @@
+{
+  "id": "drift",
+  "path": "labs/drift/",
+  "emoji": "🏁",
+  "name": {
+    "es": "Derrape",
+    "en": "Drift",
+    "pt": "Derrapagem"
+  },
+  "tagline": {
+    "es": "Derrapa contra el reloj por un camino de tierra, puerta por puerta.",
+    "en": "Slide against the clock down a dirt road, gate by gate.",
+    "pt": "Derrape contra o relógio numa estrada de terra, portão por portão."
+  },
+  "keywords": {
+    "es": [
+      "rally",
+      "autos",
+      "carrera",
+      "contrarreloj",
+      "derrape"
+    ],
+    "en": [
+      "rally",
+      "cars",
+      "racing",
+      "time trial",
+      "drift"
+    ],
+    "pt": [
+      "rali",
+      "carros",
+      "corrida",
+      "contra o relógio",
+      "derrapagem"
+    ]
+  },
+  "players": {
+    "min": 1,
+    "max": 1
+  },
+  "duration": "1–3",
+  "tipos": [
+    "skill"
+  ],
+  "labs": true,
+  "available": false,
+  "modes": [
+    "solo"
+  ],
+  "ai": false,
+  "memory": "juegos-de-salon:drift:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [],
+  "canonExceptions": []
+}

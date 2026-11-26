@@ -1292,6 +1292,7 @@
     "public/assets/js/manifests/hangman.js",
     "public/assets/js/manifests/labs/blackjack.js",
     "public/assets/js/manifests/labs/cryptic.js",
+    "public/assets/js/manifests/labs/drift.js",
     "public/assets/js/manifests/labs/fourth-king.js",
     "public/assets/js/manifests/labs/julep.js",
     "public/assets/js/manifests/labs/transfer.js",
@@ -1533,6 +1534,13 @@
     "public/labs/cryptic/sealed.js",
     "public/labs/dominorama/engine.js",
     "public/labs/dominorama/game.js",
+    "public/labs/drift/engine.js",
+    "public/labs/drift/game.js",
+    "public/labs/drift/input.js",
+    "public/labs/drift/rules.js",
+    "public/labs/drift/scene.js",
+    "public/labs/drift/tracks.js",
+    "public/labs/drift/tuning.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
     "public/labs/flap/engine.js",
@@ -1747,6 +1755,7 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/cryptic/engine.test.mjs",
+    "public/labs/drift/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/flap/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
@@ -1955,6 +1964,8 @@
     "dominorama/lab.mjs",
     "dominorama/page.mjs",
     "double-tap.mjs",
+    "drift/game.mjs",
+    "drift/languages.mjs",
     "duels/challenge.mjs",
     "duels/create.mjs",
     "duels/duel-page.mjs",
@@ -2259,6 +2270,10 @@
     {
       "path": "docs/games/dominorama.md",
       "title": "🎲 Dominorama (La Copa game, launched 2026-11-19 18:54 Pacific; the lab prototype stays until the cleanup)"
+    },
+    {
+      "path": "docs/games/drift.md",
+      "title": "🏁 Derrape (Drift, lab, in Juegos en prueba)"
     },
     {
       "path": "docs/games/exploding-numbers.md",

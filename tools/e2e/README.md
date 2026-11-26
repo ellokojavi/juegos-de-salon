@@ -86,7 +86,7 @@ and are still run by hand. The ones in `OBSOLETE` test something that no longer 
 
 **In groups** (D-307): [`groups.mjs`](groups.mjs) splits the scripts into even groups based on
 how long each one actually took ([`durations.json`](durations.json), in seconds), so that none
-goes over ~7 min (`TARGET_S`, 420 s, D-611) and all fit at once in the 20 runners GitHub gives at a time. Each group is a
+goes over ~7 min (`TARGET_S`, 440 s, D-624) and all fit at once in the 20 runners GitHub gives at a time. Each group is a
 job that runs its scripts one after another (that they stay even and each script appears once is tested by
 `node tools/e2e/groups.test.mjs`); the run summary has the table with each script, its
 time and its result, and the `screenshots-g<n>` artifact has, in one folder per script, the screenshots of
