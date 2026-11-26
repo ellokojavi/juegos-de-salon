@@ -80,9 +80,7 @@ async function storeNow(rel) {
   }
   await progress({ storing: false, release: list.release || rel, total, have, failed: have < total });
   for (const k of await caches.keys()) if (k.startsWith('jds-release-') && k !== release(list.release || rel)) await caches.delete(k);
-  // Pages an earlier version of this worker kept in the runtime cache: they belong to an old release
-  const rt = await caches.open(RUNTIME);
-  for (const req of (await rt.keys?.()) || []) if (new URL(req.url).pathname.endsWith('/')) await rt.delete(req);
+  await dropRuntimePages();
   return true;
 }
 
@@ -124,13 +122,34 @@ async function cut(req) {
   if (req.method !== 'GET') return Response.error();
   const url = new URL(req.url);
   if (req.mode === 'navigate') {
-    const page = await fromCache(url.origin + url.pathname);
+    const page = await pageFromCache(url.origin + url.pathname);
     if (page) return page;
     const home = new URL('./', self.registration.scope).href;
-    if (url.href !== home && await fromCache(home)) return Response.redirect(home, 302);
+    if (url.href !== home && await pageFromCache(home)) return Response.redirect(home, 302);
     return Response.error();
   }
   return (await fromCache(req)) || (url.origin === self.location.origin && await fromCache(req, { ignoreSearch: true })) || Response.error();
+}
+
+/**
+ * A page from the release caches only, never the runtime one. A page an older worker kept in the
+ * runtime cache was served first forever: it told the worker its old release, so the release was never
+ * stored again and the runtime cache never cleaned; its import map then mixed its old modules with
+ * the server's current ones (La Copa on an iPhone, 1.4.3 on 2026-11-25, 'esRelleno' not found).
+ */
+async function pageFromCache(url) {
+  for (const k of await caches.keys()) {
+    if (!k.startsWith('jds-release-')) continue;
+    const r = await (await caches.open(k)).match(url);
+    if (r) return r;
+  }
+  return null;
+}
+
+/** Pages an older worker kept in the runtime cache: they belong to an old release. */
+async function dropRuntimePages() {
+  const rt = await caches.open(RUNTIME);
+  for (const req of (await rt.keys?.()) || []) if (new URL(req.url).pathname.endsWith('/')) await rt.delete(req);
 }
 
 async function fromCache(req, opts) {
@@ -154,16 +173,38 @@ async function page(req) {
     const r = await Promise.race([net.catch(() => null), timeout]);
     if (r) return r;
   } catch (_) { /* to the cache */ }
-  const cached = await fromCache(url.origin + url.pathname);
+  const cached = await pageFromCache(url.origin + url.pathname);
   if (cached) return cached;
   // A page never stored: send the browser to the home page, so its address is the home page's too.
   // Served under the old address, its relative links (assets/…) would miss and it drew unstyled
   const home = new URL('./', self.registration.scope).href;
-  if (url.href !== home && await fromCache(home)) return Response.redirect(home, 302);
+  if (url.href !== home && await pageFromCache(home)) return Response.redirect(home, 302);
   return net;   // not even the home page: wait for the network after all
 }
 
-async function keep(req) {
+/** The first 8 hex of the body's SHA-256: what tools/release/precache.mjs writes in `?h=`. */
+async function digest(r) {
+  const b = await crypto.subtle.digest('SHA-256', await r.clone().arrayBuffer());
+  return [...new Uint8Array(b)].slice(0, 4).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// The last time a stale page was sent to load again: once a minute at most, never a loop
+let reloadedAt = 0;
+
+/**
+ * A `?h=` file the server answers with other content: the page asking is from an older release (the
+ * server ignores the query and serves today's file). Mixed with its kept modules it breaks on a missing
+ * export, so the answer is not kept under that hash, and the page is loaded again, once.
+ */
+async function stale(clientId, now = Date.now()) {
+  if (!clientId || now - reloadedAt < 60000) return;
+  reloadedAt = now;
+  await dropRuntimePages();
+  const c = await self.clients.get?.(clientId);
+  if (c && 'navigate' in c) await c.navigate(c.url).catch(() => {});
+}
+
+async function keep(req, clientId) {
   const hit = await fromCache(req);
   if (hit) return hit;
   let r;
@@ -173,6 +214,13 @@ async function keep(req) {
     const near = await fromCache(req, { ignoreSearch: true });
     if (near) return near;
     throw e;
+  }
+  const url = new URL(req.url);
+  const h = url.origin === self.location.origin && url.searchParams.get('h');
+  if (h && r.ok) {
+    let same = true;
+    try { same = (await digest(r)) === h; } catch (_) { /* no crypto: trust it, as before */ }
+    if (!same) { stale(clientId); return r; }
   }
   if (r.ok || r.type === 'opaque') { const copy = r.clone(); caches.open(RUNTIME).then(c => c.put(req, copy)); }
   return r;
@@ -197,13 +245,13 @@ async function fresh(req) {
 }
 
 /** What an uncut worker does with a request, once it knows whether offline mode is on. */
-function normal(req) {
+function normal(req, clientId) {
   const url = new URL(req.url);
   const mine = url.origin === self.location.origin;
   if (req.method !== 'GET' || (!mine && !SDK.test(req.url))) return fetch(req);
   if (mine && (url.pathname.endsWith('/sw.js') || url.pathname.endsWith('/precache.json'))) return fetch(req);
   if (req.mode === 'navigate') return encendido ? page(req) : fetch(req);
-  return encendido ? (unhashed(url) ? fresh(req) : keep(req)) : fetch(req);
+  return encendido ? (unhashed(url) ? fresh(req) : keep(req, clientId)) : fetch(req);
 }
 
 self.addEventListener('fetch', e => {
@@ -216,7 +264,7 @@ self.addEventListener('fetch', e => {
   }
   if (cortado) { e.respondWith(cut(req)); return; }
   // Just woken, not yet known whether it is cut: every request waits for the answer
-  if (cortado === null) { e.respondWith(leido.then(() => (cortado ? cut(req) : normal(req)))); return; }
+  if (cortado === null) { e.respondWith(leido.then(() => (cortado ? cut(req) : normal(req, e.clientId)))); return; }
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   const mine = url.origin === self.location.origin;
@@ -227,11 +275,11 @@ self.addEventListener('fetch', e => {
     e.respondWith(leido.then(() => (encendido ? page(req) : fetch(req))));
     return;
   }
-  if (encendido) e.respondWith(unhashed(url) ? fresh(req) : keep(req));
+  if (encendido) e.respondWith(unhashed(url) ? fresh(req) : keep(req, e.clientId));
 });
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('activate', e => e.waitUntil(dropRuntimePages().catch(() => {}).then(() => self.clients.claim())));
 
 /** Un aviso llega como JSON: `{ title, body, url, tag, acciones? }`. Lo que no se entiende no se muestra. */
 self.addEventListener('push', e => {
