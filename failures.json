@@ -7955,6 +7955,19 @@
       "date": "2026-11-26T05:54:50.688Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45768312102,
+      "check": "tests",
+      "pr": 1923,
+      "branch": "uad-no-points-signed-out",
+      "commit": "a963bc406b9f99b4f4b08400fedce9a2c4321c54",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/storage-keys.js",
+      "signature": "9c7409d3da",
+      "date": "2026-11-26T06:32:57.326Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
