@@ -19,7 +19,36 @@
     en: { msg: 'We couldn\'t load the page. Check your connection and try again.', retry: 'Try again' },
     pt: { msg: 'Não conseguimos carregar a página. Confira sua conexão e tente de novo.', retry: 'Tentar de novo' },
   };
-  var G = w.__stallGuard = { shown: false, MS: MS, TEXTS: TEXTS };
+  // What the wait is "doing", one line at a time under the spinner (the owner, 2026-11-25: a fun wait
+  // until the error comes). La Copa's «…» (waiting.js) uses them too, through G.funLine.
+  var FUN = {
+    es: ['Barajando las cartas…', 'Lanzando los dados…', 'Cavilando la próxima jugada…', 'Buscando la ficha perdida…',
+      'Despertando a los peones…', 'Contando los puntos dos veces…', 'Pensando muy fuerte…', 'Buscando el dado bajo el sillón…',
+      'Afilando los lápices…', 'Repartiendo las fichas…', 'Desempolvando el tablero…', 'Consultando con la reina…'],
+    en: ['Shuffling the cards…', 'Rolling the dice…', 'Pondering the next move…', 'Looking for the lost piece…',
+      'Waking up the pawns…', 'Counting the points twice…', 'Thinking really hard…', 'Finding the die under the couch…',
+      'Sharpening the pencils…', 'Dealing the tiles…', 'Dusting off the board…', 'Asking the queen…'],
+    pt: ['Embaralhando as cartas…', 'Jogando os dados…', 'Pensando na próxima jogada…', 'Procurando a peça perdida…',
+      'Acordando os peões…', 'Contando os pontos duas vezes…', 'Pensando muito forte…', 'Procurando o dado debaixo do sofá…',
+      'Apontando os lápis…', 'Distribuindo as peças…', 'Tirando o pó do tabuleiro…', 'Consultando a rainha…'],
+  };
+  var G = w.__stallGuard = { shown: false, MS: MS, TEXTS: TEXTS, FUN: FUN };
+
+  /** A line that changes every 2 s, from a random start, never the same twice in a row; it stops once off the page. */
+  G.funLine = function (l) {
+    var list = FUN[l] || FUN[lang()];
+    var i = Math.floor(Math.random() * list.length);
+    var p = d.createElement('p');
+    p.className = 'waiting-fun';
+    p.setAttribute('aria-live', 'polite');
+    p.textContent = list[i];
+    var t = setInterval(function () {
+      if (!p.isConnected) { clearInterval(t); return; }
+      i = (i + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
+      p.textContent = list[i];
+    }, 2000);
+    return p;
+  };
 
   function lang() {
     try { var v = localStorage.getItem('juegos-de-salon:lang'); if (TEXTS[v]) return v; } catch (_) { /* no storage */ }
@@ -40,6 +69,7 @@
     spinner.className = 'waiting waiting--screen';
     spinner.id = 'stall-wait';
     spinner.setAttribute('role', 'status');
+    spinner.appendChild(G.funLine());
     main.appendChild(spinner);
     watchStart(spinner);
   }, 1500);

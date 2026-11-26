@@ -329,6 +329,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .waiting--screen { padding: var(--s-32) 0; }
 /* The waiting screen's spinner (the owner, 2026-11-25: «…» alone did not read as waiting); still with reduced motion */
 .waiting--screen::before { content: ''; display: block; width: 40px; height: 40px; margin: 0 auto var(--s-12); border-radius: 50%; border: 4px solid var(--glass-border); border-top-color: var(--cyan); animation: spin 0.9s linear infinite; }
+.waiting-fun { margin: 0; color: var(--muted); font-weight: 800; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .waiting--screen::before { animation: none; } }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }
