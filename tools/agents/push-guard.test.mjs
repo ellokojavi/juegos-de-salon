@@ -141,3 +141,18 @@ test('a hook whose script blocks with exit 2 passes the 2 on to Claude Code (#15
   assert.ok(hit && hit.includes('/badges/'), 'footer-bottom failure blocks the push');
   assert.ok(!problems(process.cwd(), (cmd, args) => cmd === 'node' && args[0].includes('footer-bottom') ? { status: 1, stdout: '', stderr: 'boom' } : { status: 0, stdout: '' }).some(p => p.includes('D-599')), 'an unexpected crash lets it through');
 }
+
+// A new architecture hit and a new Spanish exported name stop the push (signatures ea485401a9, 965641ffe6)
+{
+  const arch = "AssertionError [ERR_ASSERTION]: a new hit: fix it, or add an entry with its why to docs/architecture-allowlist.json (docs/ARCHITECTURE.md)\n+ actual - expected\n\n+ [\n+   'public/assets/js/season.js:3 layers imports up'\n+ ]\n- []";
+  const ids = 'AssertionError [ERR_ASSERTION]: new Spanish exported names (name them in English, D-316): public/assets/js/duels-ui.js listaLinea';
+  const run = (cmd, args) => cmd !== 'node' ? { status: 0, stdout: '' }
+    : args[0].includes('architecture.test') ? { status: 1, stdout: '', stderr: arch }
+    : args[0].includes('identifiers.test') ? { status: 1, stdout: '', stderr: ids }
+    : { status: 0, stdout: '' };
+  const found = problems(process.cwd(), run);
+  assert.ok(found.some(p => p.includes('architecture-allowlist') && p.includes('season.js:3')), 'a new architecture hit blocks the push, naming it');
+  assert.ok(found.some(p => p.includes('D-316') && p.includes('duels-ui.js listaLinea')), 'a new Spanish export blocks the push, naming it');
+  const crash = (cmd, args) => cmd === 'node' && /architecture|identifiers/.test(args[0]) ? { status: 1, stdout: '', stderr: 'boom' } : { status: 0, stdout: '' };
+  assert.ok(!problems(process.cwd(), crash).some(p => /architecture hit|Spanish exported/.test(p)), 'an unexpected crash lets it through');
+}
