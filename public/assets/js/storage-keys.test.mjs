@@ -20,6 +20,8 @@ test('every key the site keeps on the phone is progress or the phone\'s own', ()
       // A template's ${…} or a <placeholder> in a comment stands for any text
       const k = m[1].replace(/\$\{[^}]*\}/g, 'x').replace(/<[^>]*>/g, 'x');
       if (k.endsWith(':') || k.includes('${')) continue; // a bare prefix, joined with a name elsewhere
+      // A mark of something told or seen belongs to the phone, or signing in again tells it twice
+      if (/anunciad|visto|vista|seen|challenged|-base$/.test(k) && kindOf(k) === 'progress') sin.add(`${k} is a "told" mark: put it in DEVICE  (${f.slice(PUBLIC.length + 1)})`);
       if (!kindOf(k)) sin.add(`${k}  (${f.slice(PUBLIC.length + 1)})`);
     }
     // A key without the site's prefix, written straight to the storage
@@ -35,4 +37,9 @@ test('signing out clears the progress and keeps the settings', () => {
   const s = { get length() { return m.size; }, key: i => [...m.keys()][i], removeItem: k => m.delete(k) };
   clearProgress(s);
   assert.deepEqual([...m.keys()].sort(), ['juegos-de-salon:copa:prueba', 'juegos-de-salon:jugador', 'juegos-de-salon:labs-llave', 'juegos-de-salon:lang', 'juegos-de-salon:uno-al-dia:avisos']);
+});
+
+test('what was already told or shown stays on signing out, so it is never told again', () => {
+  for (const k of ['juegos-de-salon:logros-anunciados', 'juegos-de-salon:logros-base', 'juegos-de-salon:profile-badges:abc', 'juegos-de-salon:uno-al-dia:temporada-vista',
+    'juegos-de-salon:copa:resumen-visto', 'juegos-de-salon:duels-challenged', 'juegos-de-salon:rk-visto:x:y']) assert.equal(kindOf(k), 'device', k);
 });
