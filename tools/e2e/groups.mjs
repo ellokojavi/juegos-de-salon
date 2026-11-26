@@ -16,7 +16,7 @@ import { execFileSync } from 'node:child_process';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const DURATIONS = join(HERE, 'durations.json');
-export const TARGET_S = 420;       // ~7 min per group: with ~1 min of setup, the check in ~8 (400 until D-611: main sat at the alarm again with 1 s of headroom; 360 until D-585: the 18 runners were full and main sat at the alarm; 310 until D-484: the panel's views script filled the last group; 270 until D-421: with Agentes' two jobs the 18 runners no longer fit; 300 until D-447: Dudo's shake script and its language screens filled the last group)
+export const TARGET_S = 440;       // ~7.3 min per group: with ~1 min of setup, the check in ~8.5 (420 until D-624: measured afresh, main sat over the alarm with 488 s; 400 until D-611: main sat at the alarm again with 1 s of headroom; 360 until D-585: the 18 runners were full and main sat at the alarm; 310 until D-484: the panel's views script filled the last group; 270 until D-421: with Agentes' two jobs the 18 runners no longer fit; 300 until D-447: Dudo's shake script and its language screens filled the last group)
 export const MAXIMUM = 18;         // and 2 runners free out of the 20, for list and end-to-end
 export const UNMEASURED_S = 90;    // a new script with no measured sibling, until it is measured
 const REPO = process.env.REPO || 'ellokojavi/juegos-de-salon';
