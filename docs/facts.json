@@ -2149,6 +2149,10 @@
       "title": "PR previews (D-429)"
     },
     {
+      "path": "docs/PROFILE.md",
+      "title": "The player profile and what sits around it"
+    },
+    {
       "path": "docs/PWA-NOTIFICACIONES.md",
       "title": "App instalable y avisos al celular (PWA + Web Push)"
     },

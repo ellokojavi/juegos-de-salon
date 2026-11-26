@@ -38,7 +38,7 @@ The game inside is a placeholder (a race to ten). Replace it, keeping what surro
   `share-templates.js`, never by hand: a room invite with `roomInvite()` (through `botonInvitar`), a result
   played alone with `botonResultadoSolo()` (`soloResult`), any other result with `result()`; each passes
   `tagline: taglineLine(<the game's tagline>, lang)`, so whoever receives it reads in one line what the game
-  is about (the line shows while the lab flag `share-tagline` is on). The game's link from its cover and the
+  is about (the line is live for everyone; flag `share-tagline` is on for all). The game's link from its cover and the
   home page needs nothing from the game: it reads `tagline` from the manifest. `share-templates.test.mjs`
   checks every game's room, link and result messages in three languages and fails a hand-built header.
 - **Memory, the pass screen** with the shared modules: `session.js` (C-6), `compartir.js`,

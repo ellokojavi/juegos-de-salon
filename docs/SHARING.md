@@ -41,7 +41,7 @@ placeholder left), and fails any page that calls `cabecera()` or writes a `{emoj
 | **T6 A table / ranking** | competition · day or month | who is missing / my place | `lamina()` + the table | the competition | `copa` / `uno-al-dia-ranking` |
 | (video) | `🎬 *Juegos de Salón* · Mira el video` | `videoLines` | none: YouTube's thumbnail (D-253) | the Short | `video` |
 
-## The game's line (flag `share-tagline`)
+## The game's line (live for everyone since 2026-11-24, flag `share-tagline`)
 
 Every share about one game (T1, T4, T5 and a duel) carries, right after the header, one line with
 what the game is about: `🎮 {tagline}`, the game's own tagline (`tagline` in its manifest or in
