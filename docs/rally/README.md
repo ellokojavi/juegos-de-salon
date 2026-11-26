@@ -5,8 +5,11 @@
 > session that has never seen the clip or that conversation can build the game from here, phase by
 > phase. Where it stands is in [PROGRESS.md](PROGRESS.md); update that file in every PR.
 >
-> `rally` is a **working name**. The owner picks the name the player reads, and the folder, id, keys
-> and docs follow it (C-20). Until then every path below says `rally`.
+> **The name** (owner, 2026-11-25): the player reads **Derrape** in Spanish, **Drift** in English and
+> **Derrapagem** in Portuguese, with 🏁. So the id, folder, keys, hook, e2e and spec are `drift`
+> (C-20): `public/labs/drift/`, `window.__drift`, `docs/games/drift.md`. This plan folder keeps the
+> name `docs/rally/` so the start prompt in [PROMPT.md](PROMPT.md) keeps working; "rally" in prose
+> here means the genre.
 
 ## The idea in one paragraph
 
