@@ -68,6 +68,10 @@ export function activarRankings(si, storage = globalThis.localStorage) {
   try { if (si) storage.setItem(LABS_RANKINGS_KEY, '1'); else storage.removeItem(LABS_RANKINGS_KEY); } catch (_) { /* sin memoria */ }
 }
 
+import { clearProgress } from './storage-keys.js';
+/** The player's progress on this phone, cleared on signing out (storage-keys.js). */
+export const limpiarProgreso = (storage = globalThis.localStorage) => { clearProgress(storage); try { globalThis.sessionStorage && clearProgress(globalThis.sessionStorage); } catch (_) { /* sin memoria */ } };
+
 /** El jugador guardado en este celular, sin esperar a nada: para dibujar de una. */
 export function leerYo(storage = globalThis.localStorage) {
   try { const y = JSON.parse(storage.getItem(KEY)); return y && esJid(y.jid) ? y : null; } catch (_) { return null; }
@@ -290,6 +294,9 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     salir() {
       const yo = api.yo();
       escribir(KEY, null); escribir(MEJORES, null);
+      // A clean sheet: what this player did on this phone leaves with them (the owner's report); signing
+      // in again brings it back from the account (the cups, D-220; Uno al día's days)
+      limpiarProgreso();
       avisar();
       if (yo) almacen.listo().then(uid => almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: null })).catch(() => {});
     },
