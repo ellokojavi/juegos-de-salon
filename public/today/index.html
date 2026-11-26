@@ -341,7 +341,9 @@
       const hoy = e.hoy, [y, m] = hoy.split('-').map(Number);
       const yo = enRed?.yo || null;
       const pts = enRed?.fila ? enRed.fila.s : leerCache(periodoMes(hoy)) ?? seasonPoints(w, hoy);
-      const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
+      // Signed out, no month points: they count only with a player (the owner's report)
+      const anon = !sentado();
+      const hecho = !anon && e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
       const estados = [];
       if (hecho) estados.push(fmt(P.hoySumaste, { p: miles(hecho.points), s: hecho.score, b: hecho.bonus }));
       // The place line has its own slot for anyone signed in, so it fills in without pushing the page
@@ -355,7 +357,7 @@
         el('div', { class: 'chips' }, el('span', { class: 'chip' }, fmt(P.temporada, { mes: mesLargo(y, m) })),
           ...(enRed?.campeon ? [el('span', { class: 'chip chip--gold' }, fmt(P.campeon, { mes: mesLargo(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) }))] : []),
           el('span', { class: 'quedan' }, quedan(hoy))),
-        el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-pts' }, miles(pts)), el('small', {}, P.pts)),
+        ...(anon ? [] : [el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-pts' }, miles(pts)), el('small', {}, P.pts))]),
         ...estados.map(t => el('p', { class: 'estado' }, t)),
         ...(lugar != null ? [el('p', { class: 'estado lugar', id: 'uad-lugar' }, lugar || '\u00a0')] : []),
         el('div', { class: 'uad-trio', id: 'uad-trio' },
@@ -379,7 +381,9 @@
       // The place the server gave, or the last one it gave this month, so the big number does not jump
       // (a read that failed keeps it; one that found no row this month cleared it)
       const puesto = enRed?.fila?.puesto ?? (sentado() ? leerCachePuesto(periodoMes(hoy)) : null);
-      const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
+      // Signed out, no month points: they count only with a player (the owner's report)
+      const anon = !sentado();
+      const hecho = !anon && e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
       let aviso = null;
       if (!puesto && yo && !e.dia) aviso = P.juegaHoy;
       else if (!puesto && yo && e.dia) aviso = P.enUnMomento;
@@ -396,7 +400,7 @@
       ].filter(Boolean);
       return el('section', { class: 'panel hero limpia', id: 'uad-puntos' },
         ...(enRed?.campeon ? [el('div', { class: 'chips' }, el('span', { class: 'chip chip--gold' }, fmt(P.campeon, { mes: mesLargo(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) })))] : []),
-        grande,
+        ...(anon ? [] : [grande]),
         el('p', { class: 'estado bajo' }, ...bajo),
         ...(aviso ? [el('p', { class: 'estado lugar', id: 'uad-lugar' }, aviso)] : []),
         ...(partes.length ? [el('p', { class: 'estado uad-linea', id: 'uad-trio', role: 'img', 'aria-label': partes.map(x => x[1]).join('. ') }, partes.map(x => x[0]).join(' · '))] : []),

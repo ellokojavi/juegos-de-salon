@@ -290,6 +290,8 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     salir() {
       const yo = api.yo();
       escribir(KEY, null); escribir(MEJORES, null);
+      // The month's points and place Firebase gave this player leave with them (the owner's report)
+      try { globalThis.localStorage?.removeItem('uad-pts-cache'); } catch (_) { /* sin memoria */ }
       avisar();
       if (yo) almacen.listo().then(uid => almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: null })).catch(() => {});
     },

@@ -114,6 +114,10 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
  */
 function chipPuntos(T, lang, racha = 0) {
   const P = T.pts, hoy = fechaLocal(), mes = `s${hoy.slice(0, 7)}`;
+  // Signed out, no month points or place: they count only with a player (the owner's report)
+  let conJugador = false;
+  try { conJugador = !!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid; } catch (_) { /* sin memoria */ }
+  if (!conJugador) return [el('span', { class: 'uad-card-pos' }, `🔥 ${racha}`), el('span', { class: 'uad-card-sub' }, el('i', {}, T.rachaLabel))];
   let c = null;
   try { c = JSON.parse(localStorage.getItem('uad-pts-cache') || 'null'); } catch (_) { /* sin memoria */ }
   if (c?.p !== mes || !Number.isFinite(c?.s)) c = null;
