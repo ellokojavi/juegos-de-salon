@@ -215,7 +215,27 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
     // The number engraved in the medal, the light crossing it and the raised ring (the owner's pick A5-B5, 2026-11-25)
     here.querySelector('.pf-medal').replaceChildren(el('b', {}, String(n)));
   }).catch(() => {});
-  const body = el('div', { class: 'pf-peek-body' }, el('p', { class: 'muted pf-peek-wait' }, T.peekLoading));
+  // While their facts load, a skeleton of the same shape (chips, the three stats, the games, the badges), so the
+  // sheet opens near its final height instead of jumping from a line of text to the full card (the owner, 2026-11-26)
+  const bone = (cls, n = 1) => Array.from({ length: n }, () => el('span', { class: `pf-skel ${cls}` }));
+  const body = el('div', { class: 'pf-peek-body', 'aria-busy': 'true' },
+    el('p', { class: 'pf-peek-live pf-peek-wait', role: 'status' }, T.peekLoading),
+    el('div', { class: 'pf-skel-row pf-skel-chips', 'aria-hidden': 'true' }, bone('pf-skel-chip', 2)),
+    el('div', { class: 'pf-stats pf-peek-stats', 'aria-hidden': 'true' }, bone('pf-skel-stat', 3)),
+    el('div', { class: 'pf-peek-part', 'aria-hidden': 'true' }, bone('pf-skel-h'), bone('pf-skel-game', SHOWN_GAMES)),
+    el('div', { class: 'pf-peek-part', 'aria-hidden': 'true' }, bone('pf-skel-h'), el('div', { class: 'pf-skel-row pf-skel-medals' }, bone('pf-skel-medal', 4))));
+  // What is left of the change eases: the sheet glides from its height to the new one and the content fades in
+  const still = () => doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const settle = draw => {
+    const h0 = panel.getBoundingClientRect().height;
+    draw();
+    body.removeAttribute('aria-busy');
+    allTime.textContent = allTimeText; // their all-time place, with the rest (it is read alongside)
+    if (still() || !panel.animate) return;
+    const h1 = panel.getBoundingClientRect().height;
+    if (Math.abs(h1 - h0) > 1) panel.animate([{ height: `${h0}px`, overflow: 'hidden' }, { height: `${h1}px`, overflow: 'hidden' }], { duration: 280, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+    body.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' });
+  };
   const panel = el('div', { class: 'hoja pf-peek', id: 'pf-peek', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pf-peek-name' },
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
     el('div', { class: 'hoja-cabeza' },
@@ -243,18 +263,18 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   doc.addEventListener('keydown', onKey);
   panel.querySelector('.pf-peek-ok')?.focus?.({ preventScroll: true });
 
-  let f = null;
+  let f = null, allTimeText = '';
   try {
     const J = await jugador();
     [f] = await Promise.all([readFacts(J, jid), context?.allTime
       ? J.tabla(context.allTime, SIEMPRE, { top: 100, reciente: 60000 }).then(v => {
         const p = v.top.find(x => x.jid === jid)?.puesto;
-        if (Number.isInteger(p)) allTime.textContent = fmt(T.peekGamePlace, { place: placeOf(p) });
+        if (Number.isInteger(p)) allTimeText = fmt(T.peekGamePlace, { place: placeOf(p) });
       }).catch(() => {})
       : null]);
   } catch (_) { f = null; }
   if (!layer) return null;
-  if (!f) { body.replaceChildren(el('p', { class: 'muted pf-peek-wait' }, T.peekError)); return panel; }
+  if (!f) { settle(() => body.replaceChildren(el('p', { class: 'muted pf-peek-wait' }, T.peekError))); return panel; }
   name(f.co, f.n);
   const sinceFull = f.since ? fmt(T.since, { month: new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(f.since)) }) : null;
   const placeFull = f.allRounder ? fmt(T.peekPlace, { place: placeOf(f.allRounder) }) : null;
@@ -272,7 +292,7 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
   const badges = peekBadges(f);
   const badgeName = b => (T.badges[b.id] || [b.id])[0];
   const fav = f.byGame.slice(0, SHOWN_GAMES);
-  body.replaceChildren(...[
+  settle(() => body.replaceChildren(...[
     facts,
     el('div', { class: 'pf-stats pf-peek-stats' },
       stat(`🔥 ${num(f.streak || 0)}`, T.statStreak), stat(num(f.plays || 0), T.statPlays), stat(`🏆 ${num(f.medals.gold)}`, T.statCups)),
@@ -291,7 +311,7 @@ export async function peekPlayer(jid, { hint = {}, context = null, lang = getLan
             el('span', { class: 'pf-medal', 'aria-hidden': 'true' }, b.icon), el('small', {}, badgeName(b)))),
           badges.length > SHOWN_BADGES ? el('li', { class: 'pf-peek-more' }, el('span', { class: 'pf-medal' }, `+${badges.length - SHOWN_BADGES}`)) : null)
         : el('p', { class: 'muted' }, T.peekNoBadges)),
-  ].filter(Boolean));
+  ].filter(Boolean)));
   return panel;
 }
 

@@ -37,5 +37,20 @@ for (const W of [320, 390]) {
   await b.shot(`cup-peek-${W}`);
   await ev(`document.querySelector('#pf-peek .pf-peek-ok').click()`); await sleep(300);
   ok(await ev(`!document.getElementById('pf-peek')`), `${W}: Cerrar closes it`);
+  // No jump while the facts load (the owner, 2026-11-26): with the reads slowed like a slow network, the sheet opens on a
+  // skeleton of the card's shape and, once it has slid in, eases to its final height: never more than 40 px in one frame
+  // (the ease-out's first frames move 10–25 px; the jump it replaced was ~400 px in one), and Cerrar does not move
+  await ev(`import('/assets/js/jugador.js').then(async ({ jugador }) => { const J = await jugador(); for (const k of ['perfil', 'historialDia', 'podios', 'tabla']) { const f = J[k].bind(J); J[k] = (...a) => new Promise(r => setTimeout(() => r(f(...a)), 800)); } return 1; })`);
+  await ev(`(() => { window.__peek = []; const t0 = performance.now(); ${row}.querySelector('.quien b').click();
+    const log = () => { const p = document.getElementById('pf-peek'); if (p) window.__peek.push([performance.now() - t0, p.getBoundingClientRect().top, p.querySelector('.pf-peek-ok').getBoundingClientRect().top, !!p.querySelector('.pf-skel')]);
+      if (performance.now() - t0 < 2200) requestAnimationFrame(log); };
+    requestAnimationFrame(log); return 1; })()`);
+  await sleep(2500);
+  const frames = JSON.parse(await ev('JSON.stringify(window.__peek)')).filter(f => f[0] > 320);
+  const step = (i, k) => Math.abs(frames[i][k] - frames[i - 1][k]);
+  const top = Math.max(0, ...frames.slice(1).map((_, i) => step(i + 1, 1))), close = Math.max(0, ...frames.slice(1).map((_, i) => step(i + 1, 2)));
+  ok(frames.some(f => f[3]) && frames.some(f => !f[3]), `${W}: it opens on a skeleton and the facts replace it`);
+  ok(top <= 40 && close <= 2, `${W}: no jump as the facts arrive (the sheet moves ${Math.round(top)} px at most in a frame, Cerrar ${Math.round(close)} px)`);
+  await ev(`document.querySelector('#pf-peek .pf-peek-ok').click()`); await sleep(300);
   b.close();
 }
