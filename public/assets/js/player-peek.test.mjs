@@ -48,7 +48,9 @@ const tabOn = node({ text: 'Esta semana', data: { p: 'semana' } });
 const box = node({ data: { tabla: 'sudoku_easy', pestana: 'semana' }, q: { '.rk-seg .on': tabOn, '.rk-titulo': node({ text: '🧩  Ranking de Sudoku' }) } });
 const row = node({ data: { jid: 'abcd1234', k: 'score', puesto: '2' }, closest: { '.rk-ranking, .rk-campeones': box }, q: { '.rk-puesto': node({ text: '🥈' }), '.rk-puntos': node({ text: '120' }), '.rk-tiempo': node({ text: '1:02' }) } });
 // The place as a number (its medal's metal comes from it), each figure with its unit (option A, the owner, 2026-11-23)
-assert.deepEqual(rowContext(row), { label: '🧩 Ranking de Sudoku · Esta semana', place: '2', values: [{ v: '120', unit: 'pts' }, { v: '1:02', unit: 'time' }], allTime: 'sudoku_easy' });
+assert.deepEqual(rowContext(row), { label: '🧩 Ranking de Sudoku · Esta semana', place: '2', values: [{ v: '120', unit: 'pts' }, { v: '1:02', unit: 'time' }], allTime: 'sudoku_easy', game: 'sudoku' });
+// The table's game, for the sheet's ⚔️ challenge to a duel in it; none on a table that is not a game's
+assert.equal(rowContext(row).game, 'sudoku');
 const kind = (k, s, t) => rowContext(node({ data: { k, puesto: '7' }, closest: { '.rk-ranking, .rk-campeones': box }, q: { '.rk-puntos': node({ text: s }), '.rk-tiempo': node({ text: t }) } })).values;
 assert.deepEqual(kind('wins', '12', '🏆'), [{ v: '12', unit: 'wins' }], 'a wins table counts wins, no time');
 assert.deepEqual(kind('plays', '340', '🎲'), [{ v: '340', unit: 'plays' }]);
@@ -61,7 +63,7 @@ const always = node({ data: { tabla: 'sudoku_easy', pestana: 'siempre' }, q: { '
 assert.equal(rowContext(node({ closest: { '.rk-ranking, .rk-campeones': always }, q: {} })).allTime, null);
 const champs = node({ data: {}, q: { '.rk-titulo': node({ text: '🏅 Campeones' }) } });
 assert.deepEqual(rowContext(node({ closest: { '.rk-ranking, .rk-campeones': champs }, q: { '.rk-puesto': node({ text: '1' }), '.rk-medallas': node({ text: '🥇2 🥈0 🥉1' }) } })),
-  { label: '🏅 Campeones', place: '1', values: [{ v: '🥇2 🥈0 🥉1' }], allTime: null });
+  { label: '🏅 Campeones', place: '1', values: [{ v: '🥇2 🥈0 🥉1' }], allTime: null, game: null });
 const general = node({ data: { tabla: 'todoterreno', pestana: 'semana' }, q: { '.rk-seg .on': tabOn } });
 assert.equal(rowContext(node({ closest: { '.rk-ranking, .rk-campeones': general }, q: {} })).allTime, null, 'the overall place is already the sheet\'s own line');
 console.log('✓ the sheet says where it was opened');

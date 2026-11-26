@@ -1,20 +1,5 @@
 /* Duels (lab flag rivals, duels-ui.js): the profile's row of duel cards, the all-duels page, the
-   new-duel sheet and the ⚔️ on a ranking's rows. Only the design system's tokens (D-533). */
-
-/* The ⚔️ at the end of a ranking row: the row gets a fifth column */
-.rk-fila.dl-con { grid-template-columns: 2.2em 1fr auto auto 32px; }
-/* Just the icon, no circle of its own (the owner, 2026-11-23); an invisible band around it takes the
-   tap area past 44 px (U-10), into the row's padding */
-.dl-retar {
-  position: relative; width: 32px; height: 32px; display: grid; place-items: center; padding: 0;
-  border: 0; background: none; font-size: var(--fs-120); line-height: 1; cursor: pointer; color: var(--ink);
-  -webkit-tap-highlight-color: transparent;
-}
-.dl-retar::before { content: ''; position: absolute; inset: -10px -8px; }
-.dl-retar:active { transform: scale(.9); }
-.dl-retar:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-radius: var(--r-12); }
-/* Your own row has no ⚔️: an empty cell of the same width keeps every row's columns aligned */
-.dl-retar-vacio { width: 32px; height: 32px; }
+   new-duel sheet. Only the design system's tokens (D-533). */
 
 /* The profile's section: min-width 0, or the row of cards widens the page's grid column */
 .dl-slot, .dl-seccion { min-width: 0; }

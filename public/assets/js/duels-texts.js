@@ -131,7 +131,6 @@ export const TEXTS = {
     levelNote: 'Los dos juegan en este nivel. No se puede cambiar después.',
     duelLevel: '🔒 Nivel del duelo: {v}. El mismo para los dos.',
     levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Servicios' },
-    challengeRow: 'Retar a {n} a un duelo',
   },
   en: {
     statsTitle: '📊 Your numbers',
@@ -264,7 +263,6 @@ export const TEXTS = {
     levelNote: 'You both play at this level. It cannot be changed later.',
     duelLevel: '🔒 Duel level: {v}. The same for both of you.',
     levels: { easy: '🟢 Easy', normal: '🟢 Easy', hard: '🔴 Hard', numbers: '🔢 Numbers', utilities: '⚡💧 Utilities' },
-    challengeRow: 'Challenge {n} to a duel',
   },
   pt: {
     statsTitle: '📊 Seus números',
@@ -397,6 +395,5 @@ export const TEXTS = {
     levelNote: 'Os dois jogam neste nível. Não dá para mudar depois.',
     duelLevel: '🔒 Nível do duelo: {v}. O mesmo para os dois.',
     levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Serviços' },
-    challengeRow: 'Desafiar {n} para um duelo',
   },
 };

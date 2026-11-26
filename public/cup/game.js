@@ -2266,8 +2266,6 @@ function practica(id, varianteElegida = null) {
   if (Jr.puntajeTiempo) flag('tango-time').then(on => { const x = on && document.getElementById('como-puntaje'); if (x) x.textContent = Jr.puntajeTiempo; }, () => {});
   // A game's own page: Instrucciones and Entrar as dialogs, no game chip on top (lab: #seccion-cover-dialogs)
   if (SUELTO) coverWithDialogs(body, { lang: LANG, alTocar: () => SFX.tap() });
-  // ⚔️ on the ranking's rows: challenge that player to a duel in this game (lab: #seccion-rivals)
-  if (SUELTO && rankea(id)) flag('rivals').then(on => on && import('../assets/js/duels-ui.js').then(m => m.retosEnRankings(document.body, { alTocar: () => SFX.tap() }))).catch(() => {});
   // The first attempt counts from its start (D-433): the line says so, an attempt left halfway goes
   // on where it was, and one started on another phone counts 0
   // Empezar waits for that answer (at once without a player; with one, at most Firebase's 2.5 s)
