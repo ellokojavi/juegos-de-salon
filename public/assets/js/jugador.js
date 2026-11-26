@@ -68,6 +68,21 @@ export function activarRankings(si, storage = globalThis.localStorage) {
   try { if (si) storage.setItem(LABS_RANKINGS_KEY, '1'); else storage.removeItem(LABS_RANKINGS_KEY); } catch (_) { /* sin memoria */ }
 }
 
+/**
+ * The player's progress on this phone, cleared on signing out so the next person starts on a clean
+ * sheet (the owner's report): Uno al día, the cups, the games played, the queue, the cached points.
+ * The phone's own settings (language, sound, offline, labs, visits) stay.
+ */
+const PROGRESO = ['juegos-de-salon:uno-al-dia', 'juegos-de-salon:copa:', 'juegos-de-salon:jugador:', 'juegos-de-salon:jugados',
+  'juegos-de-salon:partidas', 'juegos-de-salon:profile-badges:', 'juegos-de-salon:rk-visto:', 'juegos-de-salon:diario:', 'uad-pts-cache'];
+export function limpiarProgreso(storage = globalThis.localStorage) {
+  try {
+    const claves = [];
+    for (let i = 0; i < storage.length; i++) claves.push(storage.key(i));
+    for (const k of claves) if (PROGRESO.some(p => k.startsWith(p)) && !k.startsWith('juegos-de-salon:copa:prueba')) storage.removeItem(k);
+  } catch (_) { /* sin memoria */ }
+}
+
 /** El jugador guardado en este celular, sin esperar a nada: para dibujar de una. */
 export function leerYo(storage = globalThis.localStorage) {
   try { const y = JSON.parse(storage.getItem(KEY)); return y && esJid(y.jid) ? y : null; } catch (_) { return null; }
@@ -290,8 +305,9 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     salir() {
       const yo = api.yo();
       escribir(KEY, null); escribir(MEJORES, null);
-      // The month's points and place Firebase gave this player leave with them (the owner's report)
-      try { globalThis.localStorage?.removeItem('uad-pts-cache'); } catch (_) { /* sin memoria */ }
+      // A clean sheet: what this player did on this phone leaves with them (the owner's report); signing
+      // in again brings it back from the account (the cups, D-220; Uno al día's days)
+      limpiarProgreso();
       avisar();
       if (yo) almacen.listo().then(uid => almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: null })).catch(() => {});
     },

@@ -1,3 +1,4 @@
 level: patch
 
 - **Uno al día without a signed-in player no longer shows month points.** /today/'s season box and the home card's chip showed the month's points (and the cached place) left on the phone by the last signed-in player; signed out they now show only the days left and the streak, and signing out forgets the cached points and place.
+- **Signing out leaves a clean sheet.** "Salir" now clears what that player did on the phone (Uno al día days, the cups and their progress, games played, the upload queue, cached points), so the next person starts fresh and is no longer offered someone else's Gran Final; signing in again brings the cups and Uno al día back from the account. Language, sound, offline and lab settings stay.
