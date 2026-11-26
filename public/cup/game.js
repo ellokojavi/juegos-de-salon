@@ -617,16 +617,26 @@ function memorial(podio) {
   el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.cupHome));
 }
 
+/**
+ * How long «…» waits on Firebase before saying the connection is stuck (the owner, 2026-11-25: La Copa
+ * stuck on «…» with no way out). A late answer still draws the cup: the listener stays on.
+ */
+const ESPERA_MAX_MS = 10000;
+const aTiempo = p => Promise.race([p, new Promise((_, no) => setTimeout(() => no({ code: 'offline' }), ESPERA_MAX_MS))]);
+
 async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
   S.code = code;
   espera('…');
   let st;
-  try { st = await abrirStore(); await st.listo(); } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); return; }
+  try { st = await aTiempo(abrirStore().then(x => x.listo().then(() => x))); } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); return; }
   // No signal and La Copa offline not on for this phone: say so, not "no cup with that code"
   if (st.tipo === 'firebase' && sinRed()) { espera(errorDe({ code: 'offline' }), { error: true, reintentar: () => location.reload() }); return; }
   if (S.off) S.off();
   let primera = true;
+  // The cup's first answer: if it does not arrive in time, the stuck connection says so instead of «…» forever
+  const sinRespuesta = setTimeout(() => { if (primera && S.code === code) espera(errorDe({ code: 'offline' }), { error: true, reintentar: () => location.reload() }); }, ESPERA_MAX_MS);
   S.off = st.escuchar(code, L => {
+    clearTimeout(sinRespuesta);
     const habia = !!S.L?.meta;
     // Si el admin la terminó antes (D-161), la copa se ve cerrada desde esa hora
     L = conCierre(L);
@@ -2720,8 +2730,8 @@ window.__copa = {
 async function abrirPorAlias(a) {
   espera('…');
   try {
-    const st = await abrirStore(); await st.listo();
-    const x = await st.alias(a);
+    const st = await aTiempo(abrirStore().then(x => x.listo().then(() => x)));
+    const x = await aTiempo(st.alias(a));
     if (!x?.code) { espera(fmt(T.errNoAlias, { a }), { error: true }); return; }
     await abrirCopa(x.code);
   } catch (e) { espera(errorDe(e), { error: true, reintentar: () => location.reload() }); }
