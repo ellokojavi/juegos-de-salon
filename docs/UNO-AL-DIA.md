@@ -281,6 +281,9 @@ phone's own count (`seasonPoints` over the days in `localStorage`, `daily-points
 Since D-435 the home page itself refreshes it: once today
 is played and someone is signed in, `uad-place.js` reads the month's table after the page is drawn,
 writes the same `uad-pts-cache` and swaps the chip if the place or the points changed.
+Signed out there are no month points: the chip shows only the streak, /today/'s season box shows only
+the days left and the streak (no total, no place, no "you added" line), and signing out removes
+`uad-pts-cache` (`salir()` in `jugador.js`).
 
 ## Su página: 📅 Uno al día
 
