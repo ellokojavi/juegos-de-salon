@@ -81,3 +81,4 @@ The site credits what inspires a game on its cover, with a link, and never on th
 (Agentes credits Codenames, Aletazo credits Flappy Bird: see `docs/games/flap.md`). Once the owner
 names the clip's game, the cover says «Inspirado en …» with its link, in three languages. If it stays
 unknown, the game is described as what it is, an original rally time trial, and credits nothing.
+**Answered 2026-11-25: unknown.** The cover credits nothing.

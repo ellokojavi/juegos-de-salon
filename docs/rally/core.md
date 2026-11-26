@@ -97,7 +97,7 @@ an elevation profile over `s` that the flat physics ignores.
 
 **Stages are generated at build time and committed as data**, not generated on the phone:
 
-- `tools/generators/rally-tracks.mjs` draws pieces from a seeded generator, rejects a stage that
+- `tools/generators/drift-tracks.mjs` draws pieces from a seeded generator, rejects a stage that
   crosses or comes within 25 m of itself, that is outside the length range, or that the autopilot
   cannot finish cleanly, and writes `tracks.js`: a list of stages, each a short array of piece
   codes. A stage is a few hundred bytes.
@@ -206,7 +206,7 @@ A record is `{ s, ms }`, higher `s` first, then lower `ms`.
   Solo scores are reported by the phone everywhere on this site; this game does not try to do
   better than the rest (no replay verification: it would not be reliable across browser engines,
   for the reason in section 4).
-- **The table**: `rally` (weekly stage) needs no Firebase rule. Add it to `SOLO_TABLES` when the
+- **The table**: `drift` (weekly stage) needs no Firebase rule. Add it to `SOLO_TABLES` when the
   owner says the game records scores.
 - Uno al día and La Copa are **after launch** and each is its own decision and PR; this design only
   avoids blocking them (a 0 to 100 score, a pure date-to-stage function, a fixed-length run).
@@ -218,7 +218,7 @@ again.
 
 - Recorded as **positions**, not inputs: `x`, `y`, heading every 100 ms, rounded to centimetres,
   interpolated when drawn. Replaying inputs through the physics would drift between devices.
-- Kept on the phone, one per stage, a few kilobytes (`juegos-de-salon:rally:ghost:<stage>`), in
+- Kept on the phone, one per stage, a few kilobytes (`juegos-de-salon:drift:ghost:<stage>`), in
   `try/catch` like every write.
 - Never collides, never ranks, can be turned off.
 - A friend's ghost or the leader's means uploading runs: new stored data, a privacy edit, a 🔴 PR.
@@ -233,7 +233,7 @@ again.
   at that gate with the clock as it was there, plus the reset penalty so reloading is never a way
   to undo a bad corner.
 - Finished runs mark `done: true`. A new run deletes the saved one.
-- The best time and best splits per stage are kept apart (`juegos-de-salon:rally:best`).
+- The best time and best splits per stage are kept apart (`juegos-de-salon:drift:best`).
 
 ## 11. HUD and what the player hears
 
@@ -276,10 +276,10 @@ with changed values is never ranked.
 near itself, has its gates on the road, and is finished cleanly by the autopilot within a time
 range. The committed `tracks.js` is what the generator writes (run it, compare).
 
-**End to end** (`tools/e2e/rally/game.mjs`, the generator writes the skeleton): cover, three
-languages, Jugar with a double tap, the countdown, the hook `window.__rally` drives the test stage
+**End to end** (`tools/e2e/drift/game.mjs`, the generator writes the skeleton): cover, three
+languages, Jugar with a double tap, the countdown, the hook `window.__drift` drives the test stage
 with the autopilot through the real loop, the HUD counts gates, the result shows the time and the
-exits, the ranking block is there, at 375 and 320 px with no sideways scroll. Assert on `__rally.g`,
+exits, the ranking block is there, at 375 and 320 px with no sideways scroll. Assert on `__drift.g`,
 not on pixels or frame rate: CI's Chrome draws in software and is slow. `tools/e2e/flap/lab.mjs` is
 the model for driving a real-time game from a script.
 
