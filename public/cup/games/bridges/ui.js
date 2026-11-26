@@ -194,6 +194,8 @@ export function montar(raiz, ctx) {
         J.fantasma = v; J.pistas = (J.pistas | 0) + 1; guardar();
       }
       SFX.tap(); vibrate(10); aviso.textContent = T.tvHintShown; repintar();
+      // On a short phone the button sits under the board: bring the board back into view to see the ghost
+      if (c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start', behavior: QUIETO ? 'auto' : 'smooth' });
     } }, `💡 ${T.tvHint}`);
     const acciones = el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse);
     // Two by two, the board a little smaller on a short phone (style.css): it is sized again once the row is there
@@ -265,7 +267,7 @@ export function montar(raiz, ctx) {
       const toque = inicioPx && Math.hypot(ev.clientX - inicioPx[0], ev.clientY - inicioPx[1]) < 8;
       if (toque) {
         // A tap on the hint's ghost lays it, as a drag along it would
-        if (J.fantasma && distancia(J.fantasma, m) < 0.22) { poner(J.fantasma.a, J.fantasma.b); desde = null; ultimoArrastre = null; repintar(); return; }
+        if (J.fantasma && distancia(J.fantasma, m) < 0.35) { poner(J.fantasma.a, J.fantasma.b); desde = null; ultimoArrastre = null; repintar(); return; }
         const i = vigaBajo(m);
         if (i >= 0 && esCubierta(J.vigas[i])) { SFX.error(); vibrate([30, 30, 30]); aviso.textContent = T.tvDeck; }
         else if (i >= 0) { historial.push(J.vigas); J.vigas = J.vigas.filter((_, k) => k !== i); SFX.tap(); aviso.textContent = T.tvRemoved; guardar(); }
