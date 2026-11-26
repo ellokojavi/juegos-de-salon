@@ -73,9 +73,11 @@ export function showChallenge(d, me, { T, info = '', href = '#' } = {}) {
   const go = mk('a', 'btn btn--yellow dc-aceptar', T.challengeAccept); go.href = href;
   const later = mk('button', 'dc-despues', T.challengeLater); later.type = 'button';
   const pie = mk('div', 'dc-pie'); pie.append(mk('p', 'dc-info', info), go, later);
+  // The title in the home page's colours: the same shimmering rainbow as «Juegos de Salón» (.rainbow, base.css)
+  const kicker = mk('p', 'dc-kicker'); kicker.append(mk('span', 'rainbow', T.challengeKicker));
   const escena = mk('div', 'dc-escena');
   escena.append(mk('div', 'dc-mitad dc-mitad-a'), mk('div', 'dc-mitad dc-mitad-b'), mk('div', 'dc-lineas'),
-    mk('p', 'dc-kicker', T.challengeKicker), player('dc-yo', me.n), player('dc-rival', e.rivalN), vs, mk('div', 'dc-corte'), sword, pie, mk('div', 'dc-flash'));
+    kicker, player('dc-yo', me.n), player('dc-rival', e.rivalN), vs, mk('div', 'dc-corte'), sword, pie, mk('div', 'dc-flash'));
   layer.append(escena);
   const close = () => { layer.remove(); document.removeEventListener('keydown', esc); };
   const esc = ev => { if (ev.key === 'Escape') close(); };

@@ -25,7 +25,7 @@ for (const [width, height] of [[390, 844], [320, 568]]) {
     ok(shown, `${width}: a new duel from Cata opens the challenge screen`);
     if (!shown) continue;
     // Measured at its last frame, in the same step it was found: the animations finished at once
-    const m = JSON.parse(await ev(`JSON.stringify((() => { document.querySelector('.dc-capa').getAnimations({ subtree: true }).forEach(a => a.finish()); const r = s => document.querySelector(s).getBoundingClientRect(); return { scroll: document.documentElement.scrollWidth > innerWidth, rival: r('.dc-rival').bottom, info: r('.dc-info').top, names: [...document.querySelectorAll('.dc-nombre')].map(x => x.textContent), href: document.querySelector('.dc-aceptar').getAttribute('href'), btn: r('.dc-despues').height }; })())`));
+    const m = JSON.parse(await ev(`JSON.stringify((() => { document.querySelector('.dc-capa').getAnimations({ subtree: true }).filter(a => a.effect.getComputedTiming().endTime !== Infinity).forEach(a => a.finish()); const r = s => document.querySelector(s).getBoundingClientRect(); return { scroll: document.documentElement.scrollWidth > innerWidth, rival: r('.dc-rival').bottom, info: r('.dc-info').top, names: [...document.querySelectorAll('.dc-nombre')].map(x => x.textContent), href: document.querySelector('.dc-aceptar').getAttribute('href'), btn: r('.dc-despues').height }; })())`));
     await b.shot(`challenge-${width}`);
     ok(!m.scroll, `${width}: no sideways scroll`);
     ok(m.rival <= m.info, `${width}: the rival ends above the duel's line (${Math.round(m.rival)} ≤ ${Math.round(m.info)})`);
