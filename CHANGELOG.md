@@ -1,5 +1,202 @@
 # Changelog
 
+## 1.49.11 — 2026-11-26
+- **Queens:** the 👑 has a thin dark outline, so it stands out on light regions too.
+
+## 1.49.10 — 2026-11-25
+- **A calmer wait**: the spinner and its fun line sit in the middle of the screen, and the first line only shows after 2.5 s of spinner, so most waits end before anything distracts.
+
+## 1.49.9 — 2026-11-25
+- **Uno al día without a signed-in player no longer shows month points.** /today/'s season box and the home card's chip showed the month's points (and the cached place) left on the phone by the last signed-in player; signed out they now show only the days left and the streak, and signing out forgets the cached points and place.
+- **Signing out leaves a clean sheet.** "Salir" now clears what that player did on the phone (Uno al día days, the cups and their progress, games played, the upload queue, cached points), so the next person starts fresh and is no longer offered someone else's Gran Final; signing in again brings the cups and Uno al día back from the account. Language, sound, offline and lab settings stay.
+- **Every key the site keeps on the phone is sorted** in `public/assets/js/storage-keys.js`: the player's progress (cleared on signing out) or the phone's own (settings, visits, hints). `storage-keys.test.mjs` fails on a new key in neither list, so one player's progress can no longer stay on the phone for the next.
+
+## 1.49.8 — 2026-11-25
+- **Rally plan, phase 1.0 signed off**: the owner named the game Derrape (Drift, Derrapagem) 🏁, so its id is `drift`; the clip's source is unknown, so no credit; a stage is 8 to 10 gates. `docs/rally/` updated, next is the grey-box drive (1.1). Nothing changes for players.
+
+## 1.49.7 — 2026-11-25
+- **Rally, a plan and no code yet**: the design for a time-trial driving game in three paths (top-down 2D, simple 3D behind the same engine, a backlog of extras), with its phases, the owner's open decisions and the prompt that starts a session on it, in `docs/rally/`. Nothing changes for players.
+
+## 1.49.6 — 2026-11-25
+- **No more endless waiting on La Copa and Uno al día**: on a stuck connection, La Copa's «…» gives up after 10 s, and a page whose scripts never arrived stops staying blank. Either way the player sees «No pudimos…» with a button to try again (`stall-guard.js`). While waiting, a spinner turns under the title with a fun line that changes every 2 s («Soplando los dados para la suerte…», «Sobornando al dado con un caramelo…»), instead of a bare «…» or an empty page.
+
+## 1.49.5 — 2026-11-25
+- **Offline mode**: a phone that kept an old copy of a page no longer gets stuck on it. A page saved by an older version of the app is never served again, and a page whose files no longer match the site loads again once on its own. La Copa failed to open on a player's iPhone because of this.
+
+## 1.49.4 — 2026-11-25
+- **Duels: tidy numbers.** In «Your numbers», each tile's icon, value and label sit on the same line as its neighbour's, and the duel game's icon is as big as the others.
+
+## 1.49.3 — 2026-11-25
+- **No flash of the old background**: on a skin's days the page no longer shows the usual background for a fraction of a second before the skin; the phone remembers the skin's palette and draws it from the first frame.
+
+## 1.49.2 — 2026-11-25
+- **Skins in the lab stay off until previewed**: a seasonal skin not yet public no longer turns on by itself for lab testers on its dates; it shows only when opened with its preview from the panel (D-623).
+
+## 1.49.1 — 2026-11-25
+- **Panel, 📱 Screens: a coverage table under the width curve.** For P50, P80, P90 and P99, the narrowest width a design must still fit to cover that share of the range's visits, with the share it really covers (by whole bands). Owner only.
+
+## 1.49.0 — 2026-11-25
+- **Thanksgiving skin, for everyone, on every page**: from November 22 to 29 the whole site, games included, gets a November sunset and a few leaves falling behind the page; on the home page a turkey walks past behind the games now and then. From now on every skin dresses every page, not only the home page (D-622). The oak branch in the corner is gone, so nothing sits behind the user pill.
+
+## 1.48.18 — 2026-11-25
+- **Panel, 📱 Screens: a width curve above the Width table.** Visits drawn along real pixels (log scale), each band's block sized so its area is its share, with the middle 80% shaded, the most common width marked and the 320 px floor dashed; tapping a block rings its row in the table. Owner only, nothing players see.
+
+## 1.48.17 — 2026-11-25
+- **Panel: no pink dot on 🩺 Health.** A page failing to start now and then is normal and the dot asked for nothing; Health itself keeps every failure (D-621).
+
+## 1.48.16 — 2026-11-25
+- **Panel: archived campaigns can be previewed.** In 📣 Campaigns, tapping an archived campaign opens it into the same still splash preview the queue's cards have (▶ plays it), with its Live Preview 🔎 link and ↩︎ Unarchive; a second tap folds it again. Owner only: players see nothing new.
+
+## 1.48.15 — 2026-11-25
+- **Thanksgiving skin, in the lab**: from November 22 to 28 the home page and Rankings get a November sunset, a few leaves falling behind the page and a turkey that walks past behind the games now and then. Only lab key holders see it until the owner turns it on for everyone; the owner reviews it from the panel's 🎨 Skins. Seasonal templates can now drop things that keep falling (`fall`) and walk something across the bottom (`strut`), both behind the page (docs/SEASONS.md).
+
+## 1.48.14 — 2026-11-25
+- **The podium medal on a player's sheet looks like a real medal**: the 1, 2 or 3 is engraved in the gold, silver or bronze, with a raised ring inside the rim; the gleam crosses the number and then runs round the ring (the owner's pick A5-B5).
+
+## 1.48.13 — 2026-11-25
+- **Rankings open on «Siempre»**: every game ranking with that tab now opens on it instead of «Semana», so a quiet week never shows an empty table. Uno al día keeps its own tabs.
+
+## 1.48.12 — 2026-11-25
+- **/labs/ cards (owner only)**: a flagged card no longer shows the «📊 Uso en el laboratorio» numbers (its box still turns green when ready), and its flag id shows as a small label at the end of its title (Cup-Best-Day-All), with no extra line.
+
+## 1.48.11 — 2026-11-25
+- **Duels (lab):** «⚔️ Your rivals» on /duels/ shows each rival's record by game with the same bars as «📈 Your progress», and the rematch is a round ⚔️ at the end of each game's bar: that rival, that game, the format you last played it in, ready to send.
+
+## 1.48.10 — 2026-11-25
+- **La Copa (big cup, lab)**: the places each player moved (▲2, ▼1) go back to their own column beside the place when the day blocks fit on one line; with more than 8 days or a narrow screen they stay after the name.
+
+## 1.48.9 — 2026-11-25
+- **Tests: every new lab flag says what the end-to-end scripts see.** A flag Firebase does not know yet is on in every script, and four PRs went red on scripts that never asked for it; now the quick `tests` check asks for its row in `tools/e2e/flags-held.json` (off, or lab on purpose) before the long run starts. Nothing players see changes.
+
+## 1.48.8 — 2026-11-25
+- Retention ledger: the week of 2026-11-15 is read (next-day return 57.8%, second week under the band's floor 59.3%), and its one proposal, a morning Uno al día push, waits for the owner in #1895. Nothing changes for players.
+
+## 1.48.7 — 2026-11-24
+- **⚔️ Duels lock the level** (lab): when you challenge someone to a game with levels (Sudoku, Croc!, Pintaminas, Loteo), you pick 🟢 Fácil or 🔴 Difícil right under the game, nothing is picked for you, and the duel says it everywhere: its title, the invite, each round. The round's page says «🔒 Nivel del duelo: 🔴 Difícil» and offers no level picker, so both players get exactly the same game.
+
+## 1.48.6 — 2026-11-24
+- **Player sheets:** opening a player's sheet from a ranking no longer jumps while their facts load. It opens on a skeleton of the card's own shape (two chips, the three stats, the games, a row of medals) close to its final height, then eases the last few pixels and fades the facts in; Close stays put. Their all-time place appears with the rest instead of a moment earlier.
+
+## 1.48.5 — 2026-11-24
+- **Every game's share carries its tagline line**, the lab games' too (Memorice, Transbordo, Críptico, Sudoku, Blackjack, Dominorama, Babel, Números explosivos, which gets its tagline) and La Copa's result of the day (in Labs, flag `share-tagline`). `share-templates.test.mjs` fails a game's share without it.
+
+## 1.48.4 — 2026-11-24
+- **A new game shares with the templates from its first day**: the new-game generator writes its result's share with `result()` of `share-templates.js` and the game's tagline line, and ADD-GAME.md, C-7 and the canons' checklist say every game's share text comes from a template with that line (D-620). `share-templates.test.mjs` now also fails the generator if it writes a header by hand.
+
+## 1.48.3 — 2026-11-24
+- **Every share message comes from one set of templates** (`share-templates.js`, D-620): room invites, the app, the video, a game's link, results, tables and invites to a cup, a duel or Uno al día. A test checks every one in the three languages. Fixed on the way: Uno al día's shares leave a blank line after their header like all the others, a duel challenge opens with its header (`⚔️ *Sudoku* · al mejor de 3`), and a room invite sent before the inviter's name arrived says «Te invitaron a jugar» instead of «👋  te invita».
+
+## 1.48.2 — 2026-11-24
+- **A shared game says what it is about** (in Labs, flag `share-tagline`): a room invite, a game's link (its cover or its sheet on the home page), a solo result and a duel challenge add one line, `🎮 {tagline}`, with the tagline its card shows, in the message's language. New `docs/SHARING.md`: the inventory of every share button, the six templates they fit and the review of each one.
+
+## 1.48.1 — 2026-11-25
+- **Duels (lab):** each duel has its own page, `/duels/?d=…`: a big card with both players, the score, how it stands and the clock, then the duel round by round (decided, your turn with ▶ Play, the rival's score hidden until you play, still to play, not needed), the head to head with that rival and ⚔️ Rematch. A row of /duels/ and the profile's cards open it. On the Duels card of /labs/, 🧪 adds made-up duels to yours on that phone only, never written, to try the nemesis, the arch rival and the stats.
+- **Duels (lab):** the round to play has no box around it, only its glowing ball. While the 🧪 test duels are on, 🎨 A B C on /duels/ and on a duel's page switch between three looks to compare: rows and a track; cards, tiles and a tug of war per round; tickets, a line by date and one card per round.
+- **Duels (lab):** the owner picked the looks: a duel's page keeps the round track, with ▶ Play round N on the card itself and «🙈 Beto already played it» under it; /duels/ shows the open duels as tickets and the finished ones on a line by date, each opening with its rounds, the head to head, See the duel and ⚔️ Rematch. New «📈 Your progress»: the win rate duel by duel, the latest ten and the record by game. The 🎨 A B C switch is gone.
+
+## 1.48.0 — 2026-11-24
+- **🥇 Labs: the podium shines** (flag `podium-shine`). On a player's sheet opened from a ranking, 1st, 2nd and 3rd place get a medal that shines: rays of its metal turn behind it, it beats softly, only the number inside, and the card is framed in gold, silver or bronze with a gleam crossing it. Still for whoever asks for less motion (the owner's pick C, 2026-11-24).
+
+## 1.47.27 — 2026-11-24
+- **Making-of**: the opening line names the contributors next to the product lead and the AI agents.
+
+## 1.47.26 — 2026-11-24
+- **Labs (profile-chips)**: a player's sheet shows since when they play and their overall place as two short chips (📅 nov 2026 · 🎯 1.º general), like one's own profile, instead of a grey sentence; each chip keeps the full sentence as its label.
+
+## 1.47.25 — 2026-11-24
+- **Making-of**: the PRs figure now says how many people contribute (3, live from GitHub), and the fallback figures are brought up to today.
+
+## 1.47.24 — 2026-11-24
+- **A player's sheet no longer says «10 días seguidos» from the Uno al día points table**: that number was the streak bonus, capped at 10, not the real streak (the sheet already shows the real one below). The 🔥 leaves the points table's rows for the same reason, and a place from 4th on shows big in the yellow-to-pink gradient of the home page's Uno al día card instead of a grey ring.
+
+## 1.47.23 — 2026-11-24
+- **Profile**: a badge's sheet now shows its name in the games' display type, in yellow with a purple drop shadow, next to its emoji.
+
+## 1.47.22 — 2026-11-24
+- **Lab: Dominorama rules in the zone's corner** (flag `dominorama-corner-labels`): each zone's corner filled with its color and the rule inside, about twice the diamond's size, because players found the diamonds too small. Only lab testers see it.
+
+## 1.47.21 — 2026-11-24
+- **Profile**: a badge the profile finds new that no game announced (🧩 Collector counted from every phone, when this phone's own list missed a game) now opens its congratulations window there, once.
+
+## 1.47.20 — 2026-11-24
+- **Dominorama: a laid piece is two squares again.** Its halves were 6 px longer along its length (52×58 on a phone), so pieces on the board looked stretched; now they keep the 2:1 shape of the ones in the tray.
+
+## 1.47.19 — 2026-11-24
+- **Duels open straight on the quick duel** (lab flag rivals): «Nuevo duelo» no longer asks ⚡ or 🛠️ first; the rival, the format and the game are there at once, and «🛠️ Arma un duelo a tu medida» is a link right under the button, with «⚡ Volver al duelo rápido» to come back.
+- **A custom duel picks how to win, then how many rounds**: 🏆 most rounds won, over 3, 5, 7 or 9 rounds (odd, so there is always a winner), or ➕ most points, over any number from 2 to 9. The rules (`firebase/database.rules.json`), the test store and a round's link take up to nine rounds.
+- **The custom duel's sheet changes size smoothly** (lab flag rivals): going from step to step, switching between most rounds won and most points, or opening a round to change its game, the sheet eases to its new height instead of jumping, and each new step fades in. With reduced motion it changes at once.
+
+## 1.47.18 — 2026-11-24
+- **Dominorama: zones that touch never look alike.** Each zone now takes the palette color farthest from its neighbours (side or corner), measured in Oklab, instead of the next one in order; before, two touching zones could even get the same color. Amber and mint left the palette for a clearer orange. Over 900 generated boards the closest touching pair went from identical to clearly distinct.
+
+## 1.47.17 — 2026-11-24
+- **U-41: visual proposals reach the owner as a published Artifact page readable on the phone**, never only a PNG or a file path.
+
+## 1.47.16 — 2026-11-24
+- **Profile**: in the achievements, the games section now comes first, before Uno al día, La Copa, Duels and your plays.
+
+## 1.47.15 — 2026-11-24
+- **The share button has a cleaner icon**: the open box with the arrow going up, as on iOS, now drawn as a thin turquoise line instead of the thick two-colour one.
+
+## 1.47.14 — 2026-11-24
+- **Badges (in the lab, `badge-details`)**: a badge whose detail would only say «not yet» no longer opens it: an unearned month or cup podium, or Madrugador, Finde a tope, Odio los lunes and Especialista with no progress at all. Earned badges and those with progress still open theirs.
+
+## 1.47.13 — 2026-11-24
+- **Achievements (lab badge-details)**: the ⓘ on each badge moves to the card's top-right corner and is toned down.
+
+## 1.47.12 — 2026-11-24
+- **Workshop: the merge queue trial's evaluation has its criteria written down** (D-586): on 2026-11-25 it decides remove, keep, or build on it judged on the queue as it is since D-618 and D-619, with the hours it was down left out. Carried over from the unmerged branch `merge-queue`.
+
+## 1.47.11 — 2026-11-24
+- **Workshop: `sync-pr` resolves the rule counts too.** A conflict in `docs/RULES.md`, `CONTRIBUTING.md` or the PR template that only differs in the numbers `rules.mjs` writes is taken from main and regenerated, instead of leaving the PR in conflict (D-580). Carried over from the unmerged branch `auto-sync-generated`.
+
+## 1.47.10 — 2026-11-24
+- **The queue-doctor cloud task exists** (D-619): `trig_01EUEoQEdrD3rkiC9dMK5HZC`, hourly at :45 UTC. Its prompt now clones the repo first, as the stalled-PR takeover does, since a fresh cloud run starts without it.
+
+## 1.47.9 — 2026-11-24
+- **The merge queue has a doctor** (D-619). Every 5 minutes the heartbeat checks the queue without a model: it remakes a deleted label, starts a step that did not run, and keeps a "Merge queue needs a look" issue with what is still wrong. Every hour the `queue-doctor` cloud task fixes that on its own and ships the fix, never waiting for the owner except on a 🔴 PR. The line now puts a fix to the queue first and PRs that change nothing under `public/` ahead of the rest.
+
+## 1.47.8 — 2026-11-24
+- **La Copa no longer counts as a game** in the profile badges (Collector, Explorer) and the player peek: it is a way of playing the games over days, not one more game. One list, `PLAYABLE_GAMES` in `games.js`, feeds every "games played" count.
+
+## 1.47.7 — 2026-11-24
+- **The profile's Vibración switch** keeps the 📳 emoji and greys it out when vibration is off, instead of switching to 📴.
+
+## 1.47.6 — 2026-11-24
+- **Profile without the ⓘ**: the info button at the right of the profile title is gone; the page explains itself. The welcome still opens by itself on the first visit.
+
+## 1.47.5 — 2026-11-24
+- **Processes round 2026-11-24**: the push guard now stops a push that adds a page no footer script measures or excuses (D-599), instead of a red `tests` run; flags snapshot and end-to-end durations refreshed.
+
+## 1.47.4 — 2026-11-24
+- **The merge queue labels the PR it updates again.** #1860's new label function was called `mark`, a name the step loop already used for a local, so every real update crashed before labelling the PR and the queue lost track of it. It is now `labelInFlight`, and a new test runs the whole step against a fake `gh`.
+
+## 1.47.3 — 2026-11-24
+- **Profile**: every badge medal now gives its emoji the same soft dark rim, so pale ones read on the metal; El canapé is no longer the odd one out.
+
+## 1.47.2 — 2026-11-24
+- **The merge queue makes its label again if it goes missing.** For over an hour on 2026-11-24 the `merge-queue` label did not exist: every queue step updated a PR and then failed to label it, so the queue lost track of the PR in flight and kept updating others (six PRs testing at once). Now it recreates the label and goes on.
+
+## 1.47.1 — 2026-11-24
+- **The merge queue runs end-to-end once per PR** (D-618). It cancels the running `end-to-end` of a PR that is behind main, which tests a main the PR can no longer merge into, and lets a behind PR into the line once `tests` passed. `end-to-end` then runs only after the update, on today's main. A cancelled run is no longer red for `wait-pr.mjs`, the pending-work issue or the processes round.
+
+## 1.47.0 — 2026-11-24
+- 🎖️ **El detalle de cada logro, en Labs:** en tu perfil, un logro con ⓘ se abre al tocarlo y te dice lo que la tarjeta no alcanzaba a mostrar: qué juegos te faltan (cada uno con su botón para jugar), cuál está en su semana de estreno y cuántos días le quedan, tus juegos más jugados, tu mejor lugar en cada tabla, tu racha de hoy, el mes en calendario con los días que fallaste, y las mañanas, fines de semana, copas y meses que ya cuentan. Los logros secretos siguen en secreto.
+
+## 1.46.6 — 2026-11-24
+- **Privacy**: the lines about proposing a clue in Cryptic and about Duels show only once each is out of the lab; until then the page no longer tells players about something they cannot use.
+- **Rule (D-617)**: a game or feature in the lab changes nothing a player sees until it is on for everyone; only the tester toggles show it.
+
+## 1.46.5 — 2026-11-24
+- **Profile**: the badges tab no longer ends the games group with a «Ir a los juegos» button.
+- **Profile**: a tap on a game in «Tus partidas» opens its cover.
+
+## 1.46.4 — 2026-11-24
+- **PR previews always say how they ended**: when GitHub Pages is slow, the preview check used to be cut off at 10 minutes with the comment stuck on ⏳; it now has 15, enough to write the link or the ⚠️.
+
+## 1.46.3 — 2026-11-24
+- **The profile card's «Jugando desde… · n de m logros» becomes two chips** (lab flag profile-chips): 📅 the month and year, 🎖️ n/total, on one line under the name; each chip's sentence is its label, read aloud and shown on a long press.
+
 ## 1.46.2 — 2026-11-24
 - **Toque y Fama: 🔢 Número and 🔤 Palabra switch like tabs.** The toggle changes the game on the same page, with the top bar still, instead of loading the other page; Back returns to the previous tab.
 
