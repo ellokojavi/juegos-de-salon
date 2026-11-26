@@ -29,7 +29,7 @@ export const DEVICE = [
   'labs-avisos', 'labs-idioma', 'labs-llave', 'labs-quien', 'labs-rankings', 'flags', 'flags-off', 'flags-pinned', 'duels-demo',
   'activo', 'activo-juegos', 'dispositivo', 'origin', 'ref', 'ultima', 'vino', 'visita', 'visita-jugo', 'visita-via', 'not-counted', 'rooms-created', 'dias',
   'splash-alcance', 'splash-suave', 'splash-via', 'splash-visto', 'season-guess', 'lanza-recarga', 'cover-dialogs', 'support', 'buzon',
-  'profile-bubble', 'profile-intro', 'profile-seen-day', 'profile-via',
+  'profile-bubble', 'profile-intro', 'profile-seen-day', 'profile-via', 'drift:tuning',
   'prueba:*', 'buzon:prueba', 'vapid-prueba', 'copa:prueba', 'copa:prueba:*',
 ].map(k => P + k).concat(['labs:pildoras', 'copa:prueba:uid']);
 
