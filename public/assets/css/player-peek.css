@@ -32,7 +32,7 @@
 /* One's own sheet from a ranking: «(tú)» after the name, quieter, and a link to the profile under it (44 px to tap) */
 .pf-peek-you { color: var(--muted); font-family: var(--font-body); text-transform: none; font-size: var(--fs-100); font-weight: 800; letter-spacing: 0; white-space: nowrap; }
 .pf-peek-mine { display: inline-flex; align-items: center; min-height: 44px; color: var(--cyan); font-weight: 900; text-decoration: none; }
-.pf-peek-body { display: grid; gap: var(--s-20); }
+.pf-peek-body { display: grid; gap: var(--s-20); align-content: start; flex: 1 0 auto; } /* it fills the sheet as its height eases, so CERRAR stays at the bottom */
 .hoja .pf-peek-line { font-size: var(--fs-85); }
 /* Lab flag profile-chips: since when and the overall place as two chips, centred (the owner's pick, 2026-11-24) */
 .pf-peek-chips { justify-content: center; margin: 0; }
@@ -123,3 +123,17 @@
 @keyframes pf-destello { 0% { background-position: 120% 0; } 45%, 100% { background-position: -30% 0; } }
 @media (prefers-reduced-motion: reduce) { .pf-peek-here--shine *, .pf-peek-here--shine::after, .pf-peek-here--shine .pf-peek-here-medal::before, .pf-peek-here--shine .pf-medal::before,
   .pf-peek-here--shine .pf-medal, .pf-peek-here--shine .pf-medal > b, .pf-peek-here--shine .pf-medal::after { animation: none; } }
+/* While a player's facts load: a skeleton of the card's own shape (two chips, the three stats, the games' rows, a row
+   of medals), so the sheet opens near its final height and eases the rest (player-peek.js `settle`, the owner 2026-11-26).
+   «Cargando…» stays for screen readers only. */
+.pf-peek-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pf-skel { display: block; background: rgb(var(--ink-rgb) / 0.08); border-radius: var(--r-12); animation: pf-skel 1.2s ease-in-out infinite alternate; }
+.pf-skel-row { display: flex; justify-content: center; gap: var(--s-8); }
+.pf-skel-chip { width: 112px; height: 36px; border-radius: var(--r-pill); }
+.pf-skel-stat { height: 74px; }
+.pf-skel-h { width: 46%; height: 20px; border-radius: var(--r-8); }
+.pf-skel-game { height: 40px; }
+.pf-skel-medals { justify-content: space-around; padding: var(--s-16) 0; }
+.pf-skel-medal { width: 56px; height: 56px; border-radius: 50%; }
+@keyframes pf-skel { to { background: rgb(var(--ink-rgb) / 0.16); } }
+@media (prefers-reduced-motion: reduce) { .pf-skel { animation: none; } }

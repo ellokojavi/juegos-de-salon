@@ -1,3 +1,3 @@
 level: patch
 
-- **Duels (lab):** the ⚔️ is gone from the ranking rows. Instead, tapping another player in a ranking opens their sheet with «⚔️ Challenge to a duel» next to Close, which opens the new duel against them, in that ranking's game when it is a duel game.
+- **Player sheets:** opening a player's sheet from a ranking no longer jumps while their facts load. It opens on a skeleton of the card's own shape (two chips, the three stats, the games, a row of medals) close to its final height, then eases the last few pixels and fades the facts in; Close stays put. Their all-time place appears with the rest instead of a moment earlier.
