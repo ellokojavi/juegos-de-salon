@@ -339,6 +339,11 @@
           "date": "2026-10-28",
           "what": "Ideas check: solo Plots shows 32 starts, 2 finished, while the home count gives it 52 finished; finish reporting may be broken",
           "commit": null
+        },
+        {
+          "date": "2026-11-26",
+          "what": "Ideas round 2026-11-25: Paint Mines 65 starts/0 finishes, Plots 21/0, Sudoku 20/3 while their difficulty variants show 100%: starts logged under the base id, finishes under the variant",
+          "commit": null
         }
       ],
       "mechanism": null
@@ -915,9 +920,18 @@
           "date": "2026-11-19",
           "what": "Weekly popularity opened #1503 green but its direct gh pr merge was refused (base branch policy); the order only landed when the owner enabled auto-merge a day later. Run https://github.com/ellokojavi/juegos-de-salon/actions/runs/43965544267",
           "commit": null
+        },
+        {
+          "date": "2026-11-26",
+          "what": "Weekly popularity failed a third Monday (run 45292320743, #1825 behind main, base branch policy refused the plain merge); owner enabled auto-merge by hand",
+          "commit": null
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-11-26",
+        "what": "popularity.yml: behind main, it turns on auto-merge and the merge queue takes it (6075873fb)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1840"
+      }
     },
     {
       "key": "push-guard-swallowed",
@@ -1138,6 +1152,16 @@
           "date": "2026-11-24",
           "what": "Documentation round 2026-11-24 again stat/grep only on first pass; sent back, second pass read 24 of 47 diffs",
           "commit": null
+        },
+        {
+          "date": "2026-11-26",
+          "what": "Round 2026-11-25: PR #1896 only advanced documentation.json after reading diff stats and changelog entries for 45 PRs in 63 s; sent back; second pass still skipped public/ diffs, processes added the Duels lv note to D-603 itself",
+          "commit": null
+        },
+        {
+          "date": "2026-11-26",
+          "what": "Round 2026-11-26 (#1930): per-PR list given after a 92 s run; Duels PRs judged 'styling only' without a game page, cup.md line 28 left stale",
+          "commit": null
         }
       ],
       "mechanism": null
@@ -1205,6 +1229,78 @@
         "915b0ecda5",
         "70d8e2fa96"
       ]
+    },
+    {
+      "key": "architecture-hit-late",
+      "what": "CI tests: tools/agents/architecture.test.mjs · ",
+      "seen": [
+        {
+          "date": "2026-11-19T18:34:25.625Z",
+          "what": "#1655 tests: tools/agents/architecture.test.mjs",
+          "commit": "a9e88be794e94a5e3cda944634e2acb1abe322f1"
+        },
+        {
+          "date": "2026-11-19T18:48:28.203Z",
+          "what": "#1655 tests: tools/agents/architecture.test.mjs",
+          "commit": "cb0ce98d005900c234eb3a95fc120f11b0e6e491"
+        },
+        {
+          "date": "2026-11-25T20:41:13.619Z",
+          "what": "#1912 tests: tools/agents/architecture.test.mjs",
+          "commit": "d60194faedec144adffb5fd15f748a8b574af4ba"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "ea485401a9"
+      ]
+    },
+    {
+      "key": "spanish-export-late",
+      "what": "CI tests: tools/agents/identifiers.test.mjs · ",
+      "seen": [
+        {
+          "date": "2026-11-20T01:03:34.845Z",
+          "what": "#1667 tests: tools/agents/identifiers.test.mjs",
+          "commit": "c6fb3a1d0a34b79c3cf555fcbab7ba426be0a07f"
+        },
+        {
+          "date": "2026-11-20T01:09:51.106Z",
+          "what": "#1667 tests: tools/agents/identifiers.test.mjs",
+          "commit": "7638f39e835a06072937aee2125e5f4649ebe325"
+        },
+        {
+          "date": "2026-11-20T01:20:34.985Z",
+          "what": "#1667 tests: tools/agents/identifiers.test.mjs",
+          "commit": "edf375043e8583571d9e3de172cdf8c43d4d4e01"
+        },
+        {
+          "date": "2026-11-20T01:26:49.073Z",
+          "what": "#1667 tests: tools/agents/identifiers.test.mjs",
+          "commit": "774c2a4e9b8a441cd6447e89fd267c7fe00dac93"
+        },
+        {
+          "date": "2026-11-25T02:12:10.238Z",
+          "what": "#1886 tests: tools/agents/identifiers.test.mjs",
+          "commit": "681663541bbf8a9dcadea85a7ffc43eeb40a6fae"
+        }
+      ],
+      "mechanism": null,
+      "signatures": [
+        "965641ffe6"
+      ]
+    },
+    {
+      "key": "durations-over-target",
+      "what": "groups.mjs measure: heaviest group 486 s fails groups.test.mjs (TARGET_S), so the round cannot commit durations.json; third round in a row (471 s 11-23, 484 s 11-24, 486 s 11-26)",
+      "seen": [
+        {
+          "date": "2026-11-26",
+          "what": "groups.mjs measure: heaviest group 486 s fails groups.test.mjs (TARGET_S), so the round cannot commit durations.json; third round in a row (471 s 11-23, 484 s 11-24, 486 s 11-26)",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -1417,6 +1513,12 @@
       "key": "e2e-new-flag-on-everywhere",
       "what": "flags-snapshot.test.mjs fails on a flag of FLAGS with no state the tests know (not in the snapshot nor in flags-held.json)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1899"
+    },
+    {
+      "date": "2026-11-26",
+      "key": "popularity-merge-blocked",
+      "what": "popularity.yml: behind main, it turns on auto-merge and the merge queue takes it (6075873fb)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1840"
     }
   ],
   "queueDone": [
@@ -1433,28 +1535,28 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-24",
-      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4"
+      "date": "2026-11-26",
+      "to": "48a50ae6c88b1a971db614a30f8a9dde7c4dae3b"
     },
     "usability": {
-      "date": "2026-11-24",
-      "to": "68f57daac615fb07b7cd20a361cfb9ba761399a4"
+      "date": "2026-11-26",
+      "to": "48a50ae6c88b1a971db614a30f8a9dde7c4dae3b"
     },
     "ideas": {
-      "date": "2026-11-18",
-      "to": "1fe300d8d0391e10e4ed68edc9c289e3f52e8708"
+      "date": "2026-11-26",
+      "to": "73d65fbbebf2f886f1b2de58bad941f323bd1fc4"
     },
     "ci-health": {
-      "date": "2026-11-18",
-      "to": "1fe300d8d0391e10e4ed68edc9c289e3f52e8708"
+      "date": "2026-11-26",
+      "to": "73d65fbbebf2f886f1b2de58bad941f323bd1fc4"
     },
     "backlog": {
-      "date": "2026-11-18",
-      "to": "1fe300d8d0391e10e4ed68edc9c289e3f52e8708"
+      "date": "2026-11-26",
+      "to": "48a50ae6c88b1a971db614a30f8a9dde7c4dae3b"
     },
     "retention": {
-      "date": "2026-11-18",
-      "to": "1fe300d8d0391e10e4ed68edc9c289e3f52e8708"
+      "date": "2026-11-26",
+      "to": "73d65fbbebf2f886f1b2de58bad941f323bd1fc4"
     }
   },
   "rounds": [

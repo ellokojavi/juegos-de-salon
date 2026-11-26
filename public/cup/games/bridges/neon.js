@@ -239,7 +239,7 @@ function sierra(ctx, W, base, alto, color, borde, semilla, hasta) {
 }
 
 /** Draws a stage in the house style: same arguments as scene.js's `dibujar`. */
-export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null } = {}) {
+export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null, fantasma = null } = {}) {
   if (!c._m) return;
   const ctx = c.getContext('2d');
   const k = c._m.escala / ARTE, dpr = c._m.dpr;
@@ -502,6 +502,17 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), l = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / l, uy = (by - ay) / l;
     const [px, py] = A(x, y), m = 3;
     viga(px - ux * m, py - uy * m, px + ux * m, py + uy * m, v, 1.6);
+  }
+  // The 💡 hint's beam (flag bridges-hint): a white ghost that breathes, with a ring at each end, until it is laid
+  if (fantasma) {
+    const [ax, ay] = A(...fantasma.a), [bx, by] = A(...fantasma.b);
+    ctx.globalAlpha = QUIETO ? 0.6 : 0.45 + 0.25 * Math.sin(ahora * 4);
+    brilla(ctx, '#ffffff', 6, () => {
+      linea(ctx, ax, ay, bx, by, '#ffffff', grosor + 0.6);
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 0.6;
+      for (const [x, y] of [[ax, ay], [bx, by]]) { ctx.beginPath(); ctx.arc(x, y, 2.4, 0, Math.PI * 2); ctx.stroke(); }
+    });
+    ctx.globalAlpha = 1;
   }
   // The beam being dragged: dashes, green if it can go, pink if not, and a ring where it will land
   if (arrastre) {

@@ -26,22 +26,10 @@
   "settings-in-profile": {
     "state": "off"
   },
-  "badge-details": {
-    "state": "lab"
-  },
-  "profile-chips": {
-    "state": "lab"
-  },
-  "podium-shine": {
-    "state": "lab"
-  },
   "rivals": {
     "state": "lab"
   },
   "home-carousels-sheet": {
-    "state": "lab"
-  },
-  "cup-big": {
     "state": "lab"
   },
   "dominorama-corner-labels": {
@@ -50,16 +38,13 @@
   "sudoku-big-keys": {
     "state": "lab"
   },
-  "share-tagline": {
-    "state": "lab"
-  },
-  "vibration-setting": {
-    "state": "lab"
-  },
   "blackjack-felt": {
     "state": "lab"
   },
   "lab-ready": {
     "state": "lab"
+  },
+  "bridges-hint": {
+    "state": "off"
   }
 }

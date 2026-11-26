@@ -37,19 +37,25 @@
   };
   var G = w.__stallGuard = { shown: false, MS: MS, TEXTS: TEXTS, FUN: FUN };
 
-  /** A line that changes every 2 s, from a random start, never the same twice in a row; it stops once off the page. */
+  /** A line that shows after 2.5 s and then changes every 2 s, from a random start, never the same twice in a row; it stops once off the page. */
   G.funLine = function (l) {
     var list = FUN[l] || FUN[lang()];
     var i = Math.floor(Math.random() * list.length);
     var p = d.createElement('p');
     p.className = 'waiting-fun';
     p.setAttribute('aria-live', 'polite');
-    p.textContent = list[i];
-    var t = setInterval(function () {
+    // The first line only after 2.5 s of spinner: most waits end before it and nothing distracts
+    var t = null;
+    setTimeout(function () {
+      if (!p.isConnected) return;
+      p.textContent = list[i];
+      t = setInterval(next, 2000);
+    }, 2500);
+    function next() {
       if (!p.isConnected) { clearInterval(t); return; }
       i = (i + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
       p.textContent = list[i];
-    }, 2000);
+    }
     return p;
   };
 
@@ -69,7 +75,7 @@
     var main = d.querySelector('main') || d.body;
     if (!main) return;
     spinner = d.createElement('div');
-    spinner.className = 'waiting waiting--screen';
+    spinner.className = 'waiting waiting--screen waiting--center';
     spinner.id = 'stall-wait';
     spinner.setAttribute('role', 'status');
     spinner.appendChild(G.funLine());

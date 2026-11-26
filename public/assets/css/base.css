@@ -329,7 +329,11 @@ p { line-height: 1.5; margin: 0 0 12px; }
 .waiting--screen { padding: var(--s-32) 0; }
 /* The waiting screen's spinner (the owner, 2026-11-25: «…» alone did not read as waiting); still with reduced motion */
 .waiting--screen::before { content: ''; display: block; width: 40px; height: 40px; margin: 0 auto var(--s-12); border-radius: 50%; border: 4px solid var(--glass-border); border-top-color: var(--cyan); animation: spin 0.9s linear infinite; }
-.waiting-fun { margin: 0; color: var(--muted); font-weight: 800; }
+.waiting-fun { margin: 0; color: var(--muted); font-weight: 800; min-height: 1.5em; }
+/* A wait with nothing else on screen (La Copa's «…», a page not started): the spinner and its line in the
+   middle of the screen, over a page that shows only its title; taps go through to «‹ Menú» */
+.waiting--center { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 var(--s-24); pointer-events: none; }
+.waiting--center::before { margin-bottom: var(--s-12); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .waiting--screen::before { animation: none; } }
 .waiting .dots::after, .dots::after { content: '…'; animation: dots 1.2s steps(4) infinite; }

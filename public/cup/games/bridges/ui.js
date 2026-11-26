@@ -9,11 +9,19 @@
  * The moves are `{ etapa, hechas: [{ usada, pico }], vigas, fin, seg, puntos }`: a reload rebuilds the
  * stage with the beams laid so far. The score is the lab's (`puntajePartida`), kept in `puntos` when the
  * game ends, so the result needs neither the catalog nor the physics.
+ *
+ * 💡 Hint (flag bridges-hint; lab: #seccion-bridges-hint): only on the game's own page, for one player,
+ * never in La Copa, its trial, Uno al día or a duel, where everyone plays the same. Beside ↩ Undo, it
+ * shows one beam of the crossing's known bridge (`pista()` in engine.js) ghosted on the board until the
+ * player lays it (a tap on it, or a drag over it); each costs COSTO_PISTA points (`J.pistas`), and the
+ * ghost waiting is `J.fantasma`.
  */
 import { el, confetti } from '../../../assets/js/ui.js';
 import { fijos, crearSim, paso, DT, puntajePartida, picoDe, picoReferencia, costo, unirViga, puntosMedios, partir, trazo, cubierta, esCubierta, PUNTOS_ETAPA } from './physics.js';
 import { QUIETO, pct, aMundo, esfuerzoAhora, timeOfDay, DEMO, trenMini, lienzo, medidor, dibujar, fueraDeEscena } from './scene.js';
-import { etapasDe, tarjeta, CATALOGO_URL, NIVELES, TIEMPO_S } from './engine.js';
+import { etapasDe, tarjeta, pista, cubre, CATALOGO_URL, NIVELES, TIEMPO_S } from './engine.js';
+import { flag } from '../../../assets/js/flags.js';
+import { tiene, param } from '../../../assets/js/parametros.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { mmss } from '../../../assets/js/time-format.js';
@@ -111,10 +119,11 @@ export function montar(raiz, ctx) {
   const { T, fmt, SFX, vibrate, p, lang } = ctx;
   const niveles = p.niveles || NIVELES, total = niveles.length, limite = p.tiempo || TIEMPO_S * 1000;
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? ctx.jugadas : {};
-  const J = { etapa: 0, hechas: [], vigas: [], fin: null, seg: 0, puntos: null, ...previa };
+  const J = { etapa: 0, hechas: [], vigas: [], fin: null, seg: 0, puntos: null, pistas: 0, fantasma: null, ...previa };
   J.hechas = (J.hechas || []).slice(0, total); J.vigas = Array.isArray(J.vigas) ? J.vigas : [];
   J.etapa = Math.min(J.etapa | 0, total - 1);
-  const copia = () => ({ ...J, hechas: J.hechas.map(x => ({ ...x })), vigas: J.vigas.map(v => ({ a: [...v.a], b: [...v.b] })) });
+  const copia = () => ({ ...J, hechas: J.hechas.map(x => ({ ...x })), vigas: J.vigas.map(v => ({ a: [...v.a], b: [...v.b] })),
+    fantasma: J.fantasma && { a: [...J.fantasma.a], b: [...J.fantasma.b] } });
   const guardar = () => ctx.guardar(copia());
   const final = () => ({ ...copia(), etapas: total, tiempo: limite });
   const usado = () => ctx.tiempo?.() ?? 0;
@@ -124,8 +133,13 @@ export function montar(raiz, ctx) {
   let etapas = null, acabado = !!J.fin, reloj = null, relojNodo = null, simulando = false, historial = [], rotasAntes = new Set(), inicioEtapa = null;
   const visita = visitante(total);
   window.__trenCopa = { J, get etapas() { return etapas; } };
+  // 💡 Hints only for one player on the game's own page (`data-suelto`): not La Copa, its trial, Uno al día or a duel
+  let conPistas = false, ponerPista = null;
+  if (document.body.hasAttribute('data-suelto') && !ctx.textoFin && !J.fin && !tiene('today') && !param('duel')) {
+    flag('bridges-hint').then(on => { conPistas = on; if (on) ponerPista?.(); }).catch(() => {});
+  }
 
-  const puntaje = () => puntajePartida(J.hechas.map(x => x.usada), J.seg, etapas, J.hechas.map(x => x.pico));
+  const puntaje = () => puntajePartida(J.hechas.map(x => x.usada), J.seg, etapas, J.hechas.map(x => x.pico), J.pistas);
 
   const progreso = () => el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
     ...Array.from({ length: total }, (_, k) => el('span', { class: k < J.hechas.length ? 'hecha' : k === J.etapa && !J.fin ? 'actual' : '' })));
@@ -171,6 +185,25 @@ export function montar(raiz, ctx) {
       historial.push(J.vigas); J.vigas = cubierta(e); aviso.textContent = T.tvCleared; guardar(); repintar();
     }, { id: 'btn-borrar' });
     const botonRendirse = conConfirmacion('rendirse', `🏳️ ${T.giveUp}`, `🏳️ ${T.tvSure}`, () => acabar('rendido'), { id: 'btn-rendirse' });
+    // 💡 Hint: one beam of the known bridge, ghosted until the player lays it; the same ghost is not charged twice
+    const botonPista = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-pista', onClick: () => {
+      if (simulando || acabado) return;
+      if (!J.fantasma) {
+        const v = pista(e, J.vigas);
+        if (!v) { aviso.textContent = T.tvHintNone; return; }
+        J.fantasma = v; J.pistas = (J.pistas | 0) + 1; guardar();
+      }
+      SFX.tap(); vibrate(10); aviso.textContent = T.tvHintShown; repintar();
+      // On a short phone the button sits under the board: bring the board back into view to see the ghost
+      if (c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start', behavior: QUIETO ? 'auto' : 'smooth' });
+    } }, `💡 ${T.tvHint}`);
+    const acciones = el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse);
+    // Two by two, the board a little smaller on a short phone (style.css): it is sized again once the row is there
+    ponerPista = () => {
+      if (botonPista.isConnected || acabado || !e.solucion?.length) return;
+      botonDeshacer.after(botonPista); acciones.classList.add('con-pista');
+      requestAnimationFrame(() => { if (c.isConnected && !simulando) { c._ajustar(); repintar(); } });
+    };
 
     raiz.replaceChildren(el('div', { class: 'stack tv-juego' },
       el('div', { class: 'tv-cabeza' }, progreso(), relojNodo),
@@ -180,12 +213,15 @@ export function montar(raiz, ctx) {
       el('div', { class: 'tv-tablero' }, c, aguja.caja),
       el('div', { class: 'tv-barra' }, tablones, cuenta, aviso),
       botonProbar,
-      el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse)));
+      acciones));
+    if (conPistas) ponerPista();
     c._ajustar();
     tic();
 
     const usados = () => new Set([...fijos(e).map(([x, y]) => `${x},${y}`), ...J.vigas.flatMap(v => [v.a.join(','), v.b.join(',')])]);
     function repintar(arrastre = null) {
+      // The ghost goes once its beam is laid, whole or split at its joints
+      if (J.fantasma && cubre(J.vigas, J.fantasma)) J.fantasma = null;
       const gastado = costo(e, J.vigas);
       cuenta.textContent = fmt(e.acero ? T.tvSteel : T.tvWood, { n: n1(gastado), max: n1(e.presupuesto) });
       cuenta.classList.toggle('lleno', gastado >= e.presupuesto - 0.05);
@@ -193,13 +229,14 @@ export function montar(raiz, ctx) {
       botonDeshacer.disabled = !historial.length || simulando;
       botonProbar.disabled = simulando;
       botonBorrar.disabled = simulando || !J.vigas.some(v => !esCubierta(v));
-      dibujar(c, e, { vigas: J.vigas, grilla: !simulando, arrastre, usados: usados(), rotasAntes, visitas: visitas() });
+      botonPista.disabled = simulando;
+      dibujar(c, e, { vigas: J.vigas, grilla: !simulando, arrastre, usados: usados(), rotasAntes, visitas: visitas(), fantasma: simulando ? null : J.fantasma });
     }
     repintar();
     let ultimoArrastre = null;
     const vivo = () => {
       if (!c.isConnected || acabado) return;
-      if (!simulando) dibujar(c, e, { vigas: J.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes, visitas: visitas() });
+      if (!simulando) dibujar(c, e, { vigas: J.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes, visitas: visitas(), fantasma: J.fantasma });
       requestAnimationFrame(vivo);
     };
     if (!QUIETO) requestAnimationFrame(vivo);
@@ -229,39 +266,43 @@ export function montar(raiz, ctx) {
       const m = punto(ev), g = cercano(m);
       const toque = inicioPx && Math.hypot(ev.clientX - inicioPx[0], ev.clientY - inicioPx[1]) < 8;
       if (toque) {
+        // A tap on the hint's ghost lays it, as a drag along it would
+        if (J.fantasma && distancia(J.fantasma, m) < 0.35) { poner(J.fantasma.a, J.fantasma.b); desde = null; ultimoArrastre = null; repintar(); return; }
         const i = vigaBajo(m);
         if (i >= 0 && esCubierta(J.vigas[i])) { SFX.error(); vibrate([30, 30, 30]); aviso.textContent = T.tvDeck; }
         else if (i >= 0) { historial.push(J.vigas); J.vigas = J.vigas.filter((_, k) => k !== i); SFX.tap(); aviso.textContent = T.tvRemoved; guardar(); }
         else if (!desde) aviso.textContent = T.tvLoose;
         desde = null; ultimoArrastre = null; repintar(); return;
       }
-      if (desde) {
-        const hasta = cerca(m, g) ? g : null;
-        const base = e.madera && hasta ? partir(partir(J.vigas, desde), hasta) : J.vigas;
-        const t = hasta ? trazo(e, base, desde, hasta) : { piezas: [], motivo: 'fuera' };
-        let vs = J.vigas;
-        for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
-        // What it costs is measured after joining: a long beam over the deck adds only what is not there yet
-        const motivo = t.motivo || (costo(e, vs) === costo(e, J.vigas) && vs.length === J.vigas.length ? 'repetida'
-          : costo(e, vs) > e.presupuesto + 1e-9 ? (e.acero ? 'sinAcero' : 'sinMadera') : null);
-        const textos = { larga: T.tvTooLong, fuera: T.tvOutside, repetida: T.tvRepeated, presupuesto: T.tvNoWood, sinMadera: T.tvNoWood, sinAcero: T.tvNoSteel, suelta: T.tvLoose };
-        if (motivo) { if (motivo !== 'cero') { aviso.textContent = textos[motivo] || T.tvOutside; SFX.error(); vibrate([30, 30, 30]); } }
-        else {
-          historial.push(J.vigas);
-          J.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = '';
-          guardar();
-        }
-      }
+      if (desde) poner(desde, cerca(m, g) ? g : null);
       desde = null; ultimoArrastre = null; repintar();
     });
-    function vigaBajo([x, y]) {
+    /** Lays a beam (or a stroke of them) from `desde` to `hasta`, or says why not. */
+    function poner(desde, hasta) {
+      const base = e.madera && hasta ? partir(partir(J.vigas, desde), hasta) : J.vigas;
+      const t = hasta ? trazo(e, base, desde, hasta) : { piezas: [], motivo: 'fuera' };
+      let vs = J.vigas;
+      for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
+      // What it costs is measured after joining: a long beam over the deck adds only what is not there yet
+      const motivo = t.motivo || (costo(e, vs) === costo(e, J.vigas) && vs.length === J.vigas.length ? 'repetida'
+        : costo(e, vs) > e.presupuesto + 1e-9 ? (e.acero ? 'sinAcero' : 'sinMadera') : null);
+      const textos = { larga: T.tvTooLong, fuera: T.tvOutside, repetida: T.tvRepeated, presupuesto: T.tvNoWood, sinMadera: T.tvNoWood, sinAcero: T.tvNoSteel, suelta: T.tvLoose };
+      if (motivo) { if (motivo !== 'cero') { aviso.textContent = textos[motivo] || T.tvOutside; SFX.error(); vibrate([30, 30, 30]); } }
+      else {
+        historial.push(J.vigas);
+        J.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = '';
+        guardar();
+      }
+    }
+    /** How far point (x, y) is from beam v, in squares. */
+    function distancia(v, [x, y]) {
+      const [ax, ay] = v.a, [bx, by] = v.b, dx = bx - ax, dy = by - ay;
+      const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(x - (ax + u * dx), y - (ay + u * dy));
+    }
+    function vigaBajo(p) {
       let mejor = -1, d = 0.22;
-      J.vigas.forEach((v, k) => {
-        const [ax, ay] = v.a, [bx, by] = v.b, dx = bx - ax, dy = by - ay;
-        const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
-        const dd = Math.hypot(x - (ax + u * dx), y - (ay + u * dy));
-        if (dd < d) { d = dd; mejor = k; }
-      });
+      J.vigas.forEach((v, k) => { const dd = distancia(v, p); if (dd < d) { d = dd; mejor = k; } });
       return mejor;
     }
 
@@ -291,6 +332,7 @@ export function montar(raiz, ctx) {
             avisado = true; aviso.textContent = T.tvPassed; SFX.win(); vibrate([30, 50, 30]);
             // Saved now, so a reload after the train made it does not ask for the stage again
             J.hechas.push({ usada: costo(e, J.vigas), pico: picoDe(sim) });
+            J.fantasma = null;
             if (J.hechas.length < total) { visita.mudar(J.etapa); J.etapa++; J.vigas = []; }
             guardar();
           }
@@ -385,7 +427,7 @@ export function montar(raiz, ctx) {
     J.fin = motivo;
     J.seg = Math.min(limite, usado()) / 1000;
     const r = puntaje();
-    J.puntos = { total: r.total, etapas: r.etapas, ahorro: r.ahorro, solidez: r.solidez, rapidez: r.rapidez, pasadas: r.pasadas,
+    J.puntos = { total: r.total, etapas: r.etapas, ahorro: r.ahorro, solidez: r.solidez, rapidez: r.rapidez, pasadas: r.pasadas, pistas: r.pistas, ptsPistas: r.ptsPistas,
       detalle: J.hechas.map((x, k) => ({ usada: x.usada, max: etapas[k].presupuesto, minimo: etapas[k].minimo })) };
     guardar();
     ctx.pararReloj?.(final());
@@ -446,6 +488,7 @@ export function desglose(e, { T, fmt, mmss: tiempo = mmss, lang }) {
     fmt(T.tvBdSpeed, { t: tiempo((e.seg || 0) * 1000), p: r.rapidez }),
   ];
   lineas.push(...(r.detalle || []).map((x, k) => fmt(T.tvBdStage, { n: k + 1, w: n1(x.usada), max: n1(x.max), m: n1(x.minimo) })));
+  if (r.pistas) lineas.push(fmt(r.pistas === 1 ? T.tvBdHintOne : T.tvBdHints, { n: r.pistas, p: r.ptsPistas }));
   return lineas;
 }
 

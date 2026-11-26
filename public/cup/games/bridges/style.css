@@ -38,6 +38,10 @@
 .tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
 .tv-acciones .btn { padding-inline: var(--s-6); }
 .tv-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); }
+/* 💡 Hint (flag bridges-hint): beside Undo, so the four actions go two by two, and the board gives up the
+   extra row's height on a phone that is not tall, so all four stay in view on a 390 × 844 */
+.tv-acciones.con-pista { grid-template-columns: repeat(2, 1fr); }
+.tv-juego:has(.con-pista) .tv-tablero { max-width: min(560px, max(260px, calc(100svh - 530px))); }
 .tv-juego .score-big { margin: 0; font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .tv-sello { justify-self: center; margin: 0 auto; font: var(--fs-120) var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: var(--s-2) var(--s-12); border: 3px solid currentColor; border-radius: var(--r-10); transform: rotate(-5deg); width: fit-content; }

@@ -3,13 +3,14 @@
  * phone still showed the last player's points and offered their cup's Gran Final). PROGRESS is what a
  * player did or earned: signing out clears it, so the next person starts on a clean sheet (signing in
  * brings back what the account keeps). DEVICE is the phone's own: settings, visits, hints, tests.
- * `*` stands for any text. storage-keys.test.mjs fails on a key in neither list, so a new one is
+ * A mark of what was already told or shown (an achievement, a recap, a challenge) is the phone's: a
+ * player who signs out and in is never told it again. `*` stands for any text. storage-keys.test.mjs fails on a key in neither list, so a new one is
  * sorted the day it is written.
  */
 const P = 'juegos-de-salon:';
 export const PROGRESS = [
   // Uno al día: the days, the started game, the invites, the season seen (its reminder hour stays)
-  'uno-al-dia', 'uno-al-dia:empezado', 'uno-al-dia:partida:*', 'uno-al-dia:inv', 'uno-al-dia:aceptados', 'uno-al-dia:temporada-vista',
+  'uno-al-dia', 'uno-al-dia:empezado', 'uno-al-dia:partida:*', 'uno-al-dia:inv', 'uno-al-dia:aceptados',
   // The cups: this phone's cups, its players, days, copies and queued uploads (not the test harness)
   'copa:*',
   // The player: bests, friends, the upload queue
@@ -18,7 +19,7 @@ export const PROGRESS = [
   'jugados', 'partidas', 'diario:*', 'aletazo-best', 'memory-best', 'stack-best', 'sudoku:best', '*:record-solo', '*:record-relampago',
   '*:days', 'artifacts', 'artilugio-stages', 'play-hours', 'play-marks', 'play-run',
   // Badges, achievements and rankings seen, favourites, duels
-  'profile-badges:*', 'logros-anunciados', 'logros-base', 'rk-visto:*', 'favoritos', 'duels-challenged',
+  'favoritos',
   // Names typed in, and the games in progress to rejoin
   '*:name', '*:names', 'players', '*:session', 'cuarto-rey:game', 'bn:session', 'tyf:session',
 ].map(k => P + k).concat(['uad-pts-cache']);
@@ -29,6 +30,9 @@ export const DEVICE = [
   'labs-avisos', 'labs-idioma', 'labs-llave', 'labs-quien', 'labs-rankings', 'flags', 'flags-off', 'flags-pinned', 'duels-demo',
   'activo', 'activo-juegos', 'dispositivo', 'origin', 'ref', 'ultima', 'vino', 'visita', 'visita-jugo', 'visita-via', 'not-counted', 'rooms-created', 'dias',
   'splash-alcance', 'splash-suave', 'splash-via', 'splash-visto', 'season-guess', 'lanza-recarga', 'cover-dialogs', 'support', 'buzon',
+  // What was already told or shown (achievements, recaps, challenges, tables): never told again after
+  // signing out and in (the owner's report); the badges seen are kept per player id
+  'logros-anunciados', 'logros-base', 'profile-badges:*', 'uno-al-dia:temporada-vista', 'copa:resumen-visto', 'duels-challenged', 'rk-visto:*',
   'profile-bubble', 'profile-intro', 'profile-seen-day', 'profile-via', 'drift:tuning',
   'prueba:*', 'buzon:prueba', 'vapid-prueba', 'copa:prueba', 'copa:prueba:*',
 ].map(k => P + k).concat(['labs:pildoras', 'copa:prueba:uid']);

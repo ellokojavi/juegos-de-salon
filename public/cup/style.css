@@ -532,6 +532,8 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .rej.marca { color: rgb(var(--cp-negro-rgb) / 0.45); font-size: clamp(0.8rem, 3.8vw, 1.1rem); }
 .rej.choque { box-shadow: inset 0 0 0 3px var(--red); background-image: repeating-linear-gradient(45deg, rgb(var(--red-rgb) / 0.35) 0 4px, transparent 4px 8px) !important; }
 .rej:disabled { cursor: default; }
+/* A thin dark outline on the crown, so it stands out on light regions too */
+.rej:not(.marca), .rej-ej span { text-shadow: 1px 0 0 rgb(var(--cp-negro-rgb) / 0.7), -1px 0 0 rgb(var(--cp-negro-rgb) / 0.7), 0 1px 0 rgb(var(--cp-negro-rgb) / 0.7), 0 -1px 0 rgb(var(--cp-negro-rgb) / 0.7); }
 /* A texture per region over its color, for colorblind players (#896, D-481): region-patterns.js */
 .tramas .rej:not(.choque), .tramas .rej-ej span:not(.choque) { background: var(--trama), var(--zona) !important; }
 .tramas .rej.marca { color: rgb(var(--cp-negro-rgb) / 0.6); text-shadow: 0 0 2px var(--ink), 0 0 4px var(--ink); }
