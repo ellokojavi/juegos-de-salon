@@ -8010,6 +8010,19 @@
         "stat": "40 file(s) +2029 −119: README.md, changelog/drift-greybox.md, changelog/uad-no-points-signed-out.md, docs/COSTS.md, docs/DECISIONS.md, …"
       },
       "flaky": false
+    },
+    {
+      "run": 45823822513,
+      "check": "tests",
+      "pr": 1934,
+      "branch": "labs-twins",
+      "commit": "3bc4f2191a84fd2fa9d805f0fbd788a7605cb3d4",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-26T12:57:37.982Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
