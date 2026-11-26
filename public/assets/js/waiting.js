@@ -12,7 +12,7 @@ import { el } from './ui.js';
 export function showWaiting(body, text, { error = false, retry = null, retryLabel = '', home = null, homeLabel = '' } = {}) {
   // A bare «…» gets the fun lines under the spinner (stall-guard.js, on the pages that load it)
   const fun = !error && text === '…' && globalThis.__stallGuard?.funLine;
-  body.replaceChildren(el('div', { class: error ? 'form-error' : 'waiting waiting--screen' }, fun ? fun() : text));
+  body.replaceChildren(el('div', { class: error ? 'form-error' : fun ? 'waiting waiting--screen waiting--center' : 'waiting waiting--screen' }, fun ? fun() : text));
   if (retry) body.append(el('button', { class: 'btn btn--cyan', onClick: retry }, retryLabel));
   if (error && home) body.append(el('a', { class: 'btn btn--ghost btn--sm', href: home }, homeLabel));
 }
