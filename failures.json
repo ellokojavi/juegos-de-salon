@@ -7925,6 +7925,19 @@
         "stat": "2 file(s) +3 −3: public/assets/js/season.js, public/assets/js/vigia.js"
       },
       "flaky": false
+    },
+    {
+      "run": 45760050220,
+      "check": "tests",
+      "pr": 1921,
+      "branch": "loading-timeout",
+      "commit": "1e28936455b459d60185ee5ad9f81060dc14bce0",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/stall-guard.js",
+      "signature": "c88c19688f",
+      "date": "2026-11-26T05:14:05.284Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
