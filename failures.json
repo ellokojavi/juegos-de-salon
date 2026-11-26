@@ -8023,6 +8023,19 @@
       "date": "2026-11-26T12:57:37.982Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 45851266118,
+      "check": "tests",
+      "pr": 1934,
+      "branch": "labs-twins",
+      "commit": "d75995377a309c81dae0b96183203167c01b441d",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-26T15:40:54.400Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
