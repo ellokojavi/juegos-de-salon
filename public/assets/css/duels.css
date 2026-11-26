@@ -147,8 +147,12 @@
 }
 .dl-stat { box-shadow: 0 4px 0 var(--bg1); }
 .dl-stat i { font-style: normal; font-size: var(--fs-110); line-height: 1; }
+/* Icon, value and label on the same lines in every tile of a row: the label sits at the bottom (the owner, 2026-11-26) */
+.dl-stat:not(.dl-stat--record) { grid-template-rows: var(--s-24) 1fr auto; align-items: center; }
+.dl-stat:not(.dl-stat--record) i { display: grid; place-items: center; height: 100%; font-size: var(--fs-140); }
+.dl-stat:not(.dl-stat--record) > span { align-self: end; }
 .dl-stat b { font: 900 var(--fs-140) var(--font-num); color: var(--yellow); }
-.dl-stat span { color: var(--muted); font: 800 var(--fs-75) var(--font-body); }
+.dl-stat > span { color: var(--muted); font: 800 var(--fs-75) var(--font-body); }
 /* The record, the arcade hero of the stats (the owner, 2026-11-26): wins lime, losses pink, the rate as a bar */
 .dl-stat--record {
   grid-column: 1 / -1; gap: var(--s-6); padding: var(--s-14) var(--s-14);
