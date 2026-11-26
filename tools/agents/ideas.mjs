@@ -162,7 +162,9 @@ export function ideasDecisions(ideas, { summary = '', date = today() } = {}) {
     const lines = [i.recommendation, `Evidence: ${i.evidence}`];
     if (i.inspiration) lines.push(`Inspired by ${i.inspiration}`);
     lines.push(`Cost: ${i.cost}`, `First try: ${i.prototype}`, `It worked if: ${i.proof}`);
-    return { question: questionOf(i), context: lines.join('\n'), yes: [{ type: 'queue', task: `ideas ${i.id}: ${i.prototype}` }] };
+    // decide refuses a decision without its origin (#1435): an idea's is this round and its evidence
+    const origin = `The ideas agent's weekly round (D-360), ${date}${i.inspiration ? `; inspired by ${i.inspiration}` : ''}. Evidence: ${i.evidence}`;
+    return { question: questionOf(i), context: lines.join('\n'), origin, yes: [{ type: 'queue', task: `ideas ${i.id}: ${i.prototype}` }] };
   });
   return { title: `Ideas: ${date}`, summary, decisions };
 }

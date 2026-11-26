@@ -6,6 +6,12 @@ what falls reach every page; what moves across the screen (`flyby`, `peek`, `str
 the home page, where nobody is mid-play. Every page gets it from `tester-boot.js`, which `vigia.js`
 already puts on every page but the panel: a new page or game needs nothing to take the skin.
 
+**First paint.** `season.js` runs after the page is drawn, so a skin's background used to arrive late and the old
+one flashed. When a public skin loads on its own days, `season.js` keeps its `--fondo` on the phone
+(`juegos-de-salon:season-guess`, with its from/to dates) and `vigia.js`, in every page's head, puts it on `<html>`
+before the first paint while today is in those days; `season.js` then confirms it or forgets it (a page with no
+skin today, a lab skin without a lab key). Not with `?test`, `?season=` or in the panel (2026-11-25).
+
 ## The pieces
 
 | File | What it holds |
