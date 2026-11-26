@@ -22,15 +22,15 @@
   // What the wait is "doing", one line at a time under the spinner (the owner, 2026-11-25: a fun wait
   // until the error comes). La Copa's «…» (waiting.js) uses them too, through G.funLine.
   var FUN = {
-    es: ['Soplando los dados para la suerte…', 'Buscando los polvitos mágicos que ni tú ni yo vemos…', 'Sobornando al dado con un caramelo…',
+    es: ['Soplando los dados para la suerte…', 'Polvitos de misericoco, que tú no ves ni yo tampoco…', 'Peinando a las marionetas…', 'Esternocleidomastoideando…', 'Sobornando al dado con un caramelo…',
       'Sacando la ficha que se cayó bajo el sillón…', 'Discutiendo quién parte…', 'Despertando al árbitro…', 'Leyendo las reglas por primera vez…',
       'Escondiendo el comodín en la manga…', 'Revisando que nadie haga trampa (tú no)…', 'Buscando un lápiz que escriba…',
       'Ensayando la cara de póker…', 'Pidiéndole revancha a la abuela…', 'Contando las cartas… otra vez…', 'Calentando la silla de la suerte…'],
-    en: ['Blowing on the dice for luck…', 'Looking for the magic dust neither of us can see…', 'Bribing the die with a candy…',
+    en: ['Blowing on the dice for luck…', 'Misericoco dust, you can\'t see it and neither can I…', 'Combing the puppets…', 'Sternocleidomastoiding…', 'Bribing the die with a candy…',
       'Fishing the lost piece out from under the couch…', 'Arguing about who goes first…', 'Waking up the referee…', 'Reading the rules for the first time…',
       'Hiding the joker up a sleeve…', 'Checking nobody cheats (not you)…', 'Looking for a pencil that works…',
       'Practising the poker face…', 'Asking Grandma for a rematch…', 'Counting the cards… again…', 'Warming up the lucky chair…'],
-    pt: ['Soprando os dados para dar sorte…', 'Procurando o pozinho mágico que nem você nem eu vemos…', 'Subornando o dado com uma bala…',
+    pt: ['Soprando os dados para dar sorte…', 'Pozinho de misericoco, que você não vê nem eu tampouco…', 'Penteando as marionetes…', 'Esternocleidomastoideando…', 'Subornando o dado com uma bala…',
       'Tirando a peça que caiu debaixo do sofá…', 'Discutindo quem começa…', 'Acordando o juiz…', 'Lendo as regras pela primeira vez…',
       'Escondendo o curinga na manga…', 'Conferindo se ninguém trapaceia (você não)…', 'Procurando um lápis que escreva…',
       'Treinando a cara de paisagem…', 'Pedindo revanche para a vovó…', 'Contando as cartas… de novo…', 'Esquentando a cadeira da sorte…'],
