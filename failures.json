@@ -7936,7 +7936,11 @@
       "error": "ERROR · appeared modules: public/assets/js/stall-guard.js",
       "signature": "c88c19688f",
       "date": "2026-11-26T05:14:05.284Z",
-      "fix": null,
+      "fix": {
+        "commit": "8a9a1281a9d1618ec1284b09ed4b962707a13453",
+        "date": "2026-11-26T05:18:52.049Z",
+        "stat": "6 file(s) +29 −5: README.md, changelog/loading-timeout.md, docs/facts.json, public/assets/css/base.css, public/assets/js/stall-guard.js, …"
+      },
       "flaky": false
     }
   ]
