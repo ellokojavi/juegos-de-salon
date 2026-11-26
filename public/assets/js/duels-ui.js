@@ -126,12 +126,12 @@ export function panelEstadisticas(lista, me) {
     el('p', { class: 'lead' }, T.statsTitle),
     el('div', { class: 'dl-stats' },
       record,
+      // Four tiles, two by two, each with its icon on top (the owner, 2026-11-26): the duel game is the fourth
       tile('🔥', s.racha, T.statStreak),
       tile('🏆', s.mejorRacha, T.statBest),
-      tile('🎯', `${s.rondasG}–${s.rondasP}`, T.statRounds),
       tile('👥', s.rivales, T.statRivals),
-      tile('⚔️', s.abiertos, T.statOpen)),
-    g ? el('p', { class: 'dl-nota center' }, `${T.statGame} `, el('span', { 'aria-hidden': 'true' }, gameIcon(g)), ` ${nombreJuego(g)}`) : null);
+      g ? el('div', { class: 'dl-stat dl-stat--juego' }, el('i', { 'aria-hidden': 'true' }, gameIcon(g)), el('b', {}, nombreJuego(g)), el('span', {}, T.statGameTile))
+        : tile('🎮', '–', T.statGameTile)));
 }
 
 /**
