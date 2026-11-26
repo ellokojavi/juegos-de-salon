@@ -1,0 +1,42 @@
+/* ==========================================================
+   Gemelos: the game's own styles (lab).
+   The shell (screens, the cover's hero, modes, the result's hero) lives once in base.css (DESIGN.md §2);
+   this file keeps only what is the game's own, on the tokens (DESIGN.md §1).
+   ========================================================== */
+
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
+.today-note { margin: 0; }
+.credito { font-size: var(--fs-85); margin: 0; }
+.credito a { color: inherit; }
+.play-status { margin: 0; }
+.clock { font-family: var(--font-num); font-weight: 900; font-variant-numeric: tabular-nums; }
+
+/* ---------- The board: a grid of cells, a number is a tile, a gap stays empty ---------- */
+.twins-board {
+  display: grid; grid-template-columns: repeat(var(--cols, 5), 1fr); gap: var(--s-8);
+  padding: var(--s-10); border-radius: var(--r-16); background: var(--well);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.twins-board .gap { aspect-ratio: 1; border-radius: var(--r-12); border: 1px dashed var(--glass-border); }
+.tile {
+  aspect-ratio: 1; min-width: 0; padding: 0; border: 0; border-radius: var(--r-12); cursor: grab;
+  font: 900 var(--fs-160) var(--font-num); font-variant-numeric: tabular-nums; line-height: 1;
+  background: var(--yellow); color: var(--ink-on-yellow); box-shadow: 0 4px 0 var(--edge-yellow);
+  touch-action: none; position: relative;
+}
+/* Equal numbers share a colour (each power of two its own), so twins are easy to spot */
+.tile[data-c="1"] { background: var(--cyan); color: var(--ink-on-cyan); box-shadow: 0 4px 0 var(--edge-cyan); }
+.tile[data-c="2"] { background: var(--pink); color: var(--ink); box-shadow: 0 4px 0 var(--edge-pink); }
+.tile[data-c="3"] { background: var(--lime); color: var(--card-ink); box-shadow: 0 4px 0 var(--well-deep); }
+.tile[data-c="4"] { background: var(--orange); color: var(--card-ink); box-shadow: 0 4px 0 var(--well-deep); }
+.tile[data-c="5"] { background: var(--card); color: var(--card-ink); box-shadow: 0 4px 0 var(--well-deep); }
+.tile--long { font-size: var(--fs-120); }
+.tile--picked { outline: 3px solid var(--ink); outline-offset: 2px; }
+.tile--lifted { z-index: 2; cursor: grabbing; pointer-events: none; box-shadow: 0 8px 18px var(--well-deep); }
+.tile--target { outline: 3px solid var(--ink); outline-offset: 2px; transform: scale(1.06); }
+.tile--merged { animation: pop 0.25s ease-out; }
+/* The 💡 hint: the number to drag pulses, its twin is ringed */
+.tile--from { animation: twinsPulse 0.9s ease-in-out infinite; outline: 3px solid var(--ink); outline-offset: 2px; }
+.tile--to { outline: 3px dashed var(--ink); outline-offset: 2px; }
+@keyframes twinsPulse { 50% { transform: scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .tile--from, .tile--merged { animation: none; } }
