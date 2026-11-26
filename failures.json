@@ -8021,7 +8021,11 @@
       "error": "",
       "signature": "14fef58185",
       "date": "2026-11-26T12:57:37.982Z",
-      "fix": null,
+      "fix": {
+        "commit": "d9101830b5da80d0f871f9f0fe7a3142e9122e69",
+        "date": "2026-11-26T16:14:54.915Z",
+        "stat": "103 file(s) +865 −391: .claude/agents/documentation.md, CHANGELOG.md, changelog/achievement-title-display.md, changelog/achievements-seen-account.md, changelog/badge-details.md, …"
+      },
       "flaky": false
     },
     {
@@ -8034,7 +8038,11 @@
       "error": "",
       "signature": "14fef58185",
       "date": "2026-11-26T15:40:54.400Z",
-      "fix": null,
+      "fix": {
+        "commit": "d9101830b5da80d0f871f9f0fe7a3142e9122e69",
+        "date": "2026-11-26T16:14:54.915Z",
+        "stat": "7 file(s) +133 −103: changelog/e2e-target-440.md, docs/DECISIONS.md, docs/decisions/D-611.md, docs/decisions/D-624.md, docs/facts.json, …"
+      },
       "flaky": false
     },
     {
@@ -8047,7 +8055,11 @@
       "error": "ERROR · appeared modules: public/assets/js/manifests/labs/twins.js, public/labs/twins/engine.js, public/labs/twins/game.js, public/labs/twins/rules.js\nERROR · appeared documents: {\"path\": \"docs/games/twins.md\", \"title\": \"🔢 Twins (Gemelos;",
       "signature": "b89b2b258b",
       "date": "2026-11-26T16:06:01.184Z",
-      "fix": null,
+      "fix": {
+        "commit": "d9101830b5da80d0f871f9f0fe7a3142e9122e69",
+        "date": "2026-11-26T16:14:54.915Z",
+        "stat": "1 file(s) +12 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
