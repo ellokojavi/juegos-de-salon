@@ -63,8 +63,7 @@ Newest first. One or two lines: the date (Pacific), what happened, what changed 
 
 - **2026-11-25** · Phase 1.1 built: the grey-box drive in `/labs/drift/` (engine with 17 node tests,
   scheme A and keys, the 2D scene, the tuning panel, e2e). Design changed in core.md section 3: the
-  plain grip model spun the car at full lock, so the yaw is now capped at `overSteer` × what the grip
-  holds and the rear pulls the nose back (`align`). The 1.0 PR had left this file's "Now" stale; fixed.
+  plain grip model spun the car at full lock; the fix is described there and in `docs/games/drift.md`. The 1.0 PR had left this file's "Now" stale; fixed.
 
 - **2026-11-25** · Phase 1.0 done: the owner named the game Derrape / Drift / Derrapagem 🏁 (id
   `drift`, so every code path in these docs now says `drift`), declared the clip's source unknown
