@@ -7970,7 +7970,11 @@
       "error": "ERROR · appeared modules: public/assets/js/storage-keys.js",
       "signature": "9c7409d3da",
       "date": "2026-11-26T06:32:57.326Z",
-      "fix": null,
+      "fix": {
+        "commit": "af2bdcaaca5a9f6130961173704bc85adfe1eac2",
+        "date": "2026-11-26T06:52:16.078Z",
+        "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
+      },
       "flaky": false
     }
   ]
