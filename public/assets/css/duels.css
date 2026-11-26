@@ -140,14 +140,33 @@
 @media (prefers-reduced-motion: reduce) { .dl-hueso { animation: none; } }
 
 /* The stats, the rivalries and the rematch of /duels/ */
-.dl-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-8); }
+.dl-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s-8); }
+.dl-stat { grid-column: span 2; }
+.dl-stat:nth-last-child(-n+2) { grid-column: span 3; }
 .dl-stat {
   display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-10) var(--s-4); min-width: 0;
   border-radius: var(--r-12); background: var(--well); text-align: center;
 }
-.dl-stat.ancho { grid-column: 1 / -1; }
+.dl-stat { box-shadow: 0 4px 0 var(--bg1); }
+.dl-stat i { font-style: normal; font-size: var(--fs-110); line-height: 1; }
 .dl-stat b { font: 900 var(--fs-140) var(--font-num); color: var(--yellow); }
 .dl-stat span { color: var(--muted); font: 800 var(--fs-75) var(--font-body); }
+/* The record, the arcade hero of the stats (the owner, 2026-11-26): wins lime, losses pink, the rate as a bar */
+.dl-stat--record {
+  grid-column: 1 / -1; gap: var(--s-6); padding: var(--s-14) var(--s-14);
+  background: linear-gradient(100deg, rgb(var(--lime-rgb) / .18), var(--well) 40%, var(--well) 60%, rgb(var(--pink-rgb) / .2));
+}
+.dl-record { display: flex; align-items: baseline; gap: var(--s-8); }
+.dl-record b { font-size: var(--fs-200); text-shadow: var(--shadow-text); }
+.dl-record b.w { color: var(--lime); }
+.dl-record b.l { color: var(--pink); }
+.dl-record b.t { color: var(--muted); }
+.dl-record-sep { color: var(--muted); font: 900 var(--fs-140) var(--font-num); }
+.dl-record-barra { display: flex; width: 100%; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--glass-border); }
+.dl-record-barra i.w { background: var(--lime); }
+.dl-record-barra i.l { background: var(--pink); }
+.dl-record-barra i.t { background: var(--muted); }
+.dl-stat--record small { color: var(--ink); font: 900 var(--fs-90) var(--font-body); }
 .dl-destacados { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--s-10); }
 .dl-destacado { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); text-align: center; }
 .dl-destacado.arch { border-color: var(--yellow); }
@@ -252,6 +271,18 @@ a.dl-card-g { text-decoration: none; }
   border: 2px solid var(--glass-border);
 }
 .dl-ticket.turno { border-color: var(--yellow); box-shadow: 0 0 22px rgb(var(--yellow-rgb) / .2); }
+/* Arcade tickets (the owner's pick A, 2026-11-26): a 3D edge like the buttons, stronger ends, a bigger score, names under the faces */
+#dl-mios .dl-ticket {
+  border: 0; padding: var(--s-16) var(--s-14);
+  background: linear-gradient(100deg, rgb(var(--cyan-rgb) / .35), var(--bg2) 38%, var(--bg2) 62%, rgb(var(--pink-rgb) / .38));
+  box-shadow: 0 6px 0 var(--bg1), var(--shadow-panel);
+}
+#dl-mios .dl-ticket.turno { box-shadow: 0 0 0 2px var(--yellow), 0 6px 0 var(--edge-yellow), 0 14px 30px rgb(var(--yellow-rgb) / .3); }
+#dl-mios .dl-ticket:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--bg1); }
+#dl-mios .dl-marcador { font-size: var(--fs-200); text-shadow: 0 3px 0 var(--edge-yellow); }
+#dl-mios .dl-cara { width: 58px; height: 58px; }
+.dl-ticket-lado { display: grid; justify-items: center; gap: var(--s-4); min-width: 0; }
+.dl-ticket-lado b { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 800 var(--fs-90) var(--font-body); }
 .dl-ticket-mid { display: grid; justify-items: center; gap: var(--s-4); text-align: center; min-width: 0; }
 .dl-ticket-mid small { color: var(--muted); font-weight: 800; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-ticket-mid small.dl-ticket-turno { color: var(--yellow); }

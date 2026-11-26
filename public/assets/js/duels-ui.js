@@ -109,17 +109,28 @@ export function panelEstadisticas(lista, me) {
   const s = estadisticas(lista, me);
   if (!s.jugados) return null;
   const g = s.juego && duelGame(s.juego);
-  const tile = (v, txt, cls = '') => el('div', { class: `dl-stat${cls ? ` ${cls}` : ''}` }, el('b', {}, String(v)), el('span', {}, txt));
+  const tile = (icono, v, txt) => el('div', { class: 'dl-stat' }, el('i', { 'aria-hidden': 'true' }, icono), el('b', {}, String(v)), el('span', {}, txt));
+  // The record as the arcade card's hero: wins and losses in their colours, the win rate as a bar (the owner, 2026-11-26)
+  const total = s.g + s.p + (s.e || 0);
+  const record = el('div', { class: 'dl-stat dl-stat--record' },
+    el('div', { class: 'dl-record' },
+      el('b', { class: 'w' }, String(s.g)), el('span', { class: 'dl-record-sep' }, '–'), el('b', { class: 'l' }, String(s.p)),
+      s.e ? [el('span', { class: 'dl-record-sep' }, '–'), el('b', { class: 't' }, String(s.e))] : null),
+    el('span', {}, T.statRecord),
+    el('div', { class: 'dl-record-barra', 'aria-hidden': 'true' },
+      el('i', { class: 'w', style: `width:${total ? (100 * s.g) / total : 0}%` }),
+      s.e ? el('i', { class: 't', style: `width:${(100 * s.e) / total}%` }) : null,
+      el('i', { class: 'l', style: `width:${total ? (100 * s.p) / total : 0}%` })),
+    el('small', {}, `${s.pct == null ? '–' : `${s.pct}%`} ${T.statPct}`));
   return el('section', { class: 'panel', id: 'dl-stats' },
     el('p', { class: 'lead' }, T.statsTitle),
     el('div', { class: 'dl-stats' },
-      tile(`${s.g}–${s.p}${s.e ? `–${s.e}` : ''}`, T.statRecord, 'ancho'),
-      tile(s.pct == null ? '–' : `${s.pct}%`, T.statPct),
-      tile(s.racha, T.statStreak),
-      tile(s.mejorRacha, T.statBest),
-      tile(`${s.rondasG}–${s.rondasP}`, T.statRounds),
-      tile(s.rivales, T.statRivals),
-      tile(s.abiertos, T.statOpen)),
+      record,
+      tile('🔥', s.racha, T.statStreak),
+      tile('🏆', s.mejorRacha, T.statBest),
+      tile('🎯', `${s.rondasG}–${s.rondasP}`, T.statRounds),
+      tile('👥', s.rivales, T.statRivals),
+      tile('⚔️', s.abiertos, T.statOpen)),
     g ? el('p', { class: 'dl-nota center' }, `${T.statGame} `, el('span', { 'aria-hidden': 'true' }, gameIcon(g)), ` ${nombreJuego(g)}`) : null);
 }
 
@@ -561,13 +572,13 @@ export function listTimeline(abiertos, hechos, me, { alTocar = () => {}, lista =
     const e = estado(d, me), turno = e.turno >= 0;
     const yoN = d.a === me ? d.an : d.bn;
     return el('a', { class: `dl-ticket${turno ? ' turno' : ''}`, href: hrefDuelo(d), onClick: alTocar, 'data-duel': d.id },
-      el('span', { class: `dl-cara yo${halos(e.puntos)[0]}` }, inicial(yoN)),
+      el('span', { class: 'dl-ticket-lado' }, el('span', { class: `dl-cara yo${halos(e.puntos)[0]}` }, inicial(yoN)), el('b', {}, yoN || T.you)),
       el('div', { class: 'dl-ticket-mid' },
         el('small', {}, titulo(d)),
         el('b', { class: 'dl-marcador' }, `${e.puntos[0]}–${e.puntos[1]}`),
         el('div', { class: 'dl-puntos' }, puntos(e)),
         el('small', { class: turno ? 'dl-ticket-turno' : '' }, turno ? T.yourTurn : fmt(T.waitingFor, { n: e.rivalN }))),
-      el('span', { class: `dl-cara el${halos(e.puntos)[1]}` }, inicial(e.rivalN)));
+      el('span', { class: 'dl-ticket-lado' }, el('span', { class: `dl-cara el${halos(e.puntos)[1]}` }, inicial(e.rivalN)), el('b', {}, e.rivalN)));
   };
   const fecha = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' });
   const h2h = rivalidades(lista, me);
