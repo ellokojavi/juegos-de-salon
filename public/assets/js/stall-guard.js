@@ -22,15 +22,18 @@
   // What the wait is "doing", one line at a time under the spinner (the owner, 2026-11-25: a fun wait
   // until the error comes). La Copa's «…» (waiting.js) uses them too, through G.funLine.
   var FUN = {
-    es: ['Barajando las cartas…', 'Lanzando los dados…', 'Cavilando la próxima jugada…', 'Buscando la ficha perdida…',
-      'Despertando a los peones…', 'Contando los puntos dos veces…', 'Pensando muy fuerte…', 'Buscando el dado bajo el sillón…',
-      'Afilando los lápices…', 'Repartiendo las fichas…', 'Desempolvando el tablero…', 'Consultando con la reina…'],
-    en: ['Shuffling the cards…', 'Rolling the dice…', 'Pondering the next move…', 'Looking for the lost piece…',
-      'Waking up the pawns…', 'Counting the points twice…', 'Thinking really hard…', 'Finding the die under the couch…',
-      'Sharpening the pencils…', 'Dealing the tiles…', 'Dusting off the board…', 'Asking the queen…'],
-    pt: ['Embaralhando as cartas…', 'Jogando os dados…', 'Pensando na próxima jogada…', 'Procurando a peça perdida…',
-      'Acordando os peões…', 'Contando os pontos duas vezes…', 'Pensando muito forte…', 'Procurando o dado debaixo do sofá…',
-      'Apontando os lápis…', 'Distribuindo as peças…', 'Tirando o pó do tabuleiro…', 'Consultando a rainha…'],
+    es: ['Soplando los dados para la suerte…', 'Buscando los polvitos mágicos que ni tú ni yo vemos…', 'Sobornando al dado con un caramelo…',
+      'Sacando la ficha que se cayó bajo el sillón…', 'Discutiendo quién parte…', 'Despertando al árbitro…', 'Leyendo las reglas por primera vez…',
+      'Escondiendo el comodín en la manga…', 'Revisando que nadie haga trampa (tú no)…', 'Buscando un lápiz que escriba…',
+      'Ensayando la cara de póker…', 'Pidiéndole revancha a la abuela…', 'Contando las cartas… otra vez…', 'Calentando la silla de la suerte…'],
+    en: ['Blowing on the dice for luck…', 'Looking for the magic dust neither of us can see…', 'Bribing the die with a candy…',
+      'Fishing the lost piece out from under the couch…', 'Arguing about who goes first…', 'Waking up the referee…', 'Reading the rules for the first time…',
+      'Hiding the joker up a sleeve…', 'Checking nobody cheats (not you)…', 'Looking for a pencil that works…',
+      'Practising the poker face…', 'Asking Grandma for a rematch…', 'Counting the cards… again…', 'Warming up the lucky chair…'],
+    pt: ['Soprando os dados para dar sorte…', 'Procurando o pozinho mágico que nem você nem eu vemos…', 'Subornando o dado com uma bala…',
+      'Tirando a peça que caiu debaixo do sofá…', 'Discutindo quem começa…', 'Acordando o juiz…', 'Lendo as regras pela primeira vez…',
+      'Escondendo o curinga na manga…', 'Conferindo se ninguém trapaceia (você não)…', 'Procurando um lápis que escreva…',
+      'Treinando a cara de paisagem…', 'Pedindo revanche para a vovó…', 'Contando as cartas… de novo…', 'Esquentando a cadeira da sorte…'],
   };
   var G = w.__stallGuard = { shown: false, MS: MS, TEXTS: TEXTS, FUN: FUN };
 
