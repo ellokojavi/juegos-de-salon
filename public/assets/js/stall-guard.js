@@ -4,7 +4,8 @@
  * stuck on «…» and Uno al día blank).
  *
  * A classic script, like vigia.js, which it reads: "started" is `__vigia.listoEn`, set by
- * trackVisit. After 10 s in view without starting, it puts a notice and a button that reloads the
+ * trackVisit. After 1.5 s without starting it shows the waiting spinner (base.css's
+ * `.waiting--screen`, the owner 2026-11-25: a blank page did not read as waiting); after 10 s in view without starting, it puts a notice and a button that reloads the
  * page at the end of the page's <main>. Written without `?.` or `??`, so an old Safari reads it, and
  * it imports nothing: the texts are here, in the three languages (C-3), by the language i18n.js keeps.
  */
@@ -26,11 +27,29 @@
   }
   function started() { return !!(w.__vigia && w.__vigia.listoEn !== null); }
 
+  var spinner = null;
+  function dropSpinner() { if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner); spinner = null; }
+  function watchStart(node) {
+    var t = setInterval(function () { if (started()) { clearInterval(t); if (node.parentNode) node.parentNode.removeChild(node); } }, 300);
+  }
+  setTimeout(function () {
+    if (started() || G.shown) return;
+    var main = d.querySelector('main') || d.body;
+    if (!main) return;
+    spinner = d.createElement('div');
+    spinner.className = 'waiting waiting--screen';
+    spinner.id = 'stall-wait';
+    spinner.setAttribute('role', 'status');
+    main.appendChild(spinner);
+    watchStart(spinner);
+  }, 1500);
+
   G.show = function () {
     if (G.shown || started()) return;
     var main = d.querySelector('main') || d.body;
     if (!main) return;
     G.shown = true;
+    dropSpinner();
     var T = TEXTS[lang()];
     var box = d.createElement('div');
     box.className = 'panel center';
@@ -47,7 +66,7 @@
     box.appendChild(b);
     main.appendChild(box);
     // Started late after all: the page draws itself and the notice goes
-    var t = setInterval(function () { if (started()) { clearInterval(t); if (box.parentNode) box.parentNode.removeChild(box); } }, 500);
+    watchStart(box);
   };
 
   // Only a page that was in view: one opened in the background waits until it is seen
