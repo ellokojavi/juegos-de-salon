@@ -43,5 +43,8 @@
   },
   "lab-ready": {
     "state": "lab"
+  },
+  "bridges-hint": {
+    "state": "off"
   }
 }

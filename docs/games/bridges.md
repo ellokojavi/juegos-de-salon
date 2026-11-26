@@ -50,6 +50,18 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   doesn't end at, it is drawn in front with a dark edge (`pasoPorEncima()`), so it doesn't read as
   joined there.
 
+- **💡 Hint** (#1900, like Rutas rotas' #1381), behind the runtime flag `bridges-hint` (D-498, held *off* in
+  `tools/e2e/flags-held.json`): only on the game's own page, for one player, never in La Copa, its trial,
+  Uno al día (`?today`) or a duel round, where everyone plays the same. «💡 Pista (−3)» sits beside ↩ Undo,
+  and the four actions go two by two (the board gives up the extra row's height on a phone that is not tall,
+  so all four stay in view at 390 × 844). A tap shows one beam of the crossing's known bridge (the
+  catalog's `solucion`) as a white ghost on the board (`pista()` in `engine.js`: the first beam the player's
+  bridge lacks, whole or split at its joints, in the catalog's order, that touches the bridge as it stands)
+  and says «La viga marcada es del puente conocido: tócala para ponerla.». The ghost stays (`J.fantasma`,
+  saved with the moves) until that beam is laid, by a tap on it or a drag over it; another tap on 💡 while it
+  waits shows it again without charging. Each hint is a last score layer, −3 (`COSTO_PISTA` in `physics.js`,
+  never below 0), counted in the moves (`pistas`) and in the breakdown («💡 2 pistas: −6.»).
+
 ## Crossings and catalogs
 
 - Each game draws one crossing per level (2, 3, 3, 4, 5) from `catalog.json` (33 crossings, 6 or 7 per level, ordered by the wood their solution needs so each level asks more than the one before: about 9 to 12 m at level 1 up to 29 to 36 m at level 5; about 15,000 combinations): low anchors on the cliff faces,
