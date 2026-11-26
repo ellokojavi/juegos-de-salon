@@ -7953,7 +7953,11 @@
       "error": "✗ the button turns cyan, with the points and the streak (OCT 2026 📅 UNO AL DÍA Cada día un juego sorpresa, el mismo desafío para todos. 🔥 1 racha)",
       "signature": "135cd21113",
       "date": "2026-11-26T05:54:50.688Z",
-      "fix": null,
+      "fix": {
+        "commit": "af2bdcaaca5a9f6130961173704bc85adfe1eac2",
+        "date": "2026-11-26T06:51:24.232Z",
+        "stat": "17 file(s) +255 −11: README.md, changelog/loading-timeout.md, changelog/uad-no-points-signed-out.md, docs/canons/C-7.md, docs/facts.json, …"
+      },
       "flaky": false
     },
     {
