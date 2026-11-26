@@ -58,8 +58,14 @@ changelog entries are written in English, even inside files that are still in Sp
    are duplicated, gaps or disorder in the numbering, Statuses outside the four, corrections that the
    old decision does not mark, duplicate IDs in `REQUERIMIENTOS.md` and `USABILIDAD.md`, paths cited
    in the guides that do not exist, scripts that `tools/e2e/README.md` does not name, the version without an entry
-   in the CHANGELOG). Then read the diff of each merged PR
-   (`git diff <antes>..<después> --stat` and whatever else is needed). If there is nothing new or pending,
+   in the CHANGELOG). Then read the diff of each merged PR. The `--stat` and the changelog entry only
+   tell you which PRs to open: for every PR that changes `public/`, `firebase/` or a workflow, read its
+   code diff (`git show <sha> -- public/ firebase/`), and compare what it does (a new field it stores, a
+   new screen, a rule, a flag) with the doc that describes it. That doc is the game's page, the
+   decision's dated notes, or `UNO-AL-DIA.md`. The check and the flag list cannot see a data shape or a
+   behaviour that no doc names: on 2026-11-25, a Duels round's level (`lv`) was missing from D-603
+   after two passes that skipped the code (pattern `executor-documentation-shallow`, five times). Your
+   report names, for each such PR, the doc you compared it with. If there is nothing new or pending,
    finish without a PR.
 2. **For each change**, make sure it is recorded where it belongs:
    - **The CHANGELOG** (D-300): each merged PR left its unnumbered entry in `changelog/` (or it is

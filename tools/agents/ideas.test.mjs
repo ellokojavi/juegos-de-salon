@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { laboratorio, popularidadHoy, deriva, debiles, embudoGrupo, validateIdea, ideasDecisions, addIdeas, setStatus, questionOf, MEMORY, ROOT, STATUSES, LANES } from './ideas.mjs';
+import { requireOrigins } from './processes.mjs';
 import { nuevoOrden } from './popularity.mjs';
 import { POPULARIDAD } from '../../public/assets/js/games.js';
 
@@ -77,6 +78,9 @@ assert.equal(d.decisions.length, 2);
 assert.deepEqual(d.decisions[0].yes, [{ type: 'queue', task: 'ideas cup-seasons: a lab flag' }]);
 assert.match(d.decisions[1].context, /^Yes: cheap and measurable\.\nEvidence: D7 return 12%\nInspired by Shikaku/);
 assert.equal(d.decisions[0].no, undefined, 'a No is only recorded');
+// decide refuses a decision without origin (#1435): propose failed on 2026-11-25
+requireOrigins(d.decisions);
+assert.match(d.decisions[1].origin, /^The ideas agent's weekly round \(D-360\), 2026-10-18; inspired by Shikaku/);
 assert.throws(() => ideasDecisions([idea, idea]), /twice/);
 assert.throws(() => ideasDecisions([idea, { ...idea, id: 'b' }, { ...idea, id: 'c' }, { ...idea, id: 'd' }]), /at most three/);
 assert.throws(() => ideasDecisions([]), /at least one/);

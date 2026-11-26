@@ -65,6 +65,11 @@ const ES = {
     tvLast: '🏁 Terminar',
     tvSolution: '💡 Así se podía cruzar la etapa {n}',
     tvSolutionNote: 'Usa {n} m de los {max} m que tenías, con un esfuerzo máximo de {p}.',
+    tvHint: 'Pista (−3)',
+    tvHintShown: 'La viga marcada es del puente conocido: tócala para ponerla.',
+    tvHintNone: 'Ya tienes todas las vigas del puente conocido: prueba.',
+    tvBdHintOne: '💡 1 pista: −{p}.',
+    tvBdHints: '💡 {n} pistas: −{p}.',
   },
 };
 
@@ -130,6 +135,11 @@ const EN = {
     tvLast: '🏁 Finish',
     tvSolution: '💡 How stage {n} could be crossed',
     tvSolutionNote: 'It uses {n} m of the {max} m you had, with a peak strain of {p}.',
+    tvHint: 'Hint (−3)',
+    tvHintShown: 'The marked beam is part of the known bridge: tap it to lay it.',
+    tvHintNone: 'You already have every beam of the known bridge: test it.',
+    tvBdHintOne: '💡 1 hint: −{p}.',
+    tvBdHints: '💡 {n} hints: −{p}.',
   },
 };
 
@@ -195,6 +205,11 @@ const PT = {
     tvLast: '🏁 Terminar',
     tvSolution: '💡 Assim dava para atravessar a etapa {n}',
     tvSolutionNote: 'Usa {n} m dos {max} m que você tinha, com um esforço máximo de {p}.',
+    tvHint: 'Dica (−3)',
+    tvHintShown: 'A viga marcada é da ponte conhecida: toque nela para colocá-la.',
+    tvHintNone: 'Você já tem todas as vigas da ponte conhecida: teste.',
+    tvBdHintOne: '💡 1 dica: −{p}.',
+    tvBdHints: '💡 {n} dicas: −{p}.',
   },
 };
 
