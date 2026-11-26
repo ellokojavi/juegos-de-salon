@@ -5,6 +5,9 @@
   "babel-tally": {
     "state": "all"
   },
+  "badge-details": {
+    "state": "all"
+  },
   "bn-salva": {
     "state": "off"
   },
@@ -42,6 +45,12 @@
     "state": "all"
   },
   "cup-again": {
+    "state": "all"
+  },
+  "cup-best-day-all": {
+    "state": "all"
+  },
+  "cup-big": {
     "state": "all"
   },
   "cup-footer": {
@@ -116,7 +125,13 @@
   "pm-pick-brush": {
     "state": "all"
   },
+  "podium-shine": {
+    "state": "all"
+  },
   "profile": {
+    "state": "all"
+  },
+  "profile-chips": {
     "state": "all"
   },
   "profile-plays": {
@@ -129,6 +144,9 @@
     "state": "all"
   },
   "settings-in-profile": {
+    "state": "all"
+  },
+  "share-tagline": {
     "state": "all"
   },
   "stack": {
@@ -159,6 +177,9 @@
     "state": "all"
   },
   "uad-skip-end": {
+    "state": "all"
+  },
+  "vibration-setting": {
     "state": "all"
   },
   "wins-hide-empty": {

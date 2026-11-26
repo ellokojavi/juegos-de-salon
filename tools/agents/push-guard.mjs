@@ -14,6 +14,10 @@
 //     (signature 97c0b5ca90: red `tests` on #1696, #1699, #1667, each after bringing main in, D-594)
 //   - a page under public/ that no footer script measures or excuses (D-599)
 //     → node tools/e2e/footer-bottom.test.mjs (signature 03ba96abef: red `tests` on #1809, #1851)
+//   - a new architecture hit not allowlisted     → node tools/agents/architecture.test.mjs
+//     (signature ea485401a9: red `tests` on #1655, #1912)
+//   - a new Spanish exported name (D-316)         → node tools/agents/identifiers.test.mjs
+//     (signature 965641ffe6: red `tests` on #1667 four times, #1886)
 //   - a branch that brings changes but no changelog/<branch>.md entry (D-300)
 //     → node tools/release/changelog.mjs new [patch|minor]
 // Exit 2 blocks the push and tells the session what to run; anything unexpected lets it through.
@@ -72,6 +76,17 @@ export function problems(cwd, run = (cmd, args) => spawnSync(cmd, args, { cwd, e
     const r = run('node', ['tools/e2e/footer-bottom.test.mjs']);
     const why = `${r.stdout || ''}${r.stderr || ''}`.split('\n').find(l => /pages no script measures|entries for pages that do not exist|measured and excused at once/.test(l));
     if (r.status === 1 && why) out.push(`a page is not placed for the footer check (D-599): add it to PAGES or NO_FOOTER in tools/e2e/pages-footer-bottom.mjs, then commit it\n  ${why.replace(/^.*?(pages no|entries|measured)/, '$1').trim()}`);
+  }
+  if (existsSync(join(cwd, 'tools/agents/architecture.test.mjs'))) {
+    const r = run('node', ['tools/agents/architecture.test.mjs']);
+    const text = `${r.stdout || ''}${r.stderr || ''}`;
+    const hits = text.split('\n').filter(l => /^\+\s+'/.test(l)).map(l => l.replace(/^\+\s+'|',?$/g, ''));
+    if (r.status === 1 && /a new hit: fix it/.test(text)) out.push(`a new architecture hit (docs/ARCHITECTURE.md): fix it, or add an entry with its why to docs/architecture-allowlist.json, then commit it${hits.length ? `\n  ${hits.join('\n  ')}` : ''}`);
+  }
+  if (existsSync(join(cwd, 'tools/agents/identifiers.test.mjs'))) {
+    const r = run('node', ['tools/agents/identifiers.test.mjs']);
+    const line = `${r.stdout || ''}${r.stderr || ''}`.split('\n').find(l => /new Spanish exported names/.test(l));
+    if (r.status === 1 && line) out.push(`a new Spanish exported name (D-316): name it in English, then commit it\n  ${line.replace(/^.*?:\s*(public|tools)/, '$1').replace(/^.*D-316\):\s*/, '')}`);
   }
   out.push(...missingChangelog(run));
   return out;
