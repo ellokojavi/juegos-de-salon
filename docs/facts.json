@@ -2389,6 +2389,42 @@
       "title": "Piece 7 · The retention loop"
     },
     {
+      "path": "docs/rally/PROGRESS.md",
+      "title": "Rally: where it stands"
+    },
+    {
+      "path": "docs/rally/PROMPT.md",
+      "title": "The prompt that starts a session on Rally"
+    },
+    {
+      "path": "docs/rally/README.md",
+      "title": "Rally: a time-trial driving game, in three paths"
+    },
+    {
+      "path": "docs/rally/constraints.md",
+      "title": "What this site asks of a driving game"
+    },
+    {
+      "path": "docs/rally/core.md",
+      "title": "The core: what all three paths share"
+    },
+    {
+      "path": "docs/rally/path-1-top-down.md",
+      "title": "Path 1 · Top-down rally"
+    },
+    {
+      "path": "docs/rally/path-2-3d.md",
+      "title": "Path 2 · Simple 3D"
+    },
+    {
+      "path": "docs/rally/path-3-full.md",
+      "title": "Path 3 · Everything the clip shows"
+    },
+    {
+      "path": "docs/rally/reference.md",
+      "title": "The reference clip"
+    },
+    {
       "path": "firebase/README.md",
       "title": "Firebase"
     },
