@@ -7976,6 +7976,19 @@
         "stat": "2 file(s) +3 −1: README.md, docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 45772223765,
+      "check": "tests",
+      "pr": 1928,
+      "branch": "drift-greybox",
+      "commit": "b796e95d4dbdced3fabaa07c1937f814e12e1b9a",
+      "test": "public/assets/js/storage-keys.test.mjs",
+      "error": "",
+      "signature": "a3c637f657",
+      "date": "2026-11-26T07:04:09.920Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
