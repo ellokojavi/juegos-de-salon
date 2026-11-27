@@ -29,6 +29,7 @@ import { GAME_ID, LOCALES } from './rules.js';
 import { TRACKS, DEFAULT_TRACK } from './tracks.js';
 import * as E from './engine.js';
 import { escena } from './scene.js';
+import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
 import { loadTuning, openTuning, isTuned } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
@@ -92,10 +93,16 @@ function begin(g, track) {
   countdown();
 }
 
+/** What the car can hit on this stage: the trees and rocks of the setting the scene draws. */
+function arm(track) {
+  track.solids = solids(scenery(track, settingOf(track, view.setting)));
+  return track;
+}
+
 function startRun() {
   // One tap, one run (C-14): a second tap while the stage is already up does nothing
   if ($('#screen-play').classList.contains('active')) return;
-  const track = E.buildTrack(stage());
+  const track = arm(E.buildTrack(stage()));
   begin(E.newGame({ track }), stage());
   save();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 }); // usage signal (C-7, D-210)
@@ -104,7 +111,7 @@ function startRun() {
 function resume(saved) {
   if ($('#screen-play').classList.contains('active')) return;
   const def = TRACKS[saved.track];
-  const g = E.restore(saved.snap, E.buildTrack(def));
+  const g = E.restore(saved.snap, arm(E.buildTrack(def)));
   // Back stopped where it was saved; a run already under way pays the reset, so reloading undoes nothing
   Object.assign(g.car, { vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: g.car.x, py: g.car.y, ph: g.car.h });
   if (g.t > 0) g.penalty += E.TUNING.resetPenalty;
@@ -156,7 +163,18 @@ function play(e) {
     if (S.g.mode !== 'done') save();
   } else if (e.type === 'miss') { SFX.error(); vibrate(60); save(); }
   else if (e.type === 'reset') SFX.tap();
+  else if (e.type === 'crash') crashed();
+  else if (e.type === 'wrecked') wreck();
   else if (e.type === 'finish') finish();
+}
+
+/** A crash: the bang, a buzz, and «−1 ❤️» rising from the car (the scene draws the impact itself). */
+function crashed() {
+  SFX.hit(); vibrate(90);
+  const tag = el('div', { class: 'dr-hit', 'aria-hidden': 'true' }, '💥 −1 ❤️');
+  $('#stage').append(tag);
+  setTimeout(() => tag.remove(), 1200);
+  if (S.g.mode !== 'done') save();
 }
 
 function paintHud() {
@@ -168,6 +186,13 @@ function paintHud() {
   const total = g.track.gates.length;
   $('#gate').textContent = fmt(T.gateOf, { n: Math.min(g.gate + 1, total), total });
   $('#btn-reset').classList.toggle('dr-offer', E.needsReset(g));
+  const lives = $('#lives');
+  if (lives.dataset.n !== String(g.lives)) {
+    lives.dataset.n = String(g.lives);
+    lives.textContent = `❤️ ${g.lives}`;
+    lives.setAttribute('aria-label', fmt(T.lives, { n: g.lives }));
+    lives.classList.toggle('dr-lives--low', g.lives <= 3);
+  }
 }
 
 /* ---------------- Pause (C-6) ---------------- */
@@ -185,6 +210,14 @@ function unpause() {
 }
 
 /* ---------------- Result (C-19) ---------------- */
+/** The last life gone: the run ends with no time. */
+function wreck() {
+  save(true);
+  trackFinish({ ganador: null, detalle: 'wrecked' });
+  vibrate([60, 40, 140]);
+  setTimeout(() => renderResult(), 1600);
+}
+
 function finish() {
   const g = S.g;
   const time = E.clock(E.total(g));
@@ -197,20 +230,25 @@ function finish() {
 function renderResult() {
   const g = S.g;
   const time = E.clock(E.total(g));
+  const at = { n: Math.min(g.gate + 1, g.track.gates.length), total: g.track.gates.length };
+  $('#result-trophy').textContent = g.wrecked ? '💥' : '🏁';
+  $('#result-title').textContent = g.wrecked ? T.wreckedTitle : T.resultTitle;
   $('#result-time').textContent = time;
-  $('#result-detail').textContent = g.penalty ? fmt(T.withPenalty, { clock: E.clock(g.t), s: Math.round(g.penalty / 1000) }) : T.clean;
+  $('#result-time').hidden = !!g.wrecked;
+  $('#result-detail').textContent = g.wrecked ? fmt(T.wreckedDetail, at)
+    : g.penalty ? fmt(T.withPenalty, { clock: E.clock(g.t), s: Math.round(g.penalty / 1000) }) : T.clean;
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); startRun(); } }, T.again),
     botonCompartir({
       rotulo: T.shareRotulo, id: 'btn-share', alTocar: () => SFX.tap(),
       avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
-      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, tagline: taglineLine(manifest.tagline, lang), lines: [fmt(T.shareLine, { time })] }) }),
+      armar: async () => ({ titulo: T.title, url: location.origin + location.pathname, texto: result({ head: { emoji: manifest.emoji, title: T.title, context: T.shareContext }, tagline: taglineLine(manifest.tagline, lang), lines: [g.wrecked ? fmt(T.shareWrecked, at) : fmt(T.shareLine, { time })] }) }),
     }));
   $('#result-exits').replaceChildren(salidasFin('lab', { lang, raiz: '../../' }));
   // Whether this game records scores is the owner's decision 8 (docs/rally/PROGRESS.md, before phase
   // 1.5): until then a run is a game played alone, which the rankings do not count
   finDePartida({ juego: GAME_ID, modo: 'solo', alTocar: () => SFX.tap() });
-  confetti();
+  if (!g.wrecked) confetti();
   showScreen('screen-result');
 }
 
@@ -238,6 +276,8 @@ function init() {
     S.paused = true; input?.release();
     openTuning({ T, view, frameMs: () => S.frameMs, onClose: () => {
       S.tuned = S.tuned || isTuned(view);
+      // Another setting grows other trees: the car hits what it sees
+      if (S.g) arm(S.g.track);
       // The controls are rebuilt with the panel's scheme and thumb travel; a new scheme shows its hint again
       if (S.g && input) { const changed = input.scheme !== view.scheme, gone = $('#hint').classList.contains('fuera'); setControls(); $('#hint').classList.toggle('fuera', gone && !changed); }
       S.last = performance.now();

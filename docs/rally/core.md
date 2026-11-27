@@ -67,17 +67,19 @@ Each step:
 3. Forward: add throttle acceleration, subtract braking, rolling drag and air drag. The surface
    scales acceleration and drag.
 4. Turn the heading: `yaw = vf / WHEELBASE × tan(steerAngle)`, with the largest steer angle shrinking
-   as speed rises (*starting values*: 32° when slow, 9° at top speed).
+   as speed rises (*starting values*: 32° when slow, 9° at top speed; 40° and 14° since the owner asked to turn harder, 2026-11-27).
 5. Sideways grip: remove up to `GRIP[surface] × dt` of `vl`. That one line is the drift: while a
    corner asks for less sideways acceleration than the grip gives, the car tracks; ask for more and
    it slides wide with its nose pointed in. The handbrake multiplies grip by a fraction for the rear
    feel; off the road grip and drive both drop.
    **Found in 1.1:** step 4 alone spins the car at full lock (the nose turns at the bicycle's rate
    whatever the grip, and the sideways speed only grows). So the yaw is capped at `overSteer`
-   (*starting value* 2.2) times what the grip can hold at that speed, which makes a slide start
+   (*starting value* 2.2, now 3.0) times what the grip can hold at that speed, which makes a slide start
    progressively, and the rear pulls the nose back toward the direction of travel at `align`
-   (*starting value* 2.5 per second, less with the handbrake), which ends a slide within about half a
-   second of letting go. Both are in `TUNING`.
+   (*starting value* 2.5 per second, now 3.0, less with the handbrake), which ends a slide within about half a
+   second of letting go. Both are in `TUNING`. To turn harder (the owner, 2026-11-27) the lock, the
+   cap and the grip went up together (gravel grip 9 → 11 m/s², asphalt 14 → 16), and `align` with
+   them so a bigger slide still ends within half a second.
 6. Rebuild the velocity from the new heading, move the car.
 7. `car.slip = |vl|` drives the tyre tracks, the dust and the skid sound.
 
@@ -129,6 +131,16 @@ centre (on or off the road), and the direction of travel (the wrong way).
 **A test stage** for the e2e script and `?test`: three gates, about 12 seconds for the autopilot.
 
 ## 5. Gates, the clock, penalties
+
+- **Crashes and lives** (the owner, 2026-11-26): trees' trunks, dead trees, stumps, rocks and hay
+  bales are solid circles beside the road (`track.solids`); bushes are soft. The car, two circles
+  along its length, bounces off them; a hit faster than `crashSpeed` (3 m/s) costs one of 10 `lives`
+  and records a dent where it struck (`car.hits`, in the car's frame). The tenth crash wrecks the
+  car: the run ends with no time (`g.wrecked`), and the result says at which gate. The scene shows
+  each crash as a ring, sparks and debris, with no camera shake, and the damage grows on the car.
+- **The solids must be the same on every phone** for a ranking to be fair: today the scene's seeded
+  generator places them on the phone (fine in the lab). In 1.3 the stage generator commits them
+  with each stage, like the pieces (section 4).
 
 - **Gates** sit at even distances along the centreline; the last is the finish. Each is a segment
   across the road between two posts. *Starting value*: 8 to 10 per stage (the clip has 20 on a stage

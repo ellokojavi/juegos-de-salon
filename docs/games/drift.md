@@ -54,7 +54,9 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 - `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot) and `first`
   (9 gates, about 1:14). The generator and the weekly pool come in phase 1.3.
 - `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' gauges (`.dr-touch`) just above each thumb.
-- `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`.
+- `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`: the road (ruts on gravel, lines on asphalt), the props as sprites drawn once, the car over them (a crown never hides it), tyre tracks while it slides, dust from a fixed pool, the light of the hour as one tint.
+- Crashes (core section 5): solid trees, rocks, stumps and hay bales; 10 lives; a crash over 3 m/s costs one and dents the car where it struck; the tenth wrecks it and ends the run with no time. `game.js` puts the solids of the setting being drawn on the track (`arm`), so the car hits what the player sees.
+- `scenery.js`: the three settings (`meadow`, `forest`, `plain`), each a palette and the props it grows, and the props of a stage from a seeded generator (the same for everyone, none on the road; `scenery.test.mjs`). The stage names its setting; the lab's 🔧 panel can show any of the three.
   The camera turns toward the direction of travel, eased over about half a second, never shakes, never
   zooms with speed; twice as damped with reduced motion. The fixed map stays in the panel, though the
   owner found it does not work (decision 4).
@@ -67,8 +69,8 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 A body that slides (core.md, section 3): the steering eases to the thumb; the yaw of a bicycle with
 less lock at speed; sideways grip removes up to `grip × dt` of the sideways speed each step, which is
 the drift. Two terms the plan did not have, found while building: the nose may turn in at most
-`overSteer` (2.2) times what the grip holds, so a slide starts progressively and never spins, and
-the rear pulls the nose back toward the travel at `align` (2.5 per second), which ends a slide within
+`overSteer` (3.0) times what the grip holds, so a slide starts progressively and never spins, and
+the rear pulls the nose back toward the travel at `align` (3.0 per second), which ends a slide within
 about half a second once the thumb lets go.
 
 ## Protocolo de mensajes
