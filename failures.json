@@ -8078,6 +8078,19 @@
         "stat": "2 file(s) +3 −1: docs/facts.json, docs/rally/PROGRESS.md"
       },
       "flaky": false
+    },
+    {
+      "run": 46077144882,
+      "check": "end-to-end",
+      "pr": 1949,
+      "branch": "drift-speed",
+      "commit": "e5fbd95c055bb48013d4175be5d41da8eb4250eb",
+      "test": "drift/game.mjs",
+      "error": "✗ 375: the pedal slid down brakes, and the car still turns (14.3 → 3.6 m/s)",
+      "signature": "8c308cc552",
+      "date": "2026-11-27T22:39:16.106Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
