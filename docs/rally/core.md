@@ -160,14 +160,16 @@ else.
 
 | Scheme | How | For | Against |
 |---|---|---|---|
-| **A · Two halves, auto-throttle** (recommended default) | The car accelerates by itself. Hold the left half of the stage to steer left, the right half to steer right, both to brake; a quick double hold is the handbrake, if it earns its place. | Works with one or two thumbs, upright, at 320 px. Nothing to aim at. Explains itself in one line. | No fine steering: the easing in the engine has to supply it. |
-| B · Slide to steer | Drag a thumb sideways anywhere; the distance from where it landed is the steering. Auto-throttle; a second finger brakes. | Analogue steering. | Harder to explain; the thumb drifts; tiring over two minutes. |
-| C · On-screen buttons | ◀ ▶ on one side, pedal and brake on the other. | Familiar. | Four targets to find without looking; crowds a 320 px stage. |
-| Keyboard | Arrows or WASD, space for the handbrake. Always on, whichever touch scheme is active. | Desktop, e2e scripts. | |
+| **Wheel and pedal** (`wheel`, the default since 2026-11-26) | The left thumb lands anywhere on the left half and slides sideways to steer (full lock at `reach`, *starting value* 60 px). The right thumb on the right half is the pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes; held down with the car stopped, it reverses (the owner, 2026-11-26). Lifting lets the car roll. A gauge just above each thumb (not under it: the owner, «el dedo presionado tapa el control») shows the wheel as a bar with a knob and the pedal as a bar green above and red below; the car turns its front wheels and lights its brake lights. | Analogue steering and analogue pedals at once: brake into a bend while turning, lift, accelerate out. Nothing to aim at. | Two thumbs; needs a hint per half. |
+| One finger (`stick`) | One thumb is a stick from where it lands: sideways steers, up accelerates, down brakes. | One hand. | Steering and pedal are coupled in one thumb. |
+| A · Two halves, auto-throttle (`auto`, the 1.1 scheme) | The car accelerates by itself; hold a half to turn, both to brake. | Explains itself in one line. | **Dropped by the owner on the first drive (2026-11-26):** the car never stops pulling, and braking while turning is impossible. Kept in the tuning panel only to compare. |
+| On-screen buttons | ◀ ▶ on one side, pedal and brake on the other. | Familiar. | Four targets to find without looking; crowds a 320 px stage. Not built. |
+| Keyboard | ←/→ or A/D steer, ↑/W accelerates, ↓/S brakes, space for the handbrake. Always on. | Desktop, e2e scripts. | |
 
-Build A and the keyboard first. Add B behind a lab switch only if the owner finds A too coarse.
-Whatever wins, the first run shows a hint on the stage («👈 👉 Mantén un lado para girar») that leaves
-on the first input.
+The scheme is chosen in the lab's tuning panel; the cover's instructions describe the default. The
+first run shows each half's hint on the stage («👈 👉 Desliza para girar» on the left, «👆 Mantén:
+aceleras / 👇 Bájalo: frenas» on the right), gone on the first input. With a pedal, the clock starts
+on the first throttle, as section 5 says.
 
 **The camera decides whether A works.** With the stage fixed north-up, "left" reverses when the car
 drives down the screen. So the default view follows the car's heading: the car always points up,

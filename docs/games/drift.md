@@ -20,13 +20,18 @@ for the car. It exists so the owner can feel the car under a thumb and tune it (
 
 ## Reglas
 
-- Pass every gate to the finish in the shortest time. The car accelerates by itself.
-- Hold the left half of the stage to steer left, the right half to steer right, both to brake. On a
-  keyboard: arrows or WASD, ↓/S brakes, space is the handbrake.
+- Pass every gate to the finish in the shortest time.
+- **Wheel and pedal** (the default since the owner's first drive, 2026-11-26): the left thumb lands
+  anywhere on the left half and slides sideways to steer; the right thumb on the right half is the
+  pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes. Lifting
+  lets the car roll. Held down with the car stopped, the brake is reverse (`reverseAccel`, `topReverse`, white lights). A gauge just above each thumb, where the thumb does not cover it, shows what it does: the wheel a bar with a knob, the pedal a bar green above and red below; the car shows it too, with its front wheels turned and its brake lights. Both are analogue, so braking into a bend while
+  turning works. The lab's tuning panel also offers **one finger** (a stick: sideways steers, up
+  accelerates, down brakes) and the 1.1 **self-accelerating** halves, to compare. On a keyboard: ←/→
+  or A/D steer, ↑/W accelerates, ↓/S brakes, space is the handbrake.
 - A missed gate (driven past by more than a car length without crossing it) adds 10 s; the ↺ button
   puts the car back on the road, stopped, for 5 s. ↺ lights up after 3 s off the road or the wrong way.
 - Off the road the car is slower and slides more; there are no walls.
-- The clock starts with the first throttle after the 3, 2, 1 and counts in engine steps, so a slow
+- The clock starts with the first throttle after the 3, 2, 1 (the car waits on the line until then) and counts in engine steps, so a slow
   phone plays in slow motion and never gets a different time. The final time is the clock plus the
   penalties.
 
@@ -37,8 +42,8 @@ One: alone (`solo`). `?test` plays the three-gate test stage instead of the real
 ## Flujo
 
 Cover (resume panel, «🏁 Jugar», how to play, the footer) → the shared 3, 2, 1 → the stage (the clock,
-the penalties, «Puerta n de N», ↺, and 🔧 with a lab key; the hint «👈 👉 Mantén un lado para girar y los dos para frenar»
-until the first touch) → the result (the final time, the clock and penalties in one line, «Jugar otra
+the penalties, «Puerta n de N», ↺, and 🔧 with a lab key; each half's hint, «👈 👉 Desliza para girar» and
+«👆 Mantén: aceleras / 👇 Bájalo: frenas», until the first touch) → the result (the final time, the clock and penalties in one line, «Jugar otra
 vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 
 ## The code
@@ -48,11 +53,12 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
   radians; x east, y north, a heading counter-clockwise from +x. Every tuning value is in `TUNING`.
 - `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot) and `first`
   (9 gates, about 1:14). The generator and the weekly pool come in phase 1.3.
-- `input.js`: scheme A (two halves, auto-throttle) and the keyboard, into `{ steer, throttle, brake, handbrake }`.
+- `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' gauges (`.dr-touch`) just above each thumb.
 - `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`.
   The camera turns toward the direction of travel, eased over about half a second, never shakes, never
-  zooms with speed; twice as damped with reduced motion. The fixed map is the other view.
-- `tuning.js`: the lab's tuning panel (only with a lab key): the car's values, the camera, the road in
+  zooms with speed; twice as damped with reduced motion. The fixed map stays in the panel, though the
+  owner found it does not work (decision 4).
+- `tuning.js`: the lab's tuning panel (only with a lab key): the controls and the thumb's travel, the car's values, the camera, the road in
   view, the frame time, «Copiar valores». It saves only on this phone.
 - `game.js`: screens, the fixed-step loop, the countdown, the HUD, pause, memory, the result.
 
@@ -85,7 +91,8 @@ before phase 1.5). The result calls `finDePartida` as a game played alone, which
 
 - `public/labs/drift/`: the files above, `game.json`, `rules.js` (LOCALES), `engine.test.mjs`, `style.css`.
 - `tools/e2e/drift/game.mjs`: the test stage driven to the result by the autopilot through the page's
-  real loop, at 375 and 320 px, plus a touch that steers, pause and resume.
+  real loop, at 375 and 320 px; before it, real touch: wheel and pedal at 375 (accelerate, steer, brake
+  while turning), one finger at 320; then pause and resume.
   `node tools/e2e/conformance.mjs labs/drift` checks the canons; `look.mjs drift intro|stage|result`.
 
 ## Excepciones a los cánones

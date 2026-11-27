@@ -7,8 +7,7 @@ in the other files.
 ## Now
 
 - **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md))
-- **Next phase**: 1.1 · A grey-box drive, in the lab: built, waiting for the owner to drive it on a
-  phone (the last exit line). Then 1.2, the feel round, on the same preview.
+- **Next phase**: 1.3 · Stages (the pool of stages, the stage of the week, the co-driver's map).
 - **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928).
 - **Name**: Derrape / Drift / Derrapagem 🏁, id `drift` (decision 1)
 
@@ -17,8 +16,8 @@ in the other files.
 | Phase | What | Status | PR |
 |---|---|---|---|
 | 1.0 | Concept sign-off | done | [#1926](https://github.com/ellokojavi/juegos-de-salon/pull/1926) |
-| 1.1 | Grey-box drive in the lab | in progress: built, the owner's drive pending | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
-| 1.2 | The feel round | not started | |
+| 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
+| 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
 | 1.4 | The look and the sound | not started | |
 | 1.5 | Ghost, ranking, share, memory | not started | |
@@ -43,8 +42,8 @@ answer and its date here; a decision that sets a policy someone could undo also 
 | 1 | The name the player reads, in es, en and pt, and its emoji. The folder and id follow it (C-20). | before 1.1 | «Rally» in all three (then it joins `SAME_NAME`), 🏁. A name of our own, like Aletazo, is more in the site's voice if the owner has one. | **Derrape** (es), **Drift** (en), **Derrapagem** (pt), 🏁; id `drift`. 2026-11-25 |
 | 2 | Where the clip came from, so the cover can credit the game that inspired it. | before 1.1 | Ask for the link. Unknown is an acceptable answer: then no credit. | Unknown: the cover credits nothing. 2026-11-25 |
 | 3 | Stage length. | before 1.1 | 8 to 10 gates, 60 to 90 seconds. The clip's is 20 gates and about three and a half minutes. | The recommended: 8 to 10 gates, 60 to 90 seconds. 2026-11-25 |
-| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | |
-| 5 | Controls: two halves with auto-throttle, or something else. | in 1.2, by playing | Two halves, auto-throttle. | |
+| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26 |
+| 5 | Controls: two halves with auto-throttle, or something else. | in 1.2, by playing | Two halves, auto-throttle. | Not auto-throttle (the owner, 2026-11-26: it pulls all the time and braking into a bend is impossible). **Wheel and pedal** (default), with one finger in 🔧; the brake held when stopped reverses. «Me gusta», 2026-11-26 |
 | 6 | Penalties: a missed gate and a reset. | in 1.3 | +10 s and +5 s. | |
 | 7 | How often the stage changes. | before 1.3 | One stage a week, the same for everyone. | |
 | 8 | Does the game record scores in Rankings? | before 1.5 | Yes: the table `drift`, score 0 to 100 against par, then time. | |
@@ -55,11 +54,24 @@ answer and its date here; a decision that sets a policy someone could undo also 
 
 ## Later (ideas that came up and are not in the current phase)
 
-Nothing yet. A feature that tempts a phase beyond its exit list is written here instead of built.
+A feature that tempts a phase beyond its exit list is written here instead of built.
+
+- Tilt steering (the phone as the wheel): needs a motion permission on iPhone; try only if the thumb schemes fail.
+- A handbrake on touch (today only the keyboard's space): if the feel round shows slides need it.
 
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-26** · 1.2 done: the owner drove round 1 with the gauges, reverse and the closer camera and said «Me gusta. Continuemos con el desarrollo». The values in the code are the defaults.
+
+- **2026-11-26** · Round 1, second change: the pressed thumb hid its own control (the owner). Each
+  thumb's gauge is now drawn just above it, and the car shows the input (front wheels, brake lights).
+  Then the owner asked for reverse (the brake held with the car stopped) and more zoom (50 m in view, was 70).
+
+- **2026-11-26** · The owner drove 1.1 (exit met): the fixed map does not work, and auto-throttle is too
+  restrictive (no braking while turning). Feel round 1: two new analogue schemes, wheel and pedal
+  (default) and one finger; auto-throttle kept only to compare. Design changed in core.md section 6.
 
 - **2026-11-25** · Phase 1.1 built: the grey-box drive in `/labs/drift/` (engine with 17 node tests,
   scheme A and keys, the 2D scene, the tuning panel, e2e). Design changed in core.md section 3: the
