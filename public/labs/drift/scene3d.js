@@ -279,7 +279,8 @@ function carMeshes() {
     for (let i = 0; i < n; i++) {
       const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2;
       const p = (a, y) => [Math.cos(a) * r, y, Math.sin(a) * r];
-      m.quad(p(a0, -hw), p(a1, -hw), p(a1, hw), p(a0, hw), T);
+      // The tread in two shades, so its turning shows from behind too
+      m.quad(p(a0, -hw), p(a1, -hw), p(a1, hw), p(a0, hw), i % 2 ? T : rgb('#3a3a44'));
       m.tri([0, hw + 0.01, 0], p(a1, hw + 0.01), p(a0, hw + 0.01), i % 2 ? H : T);
       m.tri([0, -hw - 0.01, 0], p(a0, -hw - 0.01), p(a1, -hw - 0.01), i % 2 ? H : T);
     }
@@ -306,7 +307,7 @@ export function escena3d(canvas) {
   if (!R) return null;
   let W = 0, H = 0, dpr = 1, lastNow = 0;
   const cam = { a: Math.PI / 2, ready: false, x: 0, y: 0, z: 0 };
-  const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0 };
+  const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0, spin: 0 };
   const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create();
   // Tyre tracks: a ring of segments [x1, y1, x2, y2]; dust, sparks and smoke: fixed pools
   const marks = new Float32Array(TRACKS * 4);
@@ -363,11 +364,19 @@ export function escena3d(canvas) {
       pose.pitch += (Math.max(-0.05, Math.min(0.05, -af * 0.004)) - pose.pitch) * k;
     }
     pose.lastVf = vf; pose.lastVs = vs;
+    // The wheels turn as the car runs, and spin faster than it moves when it pulls away hard
+    if (dt > 0) {
+      const pull = (car.throttle || 0) * Math.max(0, 1 - car.speed / 15) * 22;
+      pose.spin = (pose.spin + (vf / 0.36 + pull) * dt) % (Math.PI * 2);
+    }
 
-    // The camera: the direction of travel, eased; behind and above, looking ahead of the car
+    // The camera: the direction of travel, eased; behind and above, looking ahead of the car. In reverse
+    // it holds still (the owner, 2026-11-27): it neither swings round to the travel nor turns with the car
     const travel = car.speed > 2 ? Math.atan2(car.vy, car.vx) : h;
     const k = cam.ready ? 1 - Math.exp(-dt / (CAM.ease * (quiet() ? 2 : 1))) : 1;
-    cam.a = wrap(cam.a + wrap(travel - cam.a) * k);
+    const reversing = vf < -0.3;
+    if (!cam.ready) cam.a = h;
+    else if (!reversing) cam.a = wrap(cam.a + wrap(travel - cam.a) * k);
     const ca = Math.cos(cam.a), sa = Math.sin(cam.a);
     const tz = z * 0.5;
     cam.z = cam.ready ? cam.z + (tz - cam.z) * k : tz;
@@ -402,7 +411,7 @@ export function escena3d(canvas) {
         owed -= 1;
         const p = puffs[nextPuff]; nextPuff = (nextPuff + 1) % DUST;
         const [wx, wy] = rear[nextPuff % 2];
-        Object.assign(p, { x: wx, y: wy, z: 0.3, vx: car.vx * 0.15 + (Math.random() - 0.5) * 2, vy: car.vy * 0.15 + (Math.random() - 0.5) * 2, vz: 0.6 + Math.random() * 0.8, age: 0, life: 0.8 + Math.random() * 0.8, r: 0.3 + Math.random() * 0.3, col: dustCol, grow: 2.4, alpha: 0.32 });
+        Object.assign(p, { x: wx, y: wy, z: 0.3, vx: car.vx * 0.15 + (Math.random() - 0.5) * 2, vy: car.vy * 0.15 + (Math.random() - 0.5) * 2, vz: 0.6 + Math.random() * 0.8, age: 0, life: 0.8 + Math.random() * 0.8, r: 0.3 + Math.random() * 0.25, col: dustCol, grow: 1.6, alpha: 0.24 });
       }
     }
     // A new crash: sparks and bits where it struck
@@ -474,12 +483,12 @@ export function escena3d(canvas) {
     R.draw(carBufs.body, { m: M, tint: [darken, darken, darken, 1] });
     R.draw(carBufs.glass, { m: M, tint: damage >= 3 ? [1.6, 1.6, 1.7, 1] : [1, 1, 1, 1] });
     R.draw(carBufs.lights, { m: M, lit: 0, tint: damage >= 5 ? [0.2, 0.2, 0.2, 1] : [1, 1, 1, 1] });
-    const braking = car.brake > 0.05 && vf > 0.5, reversing = vf < -0.3;
+    const braking = car.brake > 0.05 && vf > 0.5;
     R.draw(carBufs.brake, { m: M, lit: 0, tint: [...rgb(reversing ? COLOURS.reverse : braking ? COLOURS.brakeOn : COLOURS.brakeOff), 1] });
     // The wheels: the front ones turn with the steering (steer +1 is right: the heading decreases)
     const steerA = -(car.steer || 0) * 0.5;
     for (const [fx, front] of [[CAR_L * 0.31, true], [-CAR_L * 0.3, false]]) for (const side of [-1, 1]) {
-      mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, front ? steerA : 0);
+      mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, front ? steerA : 0, pose.spin);
       mat4.multiply(MW, M, MW);
       R.draw(front ? carBufs.wheelFront : carBufs.wheelBack, { m: MW });
     }

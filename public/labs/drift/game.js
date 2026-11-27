@@ -32,7 +32,7 @@ import { escena } from './scene.js';
 import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
-import { loadTuning, openTuning, isTuned, save as saveView, SCENES } from './tuning.js';
+import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
 
@@ -109,13 +109,18 @@ function sceneFor(want) {
   return made;
 }
 
+/** The rules, with step 2 in the words of the chosen view's controls (one finger is 3D's default). */
+function renderHow() {
+  $('#how').replaceChildren(...L.como.map((s, i) => el('li', {}, i === 1 && view[schemeKey(view)] === 'stick' ? T.howStick : s)));
+}
+
 /** The cover's choice of view, 2D or 3D, kept on this phone with the panel's values. */
 function renderScenePick() {
   const pick = $('#scene-pick');
   pick.setAttribute('aria-label', T.sceneLabel);
   const paint = () => pick.replaceChildren(...SCENES.map(k => el('button', {
     type: 'button', class: view.scene === k ? 'on' : '', 'aria-pressed': String(view.scene === k), 'data-scene': k,
-    onClick: () => { SFX.tap(); view.scene = k; saveView(view); paint(); },
+    onClick: () => { SFX.tap(); view.scene = k; applyScene(view); saveView(view); paint(); renderHow(); },
   }, k === '3d' ? T.scene3d : T.scene2d)));
   paint();
 }
@@ -156,7 +161,7 @@ function resume(saved) {
 /** The controls of the scheme chosen in the tuning panel, and their first-run hint. */
 function setControls() {
   input?.dispose();
-  input = controls($('#stage'), { scheme: view.scheme, reach: view.reach, onFirst: () => $('#hint').classList.add('fuera') });
+  input = controls($('#stage'), { scheme: view[schemeKey(view)], reach: view.reach, onFirst: () => $('#hint').classList.add('fuera') });
   const hint = $('#hint');
   hint.dataset.scheme = input.scheme;
   hint.replaceChildren(...(input.scheme === 'wheel' ? [T.hintSteer, T.hintPedal] : [input.scheme === 'stick' ? T.hintStick : T.hint]).map(x => el('span', {}, x)));
@@ -308,7 +313,7 @@ function init() {
   $('#lang-slot').append(coverLangToggle());
   $('#sound-slot').append(soundToggle());
   initSound();
-  $('#how').replaceChildren(...L.como.map(s => el('li', {}, s)));
+  renderHow();
   // Instrucciones and Entrar as dialogs behind the lab flag cover-dialogs (C-8)
   coverWithDialogs($('#screen-intro'), { lang, alTocar: () => SFX.tap() });
   $('#btn-play').addEventListener('click', () => { SFX.tap(); startRun(); });
@@ -329,7 +334,7 @@ function init() {
       // Another setting grows other trees: the car hits what it sees
       if (S.g) arm(S.g.track);
       // The controls are rebuilt with the panel's scheme and thumb travel; a new scheme shows its hint again
-      if (S.g && input) { const changed = input.scheme !== view.scheme, gone = $('#hint').classList.contains('fuera'); setControls(); $('#hint').classList.toggle('fuera', gone && !changed); }
+      if (S.g && input) { const changed = input.scheme !== view[schemeKey(view)], gone = $('#hint').classList.contains('fuera'); setControls(); $('#hint').classList.toggle('fuera', gone && !changed); }
       S.last = performance.now();
       if (!was) { S.paused = false; if (S.live) countdown(); }
     } });
@@ -345,6 +350,8 @@ function init() {
 window.__drift = {
   S,
   get g() { return S.g; },
+  /** The values the car drives with now (each view has its own set). */
+  get tuning() { return { ...E.TUNING }; },
   /** The view on screen: '2d' or '3d' (a phone without WebGL plays 2D whatever it chose). */
   get scene() { return sc ? sc.kind || '2d' : null; },
   autopilot(on = true) { S.auto = !!on; },

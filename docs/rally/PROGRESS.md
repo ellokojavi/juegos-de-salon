@@ -65,6 +65,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner on the 3D view: the camera no longer turns in reverse; one finger by default and acceleration 18 (3D only: each view now has its own values and controls, as path 2 allows); a top-speed control whose default sits at a quarter of its bar; the wheels turn as the car runs.
+
 - **2026-11-27** · The owner asked for a higher top speed: 42/50 → 52/62 m/s (gravel/asphalt), accel kept at 10 (at 12 the car reached a bend faster and braking in it straightened the nose, which the e2e check caught). The lock now narrows up to a fixed `lockSpeed` (42 m/s) instead of the top speed, so the steering feels as before; the `split` stage's first straight grew 80 m to stay over 60 s.
 
 - **2026-11-27** · The owner brought path 2 forward: «Hagamos esta versión 3D simplemente una variante del juego en la portada», to feel both. The cover offers «🗺️ Vista 2D» / «🚗 Vista 3D»; `scene3d.js` on our own WebGL renderer (`gl3d.js`, option A) draws the same stage from behind the car, and a phone without WebGL plays 2D. The owner is still not at ease with how the car accelerates, brakes, slides and turns: polished as we go.

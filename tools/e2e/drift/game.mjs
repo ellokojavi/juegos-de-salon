@@ -123,11 +123,14 @@ for (const width of [375, 320]) {
     ok(await b.evaluate("document.querySelector('#scene-pick [data-scene=\"2d\"]').classList.contains('on')"), `${width}: the cover offers 2D and 3D, 2D chosen at first`);
     await b.evaluate("document.querySelector('#scene-pick [data-scene=\"3d\"]').click(); 1");
     ok(await b.evaluate("JSON.parse(localStorage.getItem('juegos-de-salon:drift:tuning')).view.scene === '3d'"), `${width}: the choice is kept on the phone`);
+    ok(/Un dedo/.test(await b.evaluate("document.getElementById('how').children[1].textContent")), `${width}: 3D: the rules explain one finger, 3D's own controls`);
     await b.shot(`cover-3d-${width}`);
     await b.evaluate("document.getElementById('btn-play').click(); 1");
     ok(await b.until("document.querySelector('#screen-play.active') && window.__drift.S.live", 3000), `${width}: 3D: «Jugar» opens the stage`);
     const webgl = await b.evaluate("!!document.createElement('canvas').getContext('webgl')");
     ok(await b.evaluate('window.__drift.scene') === (webgl ? '3d' : '2d'), `${width}: 3D: the stage is drawn from behind the car (${webgl ? 'WebGL' : 'no WebGL here: 2D'})`);
+    ok(await b.evaluate("document.getElementById('hint').dataset.scheme") === 'stick', `${width}: 3D: one finger by default`);
+    ok(await b.evaluate('window.__drift.tuning.accel') === 18, `${width}: 3D: it accelerates with its own value (18)`);
     await b.evaluate('window.__drift.autopilot(true); 1');
     ok(await b.until('window.__drift.g.gate >= 1', 15000), `${width}: 3D: the car drives through the first gate`);
     await b.evaluate(into); await sleep(400);
@@ -138,6 +141,7 @@ for (const width of [375, 320]) {
     await b.go(URL);
     await b.evaluate("document.querySelector('#scene-pick [data-scene=\"2d\"]').click(); document.getElementById('btn-play').click(); 1");
     ok(await b.until("document.querySelector('#screen-play.active') && window.__drift.scene === '2d'", 3000), `${width}: back to 2D, the stage is drawn from above`);
+    ok(await b.evaluate("window.__drift.tuning.accel === 10 && document.getElementById('hint').dataset.scheme === 'wheel'"), `${width}: 2D keeps its own values and its wheel and pedal`);
     ok(!b.errors.length, `${width}: 3D: no console errors` + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
   }
   b.close();
