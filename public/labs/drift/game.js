@@ -115,6 +115,8 @@ function resume(saved) {
   // Back stopped where it was saved; a run already under way pays the reset, so reloading undoes nothing
   Object.assign(g.car, { vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: g.car.x, py: g.car.y, ph: g.car.h });
   if (g.t > 0) g.penalty += E.TUNING.resetPenalty;
+  // Its clock goes on with the first throttle, as at the start (with the countdown, at its «¡A correr!»)
+  if (g.mode === 'play') g.mode = 'ready';
   begin(g, def);
   save();
 }
@@ -128,8 +130,19 @@ function setControls() {
   hint.replaceChildren(...(input.scheme === 'wheel' ? [T.hintSteer, T.hintPedal] : [input.scheme === 'stick' ? T.hintStick : T.hint]).map(x => el('span', {}, x)));
 }
 
-/** The shared 3, 2, 1; control comes back when it says «¡A correr!». */
+/**
+ * No countdown while the game is in the lab (the owner, 2026-11-27: three seconds lost on every
+ * test): the stage is live at once and the clock waits for the first throttle, as it always did.
+ * `COUNTDOWN = true` brings back the shared 3, 2, 1 (decided before a launch, PROGRESS.md "Later").
+ */
+const COUNTDOWN = false;
+
+/** The shared 3, 2, 1; control comes back when it says «¡A correr!». Without it, control is at once. */
 function countdown() {
+  if (!COUNTDOWN) {
+    if (S.g.mode !== 'done') { S.live = true; S.last = performance.now(); }
+    return;
+  }
   S.live = false;
   cuentaRegresiva({ titulo: T.title, ya: T.go }).then(() => {
     if (S.g.mode === 'done') return;
@@ -164,6 +177,9 @@ function play(e) {
   } else if (e.type === 'miss') { SFX.error(); vibrate(60); save(); }
   else if (e.type === 'reset') SFX.tap();
   else if (e.type === 'crash') crashed();
+  else if (e.type === 'boost') { SFX.pass(); vibrate(30); }
+  else if (e.type === 'jump') SFX.flip();
+  else if (e.type === 'land') { SFX.dice(); vibrate(40); }
   else if (e.type === 'wrecked') wreck();
   else if (e.type === 'finish') finish();
 }
@@ -304,6 +320,6 @@ window.__drift = {
     for (let i = 0; i < 120 * 600 && g.mode !== 'done'; i++) E.step(g, E.autopilot(g));
     g.events.splice(0).forEach(play);
   },
-  countdownMs: 3000 + CUENTA_SALE_MS,
+  countdownMs: COUNTDOWN ? 3000 + CUENTA_SALE_MS : 0,
 };
 init();

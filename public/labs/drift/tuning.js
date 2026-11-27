@@ -14,14 +14,14 @@ import { SCHEMES } from './input.js';
 import { SETTING_NAMES } from './scenery.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 50, scheme: 'wheel', reach: 60, setting: 'stage' });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage' });
 
 /** What the panel offers, with each slider's range and step. */
 const SLIDERS = [
   ['steerTime', 0.03, 0.5, 0.01], ['lockSlow', 15, 45, 1], ['lockFast', 3, 20, 0.5],
-  ['topGravel', 15, 45, 0.5], ['accel', 3, 14, 0.25], ['brake', 6, 24, 0.5],
+  ['topGravel', 15, 70, 0.5], ['accel', 3, 20, 0.25], ['brake', 6, 30, 0.5],
   ['gripGravel', 4, 20, 0.25], ['overSteer', 1, 4, 0.05], ['align', 0, 8, 0.1],
-  ['handbrake', 0.15, 1, 0.05], ['gripOff', 2, 12, 0.25], ['topOff', 6, 25, 0.5],
+  ['handbrake', 0.15, 1, 0.05], ['gripOff', 2, 12, 0.25], ['topOff', 6, 30, 0.5], ['boostTop', 1, 2.5, 0.05], ['boostTime', 0.3, 3, 0.1],
   ['topReverse', 3, 15, 0.5],
 ];
 

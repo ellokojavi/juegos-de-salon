@@ -38,6 +38,76 @@ ok('every stage stays clear of itself (25 m) and the first is 8 to 10 gates', ()
   assert.ok(TRACKS.first.gates >= 8 && TRACKS.first.gates <= 10);
 });
 
+ok('a fork leaves the main road and meets it again, clear of the rest of the stage, with no gate inside', () => {
+  const t = first();
+  assert.equal(t.branches.length, 2);
+  for (const b of t.branches) {
+    const a0 = b.pts[0], a1 = b.pts[b.pts.length - 1], m0 = t.pts[a0.i], m1 = t.pts[a1.i];
+    assert.ok(Math.hypot(a0.x - m0.x, a0.y - m0.y) < 0.5 && Math.hypot(a1.x - m1.x, a1.y - m1.y) < 0.5, 'it starts and ends on the main road');
+    const far = Math.max(...b.pts.map(q => Math.hypot(q.x - t.pts[q.i].x, q.y - t.pts[q.i].y)));
+    assert.ok(far > 10, `it really splits (${far.toFixed(1)} m apart)`);
+    for (const q of b.pts) for (const p of t.pts) {
+      if (p.s < b.from - 40 || p.s > b.to + 40) assert.ok(Math.hypot(q.x - p.x, q.y - p.y) >= 14, `fork ${b.n} comes near the road at ${p.s} m`);
+    }
+    for (const g of t.gates) assert.ok(g.s < b.from || g.s > b.to, `gate at ${g.s} m inside fork ${b.n}`);
+  }
+});
+
+ok('on a fork the car on the branch is on the road, and its progress runs as on the main one', () => {
+  const t = first(), b = t.branches[0], q = b.pts[Math.floor(b.pts.length / 2)];
+  const g = E.newGame({ track: t });
+  g.mode = 'play'; g.idx = q.i;
+  Object.assign(g.car, { x: q.x, y: q.y, h: q.h, px: q.x, py: q.y, vx: Math.cos(q.h) * 10, vy: Math.sin(q.h) * 10 });
+  steps(g, { ...FULL, throttle: 0.3 }, 10);
+  assert.equal(g.branch, 0); assert.ok(g.onRoad, 'on the road');
+  assert.ok(Math.abs(g.progress - q.s) < 4, `progress ${g.progress.toFixed(1)} against ${q.s}`);
+});
+
+ok('a boost pad pushes the car well past its top speed for a moment', () => {
+  const track = straight();
+  track.pads = [{ x: 0, y: 30, h: Math.PI / 2, s: 30, half: 1.7, len: 8 }];
+  const g = E.newGame({ track });
+  const events = [];
+  let best = 0;
+  for (let i = 0; i < 120 * 8; i++) { E.step(g, FULL); best = Math.max(best, g.car.speed); events.push(...g.events.splice(0)); }
+  assert.ok(events.some(e => e.type === 'boost'));
+  assert.ok(best > E.TUNING.topGravel * 1.15, `peak ${best.toFixed(1)} against top ${E.TUNING.topGravel}`);
+  assert.ok(g.car.speed < E.TUNING.topGravel * 1.05, `and then back near its top speed (${g.car.speed.toFixed(1)})`);
+});
+
+ok('a ramp throws the car up; it lands where it lands, without losing a life, and cannot crash in the air', () => {
+  const track = straight();
+  track.ramps = [{ x: 0, y: 80, h: Math.PI / 2, s: 80, half: 3.1, len: 5 }];
+  // A tree right where the car flies over it
+  track.solids = [{ x: 0, y: 100, r: 0.6 }];
+  const g = E.newGame({ track });
+  const events = [];
+  let top = 0;
+  for (let i = 0; i < 120 * 10; i++) { E.step(g, FULL); top = Math.max(top, g.car.z); events.push(...g.events.splice(0)); }
+  assert.ok(events.some(e => e.type === 'jump') && events.some(e => e.type === 'land'));
+  assert.ok(top > 1, `it flew ${top.toFixed(2)} m high`);
+  assert.equal(g.car.z, 0);
+  assert.equal(g.lives, E.TUNING.lives, 'no life lost: not the landing, not the tree under it');
+});
+
+ok('every boost pad has a long straight after it, so a boosted car is not thrown at a bend', () => {
+  // About how far a boosted car goes before it is back to its top speed (the owner, 2026-11-27)
+  const PAD_RUN = 130;
+  for (const t of [test(), first()]) for (const p of t.pads) {
+    const path = p.fork !== undefined ? t.branches[p.fork].pts : t.pts;
+    const run = path.filter(q => q.s >= p.s && q.s <= p.s + PAD_RUN);
+    assert.ok(run.length && run[run.length - 1].s >= p.s + PAD_RUN - 2 * E.SAMPLE, `${t.id}: the road ends ${PAD_RUN} m after the pad at ${p.s}`);
+    const turn = Math.max(...run.map(q => Math.abs(((q.h - p.h + 3 * Math.PI) % (2 * Math.PI)) - Math.PI)));
+    assert.ok(turn < 0.12, `${t.id}: the road turns ${(turn * 180 / Math.PI).toFixed(0)}° within ${PAD_RUN} m of the pad at ${p.s.toFixed(0)} m`);
+  }
+});
+
+ok('boosted, the car still turns as well as at its top speed', () => {
+  const turnAt = speed => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = speed; g.boost = 1; const h0 = g.car.h; steps(g, { steer: 1, throttle: 1, brake: 0, handbrake: false }, 60); return h0 - g.car.h; };
+  const top = E.TUNING.topGravel;
+  assert.ok(turnAt(top * 1.6) >= turnAt(top) * 0.85, `full lock in half a second: ${turnAt(top * 1.6).toFixed(2)} rad boosted against ${turnAt(top).toFixed(2)} at top speed`);
+});
+
 ok('the clock waits for the first throttle, and counts in steps', () => {
   const g = E.newGame({ track: test() });
   steps(g, E.IDLE, 120);
@@ -78,7 +148,8 @@ ok('a tree ahead: the car bounces off, loses one life and keeps a dent at its no
   const track = straight();
   track.solids = [{ x: 0, y: 40, r: 1 }];
   const g = E.newGame({ track });
-  steps(g, FULL, 120 * 4);
+  for (let i = 0; i < 120 * 6 && g.lives === E.TUNING.lives; i++) E.step(g, FULL);
+  steps(g, E.IDLE, 120);
   assert.equal(g.lives, E.TUNING.lives - 1, `lives ${g.lives}`);
   assert.ok(g.car.y < 40 - 1.9, `stopped before the trunk (${g.car.y.toFixed(2)})`);
   assert.equal(g.car.hits.length, 1);
@@ -121,9 +192,12 @@ ok('a gentle bend at speed holds; a tight one slides', () => {
     for (let i = 0; i < 120; i++) { E.step(g, { steer, throttle: 1, brake: 0, handbrake: false }); slip = Math.max(slip, g.car.slip); }
     return slip;
   };
-  // A gentle bend: a little thumb (0.12 of full lock turns about as hard as 0.15 did before the owner asked for more lock)
-  assert.ok(at(15, 0.12) < 0.05, 'a gentle bend holds');
-  assert.ok(at(25, 1) > 1, 'full lock at speed slides');
+  // A gentle bend: a little thumb at half the top speed (the lock grew twice at the owner's asking,
+  // so a little thumb is 0.05 of it now); it still turns, and the tyres hold
+  assert.ok(at(E.TUNING.topGravel * 0.5, 0.05) < 0.05, 'a gentle bend at half the top speed holds');
+  const turned = (() => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = E.TUNING.topGravel * 0.5; const h0 = g.car.h; steps(g, { steer: 0.05, throttle: 1, brake: 0, handbrake: false }, 120); return h0 - g.car.h; })();
+  assert.ok(turned > 0.1, `the gentle bend turns (${turned.toFixed(2)} rad in a second)`);
+  assert.ok(at(E.TUNING.topGravel * 0.8, 1) > 1, 'full lock at speed slides');
   // The handbrake loosens the rear: more slide for the same steering
   const hb = (() => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = 18; let s = 0; for (let i = 0; i < 120; i++) { E.step(g, { steer: 0.6, throttle: 1, brake: 0, handbrake: true }); s = Math.max(s, g.car.slip); } return s; })();
   assert.ok(hb > at(18, 0.6));

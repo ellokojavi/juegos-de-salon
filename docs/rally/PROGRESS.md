@@ -19,7 +19,7 @@ in the other files.
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
-| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives | [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941) |
+| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | [#1946](https://github.com/ellokojavi/juegos-de-salon/pull/1946) |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
 | 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
@@ -57,11 +57,18 @@ answer and its date here; a decision that sets a policy someone could undo also 
 A feature that tempts a phase beyond its exit list is written here instead of built.
 
 - Tilt steering (the phone as the wheel): needs a motion permission on iPhone; try only if the thumb schemes fail.
+- The shared 3, 2, 1 before a run: off in the lab since the owner asked (2026-11-27, `COUNTDOWN` in game.js); decide before a launch whether it comes back.
 - A handbrake on touch (today only the keyboard's space): if the feel round shows slides need it.
 
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner removed the countdown for testing (three seconds on every change): `COUNTDOWN = false` in game.js; the clock already waits for the first throttle, and a resumed run now does too.
+
+- **2026-11-27** · The owner: boosted, the car could not be steered, and a pad must be followed by a long straight. The grip now grows with the speed past the top, so a boosted car turns as at its top speed; a test holds every pad to 130 m of straight; the first stage's straights after its pads grew (S80 → S150, S100 → S170) and the hairpin fork lost its pad.
+
+- **2026-11-27** · The owner's settings became the defaults (follow view, thumb travel 75 px, 40 m in view). For vertigo: top 42/50 m/s (was 30/36), accel 10, brake 20, side streaks. No dust on asphalt itself. New on the stages: forks (two on the first stage), ramps (fly, land unharmed) and boost pads. Design in core section 5.
 
 - **2026-11-27** · The owner asked to turn harder: lock 32°/9° → 40°/14°, `overSteer` 2.2 → 3.0, grip gravel 9 → 11 and asphalt 14 → 16, `align` 2.5 → 3.0 (so a slide still ends in half a second). At 25 m/s the car now turns about two thirds faster.
 

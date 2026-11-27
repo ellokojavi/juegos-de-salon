@@ -33,7 +33,7 @@ const LIFT = 56;
  * @param {number} [o.reach]    px of thumb travel for full steering (and for the stick's full pedal)
  * @param {() => void} [o.onFirst]   called on the first input of a run (the hint leaves)
  */
-export function controls(stage, { scheme = 'wheel', reach = 60, onFirst = () => {} } = {}) {
+export function controls(stage, { scheme = 'wheel', reach = 75, onFirst = () => {} } = {}) {
   if (!SCHEMES.includes(scheme)) scheme = 'wheel';
   const touches = new Map();   // id → { role, x0, y0, x, y, ring, dot, gx, gy }
   const keys = new Set();
