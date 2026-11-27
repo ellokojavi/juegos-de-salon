@@ -48,11 +48,11 @@ export const TRACKS = {
   split: {
     id: 'split', gates: 10, surface: 'gravel', setting: 'meadow',
     pieces: [
-      ['S', 220], ['R', 220, 30], ['S', 160], ['L', 180, 45], ['S', 230], ['R', 160, 35], ['S', 140],
+      ['S', 300], ['R', 220, 30], ['S', 160], ['L', 180, 45], ['S', 230], ['R', 160, 35], ['S', 140],
       ['L', 30, 80], ['S', 40], ['R', 16, 160], ['S', 50], ['L', 28, 70], ['R', 28, 70], ['S', 60],
       ['L', 18, 150], ['S', 50], ['R', 35, 90], ['S', 40], ['L', 60, 50], ['S', 60], ['R', 40, 70], ['S', 90],
     ],
-    zones: [{ from: 0, to: 1180, surface: 'asphalt' }],
+    zones: [{ from: 0, to: 1260, surface: 'asphalt' }],
   },
   // Under the rain: a short technical stage on wet asphalt, where the grip is less than on dry gravel
   rain: {

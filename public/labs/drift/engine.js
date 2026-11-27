@@ -35,8 +35,8 @@ export const STEP = 1 / 120;
  */
 export const TUNING = {
   steerTime: 0.15,        // s from centre to full lock
-  topGravel: 42,          // m/s (30 until the owner asked for vertigo, 2026-11-27)
-  topAsphalt: 50,
+  topGravel: 52,          // m/s (30, then 42 for vertigo, then 52: the owner asked for more, 2026-11-27)
+  topAsphalt: 62,
   topOff: 18,             // off the road
   accel: 10,              // m/s²
   brake: 20,
@@ -44,7 +44,8 @@ export const TUNING = {
   maxOffDrag: 12,         // the most the rough ground slows a fast car, m/s²
   wheelbase: 2.5,         // m
   lockSlow: 40,           // degrees of steering when slow…
-  lockFast: 14,           // …and at top speed
+  lockFast: 14,           // …and from `lockSpeed` up
+  lockSpeed: 42,          // m/s where the lock reaches lockFast (the old top speed, so the steering feels as before)
   gripGravel: 11,         // m/s² of sideways grip
   gripAsphalt: 16,
   gripOff: 5,
@@ -260,7 +261,7 @@ export function step(g, input = IDLE) {
   // steering was too weak to control it)
   const over = Math.max(1, Math.abs(vf) / topOf(surface));
   const grip = gripOf(surface, track.wet) * (handbrake ? T.handbrake : 1) * over;
-  const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(Math.abs(vf) / T.topGravel, 0, 1)) * DEG;
+  const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(Math.abs(vf) / T.lockSpeed, 0, 1)) * DEG;
   const cap = T.overSteer * (handbrake ? 2 : 1) * grip / Math.max(Math.abs(vf), 4);
   let yaw = clamp(-vf / T.wheelbase * Math.tan(car.steer * lock), -cap, cap);
   const vxw = car.vx + (vf - (car.vx * c + car.vy * s)) * c, vyw = car.vy + (vf - (car.vx * c + car.vy * s)) * s;
@@ -482,7 +483,7 @@ export function autopilot(g) {
   const ahead = 5 + v * 0.45;
   const target = P[Math.min(P.length - 1, g.idx + Math.round(ahead / SAMPLE))];
   const err = wrap(Math.atan2(target.y - car.y, target.x - car.x) - car.h);
-  const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(v / T.topGravel, 0, 1)) * DEG;
+  const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(v / T.lockSpeed, 0, 1)) * DEG;
   const steer = clamp(-err / lock * 1.6, -1, 1);
   // The slowest the next stretch allows, braking in time for it
   const look = Math.round((v * v / (2 * T.brake) + 20) / SAMPLE);
