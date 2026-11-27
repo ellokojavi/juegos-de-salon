@@ -12,9 +12,10 @@ import { TUNING, DEFAULT_TUNING } from './engine.js';
 import { TUNING_KEY } from './rules.js';
 import { SCHEMES } from './input.js';
 import { SETTING_NAMES } from './scenery.js';
+import { STAGES, DEFAULT_TRACK } from './tracks.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage' });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK });
 
 /** What the panel offers, with each slider's range and step. */
 const SLIDERS = [
@@ -37,6 +38,7 @@ export function loadTuning() {
   if (!SCHEMES.includes(view.scheme)) view.scheme = DEFAULT_VIEW.scheme;
   if (!Number.isFinite(view.reach)) view.reach = DEFAULT_VIEW.reach;
   if (view.setting !== 'stage' && !SETTING_NAMES.includes(view.setting)) view.setting = DEFAULT_VIEW.setting;
+  if (!STAGES.includes(view.stage)) view.stage = DEFAULT_VIEW.stage;
   return view;
 }
 
@@ -65,6 +67,12 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
   const paintSchemes = () => schemes.replaceChildren(...[['wheel', T.schemeWheel], ['stick', T.schemeStick], ['auto', T.schemeAuto]].map(([m, label]) =>
     el('button', { type: 'button', class: view.scheme === m ? 'on' : '', 'aria-pressed': String(view.scheme === m), onClick: () => { view.scheme = m; save(view); paintSchemes(); } }, label)));
   paintSchemes();
+  // The stage: a new one starts a new run on it when the panel closes (the owner's track ideas, 2026-11-27)
+  const stages = el('div', { class: 'seg dr-tune-schemes', role: 'group', 'aria-label': T.tuneStage });
+  const STAGE_LABEL = { first: T.stageFirst, split: T.stageSplit, rain: T.stageRain };
+  const paintStages = () => stages.replaceChildren(...STAGES.map(m =>
+    el('button', { type: 'button', class: view.stage === m ? 'on' : '', 'aria-pressed': String(view.stage === m), onClick: () => { view.stage = m; save(view); paintStages(); } }, STAGE_LABEL[m])));
+  paintStages();
   // The setting: the stage's own, or any of the three to look at it (the scene redraws at once)
   const settings = el('div', { class: 'seg dr-tune-schemes', role: 'group', 'aria-label': T.tuneSetting });
   const paintSettings = () => settings.replaceChildren(...[['stage', T.settingStage], ['meadow', T.settingMeadow], ['forest', T.settingForest], ['plain', T.settingPlain]].map(([m, label]) =>
@@ -101,6 +109,7 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
     el('div', { class: 'hoja-cabeza' }, el('h3', { id: 'tuning-title' }, T.tuneTitle),
       el('button', { type: 'button', class: 'icon-btn', 'aria-label': T.tuneClose, id: 'btn-tune-close', onClick: close }, '✕')),
     frame,
+    el('p', { class: 'dr-tune-name' }, T.tuneStage), stages,
     el('p', { class: 'dr-tune-name' }, T.tuneControls), schemes, reach,
     el('p', { class: 'dr-tune-name' }, T.tuneCamera), camera, ahead,
     el('p', { class: 'dr-tune-name' }, T.tuneSetting), settings,

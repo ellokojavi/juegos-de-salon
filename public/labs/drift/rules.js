@@ -30,6 +30,7 @@ const ES = {
     tuneControls: 'Controles', schemeWheel: '🕹️ Volante y pedal', schemeStick: '👆 Un dedo', schemeAuto: 'Acelera solo',
     tuneSetting: 'Escenario', settingStage: '🏁 Etapa', settingMeadow: '🌿 Pradera', settingForest: '🔥 Bosque', settingPlain: '🌙 Llanura',
     tuneReach: 'Recorrido del pulgar (px)',
+    tuneStage: 'Tramo (empieza de nuevo)', stageFirst: '🌿 El primero', stageSplit: '⚡ Rápido y técnico', stageRain: '🌧️ Bajo la lluvia',
   },
   como: [
     '🏁 Cruza todas las puertas hasta la meta en el menor tiempo.',
@@ -60,6 +61,7 @@ const EN = {
     tuneControls: 'Controls', schemeWheel: '🕹️ Wheel and pedal', schemeStick: '👆 One finger', schemeAuto: 'Self-accelerating',
     tuneSetting: 'Setting', settingStage: '🏁 Stage', settingMeadow: '🌿 Meadow', settingForest: '🔥 Forest', settingPlain: '🌙 Plain',
     tuneReach: 'Thumb travel (px)',
+    tuneStage: 'Stage (starts again)', stageFirst: '🌿 The first', stageSplit: '⚡ Fast and technical', stageRain: '🌧️ In the rain',
   },
   como: [
     '🏁 Drive through every gate to the finish in the shortest time.',
@@ -90,6 +92,7 @@ const PT = {
     tuneControls: 'Controles', schemeWheel: '🕹️ Volante e pedal', schemeStick: '👆 Um dedo', schemeAuto: 'Acelera sozinho',
     tuneSetting: 'Cenário', settingStage: '🏁 Etapa', settingMeadow: '🌿 Prado', settingForest: '🔥 Floresta', settingPlain: '🌙 Planície',
     tuneReach: 'Curso do polegar (px)',
+    tuneStage: 'Trecho (começa de novo)', stageFirst: '🌿 O primeiro', stageSplit: '⚡ Rápido e técnico', stageRain: '🌧️ Na chuva',
   },
   como: [
     '🏁 Passe por todos os portões até a chegada no menor tempo.',

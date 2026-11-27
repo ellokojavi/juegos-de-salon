@@ -24,7 +24,7 @@
  * arrives over about half a second and never snaps; it does not shake and does not zoom with speed.
  * With reduced motion it is damped twice as much, and there is half the dust.
  */
-import { SETTINGS, scenery, near, settingOf } from './scenery.js';
+import { SETTINGS, CROWD, scenery, near, settingOf, seeded } from './scenery.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
 const COLOURS = {
@@ -35,6 +35,7 @@ const COLOURS = {
   spark: '#ffd23f', flash: 'rgba(255, 255, 255, 0.85)', flameOuter: '#ff7a1a', flameInner: '#ffe066', bumper: '#b81a5e',
   ramp: '#8a5a2b', rampEdge: '#c58a4a', rampShade: 'rgba(0, 0, 0, 0.35)', pad: 'rgba(40, 230, 220, 0.75)', padArrow: '#fff36b',
   boostFlame: '#6ee7ff', streak: 'rgba(255, 255, 255, 0.35)',
+  wetSheen: 'rgba(15, 25, 45, 0.3)', puddle: 'rgba(175, 195, 225, 0.22)', rain: 'rgba(200, 215, 240, 0.35)', wetTint: 'rgba(30, 45, 80, 0.18)',
   headlight: '#fff6c8', brakeLight: '#ff3b30', reverseLight: '#ffffff', brakeOff: '#5a1020',
 };
 const MAX_DPR = 2;
@@ -49,6 +50,18 @@ const TRACKS = 600, MARK_SLIP = 1.4;
 const DUST = 80;
 /** Crash debris and bonnet smoke: particles in each pool. */
 const DEBRIS = 48, SMOKE = 40;
+/** Rain drops on a wet stage. */
+const RAIN = 90;
+
+/** The puddles of a wet stage: on the road, from the stage's own seed (never the engine's). */
+function puddlesOf(track) {
+  const rnd = seeded(`${track.id}:puddles`), out = [];
+  for (let i = 5; i < track.pts.length; i += 6 + Math.floor(rnd() * 10)) {
+    const p = track.pts[i], o = (rnd() - 0.5) * (p.w - 2.4);
+    out.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h + (rnd() - 0.5) * 0.6, a: 0.8 + rnd() * 1.6, b: 0.4 + rnd() * 0.7 });
+  }
+  return out;
+}
 
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const quiet = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -66,7 +79,7 @@ function canvasOf(w, h) {
  */
 function propSprite(kind, v, S, ppm) {
   const sun = S.sun, E = 1 + Math.hypot(sun[0], sun[1]) + 0.1;
-  const rRef = { tree: 4.2, dead: 3, bush: 1.8, rock: 1.4, hay: 1.1, stump: 0.8 }[kind] || 2;
+  const rRef = { tree: 4.2, dead: 3, bush: 1.8, rock: 1.4, hay: 1.1, stump: 0.8, fan: 0.5, bale: 0.6 }[kind] || 2;
   const px = Math.min(256, Math.max(8, 2 * E * rRef * ppm));
   const c = canvasOf(px, px), x = c.getContext('2d');
   x.translate(px / 2, px / 2); x.scale(px / (2 * E), px / (2 * E));
@@ -118,6 +131,20 @@ function propSprite(kind, v, S, ppm) {
     disc(0, 0, 1, S.hay[0]);
     x.strokeStyle = S.hay[1]; x.lineWidth = 0.09;
     for (const r of [0.7, 0.45, 0.2]) { x.beginPath(); x.arc(0, 0, r, 0.3 * v, 0.3 * v + 5); x.stroke(); }
+  } else if (kind === 'bale') {
+    // A round straw bale, the same in every setting
+    disc(sx * 0.6, sy * 0.6, 1, S.shadow);
+    disc(0, 0, 1, CROWD.bale[v % 2]);
+    x.strokeStyle = CROWD.bale[(v + 1) % 2]; x.lineWidth = 0.12;
+    for (const r of [0.65, 0.35]) { x.beginPath(); x.arc(0, 0, r, 0.5 * v, 0.5 * v + 5); x.stroke(); }
+  } else if (kind === 'fan') {
+    // A person seen from above: shoulders in a bright shirt, a head; some with their arms up
+    const shirt = CROWD.shirts[v % CROWD.shirts.length], skin = CROWD.skin[(v >> 3) % CROWD.skin.length];
+    disc(sx * 0.7, sy * 0.7, 0.95, S.shadow);
+    x.fillStyle = shirt; x.beginPath(); x.ellipse(0, 0, 1, 0.62, 0, 0, Math.PI * 2); x.fill();
+    if (v % 3 === 0) { disc(-0.95, 0.55, 0.26, skin); disc(0.95, 0.55, 0.26, skin); }
+    disc(0, 0, 0.48, skin);
+    disc(0, -0.08, 0.3, v % 2 ? '#2a1a10' : '#c9a050');
   }
   return { img: c, E };
 }
@@ -140,7 +167,9 @@ export function escena(canvas) {
   let lastNow = 0;
   // What is built once per stage and setting, and once per scale
   let world = null;          // { track, setting, S, patches, cells }
-  let sprites = new Map(), spritePpm = 0, dust = null;
+  let sprites = new Map(), spritePpm = 0, dust = null, spray = null;
+  // The rain: drops in screen space, falling at a slant
+  const drops = Array.from({ length: RAIN }, () => ({ x: Math.random(), y: Math.random(), v: 0.8 + Math.random() * 0.5 }));
   const seen = [];
   // Tyre tracks: a ring of segments [x1, y1, x2, y2], newest at `head`
   const marks = new Float32Array(TRACKS * 4);
@@ -167,8 +196,8 @@ export function escena(canvas) {
     const setting = settingOf(track, name);
     if (world && world.track === track && world.setting === setting) return world;
     const S = SETTINGS[setting];
-    world = { track, setting, S, ...scenery(track, setting) };
-    sprites = new Map(); spritePpm = 0; dust = dustSprite(S.dust);
+    world = { track, setting, S, ...scenery(track, setting), puddles: track.wet ? puddlesOf(track) : [] };
+    sprites = new Map(); spritePpm = 0; dust = dustSprite(S.dust); spray = dustSprite([205, 215, 230]);
     return world;
   }
   function sprite(kind, v, ppm) {
@@ -230,8 +259,10 @@ export function escena(canvas) {
       // Dust from loose ground: a gravel road, the road's edge, off the road; never from asphalt itself
       // (the owner, 2026-11-27), and never in the air
       const w = g.track.pts[g.idx]?.w || 7;
-      const dusty = (S.ruts !== null || !g.onRoad || Math.abs(g.side) > w / 2 - 1.2) && !(car.z > 0);
-      let rate = dusty ? Math.min(60, car.slip * 9) + (car.speed > 3 ? (car.throttle || 0) * car.speed * 0.6 : 0) : 0;
+      // On a wet stage the wheels throw spray instead, from any road at speed
+      const wet = g.track.wet;
+      const dusty = (wet ? car.speed > 12 : car.surface === 'gravel' || !g.onRoad || Math.abs(g.side) > w / 2 - 1.2) && !(car.z > 0);
+      let rate = dusty ? Math.min(60, car.slip * 9) + (car.speed > 3 ? (wet ? 0.5 : car.throttle || 0) * car.speed * 0.6 : 0) : 0;
       if (quiet()) rate /= 2;
       owed += rate * dt;
       while (owed >= 1) {
@@ -291,22 +322,30 @@ export function escena(canvas) {
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
     }
     road(g.track, S, cam.x, cam.y, reach);
+    if (g.track.wet) puddles(world.puddles, cam.x, cam.y, reach);
     features(g.track, now);
     tyreMarks(S, zoom);
     gates(g, zoom);
     // The props, then the car over them (a crown must never hide it), then its dust
     const ppm = zoom * dpr;
+    const still = quiet();
     for (const it of near(world.cells, cam.x, cam.y, reach, seen)) {
       const { img, E } = sprite(it.kind, it.v, ppm);
-      const e = E * it.r;
+      let e = E * it.r;
+      // The people jump as the car goes by (never with reduced motion)
+      if (it.kind === 'fan' && !still) {
+        const d = Math.hypot(it.x - x, it.y - y);
+        if (d < 35) e *= 1 + 0.14 * Math.abs(Math.sin(now / 160 + it.ph)) * (1 - d / 35);
+      }
       ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
+    for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0);
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
       ctx.globalAlpha = 1 - f;
-      ctx.drawImage(dust, p.x - r, p.y - r, 2 * r, 2 * r);
+      ctx.drawImage(g.track.wet ? spray : dust, p.x - r, p.y - r, 2 * r, 2 * r);
     }
     for (const p of smoke) {
       if (p.age >= p.life) continue;
@@ -330,6 +369,7 @@ export function escena(canvas) {
     ctx.restore();
     // The light of the hour: warm at sunset, blue at dusk
     if (S.tint) { ctx.fillStyle = S.tint; ctx.fillRect(0, 0, W, H); }
+    if (g.track.wet) rain(dt);
     streaks(car, g.boost > 0);
 
     // The gate numbers, upright on the screen
@@ -349,36 +389,117 @@ export function escena(canvas) {
       }
     }
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    for (const [colour, extra] of [[S.shoulder, 2.4], [S.road, 0]]) {
-      ctx.strokeStyle = colour;
-      // Wider where the bend is a hairpin: each width its own stroke
+    // Each stretch in the look of its surface: the setting's own road for the surface it was made for,
+    // the other surface's usual look where the stage changes (a gravel meadow that turns to asphalt)
+    const native = S.lines ? 'asphalt' : 'gravel';
+    const lookOf = sf => (sf === native ? S : SETTINGS[sf === 'asphalt' ? 'plain' : 'meadow']);
+    const surfaces = [...new Set(runs.flat().map(p => p.sf))];
+    // Wider where the bend is a hairpin: each width its own stroke
+    // Where the surface changes, each stretch reaches one point into the next and ends square, so the
+    // two meet edge to edge (a round end would bulge over the other surface)
+    const stroke = (keep, width) => {
       for (const w of [7, 9]) {
-        ctx.lineWidth = w + extra;
+        // (the hairpin's wider stroke keeps its round ends: it widens the road gently)
+        ctx.lineCap = surfaces.length > 1 && width === 0 && w === 7 ? 'butt' : 'round';
+        ctx.lineWidth = w + width;
         ctx.beginPath();
         for (const rn of runs) {
           let open = false;
-          for (const p of rn) {
-            if (p.w < w) { open = false; continue; }
+          for (let i = 0; i < rn.length; i++) {
+            const p = rn[i];
+            if (p.w < w || !(keep(p) || (i > 0 && keep(rn[i - 1])))) { open = false; continue; }
             if (!open) { ctx.moveTo(p.x, p.y); open = true; } else ctx.lineTo(p.x, p.y);
           }
         }
         ctx.stroke();
       }
-    }
-    // A line along the road, `off` metres to its left (a negative one, to its right)
-    const along = (off, edge) => {
+    };
+    ctx.strokeStyle = S.shoulder; stroke(() => true, 2.4);
+    ctx.lineCap = 'round';
+    for (const sf of surfaces) { ctx.strokeStyle = lookOf(sf).road; stroke(p => p.sf === sf, 0); }
+    // The rain darkens the road
+    if (track.wet) { ctx.strokeStyle = COLOURS.wetSheen; stroke(() => true, 0); }
+    // A line along the road, `off` metres to its left (a negative one, to its right), on one surface
+    const along = (off, edge, sf) => {
       ctx.beginPath();
-      for (const rn of runs) rn.forEach((p, i) => {
-        const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
-        const px = p.x - Math.sin(p.h) * o, py = p.y + Math.cos(p.h) * o;
-        i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-      });
+      for (const rn of runs) {
+        let open = false;
+        for (const p of rn) {
+          if (p.sf !== sf) { open = false; continue; }
+          const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
+          const px = p.x - Math.sin(p.h) * o, py = p.y + Math.cos(p.h) * o;
+          if (open) ctx.lineTo(px, py); else { ctx.moveTo(px, py); open = true; }
+        }
+      }
       ctx.stroke();
     };
     // Gravel: the two ruts the cars before you dug; asphalt: the edge lines and the centre dashes
-    if (S.ruts) { ctx.strokeStyle = S.ruts; ctx.lineWidth = 0.7; along(1.25); along(-1.25); }
-    if (S.lines) { ctx.strokeStyle = S.lines; ctx.lineWidth = 0.18; along(0.45, true); along(-0.45, true); }
-    if (S.centre) { ctx.strokeStyle = S.centre; ctx.lineWidth = 0.2; ctx.setLineDash([3, 5]); along(0); ctx.setLineDash([]); }
+    for (const sf of surfaces) {
+      const L = lookOf(sf);
+      if (L.ruts) { ctx.strokeStyle = L.ruts; ctx.lineWidth = 0.7; along(1.25, false, sf); along(-1.25, false, sf); }
+      if (L.lines) { ctx.strokeStyle = L.lines; ctx.lineWidth = 0.18; along(0.45, true, sf); along(-0.45, true, sf); }
+      if (L.centre) { ctx.strokeStyle = L.centre; ctx.lineWidth = 0.2; ctx.setLineDash([3, 5]); along(0, false, sf); ctx.setLineDash([]); }
+    }
+  }
+
+  /** The puddles of a wet stage: pale ellipses on the road that catch the sky. */
+  function puddles(list, cx, cy, reach) {
+    ctx.fillStyle = COLOURS.puddle;
+    ctx.beginPath();
+    for (const p of list) {
+      if (Math.abs(p.x - cx) > reach || Math.abs(p.y - cy) > reach) continue;
+      ctx.moveTo(p.x + Math.cos(p.h) * p.a, p.y + Math.sin(p.h) * p.a);
+      ctx.ellipse(p.x, p.y, p.a, p.b, p.h, 0, Math.PI * 2);
+    }
+    ctx.fill();
+  }
+
+  /**
+   * A grandstand beside the road: a stepped stand along it, full of people facing the road, with a
+   * roof over the back rows and a rail at the front. The front rows stand up as the car goes by.
+   */
+  function stand(st, S, carX, carY, now, still) {
+    ctx.save();
+    // In the stand's own frame: x along the road, y away from it (its front rows and rail toward the road)
+    ctx.translate(st.x, st.y); ctx.rotate(st.h); ctx.scale(1, st.side);
+    const L = st.len / 2, D = st.dep / 2;
+    ctx.fillStyle = S.shadow; ctx.fillRect(-L + 1, -D + 1, st.len, st.dep);
+    ctx.fillStyle = CROWD.stand; ctx.fillRect(-L, -D, st.len, st.dep);
+    ctx.fillStyle = CROWD.step;
+    const rows = 4, rowD = (st.dep * 0.7) / rows;
+    for (let r = 0; r < rows; r++) ctx.fillRect(-L + 0.3, -D + 0.4 + r * rowD, st.len - 0.6, rowD * 0.45);
+    // The people on the rows, from the stand's own seed
+    const rnd = seeded(`stand:${st.v}`), near = Math.hypot(carX - st.x, carY - st.y) < 45 && !still;
+    for (let r = 0; r < rows; r++) for (let a = -L + 0.8; a < L - 0.6; a += 0.9 + rnd() * 0.5) {
+      if (rnd() < 0.15) continue;
+      const v = Math.floor(rnd() * 32), py = -D + 0.6 + r * rowD, jump = near && r < 2 ? 0.08 * Math.abs(Math.sin(now / 150 + a)) : 0;
+      const sz = 0.34 + jump;
+      ctx.fillStyle = CROWD.shirts[v % CROWD.shirts.length];
+      ctx.beginPath(); ctx.ellipse(a, py, sz, sz * 0.62, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = CROWD.skin[(v >> 3) % CROWD.skin.length];
+      ctx.beginPath(); ctx.arc(a, py, sz * 0.45, 0, Math.PI * 2); ctx.fill();
+    }
+    // The roof over the back, and the rail at the front
+    ctx.fillStyle = CROWD.roof; ctx.fillRect(-L - 0.3, D - st.dep * 0.28, st.len + 0.6, st.dep * 0.28 + 0.3);
+    ctx.strokeStyle = CROWD.rail; ctx.lineWidth = 0.15;
+    ctx.beginPath(); ctx.moveTo(-L, -D); ctx.lineTo(L, -D); ctx.stroke();
+    ctx.restore();
+  }
+
+  /** The rain: short slanted strokes across the screen, and a grey-blue cast (still drops with reduced motion). */
+  function rain(dt) {
+    ctx.fillStyle = COLOURS.wetTint; ctx.fillRect(0, 0, W, H);
+    const fall = quiet() ? 0 : dt * 1.6;
+    ctx.strokeStyle = COLOURS.rain; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (const d of drops) {
+      d.y += fall * d.v; d.x -= fall * d.v * 0.25;
+      if (d.y > 1) { d.y -= 1; d.x = Math.random(); }
+      if (d.x < 0) d.x += 1;
+      const px = d.x * W, py = d.y * H;
+      ctx.moveTo(px, py); ctx.lineTo(px - 4, py + 14);
+    }
+    ctx.stroke();
   }
 
   /**

@@ -26,7 +26,7 @@ import { result } from '../../assets/js/share-templates.js';
 import { cuentaRegresiva, CUENTA_SALE_MS } from '../../assets/js/cuenta-regresiva.js';
 import { labAccess } from '../../assets/js/lab-access.js';
 import { GAME_ID, LOCALES } from './rules.js';
-import { TRACKS, DEFAULT_TRACK } from './tracks.js';
+import { TRACKS, STAGES, DEFAULT_TRACK } from './tracks.js';
 import * as E from './engine.js';
 import { escena } from './scene.js';
 import { scenery, solids, settingOf } from './scenery.js';
@@ -45,8 +45,9 @@ const T = L.ui;
 const C = COMMON[lang] || COMMON.es;
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{' + k + '}'));
 const TEST = new URLSearchParams(location.search).has('test');
-const stage = () => TRACKS[TEST ? 'test' : DEFAULT_TRACK];
 const view = loadTuning();
+/** The stage a run plays: the test one with `?test`, else the lab panel's pick (the first stage by default). */
+const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.stage : DEFAULT_TRACK];
 
 /** The run on screen: the engine's state and the loop's own. */
 const S = { g: null, track: null, acc: 0, last: 0, live: false, paused: false, auto: false, frameMs: 0, raf: 0, tuned: false };
@@ -102,6 +103,11 @@ function arm(track) {
 function startRun() {
   // One tap, one run (C-14): a second tap while the stage is already up does nothing
   if ($('#screen-play').classList.contains('active')) return;
+  newRun();
+}
+
+/** A fresh run on the stage the panel picks. */
+function newRun() {
   const track = arm(E.buildTrack(stage()));
   begin(E.newGame({ track }), stage());
   save();
@@ -292,6 +298,8 @@ function init() {
     S.paused = true; input?.release();
     openTuning({ T, view, frameMs: () => S.frameMs, onClose: () => {
       S.tuned = S.tuned || isTuned(view);
+      // Another stage picked in the panel: a new run on it
+      if (S.g && S.track.id !== stage().id) { newRun(); return; }
       // Another setting grows other trees: the car hits what it sees
       if (S.g) arm(S.g.track);
       // The controls are rebuilt with the panel's scheme and thumb travel; a new scheme shows its hint again

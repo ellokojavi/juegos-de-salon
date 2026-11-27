@@ -101,7 +101,9 @@ finishes a stage on the first try, badly; an expert finds two seconds.
 and, for arcs, a radius and a side. Sampled every 2 m into points `{ x, y, h, s, k }` (position,
 heading, distance from the start, curvature). Width 7 m (*starting value*), wider at hairpins. Each
 stage also carries a surface (`gravel` or `asphalt`), a setting (a palette name), and, for path 2,
-an elevation profile over `s` that the flat physics ignores.
+an elevation profile over `s` that the flat physics ignores. A stage may change surface along its
+length (`zones: [{ from, to, surface }]`, each point carries its `sf`) and may be wet (`weather: 'wet'`:
+grip × 0.85 on gravel, × 0.6 on asphalt), both added from the owner's track ideas (2026-11-27).
 
 **Stages are generated at build time and committed as data**, not generated on the phone:
 
