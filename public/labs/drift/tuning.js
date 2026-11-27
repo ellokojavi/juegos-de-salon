@@ -11,9 +11,10 @@ import { el } from '../../assets/js/ui.js';
 import { TUNING, DEFAULT_TUNING } from './engine.js';
 import { TUNING_KEY } from './rules.js';
 import { SCHEMES } from './input.js';
+import { SETTING_NAMES } from './scenery.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 50, scheme: 'wheel', reach: 60 });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 50, scheme: 'wheel', reach: 60, setting: 'stage' });
 
 /** What the panel offers, with each slider's range and step. */
 const SLIDERS = [
@@ -35,6 +36,7 @@ export function loadTuning() {
   if (!Number.isFinite(view.ahead) || view.ahead === 70) view.ahead = DEFAULT_VIEW.ahead;
   if (!SCHEMES.includes(view.scheme)) view.scheme = DEFAULT_VIEW.scheme;
   if (!Number.isFinite(view.reach)) view.reach = DEFAULT_VIEW.reach;
+  if (view.setting !== 'stage' && !SETTING_NAMES.includes(view.setting)) view.setting = DEFAULT_VIEW.setting;
   return view;
 }
 
@@ -63,6 +65,11 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
   const paintSchemes = () => schemes.replaceChildren(...[['wheel', T.schemeWheel], ['stick', T.schemeStick], ['auto', T.schemeAuto]].map(([m, label]) =>
     el('button', { type: 'button', class: view.scheme === m ? 'on' : '', 'aria-pressed': String(view.scheme === m), onClick: () => { view.scheme = m; save(view); paintSchemes(); } }, label)));
   paintSchemes();
+  // The setting: the stage's own, or any of the three to look at it (the scene redraws at once)
+  const settings = el('div', { class: 'seg dr-tune-schemes', role: 'group', 'aria-label': T.tuneSetting });
+  const paintSettings = () => settings.replaceChildren(...[['stage', T.settingStage], ['meadow', T.settingMeadow], ['forest', T.settingForest], ['plain', T.settingPlain]].map(([m, label]) =>
+    el('button', { type: 'button', class: view.setting === m ? 'on' : '', 'aria-pressed': String(view.setting === m), onClick: () => { view.setting = m; save(view); paintSettings(); } }, label)));
+  paintSettings();
 
   const slider = (label, get, set, min, max, stepBy) => {
     const out = el('output', { class: 'dr-tune-value' }, String(get()));
@@ -84,7 +91,7 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
   const defaults = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => {
     Object.assign(TUNING, DEFAULT_TUNING); Object.assign(view, DEFAULT_VIEW); save(view);
     rows.forEach(r => { r.input.value = r.get(); r.out.textContent = String(r.get()); });
-    paintCamera(); paintSchemes();
+    paintCamera(); paintSchemes(); paintSettings();
   } }, T.tuneDefaults);
 
   const close = () => { clearInterval(tick); layer.remove(); removeEventListener('keydown', onKey); onClose(); };
@@ -96,6 +103,7 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
     frame,
     el('p', { class: 'dr-tune-name' }, T.tuneControls), schemes, reach,
     el('p', { class: 'dr-tune-name' }, T.tuneCamera), camera, ahead,
+    el('p', { class: 'dr-tune-name' }, T.tuneSetting), settings,
     ...cars,
     el('div', { class: 'btn-row' }, copy, defaults));
   const layer = el('div', { class: 'hoja-capa', id: 'tuning-layer' }, el('div', { class: 'hoja-fondo', onClick: close }), sheet);

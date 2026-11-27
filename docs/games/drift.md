@@ -54,7 +54,8 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 - `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot) and `first`
   (9 gates, about 1:14). The generator and the weekly pool come in phase 1.3.
 - `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' gauges (`.dr-touch`) just above each thumb.
-- `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`.
+- `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`: the road (ruts on gravel, lines on asphalt), the props as sprites drawn once, the car over them (a crown never hides it), tyre tracks while it slides, dust from a fixed pool, the light of the hour as one tint.
+- `scenery.js`: the three settings (`meadow`, `forest`, `plain`), each a palette and the props it grows, and the props of a stage from a seeded generator (the same for everyone, none on the road; `scenery.test.mjs`). The stage names its setting; the lab's 🔧 panel can show any of the three.
   The camera turns toward the direction of travel, eased over about half a second, never shakes, never
   zooms with speed; twice as damped with reduced motion. The fixed map stays in the panel, though the
   owner found it does not work (decision 4).

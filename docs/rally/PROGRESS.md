@@ -7,7 +7,7 @@ in the other files.
 ## Now
 
 - **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md))
-- **Next phase**: 1.3 · Stages (the pool of stages, the stage of the week, the co-driver's map).
+- **Next phase**: 1.4 · The look first (the owner, 2026-11-26: «Mejoremos las gráficas primero»), then 1.3 · Stages. In progress: the settings, scenery, car, tyre tracks and dust.
 - **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928).
 - **Name**: Derrape / Drift / Derrapagem 🏁, id `drift` (decision 1)
 
@@ -19,7 +19,7 @@ in the other files.
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
-| 1.4 | The look and the sound | not started | |
+| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look | `drift-look` |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
 | 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
@@ -44,7 +44,7 @@ answer and its date here; a decision that sets a policy someone could undo also 
 | 3 | Stage length. | before 1.1 | 8 to 10 gates, 60 to 90 seconds. The clip's is 20 gates and about three and a half minutes. | The recommended: 8 to 10 gates, 60 to 90 seconds. 2026-11-25 |
 | 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26 |
 | 5 | Controls: two halves with auto-throttle, or something else. | in 1.2, by playing | Two halves, auto-throttle. | Not auto-throttle (the owner, 2026-11-26: it pulls all the time and braking into a bend is impossible). **Wheel and pedal** (default), with one finger in 🔧; the brake held when stopped reverses. «Me gusta», 2026-11-26 |
-| 6 | Penalties: a missed gate and a reset. | in 1.3 | +10 s and +5 s. | |
+| 6 | Penalties: a missed gate and a reset. | in 1.3 | +10 s and +5 s. | The recommended: +10 s and +5 s. 2026-11-26 |
 | 7 | How often the stage changes. | before 1.3 | One stage a week, the same for everyone. | |
 | 8 | Does the game record scores in Rankings? | before 1.5 | Yes: the table `drift`, score 0 to 100 against par, then time. | |
 | 9 | The bar for the lab verdict. | before 1.6 | Half or more of the testers who finish a run start a second one in the same visit, over at least 10 testers. | |
@@ -62,6 +62,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-26** · Asked decision 7 (how often the stage changes), the owner answered «Mejoremos las gráficas primero»: 1.4's look goes before 1.3, decision 7 waits for 1.3. Penalties kept (+10 s, +5 s). The look: three settings with seeded scenery, a car with stripes and lights, tyre tracks, dust; the car is drawn over the props so a crown never hides it.
 
 - **2026-11-26** · 1.2 done: the owner drove round 1 with the gauges, reverse and the closer camera and said «Me gusta. Continuemos con el desarrollo». The values in the code are the defaults.
 

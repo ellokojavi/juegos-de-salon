@@ -27,6 +27,7 @@ const ES = {
     tuneCopy: '📋 Copiar valores', tuneCopied: 'Copiados', tuneDefaults: 'Volver a los de fábrica',
     tuneFrame: 'Cuadro: {ms} ms', tuneClose: 'Cerrar',
     tuneControls: 'Controles', schemeWheel: '🕹️ Volante y pedal', schemeStick: '👆 Un dedo', schemeAuto: 'Acelera solo',
+    tuneSetting: 'Escenario', settingStage: '🏁 Etapa', settingMeadow: '🌿 Pradera', settingForest: '🔥 Bosque', settingPlain: '🌙 Llanura',
     tuneReach: 'Recorrido del pulgar (px)',
   },
   como: [
@@ -55,6 +56,7 @@ const EN = {
     tuneCopy: '📋 Copy values', tuneCopied: 'Copied', tuneDefaults: 'Back to the defaults',
     tuneFrame: 'Frame: {ms} ms', tuneClose: 'Close',
     tuneControls: 'Controls', schemeWheel: '🕹️ Wheel and pedal', schemeStick: '👆 One finger', schemeAuto: 'Self-accelerating',
+    tuneSetting: 'Setting', settingStage: '🏁 Stage', settingMeadow: '🌿 Meadow', settingForest: '🔥 Forest', settingPlain: '🌙 Plain',
     tuneReach: 'Thumb travel (px)',
   },
   como: [
@@ -83,6 +85,7 @@ const PT = {
     tuneCopy: '📋 Copiar valores', tuneCopied: 'Copiados', tuneDefaults: 'Voltar aos de fábrica',
     tuneFrame: 'Quadro: {ms} ms', tuneClose: 'Fechar',
     tuneControls: 'Controles', schemeWheel: '🕹️ Volante e pedal', schemeStick: '👆 Um dedo', schemeAuto: 'Acelera sozinho',
+    tuneSetting: 'Cenário', settingStage: '🏁 Etapa', settingMeadow: '🌿 Prado', settingForest: '🔥 Floresta', settingPlain: '🌙 Planície',
     tuneReach: 'Curso do polegar (px)',
   },
   como: [
