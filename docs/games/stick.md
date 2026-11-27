@@ -77,6 +77,9 @@ Under them: "📅 Today's course is the same for everyone. Pass the phone and co
   perfect is worth **+1 for the first, +2 for the second in a row, and so on up to +5**; the points rise from
   the pillar, and once two are in a row a chip under the score says "🔥 ×n · next flag +m". From 5 in a row,
   a little confetti. A landing off the flag breaks the streak.
+- **Lighter glows** (flag `shinobi-light-fx`, lab, #1939): Firefox blurs canvas shadows on the CPU and a perfect dropped
+  frames there. With the flag on, each glow is drawn without blur (the flag's glow as two wide faint strokes; the
+  stick, rings and CSS glows with no blurred shadow or animated filter). Off, nothing changes.
 - **No stars** (the owner's request, 2026-10-25): the first version hung a ⭐ under the bridge in some gaps,
   grabbed by tapping while running to flip the ninja under the bridge, with a crash if it was still upside
   down at the pillar. The stars, the flip and the crash are gone: a tap while running does nothing.
