@@ -29,9 +29,10 @@ import { GAME_ID, LOCALES } from './rules.js';
 import { TRACKS, STAGES, DEFAULT_TRACK } from './tracks.js';
 import * as E from './engine.js';
 import { escena } from './scene.js';
+import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
-import { loadTuning, openTuning, isTuned } from './tuning.js';
+import { loadTuning, openTuning, isTuned, save as saveView, SCENES } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
 
@@ -82,7 +83,7 @@ function begin(g, track) {
   S.g = g;
   S.acc = 0; S.live = false; S.paused = false; S.tuned = isTuned(view);
   showScreen('screen-play');
-  if (!sc) sc = escena($('#canvas'));
+  sc = sceneFor(view.scene);
   sc.resize();
   setControls();
   $('#hint').classList.toggle('fuera', !!S.g.t);
@@ -92,6 +93,31 @@ function begin(g, track) {
   S.last = performance.now();
   S.raf = requestAnimationFrame(frame);
   countdown();
+}
+
+/**
+ * The scene the cover's choice asks for: from above (scene.js) or from behind the car (scene3d.js).
+ * A canvas keeps the kind of context it was first given, so a change of view starts on a fresh one;
+ * a phone without WebGL plays from above.
+ */
+function sceneFor(want) {
+  if (sc && (sc.kind || '2d') === want) return sc;
+  const fresh = () => { const c = $('#canvas'), n = c.cloneNode(false); c.replaceWith(n); return n; };
+  if (sc) { sc.dispose(); fresh(); }
+  let made = want === '3d' ? escena3d($('#canvas')) : null;
+  if (!made) { if (want === '3d') fresh(); made = escena($('#canvas')); }
+  return made;
+}
+
+/** The cover's choice of view, 2D or 3D, kept on this phone with the panel's values. */
+function renderScenePick() {
+  const pick = $('#scene-pick');
+  pick.setAttribute('aria-label', T.sceneLabel);
+  const paint = () => pick.replaceChildren(...SCENES.map(k => el('button', {
+    type: 'button', class: view.scene === k ? 'on' : '', 'aria-pressed': String(view.scene === k), 'data-scene': k,
+    onClick: () => { SFX.tap(); view.scene = k; saveView(view); paint(); },
+  }, k === '3d' ? T.scene3d : T.scene2d)));
+  paint();
 }
 
 /** What the car can hit on this stage: the trees and rocks of the setting the scene draws. */
@@ -311,6 +337,7 @@ function init() {
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   addEventListener('pagehide', pause);
   addEventListener('resize', () => sc?.resize());
+  renderScenePick();
   renderResumeSlot();
 }
 
@@ -318,6 +345,8 @@ function init() {
 window.__drift = {
   S,
   get g() { return S.g; },
+  /** The view on screen: '2d' or '3d' (a phone without WebGL plays 2D whatever it chose). */
+  get scene() { return sc ? sc.kind || '2d' : null; },
   autopilot(on = true) { S.auto = !!on; },
   pause, unpause,
   reset: () => S.g && E.reset(S.g),

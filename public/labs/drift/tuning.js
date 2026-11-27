@@ -15,7 +15,9 @@ import { SETTING_NAMES } from './scenery.js';
 import { STAGES, DEFAULT_TRACK } from './tracks.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d' });
+/** The two views the cover offers: from above (scene.js) and from behind the car (scene3d.js). */
+export const SCENES = ['2d', '3d'];
 
 /** What the panel offers, with each slider's range and step. */
 const SLIDERS = [
@@ -39,14 +41,16 @@ export function loadTuning() {
   if (!Number.isFinite(view.reach)) view.reach = DEFAULT_VIEW.reach;
   if (view.setting !== 'stage' && !SETTING_NAMES.includes(view.setting)) view.setting = DEFAULT_VIEW.setting;
   if (!STAGES.includes(view.stage)) view.stage = DEFAULT_VIEW.stage;
+  if (!SCENES.includes(view.scene)) view.scene = DEFAULT_VIEW.scene;
   return view;
 }
 
 /** Whether any value differs from the shipped one. */
 export const isTuned = view => Object.keys(DEFAULT_TUNING).some(k => TUNING[k] !== DEFAULT_TUNING[k])
-  || Object.keys(DEFAULT_VIEW).some(k => view[k] !== DEFAULT_VIEW[k]);
+  || Object.keys(DEFAULT_VIEW).some(k => k !== 'scene' && view[k] !== DEFAULT_VIEW[k]);
 
-function save(view) {
+/** Keeps the panel's values and the view on this phone (the cover's 2D/3D choice too). */
+export function save(view) {
   const changed = Object.fromEntries(Object.keys(DEFAULT_TUNING).filter(k => TUNING[k] !== DEFAULT_TUNING[k]).map(k => [k, TUNING[k]]));
   try { globalThis.localStorage?.setItem(TUNING_KEY, JSON.stringify({ tuning: changed, view })); } catch (_) { /* private mode: lasts this visit */ }
 }
@@ -97,7 +101,7 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
     try { await navigator.clipboard.writeText(text); copy.textContent = T.tuneCopied; } catch (_) { copy.textContent = text.length + ' …'; }
   } }, T.tuneCopy);
   const defaults = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => {
-    Object.assign(TUNING, DEFAULT_TUNING); Object.assign(view, DEFAULT_VIEW); save(view);
+    Object.assign(TUNING, DEFAULT_TUNING); Object.assign(view, DEFAULT_VIEW, { scene: view.scene }); save(view);
     rows.forEach(r => { r.input.value = r.get(); r.out.textContent = String(r.get()); });
     paintCamera(); paintSchemes(); paintSettings();
   } }, T.tuneDefaults);

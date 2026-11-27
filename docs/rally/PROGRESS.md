@@ -6,7 +6,7 @@ in the other files.
 
 ## Now
 
-- **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md))
+- **Path**: 1 · Top-down ([path-1-top-down.md](path-1-top-down.md)), and path 2's 3D view beside it on the cover ([path-2-3d.md](path-2-3d.md), the owner, 2026-11-27)
 - **Next phase**: 1.4 · The look first (the owner, 2026-11-26: «Mejoremos las gráficas primero»), then 1.3 · Stages. In progress: the settings, scenery, car, tyre tracks and dust.
 - **Code**: `public/labs/drift/` (spec: [docs/games/drift.md](../games/drift.md)), from [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928).
 - **Name**: Derrape / Drift / Derrapagem 🏁, id `drift` (decision 1)
@@ -22,10 +22,10 @@ in the other files.
 | 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | [#1946](https://github.com/ellokojavi/juegos-de-salon/pull/1946) |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
-| 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
-| 2.1 | The second scene, grey | | |
+| 2.0 | Renderer spike and decision | in progress: renderer A built (the recommended); its measurements on the owner's phone owed | |
+| 2.1 | The second scene, grey | done, already dressed: a 2D/3D choice on the cover (the owner, 2026-11-27) | |
 | 2.2 | The camera round | | |
-| 2.3 | The world | | |
+| 2.3 | The world | in progress: road, forks, props, crowds, grandstands, hills, fog, baked shadows, the three settings; no elevation on the road yet | |
 | 2.4 | Effects and the safety net | | |
 | 2.5 | The verdict | | |
 | 3.x | Increments, one at a time ([path-3-full.md](path-3-full.md)) | waits for 2.5 and the owner's pick | |
@@ -64,6 +64,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner brought path 2 forward: «Hagamos esta versión 3D simplemente una variante del juego en la portada», to feel both. The cover offers «🗺️ Vista 2D» / «🚗 Vista 3D»; `scene3d.js` on our own WebGL renderer (`gl3d.js`, option A) draws the same stage from behind the car, and a phone without WebGL plays 2D. The owner is still not at ease with how the car accelerates, brakes, slides and turns: polished as we go.
 
 - **2026-11-27** · The owner sent track ideas (layout archetypes, surface changes, rain, shortcuts) and said «Probemos en el juego», adding people and grandstands. Built in the lab, ahead of 1.3: a surface per stretch of road (`zones`), wet stages (`weather`), two stages to compare with the first (`split`, fast asphalt then technical gravel; `rain`, technical on wet asphalt), picked in 🔧, and crowds behind straw bales at tight bends plus grandstands at the start and finish. For 1.3: the generator can draw stages by archetype and with zones.
 
