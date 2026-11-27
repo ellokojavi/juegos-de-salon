@@ -65,6 +65,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner asked for a higher top speed: 42/50 → 52/62 m/s (gravel/asphalt), accel 10 → 12. The lock now narrows up to a fixed `lockSpeed` (42 m/s) instead of the top speed, so the steering feels as before; the `split` stage's first straight grew 80 m to stay over 60 s.
+
 - **2026-11-27** · The owner brought path 2 forward: «Hagamos esta versión 3D simplemente una variante del juego en la portada», to feel both. The cover offers «🗺️ Vista 2D» / «🚗 Vista 3D»; `scene3d.js` on our own WebGL renderer (`gl3d.js`, option A) draws the same stage from behind the car, and a phone without WebGL plays 2D. The owner is still not at ease with how the car accelerates, brakes, slides and turns: polished as we go.
 
 - **2026-11-27** · The owner sent track ideas (layout archetypes, surface changes, rain, shortcuts) and said «Probemos en el juego», adding people and grandstands. Built in the lab, ahead of 1.3: a surface per stretch of road (`zones`), wet stages (`weather`), two stages to compare with the first (`split`, fast asphalt then technical gravel; `rain`, technical on wet asphalt), picked in 🔧, and crowds behind straw bales at tight bends plus grandstands at the start and finish. For 1.3: the generator can draw stages by archetype and with zones.
