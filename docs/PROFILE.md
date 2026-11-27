@@ -12,6 +12,7 @@ has its own flag, listed with its switch on `/labs/` (`flag-list.js`).
 - **Logros** (achievements, `badges.js`): bronze, silver and gold in groups (daily, cup, duels, games). `?reveal`
   on the URL replays the last badge earned, `?reveal=<id>` a given earned one, to try the reveal as often as wanted;
   nothing is recorded.
+- **Achievements told, on the account** (#1937, #1932; `told-sync.js`, `jugadorLogros/<jid>/{a,v}`): an achievement belongs to an account and a date. The windows celebrated (`a`) and the badges seen (`v`) are merged into each phone before a window or a «¡Nueva!» is drawn, and the phone's marks the account lacks are uploaded, so one told on a phone is told on every phone and stays told after signing out and in. Signed out, nothing is synced. Disclosed in `/privacy/`.
 - **Tus partidas** (flag `profile-plays`, lab): one bar per game on Logros, the most played first, five shown and
   the rest under a button; it leaves Rankings.
 
