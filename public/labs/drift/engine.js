@@ -38,7 +38,7 @@ export const TUNING = {
   topGravel: 52,          // m/s (30, then 42 for vertigo, then 52: the owner asked for more, 2026-11-27)
   topAsphalt: 62,
   topOff: 18,             // off the road
-  accel: 12,              // m/s² (10 until the top speed rose to 52/62)
+  accel: 10,              // m/s²
   brake: 20,
   roll: 0.6,              // rolling drag, m/s²
   maxOffDrag: 12,         // the most the rough ground slows a fast car, m/s²
