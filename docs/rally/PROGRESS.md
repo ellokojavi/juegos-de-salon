@@ -57,11 +57,14 @@ answer and its date here; a decision that sets a policy someone could undo also 
 A feature that tempts a phase beyond its exit list is written here instead of built.
 
 - Tilt steering (the phone as the wheel): needs a motion permission on iPhone; try only if the thumb schemes fail.
+- The shared 3, 2, 1 before a run: off in the lab since the owner asked (2026-11-27, `COUNTDOWN` in game.js); decide before a launch whether it comes back.
 - A handbrake on touch (today only the keyboard's space): if the feel round shows slides need it.
 
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner removed the countdown for testing (three seconds on every change): `COUNTDOWN = false` in game.js; the clock already waits for the first throttle, and a resumed run now does too.
 
 - **2026-11-27** · The owner: boosted, the car could not be steered, and a pad must be followed by a long straight. The grip now grows with the speed past the top, so a boosted car turns as at its top speed; a test holds every pad to 130 m of straight; the first stage's straights after its pads grew (S80 → S150, S100 → S170) and the hairpin fork lost its pad.
 

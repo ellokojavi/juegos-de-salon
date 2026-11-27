@@ -1,5 +1,5 @@
 // Drift (lab): the grey-box drive to the result (docs/rally/core.md, section 13). On the three-gate test
-// stage (?test), «Jugar» double-tapped (one run, C-14), the shared countdown, then the hook
+// stage (?test), «Jugar» double-tapped (one run, C-14), no countdown in the lab (the owner), then the hook
 // window.__drift switches on the autopilot and the page's own loop drives the stage: the HUD counts the
 // gates, the result shows the time and the exits back to the lab, at 375 and 320 px with no sideways
 // scroll. It asserts on __drift.g, never on pixels or frame rate (CI's Chrome draws in software).
@@ -25,8 +25,8 @@ for (const width of [375, 320]) {
   await b.shot(`cover-${width}`);
   await doubleTap(b, '#btn-play');
   ok(await b.until("document.querySelector('#screen-play.active') && !!window.__drift.g", 2000), `${width}: «Jugar» opens the stage`);
-  ok(await b.evaluate("document.querySelectorAll('#cuenta').length <= 1"), `${width}: a double tap starts one countdown`);
-  ok(await b.until("!document.getElementById('cuenta')", 6000), `${width}: the countdown ends`);
+  ok(await b.evaluate("!document.getElementById('cuenta')"), `${width}: no countdown in the lab`);
+  ok(await b.until("window.__drift.S.live", 1000), `${width}: the stage is live at once`);
   // Touch, through the page's real controls: pointer events on the stage, relative to where each thumb lands
   const box = JSON.parse(await b.evaluate("JSON.stringify(document.getElementById('stage').getBoundingClientRect())"));
   const finger = (id, x, y) => b.evaluate(`(() => { const s = document.getElementById('stage'), o = { pointerId: ${id}, clientX: ${x}, clientY: ${y}, bubbles: true, button: 0 };
@@ -35,7 +35,7 @@ for (const width of [375, 320]) {
   const lift = id => b.evaluate(`(() => { document.getElementById('stage').dispatchEvent(new PointerEvent('pointerup', { pointerId: ${id}, bubbles: true })); return 1 })()`);
   const car = async () => JSON.parse(await b.evaluate('JSON.stringify({ h: window.__drift.g.car.h, v: window.__drift.g.car.speed, mode: window.__drift.g.mode })'));
   const lx = box.x + box.width * 0.25, rx = box.x + box.width * 0.75, y = box.y + box.height * 0.6;
-  ok((await car()).mode === 'ready', `${width}: after the countdown the car waits for the throttle`);
+  ok((await car()).mode === 'ready', `${width}: the car waits for the throttle, and the clock with it`);
   if (width === 375) {
     // Wheel and pedal (the default): the right thumb held accelerates and starts the clock
     await finger(8, rx, y); await sleep(900);
