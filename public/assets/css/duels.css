@@ -60,7 +60,7 @@
 .dl-row-sc { display: flex; align-items: center; gap: var(--s-6); font: 900 var(--fs-100) var(--font-num); color: var(--yellow); }
 .dl-fin { font: 900 var(--fs-85) var(--font-body); white-space: nowrap; }
 .dl-fin.w { color: var(--dl-w); }
-.dl-fin.l { color: var(--dl-l); }
+.dl-fin.l { color: var(--pink); }
 .dl-fin.t { color: var(--muted); }
 
 /* The new-duel sheet */
@@ -152,7 +152,7 @@
 .dl-record { display: flex; align-items: baseline; gap: var(--s-8); }
 .dl-record b { font-size: var(--fs-200); text-shadow: var(--shadow-text); }
 .dl-record b.w { color: var(--dl-w); }
-.dl-record b.l { color: var(--dl-l); }
+.dl-record b.l { color: var(--pink); }
 .dl-record b.t { color: var(--muted); }
 .dl-record-sep { color: var(--muted); font: 900 var(--fs-140) var(--font-num); }
 .dl-record-barra { display: flex; width: 100%; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--glass-border); }
@@ -166,7 +166,7 @@
 .dl-destacado.arch { border-color: var(--yellow); }
 .dl-destacado.nemesis { border-color: var(--pink); }
 .dl-h2h.w { color: var(--dl-w); }
-.dl-h2h.l { color: var(--dl-l); }
+.dl-h2h.l { color: var(--pink); }
 .dl-h2h.t { color: var(--muted); }
 .dl-fin-col { display: grid; justify-items: end; gap: var(--s-4); }
 .dl-revancha { white-space: nowrap; }
