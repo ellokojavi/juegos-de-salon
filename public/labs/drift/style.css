@@ -30,9 +30,14 @@
 
 /* The first-run hint, until the first touch */
 .dr-hint {
-  position: absolute; left: 0; right: 0; bottom: calc(var(--s-24) + env(safe-area-inset-bottom)); margin: 0; text-align: center; pointer-events: none;
-  font: 900 var(--fs-120) var(--font-body); color: var(--ink); text-shadow: var(--shadow-text); transition: opacity 0.3s;
+  position: absolute; left: 0; right: 0; bottom: calc(var(--s-24) + env(safe-area-inset-bottom)); margin: 0; padding: 0 var(--s-12);
+  display: flex; gap: var(--s-12); text-align: center; pointer-events: none;
+  font: 900 var(--fs-110) var(--font-body); color: var(--ink); text-shadow: var(--shadow-text); transition: opacity 0.3s;
 }
+.dr-hint span { flex: 1; white-space: pre-line; }
+/* Wheel and pedal: each half's own hint under its thumb */
+.dr-hint[data-scheme='wheel'] { font-size: var(--fs-90); }
+.dr-hint[data-scheme='wheel'] span { flex: 1 1 50%; }
 .dr-hint.fuera { opacity: 0; }
 
 /* Paused: over the run, until a tap */
@@ -48,3 +53,20 @@
 .dr-tune-value { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--cyan); }
 .dr-tune-row input { width: 100%; min-height: 32px; accent-color: var(--cyan); }
 .dr-tune-frame { margin: 0; font-size: var(--fs-85); }
+
+/* ---------- Where each thumb landed: a ring, and a dot that follows the thumb (input.js) ---------- */
+/* The thumbs' gauges, drawn just above each thumb (input.js sizes and places them) */
+.dr-touch {
+  position: absolute; transform: translate(-50%, -50%); pointer-events: none;
+  border: 2px solid rgb(var(--ink-rgb) / 0.45); background: rgb(var(--ink-rgb) / 0.08);
+}
+.dr-touch--steer { height: 20px; border-radius: var(--r-pill); }
+.dr-touch--stick { border-radius: 50%; }
+.dr-touch--pedal {
+  width: 20px; border-radius: var(--r-pill); border-color: rgb(var(--ink-rgb) / 0.55);
+  background: linear-gradient(to bottom, rgb(var(--lime-rgb) / 0.55) 0 33%, rgb(var(--red-rgb) / 0.55) 33% 100%);
+}
+.dr-touch-dot {
+  position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%;
+  background: rgb(var(--ink-rgb) / 0.85); box-shadow: var(--shadow-text);
+}

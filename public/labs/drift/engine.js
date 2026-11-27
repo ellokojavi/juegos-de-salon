@@ -39,6 +39,8 @@ export const TUNING = {
   overSteer: 2.2,         // how far the nose may turn in past what the grip holds
   align: 2.5,             // how fast the rear pulls the nose back toward the travel, 1/s
   offAccel: 0.6,          // acceleration × this off the road
+  reverseAccel: 4,        // m/s² backwards: the brake held with the car stopped (the owner, 2026-11-26)
+  topReverse: 8,          // m/s
   missPenalty: 10000,     // ms
   resetPenalty: 5000,
   resetAfter: 3,          // s off the road or the wrong way before ↺ is offered
@@ -127,7 +129,7 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
@@ -161,10 +163,14 @@ export function step(g, input = IDLE) {
   const top = off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel;
   const acc = T.accel * (off ? T.offAccel : 1);
   vf += clamp(throttle, 0, 1) * acc * dt;
+  // Reverse: the brake held once the car has stopped (or is already rolling back) drives it backwards
+  const backing = g.mode === 'play' && brake > 0 && !(throttle > 0) && vf <= 0;
+  if (backing) vf -= clamp(brake, 0, 1) * T.reverseAccel * (off ? T.offAccel : 1) * dt;
   const sign = vf > 0 ? 1 : vf < 0 ? -1 : 0;
-  let drag = T.roll + (T.accel - T.roll) * (vf / top) * (vf / top);
+  const topNow = vf < 0 ? T.topReverse : top;
+  let drag = T.roll + (T.accel - T.roll) * (vf / topNow) * (vf / topNow);
   if (off) drag = Math.min(drag, T.maxOffDrag);
-  drag += clamp(brake, 0, 1) * T.brake;
+  if (!backing) drag += clamp(brake, 0, 1) * T.brake;
   const dv = drag * dt;
   vf = Math.abs(vf) <= dv ? 0 : vf - sign * dv;
 
@@ -195,7 +201,8 @@ export function step(g, input = IDLE) {
   // 6. Rebuild the velocity and move
   car.vx = f * c2 - l * s2; car.vy = f * s2 + l * c2;
   car.x += car.vx * dt; car.y += car.vy * dt;
-  // 7. What the scene and the sound read
+  // 7. What the scene and the sound read (the pedals as applied: the brake lights)
+  car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
   car.slip = Math.abs(l);
   car.speed = Math.hypot(car.vx, car.vy);
 
