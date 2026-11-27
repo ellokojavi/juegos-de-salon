@@ -90,6 +90,24 @@ ok('a ramp throws the car up; it lands where it lands, without losing a life, an
   assert.equal(g.lives, E.TUNING.lives, 'no life lost: not the landing, not the tree under it');
 });
 
+ok('every boost pad has a long straight after it, so a boosted car is not thrown at a bend', () => {
+  // About how far a boosted car goes before it is back to its top speed (the owner, 2026-11-27)
+  const PAD_RUN = 130;
+  for (const t of [test(), first()]) for (const p of t.pads) {
+    const path = p.fork !== undefined ? t.branches[p.fork].pts : t.pts;
+    const run = path.filter(q => q.s >= p.s && q.s <= p.s + PAD_RUN);
+    assert.ok(run.length && run[run.length - 1].s >= p.s + PAD_RUN - 2 * E.SAMPLE, `${t.id}: the road ends ${PAD_RUN} m after the pad at ${p.s}`);
+    const turn = Math.max(...run.map(q => Math.abs(((q.h - p.h + 3 * Math.PI) % (2 * Math.PI)) - Math.PI)));
+    assert.ok(turn < 0.12, `${t.id}: the road turns ${(turn * 180 / Math.PI).toFixed(0)}° within ${PAD_RUN} m of the pad at ${p.s.toFixed(0)} m`);
+  }
+});
+
+ok('boosted, the car still turns as well as at its top speed', () => {
+  const turnAt = speed => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = speed; g.boost = 1; const h0 = g.car.h; steps(g, { steer: 1, throttle: 1, brake: 0, handbrake: false }, 60); return h0 - g.car.h; };
+  const top = E.TUNING.topGravel;
+  assert.ok(turnAt(top * 1.6) >= turnAt(top) * 0.85, `full lock in half a second: ${turnAt(top * 1.6).toFixed(2)} rad boosted against ${turnAt(top).toFixed(2)} at top speed`);
+});
+
 ok('the clock waits for the first throttle, and counts in steps', () => {
   const g = E.newGame({ track: test() });
   steps(g, E.IDLE, 120);

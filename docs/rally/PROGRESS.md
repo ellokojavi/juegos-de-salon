@@ -63,6 +63,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner: boosted, the car could not be steered, and a pad must be followed by a long straight. The grip now grows with the speed past the top, so a boosted car turns as at its top speed; a test holds every pad to 130 m of straight; the first stage's straights after its pads grew (S80 → S150, S100 → S170) and the hairpin fork lost its pad.
+
 - **2026-11-27** · The owner's settings became the defaults (follow view, thumb travel 75 px, 40 m in view). For vertigo: top 42/50 m/s (was 30/36), accel 10, brake 20, side streaks. No dust on asphalt itself. New on the stages: forks (two on the first stage), ramps (fly, land unharmed) and boost pads. Design in core section 5.
 
 - **2026-11-27** · The owner asked to turn harder: lock 32°/9° → 40°/14°, `overSteer` 2.2 → 3.0, grip gravel 9 → 11 and asphalt 14 → 16, `align` 2.5 → 3.0 (so a slide still ends in half a second). At 25 m/s the car now turns about two thirds faster.

@@ -144,7 +144,7 @@ centre (on or off the road), and the direction of travel (the wrong way).
     carry the main road's distance, so progress, misses and gates read the same on both; no gate
     sits inside a fork. The car is located on whichever road is nearer; ↺ brings it back to the
     main one. Each branch should trade something: the first stage's hairpin fork is tight and
-    short or wide with a pad; its sweeper fork is smooth or has a jump.
+    short or wide and fast; its sweeper fork is smooth or has a jump.
   - A **ramp** throws the car up at `rampLift` (0.18) of its forward speed under `gravity` 12 m/s²
     (about a second in the air at speed, 2 m high): no steering, no grip, no throttle and no
     crash in the air, and the landing costs nothing (`car.z`, `car.vz`; the scene grows the car a
@@ -152,6 +152,10 @@ centre (on or off the road), and the direction of travel (the wrong way).
   - A **boost pad** (8 × 3.4 m, narrower than the road, so it has to be aimed at) gives
     `boostTime` 1.2 s of `boostTop` × 1.7 the top speed and `boostAccel` 26 m/s²; past the top
     speed with the boost spent, a drag proportional to the excess brings the car back in a second or two.
+    Past the top speed the grip grows in proportion to the speed (as if the air pressed the car
+    down), so a boosted car turns as well as at its top speed (the owner, 2026-11-27: boosted, it
+    could not be steered). **A pad needs a long straight after it**: no more than 7° of turn in the
+    130 m that follow (`engine.test.mjs`), or the player is thrown at a bend.
 - **The solids must be the same on every phone** for a ranking to be fair: today the scene's seeded
   generator places them on the phone (fine in the lab). In 1.3 the stage generator commits them
   with each stage, like the pieces (section 4).

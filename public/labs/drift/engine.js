@@ -237,7 +237,12 @@ export function step(g, input = IDLE) {
   // can follow (that is the slide), but only so far: capped at `overSteer` times what the grip holds,
   // so a slide starts progressively and never as a spin. The rear then pulls the nose back toward
   // where the car is going (`align`), which ends a slide once the thumb lets go.
-  const grip = (off ? T.gripOff : track.surface === 'asphalt' ? T.gripAsphalt : T.gripGravel) * (handbrake ? T.handbrake : 1);
+  // Past the normal top speed (a boost, and its tail) the car holds the road in proportion, as if
+  // pressed down by the air: it turns as well as at its top speed (the owner, 2026-11-27: boosted, the
+  // steering was too weak to control it)
+  const base = off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel;
+  const over = Math.max(1, Math.abs(vf) / base);
+  const grip = (off ? T.gripOff : track.surface === 'asphalt' ? T.gripAsphalt : T.gripGravel) * (handbrake ? T.handbrake : 1) * over;
   const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(Math.abs(vf) / T.topGravel, 0, 1)) * DEG;
   const cap = T.overSteer * (handbrake ? 2 : 1) * grip / Math.max(Math.abs(vf), 4);
   let yaw = clamp(-vf / T.wheelbase * Math.tan(car.steer * lock), -cap, cap);

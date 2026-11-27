@@ -24,21 +24,22 @@ export const TRACKS = {
   test: {
     id: 'test', gates: 3, surface: 'gravel', setting: 'meadow',
     pieces: [['S', 50], ['R', 60, 45], ['S', 40], ['L', 50, 60], ['S', 70]],
-    pads: [{ s: 22 }], ramps: [{ s: 200 }],
+    ramps: [{ s: 200 }],
   },
   // The first real stage: 9 gates, a mix of sweepers, a hairpin and a chicane
   first: {
     id: 'first', gates: 9, surface: 'gravel', setting: 'meadow',
     pieces: [
-      ['S', 80], ['R', 70, 40], ['S', 60], ['L', 45, 75], ['S', 50], ['R', 30, 60], ['L', 30, 60],
+      ['S', 150], ['R', 70, 40], ['S', 60], ['L', 45, 75], ['S', 50], ['R', 30, 60], ['L', 30, 60],
       ['S', 90], ['L', 120, 35], ['S', 40], ['R', 18, 150], ['S', 70], ['L', 60, 55], ['S', 40],
-      ['R', 90, 50], ['S', 120], ['L', 35, 90], ['R', 40, 70], ['S', 60], ['L', 80, 45], ['S', 100],
+      ['R', 90, 50], ['S', 120], ['L', 35, 90], ['R', 40, 70], ['S', 60], ['L', 80, 45], ['S', 170],
       ['R', 25, 100], ['S', 60], ['L', 150, 30], ['S', 80],
     ],
-    // Two forks: round the hairpin tight, or wide over a boost pad; the long sweeper, or a jump
-    forks: [{ from: 540, to: 650, side: 'L', offset: 14 }, { from: 370, to: 505, side: 'R', offset: 15 }],
-    pads: [{ s: 40 }, { fork: 0, u: 0.45 }, { s: 1230 }],
-    ramps: [{ fork: 1, u: 0.3 }, { s: 900 }],
+    // Two forks: round the hairpin tight and short, or wide and fast; the long sweeper, or a jump.
+    // A boost pad only where a long straight follows it (PAD_RUN in engine.test.mjs)
+    forks: [{ from: 610, to: 720, side: 'L', offset: 14 }, { from: 432, to: 556, side: 'R', offset: 15 }],
+    pads: [{ s: 8 }, { s: 1282 }],
+    ramps: [{ fork: 1, u: 0.3 }, { s: 970 }],
   },
 };
 
