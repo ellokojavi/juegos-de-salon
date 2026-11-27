@@ -13,7 +13,7 @@ import { TUNING_KEY } from './rules.js';
 import { SCHEMES } from './input.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 70, scheme: 'wheel', reach: 60 });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 50, scheme: 'wheel', reach: 60 });
 
 /** What the panel offers, with each slider's range and step. */
 const SLIDERS = [
@@ -21,6 +21,7 @@ const SLIDERS = [
   ['topGravel', 15, 45, 0.5], ['accel', 3, 14, 0.25], ['brake', 6, 24, 0.5],
   ['gripGravel', 4, 20, 0.25], ['overSteer', 1, 4, 0.05], ['align', 0, 8, 0.1],
   ['handbrake', 0.15, 1, 0.05], ['gripOff', 2, 12, 0.25], ['topOff', 6, 25, 0.5],
+  ['topReverse', 3, 15, 0.5],
 ];
 
 /** The saved values, put into TUNING and returned with the view; an unreadable save is ignored. */
@@ -30,7 +31,8 @@ export function loadTuning() {
   for (const [k, v] of Object.entries(saved.tuning || {})) if (k in DEFAULT_TUNING && Number.isFinite(v)) TUNING[k] = v;
   const view = { ...DEFAULT_VIEW, ...(saved.view || {}) };
   if (view.mode !== 'fixed') view.mode = 'follow';
-  if (!Number.isFinite(view.ahead)) view.ahead = DEFAULT_VIEW.ahead;
+  // 70 m was the default until the owner asked for more zoom (2026-11-26): an old save holding it takes the new one
+  if (!Number.isFinite(view.ahead) || view.ahead === 70) view.ahead = DEFAULT_VIEW.ahead;
   if (!SCHEMES.includes(view.scheme)) view.scheme = DEFAULT_VIEW.scheme;
   if (!Number.isFinite(view.reach)) view.reach = DEFAULT_VIEW.reach;
   return view;
@@ -69,7 +71,7 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
     rows.push({ input, out, get });
     return el('label', { class: 'dr-tune-row' }, el('span', { class: 'dr-tune-name' }, label, out), input);
   };
-  const ahead = slider(T.tuneAhead, () => view.ahead, v => { view.ahead = v; }, 40, 120, 5);
+  const ahead = slider(T.tuneAhead, () => view.ahead, v => { view.ahead = v; }, 25, 120, 5);
   const reach = slider(T.tuneReach, () => view.reach, v => { view.reach = v; }, 25, 140, 5);
   const cars = SLIDERS.map(([k, min, max, s]) => slider(k, () => TUNING[k], v => { TUNING[k] = v; }, min, max, s));
 

@@ -65,6 +65,7 @@ Newest first. One or two lines: the date (Pacific), what happened, what changed 
 
 - **2026-11-26** · Round 1, second change: the pressed thumb hid its own control (the owner). Each
   thumb's gauge is now drawn just above it, and the car shows the input (front wheels, brake lights).
+  Then the owner asked for reverse (the brake held with the car stopped) and more zoom (50 m in view, was 70).
 
 - **2026-11-26** · The owner drove 1.1 (exit met): the fixed map does not work, and auto-throttle is too
   restrictive (no braking while turning). Feel round 1: two new analogue schemes, wheel and pedal

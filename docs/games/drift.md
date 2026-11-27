@@ -24,7 +24,7 @@ for the car. It exists so the owner can feel the car under a thumb and tune it (
 - **Wheel and pedal** (the default since the owner's first drive, 2026-11-26): the left thumb lands
   anywhere on the left half and slides sideways to steer; the right thumb on the right half is the
   pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes. Lifting
-  lets the car roll. A gauge just above each thumb, where the thumb does not cover it, shows what it does: the wheel a bar with a knob, the pedal a bar green above and red below; the car shows it too, with its front wheels turned and its brake lights. Both are analogue, so braking into a bend while
+  lets the car roll. Held down with the car stopped, the brake is reverse (`reverseAccel`, `topReverse`, white lights). A gauge just above each thumb, where the thumb does not cover it, shows what it does: the wheel a bar with a knob, the pedal a bar green above and red below; the car shows it too, with its front wheels turned and its brake lights. Both are analogue, so braking into a bend while
   turning works. The lab's tuning panel also offers **one finger** (a stick: sideways steers, up
   accelerates, down brakes) and the 1.1 **self-accelerating** halves, to compare. On a keyboard: ←/→
   or A/D steer, ↑/W accelerates, ↓/S brakes, space is the handbrake.

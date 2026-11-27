@@ -39,6 +39,8 @@ export const TUNING = {
   overSteer: 2.2,         // how far the nose may turn in past what the grip holds
   align: 2.5,             // how fast the rear pulls the nose back toward the travel, 1/s
   offAccel: 0.6,          // acceleration × this off the road
+  reverseAccel: 4,        // m/s² backwards: the brake held with the car stopped (the owner, 2026-11-26)
+  topReverse: 8,          // m/s
   missPenalty: 10000,     // ms
   resetPenalty: 5000,
   resetAfter: 3,          // s off the road or the wrong way before ↺ is offered
@@ -161,10 +163,14 @@ export function step(g, input = IDLE) {
   const top = off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel;
   const acc = T.accel * (off ? T.offAccel : 1);
   vf += clamp(throttle, 0, 1) * acc * dt;
+  // Reverse: the brake held once the car has stopped (or is already rolling back) drives it backwards
+  const backing = g.mode === 'play' && brake > 0 && !(throttle > 0) && vf <= 0;
+  if (backing) vf -= clamp(brake, 0, 1) * T.reverseAccel * (off ? T.offAccel : 1) * dt;
   const sign = vf > 0 ? 1 : vf < 0 ? -1 : 0;
-  let drag = T.roll + (T.accel - T.roll) * (vf / top) * (vf / top);
+  const topNow = vf < 0 ? T.topReverse : top;
+  let drag = T.roll + (T.accel - T.roll) * (vf / topNow) * (vf / topNow);
   if (off) drag = Math.min(drag, T.maxOffDrag);
-  drag += clamp(brake, 0, 1) * T.brake;
+  if (!backing) drag += clamp(brake, 0, 1) * T.brake;
   const dv = drag * dt;
   vf = Math.abs(vf) <= dv ? 0 : vf - sign * dv;
 

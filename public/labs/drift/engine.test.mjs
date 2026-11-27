@@ -52,8 +52,26 @@ ok('the car accelerates to its top speed and no further, and stops under braking
   const g = E.newGame({ track: straight() });
   steps(g, FULL, 120 * 30);
   assert.ok(g.car.speed > E.TUNING.topGravel - 1 && g.car.speed <= E.TUNING.topGravel + 1e-6, `top ${g.car.speed}`);
-  steps(g, { ...FULL, throttle: 0, brake: 1 }, 120 * 4);
+  // Braking stops the car (from 30 m/s in a little over two seconds), it does not slide past zero
+  let n = 0;
+  while (g.car.speed > 0 && n < 120 * 4) { E.step(g, { ...FULL, throttle: 0, brake: 1 }); n++; }
   assert.equal(g.car.speed, 0);
+  assert.ok(n > 120 * 1.5 && n < 120 * 3, `stopped in ${n} steps`);
+});
+
+ok('the brake held with the car stopped is reverse, up to its own top speed; the throttle stops it', () => {
+  const g = E.newGame({ track: straight() });
+  g.mode = 'play';
+  const forward = () => g.car.vx * Math.cos(g.car.h) + g.car.vy * Math.sin(g.car.h);
+  steps(g, { ...FULL, throttle: 0, brake: 1 }, 120 * 10);
+  assert.ok(forward() < 0, `going backwards (${forward()})`);
+  assert.ok(g.car.speed <= E.TUNING.topReverse + 1e-6 && g.car.speed > E.TUNING.topReverse * 0.5, `reverse speed ${g.car.speed}`);
+  steps(g, FULL, 120 * 3);
+  assert.ok(forward() > 0, 'the throttle drives it forward again');
+  // Waiting at the start line, the held brake never reverses
+  const w = E.newGame({ track: straight() });
+  steps(w, E.IDLE, 120 * 2);
+  assert.equal(w.car.speed, 0);
 });
 
 ok('a gentle bend at speed holds; a tight one slides', () => {

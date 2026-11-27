@@ -14,8 +14,8 @@ const ES = {
     title: 'Derrape', lead: 'Derrapa contra el reloj por un camino de tierra, puerta por puerta.',
     howTitle: '🏁 Cómo se juega', play: '🏁 Jugar', go: '¡A correr!',
     hint: '👈 👉 Mantén un lado para girar y los dos para frenar',
-    hintSteer: '👈 👉 Desliza para girar', hintPedal: '👆 Mantén: aceleras\n👇 Bájalo: frenas',
-    hintStick: '🕹️ Desliza: a los lados giras, arriba aceleras, abajo frenas',
+    hintSteer: '👈 👉 Desliza para girar', hintPedal: '👆 Mantén: aceleras\n👇 Bájalo: frenas y retrocedes',
+    hintStick: '🕹️ Desliza: a los lados giras, arriba aceleras, abajo frenas y retrocedes',
     gateOf: 'Puerta {n} de {total}', penalty: '+{s} s', resetLabel: 'Volver al camino',
     paused: 'En pausa', tapToGo: 'Toca para seguir',
     resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
@@ -31,7 +31,7 @@ const ES = {
   },
   como: [
     '🏁 Cruza todas las puertas hasta la meta en el menor tiempo.',
-    '🕹️ Pulgar izquierdo: desliza para girar. Pulgar derecho: mantén para acelerar y bájalo para frenar.',
+    '🕹️ Pulgar izquierdo: desliza para girar. Pulgar derecho: mantén para acelerar y bájalo para frenar y retroceder.',
     '⏱️ Saltarte una puerta suma 10 segundos. Si te sales, ↺ te devuelve al camino por 5 segundos.',
   ],
 };
@@ -42,8 +42,8 @@ const EN = {
     title: 'Drift', lead: 'Slide against the clock down a dirt road, gate by gate.',
     howTitle: '🏁 How to play', play: '🏁 Play', go: 'Go!',
     hint: '👈 👉 Hold one side to steer, both to brake',
-    hintSteer: '👈 👉 Slide to steer', hintPedal: '👆 Hold: speed up\n👇 Slide down: brake',
-    hintStick: '🕹️ Slide: sideways to steer, up to speed up, down to brake',
+    hintSteer: '👈 👉 Slide to steer', hintPedal: '👆 Hold: speed up\n👇 Slide down: brake, then reverse',
+    hintStick: '🕹️ Slide: sideways to steer, up to speed up, down to brake, then reverse',
     gateOf: 'Gate {n} of {total}', penalty: '+{s} s', resetLabel: 'Back on the road',
     paused: 'Paused', tapToGo: 'Tap to go on',
     resumeTitle: '⏯ There is a game in progress', resume: 'Continue', delete: 'Delete',
@@ -59,7 +59,7 @@ const EN = {
   },
   como: [
     '🏁 Drive through every gate to the finish in the shortest time.',
-    '🕹️ Left thumb: slide to steer. Right thumb: hold to speed up, slide it down to brake.',
+    '🕹️ Left thumb: slide to steer. Right thumb: hold to speed up, slide it down to brake, then reverse.',
     '⏱️ Missing a gate adds 10 seconds. If you go off, ↺ puts you back on the road for 5 seconds.',
   ],
 };
@@ -70,8 +70,8 @@ const PT = {
     title: 'Derrapagem', lead: 'Derrape contra o relógio numa estrada de terra, portão por portão.',
     howTitle: '🏁 Como se joga', play: '🏁 Jogar', go: 'Já!',
     hint: '👈 👉 Segure um lado para virar e os dois para frear',
-    hintSteer: '👈 👉 Deslize para virar', hintPedal: '👆 Segure: acelera\n👇 Desça: freia',
-    hintStick: '🕹️ Deslize: para os lados vira, para cima acelera, para baixo freia',
+    hintSteer: '👈 👉 Deslize para virar', hintPedal: '👆 Segure: acelera\n👇 Desça: freia e dá ré',
+    hintStick: '🕹️ Deslize: para os lados vira, para cima acelera, para baixo freia e dá ré',
     gateOf: 'Portão {n} de {total}', penalty: '+{s} s', resetLabel: 'Voltar à estrada',
     paused: 'Em pausa', tapToGo: 'Toque para seguir',
     resumeTitle: '⏯ Há uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
@@ -87,7 +87,7 @@ const PT = {
   },
   como: [
     '🏁 Passe por todos os portões até a chegada no menor tempo.',
-    '🕹️ Polegar esquerdo: deslize para virar. Polegar direito: segure para acelerar e desça para frear.',
+    '🕹️ Polegar esquerdo: deslize para virar. Polegar direito: segure para acelerar e desça para frear e dar ré.',
     '⏱️ Pular um portão soma 10 segundos. Se você sair, ↺ te leva de volta à estrada por 5 segundos.',
   ],
 };

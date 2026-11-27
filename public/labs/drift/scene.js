@@ -21,7 +21,7 @@ const COLOURS = {
   ground: '#2f4a2a', grid: 'rgba(255, 255, 255, 0.05)', shoulder: '#6d5f44', road: '#a8916a',
   hairpin: '#b39c74', centre: 'rgba(255, 255, 255, 0.18)',
   gateNext: '#ffd23f', gateLater: 'rgba(255, 255, 255, 0.45)', gatePast: 'rgba(255, 255, 255, 0.15)',
-  car: '#ff2e88', carGlass: '#2a0a1c', wheel: '#14141a', brakeLight: '#ff3b30', brakeOff: '#5a1020', shadow: 'rgba(0, 0, 0, 0.35)', label: '#ffffff',
+  car: '#ff2e88', carGlass: '#2a0a1c', wheel: '#14141a', brakeLight: '#ff3b30', reverseLight: '#ffffff', brakeOff: '#5a1020', shadow: 'rgba(0, 0, 0, 0.35)', label: '#ffffff',
 };
 const MAX_DPR = 2;
 const CAR_L = 4.2, CAR_W = 1.8;
@@ -50,7 +50,7 @@ export function escena(canvas) {
   function draw(g, alpha = 0, view = {}) {
     if (!W || !H) return;
     const mode = view.mode === 'fixed' ? 'fixed' : 'follow';
-    const ahead = view.ahead || 70;
+    const ahead = view.ahead || 50;
     const now = globalThis.performance?.now() ?? 0;
     const dt = Math.min(0.1, lastNow ? (now - lastNow) / 1000 : 0);
     lastNow = now;
@@ -108,8 +108,9 @@ export function escena(canvas) {
     }
     ctx.fillStyle = COLOURS.carGlass;
     ctx.fillRect(CAR_L * 0.08, -CAR_W / 2 + 0.2, CAR_L * 0.22, CAR_W - 0.4);
-    // The brake lights at the back: lit while braking
-    ctx.fillStyle = car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
+    // The lights at the back: white while going backwards (reverse), red while braking
+    const backwards = car.vx * Math.cos(car.h) + car.vy * Math.sin(car.h) < -0.3;
+    ctx.fillStyle = backwards ? COLOURS.reverseLight : car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
     ctx.fillRect(-CAR_L / 2, CAR_W / 2 - 0.5, 0.25, 0.4);
     ctx.fillRect(-CAR_L / 2, -CAR_W / 2 + 0.1, 0.25, 0.4);
     ctx.restore();
