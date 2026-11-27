@@ -115,6 +115,30 @@ for (const width of [375, 320]) {
     ok(await b.until("document.querySelector('#screen-result.active')", 4000), `${width}: the last life wrecks the car and ends the run`);
     ok(await b.evaluate("document.getElementById('result-trophy').textContent === '💥' && document.getElementById('result-time').hidden"), `${width}: the result says the car was wrecked, with no time`);
     await b.shot(`wrecked-${width}`);
+
+    // The cover's choice of view (the owner, 2026-11-27): 3D from behind the car, then 2D again
+    await b.go(URL);
+    await b.evaluate("localStorage.removeItem('juegos-de-salon:drift:session'); 1");
+    await b.go(URL);
+    ok(await b.evaluate("document.querySelector('#scene-pick [data-scene=\"2d\"]').classList.contains('on')"), `${width}: the cover offers 2D and 3D, 2D chosen at first`);
+    await b.evaluate("document.querySelector('#scene-pick [data-scene=\"3d\"]').click(); 1");
+    ok(await b.evaluate("JSON.parse(localStorage.getItem('juegos-de-salon:drift:tuning')).view.scene === '3d'"), `${width}: the choice is kept on the phone`);
+    await b.shot(`cover-3d-${width}`);
+    await b.evaluate("document.getElementById('btn-play').click(); 1");
+    ok(await b.until("document.querySelector('#screen-play.active') && window.__drift.S.live", 3000), `${width}: 3D: «Jugar» opens the stage`);
+    const webgl = await b.evaluate("!!document.createElement('canvas').getContext('webgl')");
+    ok(await b.evaluate('window.__drift.scene') === (webgl ? '3d' : '2d'), `${width}: 3D: the stage is drawn from behind the car (${webgl ? 'WebGL' : 'no WebGL here: 2D'})`);
+    await b.evaluate('window.__drift.autopilot(true); 1');
+    ok(await b.until('window.__drift.g.gate >= 1', 15000), `${width}: 3D: the car drives through the first gate`);
+    await b.evaluate(into); await sleep(400);
+    ok(await b.evaluate('window.__drift.g.car.hits.length >= 1'), `${width}: 3D: a crash dents the car here too`);
+    await b.shot(`stage-3d-${width}`);
+    await b.evaluate('window.__drift.g.track.solids = []; window.__drift.drive(); 1');
+    ok(await b.until("document.querySelector('#screen-result.active')", 5000), `${width}: 3D: the run reaches the result`);
+    await b.go(URL);
+    await b.evaluate("document.querySelector('#scene-pick [data-scene=\"2d\"]').click(); document.getElementById('btn-play').click(); 1");
+    ok(await b.until("document.querySelector('#screen-play.active') && window.__drift.scene === '2d'", 3000), `${width}: back to 2D, the stage is drawn from above`);
+    ok(!b.errors.length, `${width}: 3D: no console errors` + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
   }
   b.close();
 }

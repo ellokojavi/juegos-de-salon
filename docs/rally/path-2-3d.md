@@ -4,6 +4,12 @@ The same game drawn from behind the car in a low-poly world. **Nothing in the en
 stages, the HUD or the rules changes**: this path adds one scene file behind a flag and keeps path
 1's scene as the fallback. Start it only after path 1's verdict (phase 1.6) and the owner's yes.
 
+**Brought forward (the owner, 2026-11-27)**: «ya podemos empezar a implementar la versión 3D… una
+variante del juego en la portada, cosa de poder testear 2D y 3D desde la misma prueba». So 2.1 and
+most of 2.3 came before 1.6, the game being in the lab already: the choice is on the cover
+(`view.scene`), not behind a flag of its own; renderer A was built as recommended, and phase 2.0's
+measurements are still owed before decision 11 is closed.
+
 ## What the player gets, and what they do not
 
 They get: a chase camera, a low-poly car that leans in corners, a road that rises and falls, trees,
