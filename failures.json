@@ -8072,7 +8072,11 @@
       "error": "ERROR · appeared modules: public/labs/drift/scenery.js",
       "signature": "0ed7b63277",
       "date": "2026-11-27T06:00:38.422Z",
-      "fix": null,
+      "fix": {
+        "commit": "2760685cd79f7fc8ea06f8267b9073b23edf7da8",
+        "date": "2026-11-27T06:07:28.529Z",
+        "stat": "2 file(s) +3 −1: docs/facts.json, docs/rally/PROGRESS.md"
+      },
       "flaky": false
     }
   ]
