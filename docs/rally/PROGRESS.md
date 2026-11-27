@@ -19,7 +19,7 @@ in the other files.
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
-| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | `drift-forks` |
+| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | [#1946](https://github.com/ellokojavi/juegos-de-salon/pull/1946) |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
 | 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
