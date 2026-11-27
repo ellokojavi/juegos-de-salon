@@ -48,6 +48,7 @@ export const FLAGS = {
   'croc': '🐸 Croc!: the game, on the home page, the search and new cups (D-517\'s way); prepared, not launched: the owner picks the date',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
   'browser-lang': '🌐 First visit in the browser\'s language (English or Portuguese), not always Spanish (D-536)',
+  'shinobi-light-fx': '🥷 Shinobi: lighter glows on a perfect (no live blur), so Firefox keeps its frames',
   'babel-tally': '🗼 Babel: the score adds itself up on the end screen, floors + bonuses = points, with its show',
   'word-in-words': '🔤 Home page: Toque y Fama: Palabra gets its own card under the 🔤 Palabras filter (only there: with no filter, Toque y Fama\'s page still picks the number or the word, #767)',
   'share-tagline': '🎮 Share messages: a game\'s invite, link or result adds one line with the game\'s tagline, so whoever gets it knows what the game is about',

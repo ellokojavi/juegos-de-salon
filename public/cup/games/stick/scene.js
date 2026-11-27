@@ -5,6 +5,13 @@
 import { pillar, pillarAt, current, next, stickAt, runX, restX, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS } from './engine.js';
 
 const QUIETO = !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+/**
+ * Lighter glows (lab: #seccion-shinobi-light-fx): Firefox blurs canvas shadows on the CPU, so a perfect
+ * (three blurred rings, a gold flag, a gold stick) dropped frames there. With it on, each glow is drawn
+ * as a wider faint stroke under the shape instead of a live shadowBlur (the owner, 2026-11-27).
+ */
+let LIGERO = false;
+export const ligero = on => { LIGERO = !!on; };
 // A lost life: the fall, then the ninja peeks up from below, throws the grapple in an arc, it bites the edge,
 // the ninja climbs hand over hand and pulls itself over the top; about 2.6 s in all
 export const CAIDA_MS = 450, ASOMA_MS = 260, GANCHO_MS = 480, TENSA_MS = 200, SUBIDA_MS = 1250, SALTO_MS = 420;
@@ -172,9 +179,16 @@ export function escena(canvas, { compacto = false } = {}) {
     lado.addColorStop(0, rgb(c, 0.45)); lado.addColorStop(1, rgb(c, 0));
     ctx.fillStyle = lado; ctx.fillRect(x, G, 1.5, (H - G) * 0.7); ctx.fillRect(x + w - 1.5, G, 1.5, (H - G) * 0.7);
     // The neon top edge
-    ctx.save(); ctx.shadowColor = rgb(c); ctx.shadowBlur = 10;
-    ctx.fillStyle = rgb(c); ctx.fillRect(x, G - 1, w, 3);
-    ctx.restore();
+    if (LIGERO) {
+      const halo = ctx.createLinearGradient(0, G - 7, 0, G + 8);
+      halo.addColorStop(0, rgb(c, 0)); halo.addColorStop(0.5, rgb(c, 0.35)); halo.addColorStop(1, rgb(c, 0));
+      ctx.fillStyle = halo; ctx.fillRect(x, G - 7, w, 15);
+      ctx.fillStyle = rgb(c); ctx.fillRect(x, G - 1, w, 3);
+    } else {
+      ctx.save(); ctx.shadowColor = rgb(c); ctx.shadowBlur = 10;
+      ctx.fillStyle = rgb(c); ctx.fillRect(x, G - 1, w, 3);
+      ctx.restore();
+    }
     if (k === 0) return;
     // The flag at its center: the target. The one to reach waves; a hit one stays gold
     const oro = doradas.has(k), cx = sx(p.x + p.w / 2);
@@ -204,13 +218,21 @@ export function escena(canvas, { compacto = false } = {}) {
     const ola = QUIETO ? 0 : Math.sin(now / (oro || objetivo ? 140 : 260) + k);
     const color = oro ? rgb(GOLD) : '#ff2e88';
     ctx.save();
-    if (oro || objetivo) { ctx.shadowColor = color; ctx.shadowBlur = oro ? 14 : 8; }
+    if ((oro || objetivo) && !LIGERO) { ctx.shadowColor = color; ctx.shadowBlur = oro ? 14 : 8; }
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(cx, top);
     ctx.quadraticCurveTo(cx + ancho * 0.5, top + ola * 2 * s, cx + ancho, top + alto * 0.22 + ola * 1.5 * s);
     ctx.quadraticCurveTo(cx + ancho * 0.5, top + alto * 0.3 - ola * 2 * s, cx, top + alto * 0.44);
-    ctx.closePath(); ctx.fill();
+    ctx.closePath();
+    if ((oro || objetivo) && LIGERO) {
+      // The glow as a soft outline of the flag itself: two wide faint strokes, no blur
+      ctx.lineJoin = 'round'; ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.12; ctx.lineWidth = (oro ? 7 : 5) * s; ctx.stroke();
+      ctx.globalAlpha = 0.25; ctx.lineWidth = (oro ? 3.5 : 2.5) * s; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    ctx.fill();
     ctx.restore();
   }
   /* --- the stick --- */
@@ -219,9 +241,13 @@ export function escena(canvas, { compacto = false } = {}) {
     const x1 = x0 + Math.cos(a) * L, y1 = G - 1 + Math.sin(a) * L;
     ctx.save();
     ctx.lineCap = 'round';
-    ctx.shadowColor = brillo ? rgb(GOLD) : 'rgba(255,210,63,0.6)'; ctx.shadowBlur = brillo ? 16 : 6;
-    ctx.strokeStyle = brillo ? '#fff2b0' : '#ffd23f'; ctx.lineWidth = Math.max(2.5, 3.2 * s);
-    ctx.beginPath(); ctx.moveTo(x0, G - 1); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, G - 1); ctx.lineTo(x1, y1);
+    const ancho = Math.max(2.5, 3.2 * s);
+    if (LIGERO) {
+      ctx.strokeStyle = rgb(GOLD, brillo ? 0.1 : 0.06); ctx.lineWidth = ancho + (brillo ? 10 : 6); ctx.stroke();
+      ctx.strokeStyle = rgb(GOLD, brillo ? 0.2 : 0.12); ctx.lineWidth = ancho + (brillo ? 4 : 2); ctx.stroke();
+    } else { ctx.shadowColor = brillo ? rgb(GOLD) : 'rgba(255,210,63,0.6)'; ctx.shadowBlur = brillo ? 16 : 6; }
+    ctx.strokeStyle = brillo ? '#fff2b0' : '#ffd23f'; ctx.lineWidth = ancho; ctx.stroke();
     ctx.restore();
   }
 
@@ -295,10 +321,14 @@ export function escena(canvas, { compacto = false } = {}) {
       if (k < 0) continue;
       if (k >= 1) { pulsos.splice(i, 1); continue; }
       const r = (4 + easeOut(k) * p.max) * s;
+      const ancho = Math.max(1, 4 * (1 - k) * s);
       ctx.save();
-      ctx.shadowColor = rgb(p.color); ctx.shadowBlur = 14;
-      ctx.strokeStyle = rgb(p.color, 1 - k); ctx.lineWidth = Math.max(1, 4 * (1 - k) * s);
-      ctx.beginPath(); ctx.arc(sx(p.x), p.y, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(sx(p.x), p.y, r, 0, Math.PI * 2);
+      if (LIGERO) {
+        ctx.strokeStyle = rgb(p.color, 0.1 * (1 - k)); ctx.lineWidth = ancho + 9 * s; ctx.stroke();
+        ctx.strokeStyle = rgb(p.color, 0.22 * (1 - k)); ctx.lineWidth = ancho + 4 * s; ctx.stroke();
+      } else { ctx.shadowColor = rgb(p.color); ctx.shadowBlur = 14; }
+      ctx.strokeStyle = rgb(p.color, 1 - k); ctx.lineWidth = ancho; ctx.stroke();
       ctx.restore();
     }
     for (let i = chispas.length - 1; i >= 0; i--) {

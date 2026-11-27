@@ -35,6 +35,14 @@ test('U-5: a banned synonym from the glossary, by language', () => {
   assert.match(bannedSynonym('Abre el link en el móvil', 'es', g), /celular/);
   assert.match(bannedSynonym('A minigame', 'lab', g), /mini/, 'a lab game is checked against every language');
   assert.equal(bannedSynonym('Minimal games', 'en', g), null);
+  // English says hint for the 💡 that costs points (pattern english-hint-term: Dominorama, Críptico)
+  assert.match(bannedSynonym('💡 Help (−{pts})', 'en', g), /hint/);
+  assert.match(bannedSynonym('💡 {n} helps', 'en', g), /hint/);
+  assert.match(bannedSynonym('💡 1 help: −{pts}.', 'en', g), /hint/);
+  assert.match(bannedSynonym('each help takes off 10.', 'en', g), /hint/);
+  assert.equal(bannedSynonym('💡 Hint: costs 1 ⭐', 'en', g), null);
+  assert.equal(bannedSynonym('This helps you find the word.', 'en', g), null);
+  assert.equal(bannedSynonym('💡 Ayuda (−{pts})', 'es', g), null);
 });
 
 test('U-6: a hard-coded 1 before a plural, and a plural in a singular slot', () => {

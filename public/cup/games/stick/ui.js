@@ -22,7 +22,8 @@ import {
   newGame, pillarAt, current, next, press, release, suspend, advance, pause, walkEnd,
   holdFor, revive, puntaje, tarjeta, PERFECT, MAX_BONUS, LIVES,
 } from './engine.js';
-import { CAIDA_MS, RESCATE_MS, escena, momento } from './scene.js';
+import { CAIDA_MS, RESCATE_MS, escena, momento, ligero } from './scene.js';
+import { flag, flagGuess } from '../../../assets/js/flags.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -146,6 +147,9 @@ export function montar(raiz, ctx) {
   const escenario = el('div', { class: 'sn-escenario', id: 'sn-escenario', role: 'button', tabindex: 0, 'aria-label': T.snHold },
     lienzo, marcador, vidas, racha, aviso, logro, cartel);
   raiz.replaceChildren(escenario);
+  // Lighter glows (lab: #seccion-shinobi-light-fx), for Firefox: see `ligero` in scene.js
+  const ponerLigero = on => { ligero(on); escenario.classList.toggle('sn-ligero', !!on); };
+  ponerLigero(flagGuess('shinobi-light-fx')); flag('shinobi-light-fx').then(ponerLigero).catch(() => {});
   const sc = escena(lienzo);
   sc.empezar(g);
   let cayo = false;
