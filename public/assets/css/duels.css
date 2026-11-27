@@ -1,6 +1,12 @@
 /* Duels (lab flag rivals, duels-ui.js): the profile's row of duel cards, the all-duels page, the
    new-duel sheet. Only the design system's tokens (D-533). */
 
+/* Wins and losses in the duels' graphs and results: the top cards' cyan and pink, toned down (the owner, 2026-11-27, «Ticket wash») */
+:root {
+  --dl-w: color-mix(in srgb, var(--cyan) 65%, var(--bg2));
+  --dl-l: color-mix(in srgb, var(--pink) 60%, var(--bg2));
+}
+
 /* The profile's section: min-width 0, or the row of cards widens the page's grid column */
 .dl-slot, .dl-seccion { min-width: 0; }
 .dl-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--s-4) var(--s-8); margin: 0 0 var(--s-8); }
@@ -53,8 +59,8 @@
 .dl-row-txt small { color: var(--muted); }
 .dl-row-sc { display: flex; align-items: center; gap: var(--s-6); font: 900 var(--fs-100) var(--font-num); color: var(--yellow); }
 .dl-fin { font: 900 var(--fs-85) var(--font-body); white-space: nowrap; }
-.dl-fin.w { color: var(--lime); }
-.dl-fin.l { color: var(--pink); }
+.dl-fin.w { color: var(--dl-w); }
+.dl-fin.l { color: var(--dl-l); }
 .dl-fin.t { color: var(--muted); }
 
 /* The new-duel sheet */
@@ -138,20 +144,20 @@
 .dl-stat:not(.dl-stat--record) > span { align-self: end; }
 .dl-stat b { font: 900 var(--fs-140) var(--font-num); color: var(--yellow); }
 .dl-stat > span { color: var(--muted); font: 800 var(--fs-75) var(--font-body); }
-/* The record, the arcade hero of the stats (the owner, 2026-11-26): wins lime, losses pink, the rate as a bar */
+/* The record, the arcade hero of the stats (the owner, 2026-11-26): wins cyan, losses pink (toned down), the rate as a bar */
 .dl-stat--record {
   grid-column: 1 / -1; gap: var(--s-6); padding: var(--s-14) var(--s-14);
-  background: linear-gradient(100deg, rgb(var(--lime-rgb) / .18), var(--well) 40%, var(--well) 60%, rgb(var(--pink-rgb) / .2));
+  background: linear-gradient(100deg, rgb(var(--cyan-rgb) / .22), var(--well) 40%, var(--well) 60%, rgb(var(--pink-rgb) / .22));
 }
 .dl-record { display: flex; align-items: baseline; gap: var(--s-8); }
 .dl-record b { font-size: var(--fs-200); text-shadow: var(--shadow-text); }
-.dl-record b.w { color: var(--lime); }
-.dl-record b.l { color: var(--pink); }
+.dl-record b.w { color: var(--dl-w); }
+.dl-record b.l { color: var(--dl-l); }
 .dl-record b.t { color: var(--muted); }
 .dl-record-sep { color: var(--muted); font: 900 var(--fs-140) var(--font-num); }
 .dl-record-barra { display: flex; width: 100%; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--glass-border); }
-.dl-record-barra i.w { background: var(--lime); }
-.dl-record-barra i.l { background: var(--pink); }
+.dl-record-barra i.w { background: var(--dl-w); }
+.dl-record-barra i.l { background: var(--dl-l); }
 .dl-record-barra i.t { background: var(--muted); }
 .dl-stat--juego b { max-width: 100%; font-size: var(--fs-110); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-stat--record small { color: var(--ink); font: 900 var(--fs-90) var(--font-body); }
@@ -159,8 +165,8 @@
 .dl-destacado { margin: 0; display: flex; flex-direction: column; gap: var(--s-8); text-align: center; }
 .dl-destacado.arch { border-color: var(--yellow); }
 .dl-destacado.nemesis { border-color: var(--pink); }
-.dl-h2h.w { color: var(--lime); }
-.dl-h2h.l { color: var(--pink); }
+.dl-h2h.w { color: var(--dl-w); }
+.dl-h2h.l { color: var(--dl-l); }
 .dl-h2h.t { color: var(--muted); }
 .dl-fin-col { display: grid; justify-items: end; gap: var(--s-4); }
 .dl-revancha { white-space: nowrap; }
@@ -283,8 +289,8 @@ a.dl-card-g { text-decoration: none; }
   content: ''; position: absolute; left: calc(-1 * var(--s-20)); top: var(--s-6); width: 14px; height: 14px; border-radius: 50%;
   background: var(--muted); box-shadow: 0 0 0 3px var(--well);
 }
-.dl-hito.w::before { background: var(--lime); }
-.dl-hito.l::before { background: var(--pink); }
+.dl-hito.w::before { background: var(--dl-w); }
+.dl-hito.l::before { background: var(--dl-l); }
 .dl-hito summary { display: grid; cursor: pointer; list-style: none; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--s-8); color: var(--ink); text-decoration: none; }
 .dl-hito-f { grid-column: 1 / -1; color: var(--muted); font: 800 var(--fs-75) var(--font-body); text-transform: uppercase; }
 .dl-hito b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -298,8 +304,8 @@ a.dl-card-g { text-decoration: none; }
 .dl-hito-mas { display: grid; gap: var(--s-8); margin-top: var(--s-8); padding: var(--s-10) var(--s-12); border-radius: var(--r-12); background: var(--well); }
 .dl-minis { display: flex; flex-wrap: wrap; gap: var(--s-6); }
 .dl-mini { padding: var(--s-2) var(--s-8); border-radius: var(--r-pill); border: 2px solid var(--glass-border); font: 800 var(--fs-85) var(--font-num); }
-.dl-mini.w { border-color: var(--lime); }
-.dl-mini.l { border-color: var(--pink); }
+.dl-mini.w { border-color: var(--dl-w); }
+.dl-mini.l { border-color: var(--dl-l); }
 .dl-hito-mas small { color: var(--muted); font-weight: 800; }
 .dl-hito-btns { display: flex; flex-wrap: wrap; gap: var(--s-8); }
 .dl-hito-btns .chip-btn { text-decoration: none; }
@@ -317,22 +323,22 @@ a.dl-card-g { text-decoration: none; }
 .dl-prog-area { fill: rgb(var(--cyan-rgb) / .14); }
 .dl-prog-linea { fill: none; stroke: var(--cyan); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .dl-prog-punto { fill: var(--muted); stroke: var(--well-deep); stroke-width: 2; }
-.dl-prog-punto.w { fill: var(--lime); }
-.dl-prog-punto.l { fill: var(--pink); }
+.dl-prog-punto.w { fill: var(--dl-w); }
+.dl-prog-punto.l { fill: var(--dl-l); }
 #dl-progreso .dl-label { margin: var(--s-4) 0 var(--s-6); }
 .dl-formas { display: flex; flex-wrap: wrap; gap: var(--s-4); margin-bottom: var(--s-12); }
 .dl-forma {
   width: 26px; height: 26px; border-radius: var(--r-8); display: grid; place-items: center;
   font: 900 var(--fs-75) var(--font-body); background: var(--muted); color: var(--ink-on-yellow);
 }
-.dl-forma.w { background: var(--lime); }
-.dl-forma.l { background: var(--pink); color: var(--ink); }
+.dl-forma.w { background: var(--dl-w); color: var(--ink-on-cyan); }
+.dl-forma.l { background: var(--dl-l); color: var(--ink); }
 .dl-pjs { display: grid; gap: var(--s-8); }
 .dl-pj { display: grid; grid-template-columns: minmax(0, 7em) minmax(0, 1fr) auto; align-items: center; gap: var(--s-8); }
 .dl-pj-g { font-weight: 800; font-size: var(--fs-85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dl-pj-barra { display: flex; gap: 2px; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--well); }
-.dl-pj-barra .w { background: var(--lime); }
-.dl-pj-barra .l { background: var(--pink); }
+.dl-pj-barra .w { background: var(--dl-w); }
+.dl-pj-barra .l { background: var(--dl-l); }
 .dl-pj small { color: var(--muted); font: 800 var(--fs-85) var(--font-num); }
 /* Each rival on /duels/: name and head to head, then their bars by game, each ending in a ⚔️ rematch */
 .dl-rv { display: grid; gap: var(--s-8); padding: var(--s-12) 0; border-bottom: 1px solid var(--glass-border); }
@@ -346,3 +352,15 @@ a.dl-card-g { text-decoration: none; }
   border: 1px solid var(--glass-border); background: var(--well); font-size: var(--fs-100); cursor: pointer;
 }
 .dl-pj-ir:active { transform: scale(.94); }
+
+/* /duels/: every panel below the open duels wears the tickets' cyan-to-pink wash, their 3D edge and a
+   gold rim, gold titles (the owner, 2026-11-27, «Ticket wash») */
+#dl-page .panel:not(.dl-hero) {
+  border-color: rgb(var(--yellow-rgb) / .45);
+  background: linear-gradient(100deg, rgb(var(--cyan-rgb) / .18), var(--bg2) 38%, var(--bg2) 62%, rgb(var(--pink-rgb) / .2));
+  box-shadow: 0 6px 0 var(--bg1), var(--shadow-panel);
+}
+#dl-page .panel:not(.dl-hero) > .lead, #dl-page .panel:not(.dl-hero) > .dl-head > .lead, #dl-page .dl-destacado > .dl-label { color: var(--yellow); text-shadow: 0 2px 0 var(--edge-yellow); }
+.dl-pj-barra { height: 8px; }
+#dl-page .panel.dl-destacado.arch { border-color: var(--yellow); }
+#dl-page .panel.dl-destacado.nemesis { border-color: var(--dl-l); }
