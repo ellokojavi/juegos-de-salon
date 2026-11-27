@@ -82,8 +82,7 @@ function begin(g, track) {
   showScreen('screen-play');
   if (!sc) sc = escena($('#canvas'));
   sc.resize();
-  input?.dispose();
-  input = controls($('#stage'), { onFirst: () => $('#hint').classList.add('fuera') });
+  setControls();
   $('#hint').classList.toggle('fuera', !!S.g.t);
   $('#pause').hidden = true;
   paintHud();
@@ -111,6 +110,15 @@ function resume(saved) {
   if (g.t > 0) g.penalty += E.TUNING.resetPenalty;
   begin(g, def);
   save();
+}
+
+/** The controls of the scheme chosen in the tuning panel, and their first-run hint. */
+function setControls() {
+  input?.dispose();
+  input = controls($('#stage'), { scheme: view.scheme, reach: view.reach, onFirst: () => $('#hint').classList.add('fuera') });
+  const hint = $('#hint');
+  hint.dataset.scheme = input.scheme;
+  hint.replaceChildren(...(input.scheme === 'wheel' ? [T.hintSteer, T.hintPedal] : [input.scheme === 'stick' ? T.hintStick : T.hint]).map(x => el('span', {}, x)));
 }
 
 /** The shared 3, 2, 1; control comes back when it says «¡A correr!». */
@@ -230,6 +238,8 @@ function init() {
     S.paused = true; input?.release();
     openTuning({ T, view, frameMs: () => S.frameMs, onClose: () => {
       S.tuned = S.tuned || isTuned(view);
+      // The controls are rebuilt with the panel's scheme and thumb travel; a new scheme shows its hint again
+      if (S.g && input) { const changed = input.scheme !== view.scheme, gone = $('#hint').classList.contains('fuera'); setControls(); $('#hint').classList.toggle('fuera', gone && !changed); }
       S.last = performance.now();
       if (!was) { S.paused = false; if (S.live) countdown(); }
     } });
