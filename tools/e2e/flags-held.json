@@ -46,5 +46,8 @@
   },
   "bridges-hint": {
     "state": "off"
+  },
+  "shinobi-light-fx": {
+    "state": "off"
   }
 }
