@@ -121,7 +121,8 @@ ok('a gentle bend at speed holds; a tight one slides', () => {
     for (let i = 0; i < 120; i++) { E.step(g, { steer, throttle: 1, brake: 0, handbrake: false }); slip = Math.max(slip, g.car.slip); }
     return slip;
   };
-  assert.ok(at(15, 0.15) < 0.05, 'a gentle bend holds');
+  // A gentle bend: a little thumb (0.12 of full lock turns about as hard as 0.15 did before the owner asked for more lock)
+  assert.ok(at(15, 0.12) < 0.05, 'a gentle bend holds');
   assert.ok(at(25, 1) > 1, 'full lock at speed slides');
   // The handbrake loosens the rear: more slide for the same steering
   const hb = (() => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = 18; let s = 0; for (let i = 0; i < 120; i++) { E.step(g, { steer: 0.6, throttle: 1, brake: 0, handbrake: true }); s = Math.max(s, g.car.slip); } return s; })();

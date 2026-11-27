@@ -63,6 +63,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner asked to turn harder: lock 32°/9° → 40°/14°, `overSteer` 2.2 → 3.0, grip gravel 9 → 11 and asphalt 14 → 16, `align` 2.5 → 3.0 (so a slide still ends in half a second). At 25 m/s the car now turns about two thirds faster.
+
 - **2026-11-26** · The owner asked for faster reverse (now 14 m/s) and crashes: solid trees and rocks, 10 lives, an impact animation and progressive damage (dents, cracked glass, a dead headlight, a hanging bumper, smoke, a flame, a scorched shell). Design in core section 5; in 1.3 the stage generator must commit the solids with each stage.
 
 - **2026-11-26** · Asked decision 7 (how often the stage changes), the owner answered «Mejoremos las gráficas primero»: 1.4's look goes before 1.3, decision 7 waits for 1.3. Penalties kept (+10 s, +5 s). The look: three settings with seeded scenery, a car with stripes and lights, tyre tracks, dust; the car is drawn over the props so a crown never hides it.

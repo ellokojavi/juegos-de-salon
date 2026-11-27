@@ -69,8 +69,8 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 A body that slides (core.md, section 3): the steering eases to the thumb; the yaw of a bicycle with
 less lock at speed; sideways grip removes up to `grip × dt` of the sideways speed each step, which is
 the drift. Two terms the plan did not have, found while building: the nose may turn in at most
-`overSteer` (2.2) times what the grip holds, so a slide starts progressively and never spins, and
-the rear pulls the nose back toward the travel at `align` (2.5 per second), which ends a slide within
+`overSteer` (3.0) times what the grip holds, so a slide starts progressively and never spins, and
+the rear pulls the nose back toward the travel at `align` (3.0 per second), which ends a slide within
 about half a second once the thumb lets go.
 
 ## Protocolo de mensajes

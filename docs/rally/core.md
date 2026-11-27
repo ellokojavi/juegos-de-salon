@@ -67,17 +67,19 @@ Each step:
 3. Forward: add throttle acceleration, subtract braking, rolling drag and air drag. The surface
    scales acceleration and drag.
 4. Turn the heading: `yaw = vf / WHEELBASE × tan(steerAngle)`, with the largest steer angle shrinking
-   as speed rises (*starting values*: 32° when slow, 9° at top speed).
+   as speed rises (*starting values*: 32° when slow, 9° at top speed; 40° and 14° since the owner asked to turn harder, 2026-11-27).
 5. Sideways grip: remove up to `GRIP[surface] × dt` of `vl`. That one line is the drift: while a
    corner asks for less sideways acceleration than the grip gives, the car tracks; ask for more and
    it slides wide with its nose pointed in. The handbrake multiplies grip by a fraction for the rear
    feel; off the road grip and drive both drop.
    **Found in 1.1:** step 4 alone spins the car at full lock (the nose turns at the bicycle's rate
    whatever the grip, and the sideways speed only grows). So the yaw is capped at `overSteer`
-   (*starting value* 2.2) times what the grip can hold at that speed, which makes a slide start
+   (*starting value* 2.2, now 3.0) times what the grip can hold at that speed, which makes a slide start
    progressively, and the rear pulls the nose back toward the direction of travel at `align`
-   (*starting value* 2.5 per second, less with the handbrake), which ends a slide within about half a
-   second of letting go. Both are in `TUNING`.
+   (*starting value* 2.5 per second, now 3.0, less with the handbrake), which ends a slide within about half a
+   second of letting go. Both are in `TUNING`. To turn harder (the owner, 2026-11-27) the lock, the
+   cap and the grip went up together (gravel grip 9 → 11 m/s², asphalt 14 → 16), and `align` with
+   them so a bigger slide still ends within half a second.
 6. Rebuild the velocity from the new heading, move the car.
 7. `car.slip = |vl|` drives the tyre tracks, the dust and the skid sound.
 

@@ -35,14 +35,14 @@ export const TUNING = {
   roll: 0.6,              // rolling drag, m/s²
   maxOffDrag: 12,         // the most the rough ground slows a fast car, m/s²
   wheelbase: 2.5,         // m
-  lockSlow: 32,           // degrees of steering when slow…
-  lockFast: 9,            // …and at top speed
-  gripGravel: 9,          // m/s² of sideways grip
-  gripAsphalt: 14,
+  lockSlow: 40,           // degrees of steering when slow…
+  lockFast: 14,           // …and at top speed
+  gripGravel: 11,         // m/s² of sideways grip
+  gripAsphalt: 16,
   gripOff: 5,
   handbrake: 0.45,        // grip × this with the handbrake
-  overSteer: 2.2,         // how far the nose may turn in past what the grip holds
-  align: 2.5,             // how fast the rear pulls the nose back toward the travel, 1/s
+  overSteer: 3.0,         // how far the nose may turn in past what the grip holds
+  align: 3.0,             // how fast the rear pulls the nose back toward the travel, 1/s
   offAccel: 0.6,          // acceleration × this off the road
   reverseAccel: 7,        // m/s² backwards: the brake held with the car stopped (the owner, 2026-11-26: faster)
   topReverse: 14,         // m/s
