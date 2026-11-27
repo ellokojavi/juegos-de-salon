@@ -40,7 +40,8 @@ for (const width of [375, 320]) {
     await finger(8, rx, y); await sleep(900);
     const a = await car();
     ok(a.mode === 'play' && a.v > 3, `${width}: wheel and pedal: holding the right thumb accelerates (${a.v.toFixed(1)} m/s)`);
-    ok(await b.evaluate("document.querySelectorAll('.dr-touch').length === 1"), `${width}: the thumb's ring shows where it landed`);
+    ok(await b.evaluate("document.querySelectorAll('.dr-touch').length === 1"), `${width}: the thumb's pedal gauge shows`);
+    ok(await b.evaluate(`document.querySelector('.dr-touch--pedal').getBoundingClientRect().bottom < ${y} - 40`), `${width}: the pedal gauge sits above the thumb, where the thumb does not cover it`);
     ok(await b.evaluate("document.getElementById('hint').classList.contains('fuera')"), `${width}: the first touch sends the hint away`);
     // The left thumb lands and slides right: the car turns right (clockwise: the heading goes down)
     await finger(7, lx, y); await move(7, lx + 60, y); await sleep(600);
@@ -49,9 +50,12 @@ for (const width of [375, 320]) {
     // Braking while turning: the pedal slid down
     await move(8, rx, y + 70); await sleep(500);
     const c = await car();
+    ok(await b.evaluate('window.__drift.g.car.brake > 0.5 && window.__drift.g.car.steer > 0.5'), `${width}: the car knows the brake and the wheel applied (its brake lights and front wheels)`);
+    const knob = JSON.parse(await b.evaluate("JSON.stringify([document.querySelector('.dr-touch--pedal').getBoundingClientRect(), document.querySelector('.dr-touch--pedal .dr-touch-dot').getBoundingClientRect()])"));
+    ok(knob[1].y + knob[1].height / 2 > knob[0].y + knob[0].height * 0.6, `${width}: the pedal's knob goes down the bar into the brake`);
     ok(c.v < b1.v - 1 && c.h < b1.h, `${width}: the pedal slid down brakes, and the car still turns (${b1.v.toFixed(1)} → ${c.v.toFixed(1)} m/s)`);
     await lift(7); await lift(8); await sleep(100);
-    ok(await b.evaluate("document.querySelectorAll('.dr-touch').length === 0"), `${width}: lifting the thumbs clears their rings`);
+    ok(await b.evaluate("document.querySelectorAll('.dr-touch').length === 0"), `${width}: lifting the thumbs clears their gauges`);
   } else {
     // One finger, chosen in the tuning panel: up accelerates, sideways steers, down brakes
     await finger(9, lx, y); await move(9, lx, y - 60); await sleep(900);

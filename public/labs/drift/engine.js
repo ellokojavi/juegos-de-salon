@@ -127,7 +127,7 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
@@ -195,7 +195,8 @@ export function step(g, input = IDLE) {
   // 6. Rebuild the velocity and move
   car.vx = f * c2 - l * s2; car.vy = f * s2 + l * c2;
   car.x += car.vx * dt; car.y += car.vy * dt;
-  // 7. What the scene and the sound read
+  // 7. What the scene and the sound read (the pedals as applied: the brake lights)
+  car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
   car.slip = Math.abs(l);
   car.speed = Math.hypot(car.vx, car.vy);
 

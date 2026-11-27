@@ -21,7 +21,7 @@ const COLOURS = {
   ground: '#2f4a2a', grid: 'rgba(255, 255, 255, 0.05)', shoulder: '#6d5f44', road: '#a8916a',
   hairpin: '#b39c74', centre: 'rgba(255, 255, 255, 0.18)',
   gateNext: '#ffd23f', gateLater: 'rgba(255, 255, 255, 0.45)', gatePast: 'rgba(255, 255, 255, 0.15)',
-  car: '#ff2e88', carGlass: '#2a0a1c', shadow: 'rgba(0, 0, 0, 0.35)', label: '#ffffff',
+  car: '#ff2e88', carGlass: '#2a0a1c', wheel: '#14141a', brakeLight: '#ff3b30', brakeOff: '#5a1020', shadow: 'rgba(0, 0, 0, 0.35)', label: '#ffffff',
 };
 const MAX_DPR = 2;
 const CAR_L = 4.2, CAR_W = 1.8;
@@ -88,7 +88,7 @@ export function escena(canvas) {
     grid(cam.x, cam.y, reach, zoom);
     road(g.track, cam.x, cam.y, reach);
     gates(g, zoom);
-    // The car: its shadow, the body, the windscreen at the front
+    // The car: its shadow, the body, the wheels (the front pair turned), the windscreen, the brake lights
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(h);
@@ -96,8 +96,22 @@ export function escena(canvas) {
     ctx.fillRect(-CAR_L / 2 + 0.3, -CAR_W / 2 - 0.3, CAR_L, CAR_W);
     ctx.fillStyle = COLOURS.car;
     ctx.fillRect(-CAR_L / 2, -CAR_W / 2, CAR_L, CAR_W);
+    // The wheels, the front pair turned as far as the steering is (so the player sees the thumb on the car)
+    ctx.fillStyle = COLOURS.wheel;
+    const WL = 0.95, WW = 0.45, turn = -(car.steer || 0) * 0.5;
+    for (const [wx, wy, front] of [[CAR_L * 0.3, CAR_W / 2, 1], [CAR_L * 0.3, -CAR_W / 2, 1], [-CAR_L * 0.3, CAR_W / 2, 0], [-CAR_L * 0.3, -CAR_W / 2, 0]]) {
+      ctx.save();
+      ctx.translate(wx, wy);
+      if (front) ctx.rotate(turn);
+      ctx.fillRect(-WL / 2, -WW / 2, WL, WW);
+      ctx.restore();
+    }
     ctx.fillStyle = COLOURS.carGlass;
     ctx.fillRect(CAR_L * 0.08, -CAR_W / 2 + 0.2, CAR_L * 0.22, CAR_W - 0.4);
+    // The brake lights at the back: lit while braking
+    ctx.fillStyle = car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
+    ctx.fillRect(-CAR_L / 2, CAR_W / 2 - 0.5, 0.25, 0.4);
+    ctx.fillRect(-CAR_L / 2, -CAR_W / 2 + 0.1, 0.25, 0.4);
     ctx.restore();
     ctx.restore();
 

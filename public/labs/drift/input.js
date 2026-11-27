@@ -15,14 +15,16 @@
  *   auto   «Acelera solo», the 1.1 scheme: the car accelerates by itself, hold a half to turn, both
  *          to brake. Kept for comparison only.
  *
- * Where each thumb landed is shown by a ring with a dot that follows it (the `.dr-touch` elements the
- * module adds to the stage), so the player sees the wheel and the pedal they are holding.
+ * What each thumb does is drawn just above it, where the thumb does not cover it (the `.dr-touch`
+ * gauges the module adds to the stage), so the player sees the wheel and the pedal they are holding.
  * The keyboard is always on: ←/→ or A/D steer, ↑/W accelerates, ↓/S brakes, space is the handbrake.
  */
 
 export const SCHEMES = ['wheel', 'stick', 'auto'];
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+/** The gap between the thumb and the near edge of its gauge, px (about 1.5 cm: clear of the thumb's pad). */
+const LIFT = 56;
 
 /**
  * @param {HTMLElement} stage   the element touched (it carries `touch-action: none` in the CSS)
@@ -33,31 +35,49 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
  */
 export function controls(stage, { scheme = 'wheel', reach = 60, onFirst = () => {} } = {}) {
   if (!SCHEMES.includes(scheme)) scheme = 'wheel';
-  const touches = new Map();   // id → { role, x0, y0, x, y, ring, dot }
+  const touches = new Map();   // id → { role, x0, y0, x, y, ring, dot, gx, gy }
   const keys = new Set();
   const off = new AbortController();
   const opt = { signal: off.signal };
   let touched = false;
   const first = () => { if (!touched) { touched = true; onFirst(); } };
 
-  /** The ring where a thumb landed and the dot that follows it, in the stage's coordinates. */
+  /**
+   * What each thumb is doing, drawn just above where it landed (LIFT px clear of it), where the thumb does not cover it
+   * (the owner, 2026-11-26: «el dedo presionado tapa el control»), or below it when the thumb lands
+   * near the top. The wheel is a bar with a knob that follows the thumb sideways; the pedal a bar,
+   * green at the top (accelerating) and red below (braking), with a knob that goes down with the
+   * thumb; the one finger a ring with its dot.
+   */
   function mark(t) {
     const ring = document.createElement('div');
     ring.className = `dr-touch dr-touch--${t.role}`;
+    const size = t.role === 'pedal' ? { width: '', height: `${reach}px` } : t.role === 'steer' ? { width: `${2 * reach}px`, height: '' } : { width: `${2 * reach}px`, height: `${2 * reach}px` };
+    Object.assign(ring.style, size);
     const dot = document.createElement('div');
     dot.className = 'dr-touch-dot';
     ring.append(dot);
     stage.append(ring);
     t.ring = ring; t.dot = dot;
+    const r = stage.getBoundingClientRect();
+    // Where the gauge sits, in the stage's coordinates: above the thumb, kept inside the stage
+    const half = t.role === 'pedal' ? 20 : reach + 8;
+    const tall = t.role === 'steer' ? 20 : t.role === 'pedal' ? reach : 2 * reach;
+    const x = clamp(t.x0 - r.left, half, Math.max(half, r.width - half));
+    let y = t.y0 - r.top - LIFT - tall / 2;
+    if (y - tall / 2 < 8) y = t.y0 - r.top + LIFT + tall / 2;
+    t.gx = x; t.gy = clamp(y, tall / 2 + 8, Math.max(tall / 2 + 8, r.height - tall / 2 - 8));
     place(t);
   }
   function place(t) {
     if (!t.ring) return;
-    const r = stage.getBoundingClientRect();
-    t.ring.style.left = `${t.x0 - r.left}px`;
-    t.ring.style.top = `${t.y0 - r.top}px`;
-    const dx = t.role === 'pedal' ? 0 : clamp(t.x - t.x0, -reach, reach);
-    const dy = t.role === 'steer' ? 0 : clamp(t.y - t.y0, -reach, reach);
+    t.ring.style.left = `${t.gx}px`;
+    t.ring.style.top = `${t.gy}px`;
+    let dx = 0, dy = 0;
+    if (t.role === 'steer') dx = clamp(t.x - t.x0, -reach, reach);
+    if (t.role === 'stick') { dx = clamp(t.x - t.x0, -reach, reach); dy = clamp(t.y - t.y0, -reach, reach); }
+    // The pedal's knob starts at the top (held: full throttle) and goes down the bar to full brake
+    if (t.role === 'pedal') dy = clamp(t.y - t.y0, 0, reach) - reach / 2;
     t.dot.style.transform = `translate(${dx}px, ${dy}px)`;
   }
   const unmark = t => t.ring?.remove();

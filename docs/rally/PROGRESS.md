@@ -17,7 +17,7 @@ in the other files.
 |---|---|---|---|
 | 1.0 | Concept sign-off | done | [#1926](https://github.com/ellokojavi/juegos-de-salon/pull/1926) |
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
-| 1.2 | The feel round | in progress: round 1, new controls | `drift-controls` |
+| 1.2 | The feel round | in progress: round 1, new controls | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
 | 1.4 | The look and the sound | not started | |
 | 1.5 | Ghost, ranking, share, memory | not started | |
@@ -62,6 +62,9 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-26** · Round 1, second change: the pressed thumb hid its own control (the owner). Each
+  thumb's gauge is now drawn just above it, and the car shows the input (front wheels, brake lights).
 
 - **2026-11-26** · The owner drove 1.1 (exit met): the fixed map does not work, and auto-throttle is too
   restrictive (no braking while turning). Feel round 1: two new analogue schemes, wheel and pedal

@@ -24,7 +24,7 @@ for the car. It exists so the owner can feel the car under a thumb and tune it (
 - **Wheel and pedal** (the default since the owner's first drive, 2026-11-26): the left thumb lands
   anywhere on the left half and slides sideways to steer; the right thumb on the right half is the
   pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes. Lifting
-  lets the car roll. A ring with a dot shows each thumb. Both are analogue, so braking into a bend while
+  lets the car roll. A gauge just above each thumb, where the thumb does not cover it, shows what it does: the wheel a bar with a knob, the pedal a bar green above and red below; the car shows it too, with its front wheels turned and its brake lights. Both are analogue, so braking into a bend while
   turning works. The lab's tuning panel also offers **one finger** (a stick: sideways steers, up
   accelerates, down brakes) and the 1.1 **self-accelerating** halves, to compare. On a keyboard: ←/→
   or A/D steer, ↑/W accelerates, ↓/S brakes, space is the handbrake.
@@ -53,7 +53,7 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
   radians; x east, y north, a heading counter-clockwise from +x. Every tuning value is in `TUNING`.
 - `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot) and `first`
   (9 gates, about 1:14). The generator and the weekly pool come in phase 1.3.
-- `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' rings (`.dr-touch`).
+- `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' gauges (`.dr-touch`) just above each thumb.
 - `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`.
   The camera turns toward the direction of travel, eased over about half a second, never shakes, never
   zooms with speed; twice as damped with reduced motion. The fixed map stays in the panel, though the

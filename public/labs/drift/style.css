@@ -55,13 +55,18 @@
 .dr-tune-frame { margin: 0; font-size: var(--fs-85); }
 
 /* ---------- Where each thumb landed: a ring, and a dot that follows the thumb (input.js) ---------- */
+/* The thumbs' gauges, drawn just above each thumb (input.js sizes and places them) */
 .dr-touch {
-  position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; pointer-events: none;
+  position: absolute; transform: translate(-50%, -50%); pointer-events: none;
   border: 2px solid rgb(var(--ink-rgb) / 0.45); background: rgb(var(--ink-rgb) / 0.08);
 }
-.dr-touch--pedal { border-color: rgb(var(--lime-rgb) / 0.6); }
+.dr-touch--steer { height: 20px; border-radius: var(--r-pill); }
+.dr-touch--stick { border-radius: 50%; }
+.dr-touch--pedal {
+  width: 20px; border-radius: var(--r-pill); border-color: rgb(var(--ink-rgb) / 0.55);
+  background: linear-gradient(to bottom, rgb(var(--lime-rgb) / 0.55) 0 33%, rgb(var(--red-rgb) / 0.55) 33% 100%);
+}
 .dr-touch-dot {
   position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%;
-  background: rgb(var(--ink-rgb) / 0.75); box-shadow: var(--shadow-text);
+  background: rgb(var(--ink-rgb) / 0.85); box-shadow: var(--shadow-text);
 }
-.dr-touch--pedal .dr-touch-dot { background: rgb(var(--lime-rgb) / 0.85); }
