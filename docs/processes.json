@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
+  "checkedUpTo": "86a622e2924bad1fba2371b11c46f298827448a8",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -992,7 +992,11 @@
           "commit": "e15582e1"
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-11-27",
+        "what": "usability-glossary.json bans the English 💡 help for the hint; usability-lint.test.mjs pins it",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1943"
+      }
     },
     {
       "key": "hook-exit-swallowed",
@@ -1600,6 +1604,12 @@
       "key": "ideas-propose-no-origin",
       "what": "ideasDecisions gives each decision its origin; ideas.test.mjs runs requireOrigins on it",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+    },
+    {
+      "date": "2026-11-27",
+      "key": "english-hint-term",
+      "what": "usability-glossary.json bans the English 💡 help for the hint; usability-lint.test.mjs pins it",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1943"
     }
   ],
   "queueDone": [
@@ -1922,6 +1932,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1857",
       "note": "dispatched docs (#1854, sent back once: shallow, pattern now 3x) + usability (477 ✓, no fixes; port 8799 taken again); collected 47 changelog entries; flags snapshot refreshed (5 flags to all); mechanism footer-page-unplaced; durations not committed: heaviest group 484 s, for ci-health"
+    },
+    {
+      "date": "2026-11-27",
+      "from": "68f57daac615fb07b7cd20a361cfb9ba761399a4",
+      "to": "86a622e2924bad1fba2371b11c46f298827448a8",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1943",
+      "note": "catch-up of 11-25/11-26 (11-26 #1931 merged unrecorded: its mechanisms recorded here); dispatched docs (#1942, sent back once: missed shinobi-light-fx and achievements-told docs, pattern now 6x) + usability; #1900 queue done (#1934, #1935), issue closed; collected 10 changelog entries; mechanism english-hint-term (glossary); durations remeasured (501 s, green)"
     }
   ],
   "ownerDecisions": [
