@@ -1162,9 +1162,18 @@
           "date": "2026-11-26",
           "what": "Round 2026-11-26 (#1930): per-PR list given after a 92 s run; Duels PRs judged 'styling only' without a game page, cup.md line 28 left stale",
           "commit": null
+        },
+        {
+          "date": "2026-11-27",
+          "what": "Round 2026-11-27 (#1942): 74 s first pass missed the shinobi-light-fx flag (39c00bed9) and achievements told kept on the account (d90ee2329) in PROFILE.md; sent back; also two pushes (memory fix)",
+          "commit": null
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-11-27",
+        "what": "documentation.md step 1: read the code diff of every PR touching public/, firebase/ or a workflow and name the doc compared (instruction: no test can check reading)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+      }
     },
     {
       "key": "footer-page-unplaced",
@@ -1250,7 +1259,11 @@
           "commit": "d60194faedec144adffb5fd15f748a8b574af4ba"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-27",
+        "what": "push-guard.mjs runs architecture.test.mjs and stops a push with a new hit not allowlisted (push-guard.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+      },
       "signatures": [
         "ea485401a9"
       ]
@@ -1285,7 +1298,11 @@
           "commit": "681663541bbf8a9dcadea85a7ffc43eeb40a6fae"
         }
       ],
-      "mechanism": null,
+      "mechanism": {
+        "date": "2026-11-27",
+        "what": "push-guard.mjs runs identifiers.test.mjs and stops a push with a new Spanish exported name (push-guard.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+      },
       "signatures": [
         "965641ffe6"
       ]
@@ -1297,6 +1314,46 @@
         {
           "date": "2026-11-26",
           "what": "groups.mjs measure: heaviest group 486 s fails groups.test.mjs (TARGET_S), so the round cannot commit durations.json; third round in a row (471 s 11-23, 484 s 11-24, 486 s 11-26)",
+          "commit": null
+        }
+      ],
+      "mechanism": null
+    },
+    {
+      "key": "name-shadowed",
+      "what": "merge-queue.mjs: a local const mark shadowed the function mark(), so every update crashed in the temporal dead zone; fixed with merge-queue-step.test.mjs",
+      "seen": [
+        {
+          "date": "2026-11-27",
+          "what": "merge-queue.mjs: a local const mark shadowed the function mark(), so every update crashed in the temporal dead zone; fixed with merge-queue-step.test.mjs",
+          "commit": "198ea3da6"
+        }
+      ],
+      "mechanism": null
+    },
+    {
+      "key": "ideas-propose-no-origin",
+      "what": "ideas.mjs propose built decide files without origin, refused since #1435; the ideas agent opened #1900 with a one-off script",
+      "seen": [
+        {
+          "date": "2026-11-27",
+          "what": "ideas.mjs propose built decide files without origin, refused since #1435; the ideas agent opened #1900 with a one-off script",
+          "commit": null
+        }
+      ],
+      "mechanism": {
+        "date": "2026-11-27",
+        "what": "ideasDecisions gives each decision its origin; ideas.test.mjs runs requireOrigins on it",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+      }
+    },
+    {
+      "key": "round-unrecorded",
+      "what": "Processes round 2026-11-26 (#1931) merged without record --to: no rounds entry, checkedUpTo left at 68f57da, and its push-guard mechanisms (architecture, identifiers) unrecorded, so check still showed them ready; the 2026-11-25 round never opened its PR",
+      "seen": [
+        {
+          "date": "2026-11-27",
+          "what": "Processes round 2026-11-26 (#1931) merged without record --to: no rounds entry, checkedUpTo left at 68f57da, and its push-guard mechanisms (architecture, identifiers) unrecorded, so check still showed them ready; the 2026-11-25 round never opened its PR",
           "commit": null
         }
       ],
@@ -1519,6 +1576,30 @@
       "key": "popularity-merge-blocked",
       "what": "popularity.yml: behind main, it turns on auto-merge and the merge queue takes it (6075873fb)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1840"
+    },
+    {
+      "date": "2026-11-27",
+      "key": "architecture-hit-late",
+      "what": "push-guard.mjs runs architecture.test.mjs and stops a push with a new hit not allowlisted (push-guard.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+    },
+    {
+      "date": "2026-11-27",
+      "key": "spanish-export-late",
+      "what": "push-guard.mjs runs identifiers.test.mjs and stops a push with a new Spanish exported name (push-guard.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+    },
+    {
+      "date": "2026-11-27",
+      "key": "executor-documentation-shallow",
+      "what": "documentation.md step 1: read the code diff of every PR touching public/, firebase/ or a workflow and name the doc compared (instruction: no test can check reading)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
+    },
+    {
+      "date": "2026-11-27",
+      "key": "ideas-propose-no-origin",
+      "what": "ideasDecisions gives each decision its origin; ideas.test.mjs runs requireOrigins on it",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1931"
     }
   ],
   "queueDone": [
@@ -1531,16 +1612,18 @@
     "#1435:2",
     "#1435:3",
     "#1381:1",
-    "#1597:1"
+    "#1597:1",
+    "#1900:1",
+    "#1900:2"
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-26",
-      "to": "48a50ae6c88b1a971db614a30f8a9dde7c4dae3b"
+      "date": "2026-11-27",
+      "to": "86a622e2924bad1fba2371b11c46f298827448a8"
     },
     "usability": {
-      "date": "2026-11-26",
-      "to": "48a50ae6c88b1a971db614a30f8a9dde7c4dae3b"
+      "date": "2026-11-27",
+      "to": "86a622e2924bad1fba2371b11c46f298827448a8"
     },
     "ideas": {
       "date": "2026-11-26",

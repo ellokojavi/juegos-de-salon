@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.52.2 — 2026-11-27
+- **Shinobi, in the lab (`shinobi-light-fx`)**: lighter glows on a perfect flag. The rings, the gold flag, the stick and the pillars' neon edge are drawn as faint wide strokes instead of a live canvas blur, and the stage's ring and the PERFECT text no longer animate a blur or a filter, so Firefox stops dropping frames there. Nothing changes until the flag is on.
+
+## 1.52.1 — 2026-11-26
+- **Labs: Derrape gets new controls** (feel round 1, after the owner's first drive): the car no longer accelerates by itself. The left thumb slides sideways to steer and the right thumb is the pedal (held, it accelerates; slid down, it brakes), both analogue, so a bend can be braked into while turning. Held down with the car stopped, the pedal reverses. The camera is closer (50 m of road in view, was 70). A gauge just above each thumb, where the thumb does not cover it, shows the wheel and the pedal, and the car turns its front wheels and lights its brake lights. The 🔧 panel also offers one finger as a stick, and the thumb's travel.
+
+## 1.52.0 — 2026-11-26
+- **Labs: Derrape, a rally time trial seen from above** (phase 1.1 of `docs/rally/`). A grey box to feel the car: the car speeds up by itself, holding one half of the screen steers, both brake; nine gates against the clock, ↺ back on the road, pause and resume, and a 🔧 tuning panel with a lab key. The engine is pure and tested in node (17 tests); `tools/e2e/drift/game.mjs` drives the test stage to the result with the autopilot.
+
+## 1.51.1 — 2026-11-26
+- **An achievement told once is told on every phone.** The achievements already celebrated and the badges already shown on the profile are now kept on the player's account (`jugadorLogros/<jid>`, with the date they were told), and each phone reads them before a window or a «¡Nueva!»: signing in on another phone no longer announces old achievements. This phone's marks the account lacks are uploaded on the first visit.
+
+## 1.51.0 — 2026-11-26
+- 🔢 **Gemelos, un juego nuevo en Labs (nombre provisorio):** un tablero de números al día, el mismo para todos. Arrastra un número sobre su gemelo de al lado para sumarlos (8 + 8 = 16) hasta que quede uno solo; el orden importa, porque algunas sumas dejan un número sin pareja. Deshacer es gratis, cada 💡 pista cuesta 10 puntos y el puntaje va de 0 a 100 según el tiempo. Cada tablero se arma al revés desde el último número, así que siempre tiene solución. Inspirado en Sumbreak, de LinkedIn.
+
+## 1.50.2 — 2026-11-26
+- **Tests: the end-to-end group target goes to 440 s** (D-624, the owner): measured afresh, main's heaviest group was already over the alarm; `durations.json` refreshed from the last five green runs. Taken out of #1928 so the lab games waiting on it (#1934) are not held by that PR.
+
+## 1.50.1 — 2026-11-26
+- **Achievements, recaps and challenges already told are not told again after signing back in.** Signing out cleared the marks of what was already celebrated (badges, secret achievements, the month's recap, a cup's summary, duel challenges), so signing in again announced old achievements as new. Those marks now belong to the phone and stay; `storage-keys.test.mjs` fails if a new "told" mark is listed as progress.
+
+## 1.50.0 — 2026-11-26
+- **🚅 Tren en Vilo: 💡 Pista**, playing alone on its own page (not in La Copa or Uno al día): a button beside ↩ Deshacer shows one beam of the known bridge for the current stage as a ghost on the board, and a tap on it lays it; each hint takes 3 points off the score, and the breakdown says how many («💡 2 pistas: −6.»). Behind its lab switch `bridges-hint` until the owner turns it on for everyone (#1900).
+
+## 1.49.13 — 2026-11-26
+- **Duels: the waiting button reads like the others.** While no rival or level is picked, the new-duel button says «Elige a quién retar» / «Elige el nivel» without a trailing full stop, like every other button (es, en, pt).
+
+## 1.49.12 — 2026-11-26
+- **Processes round 2026-11-26** (catch-up of 2026-11-25, whose round never opened its PR): the documentation agent's guide now asks it to read the code diff of every merged PR that changes `public/`, `firebase/` or a workflow and to name the doc it compared; D-603 notes the Duels per-round level (`lv`); the end-to-end flags snapshot is refreshed (seven flags on for everyone).
+- **Push guard**: a push stops on a new architecture hit (`architecture.test.mjs`) or a new Spanish exported name (`identifiers.test.mjs`), naming it, instead of a red `tests` run (signatures ea485401a9 and 965641ffe6, push-guard.test.mjs).
+- **Ideas propose**: `ideas.mjs propose` gives each decision its origin, which `decide` requires since #1435 (ideas.test.mjs).
+
 ## 1.49.11 — 2026-11-26
 - **Queens:** the 👑 has a thin dark outline, so it stands out on light regions too.
 
