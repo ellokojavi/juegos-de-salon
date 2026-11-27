@@ -14,6 +14,9 @@
  * no crash in the air; the landing costs nothing) and boost pads (`g.boost`: a short burst well past
  * the top speed).
  *
+ * Each stretch of road has its surface (`zones` in tracks.js: gravel or asphalt, so a stage can change
+ * from one to the other), and a wet stage (`weather: 'wet'`) holds less on both.
+ *
  * Beside the road stand solid things (trees, rocks: `track.solids`, circles the caller puts on the
  * track from the scenery). The car bounces off them; a hit faster than `crashSpeed` costs one of its
  * `lives` and leaves a dent where it struck (`car.hits`, in the car's own frame); the last life
@@ -45,6 +48,8 @@ export const TUNING = {
   gripGravel: 11,         // m/s² of sideways grip
   gripAsphalt: 16,
   gripOff: 5,
+  wetGravel: 0.85,        // grip × this on a wet stage: mud…
+  wetAsphalt: 0.6,        // …and wet asphalt, slipperier than dry gravel (the owner's track ideas, 2026-11-27)
   handbrake: 0.45,        // grip × this with the handbrake
   overSteer: 3.0,         // how far the nose may turn in past what the grip holds
   align: 3.0,             // how fast the rear pulls the nose back toward the travel, 1/s
@@ -110,6 +115,10 @@ export function buildTrack(stage) {
     }
   }
   const length = s;
+  // The surface of each point: the stage's own, changed along the zones it lists
+  const base = stage.surface || 'gravel';
+  for (const p of pts) p.sf = base;
+  for (const z of stage.zones || []) for (const p of pts) if (p.s >= z.from && p.s < z.to) p.sf = z.surface;
   const gates = [];
   for (let i = 1; i <= stage.gates; i++) {
     const at = (length - 6) * i / stage.gates;  // the finish sits a little before the end of the road
@@ -125,7 +134,7 @@ export function buildTrack(stage) {
     const i0 = at(f.from), i1 = at(f.to), side = f.side === 'R' ? -1 : 1, bp = [];
     for (let i = i0; i <= i1; i++) {
       const p = pts[i], u = (p.s - pts[i0].s) / (pts[i1].s - pts[i0].s), o = side * f.offset * Math.sin(Math.PI * u) ** 2;
-      bp.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h, s: p.s, k: 0, w: ROAD_WIDTH, i });
+      bp.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h, s: p.s, k: 0, w: ROAD_WIDTH, i, sf: p.sf });
     }
     // Headings along the branch itself
     for (let j = 0; j < bp.length; j++) {
@@ -141,8 +150,16 @@ export function buildTrack(stage) {
   };
   const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
   const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
-  return { id: stage.id, surface: stage.surface || 'gravel', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
+  return { id: stage.id, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
 }
+
+/** The sideways grip and the top speed of a surface ('gravel', 'asphalt' or 'off') on a dry or wet stage. */
+export function gripOf(surface, wet) {
+  const T = TUNING;
+  if (surface === 'off') return T.gripOff;
+  return surface === 'asphalt' ? T.gripAsphalt * (wet ? T.wetAsphalt : 1) : T.gripGravel * (wet ? T.wetGravel : 1);
+}
+export const topOf = surface => (surface === 'off' ? TUNING.topOff : surface === 'asphalt' ? TUNING.topAsphalt : TUNING.topGravel);
 
 /** The nearest centreline point to (x, y), searched around `from` (or everywhere with from < 0). */
 function nearest(track, x, y, from) {
@@ -170,7 +187,7 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0 };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: p.sf, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0 };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
@@ -217,7 +234,8 @@ export function step(g, input = IDLE) {
   // 3. Forward: throttle, brakes, drag; the surface scales them
   const off = !g.onRoad;
   const boosting = g.boost > 0;
-  const top = (off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel) * (boosting ? T.boostTop : 1);
+  const surface = off ? 'off' : car.surface === 'off' ? track.pts[g.idx].sf : car.surface;
+  const top = topOf(surface) * (boosting ? T.boostTop : 1);
   const acc = T.accel * (off ? T.offAccel : 1) + (boosting && vf >= 0 ? T.boostAccel : 0);
   vf += clamp(throttle, 0, 1) * acc * dt;
   // Reverse: the brake held once the car has stopped (or is already rolling back) drives it backwards
@@ -240,9 +258,8 @@ export function step(g, input = IDLE) {
   // Past the normal top speed (a boost, and its tail) the car holds the road in proportion, as if
   // pressed down by the air: it turns as well as at its top speed (the owner, 2026-11-27: boosted, the
   // steering was too weak to control it)
-  const base = off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel;
-  const over = Math.max(1, Math.abs(vf) / base);
-  const grip = (off ? T.gripOff : track.surface === 'asphalt' ? T.gripAsphalt : T.gripGravel) * (handbrake ? T.handbrake : 1) * over;
+  const over = Math.max(1, Math.abs(vf) / topOf(surface));
+  const grip = gripOf(surface, track.wet) * (handbrake ? T.handbrake : 1) * over;
   const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(Math.abs(vf) / T.topGravel, 0, 1)) * DEG;
   const cap = T.overSteer * (handbrake ? 2 : 1) * grip / Math.max(Math.abs(vf), 4);
   let yaw = clamp(-vf / T.wheelbase * Math.tan(car.steer * lock), -cap, cap);
@@ -369,7 +386,7 @@ function locate(g, dt) {
   const onRoad = Math.abs(f.side) <= p.w / 2;
   if (!onRoad && g.onRoad && g.mode === 'play') g.events.push({ type: 'offroad' });
   g.onRoad = onRoad;
-  car.surface = onRoad ? track.surface : 'off';
+  car.surface = onRoad ? p.sf : 'off';
   // ↺ brings the car back to the main road at the same distance
   if (onRoad) g.lastRoad = p.i !== undefined ? p.i : g.idx;
   g.off = onRoad ? 0 : g.off + dt;
@@ -468,13 +485,12 @@ export function autopilot(g) {
   const lock = (T.lockSlow + (T.lockFast - T.lockSlow) * clamp(v / T.topGravel, 0, 1)) * DEG;
   const steer = clamp(-err / lock * 1.6, -1, 1);
   // The slowest the next stretch allows, braking in time for it
-  const grip = (g.track.surface === 'asphalt' ? T.gripAsphalt : T.gripGravel) * 0.8;
   const look = Math.round((v * v / (2 * T.brake) + 20) / SAMPLE);
   let limit = Infinity;
   for (let i = g.idx; i < Math.min(P.length, g.idx + look); i++) {
     const k = Math.abs(P[i].k);
     if (!k) continue;
-    const vmax = Math.sqrt(grip / k), dist = (i - g.idx) * SAMPLE;
+    const vmax = Math.sqrt(gripOf(P[i].sf, g.track.wet) * 0.8 / k), dist = (i - g.idx) * SAMPLE;
     limit = Math.min(limit, Math.sqrt(vmax * vmax + 2 * T.brake * 0.7 * dist));
   }
   const slow = v > limit + 0.5;

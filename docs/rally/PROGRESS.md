@@ -59,10 +59,13 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 - Tilt steering (the phone as the wheel): needs a motion permission on iPhone; try only if the thumb schemes fail.
 - The shared 3, 2, 1 before a run: off in the lab since the owner asked (2026-11-27, `COUNTDOWN` in game.js); decide before a launch whether it comes back.
 - A handbrake on touch (today only the keyboard's space): if the feel round shows slides need it.
+- From the owner's track ideas (2026-11-27), not built: shortcuts as risk and reward (the forks are a first step), climbs and descents (elevation: path 2 or 3), tyre wear and pit stops (a stage is 60 to 90 s), weather that changes during a stage.
 
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner sent track ideas (layout archetypes, surface changes, rain, shortcuts) and said «Probemos en el juego», adding people and grandstands. Built in the lab, ahead of 1.3: a surface per stretch of road (`zones`), wet stages (`weather`), two stages to compare with the first (`split`, fast asphalt then technical gravel; `rain`, technical on wet asphalt), picked in 🔧, and crowds behind straw bales at tight bends plus grandstands at the start and finish. For 1.3: the generator can draw stages by archetype and with zones.
 
 - **2026-11-27** · The owner removed the countdown for testing (three seconds on every change): `COUNTDOWN = false` in game.js; the clock already waits for the first throttle, and a resumed run now does too.
 

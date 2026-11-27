@@ -5,7 +5,7 @@
  */
 import assert from 'node:assert/strict';
 import * as E from './engine.js';
-import { TRACKS } from './tracks.js';
+import { TRACKS, STAGES } from './tracks.js';
 
 let n = 0;
 const ok = (name, fn) => { fn(); n++; console.log('✓', name); };
@@ -27,15 +27,15 @@ ok('the track: starts at the origin facing north, points every 2 m, gates on the
   }
 });
 
-ok('every stage stays clear of itself (25 m) and the first is 8 to 10 gates', () => {
-  for (const t of [test(), first()]) {
+ok('every stage stays clear of itself (25 m) and the real ones are 8 to 10 gates', () => {
+  for (const t of Object.values(TRACKS).map(E.buildTrack)) {
     for (let i = 0; i < t.pts.length; i++) for (let j = i + 1; j < t.pts.length; j++) {
       const a = t.pts[i], b = t.pts[j];
       if (b.s - a.s > 80) assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 25, `${t.id} comes near itself at ${a.s} m`);
     }
   }
   assert.equal(TRACKS.test.gates, 3);
-  assert.ok(TRACKS.first.gates >= 8 && TRACKS.first.gates <= 10);
+  for (const id of STAGES) assert.ok(TRACKS[id].gates >= 8 && TRACKS[id].gates <= 10, id);
 });
 
 ok('a fork leaves the main road and meets it again, clear of the rest of the stage, with no gate inside', () => {
@@ -244,6 +244,39 @@ ok('the autopilot finishes the test stage with every gate, in about 12 seconds, 
   const f = drive(first());
   assert.equal(f.mode, 'done'); assert.equal(f.missed, 0); assert.equal(f.splits.length, TRACKS.first.gates);
   assert.ok(f.t > 60000 && f.t < 90000, `first ${f.t}`);
+  for (const id of STAGES) {
+    const r = drive(E.buildTrack(TRACKS[id]));
+    assert.equal(r.mode, 'done', id); assert.equal(r.missed, 0, id);
+    assert.ok(r.t > 60000 && r.t < 90000, `${id} ${r.t}`);
+  }
+});
+
+ok('surfaces: a stage changes surface along its zones, its forks take the main road\'s, and the car reads the one under it', () => {
+  const t = E.buildTrack(TRACKS.split);
+  const z = TRACKS.split.zones[0];
+  for (const p of t.pts) assert.equal(p.sf, p.s >= z.from && p.s < z.to ? 'asphalt' : 'gravel', `${p.s} m`);
+  for (const b of first().branches) for (const q of b.pts) assert.equal(q.sf, 'gravel');
+  // Driven by the autopilot: on asphalt before the change, on gravel after it
+  const g = E.newGame({ track: t }); let before = null, after = null;
+  while (g.mode !== 'done') { E.step(g, E.autopilot(g)); g.events.length = 0; if (g.onRoad) { if (g.progress < z.to - 20) before = g.car.surface; else if (g.progress > z.to + 20) after = g.car.surface; } }
+  assert.equal(before, 'asphalt'); assert.equal(after, 'gravel');
+});
+
+ok('rain: wet asphalt holds less than dry gravel, and a car at full lock on it runs wider', () => {
+  assert.ok(E.gripOf('asphalt', true) < E.gripOf('gravel', false));
+  assert.ok(E.gripOf('gravel', true) < E.gripOf('gravel', false));
+  assert.equal(E.gripOf('off', true), E.gripOf('off', false));
+  // How far the car's travel turns in half a second at full lock, from 30 m/s
+  const turn = wet => {
+    const g = E.newGame({ track: E.buildTrack({ id: 'flat', gates: 1, surface: 'asphalt', weather: wet ? 'wet' : undefined, pieces: [['S', 3000]] }) });
+    while (g.car.speed < 30) E.step(g, FULL);
+    const a0 = Math.atan2(g.car.vy, g.car.vx);
+    steps(g, { steer: 1, throttle: 1 }, 60);
+    return Math.abs(Math.atan2(g.car.vy, g.car.vx) - a0);
+  };
+  assert.ok(E.buildTrack(TRACKS.rain).wet && !first().wet);
+  const wet = turn(true), dry = turn(false);
+  assert.ok(wet < dry * 0.8, `wet ${wet.toFixed(2)} rad, dry ${dry.toFixed(2)} rad`);
 });
 
 ok('gates: a clean pass gives a split; the finish stops the clock with a finish event', () => {

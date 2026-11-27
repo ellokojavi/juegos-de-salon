@@ -51,13 +51,24 @@ vez», Share through `compartir.js`, the exit to the lab from `fin.js`, C-19).
 - `engine.js`: the pure engine (no DOM, clock or randomness): the car model, the track built from
   pieces, gates, penalties, reset, the autopilot, snapshot and restore. Axes: metres, seconds,
   radians; x east, y north, a heading counter-clockwise from +x. Every tuning value is in `TUNING`.
-- `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot) and `first`
-  (9 gates, about 1:14). The generator and the weekly pool come in phase 1.3.
+- `tracks.js`: the stages as piece lists: `test` (3 gates, about 13 s for the autopilot), `first`
+  (9 gates, about 1:04), and two that try the owner's track ideas (2026-11-27): `split`, fast then
+  technical (10 gates, about 1:02: a kilometre of asphalt sweepers, then gravel hairpins and a chicane,
+  the surface changing under the car through `zones`) and `rain` (8 gates, about 1:02, technical, on
+  wet asphalt: `weather: 'wet'`). `STAGES` lists the three real ones; the lab's 🔧 panel picks one
+  («Tramo»), and a new pick starts a new run on it. The generator and the weekly pool come in phase 1.3.
+- Surfaces and rain: each centreline point carries its surface (`sf`), forks take the main road's;
+  `gripOf(surface, wet)` and `topOf(surface)` are the one place they are read. Wet: gravel grip × 0.85,
+  asphalt × 0.6 (less than dry gravel), so the car runs wider at the same speed. The scene draws each
+  stretch in its surface's look (the setting's own road for its surface, the other's usual look
+  where the stage changes, edge to edge), darkens a wet road, scatters puddles, draws rain across the
+  screen (still with reduced motion) and throws spray instead of dust.
 - `input.js`: the touch schemes (`wheel`, `stick`, `auto`), relative to where each thumb lands and analogue, and the keyboard, into `{ steer, throttle, brake, handbrake }`; it draws the thumbs' gauges (`.dr-touch`) just above each thumb.
 - `scene.js`: the top-down 2D scene, `escena(canvas) → { draw(g, alpha, view), resize, dispose }`: the road (ruts on gravel, lines on asphalt), the props as sprites drawn once, the car over them (a crown never hides it), tyre tracks while it slides, dust from a fixed pool, the light of the hour as one tint.
 - Forks, ramps and boost pads (core section 5), placed per stage in `tracks.js`; the scene draws the forks as roads, the ramps as wooden wedges and the pads as cyan carpets with running arrows. Speed (the owner asked for vertigo): top 42 m/s on gravel, 50 on asphalt, thin streaks down the sides from 30 m/s (none with reduced motion). No dust on asphalt itself, only at its edge and off it.
 - Crashes (core section 5): solid trees, rocks, stumps and hay bales; 10 lives; a crash over 3 m/s costs one and dents the car where it struck; the tenth wrecks it and ends the run with no time. `game.js` puts the solids of the setting being drawn on the track (`arm`), so the car hits what the player sees.
 - `scenery.js`: the three settings (`meadow`, `forest`, `plain`), each a palette and the props it grows, and the props of a stage from a seeded generator (the same for everyone, none on the road; `scenery.test.mjs`). The stage names its setting; the lab's 🔧 panel can show any of the three.
+- People (the owner, 2026-11-27: «agregar gente y gradas»): `people(track)` puts a crowd on the outside of every bend tighter than 45 m, behind a row of straw bales, and a grandstand by the start and by the finish, from the stage's own seed, the same in every setting. The bales and the grandstands are solid (`solids`); the people are not, and stand behind the bales. The people jump as the car goes by (not with reduced motion).
   The camera turns toward the direction of travel, eased over about half a second, never shakes, never
   zooms with speed; twice as damped with reduced motion. The fixed map stays in the panel, though the
   owner found it does not work (decision 4).

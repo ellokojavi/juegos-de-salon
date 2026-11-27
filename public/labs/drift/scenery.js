@@ -12,6 +12,10 @@
  * same trees on the same stage (the scene's own random, never the engine's: it decides nothing a
  * time depends on). They are kept off the road and its shoulder, and stored in a coarse grid so the
  * scene draws only the cells in view.
+ *
+ * And the people (the owner, 2026-11-27: «agregar gente y gradas»): a crowd on the outside of every
+ * tight bend, behind a row of straw bales (the bales are solid, the people are not: the car meets the
+ * bales first), and a grandstand by the start and another by the finish. The same for every setting.
  */
 
 /** Every colour of a setting, declared once (DESIGN.md §4: what is drawn inside the canvas is the game's). */
@@ -44,6 +48,17 @@ export const SETTINGS = {
   },
 };
 export const SETTING_NAMES = Object.keys(SETTINGS);
+
+/** The crowd's colours, the same in every setting: shirts, skin, the straw bales, the grandstands. */
+export const CROWD = {
+  shirts: ['#ff2e88', '#ffd23f', '#3ad1ff', '#ffffff', '#ff7a1a', '#7ee06a', '#b38cff', '#e8443a'],
+  skin: ['#f1c9a5', '#d9a47a', '#a8724c', '#6e4a32'],
+  bale: ['#d8b860', '#b8963e'], tape: 'rgba(255, 60, 60, 0.9)',
+  stand: '#5b6270', step: '#7a8291', roof: '#c8323c', rail: '#e8e8ea',
+};
+
+/** A bend tighter than this (m of radius) gets a crowd on its outside. */
+const CROWD_RADIUS = 45;
 
 /** The scene's own seeded random (mulberry32). */
 export function seeded(text) {
@@ -87,6 +102,53 @@ function edgeDistance(track) {
 const SIZE = { tree: [2.2, 4.2], dead: [1.6, 3], bush: [0.9, 1.8], rock: [0.6, 1.4], hay: [0.9, 1.1], stump: [0.5, 0.8] };
 
 /**
+ * Where the people stand on `track`: `{ stands, crowd, clear }`. `stands` are the two grandstands
+ * (`{ x, y, h, side, len, dep, v }`, a rectangle along the road, on the road's left (side 1) or right), `crowd` the fans and the bales in front of
+ * them, as props; `clear` the circles no tree may grow in. From its own seed, so the trees stay put.
+ */
+export function people(track, edge = edgeDistance(track)) {
+  const rnd = seeded(`${track.id}:crowd`);
+  const P = track.pts, stands = [], crowd = [], clear = [];
+  const at = (p, side, d, along = 0) => ({ x: p.x - Math.sin(p.h) * side * d + Math.cos(p.h) * along, y: p.y + Math.cos(p.h) * side * d + Math.sin(p.h) * along });
+  // The grandstands: by the start line and by the finish, on the side with room for them
+  const LEN = 22, DEP = 7;
+  for (const s0 of [24, track.gates[track.gates.length - 1].s - 4]) {
+    const p = P.reduce((a, q) => (Math.abs(q.s - s0) < Math.abs(a.s - s0) ? q : a), P[0]);
+    for (const side of [1, -1]) {
+      const d = p.w / 2 + 6 + DEP / 2, c = at(p, side, d);
+      const corners = [-1, 1].flatMap(a => [-1, 1].map(b => ({ x: c.x + Math.cos(p.h) * a * LEN / 2 - Math.sin(p.h) * b * DEP / 2, y: c.y + Math.sin(p.h) * a * LEN / 2 + Math.cos(p.h) * b * DEP / 2 })));
+      if ([c, ...corners].every(q => edge(q.x, q.y) > 4)) {
+        stands.push({ x: c.x, y: c.y, h: p.h, side, len: LEN, dep: DEP, v: stands.length });
+        clear.push({ x: c.x, y: c.y, r: LEN / 2 + 4 });
+        break;
+      }
+    }
+  }
+  // The crowds: at the middle of every tight bend, on its outside, where a car that goes wide would go
+  for (let i = 0; i < P.length; i++) {
+    if (Math.abs(P[i].k) < 1 / CROWD_RADIUS) continue;
+    let j = i;
+    while (j + 1 < P.length && Math.sign(P[j + 1].k) === Math.sign(P[i].k) && Math.abs(P[j + 1].k) >= 1 / CROWD_RADIUS) j++;
+    const p = P[(i + j) >> 1], side = -Math.sign(p.k);
+    i = j;
+    if (p.s < 60) continue;
+    // A row of bales, then the people behind them
+    for (let a = -7; a <= 7; a += 1.6) {
+      const q = at(p, side, p.w / 2 + 4.6, a);
+      if (edge(q.x, q.y) > 3.2) crowd.push({ kind: 'bale', x: q.x, y: q.y, r: 0.6, v: Math.floor(rnd() * 2) });
+    }
+    const n = 16 + Math.floor(rnd() * 9);
+    for (let f = 0; f < n; f++) {
+      const q = at(p, side, p.w / 2 + 6.5 + rnd() * 3.5, (rnd() - 0.5) * 15);
+      if (edge(q.x, q.y) > 4.5) crowd.push({ kind: 'fan', x: q.x, y: q.y, r: 0.5, v: Math.floor(rnd() * 32), ph: rnd() * Math.PI * 2 });
+    }
+    const c = at(p, side, p.w / 2 + 8);
+    clear.push({ x: c.x, y: c.y, r: 12 });
+  }
+  return { stands, crowd, clear };
+}
+
+/**
  * The scenery of `track` in `setting`: `{ patches, cells }`, the ground's patches and the props by
  * grid cell, each `{ kind, x, y, r, v }` (`v` picks a colour variant).
  */
@@ -98,6 +160,9 @@ export function scenery(track, setting) {
   const pick = () => { let u = rnd(); for (const [k, p] of kinds) { if ((u -= p) <= 0) return k; } return kinds[0][0]; };
   const cells = new Map(), patches = new Map();
   const put = (map, item) => { const k = key(item.x, item.y); if (!map.has(k)) map.set(k, []); map.get(k).push(item); };
+  const { stands, crowd, clear } = people(track, edge);
+  for (const it of crowd) put(cells, it);
+  const free = (x, y, r) => clear.every(c => Math.hypot(c.x - x, c.y - y) > c.r + r);
   // Along the main road and along each fork
   for (const P of [track.pts, ...(track.branches || []).map(b => b.pts)]) for (let i = 0; i < P.length; i += 2) {
     const p = P[i], nx = -Math.sin(p.h), ny = Math.cos(p.h);
@@ -111,7 +176,7 @@ export function scenery(track, setting) {
         const along = (rnd() - 0.5) * 4;
         const x = p.x + nx * side * d + Math.cos(p.h) * along, y = p.y + ny * side * d + Math.sin(p.h) * along;
         // Off the road and its shoulder everywhere, also where another bend passes near
-        if (edge(x, y) > r + 2.5) put(cells, { kind, x, y, r, v: Math.floor(rnd() * 3) });
+        if (edge(x, y) > r + 2.5 && free(x, y, r)) put(cells, { kind, x, y, r, v: Math.floor(rnd() * 3) });
       }
       // The ground's patches: under everything, the road paints over them
       if (rnd() < 0.5) {
@@ -120,7 +185,7 @@ export function scenery(track, setting) {
       }
     }
   }
-  return { patches, cells };
+  return { patches, cells, stands };
 }
 
 /** The items of `map` in the cells within `reach` of (cx, cy), into `out`. */
@@ -143,9 +208,13 @@ export const settingOf = (track, pick) => (SETTINGS[pick] ? pick : SETTINGS[trac
  * above the car, so only the trunk stops it), a dead tree's trunk, a stump, a rock, a hay bale.
  * Bushes are soft: the car drives through them.
  */
-const SOLID = { tree: r => 0.25 * r, dead: r => 0.22 * r, stump: r => r, rock: r => 0.85 * r, hay: r => 0.9 * r };
-export function solids({ cells }) {
+const SOLID = { tree: r => 0.25 * r, dead: r => 0.22 * r, stump: r => r, rock: r => 0.85 * r, hay: r => 0.9 * r, bale: r => r };
+export function solids({ cells, stands = [] }) {
   const out = [];
+  // A grandstand: circles along its length, as deep as it is
+  for (const st of stands) for (let a = -st.len / 2 + st.dep / 2; a <= st.len / 2 - st.dep / 2 + 0.01; a += st.dep / 3) {
+    out.push({ x: Math.round((st.x + Math.cos(st.h) * a) * 100) / 100, y: Math.round((st.y + Math.sin(st.h) * a) * 100) / 100, r: st.dep / 2 });
+  }
   for (const it of [...cells.values()].flat()) {
     const f = SOLID[it.kind];
     if (f) out.push({ x: it.x, y: it.y, r: Math.round(f(it.r) * 100) / 100 });
