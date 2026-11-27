@@ -88,6 +88,7 @@
         <div class="dr-hud" aria-live="polite">
           <div class="dr-clock"><span id="clock">0:00.000</span><span class="dr-penalty" id="penalty" hidden></span></div>
           <div class="dr-gate" id="gate"></div>
+          <div class="dr-lives" id="lives"></div>
         </div>
         <div class="dr-edge">
           <button type="button" class="icon-btn" id="btn-tune" hidden>🔧</button>
@@ -104,8 +105,8 @@
     <!-- ============ RESULT (C-19) ============ -->
     <section class="screen stack" id="screen-result">
       <div class="result-hero">
-        <span class="trophy">🏁</span>
-        <p class="lead" data-i18n="resultTitle"></p>
+        <span class="trophy" id="result-trophy">🏁</span>
+        <p class="lead" id="result-title" data-i18n="resultTitle"></p>
         <div class="display display--xl dr-time" id="result-time">—</div>
         <p class="muted center" id="result-detail"></p>
       </div>

@@ -4,7 +4,8 @@
 // gates, the result shows the time and the exits back to the lab, at 375 and 320 px with no sideways
 // scroll. It asserts on __drift.g, never on pixels or frame rate (CI's Chrome draws in software).
 // Touch through the real controls: wheel and pedal at 375 (accelerate, steer, brake while turning),
-// one finger at 320. Then: the page hidden pauses, a reload offers to continue.
+// one finger at 320. Then: the page hidden pauses, a reload offers to continue, a crash costs a life and
+// the last one wrecks the car.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { doubleTap } from '../double-tap.mjs';
@@ -99,6 +100,21 @@ for (const width of [375, 320]) {
     ok(await b.until("document.querySelector('#resume-slot .btn')", 2500), `${width}: after a reload the cover offers to continue`);
     await b.evaluate("document.getElementById('btn-resume').click(); 1");
     ok(await b.until("document.querySelector('#screen-play.active')", 2000), `${width}: «Continuar» goes back to the stage`);
+    // Crashes: a tree put just ahead and the car sent into it; the last life wrecks the car
+    ok(await b.until("!document.getElementById('cuenta') && window.__drift.S.live", 7000), `${width}: the resumed run is live`);
+    const into = `(() => { const g = window.__drift.g, c = g.car, k = Math.cos(c.h), s = Math.sin(c.h);
+      g.mode = 'play'; g.track.solids = [{ x: c.x + k * 3.2, y: c.y + s * 3.2, r: 0.8 }]; c.vx = k * 14; c.vy = s * 14; return 1 })()`;
+    const lives0 = await b.evaluate('window.__drift.g.lives');
+    await b.evaluate(into); await sleep(300);
+    ok(await b.evaluate(`window.__drift.g.lives === ${lives0} - 1 && window.__drift.g.car.hits.length >= 1`), `${width}: a crash into a tree costs one life and leaves a dent`);
+    ok(await b.evaluate(`document.getElementById('lives').textContent.includes('${lives0 - 1}') && !!document.querySelector('.dr-hit')`), `${width}: the HUD shows the lives left and «−1 ❤️» rises`);
+    await b.shot(`crash-${width}`);
+    await sleep(800);
+    await b.evaluate('window.__drift.g.lives = 1; window.__drift.g.hitCool = 0; 1');
+    await b.evaluate(into);
+    ok(await b.until("document.querySelector('#screen-result.active')", 4000), `${width}: the last life wrecks the car and ends the run`);
+    ok(await b.evaluate("document.getElementById('result-trophy').textContent === '💥' && document.getElementById('result-time').hidden"), `${width}: the result says the car was wrecked, with no time`);
+    await b.shot(`wrecked-${width}`);
   }
   b.close();
 }

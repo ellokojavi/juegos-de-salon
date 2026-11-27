@@ -14,18 +14,25 @@
  * Each prop is a sprite drawn once to an offscreen canvas; the dust is one soft sprite; nothing builds
  * a gradient or a blur per frame.
  *
+ * A crash (a new entry in `car.hits`) flashes a ring where the car struck and throws sparks and
+ * debris, with no camera shake. The damage then stays on the car and grows with each crash: dents
+ * where it struck, a cracked windscreen, a dead headlight, a hanging bumper, smoke from the bonnet,
+ * at the last lives a flame, and a scorched shell once wrecked.
+ *
  * The camera is calm on purpose (the owner is sensitive to camera movement): it turns toward the
  * car's direction of travel, not its heading, so the twitch of a slide does not swing the world; it
  * arrives over about half a second and never snaps; it does not shake and does not zoom with speed.
  * With reduced motion it is damped twice as much, and there is half the dust.
  */
-import { SETTINGS, scenery, near } from './scenery.js';
+import { SETTINGS, scenery, near, settingOf } from './scenery.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
 const COLOURS = {
   gateNext: '#ffd23f', gateLater: 'rgba(255, 255, 255, 0.5)', gatePast: 'rgba(255, 255, 255, 0.15)', gatePost: '#1b1b22',
   chequerDark: '#15151a', chequerLight: '#f4f4f0', label: '#ffffff',
   car: '#ff2e88', carRoof: '#d81f70', carStripe: '#ffffff', carGlass: '#2a0a1c', wheel: '#14141a',
+  dent: 'rgba(30, 0, 10, 0.7)', scratch: 'rgba(255, 255, 255, 0.55)', crack: 'rgba(255, 255, 255, 0.8)', scorch: 'rgba(20, 10, 10, 0.55)',
+  spark: '#ffd23f', flash: 'rgba(255, 255, 255, 0.85)', flameOuter: '#ff7a1a', flameInner: '#ffe066', bumper: '#b81a5e',
   headlight: '#fff6c8', brakeLight: '#ff3b30', reverseLight: '#ffffff', brakeOff: '#5a1020',
 };
 const MAX_DPR = 2;
@@ -38,6 +45,8 @@ const EASE = 0.16;
 const TRACKS = 600, MARK_SLIP = 1.4;
 /** Dust: particles in the pool. */
 const DUST = 80;
+/** Crash debris and bonnet smoke: particles in each pool. */
+const DEBRIS = 48, SMOKE = 40;
 
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const quiet = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -111,7 +120,7 @@ function propSprite(kind, v, S, ppm) {
   return { img: c, E };
 }
 
-/** The dust's soft disc: one radial gradient, drawn once per colour. */
+/** The dust's soft disc: one radial gradient, drawn once per colour (the smoke uses it too). */
 function dustSprite([r, g, b]) {
   const c = canvasOf(64, 64), x = c.getContext('2d');
   const grad = x.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -137,6 +146,12 @@ export function escena(canvas) {
   // Dust: a fixed pool
   const puffs = Array.from({ length: DUST }, () => ({ x: 0, y: 0, vx: 0, vy: 0, age: 1, life: 1, r: 1 }));
   let nextPuff = 0, owed = 0, lastCar = null;
+  // A crash: the ring where it struck, the debris, and the smoke the damage gives off
+  const bits = Array.from({ length: DEBRIS }, () => ({ x: 0, y: 0, vx: 0, vy: 0, age: 1, life: 1, spark: false, size: 0.2 }));
+  const smoke = Array.from({ length: SMOKE }, () => ({ x: 0, y: 0, vx: 0, vy: 0, age: 1, life: 1, r: 1, dark: false }));
+  let nextBit = 0, nextSmoke = 0, smokeOwed = 0, seenHits = 0;
+  const rings = [];   // { x, y, age }
+  const greySmoke = dustSprite([150, 150, 155]), blackSmoke = dustSprite([35, 32, 32]);
 
   function resize() {
     const r = canvas.getBoundingClientRect();
@@ -147,7 +162,7 @@ export function escena(canvas) {
   resize();
 
   function settle(track, name) {
-    const setting = SETTINGS[name] ? name : SETTINGS[track.setting] ? track.setting : 'meadow';
+    const setting = settingOf(track, name);
     if (world && world.track === track && world.setting === setting) return world;
     const S = SETTINGS[setting];
     world = { track, setting, S, ...scenery(track, setting) };
@@ -171,7 +186,11 @@ export function escena(canvas) {
     lastNow = now;
     const car = g.car;
     const { S } = settle(g.track, view.setting);
-    if (g !== lastG) { lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; puffs.forEach(p => { p.age = p.life; }); }
+    if (g !== lastG) {
+      lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; rings.length = 0;
+      seenHits = car.hits?.length || 0;
+      for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
+    }
     // The car between the last two steps
     const x = car.px + (car.x - car.px) * alpha, y = car.py + (car.y - car.py) * alpha;
     const h = car.ph + wrap(car.h - car.ph) * alpha;
@@ -220,6 +239,35 @@ export function escena(canvas) {
       }
     }
     for (const p of puffs) if (p.age < p.life) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy *= 0.96; }
+    // A new crash: the ring where the car struck, sparks and bits of the car and of what it hit
+    const hits = car.hits || [];
+    while (seenHits < hits.length) {
+      const hit = hits[seenHits++];
+      const wx = x + c * hit.f - s * hit.l, wy = y + s * hit.f + c * hit.l;
+      rings.push({ x: wx, y: wy, age: 0 });
+      for (let i = 0; i < 14; i++) {
+        const b = bits[nextBit]; nextBit = (nextBit + 1) % DEBRIS;
+        const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 9;
+        b.x = wx; b.y = wy; b.vx = Math.cos(a) * v; b.vy = Math.sin(a) * v;
+        b.age = 0; b.life = 0.35 + Math.random() * 0.5; b.spark = i % 2 === 0; b.size = b.spark ? 0.12 : 0.18 + Math.random() * 0.2;
+      }
+    }
+    for (const r of rings) r.age += dt;
+    while (rings.length && rings[0].age > 0.4) rings.shift();
+    for (const b of bits) if (b.age < b.life) { b.age += dt; b.x += b.vx * dt; b.y += b.vy * dt; b.vx *= 0.9; b.vy *= 0.9; }
+    // Smoke from the bonnet from the seventh crash, thicker and black near the end and once wrecked
+    const damage = hits.length;
+    if (damage >= 7 && dt > 0) {
+      smokeOwed += (g.wrecked ? 14 : (damage - 6) * 3) * dt * (quiet() ? 0.5 : 1);
+      while (smokeOwed >= 1) {
+        smokeOwed -= 1;
+        const p = smoke[nextSmoke]; nextSmoke = (nextSmoke + 1) % SMOKE;
+        p.x = x + c * CAR_L * 0.35 + (Math.random() - 0.5) * 0.6; p.y = y + s * CAR_L * 0.35 + (Math.random() - 0.5) * 0.6;
+        p.vx = car.vx * 0.3 + (Math.random() - 0.5) * 0.8 + 0.6; p.vy = car.vy * 0.3 + (Math.random() - 0.5) * 0.8 + 0.4;
+        p.age = 0; p.life = 1 + Math.random(); p.r = 0.5 + Math.random() * 0.4; p.dark = g.wrecked || damage >= 9;
+      }
+    }
+    for (const p of smoke) if (p.age < p.life) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; }
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = S.ground;
@@ -247,12 +295,30 @@ export function escena(canvas) {
       const e = E * it.r;
       ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
-    drawCar(car, S, x, y, h);
+    drawCar(car, S, x, y, h, g.wrecked, now);
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
       ctx.globalAlpha = 1 - f;
       ctx.drawImage(dust, p.x - r, p.y - r, 2 * r, 2 * r);
+    }
+    for (const p of smoke) {
+      if (p.age >= p.life) continue;
+      const f = p.age / p.life, r = p.r * (1 + f * 3);
+      ctx.globalAlpha = (1 - f) * 0.8;
+      ctx.drawImage(p.dark ? blackSmoke : greySmoke, p.x - r, p.y - r, 2 * r, 2 * r);
+    }
+    for (const b of bits) {
+      if (b.age >= b.life) continue;
+      ctx.globalAlpha = 1 - b.age / b.life;
+      ctx.fillStyle = b.spark ? COLOURS.spark : b.size > 0.28 ? S.shoulder : COLOURS.car;
+      ctx.fillRect(b.x - b.size / 2, b.y - b.size / 2, b.size, b.size);
+    }
+    for (const r of rings) {
+      const f = r.age / 0.4;
+      ctx.globalAlpha = 1 - f;
+      ctx.strokeStyle = COLOURS.flash; ctx.lineWidth = 0.35;
+      ctx.beginPath(); ctx.arc(r.x, r.y, 0.6 + f * 3.2, 0, Math.PI * 2); ctx.stroke();
     }
     ctx.globalAlpha = 1;
     ctx.restore();
@@ -353,7 +419,8 @@ export function escena(canvas) {
   }
 
   /** The car: its shadow, the wheels (the front pair turned), the body, the roof and its stripes, the glass, the lights. */
-  function drawCar(car, S, x, y, h) {
+  function drawCar(car, S, x, y, h, wrecked, now) {
+    const hits = car.hits || [], damage = hits.length;
     const box = (bx, by, w, hh, r) => {
       ctx.beginPath();
       if (ctx.roundRect) ctx.roundRect(bx, by, w, hh, r); else ctx.rect(bx, by, w, hh);
@@ -390,15 +457,53 @@ export function escena(canvas) {
     ctx.fillStyle = COLOURS.carGlass;
     ctx.fillRect(CAR_L * 0.08, -CAR_W / 2 + 0.25, CAR_L * 0.12, CAR_W - 0.5);
     ctx.fillRect(-CAR_L * 0.3, -CAR_W / 2 + 0.3, CAR_L * 0.07, CAR_W - 0.6);
-    // The headlights at the front
+    // The windscreen cracks from the third crash
+    if (damage >= 3) {
+      ctx.strokeStyle = COLOURS.crack; ctx.lineWidth = 0.05;
+      const gx = CAR_L * 0.14;
+      ctx.beginPath();
+      for (const [a, b] of [[0.35, 0.45], [-0.3, 0.5], [0.05, -0.55], [0.4, -0.2]]) { ctx.moveTo(gx, 0.05); ctx.lineTo(gx + a * 0.6, b); }
+      ctx.stroke();
+    }
+    // The headlights at the front: the left one dies at the fifth crash
     ctx.fillStyle = COLOURS.headlight;
-    ctx.fillRect(CAR_L / 2 - 0.22, CAR_W / 2 - 0.5, 0.18, 0.36);
     ctx.fillRect(CAR_L / 2 - 0.22, -CAR_W / 2 + 0.14, 0.18, 0.36);
+    ctx.fillStyle = damage >= 5 ? COLOURS.wheel : COLOURS.headlight;
+    ctx.fillRect(CAR_L / 2 - 0.22, CAR_W / 2 - 0.5, 0.18, 0.36);
     // The lights at the back: white while going backwards (reverse), red while braking
     const backwards = car.vx * Math.cos(car.h) + car.vy * Math.sin(car.h) < -0.3;
     ctx.fillStyle = backwards ? COLOURS.reverseLight : car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
     ctx.fillRect(-CAR_L / 2 + 0.02, CAR_W / 2 - 0.5, 0.22, 0.36);
     ctx.fillRect(-CAR_L / 2 + 0.02, -CAR_W / 2 + 0.14, 0.22, 0.36);
+    // The dents, where each crash struck (kept inside the body), each with a scratch
+    for (const hit of hits) {
+      const fx = Math.max(-CAR_L / 2 + 0.35, Math.min(CAR_L / 2 - 0.35, hit.f)), lx = Math.max(-CAR_W / 2 + 0.3, Math.min(CAR_W / 2 - 0.3, hit.l));
+      ctx.fillStyle = COLOURS.dent;
+      ctx.beginPath(); ctx.ellipse(fx, lx, 0.5, 0.34, (fx * 7 + lx * 3) % Math.PI, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = COLOURS.scratch; ctx.lineWidth = 0.05;
+      ctx.beginPath(); ctx.moveTo(fx - 0.3, lx - 0.1); ctx.lineTo(fx + 0.25, lx + 0.12); ctx.stroke();
+    }
+    // The front bumper hangs off one corner from the sixth crash
+    if (damage >= 6) {
+      ctx.save(); ctx.translate(CAR_L / 2 - 0.05, -CAR_W / 2 + 0.1); ctx.rotate(-0.45);
+      ctx.fillStyle = COLOURS.bumper; ctx.fillRect(0, -0.12, 0.9, 0.24);
+      ctx.restore();
+    }
+    // Worn darker with each crash; scorched once wrecked
+    if (damage) {
+      ctx.fillStyle = wrecked ? COLOURS.scorch : `rgba(0, 0, 0, ${Math.min(0.3, damage * 0.03)})`;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(-CAR_L / 2, -CAR_W / 2 + 0.05, CAR_L, CAR_W - 0.1, 0.5); else ctx.rect(-CAR_L / 2, -CAR_W / 2 + 0.05, CAR_L, CAR_W - 0.1);
+      ctx.fill();
+    }
+    // A flame on the bonnet at the last lives and once wrecked, flickering
+    if (damage >= 9) {
+      const flick = 0.85 + 0.15 * Math.sin(now / 45) + 0.1 * Math.sin(now / 17);
+      ctx.fillStyle = COLOURS.flameOuter;
+      ctx.beginPath(); ctx.arc(CAR_L * 0.32, 0, 0.55 * flick, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = COLOURS.flameInner;
+      ctx.beginPath(); ctx.arc(CAR_L * 0.32, 0, 0.28 * flick, 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
   }
 

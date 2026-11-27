@@ -19,7 +19,7 @@ in the other files.
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
-| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look | [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941) |
+| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives | [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941) |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
 | 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
@@ -62,6 +62,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-26** · The owner asked for faster reverse (now 14 m/s) and crashes: solid trees and rocks, 10 lives, an impact animation and progressive damage (dents, cracked glass, a dead headlight, a hanging bumper, smoke, a flame, a scorched shell). Design in core section 5; in 1.3 the stage generator must commit the solids with each stage.
 
 - **2026-11-26** · Asked decision 7 (how often the stage changes), the owner answered «Mejoremos las gráficas primero»: 1.4's look goes before 1.3, decision 7 waits for 1.3. Penalties kept (+10 s, +5 s). The look: three settings with seeded scenery, a car with stripes and lights, tyre tracks, dust; the car is drawn over the props so a crown never hides it.
 

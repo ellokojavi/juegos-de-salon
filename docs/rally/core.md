@@ -130,6 +130,16 @@ centre (on or off the road), and the direction of travel (the wrong way).
 
 ## 5. Gates, the clock, penalties
 
+- **Crashes and lives** (the owner, 2026-11-26): trees' trunks, dead trees, stumps, rocks and hay
+  bales are solid circles beside the road (`track.solids`); bushes are soft. The car, two circles
+  along its length, bounces off them; a hit faster than `crashSpeed` (3 m/s) costs one of 10 `lives`
+  and records a dent where it struck (`car.hits`, in the car's frame). The tenth crash wrecks the
+  car: the run ends with no time (`g.wrecked`), and the result says at which gate. The scene shows
+  each crash as a ring, sparks and debris, with no camera shake, and the damage grows on the car.
+- **The solids must be the same on every phone** for a ranking to be fair: today the scene's seeded
+  generator places them on the phone (fine in the lab). In 1.3 the stage generator commits them
+  with each stage, like the pieces (section 4).
+
 - **Gates** sit at even distances along the centreline; the last is the finish. Each is a segment
   across the road between two posts. *Starting value*: 8 to 10 per stage (the clip has 20 on a stage
   more than twice as long).

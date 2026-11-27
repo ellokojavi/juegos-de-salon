@@ -9,6 +9,11 @@
  * h = π/2 and its forward vector is (cos h, sin h); its left is (−sin h, cos h). Steering +1 turns
  * right (clockwise), −1 left.
  *
+ * Beside the road stand solid things (trees, rocks: `track.solids`, circles the caller puts on the
+ * track from the scenery). The car bounces off them; a hit faster than `crashSpeed` costs one of its
+ * `lives` and leaves a dent where it struck (`car.hits`, in the car's own frame); the last life
+ * wrecks it and ends the run with no time.
+ *
  * The caller runs `step` in a fixed-step accumulator (`run` does it): the same inputs give the same
  * run on a 60 Hz and a 120 Hz screen, and a slow phone plays in slow motion, never a different time.
  */
@@ -39,8 +44,11 @@ export const TUNING = {
   overSteer: 2.2,         // how far the nose may turn in past what the grip holds
   align: 2.5,             // how fast the rear pulls the nose back toward the travel, 1/s
   offAccel: 0.6,          // acceleration × this off the road
-  reverseAccel: 4,        // m/s² backwards: the brake held with the car stopped (the owner, 2026-11-26)
-  topReverse: 8,          // m/s
+  reverseAccel: 7,        // m/s² backwards: the brake held with the car stopped (the owner, 2026-11-26: faster)
+  topReverse: 14,         // m/s
+  lives: 10,              // crashes the car takes before it is wrecked (the owner, 2026-11-26)
+  crashSpeed: 3,          // m/s into an obstacle that costs a life; slower is a nudge
+  crashBounce: 0.3,       // the share of the speed into an obstacle the car bounces back with
   missPenalty: 10000,     // ms
   resetPenalty: 5000,
   resetAfter: 3,          // s off the road or the wrong way before ↺ is offered
@@ -129,12 +137,13 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [] };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
     idx: 0, progress: 0, side: 0, onRoad: true, lastRoad: 0,
     off: 0, back: 0, wrongWay: false, events: [],
+    lives: TUNING.lives, hitCool: 0, wrecked: false,
   };
 }
 
@@ -201,6 +210,9 @@ export function step(g, input = IDLE) {
   // 6. Rebuild the velocity and move
   car.vx = f * c2 - l * s2; car.vy = f * s2 + l * c2;
   car.x += car.vx * dt; car.y += car.vy * dt;
+  // 6b. What stands beside the road: the car bounces off it, and a hard hit costs a life
+  g.hitCool = Math.max(0, (g.hitCool || 0) - dt);
+  if (track.solids?.length) collide(g);
   // 7. What the scene and the sound read (the pedals as applied: the brake lights)
   car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
   car.slip = Math.abs(l);
@@ -209,6 +221,56 @@ export function step(g, input = IDLE) {
   locate(g, dt);
   gates(g);
   if (g.mode === 'play') g.t += dt * 1000;
+}
+
+/** The car as two circles along its length, against the solids near it (a grid built once per list of solids). */
+const CAR_R = 0.95, CAR_AXLE = 1.15, SOLID_CELL = 10;
+const grids = new WeakMap();
+function solidGrid(track) {
+  let grid = grids.get(track.solids);
+  if (!grid) {
+    grid = new Map();
+    for (const o of track.solids) {
+      const k = `${Math.floor(o.x / SOLID_CELL)},${Math.floor(o.y / SOLID_CELL)}`;
+      if (!grid.has(k)) grid.set(k, []);
+      grid.get(k).push(o);
+    }
+    grids.set(track.solids, grid);
+  }
+  return grid;
+}
+function collide(g) {
+  const T = TUNING, car = g.car, grid = solidGrid(g.track);
+  const cx = Math.floor(car.x / SOLID_CELL), cy = Math.floor(car.y / SOLID_CELL);
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+    for (const o of grid.get(`${cx + i},${cy + j}`) || []) {
+      for (const along of [CAR_AXLE, -CAR_AXLE]) {
+        const c = Math.cos(car.h), s = Math.sin(car.h);
+        const px = car.x + c * along, py = car.y + s * along;
+        const dx = px - o.x, dy = py - o.y, d = Math.hypot(dx, dy), pen = CAR_R + o.r - d;
+        if (pen <= 0 || d === 0) continue;
+        const nx = dx / d, ny = dy / d;
+        car.x += nx * pen; car.y += ny * pen;
+        const vn = car.vx * nx + car.vy * ny;
+        if (vn >= 0) continue;
+        // Bounce back with a share of the speed into it, and scrape off some of the rest
+        car.vx -= (1 + T.crashBounce) * vn * nx; car.vy -= (1 + T.crashBounce) * vn * ny;
+        car.vx *= 0.8; car.vy *= 0.8;
+        if (-vn >= T.crashSpeed && g.hitCool === 0 && g.mode === 'play') {
+          g.hitCool = 0.6;
+          g.lives = Math.max(0, g.lives - 1);
+          // Where it struck, in the car's frame (forward, left), for the dent
+          const wx = o.x + nx * o.r - car.x, wy = o.y + ny * o.r - car.y;
+          car.hits.push({ f: Math.round((wx * c + wy * s) * 100) / 100, l: Math.round((-wx * s + wy * c) * 100) / 100 });
+          g.events.push({ type: 'crash', lives: g.lives, speed: -vn });
+          if (!g.lives) {
+            g.wrecked = true; g.mode = 'done';
+            g.events.push({ type: 'wrecked' });
+          }
+        }
+      }
+    }
+  }
 }
 
 /** Finds the car on the track: progress, on or off the road, the wrong way. */

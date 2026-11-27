@@ -134,3 +134,21 @@ export function near(map, cx, cy, reach, out = []) {
   }
   return out;
 }
+
+/** The setting a stage is drawn in: the lab panel's pick, or the stage's own. */
+export const settingOf = (track, pick) => (SETTINGS[pick] ? pick : SETTINGS[track.setting] ? track.setting : 'meadow');
+
+/**
+ * What the car can hit, as circles for the engine (`track.solids`): a tree's trunk (its crown is
+ * above the car, so only the trunk stops it), a dead tree's trunk, a stump, a rock, a hay bale.
+ * Bushes are soft: the car drives through them.
+ */
+const SOLID = { tree: r => 0.25 * r, dead: r => 0.22 * r, stump: r => r, rock: r => 0.85 * r, hay: r => 0.9 * r };
+export function solids({ cells }) {
+  const out = [];
+  for (const it of [...cells.values()].flat()) {
+    const f = SOLID[it.kind];
+    if (f) out.push({ x: it.x, y: it.y, r: Math.round(f(it.r) * 100) / 100 });
+  }
+  return out;
+}

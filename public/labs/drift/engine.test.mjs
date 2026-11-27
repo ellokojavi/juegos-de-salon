@@ -74,6 +74,45 @@ ok('the brake held with the car stopped is reverse, up to its own top speed; the
   assert.equal(w.car.speed, 0);
 });
 
+ok('a tree ahead: the car bounces off, loses one life and keeps a dent at its nose; a nudge costs nothing', () => {
+  const track = straight();
+  track.solids = [{ x: 0, y: 40, r: 1 }];
+  const g = E.newGame({ track });
+  steps(g, FULL, 120 * 4);
+  assert.equal(g.lives, E.TUNING.lives - 1, `lives ${g.lives}`);
+  assert.ok(g.car.y < 40 - 1.9, `stopped before the trunk (${g.car.y.toFixed(2)})`);
+  assert.equal(g.car.hits.length, 1);
+  assert.ok(g.car.hits[0].f > 1 && Math.abs(g.car.hits[0].l) < 0.5, `the dent at the nose ${JSON.stringify(g.car.hits[0])}`);
+  // Pushing on at a crawl against it is a nudge, not another crash
+  const before = g.lives;
+  steps(g, { ...FULL, throttle: 0.2 }, 120 * 2);
+  assert.ok(g.lives >= before - 1);
+  // A slow touch costs nothing
+  const slow = E.newGame({ track: Object.assign(straight(), { solids: [{ x: 0, y: 4.2, r: 0.5 }] }) });
+  steps(slow, { ...FULL, throttle: 0.3 }, 120 * 1);
+  assert.equal(slow.lives, E.TUNING.lives);
+});
+
+ok('the tenth crash wrecks the car: the run ends with no finish, and a save keeps the lives and the dents', () => {
+  const track = straight();
+  track.solids = [{ x: 0, y: 40, r: 1 }];
+  const g = E.newGame({ track });
+  const events = [];
+  for (let k = 0; k < 40 && !g.wrecked; k++) {
+    // Back off, then drive into it again
+    steps(g, { ...FULL, throttle: 0, brake: 1 }, 120 * 2);
+    steps(g, FULL, 120 * 3);
+    events.push(...g.events.splice(0));
+  }
+  assert.ok(g.wrecked && g.mode === 'done' && g.lives === 0, `wrecked ${g.wrecked}, lives ${g.lives}`);
+  assert.equal(events.filter(e => e.type === 'crash').length, E.TUNING.lives);
+  assert.ok(events.some(e => e.type === 'wrecked') && !events.some(e => e.type === 'finish'));
+  const t = g.t; steps(g, FULL, 120);
+  assert.equal(g.t, t, 'the clock stops');
+  const back = E.restore(E.snapshot(g), track);
+  assert.equal(back.lives, 0); assert.equal(back.car.hits.length, E.TUNING.lives);
+});
+
 ok('a gentle bend at speed holds; a tight one slides', () => {
   const at = (speed, steer) => {
     const g = E.newGame({ track: straight() });

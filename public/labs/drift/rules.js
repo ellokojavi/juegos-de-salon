@@ -21,7 +21,8 @@ const ES = {
     resumeTitle: '⏯ Hay una partida a medias', resume: 'Continuar', delete: 'Borrar',
     resultTitle: 'Tu tiempo', clean: 'Sin castigos: todas las puertas a la primera.',
     withPenalty: '{clock} en el reloj y {s} s de castigo.',
-    again: '🏁 Jugar otra vez', shareRotulo: '📤 Compartir', shareContext: 'Contrarreloj', shareLine: '⏱️ Hice {time} en Derrape.',
+    again: '🏁 Jugar otra vez', shareRotulo: '📤 Compartir', shareContext: 'Contrarreloj', shareLine: '⏱️ Hice {time} en Derrape.', shareWrecked: '💥 Destrocé el auto en la puerta {n} de {total} en Derrape.',
+    lives: 'Vidas: {n}', wreckedTitle: 'Auto destrozado', wreckedDetail: 'Te quedaste sin vidas en la puerta {n} de {total}.',
     tuneOpen: 'Ajustes del auto', tuneTitle: '🔧 Ajustes del auto', tuneCamera: 'Cámara',
     camFollow: 'Gira con el auto', camFixed: 'Mapa fijo', tuneAhead: 'Camino a la vista (m)',
     tuneCopy: '📋 Copiar valores', tuneCopied: 'Copiados', tuneDefaults: 'Volver a los de fábrica',
@@ -33,7 +34,7 @@ const ES = {
   como: [
     '🏁 Cruza todas las puertas hasta la meta en el menor tiempo.',
     '🕹️ Pulgar izquierdo: desliza para girar. Pulgar derecho: mantén para acelerar y bájalo para frenar y retroceder.',
-    '⏱️ Saltarte una puerta suma 10 segundos. Si te sales, ↺ te devuelve al camino por 5 segundos.',
+    '⏱️ Saltarte una puerta suma 10 segundos y ↺ te devuelve al camino por 5. El auto aguanta 10 choques.',
   ],
 };
 
@@ -50,7 +51,8 @@ const EN = {
     resumeTitle: '⏯ There is a game in progress', resume: 'Continue', delete: 'Delete',
     resultTitle: 'Your time', clean: 'No penalties: every gate on the first try.',
     withPenalty: '{clock} on the clock and {s} s of penalties.',
-    again: '🏁 Play again', shareRotulo: '📤 Share', shareContext: 'Time trial', shareLine: '⏱️ I clocked {time} in Drift.',
+    again: '🏁 Play again', shareRotulo: '📤 Share', shareContext: 'Time trial', shareLine: '⏱️ I clocked {time} in Drift.', shareWrecked: '💥 I wrecked the car at gate {n} of {total} in Drift.',
+    lives: 'Lives: {n}', wreckedTitle: 'Car wrecked', wreckedDetail: 'You ran out of lives at gate {n} of {total}.',
     tuneOpen: 'Car settings', tuneTitle: '🔧 Car settings', tuneCamera: 'Camera',
     camFollow: 'Turns with the car', camFixed: 'Fixed map', tuneAhead: 'Road in view (m)',
     tuneCopy: '📋 Copy values', tuneCopied: 'Copied', tuneDefaults: 'Back to the defaults',
@@ -62,7 +64,7 @@ const EN = {
   como: [
     '🏁 Drive through every gate to the finish in the shortest time.',
     '🕹️ Left thumb: slide to steer. Right thumb: hold to speed up, slide it down to brake, then reverse.',
-    '⏱️ Missing a gate adds 10 seconds. If you go off, ↺ puts you back on the road for 5 seconds.',
+    '⏱️ Missing a gate adds 10 seconds, and ↺ puts you back on the road for 5. The car takes 10 crashes.',
   ],
 };
 
@@ -79,7 +81,8 @@ const PT = {
     resumeTitle: '⏯ Há uma partida pela metade', resume: 'Continuar', delete: 'Apagar',
     resultTitle: 'Seu tempo', clean: 'Sem penalidades: todos os portões de primeira.',
     withPenalty: '{clock} no relógio e {s} s de penalidade.',
-    again: '🏁 Jogar de novo', shareRotulo: '📤 Compartilhar', shareContext: 'Contra o relógio', shareLine: '⏱️ Fiz {time} em Derrapagem.',
+    again: '🏁 Jogar de novo', shareRotulo: '📤 Compartilhar', shareContext: 'Contra o relógio', shareLine: '⏱️ Fiz {time} em Derrapagem.', shareWrecked: '💥 Destruí o carro no portão {n} de {total} em Derrapagem.',
+    lives: 'Vidas: {n}', wreckedTitle: 'Carro destruído', wreckedDetail: 'Você ficou sem vidas no portão {n} de {total}.',
     tuneOpen: 'Ajustes do carro', tuneTitle: '🔧 Ajustes do carro', tuneCamera: 'Câmera',
     camFollow: 'Gira com o carro', camFixed: 'Mapa fixo', tuneAhead: 'Estrada à vista (m)',
     tuneCopy: '📋 Copiar valores', tuneCopied: 'Copiados', tuneDefaults: 'Voltar aos de fábrica',
@@ -91,7 +94,7 @@ const PT = {
   como: [
     '🏁 Passe por todos os portões até a chegada no menor tempo.',
     '🕹️ Polegar esquerdo: deslize para virar. Polegar direito: segure para acelerar e desça para frear e dar ré.',
-    '⏱️ Pular um portão soma 10 segundos. Se você sair, ↺ te leva de volta à estrada por 5 segundos.',
+    '⏱️ Pular um portão soma 10 segundos, e ↺ te leva de volta à estrada por 5. O carro aguenta 10 batidas.',
   ],
 };
 
