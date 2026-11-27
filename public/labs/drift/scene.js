@@ -33,6 +33,8 @@ const COLOURS = {
   car: '#ff2e88', carRoof: '#d81f70', carStripe: '#ffffff', carGlass: '#2a0a1c', wheel: '#14141a',
   dent: 'rgba(30, 0, 10, 0.7)', scratch: 'rgba(255, 255, 255, 0.55)', crack: 'rgba(255, 255, 255, 0.8)', scorch: 'rgba(20, 10, 10, 0.55)',
   spark: '#ffd23f', flash: 'rgba(255, 255, 255, 0.85)', flameOuter: '#ff7a1a', flameInner: '#ffe066', bumper: '#b81a5e',
+  ramp: '#8a5a2b', rampEdge: '#c58a4a', rampShade: 'rgba(0, 0, 0, 0.35)', pad: 'rgba(40, 230, 220, 0.75)', padArrow: '#fff36b',
+  boostFlame: '#6ee7ff', streak: 'rgba(255, 255, 255, 0.35)',
   headlight: '#fff6c8', brakeLight: '#ff3b30', reverseLight: '#ffffff', brakeOff: '#5a1020',
 };
 const MAX_DPR = 2;
@@ -180,7 +182,7 @@ export function escena(canvas) {
   function draw(g, alpha = 0, view = {}) {
     if (!W || !H) return;
     const mode = view.mode === 'fixed' ? 'fixed' : 'follow';
-    const ahead = view.ahead || 50;
+    const ahead = view.ahead || 40;
     const now = globalThis.performance?.now() ?? 0;
     const dt = Math.min(0.1, lastNow ? (now - lastNow) / 1000 : 0);
     lastNow = now;
@@ -225,8 +227,11 @@ export function escena(canvas) {
       }
       prevRear = marking ? rear : null;
       // Dust from the slide, and from the throttle on loose ground
-      const gravel = S.ruts !== null || !g.onRoad;
-      let rate = Math.min(60, car.slip * 9) + (gravel && car.speed > 3 ? (car.throttle || 0) * car.speed * 0.6 : 0);
+      // Dust from loose ground: a gravel road, the road's edge, off the road; never from asphalt itself
+      // (the owner, 2026-11-27), and never in the air
+      const w = g.track.pts[g.idx]?.w || 7;
+      const dusty = (S.ruts !== null || !g.onRoad || Math.abs(g.side) > w / 2 - 1.2) && !(car.z > 0);
+      let rate = dusty ? Math.min(60, car.slip * 9) + (car.speed > 3 ? (car.throttle || 0) * car.speed * 0.6 : 0) : 0;
       if (quiet()) rate /= 2;
       owed += rate * dt;
       while (owed >= 1) {
@@ -286,6 +291,7 @@ export function escena(canvas) {
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
     }
     road(g.track, S, cam.x, cam.y, reach);
+    features(g.track, now);
     tyreMarks(S, zoom);
     gates(g, zoom);
     // The props, then the car over them (a crown must never hide it), then its dust
@@ -295,7 +301,7 @@ export function escena(canvas) {
       const e = E * it.r;
       ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
-    drawCar(car, S, x, y, h, g.wrecked, now);
+    drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0);
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
@@ -324,6 +330,7 @@ export function escena(canvas) {
     ctx.restore();
     // The light of the hour: warm at sunset, blue at dusk
     if (S.tint) { ctx.fillStyle = S.tint; ctx.fillRect(0, 0, W, H); }
+    streaks(car, g.boost > 0);
 
     // The gate numbers, upright on the screen
     labels(g, { zoom, anchorY });
@@ -331,12 +338,15 @@ export function escena(canvas) {
 
   /** The road: the points near the camera, stroked wide with round joins, the shoulder first. */
   function road(track, S, cx, cy, reach) {
-    const P = track.pts, r2 = reach * reach;
+    const r2 = reach * reach;
     const runs = [];
-    let run = null;
-    for (let i = 0; i < P.length; i++) {
-      const p = P[i], dx = p.x - cx, dy = p.y - cy;
-      if (dx * dx + dy * dy <= r2) { if (!run) runs.push(run = []); run.push(p); } else run = null;
+    // The main road and its forks, each cut to the stretches near the camera
+    for (const P of [track.pts, ...(track.branches || []).map(b => b.pts)]) {
+      let run = null;
+      for (let i = 0; i < P.length; i++) {
+        const p = P[i], dx = p.x - cx, dy = p.y - cy;
+        if (dx * dx + dy * dy <= r2) { if (!run) runs.push(run = []); run.push(p); } else run = null;
+      }
     }
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     for (const [colour, extra] of [[S.shoulder, 2.4], [S.road, 0]]) {
@@ -369,6 +379,57 @@ export function escena(canvas) {
     if (S.ruts) { ctx.strokeStyle = S.ruts; ctx.lineWidth = 0.7; along(1.25); along(-1.25); }
     if (S.lines) { ctx.strokeStyle = S.lines; ctx.lineWidth = 0.18; along(0.45, true); along(-0.45, true); }
     if (S.centre) { ctx.strokeStyle = S.centre; ctx.lineWidth = 0.2; ctx.setLineDash([3, 5]); along(0); ctx.setLineDash([]); }
+  }
+
+  /**
+   * The ramps (a wooden wedge, rising toward its crest, with its shadow beyond) and the boost pads
+   * (arrows running forward over a cyan carpet).
+   */
+  function features(track, now) {
+    const quad = (p, a0, a1, half) => {
+      const c = Math.cos(p.h), s = Math.sin(p.h), lx = -s * half, ly = c * half;
+      ctx.beginPath();
+      ctx.moveTo(p.x + c * a0 - lx, p.y + s * a0 - ly); ctx.lineTo(p.x + c * a1 - lx, p.y + s * a1 - ly);
+      ctx.lineTo(p.x + c * a1 + lx, p.y + s * a1 + ly); ctx.lineTo(p.x + c * a0 + lx, p.y + s * a0 + ly);
+      ctx.fill();
+    };
+    for (const r of track.ramps || []) {
+      ctx.fillStyle = COLOURS.rampShade; quad(r, 0, 1.6, r.half);
+      ctx.fillStyle = COLOURS.ramp; quad(r, -r.len, 0, r.half);
+      ctx.fillStyle = COLOURS.rampEdge;
+      for (let a = -r.len + 0.6; a < 0; a += 1.1) quad(r, a, a + 0.35, r.half);
+      quad(r, -0.35, 0, r.half);
+    }
+    const run = (now / 1000 * 4) % 2;
+    for (const p of track.pads || []) {
+      ctx.fillStyle = COLOURS.pad; quad(p, -p.len / 2, p.len / 2, p.half);
+      ctx.fillStyle = COLOURS.padArrow;
+      const c = Math.cos(p.h), s = Math.sin(p.h), lx = -s, ly = c;
+      for (let a = -p.len / 2 + run; a < p.len / 2 - 0.9; a += 2) {
+        ctx.beginPath();
+        ctx.moveTo(p.x + c * a + lx * 1.2, p.y + s * a + ly * 1.2);
+        ctx.lineTo(p.x + c * (a + 0.9), p.y + s * (a + 0.9));
+        ctx.lineTo(p.x + c * a - lx * 1.2, p.y + s * a - ly * 1.2);
+        ctx.lineTo(p.x + c * (a + 0.45), p.y + s * (a + 0.45));
+        ctx.fill();
+      }
+    }
+  }
+
+  /** Speed: thin streaks down the stage's sides, from 30 m/s and stronger in a boost (none with reduced motion). */
+  function streaks(car, boosting) {
+    if (quiet()) return;
+    const v = car.speed;
+    const n = boosting ? 14 : v > 30 ? Math.round((v - 30) / 2) : 0;
+    if (!n) return;
+    ctx.strokeStyle = COLOURS.streak; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const side = i % 2 ? 1 : -1, x0 = W / 2 + side * (W * (0.32 + Math.random() * 0.18));
+      const y0 = Math.random() * H, len = (boosting ? 90 : 30) + v * 1.5;
+      ctx.moveTo(x0, y0); ctx.lineTo(x0, y0 + len);
+    }
+    ctx.stroke();
   }
 
   /** The tyre tracks, older ones fainter: four strokes, one per age band. */
@@ -419,8 +480,10 @@ export function escena(canvas) {
   }
 
   /** The car: its shadow, the wheels (the front pair turned), the body, the roof and its stripes, the glass, the lights. */
-  function drawCar(car, S, x, y, h, wrecked, now) {
+  function drawCar(car, S, x, y, h, wrecked, now, boosting) {
     const hits = car.hits || [], damage = hits.length;
+    // In the air the car grows a little (nearer the eye) and its shadow drifts away with the sun
+    const z = car.z || 0, lift = 1 + z * 0.12;
     const box = (bx, by, w, hh, r) => {
       ctx.beginPath();
       if (ctx.roundRect) ctx.roundRect(bx, by, w, hh, r); else ctx.rect(bx, by, w, hh);
@@ -429,13 +492,20 @@ export function escena(canvas) {
     // The shadow falls the way the setting's sun says, in the world (drawn before turning to the car)
     ctx.fillStyle = S.shadow;
     ctx.save();
-    ctx.translate(x + S.sun[0] * 0.35, y + S.sun[1] * 0.35);
+    ctx.translate(x + S.sun[0] * (0.35 + z * 0.9), y + S.sun[1] * (0.35 + z * 0.9));
     ctx.rotate(h);
     box(-CAR_L / 2, -CAR_W / 2, CAR_L, CAR_W, 0.5);
     ctx.restore();
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(h);
+    ctx.scale(lift, lift);
+    // The boost: a blue flame from the exhaust
+    if (boosting) {
+      const flick = 0.8 + 0.2 * Math.sin(now / 30);
+      ctx.fillStyle = COLOURS.boostFlame;
+      ctx.beginPath(); ctx.moveTo(-CAR_L / 2, -0.35); ctx.lineTo(-CAR_L / 2 - 1.8 * flick, 0); ctx.lineTo(-CAR_L / 2, 0.35); ctx.fill();
+    }
     // The wheels, the front pair turned as far as the steering is (so the player sees the thumb on the car)
     ctx.fillStyle = COLOURS.wheel;
     const WL = 0.95, WW = 0.45, turn = -(car.steer || 0) * 0.5;

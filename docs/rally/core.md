@@ -138,6 +138,20 @@ centre (on or off the road), and the direction of travel (the wrong way).
   and records a dent where it struck (`car.hits`, in the car's frame). The tenth crash wrecks the
   car: the run ends with no time (`g.wrecked`), and the result says at which gate. The scene shows
   each crash as a ring, sparks and debris, with no camera shake, and the damage grows on the car.
+- **Forks, ramps and boost pads** (the owner, 2026-11-27, in `tracks.js` on top of the pieces):
+  - A **fork** is a second road from `from` to `to` m, bulging `offset` m to one side with a
+    sin² profile so it leaves and meets the main road tangentially (a Y at each end). Its points
+    carry the main road's distance, so progress, misses and gates read the same on both; no gate
+    sits inside a fork. The car is located on whichever road is nearer; ↺ brings it back to the
+    main one. Each branch should trade something: the first stage's hairpin fork is tight and
+    short or wide with a pad; its sweeper fork is smooth or has a jump.
+  - A **ramp** throws the car up at `rampLift` (0.18) of its forward speed under `gravity` 12 m/s²
+    (about a second in the air at speed, 2 m high): no steering, no grip, no throttle and no
+    crash in the air, and the landing costs nothing (`car.z`, `car.vz`; the scene grows the car a
+    little and pushes its shadow away).
+  - A **boost pad** (8 × 3.4 m, narrower than the road, so it has to be aimed at) gives
+    `boostTime` 1.2 s of `boostTop` × 1.7 the top speed and `boostAccel` 26 m/s²; past the top
+    speed with the boost spent, a drag proportional to the excess brings the car back in a second or two.
 - **The solids must be the same on every phone** for a ranking to be fair: today the scene's seeded
   generator places them on the phone (fine in the lab). In 1.3 the stage generator commits them
   with each stage, like the pieces (section 4).
@@ -172,7 +186,7 @@ else.
 
 | Scheme | How | For | Against |
 |---|---|---|---|
-| **Wheel and pedal** (`wheel`, the default since 2026-11-26) | The left thumb lands anywhere on the left half and slides sideways to steer (full lock at `reach`, *starting value* 60 px). The right thumb on the right half is the pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes; held down with the car stopped, it reverses (the owner, 2026-11-26). Lifting lets the car roll. A gauge just above each thumb (not under it: the owner, «el dedo presionado tapa el control») shows the wheel as a bar with a knob and the pedal as a bar green above and red below; the car turns its front wheels and lights its brake lights. | Analogue steering and analogue pedals at once: brake into a bend while turning, lift, accelerate out. Nothing to aim at. | Two thumbs; needs a hint per half. |
+| **Wheel and pedal** (`wheel`, the default since 2026-11-26) | The left thumb lands anywhere on the left half and slides sideways to steer (full lock at `reach`, *starting value* 60 px, 75 since the owner's pick, 2026-11-27). The right thumb on the right half is the pedal: held, it accelerates; slid down from where it landed, it eases off and then brakes; held down with the car stopped, it reverses (the owner, 2026-11-26). Lifting lets the car roll. A gauge just above each thumb (not under it: the owner, «el dedo presionado tapa el control») shows the wheel as a bar with a knob and the pedal as a bar green above and red below; the car turns its front wheels and lights its brake lights. | Analogue steering and analogue pedals at once: brake into a bend while turning, lift, accelerate out. Nothing to aim at. | Two thumbs; needs a hint per half. |
 | One finger (`stick`) | One thumb is a stick from where it lands: sideways steers, up accelerates, down brakes. | One hand. | Steering and pedal are coupled in one thumb. |
 | A · Two halves, auto-throttle (`auto`, the 1.1 scheme) | The car accelerates by itself; hold a half to turn, both to brake. | Explains itself in one line. | **Dropped by the owner on the first drive (2026-11-26):** the car never stops pulling, and braking while turning is impossible. Kept in the tuning panel only to compare. |
 | On-screen buttons | ◀ ▶ on one side, pedal and brake on the other. | Familiar. | Four targets to find without looking; crowds a 320 px stage. Not built. |

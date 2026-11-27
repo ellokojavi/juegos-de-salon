@@ -65,7 +65,7 @@ const key = (x, y) => `${Math.floor(x / CELL)},${Math.floor(y / CELL)}`;
 /** How far a point is from the road's edge, m (negative on the road), from a grid of the centreline's points. */
 function edgeDistance(track) {
   const grid = new Map();
-  for (const p of track.pts) {
+  for (const p of [track.pts, ...(track.branches || []).map(b => b.pts)].flat()) {
     const k = key(p.x, p.y);
     if (!grid.has(k)) grid.set(k, []);
     grid.get(k).push(p);
@@ -98,8 +98,8 @@ export function scenery(track, setting) {
   const pick = () => { let u = rnd(); for (const [k, p] of kinds) { if ((u -= p) <= 0) return k; } return kinds[0][0]; };
   const cells = new Map(), patches = new Map();
   const put = (map, item) => { const k = key(item.x, item.y); if (!map.has(k)) map.set(k, []); map.get(k).push(item); };
-  const P = track.pts;
-  for (let i = 0; i < P.length; i += 2) {
+  // Along the main road and along each fork
+  for (const P of [track.pts, ...(track.branches || []).map(b => b.pts)]) for (let i = 0; i < P.length; i += 2) {
     const p = P[i], nx = -Math.sin(p.h), ny = Math.cos(p.h);
     for (const side of [-1, 1]) {
       // Props: up to two every 4 m on each side, most of them near the road where the player sees them

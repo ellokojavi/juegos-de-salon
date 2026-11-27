@@ -164,6 +164,9 @@ function play(e) {
   } else if (e.type === 'miss') { SFX.error(); vibrate(60); save(); }
   else if (e.type === 'reset') SFX.tap();
   else if (e.type === 'crash') crashed();
+  else if (e.type === 'boost') { SFX.pass(); vibrate(30); }
+  else if (e.type === 'jump') SFX.flip();
+  else if (e.type === 'land') { SFX.dice(); vibrate(40); }
   else if (e.type === 'wrecked') wreck();
   else if (e.type === 'finish') finish();
 }

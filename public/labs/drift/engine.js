@@ -9,6 +9,11 @@
  * h = π/2 and its forward vector is (cos h, sin h); its left is (−sin h, cos h). Steering +1 turns
  * right (clockwise), −1 left.
  *
+ * The road can fork (`track.branches`: a second road that leaves the main one and meets it again,
+ * the player picks), and carries ramps (the car flies: `car.z`, `car.vz`; no steering, no grip and
+ * no crash in the air; the landing costs nothing) and boost pads (`g.boost`: a short burst well past
+ * the top speed).
+ *
  * Beside the road stand solid things (trees, rocks: `track.solids`, circles the caller puts on the
  * track from the scenery). The car bounces off them; a hit faster than `crashSpeed` costs one of its
  * `lives` and leaves a dent where it struck (`car.hits`, in the car's own frame); the last life
@@ -27,11 +32,11 @@ export const STEP = 1 / 120;
  */
 export const TUNING = {
   steerTime: 0.15,        // s from centre to full lock
-  topGravel: 30,          // m/s
-  topAsphalt: 36,
-  topOff: 14,             // off the road
-  accel: 7,               // m/s²
-  brake: 14,
+  topGravel: 42,          // m/s (30 until the owner asked for vertigo, 2026-11-27)
+  topAsphalt: 50,
+  topOff: 18,             // off the road
+  accel: 10,              // m/s²
+  brake: 20,
   roll: 0.6,              // rolling drag, m/s²
   maxOffDrag: 12,         // the most the rough ground slows a fast car, m/s²
   wheelbase: 2.5,         // m
@@ -49,6 +54,11 @@ export const TUNING = {
   lives: 10,              // crashes the car takes before it is wrecked (the owner, 2026-11-26)
   crashSpeed: 3,          // m/s into an obstacle that costs a life; slower is a nudge
   crashBounce: 0.3,       // the share of the speed into an obstacle the car bounces back with
+  rampLift: 0.18,         // a ramp throws the car up at this share of its forward speed, m/s per m/s
+  gravity: 12,            // m/s² in the air (a little more than the Earth's: shorter, livelier jumps)
+  boostTime: 1.2,         // s of boost after a pad
+  boostTop: 1.7,          // top speed × this while boosting
+  boostAccel: 26,         // m/s² of extra push while boosting
   missPenalty: 10000,     // ms
   resetPenalty: 5000,
   resetAfter: 3,          // s off the road or the wrong way before ↺ is offered
@@ -108,7 +118,30 @@ export function buildTrack(stage) {
     const p = pts[idx];
     gates.push({ i: idx, s: p.s, x: p.x, y: p.y, h: p.h, half: p.w / 2 + 0.6 });
   }
-  return { id: stage.id, surface: stage.surface || 'gravel', setting: stage.setting || 'meadow', pts, length, gates };
+  // Forks: a second road from `from` to `to` (m), bulging `offset` m to one side, meeting the main one
+  // again; it carries the main road's distance (`s`), so the progress and the gates read the same
+  const at = s0 => { let i = 0; while (i < pts.length - 1 && pts[i].s < s0) i++; return i; };
+  const branches = (stage.forks || []).map((f, n) => {
+    const i0 = at(f.from), i1 = at(f.to), side = f.side === 'R' ? -1 : 1, bp = [];
+    for (let i = i0; i <= i1; i++) {
+      const p = pts[i], u = (p.s - pts[i0].s) / (pts[i1].s - pts[i0].s), o = side * f.offset * Math.sin(Math.PI * u) ** 2;
+      bp.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h, s: p.s, k: 0, w: ROAD_WIDTH, i });
+    }
+    // Headings along the branch itself
+    for (let j = 0; j < bp.length; j++) {
+      const a = bp[Math.max(0, j - 1)], b = bp[Math.min(bp.length - 1, j + 1)];
+      bp[j].h = Math.atan2(b.y - a.y, b.x - a.x);
+    }
+    return { n, from: pts[i0].s, to: pts[i1].s, pts: bp, f };
+  });
+  // A ramp or a pad: a rectangle across the road, on the main road at `s` m or on a branch at a share `u` of it
+  const place = (where, half, len) => {
+    const p = where.fork !== undefined ? (b => b.pts[Math.round(where.u * (b.pts.length - 1))])(branches[where.fork]) : pts[at(where.s)];
+    return { x: p.x, y: p.y, h: p.h, s: p.s, half, len, fork: where.fork };
+  };
+  const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
+  const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
+  return { id: stage.id, surface: stage.surface || 'gravel', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
 }
 
 /** The nearest centreline point to (x, y), searched around `from` (or everywhere with from < 0). */
@@ -137,13 +170,13 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [] };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: track.surface, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0 };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
     idx: 0, progress: 0, side: 0, onRoad: true, lastRoad: 0,
     off: 0, back: 0, wrongWay: false, events: [],
-    lives: TUNING.lives, hitCool: 0, wrecked: false,
+    lives: TUNING.lives, hitCool: 0, wrecked: false, boost: 0, branch: -1,
   };
 }
 
@@ -162,6 +195,20 @@ export function step(g, input = IDLE) {
   // 1. The steering eases toward the thumb: a tap and a held thumb both feel right
   const rate = dt / Math.max(0.01, T.steerTime);
   car.steer += clamp(clamp(steer, -1, 1) - car.steer, -rate, rate);
+  car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
+
+  // In the air: it flies on as it left the ramp, falls, and lands where it lands (no harm done)
+  if (car.z > 0 || car.vz > 0) {
+    car.z += car.vz * dt; car.vz -= T.gravity * dt;
+    if (car.z <= 0) { car.z = 0; car.vz = 0; g.events.push({ type: 'land' }); }
+    car.x += car.vx * dt; car.y += car.vy * dt;
+    car.slip = 0; car.speed = Math.hypot(car.vx, car.vy);
+    g.boost = Math.max(0, g.boost - dt);
+    locate(g, dt);
+    gates(g);
+    if (g.mode === 'play') g.t += dt * 1000;
+    return;
+  }
 
   // 2. Velocity against the heading: forward and to the left
   const c = Math.cos(car.h), s = Math.sin(car.h);
@@ -169,8 +216,9 @@ export function step(g, input = IDLE) {
 
   // 3. Forward: throttle, brakes, drag; the surface scales them
   const off = !g.onRoad;
-  const top = off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel;
-  const acc = T.accel * (off ? T.offAccel : 1);
+  const boosting = g.boost > 0;
+  const top = (off ? T.topOff : track.surface === 'asphalt' ? T.topAsphalt : T.topGravel) * (boosting ? T.boostTop : 1);
+  const acc = T.accel * (off ? T.offAccel : 1) + (boosting && vf >= 0 ? T.boostAccel : 0);
   vf += clamp(throttle, 0, 1) * acc * dt;
   // Reverse: the brake held once the car has stopped (or is already rolling back) drives it backwards
   const backing = g.mode === 'play' && brake > 0 && !(throttle > 0) && vf <= 0;
@@ -179,6 +227,8 @@ export function step(g, input = IDLE) {
   const topNow = vf < 0 ? T.topReverse : top;
   let drag = T.roll + (T.accel - T.roll) * (vf / topNow) * (vf / topNow);
   if (off) drag = Math.min(drag, T.maxOffDrag);
+  // Past the top speed with the boost spent (after a pad): back down within a second or two
+  if (!boosting && vf > top) drag += (vf - top) * 2;
   if (!backing) drag += clamp(brake, 0, 1) * T.brake;
   const dv = drag * dt;
   vf = Math.abs(vf) <= dv ? 0 : vf - sign * dv;
@@ -213,14 +263,36 @@ export function step(g, input = IDLE) {
   // 6b. What stands beside the road: the car bounces off it, and a hard hit costs a life
   g.hitCool = Math.max(0, (g.hitCool || 0) - dt);
   if (track.solids?.length) collide(g);
-  // 7. What the scene and the sound read (the pedals as applied: the brake lights)
-  car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
+  // 7. What the scene and the sound read
   car.slip = Math.abs(l);
   car.speed = Math.hypot(car.vx, car.vy);
 
   locate(g, dt);
+  features(g, dt);
   gates(g);
   if (g.mode === 'play') g.t += dt * 1000;
+}
+
+/** Ramps and boost pads under the car (only on the ground: this runs after a ground step). */
+function features(g, dt) {
+  const T = TUNING, car = g.car, track = g.track;
+  g.boost = Math.max(0, g.boost - dt);
+  for (const r of track.ramps || []) {
+    const now = frame(r, car.x, car.y), before = frame(r, car.px, car.py);
+    const fwd = car.vx * Math.cos(r.h) + car.vy * Math.sin(r.h);
+    // Over its crest going forward: up it goes
+    if (before.along < 0 && now.along >= 0 && Math.abs(now.side) <= r.half && fwd > 5) {
+      car.vz = fwd * T.rampLift; car.z = 0.01;
+      g.events.push({ type: 'jump', speed: fwd });
+    }
+  }
+  for (const p of track.pads || []) {
+    const f = frame(p, car.x, car.y);
+    if (Math.abs(f.along) <= p.len / 2 && Math.abs(f.side) <= p.half) {
+      if (g.boost === 0) g.events.push({ type: 'boost' });
+      g.boost = T.boostTime;
+    }
+  }
 }
 
 /** The car as two circles along its length, against the solids near it (a grid built once per list of solids). */
@@ -277,14 +349,24 @@ function collide(g) {
 function locate(g, dt) {
   const car = g.car, track = g.track;
   g.idx = nearest(track, car.x, car.y, g.idx);
-  const p = track.pts[g.idx], f = frame(p, car.x, car.y);
+  let p = track.pts[g.idx], f = frame(p, car.x, car.y);
+  // On a fork, whichever road the car is nearer to: the main one or the branch
+  g.branch = -1;
+  for (const b of track.branches || []) {
+    if (p.s < b.from - 20 || p.s > b.to + 20) continue;
+    let best = 0, bd = Infinity;
+    b.pts.forEach((q, j) => { const d = (q.x - car.x) ** 2 + (q.y - car.y) ** 2; if (d < bd) { bd = d; best = j; } });
+    const q = b.pts[best], fb = frame(q, car.x, car.y);
+    if (Math.abs(fb.side) < Math.abs(f.side)) { p = q; f = fb; g.branch = b.n; }
+  }
   g.progress = p.s + f.along;
   g.side = f.side;
   const onRoad = Math.abs(f.side) <= p.w / 2;
   if (!onRoad && g.onRoad && g.mode === 'play') g.events.push({ type: 'offroad' });
   g.onRoad = onRoad;
   car.surface = onRoad ? track.surface : 'off';
-  if (onRoad) g.lastRoad = g.idx;
+  // ↺ brings the car back to the main road at the same distance
+  if (onRoad) g.lastRoad = p.i !== undefined ? p.i : g.idx;
   g.off = onRoad ? 0 : g.off + dt;
   const along = car.vx * Math.cos(p.h) + car.vy * Math.sin(p.h);
   const wrong = car.speed > 3 && along < -0.3 * car.speed;
@@ -339,7 +421,8 @@ export const needsReset = g => g.mode === 'play' && (g.off >= TUNING.resetAfter 
 export function reset(g) {
   if (g.mode !== 'play') return;
   const p = g.track.pts[g.lastRoad], car = g.car;
-  Object.assign(car, { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h });
+  Object.assign(car, { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, z: 0, vz: 0 });
+  g.boost = 0;
   g.idx = g.lastRoad; g.onRoad = true; g.off = 0; g.back = 0; g.wrongWay = false;
   g.progress = p.s; g.side = 0;
   g.resets++;

@@ -19,7 +19,7 @@ in the other files.
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
 | 1.3 | Stages | not started | |
-| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives | [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941) |
+| 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | `drift-forks` |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
 | 2.0 | Renderer spike and decision | waits for 1.6 and the owner's yes | |
@@ -62,6 +62,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner's settings became the defaults (follow view, thumb travel 75 px, 40 m in view). For vertigo: top 42/50 m/s (was 30/36), accel 10, brake 20, side streaks. No dust on asphalt itself. New on the stages: forks (two on the first stage), ramps (fly, land unharmed) and boost pads. Design in core section 5.
 
 - **2026-11-27** · The owner asked to turn harder: lock 32°/9° → 40°/14°, `overSteer` 2.2 → 3.0, grip gravel 9 → 11 and asphalt 14 → 16, `align` 2.5 → 3.0 (so a slide still ends in half a second). At 25 m/s the car now turns about two thirds faster.
 

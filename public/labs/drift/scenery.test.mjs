@@ -32,13 +32,13 @@ ok('the same stage and setting give the same props, on every phone', () => {
   assert.equal(seeded('x')(), seeded('x')());
 });
 
-ok('no prop stands on the road or its shoulder, and there are plenty of them', () => {
+ok('no prop stands on the road, its forks or their shoulders, and there are plenty of them', () => {
   for (const name of SETTING_NAMES) {
     const props = all(scenery(track, name).cells);
     assert.ok(props.length > 300, `${name}: ${props.length} props`);
     for (const it of props) {
       let d = Infinity;
-      for (const p of track.pts) d = Math.min(d, Math.hypot(p.x - it.x, p.y - it.y) - p.w / 2);
+      for (const p of [track.pts, ...track.branches.map(b => b.pts)].flat()) d = Math.min(d, Math.hypot(p.x - it.x, p.y - it.y) - p.w / 2);
       assert.ok(d > it.r + 2.4, `${name}: a ${it.kind} ${d.toFixed(1)} m from the road`);
     }
   }
