@@ -8174,7 +8174,11 @@
       "error": "ERROR · appeared modules: public/labs/drift/ghost-label.js",
       "signature": "9e678ff426",
       "date": "2026-11-28T14:24:46.735Z",
-      "fix": null,
+      "fix": {
+        "commit": "e49cd2deca299a15bc58ba09fd7d5c546ef2347d",
+        "date": "2026-11-28T14:27:58.151Z",
+        "stat": "1 file(s) +1 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
