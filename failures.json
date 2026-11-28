@@ -8125,6 +8125,19 @@
       "date": "2026-11-28T00:42:52.157Z",
       "fix": null,
       "flaky": false
+    },
+    {
+      "run": 46093623464,
+      "check": "tests",
+      "pr": 1954,
+      "branch": "ccr-4d29fc85-axwu2o",
+      "commit": "e8e3858ef39c09afb672a0125bb591c926d52a9c",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/assets/js/manifests/labs/cosmic-marble.js, public/labs/cosmic-marble/course.js, public/labs/cosmic-marble/engine.js, public/labs/cosmic-marble/game.js, public/labs/cosmic-marble/rules.js\nERROR · appeared documents: {\"path\": \"docs/games/cosmic-marble.md\", \"title\": \"🔮 Cosmic M, {\"path\": \"docs/games/cosmic-marble/generation-rules.md\", \"ti",
+      "signature": "3317edbb25",
+      "date": "2026-11-28T01:34:08.423Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
