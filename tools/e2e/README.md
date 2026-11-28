@@ -236,6 +236,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `hangman/local.mjs` | Chain of three on one phone, buying a letter, resuming and solitaire |
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
 | `drift/game.mjs` | Derrape (lab, `/labs/drift/`): the test stage driven to the result by the autopilot through the page's real loop at 375 and 320 px, plus a touch that steers, pause and resume |
+| `cosmic-marble/game.mjs` | Cosmic Marble (lab, `/labs/cosmic-marble/`): starts a run, rolls the marble, reloads and resumes it (C-6), ends it and checks the result (C-19) |
 | `liars-dice/local.mjs` | Duel against the phone and a three-player game on one phone, with resuming midway |
 | `liars-dice/online.mjs` | Three phones against real Firebase: room, verified reveal, reload midway and rematch |
 | `liars-dice/rooms-classic.mjs` | The 📜 classic rules (D-490, D-495) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; with `SICILIANA=1` it doubts the game's first bid and checks every phone shows the siciliana line and the same two-dice loss; `NOLAB_SITE` makes the last guest a player without a lab key (since D-495 the rules need none). Every phone leaves for good at the end, so the room is deleted |
@@ -322,6 +323,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `room-cap.mjs` | Past the cap of rooms per phone, warns instantly and without touching the network |
 | `hangman/languages.mjs` | El Ahorcado in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `drift/languages.mjs` | Derrape in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `cosmic-marble/languages.mjs` | Cosmic Marble in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `battleship/languages.mjs` | Batalla Naval in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `bulls-and-cows/languages.mjs` | Toque y Fama in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `timeline/languages.mjs` | Línea de Tiempo in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |

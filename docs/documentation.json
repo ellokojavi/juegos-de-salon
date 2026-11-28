@@ -1,13 +1,12 @@
 {
-  "checkedUpTo": "86a622e2924bad1fba2371b11c46f298827448a8",
+  "checkedUpTo": "72bcfbea790bb080f79fd4f493e3e461a387cebf",
   "pending": [
-    "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): need a browser run and contact-sheet review; unattended round did not redo them",
+    "README screenshots stale in 12 sections: need a browser run and contact-sheet review",
     "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
-    "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md Resumen and README",
+    "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md and README",
     "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
-    "Duels (flag rivals, lab) has no docs/games page, only D-603 and the e2e README; write it when it launches. og.mjs link card list does not name Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say if it should",
-    "Drift (flag in the lab, phase 1.x) and Gemelos (twins, lab) have docs/games pages; when they launch, check README, LO_PRINCIPAL and the link card list",
-    "docs-2026-11-23/24/25 branches: contents already on main except the profile share line, carried over here; the three can be deleted"
+    "Duels (flag rivals, lab) has no docs/games page; write it when it launches. og.mjs card list omits Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say",
+    "Drift and Cosmic Marble and Gemelos (lab): when they launch, check README, LO_PRINCIPAL and the link card list"
   ],
   "known": [],
   "rounds": [
@@ -468,6 +467,20 @@
       "pending": [
         "Drift (flag in the lab, phase 1.x) and Gemelos (twins, lab) have docs/games pages; when they launch, check README, LO_PRINCIPAL and the link card list",
         "docs-2026-11-23/24/25 branches: contents already on main except the profile share line, carried over here; the three can be deleted"
+      ]
+    },
+    {
+      "date": "2026-11-28",
+      "from": "86a622e2924bad1fba2371b11c46f298827448a8",
+      "to": "72bcfbea790bb080f79fd4f493e3e461a387cebf",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections: need a browser run and contact-sheet review",
+        "Offline mode (flags offline, cup-offline) in the lab: when published, add to LO_PRINCIPAL/shareApp.lines (D-271)",
+        "Sudoku launches by flags/sudoku: when published, check docs/games/sudoku.md and README",
+        "Cup comments (cup-talk, cup-talk-push) in the lab: when published, consider LO_PRINCIPAL and drop '(in the lab)' in PWA-NOTIFICACIONES.md",
+        "Duels (flag rivals, lab) has no docs/games page; write it when it launches. og.mjs card list omits Dominorama/Memorice/Croc/Tembleque/Wobbles: owner to say",
+        "Drift and Cosmic Marble and Gemelos (lab): when they launch, check README, LO_PRINCIPAL and the link card list"
       ]
     }
   ],
