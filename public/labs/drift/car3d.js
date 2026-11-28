@@ -201,15 +201,21 @@ export function carMeshes() {
     }
     for (const xl of [0.8, -0.78]) quadOut(trim, [xl, y(xl), 0.44], [xl - 0.012, y(xl), 0.44], [xl - 0.012, y(xl), 0.96], [xl, y(xl), 0.96], C.plastic, ref);
     trim.box(-0.62, y(-0.62) * 1.01, 0.88, 0.07, 0.01, 0.015, 0, [C.plastic, C.plastic]);
-    const nx = 0.0, nz = 0.73, r = 0.17, yy = side * (halfW(nx) + 0.02);
-    for (let k = 0; k < 18; k++) {
-      const a0 = k / 18 * Math.PI * 2, a1 = (k + 1) / 18 * Math.PI * 2;
-      out(trim, [nx, yy, nz], [nx + Math.cos(a0) * r, yy, nz + Math.sin(a0) * r], [nx + Math.cos(a1) * r, yy, nz + Math.sin(a1) * r], C.stripe, [nx, 0, nz]);
-    }
-    // A «7» drawn the right way round from its own side: on the left flank the viewer's right is −x
-    const sr = side > 0 ? -1 : 1, y2 = side * (halfW(nx) + 0.026), P = (u, v) => [nx + sr * u, y2, nz + v];
-    quadOut(trim, P(-0.085, 0.1), P(0.085, 0.1), P(0.085, 0.065), P(-0.085, 0.065), C.number, [nx, 0, nz]);
-    quadOut(trim, P(0.085, 0.1), P(0.05, 0.1), P(-0.04, -0.115), P(-0.005, -0.115), C.number, [nx, 0, nz]);
+    // The number «17» on a white rounded plate, set out from the flank so it never sinks into the paint
+    const nx = 0.0, nz = 0.75, ex = 0.22, ez = 0.15, yy = side * (halfW(nx) + 0.03), n = 24;
+    const plate = a => { const c = Math.cos(a), s = Math.sin(a), k = 4;   // a superellipse: a plate with round corners
+      return [nx + ex * Math.sign(c) * Math.pow(Math.abs(c), 2 / k), yy, nz + ez * Math.sign(s) * Math.pow(Math.abs(s), 2 / k)]; };
+    for (let k = 0; k < n; k++) out(trim, [nx, yy, nz], plate(k / n * Math.PI * 2), plate((k + 1) / n * Math.PI * 2), C.stripe, [nx, 0, nz]);
+    // Drawn the right way round from its own side: on the left flank the viewer's right is −x
+    const sr = side > 0 ? -1 : 1, y2 = side * (halfW(nx) + 0.036), P = (u, v) => [nx + sr * u, y2, nz + v];
+    const digit = (...q) => quadOut(trim, ...q.map(([u, v]) => P(u, v)), C.number, [nx, 0, nz]);
+    // «1»: a stem, its flag and its foot
+    digit([-0.105, 0.11], [-0.065, 0.11], [-0.065, -0.11], [-0.105, -0.11]);
+    digit([-0.105, 0.11], [-0.105, 0.072], [-0.15, 0.05], [-0.15, 0.085]);
+    digit([-0.145, -0.11], [-0.025, -0.11], [-0.025, -0.08], [-0.145, -0.08]);
+    // «7»: its top bar and its leg
+    digit([0.0, 0.11], [0.15, 0.11], [0.15, 0.075], [0.0, 0.075]);
+    digit([0.15, 0.11], [0.11, 0.11], [0.03, -0.11], [0.07, -0.11]);
   }
 
   /* ---- The nose: headlights, grille, intake, skid plate, tow hook, the spotlight pod ---- */
