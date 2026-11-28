@@ -8095,6 +8095,19 @@
         "stat": "4 file(s) +4 −4: changelog/drift-speed.md, docs/games/drift.md, docs/rally/PROGRESS.md, public/labs/drift/engine.js"
       },
       "flaky": false
+    },
+    {
+      "run": 46087095346,
+      "check": "tests",
+      "pr": 1951,
+      "branch": "drift-hd",
+      "commit": "5c7456e9b18cbc6a56c664e0b3b23043d6796c04",
+      "test": "README up to date",
+      "error": "ERROR · appeared modules: public/labs/drift/car2d.js, public/labs/drift/textures.js",
+      "signature": "8c416e410d",
+      "date": "2026-11-28T00:19:29.533Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
