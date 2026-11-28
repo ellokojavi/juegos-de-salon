@@ -10,6 +10,12 @@
  * la partida entera: `{ hechos, trazo, usado, ultimo }`.
  */
 import * as motor from './engine.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+await loadCss(new URL('./style.css', import.meta.url));
+
+/** Hard mode's lever in the waiting room (lab: #seccion-zip-hard). */
+export { selector } from './lever.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 /** Cuánto espera Borrar todo el segundo toque, como en Tango. */

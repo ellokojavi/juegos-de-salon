@@ -451,10 +451,12 @@ test('tango: solución única, reglas y puntaje', () => {
 });
 
 test('zip hard: walls block the line, still one solution, more walls each level', () => {
-  let antes = -1;
+  let antes = -1, lado = 0;
   for (let k = 0; k < zip.NIVELES; k++) {
     const p = zip.nivel('KQRST', 4, k, 'hard');
     assert.equal(p.n, zip.TAMANOS_DIFICIL[k]);
+    assert.ok(p.n >= lado, `level ${k} never shrinks`); lado = p.n;
+    assert.equal(p.muros.length, zip.MUROS_DIFICIL[k]);
     assert.ok(p.muros.length > antes, `level ${k} has more walls`); antes = p.muros.length;
     assert.equal(zip.resolver(p, 3), 1);
     assert.ok(zip.valido(p, p.sol));
@@ -462,6 +464,7 @@ test('zip hard: walls block the line, still one solution, more walls each level'
     const [a, b] = p.muros[0];
     assert.ok(!zip.adyacentes(p.n, a, b, p.muros) && zip.adyacentes(p.n, a, b));
   }
+  assert.equal(zip.TAMANOS_DIFICIL[0], 6); assert.equal(zip.TAMANOS_DIFICIL.at(-1), 8);
   assert.equal(zip.nivel('KQRST', 4, 0).muros, undefined);   // the normal mode has none
 });
 

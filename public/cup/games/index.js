@@ -114,7 +114,7 @@ const BUILD = {
     generar: (codigo, dia, o = {}) => ({ codigo, dia, variante: o.variante === 'hard' ? 'hard' : null }),
     montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo,
     ensayo: (c, d, o = {}) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000, variante: o.variante === 'hard' ? 'hard' : null }),
-    variantes: ZIP_HARD ? ['normal', 'hard'] : null,
+    variantes: ZIP_HARD ? ['normal', 'hard'] : null, selector: ui.selector,
   }),
   // Como Zip: los niveles se arman dentro de la pantalla y lo generado es solo la semilla del día (D-179)
   desenredo: ([, ui]) => ({ generar: (codigo, dia) => ({ codigo, dia }), montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) }),

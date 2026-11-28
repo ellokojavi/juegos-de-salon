@@ -91,23 +91,23 @@ export function resolver({ n, numeros, muros }, tope = 2) {
 }
 
 /**
- * Hard mode: a share `fraccion` of the edges the solution does not use becomes a wall. The walls
+ * Hard mode: `cuantos` of the edges the solution does not use become walls. The walls
  * never cut the solution, so it still exists; they close the easy shortcuts, and with them the
  * board keeps fewer numbers (the second loop below takes out every one it can), so there is far
  * more to work out from far less.
  */
-function murosAlAzar(a, n, camino, fraccion) {
+function murosAlAzar(a, n, camino, cuantos) {
   const usadas = new Set();
   for (let k = 1; k < camino.length; k++) usadas.add(claveMuro(camino[k - 1], camino[k]));
   const libres = [];
   for (let i = 0; i < n * n; i++) for (const j of vecinos(n, i)) if (i < j && !usadas.has(claveMuro(i, j))) libres.push([i, j]);
-  return a.barajar(libres).slice(0, Math.round(libres.length * fraccion)).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+  return a.barajar(libres).slice(0, cuantos).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
 }
 
-export function generar(codigo, dia, { n = 6, sal = 'zip', muros: fraccion = 0 } = {}) {
+export function generar(codigo, dia, { n = 6, sal = 'zip', muros: cuantos = 0 } = {}) {
   const a = azar(codigo, dia, sal);
   const camino = caminoAlAzar(a, n);
-  const muros = fraccion > 0 ? murosAlAzar(a, n, camino, fraccion) : undefined;
+  const muros = cuantos > 0 ? murosAlAzar(a, n, camino, cuantos) : undefined;
   // Siempre el principio y el final; en el medio, se suman en orden hasta que sea único
   const posiciones = [0, camino.length - 1];
   const medio = a.barajar([...Array(camino.length - 2).keys()].map(x => x + 1));
@@ -178,12 +178,12 @@ export const NIVELES = TAMANOS.length;
 export const tamanoDe = k => TAMANOS[Math.min(k, TAMANOS.length - 1)];
 
 /**
- * Hard mode (lab: #seccion-zip-hard): bigger boards from the first level and walls on every one,
- * more of them each level (a share of the edges the solution leaves free), so each board keeps
- * fewer numbers than the last. Same ten levels and the same three minutes.
+ * Hard mode (lab: #seccion-zip-hard): hard from the first board and harder on every one. The boards
+ * grow from 6 × 6 to 8 × 8 and never shrink, and every level has more walls than the one before
+ * (`MUROS_DIFICIL`, how many), so each board keeps fewer numbers. Same ten levels and three minutes.
  */
-export const TAMANOS_DIFICIL = [5, 5, 6, 6, 6, 7, 7, 7, 7, 7];
-export const MUROS_DIFICIL = [0.2, 0.3, 0.25, 0.32, 0.4, 0.3, 0.36, 0.42, 0.48, 0.55];
+export const TAMANOS_DIFICIL = [6, 6, 6, 7, 7, 7, 7, 8, 8, 8];
+export const MUROS_DIFICIL = [9, 11, 13, 16, 19, 22, 25, 29, 33, 37];
 const dificil = v => v === 'hard';
 export const tamanoDeVariante = (k, v) => (dificil(v) ? TAMANOS_DIFICIL : TAMANOS)[Math.min(k, NIVELES - 1)];
 
