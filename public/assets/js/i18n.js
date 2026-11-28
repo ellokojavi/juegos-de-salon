@@ -739,7 +739,7 @@ export const COMMON = {
         '🎖️ Seu perfil: suas medalhas, seus lugares em cada ranking e suas copas.',
         '🔓 Sem conta: é só tocar no link e jogar.',
         '📲 Como um app: você adiciona à tela inicial e, se quiser, ele avisa quando é a sua vez de jogar.',
-        '🌎 Em espanhol, inglês, português e alemão.',
+        '🌎 Em espanhol, inglês e português.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir

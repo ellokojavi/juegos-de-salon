@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "86a622e2924bad1fba2371b11c46f298827448a8",
+  "checkedUpTo": "72bcfbea790bb080f79fd4f493e3e461a387cebf",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -379,7 +379,11 @@
           "commit": null
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-11-28",
+        "what": "launch() in tools/e2e/cdp.mjs refuses a local SITE that serves another worktree, naming the port (same-tree.mjs, same-tree.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1974"
+      }
     },
     {
       "key": "e2e-gate-signature",
@@ -1171,6 +1175,11 @@
           "date": "2026-11-27",
           "what": "Round 2026-11-27 (#1942): 74 s first pass missed the shinobi-light-fx flag (39c00bed9) and achievements told kept on the account (d90ee2329) in PROFILE.md; sent back; also two pushes (memory fix)",
           "commit": null
+        },
+        {
+          "date": "2026-11-28",
+          "what": "Documentation round 2026-11-28 read only the stat of public/ and missed the Portuguese share line still naming German (D-514); sent back, it found it but #1973 had merged, so the fix landed in the processes PR",
+          "commit": "72bcfbe"
         }
       ],
       "mechanism": {
@@ -1319,6 +1328,11 @@
           "date": "2026-11-26",
           "what": "groups.mjs measure: heaviest group 486 s fails groups.test.mjs (TARGET_S), so the round cannot commit durations.json; third round in a row (471 s 11-23, 484 s 11-24, 486 s 11-26)",
           "commit": null
+        },
+        {
+          "date": "2026-11-28",
+          "what": "groups.mjs measure 2026-11-28: heaviest group 504 s, 2 s under the alarm (498 s on the old durations); ci-health's weekly round should cut browser time or propose TARGET_S",
+          "commit": "72bcfbe"
         }
       ],
       "mechanism": null
@@ -1610,6 +1624,12 @@
       "key": "english-hint-term",
       "what": "usability-glossary.json bans the English 💡 help for the hint; usability-lint.test.mjs pins it",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1943"
+    },
+    {
+      "date": "2026-11-28",
+      "key": "stale-port-server",
+      "what": "launch() in tools/e2e/cdp.mjs refuses a local SITE that serves another worktree, naming the port (same-tree.mjs, same-tree.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1974"
     }
   ],
   "queueDone": [
@@ -1628,12 +1648,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-11-27",
-      "to": "86a622e2924bad1fba2371b11c46f298827448a8"
+      "date": "2026-11-28",
+      "to": "72bcfbea790bb080f79fd4f493e3e461a387cebf"
     },
     "usability": {
-      "date": "2026-11-27",
-      "to": "86a622e2924bad1fba2371b11c46f298827448a8"
+      "date": "2026-11-28",
+      "to": "72bcfbea790bb080f79fd4f493e3e461a387cebf"
     },
     "ideas": {
       "date": "2026-11-26",
@@ -1940,6 +1960,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1943",
       "note": "catch-up of 11-25/11-26 (11-26 #1931 merged unrecorded: its mechanisms recorded here); dispatched docs (#1942, sent back once: missed shinobi-light-fx and achievements-told docs, pattern now 6x) + usability; #1900 queue done (#1934, #1935), issue closed; collected 10 changelog entries; mechanism english-hint-term (glossary); durations remeasured (501 s, green)"
+    },
+    {
+      "date": "2026-11-28",
+      "from": "86a622e2924bad1fba2371b11c46f298827448a8",
+      "to": "72bcfbea790bb080f79fd4f493e3e461a387cebf",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1974",
+      "note": "dispatched docs (#1973 merged; sent back once: read only the stat, then found the PT share line naming German, fixed here; pattern 7x) + usability (tournament green, no fixes; cup chip cut at 390 px noted); collected 28 changelog entries; flags snapshot refreshed (shinobi-light-fx all); mechanism stale-port-server; durations remeasured (504 s, 2 s headroom)"
     }
   ],
   "ownerDecisions": [
