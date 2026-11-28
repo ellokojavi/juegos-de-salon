@@ -8146,6 +8146,19 @@
         "stat": "1 file(s) +16 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 46120392477,
+      "check": "tests",
+      "pr": 1970,
+      "branch": "ccr-f9259f78-i36uzv",
+      "commit": "eae7a1dc560d9c3369eb5ff18b5f542e329f8270",
+      "test": "README up to date",
+      "error": "ERROR · appeared games.copa.files: public/cup/games/zip/lever.js, public/cup/games/zip/style.css\nERROR · appeared modules: public/cup/games/zip/lever.js",
+      "signature": "bc424adc7b",
+      "date": "2026-11-28T07:20:14.249Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
