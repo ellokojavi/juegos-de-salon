@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The crowd comes alive (the owner: «movimiento al público … serpentina»): fans jump and throw their arms up as the car nears, grandstands rise in a wave, and each crowd bursts into confetti and streamers once per pass (`cheer.js`, both views; none with reduced motion).
 - **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
 
 - **2026-11-27** · The car becomes a rally car (the owner: «una especie de auto de rally», before the track gets relief): `car3d.js` and the 2D sprite; the fans, trees, bales, rocks, bushes and grandstands get more detail (`props3d.js`, heights above a `z` for the relief). Positions and solids unchanged.

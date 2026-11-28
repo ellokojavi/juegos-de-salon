@@ -9,6 +9,9 @@
  *
  * `ctx` is { S (the setting), wetK, shadow(m, x, y, r, len), face(x, y) (the heading toward the
  * road), trackId, z (the ground's height there, 0 on a flat circuit) }. Every height below is above z.
+ * With `fans: []` the fans are listed instead of baked (the scene draws them jumping, personMesh), and
+ * with `rows: []` and `newMesh()` each grandstand tier's people get their own meshes (seated and
+ * standing), so the scene can lift them in a wave.
  */
 import { rgb } from './gl3d.js';
 import { CROWD, seeded } from './scenery.js';
@@ -21,7 +24,7 @@ const LOOK = {
 const col = (list, i) => rgb(list[i % list.length]);
 
 /** One person standing at (x, y) facing `h`: legs, hips, a jacket, arms in one of five poses, a head with hair or a cap. */
-function person(m, x, y, z, h, v, k = 1) {
+function person(m, x, y, z, h, v, k = 1, cheering = false) {
   const c = Math.cos(h), s = Math.sin(h);
   // A point `f` m forward (toward the road), `l` m to the person's left, `u` m up
   const P = (f, l, u) => [x + c * f - s * l, y + s * f + c * l, z + u * k];
@@ -47,7 +50,8 @@ function person(m, x, y, z, h, v, k = 1) {
     box(-0.02, 0, 1.8, 0.105, 0.105, 0.03, hair); box(-0.08, 0, 1.7, 0.04, 0.1, 0.09, hair);
   }
   // The arms: 0 down, 1 both up (cheering), 2 one up with a flag, 3 holding a phone up, 4 hands on hips
-  const pose = (v >> 2) % 5;
+  // Cheering (the car near): whoever had their arms down or on their hips throws them up
+  const calm = (v >> 2) % 5, pose = cheering && calm !== 2 && calm !== 3 ? 1 : calm;
   for (const side of [1, -1]) {
     const l = side * 0.27;
     if (pose === 1 || (pose === 2 && side > 0)) {
@@ -68,7 +72,15 @@ function person(m, x, y, z, h, v, k = 1) {
   }
 }
 
-export function addProp(m, it, { S, wetK = 1, shadow, face, z = 0 }) {
+const fanScale = v => 0.94 + ((v * 7) % 5) * 0.03;
+
+/**
+ * A fan of variant `v` (0…31) at the origin facing +x, calm or cheering: the scene draws it each frame
+ * where the fan stands, lifted while it jumps.
+ */
+export function personMesh(m, v, cheering) { person(m, 0, 0, 0, 0, v, fanScale(v), cheering); return m; }
+
+export function addProp(m, it, { S, wetK = 1, shadow, face, z = 0, fans = null }) {
   const { x, y, r, v } = it, tw = v * 0.7 + x * 0.01;
   if (it.kind === 'tree') {
     const [dark, mid, light] = S.trees[v % S.trees.length].map(c => rgb(c, wetK));
@@ -136,11 +148,14 @@ export function addProp(m, it, { S, wetK = 1, shadow, face, z = 0 }) {
     m.cone(x, y, z + r * 1.32, z + r * 1.34, r * 0.25, r * 0.25, 10, c1, tw, true);
   } else if (it.kind === 'fan') {
     shadow(m, x, y, 0.35, 0.3);
-    person(m, x, y, z, face ? face(x, y) : tw, v, 0.94 + ((v * 7) % 5) * 0.03);
+    const h = face ? face(x, y) : tw;
+    // With a list to fill, the fan is drawn on its own each frame (it jumps: cheer.js), else baked in
+    if (fans) fans.push({ x, y, z: z + (m.lift || 0), h, v, ph: it.ph || 0 });
+    else person(m, x, y, z, h, v, fanScale(v));
   }
 }
 
-export function addStand(m, st, { trackId, z = 0 }) {
+export function addStand(m, st, { trackId, z = 0, rows = null, newMesh = null }) {
   const c = Math.cos(st.h), s = Math.sin(st.h), out = st.side;   // out 1: the stand is on the road's left
   const toRoad = st.h - out * Math.PI / 2;
   // Three tiers rising away from the road, each with a seat rail and its fans seated on it
@@ -150,20 +165,28 @@ export function addStand(m, st, { trackId, z = 0 }) {
     const so = o + out * 0.25;
     m.box(st.x - s * so, st.y + c * so, z + 1.08 + t * 1.2, st.len / 2 - 0.1, 0.12, 0.08, st.h, rgb(LOOK.seat));
     const rs = seeded(`${trackId}:stand${st.v}:${t}`);
+    // With a list to fill, each tier's people are their own two meshes (seated, and on their feet
+    // cheering) that the scene lifts in a wave as the car passes; else they are baked in
+    const row = rows && newMesh ? { calm: newMesh(), up: newMesh(), t, x: st.x, y: st.y } : null;
+    if (row) { row.calm.lift = row.up.lift = m.lift; rows.push(row); }   // the ground's height, as the stand's
     for (let a = -st.len / 2 + 0.8; a < st.len / 2 - 0.5; a += 0.9) {
       if (rs() < 0.12) continue;   // a gap here and there
       const v = Math.floor(rs() * 32), fo = o - out * 0.05;
       const fx = st.x + c * a - s * fo, fy = st.y + s * a + c * fo, zz = z + 1 + t * 1.2;
       const shirt = col(CROWD.shirts, v), skin = col(CROWD.skin, v >> 3);
       const P = (f, l, u) => { const hc = Math.cos(toRoad), hs = Math.sin(toRoad); return [fx + hc * f - hs * l, fy + hs * f + hc * l, zz + u]; };
-      const box = (f, l, u, hf, hl, hu, cl) => { const [bx, by, bz] = P(f, l, u); m.box(bx, by, bz, hf, hl, hu, toRoad, cl); };
-      box(0.15, 0, 0.12, 0.2, 0.16, 0.07, col(LOOK.jeans, v));          // thighs, sitting
-      box(0, 0, 0.42, 0.11, 0.19, 0.25, shirt);                         // the body
-      box(0, 0, 0.8, 0.09, 0.09, 0.11, skin);                           // the head
-      if (v % 3 === 0) box(-0.01, 0, 0.93, 0.1, 0.1, 0.03, col(CROWD.caps, v));
-      else box(-0.02, 0, 0.91, 0.095, 0.095, 0.025, col(CROWD.hair, v));
-      if (v % 4 === 0) for (const l of [-0.24, 0.24]) box(0, l, 0.85, 0.05, 0.05, 0.22, shirt);   // cheering
-      else for (const l of [-0.24, 0.24]) box(0.05, l, 0.38, 0.05, 0.05, 0.2, shirt);
+      const seated = (pm, up) => {
+        const box = (f, l, u, hf, hl, hu, cl) => { const [bx, by, bz] = P(f, l, u); pm.box(bx, by, bz, hf, hl, hu, toRoad, cl); };
+        const r = up ? 0.12 : 0;   // on their feet: the body rises off the seat
+        box(0.15, 0, 0.12 + r * 0.6, 0.2 - r, 0.16, 0.07 + r, col(LOOK.jeans, v));   // thighs (or legs, standing)
+        box(0, 0, 0.42 + r, 0.11, 0.19, 0.25, shirt);                                 // the body
+        box(0, 0, 0.8 + r, 0.09, 0.09, 0.11, skin);                                   // the head
+        if (v % 3 === 0) box(-0.01, 0, 0.93 + r, 0.1, 0.1, 0.03, col(CROWD.caps, v));
+        else box(-0.02, 0, 0.91 + r, 0.095, 0.095, 0.025, col(CROWD.hair, v));
+        if (up || v % 4 === 0) for (const l of [-0.24, 0.24]) box(0, l, 0.85 + r, 0.05, 0.05, 0.22, shirt);   // arms up
+        else for (const l of [-0.24, 0.24]) box(0.05, l, 0.38, 0.05, 0.05, 0.2, shirt);
+      };
+      if (row) { seated(row.calm, false); seated(row.up, true); } else seated(m, false);
     }
   }
   // The roof on four posts, a rail along the front and a banner hanging from it
