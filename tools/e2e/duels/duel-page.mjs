@@ -38,6 +38,11 @@ try {
     await b.resize(W, 844); await sleep(300);
     ok(await ev(`document.documentElement.scrollWidth <= ${W}`), `${W}: the list, no sideways scroll`);
     await b.shot(`list-${W}`);
+    // «Your rivals»: each game's bar ends in bare ⚔️ swords, no disc (the owner, 2026-11-28), still a 44 px target
+    await ev(`document.getElementById('dl-rivalidades').scrollIntoView(); 1`); await sleep(200);
+    ok(await ev(`[...document.querySelectorAll('.dl-pj-ir')].every(x=>{const r=x.getBoundingClientRect(),c=getComputedStyle(x);return r.width>=44&&r.height>=44&&c.backgroundImage==='none'&&c.backgroundColor==='rgba(0, 0, 0, 0)'&&c.borderTopWidth==='0px'})`), `${W}: the ⚔️ rematch is bare and 44 px`);
+    await b.shot(`rivals-${W}`);
+    await ev(`scrollTo(0,0); 1`);
   }
   await b.resize(390, 844);
 
