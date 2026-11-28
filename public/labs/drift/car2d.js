@@ -3,7 +3,9 @@
  * definición … al vehículo mismo»). What never changes goes in one sprite: the body with its volume
  * (lit along its spine, darker at its flanks), the fenders over the wheels, the bonnet and its vents,
  * the windscreen with its reflection, the roof with its scoop, the rear window, the mirrors, the
- * spoiler, the stripes and the panel lines. The scene draws on top, every frame, what changes: the
+ * spoiler, the stripes and the panel lines. A rally car (the owner, 2026-11-27: «una especie de auto de
+ * rally»): black plastic arches flared over the wheels, a pod of four spotlights on the nose, red tow
+ * hooks, a roof vent and an aerial, a big wing with white end plates, the same as car3d.js. The scene draws on top, every frame, what changes: the
  * wheels (under the body), the lights, the dents, the flame.
  *
  *   carSprite(ppm) → { img, hx, hy }   the sprite and the half sizes it covers, m (car frame: x forward)
@@ -14,6 +16,7 @@ export const CAR = {
   stripe: '#ffffff', stripeEdge: 'rgba(0, 0, 0, 0.22)', glass: '#1d0a16', glassLight: '#5a3550',
   reflect: 'rgba(255, 255, 255, 0.38)', seam: 'rgba(60, 0, 25, 0.45)', outline: 'rgba(40, 0, 18, 0.85)',
   vent: '#2a0a1c', spoiler: '#c81a66', mirror: '#d81f70',
+  plastic: '#1c1c22', spot: '#fff3b0', spotRim: '#2a2a30', hook: '#e8302a', plate: '#ffffff',
 };
 const L = 4.2, W = 1.8;
 const PAD = 0.35;
@@ -49,9 +52,11 @@ export function carSprite(ppm) {
   // Row 0 is the car's −y: the scene draws the sprite from (−hx, −hy) in the car's frame, so it lands right
   x.translate(hx * ppm, hy * ppm); x.scale(ppm, ppm);
 
-  // The fenders: a bulge over each wheel, a shade darker than the body
-  x.fillStyle = CAR.body;
-  for (const fx of [L * 0.3, -L * 0.3]) for (const s of [-1, 1]) { rrect(x, fx - 0.62, s * (W / 2 - 0.02) - 0.2, 1.24, 0.4, 0.2); x.fill(); }
+  // The arches: black plastic flared over each wheel, wider than the body
+  x.fillStyle = CAR.plastic;
+  for (const fx of [L * 0.3, -L * 0.3]) for (const s of [-1, 1]) { rrect(x, fx - 0.6, s * (W / 2 + 0.02) - 0.2, 1.2, 0.4, 0.18); x.fill(); }
+  // The red tow hooks, one at the nose, one at the tail
+  x.fillStyle = CAR.hook; x.fillRect(L / 2 - 0.02, 0.38, 0.14, 0.09); x.fillRect(-L / 2 - 0.12, -0.47, 0.14, 0.09);
 
   // The body, lit along its spine and dark at its flanks: the volume
   const side = x.createLinearGradient(0, -W / 2, 0, W / 2);
@@ -115,12 +120,24 @@ export function carSprite(ppm) {
     x.fillStyle = CAR.glass; x.beginPath(); x.ellipse(L * 0.11, s * (W / 2 + 0.06), 0.04, 0.09, 0, 0, Math.PI * 2); x.fill();
   }
 
-  // The spoiler across the tail, on two struts, with its end plates
-  x.fillStyle = CAR.deep; for (const o of [-0.5, 0.5]) x.fillRect(-L / 2 + 0.2, o - 0.05, 0.25, 0.1);
-  const wing = x.createLinearGradient(-L / 2 - 0.05, 0, -L / 2 + 0.3, 0);
+  // The big rally wing across the tail, on two tall struts, with white end plates
+  x.fillStyle = CAR.plastic; for (const o of [-0.45, 0.45]) x.fillRect(-L / 2 + 0.15, o - 0.05, 0.3, 0.1);
+  const wing = x.createLinearGradient(-L / 2 - 0.12, 0, -L / 2 + 0.32, 0);
   wing.addColorStop(0, CAR.deep); wing.addColorStop(1, CAR.spoiler);
-  x.fillStyle = wing; rrect(x, -L / 2 - 0.08, -W / 2 + 0.02, 0.36, W - 0.04, 0.06); x.fill();
-  x.fillStyle = CAR.deep; for (const s of [-1, 1]) x.fillRect(-L / 2 - 0.1, s * (W / 2 - 0.02) - (s > 0 ? 0.08 : 0), 0.4, 0.08);
+  x.fillStyle = wing; rrect(x, -L / 2 - 0.12, -W / 2, 0.44, W, 0.06); x.fill();
+  x.fillStyle = CAR.stripe; for (const o of [-0.2, 0.2]) x.fillRect(-L / 2 - 0.1, o - 0.08, 0.4, 0.16);
+  x.fillStyle = CAR.plate; for (const s of [-1, 1]) x.fillRect(-L / 2 - 0.14, s * (W / 2 + 0.02) - 0.05, 0.5, 0.1);
+
+  // The roof's aerial, at the back of the roof
+  x.fillStyle = CAR.plastic; x.beginPath(); x.arc(-L * 0.22, 0.42, 0.05, 0, Math.PI * 2); x.fill();
+
+  // The pod of four spotlights over the nose: a black bar, four lamps with dark rims and a glint
+  x.fillStyle = CAR.plastic; rrect(x, L / 2 - 0.32, -0.66, 0.16, 1.32, 0.05); x.fill();
+  for (const o of [-0.45, -0.15, 0.15, 0.45]) {
+    x.fillStyle = CAR.spotRim; x.beginPath(); x.arc(L / 2 - 0.2, o, 0.14, 0, Math.PI * 2); x.fill();
+    x.fillStyle = CAR.spot; x.beginPath(); x.arc(L / 2 - 0.18, o, 0.1, 0, Math.PI * 2); x.fill();
+    x.fillStyle = 'rgba(255, 255, 255, 0.85)'; x.beginPath(); x.arc(L / 2 - 0.15, o - 0.03, 0.035, 0, Math.PI * 2); x.fill();
+  }
 
   // A crisp outline around the body for definition at any zoom
   bodyPath(x); x.strokeStyle = CAR.outline; x.lineWidth = 0.045; x.stroke();
