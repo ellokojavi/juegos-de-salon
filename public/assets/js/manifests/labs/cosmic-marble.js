@@ -1,0 +1,61 @@
+// Generated from game.json by node tools/generators/manifests.mjs: do not edit by hand.
+export default {
+  "id": "cosmic-marble",
+  "path": "labs/cosmic-marble/",
+  "emoji": "🔮",
+  "name": {
+    "es": "Canica Cósmica",
+    "en": "Cosmic Marble",
+    "pt": "Bolinha Cósmica"
+  },
+  "tagline": {
+    "es": "Inclina el teléfono y lleva la canica por cinco mundos hasta el hoyo.",
+    "en": "Tilt the phone and roll the marble through five worlds to the hole.",
+    "pt": "Incline o celular e leve a bolinha por cinco mundos até o buraco."
+  },
+  "keywords": {
+    "es": [
+      "canica",
+      "inclinar",
+      "laberinto",
+      "habilidad",
+      "mundos"
+    ],
+    "en": [
+      "marble",
+      "tilt",
+      "maze",
+      "skill",
+      "worlds"
+    ],
+    "pt": [
+      "bolinha",
+      "inclinar",
+      "labirinto",
+      "habilidade",
+      "mundos"
+    ]
+  },
+  "players": {
+    "min": 1,
+    "max": 1
+  },
+  "duration": "3–6",
+  "tipos": [
+    "skill"
+  ],
+  "labs": true,
+  "available": false,
+  "modes": [
+    "solo"
+  ],
+  "ai": false,
+  "memory": "juegos-de-salon:cosmic-marble:session",
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "firebasePaths": [],
+  "canonExceptions": []
+};

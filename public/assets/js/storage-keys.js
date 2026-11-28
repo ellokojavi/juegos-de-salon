@@ -16,7 +16,7 @@ export const PROGRESS = [
   // The player: bests, friends, the upload queue
   'jugador:*',
   // Games played, bests, records, streaks and runs on this phone
-  'jugados', 'partidas', 'diario:*', 'aletazo-best', 'memory-best', 'stack-best', 'sudoku:best', '*:record-solo', '*:record-relampago',
+  'jugados', 'partidas', 'diario:*', 'aletazo-best', 'memory-best', 'stack-best', 'sudoku:best', 'cosmic-marble:best', '*:record-solo', '*:record-relampago',
   '*:days', 'artifacts', 'artilugio-stages', 'play-hours', 'play-marks', 'play-run',
   // Badges, achievements and rankings seen, favourites, duels
   'favoritos',

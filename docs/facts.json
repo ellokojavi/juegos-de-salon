@@ -1291,6 +1291,7 @@
     "public/assets/js/manifests/generala.js",
     "public/assets/js/manifests/hangman.js",
     "public/assets/js/manifests/labs/blackjack.js",
+    "public/assets/js/manifests/labs/cosmic-marble.js",
     "public/assets/js/manifests/labs/cryptic.js",
     "public/assets/js/manifests/labs/drift.js",
     "public/assets/js/manifests/labs/fourth-king.js",
@@ -1527,6 +1528,10 @@
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
+    "public/labs/cosmic-marble/course.js",
+    "public/labs/cosmic-marble/engine.js",
+    "public/labs/cosmic-marble/game.js",
+    "public/labs/cosmic-marble/rules.js",
     "public/labs/cryptic/clues.js",
     "public/labs/cryptic/engine.js",
     "public/labs/cryptic/flapboard.js",
@@ -1770,6 +1775,7 @@
     "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
+    "public/labs/cosmic-marble/engine.test.mjs",
     "public/labs/cryptic/engine.test.mjs",
     "public/labs/drift/engine.test.mjs",
     "public/labs/drift/minimap.test.mjs",
@@ -1947,6 +1953,8 @@
     "code/lab.mjs",
     "conformance.mjs",
     "contact-sheet.mjs",
+    "cosmic-marble/game.mjs",
+    "cosmic-marble/languages.mjs",
     "cover-gaps.mjs",
     "croc/page.mjs",
     "cryptic/game.mjs",
@@ -2276,6 +2284,14 @@
     {
       "path": "docs/games/connections.md",
       "title": "🔗 Connections (Conexiones)"
+    },
+    {
+      "path": "docs/games/cosmic-marble.md",
+      "title": "🔮 Cosmic Marble (lab, in Juegos en prueba)"
+    },
+    {
+      "path": "docs/games/cosmic-marble/generation-rules.md",
+      "title": "Bolita: how courses are generated"
     },
     {
       "path": "docs/games/croc.md",

@@ -54,6 +54,8 @@ const START = {
   'labs/drift': [`document.getElementById('btn-play').click()`],
   // The yellow button opens today's board, already saved
   'labs/twins': [`document.getElementById('btn-play').click()`],
+  // «Jugar» opens the first stage, saved as it loads
+  'labs/cosmic-marble': [`document.getElementById('btn-play').click()`, `1`],
 };
 
 const b = await launch({ port: 0, dir: `${OUT}/p`, out: OUT });
