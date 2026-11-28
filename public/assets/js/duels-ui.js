@@ -380,14 +380,21 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
    * the sheet eases from its old height to the new one instead of jumping, and a new step fades in
    * (the owner, 2026-11-24: smoother size changes). With reduced motion it just redraws.
    */
-  let vista = null, alto = null;
+  let vista = null, alto = null, dondeAntes = null;
   function pintar() {
     // The first paint is not eased: the sheet opens at its full size (the owner, 2026-11-28: it grew as it opened)
     const suave = vista !== null && !matchMedia('(prefers-reduced-motion: reduce)').matches && panel.isConnected;
     const h0 = suave ? panel.getBoundingClientRect().height : 0;
     cuerpo.removeAttribute('aria-busy');
     titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
+    // Redrawing keeps where the player was: each games carousel and the sheet itself stay scrolled as they were
+    // (the owner, 2026-11-28: tapping a game sent the carousel back to its start)
+    const donde = `${modo}${paso}${editando}`, mismo = donde === dondeAntes;
+    const antes = mismo ? [...cuerpo.querySelectorAll('.dl-juegos')].map(x => x.scrollLeft) : [], arriba = panel.scrollTop;
+    dondeAntes = donde;
     cuerpo.replaceChildren(...vistas[modo]().filter(Boolean));
+    cuerpo.querySelectorAll('.dl-juegos').forEach((x, k) => { if (antes[k]) x.scrollLeft = antes[k]; });
+    panel.scrollTop = arriba;
     pararRueda();
     if (rodar) { rodar = false; rodarRondas(); }
     const clave = `${modo}${paso}`, nueva = vista !== null && clave !== vista;
