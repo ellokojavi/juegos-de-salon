@@ -4,7 +4,7 @@
  * north up: what is still to drive is a faint line, what is driven is yellow, the finish a white tick
  * and the car a dot. The same in 2D and 3D; it only reads the run, it never changes it.
  *
- *   minimap(canvas) → { draw(g) }   draws the run `g` (its track, its progress, its gate)
+ *   minimap(canvas) → { draw(g, ghost) }   draws the run `g` (its track, its progress, its gate) and the ghost's pose, if any
  *   doneShare(g) → 0…1               the share of the lap behind the car
  */
 const SIZE = 76, PAD = 7, STEP = 3;
@@ -23,7 +23,7 @@ export function minimap(canvas) {
   const x = canvas.getContext('2d');
   let track = null, pts = [], dpr = 1;
   const css = name => getComputedStyle(canvas).getPropertyValue(name).trim();
-  const ink = { done: css('--yellow') || '#ffd23f', left: 'rgba(255, 255, 255, 0.35)', car: '#ff2e88', ring: '#ffffff' };
+  const ink = { done: css('--yellow') || '#ffd23f', left: 'rgba(255, 255, 255, 0.35)', car: '#ff2e88', ring: '#ffffff', ghost: 'rgba(255, 255, 255, 0.75)' };
 
   /** Fits the main road into the square, keeping its shape; world y is up, the screen's down. */
   function fit(t) {
@@ -46,7 +46,7 @@ export function minimap(canvas) {
   }
 
   return {
-    draw(g) {
+    draw(g, ghost = null) {
       const want = Math.min(3, window.devicePixelRatio || 1);
       if (canvas.width !== Math.round(SIZE * want)) { dpr = want; canvas.width = canvas.height = Math.round(SIZE * dpr); }
       if (g.track !== track) fit(g.track);
@@ -61,6 +61,8 @@ export function minimap(canvas) {
       const a = pts[0], b = pts[Math.min(2, pts.length - 1)], h = Math.atan2(b.y - a.y, b.x - a.x);
       x.strokeStyle = ink.ring; x.lineWidth = 2; x.lineCap = 'butt';
       x.beginPath(); x.moveTo(a.x - Math.sin(h) * 5, a.y + Math.cos(h) * 5); x.lineTo(a.x + Math.sin(h) * 5, a.y - Math.cos(h) * 5); x.stroke();
+      // The ghost (ghost.js): a pale dot, under the car's
+      if (ghost) { const q = fit.at(ghost); x.fillStyle = ink.ghost; x.beginPath(); x.arc(q.x, q.y, 3, 0, Math.PI * 2); x.fill(); }
       // The car, where it really is (off the road or on a fork too)
       const c = fit.at({ x: g.car.x, y: g.car.y });
       x.fillStyle = ink.ring; x.beginPath(); x.arc(c.x, c.y, 4.5, 0, Math.PI * 2); x.fill();

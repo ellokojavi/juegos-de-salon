@@ -33,6 +33,7 @@ import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
 import { minimap } from './minimap.js';
+import { recorder, load as loadGhost, keep as keepGhost, better, poseAt, gapAt, lapProgress } from './ghost.js';
 import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
@@ -45,6 +46,7 @@ const lang = getLang();
 const L = LOCALES[lang] || LOCALES.es;
 const T = L.ui;
 const C = COMMON[lang] || COMMON.es;
+const GAP = new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'always' });
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{' + k + '}'));
 const TEST = new URLSearchParams(location.search).has('test');
 const view = loadTuning();
@@ -54,6 +56,8 @@ const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.st
 /** The run on screen: the engine's state and the loop's own. */
 const S = { g: null, track: null, acc: 0, last: 0, live: false, paused: false, auto: false, frameMs: 0, raf: 0, tuned: false };
 let sc = null, input = null;
+/** The ghost: this run's recorder (none for a resumed run, which lost its start) and the record it races. */
+const G = { rec: recorder(), ghost: null, recording: false, newRecord: false };
 
 function showScreen(id) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
@@ -83,6 +87,9 @@ function begin(g, track) {
   S.track = TRACKS[track.id] ? track : stage();
   S.g = g;
   S.acc = 0; S.live = false; S.paused = false; S.tuned = isTuned(view);
+  // The ghost of this circuit's record on this phone; a run is recorded only from its start
+  G.ghost = TEST ? null : loadGhost(g.track.id, g.track.length);
+  G.rec.reset(); G.recording = !g.t; G.newRecord = false;
   showScreen('screen-play');
   sc = sceneFor(view.scene);
   sc.resize();
@@ -199,10 +206,12 @@ function frame(now) {
   const t0 = performance.now();
   if (S.live && !S.paused) {
     S.acc = E.run(g, S.auto ? E.autopilot : () => input.read(), dt, S.acc);
+    if (G.recording) G.rec.add(g);
     if (g.events.length) g.events.splice(0).forEach(play);
   }
-  sc.draw(g, S.live ? S.acc / E.STEP : 0, view);
-  paintHud();
+  const ghost = G.ghost && g.mode !== 'done' ? poseAt(G.ghost, g.t) : null;
+  sc.draw(g, S.live ? S.acc / E.STEP : 0, view, ghost);
+  paintHud(ghost);
   S.frameMs = S.frameMs * 0.9 + (performance.now() - t0) * 0.1;
   S.raf = requestAnimationFrame(frame);
 }
@@ -233,15 +242,22 @@ function crashed() {
 }
 
 let map = null;
-function paintHud() {
+function paintHud(ghost = null) {
   const g = S.g;
-  (map ||= minimap($('#map'))).draw(g);
+  (map ||= minimap($('#map'))).draw(g, ghost);
   $('#clock').textContent = E.clock(g.t);
   const pen = $('#penalty');
   pen.hidden = !g.penalty;
   if (g.penalty) pen.textContent = fmt(T.penalty, { s: Math.round(g.penalty / 1000) });
   const total = g.track.gates.length;
   $('#gate').textContent = fmt(T.gateOf, { n: Math.min(g.gate + 1, total), total });
+  // The gap to the ghost at this point of the lap: green ahead, plain behind
+  const gap = G.ghost && g.mode === 'play' ? gapAt(G.ghost, lapProgress(g), g.t) : null, gl = $('#ghost-gap');
+  gl.hidden = gap === null;
+  if (gap !== null) {
+    const d = Math.round(gap * 10) / 10 || 0;   // the tenth shown, and its colour, agree (no green «+0,0»)
+    gl.textContent = fmt(T.ghostGap, { d: GAP.format(d) }); gl.classList.toggle('dr-ghost--ahead', d < 0);
+  }
   $('#btn-reset').classList.toggle('dr-offer', E.needsReset(g));
   const lives = $('#lives');
   if (lives.dataset.n !== String(g.lives)) {
@@ -278,6 +294,9 @@ function wreck() {
 function finish() {
   const g = S.g;
   const time = E.clock(E.total(g));
+  // A clean run faster than the record becomes the ghost (not the autopilot's, nor the test stage's)
+  const run = G.recording && !S.auto && !TEST ? G.rec.ghost(g) : null;
+  if (better(run, G.ghost)) G.newRecord = keepGhost(run);
   save(true);
   trackFinish({ ganador: null, detalle: time });
   SFX.win(); vibrate([20, 40, 60]);
@@ -294,6 +313,10 @@ function renderResult() {
   $('#result-time').hidden = !!g.wrecked;
   $('#result-detail').textContent = g.wrecked ? fmt(T.wreckedDetail, at)
     : g.penalty ? fmt(T.withPenalty, { clock: E.clock(g.t), s: Math.round(g.penalty / 1000) }) : T.clean;
+  // The record: a new one, or the one still standing
+  const rec = $('#result-ghost');
+  rec.hidden = g.wrecked || (!G.newRecord && !G.ghost);
+  rec.textContent = G.newRecord ? T.ghostRecord : G.ghost ? fmt(T.ghostBest, { clock: E.clock(G.ghost.time) }) : '';
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); startRun(); } }, T.again),
     botonCompartir({

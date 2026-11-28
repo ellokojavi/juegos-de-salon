@@ -297,7 +297,7 @@ export function escena(canvas) {
     return sprites.get(k);
   }
 
-  function draw(g, alpha = 0, view = {}) {
+  function draw(g, alpha = 0, view = {}, ghost = null) {
     if (!W || !H) return;
     const mode = view.mode === 'fixed' ? 'fixed' : 'follow';
     const ahead = view.ahead || 40;
@@ -439,6 +439,12 @@ export function escena(canvas) {
       } else ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
+    // The ghost (ghost.js) under the real car: the record's body, see-through, where it was at this time
+    if (ghost && carArt) {
+      ctx.save(); ctx.globalAlpha = 0.42; ctx.translate(ghost.x, ghost.y); ctx.rotate(ghost.h);
+      ctx.drawImage(carArt.body.img, -carArt.body.hx, -carArt.body.hy, 2 * carArt.body.hx, 2 * carArt.body.hy);
+      ctx.restore();
+    }
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
     confetti();
     for (const p of puffs) {

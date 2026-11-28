@@ -5,7 +5,7 @@
 // scroll. It asserts on __drift.g, never on pixels or frame rate (CI's Chrome draws in software).
 // Touch through the real controls: wheel and pedal at 375 (accelerate, steer, brake while turning),
 // one finger at 320. Then: the page hidden pauses, a reload offers to continue, a crash costs a life and
-// the last one wrecks the car.
+// the last one wrecks the car. Last, on this week's circuit: a kept record races the run as a ghost.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { doubleTap } from '../double-tap.mjs';
@@ -144,6 +144,31 @@ for (const width of [375, 320]) {
     ok(await b.evaluate("window.__drift.tuning.accel === 10 && document.getElementById('hint').dataset.scheme === 'wheel'"), `${width}: 2D keeps its own values and its wheel and pedal`);
     ok(!b.errors.length, `${width}: 3D: no console errors` + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
   }
+  // The ghost (ghost.js), on this week's circuit (the test stage never has one): a record kept on the
+  // phone races the run, the HUD shows the gap to it, the result shows the record
+  await b.go(SITE + '/labs/drift/?x');
+  const made = await b.evaluate(`(async () => {
+    localStorage.clear(); sessionStorage.clear();
+    const E = await import('/labs/drift/engine.js'), T = await import('/labs/drift/tracks.js'), Gh = await import('/labs/drift/ghost.js');
+    const track = E.buildTrack(T.TRACKS[T.circuitFor(Date.now())]), g = E.newGame({ track, mode: 'play' }), rec = Gh.recorder();
+    for (let i = 0; i < 120 * 400 && g.mode !== 'done'; i++) { E.step(g, E.autopilot(g)); rec.add(g); }
+    const gh = rec.ghost(g);
+    return !!gh && Gh.keep(gh) && gh.time;
+  })()`);
+  ok(made > 0, `${width}: ghost: an autopilot lap is kept as the circuit's record`);
+  await b.go(SITE + '/labs/drift/?x');
+  await b.evaluate("document.getElementById('btn-play').click(); 1");
+  ok(await b.until("document.querySelector('#screen-play.active') && window.__drift.S.live", 3000), `${width}: ghost: the stage opens`);
+  await b.evaluate('window.__drift.autopilot(true); window.__drift.g.mode = "play"; 1');
+  ok(await b.until("!document.getElementById('ghost-gap').hidden", 8000), `${width}: ghost: the HUD shows the gap to it`);
+  ok(/^👻 [+−-]\d+[.,]\d s$/.test(await b.evaluate("document.getElementById('ghost-gap').textContent")), `${width}: ghost: the gap reads «👻 ±n,n s»`);
+  await b.shot(`ghost-${width}`);
+  await b.evaluate('window.__drift.g.track.solids = []; window.__drift.drive(); 1');
+  ok(await b.until("document.querySelector('#screen-result.active')", 8000), `${width}: ghost: the run reaches the result`);
+  ok(/^👻 Tu récord: \d:\d\d\.\d{3}\.$/.test(await b.evaluate("document.getElementById('result-ghost').hidden ? '' : document.getElementById('result-ghost').textContent")), `${width}: ghost: the result shows the standing record (the autopilot's run is never one)`);
+  ok(await b.evaluate('document.documentElement.scrollWidth <= innerWidth'), `${width}: ghost: no sideways scroll`);
+  await b.shot(`result-ghost-${width}`);
+  ok(!b.errors.length, `${width}: ghost: no console errors` + (b.errors.length ? ': ' + b.errors[0].slice(0, 160) : ''));
   b.close();
 }
 process.exit(failures ? 1 : 0);

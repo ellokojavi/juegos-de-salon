@@ -333,7 +333,7 @@ export function escena3d(canvas) {
     return world;
   }
 
-  function draw(g, alpha = 0, viewOpts = {}) {
+  function draw(g, alpha = 0, viewOpts = {}, ghost = null) {
     if (!W || !H || R.lost) return;
     const now = globalThis.performance?.now() ?? 0;
     const dt = Math.min(0.1, lastNow ? (now - lastNow) / 1000 : 0);
@@ -514,6 +514,19 @@ export function escena3d(canvas) {
       mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, front ? steerA : 0, pose.spin);
       mat4.multiply(MW, M, MW);
       R.draw(front ? carBufs.wheelFront : carBufs.wheelBack, { m: MW, shine: 0.3 });
+    }
+
+    // The ghost (ghost.js): the record's car, see-through and pale, where it was at this time; drawn
+    // after everything solid without writing depth, so the road and the real car show through it
+    if (ghost && Math.hypot(ghost.x - x, ghost.y - y) > 0.5) {
+      const GT = [1.35, 1.35, 1.55, 0.32];
+      mat4.pose(MF, ghost.x, ghost.y, ghost.z, ghost.h, ghost.pitch);
+      for (const part of ['body', 'trim', 'glass']) R.draw(carBufs[part], { m: MF, tint: GT, depth: false });
+      for (const [fx, front] of [[CAR_L * 0.31, true], [-CAR_L * 0.3, false]]) for (const side of [-1, 1]) {
+        mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, 0, 0);
+        mat4.multiply(MW, MF, MW);
+        R.draw(front ? carBufs.wheelFront : carBufs.wheelBack, { m: MW, tint: GT, depth: false });
+      }
     }
 
     // The particles last: camera-facing squares, with the boost's flame behind the car

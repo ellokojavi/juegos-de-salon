@@ -284,6 +284,16 @@ by an algorithm that stays within what the car can do (the same line, a speed pr
 the grip and braking limits). A switch on the cover picks «Mi récord» or no ghost instead. Uploading
 ghosts is new stored data: Firebase rules and the privacy page (gated on the launch, D-617), a 🔴 PR.
 
+**Built so far (2026-11-27, `ghost.js`)**: the own record on this phone. A run recorded from its start
+(not a resumed one, nor the autopilot's or the test stage's) that finishes faster than the circuit's
+record becomes its ghost. Each pose carries x, y, heading, height and the lap progress every 100 ms of
+the race clock, rounded to decimetres (about 10 KB a lap). A ghost is kept with its circuit's length,
+so a circuit drawn again drops it. In both views it is drawn see-through, as a pale dot on the
+minimap, and as the gap on the clock («👻 +1,2 s», green while ahead), with «¡Nuevo récord!» or the
+standing record on the result screen. `poseAt` and `gapAt` take a pace (1.01: 1 % faster), ready for
+the leader's ghost. Still to come with the ranking: uploading runs, the next one up as the default,
+the leader's retimed ghost, and the cover's switch («Mi récord» or no ghost).
+
 The player's best run on this stage, drawn as a faint car. Cheap and the strongest reason to play
 again.
 

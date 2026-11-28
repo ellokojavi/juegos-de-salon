@@ -18,6 +18,8 @@ export const PROGRESS = [
   // Games played, bests, records, streaks and runs on this phone
   'jugados', 'partidas', 'diario:*', 'aletazo-best', 'memory-best', 'stack-best', 'sudoku:best', 'cosmic-marble:best', '*:record-solo', '*:record-relampago',
   '*:days', 'artifacts', 'artilugio-stages', 'play-hours', 'play-marks', 'play-run',
+  // Derrape's ghosts: the record run on each circuit (ghost.js)
+  'drift:ghost:*',
   // Badges, achievements and rankings seen, favourites, duels
   'favoritos',
   // Names typed in, and the games in progress to rejoin
