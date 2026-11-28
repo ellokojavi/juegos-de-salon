@@ -18,6 +18,14 @@ One line through every square, passing the numbers in order.
 The texts the player reads (how to play, scoring, tiebreak) are its entry in `JUEGOS_COPA` of
 `public/cup/rules.js`, in the three languages (C-3).
 
+## Hard mode (lab, flag `zip-hard`)
+
+On its own page only, while the flag is on (`#seccion-zip-hard` in /labs/): a 🟢 Normal / 🔴 Hard
+picker (`?mode=hard`), its own ranking table `zip_hard`. Walls sit on edges the solution does not
+use, so the line cannot cross them; boards go 5×5 to 7×7 and the share of free edges walled grows
+level by level (`MUROS_DIFICIL` in the engine), so each board keeps fewer numbers. La Copa never
+offers it (no zip in `GAME_VARIANTS`).
+
 ## Modes
 
 Solo only: a day of La Copa, or its own page `/zip/` (no cup; with a player, it goes to the rankings,

@@ -48,7 +48,7 @@ export function ejemplo({ el, T }) {
 
 export function montar(raiz, ctx) {
   const { T, fmt, el, SFX, vibrate } = ctx;
-  const { codigo, dia } = ctx.p;
+  const { codigo, dia, variante } = ctx.p;
   const J = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? { ...motor.partidaNueva(), ...ctx.jugadas } : motor.partidaNueva();
   const tiempo = ctx.p.tiempo || motor.TIEMPO_MS;
   let desde = document.hidden ? null : Date.now();
@@ -94,7 +94,7 @@ export function montar(raiz, ctx) {
   let celdas = [], linea = null;
 
   const armar = (k = J.hechos) => {
-    p = motor.nivel(codigo, dia, k);
+    p = motor.nivel(codigo, dia, k, variante);
     const { n } = p;
     grilla.innerHTML = '';
     grilla.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
@@ -103,6 +103,14 @@ export function montar(raiz, ctx) {
     svg.setAttribute('class', 'zip-trazo');
     linea = document.createElementNS(NS, 'polyline');
     svg.append(linea);
+    // Hard mode's walls (lab: #seccion-zip-hard): a thick bar on the edge the line cannot cross
+    for (const [a, b] of p.muros || []) {
+      const r = Math.floor(a / n), c = a % n, m = document.createElementNS(NS, 'line');
+      const [x1, y1, x2, y2] = b === a + 1 ? [c + 1, r, c + 1, r + 1] : [c, r + 1, c + 1, r + 1];
+      m.setAttribute('x1', x1); m.setAttribute('y1', y1); m.setAttribute('x2', x2); m.setAttribute('y2', y2);
+      m.setAttribute('class', 'zip-muro');
+      svg.append(m);
+    }
     celdas = [];
     for (let i = 0; i < n * n; i++) {
       const num = p.numeros[i];

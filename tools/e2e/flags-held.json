@@ -49,5 +49,8 @@
   },
   "shinobi-light-fx": {
     "state": "off"
+  },
+  "zip-hard": {
+    "state": "off"
   }
 }
