@@ -1,5 +1,89 @@
 # Changelog
 
+## 1.54.12 — 2026-11-28
+- **Labs: Derrape's car looks like a real rally car**: a rounded body with the wheel arches cut in and wide flares, real windows, headlights, grille, tail lights and exhaust, mirrors and a roof wing, the number 17 on both doors, and tyres on white five-spoke rims with brakes behind them. The view from above matches it.
+
+## 1.54.11 — 2026-11-27
+- **Labs: Derrape rewards the other road, and races a pace driver**: each fork's other road carries a gold «−10» that turns above the road and bursts when caught, taking 10 seconds off your time. A «−5» floats in the air past each ramp, only reached by flying it fast. Until you set a record on a circuit, your ghost is a simulated intermediate driver, and the result says by how much you beat it.
+
+## 1.54.10 — 2026-11-27
+- **Achievement splash**: the stripes behind a new achievement now scroll in a seamless loop instead of jumping back every 2.4 s (they moved 70 px, not one full stripe period, and dragged the fade mask along).
+
+## 1.54.9 — 2026-11-27
+- **Labs: Derrape's ghost**: your best lap on each circuit comes back as a see-through car to race. The clock shows how far ahead or behind it you are, and the minimap shows it as a pale dot. Beating it gives you a new record.
+
+## 1.54.8 — 2026-11-27
+- **Labs: Derrape's circuits flow**: every bend now eases in and out of the road around it instead of starting at once, most long straights bend into wide, fast sweepers, and each fork is now a real second road of 220 to 400 m round a bend: a shorter, tighter gravel cut inside it, or a longer, wider asphalt sweep outside it. A gate inside a fork stands on both roads. The twelve circuits were drawn again with the same standards, and the simulated drivers still lap them as calibrated.
+
+## 1.54.7 — 2026-11-27
+- **Labs: Derrape's confetti leaves from the fans' hands**: in 3D it was thrown from their feet.
+
+## 1.54.6 — 2026-11-27
+- **Labs: Derrape is calibrated for every kind of driver**: the steering is gentler for small thumb movements and still reaches full lock at full travel, so a shaky thumb no longer pushes the car off the road. Ramps and crests now have room after them to land before the next bend. Simulated drivers check that a skilled player laps in a good time, an intermediate one in 1.5× without crashing, and a beginner in 2× without crashing.
+
+## 1.54.5 — 2026-11-27
+- **Duels (lab):** in the new-duel sheet, tapping a game keeps the games carousel where it was instead of sending it back to the start.
+
+## 1.54.4 — 2026-11-28
+- **Duels lock the version of every game** (lab): challenging someone to Toque y Fama now asks for 🔤 Palabra or 🔢 Número, as Sudoku or Pintaminas ask for their level, and the round's page plays that one with no switch. Every duel round's page also says it counts for the duel: which round, of how many, and against whom.
+
+## 1.54.3 — 2026-11-27
+- **Labs: Derrape goes up and down**: each circuit has hills, crests that throw the car into the air, dips and bumps. Going up costs speed, coming down gives it back, and the 3D view climbs and falls with the road. On gravel the car now reaches the same top speed as on asphalt, only it takes longer to get there. The camera starts on the fixed map. The road is drawn in one piece: no more cuts where a hairpin widens, at a fork or at the start line.
+
+## 1.54.2 — 2026-11-27
+- **Labs: Derrape's crowd cheers as you go by**: the fans jump and throw their arms up when the car comes near, the grandstands rise to their feet in a wave, and each crowd throws confetti and streamers into the air as you pass. With reduced motion everyone stays still.
+
+## 1.54.1 — 2026-11-27
+- **Labs: Derrape shows a small map of the circuit**: in the corner of the race, the circuit's outline with the car as a dot, and the stretch already driven in yellow, so you can see at a glance how much is left.
+
+## 1.54.0 — 2026-11-28
+- **🔮 Canica Cósmica en el laboratorio**: deja el teléfono plano e inclínalo para llevar la canica por cinco mundos (cielo, agua, galaxia, electricidad y volcán) hasta el hoyo, con tres vidas y un tiempo par por etapa. Solo con la llave del laboratorio.
+
+## 1.53.1 — 2026-11-27
+- **Labs: Derrape's car is a rally car, and the people and things around the road have more detail**: in both views the car now has flared arches, four spotlights on its nose, a big wing and tow hooks. The fans face the road, have hair or a cap, and cheer, wave a flag or hold up a phone. Trees, bales, rocks, bushes and grandstands have more detail.
+
+## 1.53.0 — 2026-11-28
+- **Zip gets a 🔴 Hard mode in the lab**: on its own page, walls between squares that the line cannot cross, bigger boards from the first level (5×5 to 7×7) and more walls with fewer numbers every level. La Copa and Uno al día do not change; it is behind its flag `zip-hard`.
+
+## 1.52.15 — 2026-11-27
+- **Labs: Derrape races on closed circuits**: twelve new circuits of about a minute each, with the start and the finish on the same line, replace the three stages. One circuit a week is the same for everyone, and each one has its boost pads, ramps, a fork, grandstands and crowds.
+
+## 1.52.14 — 2026-11-28
+- **Duels (lab):** on the «¡Te retaron!» screen the sword's light now runs exactly through the split of the «VS»: the letters part along the same 28° line and slide straight apart.
+
+## 1.52.13 — 2026-11-27
+- **Duels**: the ⚔️ rematch at the end of each game's bar under «Your rivals» is now bare swords, without the round disc, so the history bars stay the focus.
+
+## 1.52.12 — 2026-11-27
+- **Labs: Derrape looks much sharper**: in 2D the grass, the gravel and the asphalt have texture, the road has edges, and the car is drawn in detail (volume, windows, vents, mirrors, spoiler, lights and a soft shadow), at up to 3× the screen's resolution. In 3D the light has highlights and a shaded sky, the ground and the road have grain, the car is modelled with a real cabin, bumpers, mirrors, spoiler and spoked wheels, and tufts and pebbles line the road.
+
+## 1.52.11 — 2026-11-27
+- **Labs: Derrape's 3D view drives its own way**: one finger by default and quicker acceleration, while the 2D view keeps its wheel and pedal; the camera holds still in reverse; the wheels turn as the car runs; and the lab panel has a top-speed control that goes up to four times today's.
+
+## 1.52.10 — 2026-11-27
+- **Labs: Derrape goes faster**: the top speed rises from 42 to 52 m/s on gravel and from 50 to 62 on asphalt; the steering feels as before.
+
+## 1.52.9 — 2026-11-27
+- **Labs: Derrape in 3D**: the cover now lets you choose how you see the race, «🗺️ Vista 2D» from above as before, or «🚗 Vista 3D» from behind the car, in a low-poly world with the same trees, crowds, ramps and boost pads, hills on the horizon and fog. A phone that cannot draw 3D plays from above.
+
+## 1.52.8 — 2026-11-27
+- **Labs: Derrape gets two new stages, rain, and a crowd**: «Rápido y técnico» runs a kilometre of asphalt sweepers before the road turns to gravel for hairpins and a chicane, and «Bajo la lluvia» is a technical stage on wet asphalt, slipperier than dry gravel, with puddles, rain and spray. The lab's 🔧 panel picks the stage. Every stage now has people watching from behind straw bales at the tight bends, and grandstands at the start and the finish.
+
+## 1.52.7 — 2026-11-27
+- **Labs: Derrape gets forks, ramps and boost pads, and more speed**: the road forks so the player picks a way, ramps make the car fly and land unharmed, and boost pads give a short burst past top speed, always before a long straight, with the car still steerable while boosted. The car goes faster, with streaks down the sides at speed, and there is no dust on asphalt, only at its edge and off the road. The owner's settings (thumb travel 75 px, 40 m of road in view) are the defaults. No countdown before a run while the game is in the lab: the clock starts with the first throttle.
+
+## 1.52.6 — 2026-11-27
+- **Duels (lab):** the panels of the duels page carry the open duels' look (the cyan-to-pink wash, the 3D edge, a gold rim and gold titles), and wins and losses in the graphs use the cards' cyan and pink, toned down.
+
+## 1.52.5 — 2026-11-27
+- **Labs: Derrape gets its look**: three settings (a green meadow by day, a burnt forest at sunset, a plain at dusk on asphalt), with trees, bushes, rocks and hay bales that are the same for everyone on a stage; a car with rally stripes and lights; tyre tracks while it slides and dust behind it; a chequered finish. The 🔧 panel shows any of the three settings. The car now crashes into trees and rocks: it has 10 lives, each crash costs one with an impact and leaves damage that grows (dents, cracked glass, a hanging bumper, smoke, fire), and the tenth wrecks it. Reverse is faster, and the car turns harder.
+
+## 1.52.4 — 2026-11-27
+- **Processes round 2026-11-27** (catch-up since 2026-11-24): the usability lint now rejects an English 💡 "help" where every game says hint (`docs/usability-glossary.json`, `usability-lint.test.mjs`; Dominorama and Críptico both shipped it); the 2026-11-26 round's push-guard mechanisms and the two Labs ideas built from #1900 are recorded; changelog collected, rule counts and end-to-end durations refreshed.
+
+## 1.52.3 — 2026-11-27
+- **Your profile is now named when the app is shared**: the message says it has your badges, your place in each ranking and your cups, in Spanish, English and Portuguese.
+
 ## 1.52.2 — 2026-11-27
 - **Shinobi, in the lab (`shinobi-light-fx`)**: lighter glows on a perfect flag. The rings, the gold flag, the stick and the pillars' neon edge are drawn as faint wide strokes instead of a live canvas blur, and the stage's ring and the PERFECT text no longer animate a blur or a filter, so Firefox stops dropping frames there. Nothing changes until the flag is on.
 

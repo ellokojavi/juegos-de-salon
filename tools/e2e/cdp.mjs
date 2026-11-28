@@ -5,6 +5,7 @@ import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs'
 import { measureOverlap } from './spacing-common.mjs';
 import { measureMargins } from './margins-common.mjs';
 import { isFolder as isFolder } from './output.mjs';
+import { checkSiteOnce } from './same-tree.mjs';
 // CHROME: another path to the browser (Linux, a cloud session)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 import { snapshot, held } from '../agents/flags-snapshot.mjs';
@@ -82,6 +83,8 @@ export function clockAt(at = E2E_DAY) {
 export async function launch({ port: requested, dir, out, width = 390, height = 844, clock = null }) {
   // A profile in `undefined/p` or `--part/p` stayed inside the worktree and blocked its cleanup (D-315)
   for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !isFolder(String(v))) throw new Error(`launch: ${k} = "${v}" is not an output folder (use output() from tools/e2e/output.mjs)`);
+  // A SITE on this machine must serve this tree, not a leftover server from another worktree
+  await checkSiteOnce();
   const fixed = fixedPort(requested);
   mkdirSync(dir, { recursive: true });
   // The one from an earlier run with the same profile would name a port that is gone
