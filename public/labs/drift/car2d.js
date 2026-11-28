@@ -1,11 +1,12 @@
 /**
  * Drift: the car seen from above, drawn once at the screen's scale (the owner, 2026-11-27: «más
  * definición … al vehículo mismo»). What never changes goes in one sprite: the body with its volume
- * (lit along its spine, darker at its flanks), the fenders over the wheels, the bonnet and its vents,
+ * (lit along its spine, darker at its flanks), the fenders over the wheels, the bonnet,
  * the windscreen with its reflection, the roof with its scoop, the rear window, the mirrors, the
  * spoiler, the stripes and the panel lines. A rally car (the owner, 2026-11-27: «una especie de auto de
- * rally»): black plastic arches flared over the wheels, a pod of four spotlights on the nose, red tow
- * hooks, a roof vent and an aerial, a big wing with white end plates, the same as car3d.js. The scene draws on top, every frame, what changes: the
+ * rally»; then «más realista»): wide flares in the body's colour over the wheels, a pod of four
+ * spotlights on the nose, red tow hooks, a roof vent and an aerial, a roof wing with white end plates,
+ * laid out where car3d.js has them (windscreen, roof and hatch glass at the same lengths). The scene draws on top, every frame, what changes: the
  * wheels (under the body), the lights, the dents, the flame.
  *
  *   carSprite(ppm) → { img, hx, hy }   the sprite and the half sizes it covers, m (car frame: x forward)
@@ -52,9 +53,11 @@ export function carSprite(ppm) {
   // Row 0 is the car's −y: the scene draws the sprite from (−hx, −hy) in the car's frame, so it lands right
   x.translate(hx * ppm, hy * ppm); x.scale(ppm, ppm);
 
-  // The arches: black plastic flared over each wheel, wider than the body
-  x.fillStyle = CAR.plastic;
-  for (const fx of [L * 0.3, -L * 0.3]) for (const s of [-1, 1]) { rrect(x, fx - 0.6, s * (W / 2 + 0.02) - 0.2, 1.2, 0.4, 0.18); x.fill(); }
+  // The flares: the body's colour swelling out over each wheel, wider than the body, a dark lip at their edge
+  for (const fx of [1.302, -1.26]) for (const s of [-1, 1]) {
+    x.fillStyle = CAR.plastic; rrect(x, fx - 0.6, s * (W / 2 + 0.04) - 0.17, 1.2, 0.34, 0.17); x.fill();
+    x.fillStyle = CAR.dark; rrect(x, fx - 0.56, s * (W / 2 + 0.02) - 0.15, 1.12, 0.3, 0.15); x.fill();
+  }
   // The red tow hooks, one at the nose, one at the tail
   x.fillStyle = CAR.hook; x.fillRect(L / 2 - 0.02, 0.38, 0.14, 0.09); x.fillRect(-L / 2 - 0.12, -0.47, 0.14, 0.09);
 
@@ -69,67 +72,59 @@ export function carSprite(ppm) {
   ends.addColorStop(0.9, 'rgba(60, 0, 25, 0)'); ends.addColorStop(1, 'rgba(60, 0, 25, 0.3)');
   bodyPath(x); x.fillStyle = ends; x.fill();
 
-  // The rally stripes, nose to tail, with a hairline shadow so they sit on the paint
-  for (const o of [-0.21, 0.21]) {
-    x.fillStyle = CAR.stripeEdge; x.fillRect(-L / 2 + 0.08, o - 0.1, L - 0.16, 0.2);
-    x.fillStyle = CAR.stripe; x.fillRect(-L / 2 + 0.08, o - 0.085, L - 0.16, 0.17);
+  // The rally stripes over the bonnet, with a hairline shadow so they sit on the paint
+  for (const o of [-0.2, 0.2]) {
+    x.fillStyle = CAR.stripeEdge; x.fillRect(0.8, o - 0.1, 1.2, 0.2);
+    x.fillStyle = CAR.stripe; x.fillRect(0.8, o - 0.085, 1.2, 0.17);
   }
 
-  // The bonnet: its seam, two vents and the bulge between them
+  // The bonnet's seam, where it meets the wings
   x.strokeStyle = CAR.seam; x.lineWidth = 0.03;
-  x.beginPath(); x.moveTo(L * 0.2, -W / 2 + 0.18); x.lineTo(L * 0.2, W / 2 - 0.18); x.stroke();
-  x.fillStyle = CAR.vent;
-  for (const s of [-1, 1]) {
-    rrect(x, L * 0.3, s * 0.55 - 0.09, 0.45, 0.18, 0.06); x.fill();
-    x.strokeStyle = 'rgba(255, 255, 255, 0.25)'; x.lineWidth = 0.02;
-    for (let k = 0; k < 4; k++) { x.beginPath(); x.moveTo(L * 0.3 + 0.07 + k * 0.1, s * 0.55 - 0.07); x.lineTo(L * 0.3 + 0.07 + k * 0.1, s * 0.55 + 0.07); x.stroke(); }
-  }
+  for (const s of [-1, 1]) { x.beginPath(); x.moveTo(1.95, s * 0.66); x.quadraticCurveTo(1.4, s * 0.72, 0.82, s * 0.7); x.stroke(); }
 
   // The windscreen: wider at its foot, dark glass, the sky caught in a diagonal
-  const ws = [[L * 0.19, -0.74], [L * 0.19, 0.74], [L * 0.06, 0.62], [L * 0.06, -0.62]];
-  const glass = x.createLinearGradient(L * 0.19, 0, L * 0.06, 0);
+  const ws = [[0.8, -0.74], [0.8, 0.74], [0.05, 0.62], [0.05, -0.62]];
+  const glass = x.createLinearGradient(0.8, 0, 0.05, 0);
   glass.addColorStop(0, CAR.glassLight); glass.addColorStop(1, CAR.glass);
   x.fillStyle = glass; x.beginPath(); ws.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); x.fill();
   x.fillStyle = CAR.reflect;
-  x.beginPath(); x.moveTo(L * 0.18, -0.5); x.lineTo(L * 0.18, -0.28); x.lineTo(L * 0.075, 0.2); x.lineTo(L * 0.075, -0.02); x.closePath(); x.fill();
+  x.beginPath(); x.moveTo(0.74, -0.5); x.lineTo(0.74, -0.28); x.lineTo(0.12, 0.2); x.lineTo(0.12, -0.02); x.closePath(); x.fill();
 
   // The roof, its own curve of light, and a scoop on top
   const roof = x.createLinearGradient(0, -0.62, 0, 0.62);
   roof.addColorStop(0, CAR.roof); roof.addColorStop(0.5, CAR.light); roof.addColorStop(1, CAR.roof);
-  x.fillStyle = roof; rrect(x, -L * 0.25, -0.62, L * 0.31, 1.24, 0.22); x.fill();
-  for (const o of [-0.21, 0.21]) { x.fillStyle = CAR.stripe; x.fillRect(-L * 0.25 + 0.05, o - 0.085, L * 0.31 - 0.1, 0.17); }
-  x.fillStyle = CAR.vent; rrect(x, -L * 0.05, -0.16, 0.3, 0.32, 0.08); x.fill();
-  x.fillStyle = 'rgba(255, 255, 255, 0.18)'; rrect(x, -L * 0.05 + 0.04, -0.12, 0.12, 0.24, 0.05); x.fill();
-  // Side windows: thin dark strips along the roof's edges
-  x.fillStyle = CAR.glass;
-  for (const s of [-1, 1]) { x.beginPath(); x.moveTo(L * 0.06, s * 0.62); x.lineTo(-L * 0.25, s * 0.6); x.lineTo(-L * 0.25, s * 0.7); x.lineTo(L * 0.06, s * 0.74); x.closePath(); x.fill(); }
+  x.fillStyle = roof; rrect(x, -1.52, -0.62, 1.57, 1.24, 0.18); x.fill();
+  for (const o of [-0.2, 0.2]) { x.fillStyle = CAR.stripe; x.fillRect(-1.5, o - 0.085, 1.5, 0.17); }
+  x.fillStyle = CAR.vent; rrect(x, -0.52, -0.16, 0.34, 0.32, 0.06); x.fill();
+  x.fillStyle = 'rgba(255, 255, 255, 0.18)'; rrect(x, -0.48, -0.12, 0.12, 0.24, 0.05); x.fill();
+  // Side windows: thin dark strips along the roof's edges, the B pillar between them
+  for (const s of [-1, 1]) {
+    x.fillStyle = CAR.glass; x.beginPath(); x.moveTo(0.05, s * 0.62); x.lineTo(-1.52, s * 0.6); x.lineTo(-1.52, s * 0.7); x.lineTo(0.05, s * 0.74); x.closePath(); x.fill();
+    x.fillStyle = CAR.roof; x.fillRect(-0.74, s * 0.67 - 0.06, 0.14, 0.12);
+  }
 
-  // The rear window
-  const rw = [[-L * 0.25, -0.6], [-L * 0.25, 0.6], [-L * 0.33, 0.52], [-L * 0.33, -0.52]];
+  // The hatch glass, sloping down behind the roof
+  const rw = [[-1.52, -0.6], [-1.52, 0.6], [-1.95, 0.5], [-1.95, -0.5]];
   x.fillStyle = CAR.glass; x.beginPath(); rw.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); x.fill();
-  x.fillStyle = 'rgba(255, 255, 255, 0.16)'; x.fillRect(-L * 0.32, -0.45, 0.06, 0.9);
 
-  // Door seams and the boot lid
+  // Door seams down each flank
   x.strokeStyle = CAR.seam; x.lineWidth = 0.025;
-  x.beginPath(); x.moveTo(-L * 0.36, -W / 2 + 0.2); x.lineTo(-L * 0.36, W / 2 - 0.2); x.stroke();
-  for (const s of [-1, 1]) { x.beginPath(); x.moveTo(L * 0.05, s * (W / 2 - 0.08)); x.lineTo(-L * 0.26, s * (W / 2 - 0.08)); x.stroke(); }
+  for (const xl of [0.8, -0.78]) for (const s of [-1, 1]) { x.beginPath(); x.moveTo(xl, s * (W / 2 - 0.12)); x.lineTo(xl, s * (W / 2 - 0.02)); x.stroke(); }
 
   // The mirrors, sticking out by the windscreen's foot
   for (const s of [-1, 1]) {
-    x.fillStyle = CAR.mirror; x.beginPath(); x.ellipse(L * 0.13, s * (W / 2 + 0.06), 0.1, 0.14, 0, 0, Math.PI * 2); x.fill();
-    x.fillStyle = CAR.glass; x.beginPath(); x.ellipse(L * 0.11, s * (W / 2 + 0.06), 0.04, 0.09, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = CAR.mirror; x.beginPath(); x.ellipse(0.66, s * (W / 2 + 0.06), 0.07, 0.11, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = CAR.glass; x.beginPath(); x.ellipse(0.61, s * (W / 2 + 0.06), 0.025, 0.08, 0, 0, Math.PI * 2); x.fill();
   }
 
-  // The big rally wing across the tail, on two tall struts, with white end plates
-  x.fillStyle = CAR.plastic; for (const o of [-0.45, 0.45]) x.fillRect(-L / 2 + 0.15, o - 0.05, 0.3, 0.1);
-  const wing = x.createLinearGradient(-L / 2 - 0.12, 0, -L / 2 + 0.32, 0);
+  // The rally wing at the roof's end, over the hatch glass, with white end plates
+  const wing = x.createLinearGradient(-1.94, 0, -1.5, 0);
   wing.addColorStop(0, CAR.deep); wing.addColorStop(1, CAR.spoiler);
-  x.fillStyle = wing; rrect(x, -L / 2 - 0.12, -W / 2, 0.44, W, 0.06); x.fill();
-  x.fillStyle = CAR.stripe; for (const o of [-0.2, 0.2]) x.fillRect(-L / 2 - 0.1, o - 0.08, 0.4, 0.16);
-  x.fillStyle = CAR.plate; for (const s of [-1, 1]) x.fillRect(-L / 2 - 0.14, s * (W / 2 + 0.02) - 0.05, 0.5, 0.1);
+  x.fillStyle = wing; rrect(x, -1.94, -0.79, 0.44, 1.58, 0.05); x.fill();
+  x.fillStyle = CAR.plate; for (const s of [-1, 1]) x.fillRect(-1.97, s * 0.79 - 0.03, 0.5, 0.06);
 
   // The roof's aerial, at the back of the roof
-  x.fillStyle = CAR.plastic; x.beginPath(); x.arc(-L * 0.22, 0.42, 0.05, 0, Math.PI * 2); x.fill();
+  x.fillStyle = CAR.plastic; x.beginPath(); x.arc(-1.25, 0.33, 0.05, 0, Math.PI * 2); x.fill();
 
   // The pod of four spotlights over the nose: a black bar, four lamps with dark rims and a glint
   x.fillStyle = CAR.plastic; rrect(x, L / 2 - 0.32, -0.66, 0.16, 1.32, 0.05); x.fill();
