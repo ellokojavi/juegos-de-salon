@@ -305,7 +305,12 @@ the run races the intermediate driver of the calibration (`pacer.js`, shared wit
 `tools/generators/drift-humans.mjs`), driven through the real engine when the run starts (about
 10 000 steps, some 30 ms) with the view's tuning and controls, recorded as a ghost marked `sim`. It
 is never kept: a first clean run is the player's own record, and the result says by how much the run
-beat it or was beaten. Still to come with the ranking: uploading runs, the next one up as the default,
+beat it or was beaten. **Who you race** (the owner, 2026-11-28, option C): the cover picks «👻 Mi
+récord» (the record, the intermediate driver until there is one), «Intermedio» or «Experto» (the
+calibration's expert at its own pace, `pacerGhost(track, { level: 'expert' })`), kept as `view.ghost`.
+**Medals** (option B): gold at the expert's lap, bronze at the intermediate's, silver halfway
+(`medalsOf`, `medalFor`), in the chosen view, on the time that counts; the result shows the medal and
+the time of the next one up. Still to come with the ranking: uploading runs, the next one up as the default,
 the leader's retimed ghost, and the cover's switch («Mi récord» or no ghost).
 
 The player's best run on this stage, drawn as a faint car. Cheap and the strongest reason to play

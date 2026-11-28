@@ -15,9 +15,14 @@ import { SETTING_NAMES } from './scenery.js';
 import { STAGES, DEFAULT_TRACK, TRACKS } from './tracks.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md; the fixed map since the owner asked, 2026-11-27). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'fixed', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d', scheme3d: 'stick' });
+export const DEFAULT_VIEW = Object.freeze({ mode: 'fixed', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d', scheme3d: 'stick', ghost: 'mine' });
 /** The two views the cover offers: from above (scene.js) and from behind the car (scene3d.js). */
 export const SCENES = ['2d', '3d'];
+/**
+ * Who the run races, picked on the cover (the owner, 2026-11-28, option C): the record on this phone
+ * (the intermediate driver until there is one), the intermediate driver, or the expert.
+ */
+export const GHOSTS = ['mine', 'intermediate', 'expert'];
 
 /**
  * Each view drives with its own values (path-2-3d.md allows a second TUNING set per scene, never a
@@ -73,13 +78,14 @@ export function loadTuning() {
   if (view.setting !== 'stage' && !SETTING_NAMES.includes(view.setting)) view.setting = DEFAULT_VIEW.setting;
   if (view.stage !== 'week' && !STAGES.includes(view.stage)) view.stage = DEFAULT_VIEW.stage;
   if (!SCENES.includes(view.scene)) view.scene = DEFAULT_VIEW.scene;
+  if (!GHOSTS.includes(view.ghost)) view.ghost = DEFAULT_VIEW.ghost;
   applyScene(view);
   return view;
 }
 
 /** Whether any value differs from the shipped one. */
 export const isTuned = view => { const d = defaultsFor(view.scene); return Object.keys(d).some(k => TUNING[k] !== d[k])
-  || Object.keys(DEFAULT_VIEW).some(k => k !== 'scene' && view[k] !== DEFAULT_VIEW[k]); };
+  || Object.keys(DEFAULT_VIEW).some(k => k !== 'scene' && k !== 'ghost' && view[k] !== DEFAULT_VIEW[k]); };
 
 /** Keeps the panel's values and the view on this phone (the cover's 2D/3D choice too). */
 export function save(view) {
