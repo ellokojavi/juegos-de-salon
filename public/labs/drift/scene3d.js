@@ -19,8 +19,10 @@
  * about half a second, never rolling, never shaking, a fixed field of view. With reduced motion it is
  * eased twice as much.
  */
-import { SETTINGS, CROWD, scenery, settingOf, seeded } from './scenery.js';
+import { SETTINGS, scenery, settingOf, seeded } from './scenery.js';
 import { renderer, Mesh, mat4, rgb } from './gl3d.js';
+import { carMeshes } from './car3d.js';
+import { addProp, addStand } from './props3d.js';
 
 /** Per setting: the sky (top, horizon = fog), the sun's direction (x, y, z, unit-ish), the fog's start and end, m. */
 const SKY = {
@@ -211,66 +213,15 @@ function buildWorld(track, settingName, wet) {
 
   // The props, the crowds and the grandstands
   const { cells, stands } = scenery(track, settingName);
-  for (const it of [...cells.values()].flat()) {
-    const m = at(it.x, it.y), { x, y, r, v } = it, tw = v * 0.7 + x * 0.01;
-    if (it.kind === 'tree') {
-      const [dark, mid, light] = S.trees[v % S.trees.length].map(c => rgb(c, wetK));
-      shadow(m, x, y, r * 0.75, r * 1.2);
-      m.cone(x, y, 0, r * 0.9, r * 0.14, r * 0.1, 5, rgb('#4a3424', wetK), tw, false);
-      m.cone(x, y, r * 0.6, r * 1.9, r * 0.95, r * 0.35, 7, dark, tw, true);
-      m.cone(x, y, r * 1.5, r * 2.6, r * 0.7, 0, 7, mid, tw + 0.4);
-      m.cone(x, y, r * 2.2, r * 3.05, r * 0.38, 0, 6, light, tw + 0.9);
-    } else if (it.kind === 'dead') {
-      const { trunk, branch, ember } = S.dead;
-      shadow(m, x, y, r * 0.35, r * 1.4);
-      m.cone(x, y, 0, r * 2.4, r * 0.16, r * 0.05, 5, rgb(trunk), tw);
-      for (let i = 0; i < 5; i++) {
-        const a = tw + i * 1.25, z = r * (1 + i * 0.25), len = r * (0.5 + (i % 3) * 0.15);
-        const bx = x + Math.cos(a) * len, by = y + Math.sin(a) * len;
-        m.quad([x, y, z], [bx, by, z + len * 0.6], [bx, by, z + len * 0.6 + 0.12], [x, y, z + 0.25], rgb(branch));
-        m.quad([x, y, z + 0.25], [bx, by, z + len * 0.6 + 0.12], [bx, by, z + len * 0.6], [x, y, z], rgb(branch));
-      }
-      if (v === 0) m.blob(x + 0.3, y, 0, 0.25, 0.2, 5, rgb(ember));
-    } else if (it.kind === 'stump') {
-      m.cone(x, y, 0, r * 0.9, r, r * 0.85, 7, rgb(S.dead.branch), tw, true);
-    } else if (it.kind === 'bush') {
-      shadow(m, x, y, r * 0.8, r * 0.5);
-      m.blob(x, y, 0, r, r * 1.1, 7, rgb(S.bush[0], wetK), tw);
-      m.blob(x + r * 0.2, y - r * 0.2, r * 0.3, r * 0.55, r * 1.0, 6, rgb(S.bush[1], wetK), tw + 1);
-    } else if (it.kind === 'rock') {
-      shadow(m, x, y, r * 0.8, r * 0.4);
-      m.blob(x, y, -0.1, r, r * 0.9, 6, rgb(S.rock[0], wetK), tw);
-      m.blob(x - r * 0.2, y + r * 0.1, r * 0.25, r * 0.55, r * 0.75, 5, rgb(S.rock[1], wetK), tw + 2);
-    } else if (it.kind === 'hay' || it.kind === 'bale') {
-      const cols = it.kind === 'hay' ? S.hay : CROWD.bale;
-      shadow(m, x, y, r * 0.9, r * 0.6);
-      m.cone(x, y, 0, r * 1.3, r, r, 8, rgb(cols[v % 2], wetK), tw, true);
-    } else if (it.kind === 'fan') {
-      const shirt = rgb(CROWD.shirts[v % CROWD.shirts.length]), skin = rgb(CROWD.skin[(v >> 3) % CROWD.skin.length]);
-      m.box(x, y, 0.45, 0.18, 0.15, 0.45, tw, rgb('#2a2f45'));
-      m.box(x, y, 1.15, 0.24, 0.2, 0.3, tw, shirt);
-      m.box(x, y, 1.62, 0.13, 0.13, 0.15, tw, skin);
-      if (v % 3 === 0) { m.box(x + 0.25 * Math.sin(tw), y - 0.25 * Math.cos(tw), 1.75, 0.06, 0.06, 0.3, tw, skin); m.box(x - 0.25 * Math.sin(tw), y + 0.25 * Math.cos(tw), 1.75, 0.06, 0.06, 0.3, tw, skin); }
-    }
-  }
-  for (const st of stands) {
-    const m = at(st.x, st.y), c = Math.cos(st.h), s = Math.sin(st.h);
-    // Three tiers rising away from the road, a roof over the top one
-    const out = st.side;  // 1: the stand is on the road's left, so the tiers rise toward +left
-    for (let t = 0; t < 3; t++) {
-      const o = (-st.dep / 2 + st.dep / 6 + t * st.dep / 3) * out;
-      m.box(st.x - s * o, st.y + c * o, 0.5 + t * 0.6, st.len / 2, st.dep / 6, 0.5 + t * 0.6, st.h, [rgb(CROWD.step), rgb(CROWD.stand)]);
-      const rs = seeded(`${track.id}:stand${st.v}:${t}`);
-      for (let a = -st.len / 2 + 0.8; a < st.len / 2 - 0.5; a += 1.1) {
-        const fx = st.x + c * a - s * o, fy = st.y + s * a + c * o, z = 1 + t * 1.2;
-        m.box(fx, fy, z + 0.3, 0.22, 0.18, 0.3, st.h, rgb(CROWD.shirts[Math.floor(rs() * CROWD.shirts.length)]));
-        m.box(fx, fy, z + 0.75, 0.12, 0.12, 0.14, st.h, rgb(CROWD.skin[Math.floor(rs() * CROWD.skin.length)]));
-      }
-    }
-    const ro = (st.dep / 2 - 0.3) * out;
-    m.box(st.x - s * ro, st.y + c * ro, 5, st.len / 2 + 0.4, st.dep / 2 + 0.4, 0.15, st.h, rgb(CROWD.roof));
-    for (const a of [-st.len / 2, st.len / 2]) m.box(st.x + c * a - s * ro * 1.6, st.y + s * a + c * ro * 1.6, 2.5, 0.12, 0.12, 2.5, st.h, rgb(CROWD.rail));
-  }
+  // Fans face the nearest point of the road (a coarse search: they stand a few metres from it)
+  const face = (x, y) => {
+    let best = Infinity, p = track.pts[0];
+    for (let i = 0; i < track.pts.length; i += 2) { const q = track.pts[i], d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < best) { best = d; p = q; } }
+    return Math.atan2(p.y - y, p.x - x);
+  };
+  const ctx = { S, wetK, shadow, face, trackId: track.id, z: 0 };
+  for (const it of [...cells.values()].flat()) addProp(at(it.x, it.y), it, ctx);
+  for (const st of stands) addStand(at(st.x, st.y), st, ctx);
 
   return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], bufs: null };
 }
@@ -295,149 +246,6 @@ function gateMesh(gt, finish) {
     m.quad(P(0.02, o1, z0), P(0.02, o0, z0), P(0.02, o0, z1), P(0.02, o1, z1), ban);
   }
   return m;
-}
-
-/**
- * The car, in its own frame (x forward, y left, z up), as parts drawn with its pose (the owner,
- * 2026-11-27: «más definición … al vehículo mismo»). The body is lofted through cross-sections from
- * the nose to the tail (a rocker, a flank that bulges, a shoulder, a top), so it has volume and lights
- * like a car; the cabin sits on it with a raked windscreen, side glass between pillars and a rear
- * window; then bumpers, a grille, fender lips over the wheels, mirrors, a roof scoop, the spoiler and
- * a number roundel on each door. Wheels: sixteen faces, the tread in two shades (its turning shows
- * from behind), a rim with spokes.
- */
-function carMeshes() {
-  const body = new Mesh(), glass = new Mesh(), trim = new Mesh(), wheelFront = new Mesh(), wheelBack = new Mesh(), lights = new Mesh(), brake = new Mesh(), shadow = new Mesh();
-  const B = rgb(COLOURS.car), BD = rgb(COLOURS.car, 0.78), R = rgb(COLOURS.carRoof), W = rgb(COLOURS.stripe), G = rgb(COLOURS.glass);
-  const DARK = rgb('#1c1c22'), GREY = rgb('#3a3a44'), CHROME = rgb('#c8c8d0');
-  // Cross-sections from nose to tail: x, then [half width, z] at the rocker, the flank, the shoulder and the top
-  const SECTIONS = [
-    [2.12, [0.68, 0.4], [0.72, 0.52], [0.68, 0.68], [0.52, 0.73]],
-    [1.98, [0.8, 0.32], [0.86, 0.5], [0.83, 0.76], [0.62, 0.83]],
-    [1.3, [0.82, 0.32], [0.89, 0.52], [0.86, 0.84], [0.66, 0.91]],
-    [0.75, [0.82, 0.32], [0.89, 0.52], [0.86, 0.88], [0.7, 0.95]],
-    [-0.9, [0.82, 0.32], [0.89, 0.52], [0.86, 0.9], [0.7, 0.97]],
-    [-1.6, [0.82, 0.32], [0.89, 0.52], [0.86, 0.9], [0.68, 0.98]],
-    [-2.0, [0.8, 0.34], [0.85, 0.52], [0.82, 0.86], [0.62, 0.95]],
-    [-2.12, [0.72, 0.4], [0.76, 0.52], [0.72, 0.8], [0.55, 0.87]],
-  ];
-  // A section's ring of points, from the right rocker over the top to the left rocker
-  const ring = ([x, ...pts]) => [...pts.map(([w, z]) => [x, -w, z]), ...pts.slice().reverse().map(([w, z]) => [x, w, z])];
-  const bandCol = [BD, B, B, B, B, B, BD];  // the faces between ring points: rocker darker, then paint
-  for (let i = 0; i + 1 < SECTIONS.length; i++) {
-    const a = ring(SECTIONS[i]), b = ring(SECTIONS[i + 1]);
-    for (let k = 0; k + 1 < a.length; k++) body.quad(a[k], b[k], b[k + 1], a[k + 1], bandCol[k]);
-  }
-  // The nose and the tail: a cap over each end section
-  const cap = (sec, out) => {
-    const r = ring(sec), c = [sec[0] + out * 0.01, 0, 0.6];
-    for (let k = 0; k + 1 < r.length; k++) out > 0 ? body.tri(r[k], c, r[k + 1], B) : body.tri(r[k + 1], c, r[k], B);
-    out > 0 ? body.tri(r[r.length - 1], c, r[0], B) : body.tri(r[0], c, r[r.length - 1], B);
-  };
-  cap(SECTIONS[0], 1); cap(SECTIONS[SECTIONS.length - 1], -1);
-  // The top surface's height at x (for things laid on it: stripes)
-  const topZ = x => {
-    for (let i = 0; i + 1 < SECTIONS.length; i++) {
-      const [x0, , , , [, z0]] = SECTIONS[i], [x1, , , , [, z1]] = SECTIONS[i + 1];
-      if (x <= x0 && x >= x1) return z0 + (z1 - z0) * (x0 - x) / (x0 - x1);
-    }
-    return 0.9;
-  };
-  // The rally stripes along the bonnet, a hair above the paint
-  for (const o of [-0.21, 0.21]) for (const [xa, xb] of [[2.05, 0.75]]) {
-    const n = 10;
-    for (let k = 0; k < n; k++) {
-      const x0 = xa + (xb - xa) * k / n, x1 = xa + (xb - xa) * (k + 1) / n;
-      body.quad([x0, o - 0.09, topZ(x0) + 0.02], [x0, o + 0.09, topZ(x0) + 0.02], [x1, o + 0.09, topZ(x1) + 0.02], [x1, o - 0.09, topZ(x1) + 0.02], W);
-    }
-  }
-  // The cabin: a raked windscreen, the roof, a rear window; side glass with pillars
-  const ws0 = [0.75, 0.68, 0.955], ws1 = [0.02, 0.56, 1.43], rf1 = [-0.95, 0.56, 1.41], rw0 = [-1.45, 0.66, 0.985];
-  const L_ = ([x, w, z]) => [x, w, z], R_ = ([x, w, z]) => [x, -w, z];
-  glass.quad(R_(ws0), L_(ws0), L_(ws1), R_(ws1), G);
-  body.quad(R_(ws1), L_(ws1), L_(rf1), R_(rf1), R);
-  glass.quad(L_(rw0), R_(rw0), R_(rf1), L_(rf1), G);
-  for (const o of [-0.21, 0.21]) body.quad([0.0, o - 0.09, 1.445], [0.0, o + 0.09, 1.445], [-0.93, o + 0.09, 1.425], [-0.93, o - 0.09, 1.425], W);
-  for (const side of [1, -1]) {
-    const P = ([x, w, z]) => [x, side * w, z];
-    const tri = (a, b, c, col) => (side > 0 ? glass.tri(P(a), P(b), P(c), col) : glass.tri(P(a), P(c), P(b), col));
-    const triB = (a, b, c, col) => (side > 0 ? body.tri(P(a), P(b), P(c), col) : body.tri(P(a), P(c), P(b), col));
-    // The side glass, split by a B pillar at x −0.45
-    const bp0 = [-0.42, 0.69, 0.965], bp1 = [-0.42, 0.56, 1.42], bq0 = [-0.52, 0.69, 0.968], bq1 = [-0.52, 0.56, 1.418];
-    tri(ws0, bp0, bp1, G); tri(ws0, bp1, ws1, G);
-    triB(bp0, bq0, bq1, R); triB(bp0, bq1, bp1, R);
-    tri(bq0, rw0, rf1, G); tri(bq0, rf1, bq1, G);
-    // The A pillar: a strip of paint along the windscreen's edge
-    triB(ws0, [ws0[0] - 0.05, ws0[1] + 0.005, ws0[2] + 0.04], [ws1[0] - 0.05, ws1[1] + 0.005, ws1[2]], R);
-  }
-  // A roof scoop
-  body.box(-0.25, 0, 1.47, 0.22, 0.14, 0.05, 0, [DARK, BD]);
-  // Bumpers, the grille, and a skid plate under the nose
-  body.box(2.13, 0, 0.42, 0.06, 0.72, 0.1, 0, [GREY, GREY]);
-  body.box(-2.13, 0, 0.44, 0.06, 0.74, 0.1, 0, [GREY, GREY]);
-  trim.quad([2.135, -0.34, 0.5], [2.135, 0.34, 0.5], [2.135, 0.34, 0.64], [2.135, -0.34, 0.64], DARK);
-  trim.box(1.9, 0, 0.27, 0.3, 0.6, 0.03, 0, [GREY, GREY]);
-  // Fender lips over the wheels: a dark arch of short boxes on each side
-  for (const fx of [CAR_L * 0.31, -CAR_L * 0.3]) for (const side of [-1, 1]) {
-    for (let k = 0; k <= 6; k++) {
-      const a = Math.PI * k / 6, ax = fx + Math.cos(a) * 0.48, az = 0.36 + Math.sin(a) * 0.48;
-      trim.box(ax, side * 0.9, Math.max(0.36, az), 0.09, 0.04, 0.05, 0, [DARK, DARK]);
-    }
-  }
-  // The mirrors, by the windscreen's foot
-  for (const side of [-1, 1]) {
-    body.box(0.62, side * 0.92, 1.02, 0.08, 0.11, 0.07, 0, [B, B]);
-    glass.quad([0.53, side * 0.84, 0.97], [0.53, side * 1.0, 0.97], [0.53, side * 1.0, 1.07], [0.53, side * 0.84, 1.07], CHROME);
-  }
-  // The spoiler: a wing on two struts, with end plates
-  body.box(-1.98, 0, 1.15, 0.16, 0.8, 0.035, 0, [R, BD]);
-  for (const o of [-0.55, 0.55]) body.box(-1.9, o, 1.03, 0.05, 0.04, 0.1, 0, [DARK, DARK]);
-  for (const o of [-0.82, 0.82]) body.box(-1.98, o, 1.13, 0.2, 0.02, 0.09, 0, [BD, BD]);
-  // A number roundel on each door: a white disc
-  for (const side of [-1, 1]) {
-    const n = 14, cx = -0.3, cz = 0.68, r = 0.22, y = side * 0.895;
-    for (let k = 0; k < n; k++) {
-      const a0 = k / n * Math.PI * 2, a1 = (k + 1) / n * Math.PI * 2;
-      const p0 = [cx + Math.cos(a0) * r, y, cz + Math.sin(a0) * r], p1 = [cx + Math.cos(a1) * r, y, cz + Math.sin(a1) * r];
-      side > 0 ? trim.tri([cx, y, cz], p0, p1, W) : trim.tri([cx, y, cz], p1, p0, W);
-    }
-    trim.box(-0.3, side * 0.9, 0.68, 0.03, 0.005, 0.12, 0, [DARK, DARK]);
-  }
-  // An exhaust under the tail
-  trim.cone(-2.15, -0.45, 0.28, 0.28, 0.06, 0.06, 6, CHROME);
-  // A wheel: sixteen faces along y, at the origin (each one is placed with its own pose)
-  const wheel = m => {
-    const n = 16, r = 0.36, hw = 0.15, T = rgb(COLOURS.wheel), T2 = rgb('#3a3a44'), H = rgb(COLOURS.rim), HD = rgb(COLOURS.rim, 0.55);
-    for (let i = 0; i < n; i++) {
-      const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2;
-      const p = (a, y, rr = r) => [Math.cos(a) * rr, y, Math.sin(a) * rr];
-      // The tread in two shades, in bands of two faces, so its turning shows from behind too
-      m.quad(p(a0, -hw), p(a1, -hw), p(a1, hw), p(a0, hw), Math.floor(i / 2) % 2 ? T : T2);
-      for (const sy of [1, -1]) {
-        const y = sy * (hw + 0.01), yr = sy * (hw + 0.025);
-        const t = (a, b, c, col) => (sy > 0 ? m.tri(a, b, c, col) : m.tri(a, c, b, col));
-        // The tyre's sidewall, then the rim: five spokes over a darker dish
-        t(p(a1, y), p(a0, y), p(a0, y, 0.25), T); t(p(a1, y), p(a0, y, 0.25), p(a1, y, 0.25), T);
-        t([0, yr, 0], p(a1, yr, 0.25), p(a0, yr, 0.25), Math.floor(i * 5 / n) * n / 5 === i || i % 3 === 0 ? H : HD);
-      }
-    }
-  };
-  wheel(wheelFront); wheel(wheelBack);
-  // Lights: headlights in the nose, the tail lights wide across the back
-  for (const o of [-0.48, 0.48]) {
-    trim.box(2.1, o, 0.62, 0.03, 0.17, 0.08, 0, [CHROME, CHROME]);
-    lights.box(2.125, o, 0.62, 0.02, 0.13, 0.06, 0, rgb(COLOURS.headlight));
-  }
-  for (const o of [-0.52, 0.52]) brake.box(-2.125, o, 0.68, 0.02, 0.18, 0.06, 0, rgb('#ffffff'));
-  // Its soft shadow: three dark rounded plates under it, smaller and darker inward
-  for (const [k, al] of [[1.0, 0.16], [0.85, 0.16], [0.7, 0.18]]) {
-    const n = 16;
-    for (let i = 0; i < n; i++) {
-      const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2, ex = CAR_L * 0.62 * k, ey = CAR_W * 0.7 * k;
-      shadow.tri([0, 0, 0.06], [Math.cos(a0) * ex, Math.sin(a0) * ey, 0.06], [Math.cos(a1) * ex, Math.sin(a1) * ey, 0.06], [0, 0, 0, al]);
-    }
-  }
-  return { body, glass, trim, wheelFront, wheelBack, lights, brake, shadow };
 }
 
 /* ---------------- The scene ---------------- */

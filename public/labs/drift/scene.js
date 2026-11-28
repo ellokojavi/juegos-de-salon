@@ -29,6 +29,14 @@ import { tile, pattern } from './textures.js';
 import { carSprite, shadowSprite } from './car2d.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
+/** The heading from (x, y) to the nearest point of the road: where a fan looks. */
+function faceRoad(track, x, y) {
+  let best = Infinity, p = track.pts[0];
+  for (let i = 0; i < track.pts.length; i += 2) { const q = track.pts[i], d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < best) { best = d; p = q; } }
+  return Math.atan2(p.y - y, p.x - x);
+}
+const faces = new WeakMap();
+
 const COLOURS = {
   gateNext: '#ffd23f', gateLater: 'rgba(255, 255, 255, 0.5)', gatePast: 'rgba(255, 255, 255, 0.15)', gatePost: '#1b1b22',
   chequerDark: '#15151a', chequerLight: '#f4f4f0', label: '#ffffff',
@@ -141,14 +149,44 @@ function propSprite(kind, v, S, ppm) {
     disc(0, 0, 1, CROWD.bale[v % 2]);
     x.strokeStyle = CROWD.bale[(v + 1) % 2]; x.lineWidth = 0.12;
     for (const r of [0.65, 0.35]) { x.beginPath(); x.arc(0, 0, r, 0.5 * v, 0.5 * v + 5); x.stroke(); }
+    // The rim's darker edge, and two strands of twine across it
+    x.strokeStyle = 'rgba(60, 40, 10, 0.4)'; x.lineWidth = 0.08; x.beginPath(); x.arc(0, 0, 0.96, 0, Math.PI * 2); x.stroke();
+    x.strokeStyle = '#c9a248'; x.lineWidth = 0.05;
+    for (const o of [-0.4, 0.4]) { const h = Math.sqrt(1 - o * o) * 0.97; x.beginPath(); x.moveTo(o, -h); x.lineTo(o, h); x.stroke(); }
   } else if (kind === 'fan') {
-    // A person seen from above: shoulders in a bright shirt, a head; some with their arms up
+    // A person seen from above: a shadow, the shoulders in a jacket with a collar, the arms in one of
+    // the five poses the 3D fans have (down, both up, a flag, a phone, hands on hips), a head with
+    // hair or a cap whose peak points up the sprite (−y), the side the scene turns toward the road
     const shirt = CROWD.shirts[v % CROWD.shirts.length], skin = CROWD.skin[(v >> 3) % CROWD.skin.length];
-    disc(sx * 0.7, sy * 0.7, 0.95, S.shadow);
-    x.fillStyle = shirt; x.beginPath(); x.ellipse(0, 0, 1, 0.62, 0, 0, Math.PI * 2); x.fill();
-    if (v % 3 === 0) { disc(-0.95, 0.55, 0.26, skin); disc(0.95, 0.55, 0.26, skin); }
-    disc(0, 0, 0.48, skin);
-    disc(0, -0.08, 0.3, v % 2 ? '#2a1a10' : '#c9a050');
+    const pose = (v >> 2) % 5, edge = 'rgba(20, 10, 20, 0.45)';   // its shadow: drawn by the scene, unturned
+    const arm = (ax, ay, bx, by) => {
+      x.strokeStyle = shirt; x.lineCap = 'round'; x.lineWidth = 0.3;
+      x.beginPath(); x.moveTo(ax, ay); x.lineTo(bx, by); x.stroke();
+      disc(bx, by, 0.17, skin);
+    };
+    if (pose === 1 || pose === 2) {
+      arm(-0.75, 0.2, -1.0, 0.75);
+      if (pose === 1) arm(0.75, 0.2, 1.0, 0.75);
+      else { x.fillStyle = CROWD.flags[v % CROWD.flags.length]; x.fillRect(-1.05, 0.75, 0.9, 0.55); x.fillStyle = 'rgba(255, 255, 255, 0.7)'; x.fillRect(-1.05, 0.95, 0.9, 0.12); }
+    } else if (pose === 3) {
+      arm(-0.7, 0.1, -0.25, -0.75); arm(0.7, 0.1, 0.25, -0.75);
+      x.fillStyle = '#15151a'; x.fillRect(-0.2, -0.95, 0.4, 0.22); x.fillStyle = '#bfe8ff'; x.fillRect(-0.15, -0.92, 0.3, 0.14);
+    } else if (pose === 4) {
+      arm(-0.8, 0.05, -0.95, 0.45); arm(0.8, 0.05, 0.95, 0.45);
+    }
+    x.fillStyle = shirt; x.beginPath(); x.ellipse(0, 0.1, 0.95, 0.55, 0, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = edge; x.lineWidth = 0.06; x.stroke();
+    x.fillStyle = 'rgba(0, 0, 0, 0.22)'; x.beginPath(); x.ellipse(0, 0.08, 0.5, 0.3, 0, 0, Math.PI * 2); x.fill();
+    if (pose === 0) { disc(-0.9, 0.15, 0.17, skin); disc(0.9, 0.15, 0.17, skin); }
+    disc(0, 0, 0.42, skin);
+    if (v % 3 === 0) {
+      const cap = CROWD.caps[(v >> 2) % CROWD.caps.length];
+      disc(0, 0.04, 0.4, cap);
+      x.fillStyle = cap; x.beginPath(); x.ellipse(0, -0.38, 0.3, 0.18, 0, Math.PI, Math.PI * 2); x.fill();
+      x.strokeStyle = edge; x.lineWidth = 0.04; x.beginPath(); x.arc(0, 0.04, 0.4, 0, Math.PI * 2); x.stroke();
+    } else {
+      disc(0, 0.1, 0.36, CROWD.hair[(v >> 1) % CROWD.hair.length]);
+    }
   }
   return { img: c, E };
 }
@@ -347,7 +385,16 @@ export function escena(canvas) {
         const d = Math.hypot(it.x - x, it.y - y);
         if (d < 35) e *= 1 + 0.14 * Math.abs(Math.sin(now / 160 + it.ph)) * (1 - d / 35);
       }
-      ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
+      if (it.kind === 'fan') {
+        // Each fan turned toward the road, as in 3D (its heading found once, then kept)
+        let h = faces.get(it);
+        if (h === undefined) faces.set(it, (h = faceRoad(g.track, it.x, it.y)));
+        // Its shadow first, unturned, so every shadow still falls away from the sun
+        ctx.fillStyle = S.shadow; ctx.beginPath(); ctx.arc(it.x + S.sun[0] * 0.7 * it.r, it.y + S.sun[1] * 0.7 * it.r, 0.95 * it.r, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(h + Math.PI / 2);
+        ctx.drawImage(img, -e, -e, 2 * e, 2 * e);
+        ctx.restore();
+      } else ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
@@ -500,8 +547,16 @@ export function escena(canvas) {
       const sz = 0.34 + jump;
       ctx.fillStyle = CROWD.shirts[v % CROWD.shirts.length];
       ctx.beginPath(); ctx.ellipse(a, py, sz, sz * 0.62, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(20, 10, 20, 0.4)'; ctx.lineWidth = 0.05; ctx.stroke();
+      // Some cheer with both arms up, toward the road
+      if (v % 4 === 0) {
+        ctx.fillStyle = CROWD.skin[(v >> 3) % CROWD.skin.length];
+        for (const o of [-1, 1]) { ctx.beginPath(); ctx.arc(a + o * sz * 0.9, py - sz * 0.6, sz * 0.2, 0, Math.PI * 2); ctx.fill(); }
+      }
       ctx.fillStyle = CROWD.skin[(v >> 3) % CROWD.skin.length];
       ctx.beginPath(); ctx.arc(a, py, sz * 0.45, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = v % 3 === 0 ? CROWD.caps[v % CROWD.caps.length] : CROWD.hair[v % CROWD.hair.length];
+      ctx.beginPath(); ctx.arc(a, py + sz * 0.08, sz * 0.36, 0, Math.PI * 2); ctx.fill();
     }
     // The roof over the back, and the rail at the front
     ctx.fillStyle = CROWD.roof; ctx.fillRect(-L - 0.3, D - st.dep * 0.28, st.len + 0.6, st.dep * 0.28 + 0.3);
