@@ -8157,7 +8157,11 @@
       "error": "ERROR · appeared games.copa.files: public/cup/games/zip/lever.js, public/cup/games/zip/style.css\nERROR · appeared modules: public/cup/games/zip/lever.js",
       "signature": "bc424adc7b",
       "date": "2026-11-28T07:20:14.249Z",
-      "fix": null,
+      "fix": {
+        "commit": "2317d31361823c41ee13c85d4277e7aac6a91375",
+        "date": "2026-11-28T07:25:39.930Z",
+        "stat": "7 file(s) +32 −9: .github/pull_request_template.md, CONTRIBUTING.md, changelog/ccr-f9259f78-i36uzv.md, docs/DECISIONS.md, docs/RULES.md, …"
+      },
       "flaky": false
     }
   ]
