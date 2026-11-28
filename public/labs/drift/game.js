@@ -26,12 +26,13 @@ import { result } from '../../assets/js/share-templates.js';
 import { cuentaRegresiva, CUENTA_SALE_MS } from '../../assets/js/cuenta-regresiva.js';
 import { labAccess } from '../../assets/js/lab-access.js';
 import { GAME_ID, LOCALES } from './rules.js';
-import { TRACKS, STAGES, DEFAULT_TRACK } from './tracks.js';
+import { TRACKS, STAGES, circuitFor } from './tracks.js';
 import * as E from './engine.js';
 import { escena } from './scene.js';
 import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
+import { minimap } from './minimap.js';
 import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
@@ -47,8 +48,8 @@ const C = COMMON[lang] || COMMON.es;
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{' + k + '}'));
 const TEST = new URLSearchParams(location.search).has('test');
 const view = loadTuning();
-/** The stage a run plays: the test one with `?test`, else the lab panel's pick (the first stage by default). */
-const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.stage : DEFAULT_TRACK];
+/** The circuit a run plays: the test stage with `?test`, else the lab panel's pick, by default this week's. */
+const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.stage : circuitFor(Date.now())];
 
 /** The run on screen: the engine's state and the loop's own. */
 const S = { g: null, track: null, acc: 0, last: 0, live: false, paused: false, auto: false, frameMs: 0, raf: 0, tuned: false };
@@ -215,8 +216,9 @@ function play(e) {
   else if (e.type === 'reset') SFX.tap();
   else if (e.type === 'crash') crashed();
   else if (e.type === 'boost') { SFX.pass(); vibrate(30); }
-  else if (e.type === 'jump') SFX.flip();
-  else if (e.type === 'land') { SFX.dice(); vibrate(40); }
+  // A hop over a small bump makes no noise: only a real flight (off a ramp, over a crest) does
+  else if (e.type === 'jump' && !e.crest) SFX.flip();
+  else if (e.type === 'land' && e.t > 0.25) { SFX.dice(); vibrate(40); }
   else if (e.type === 'wrecked') wreck();
   else if (e.type === 'finish') finish();
 }
@@ -230,8 +232,10 @@ function crashed() {
   if (S.g.mode !== 'done') save();
 }
 
+let map = null;
 function paintHud() {
   const g = S.g;
+  (map ||= minimap($('#map'))).draw(g);
   $('#clock').textContent = E.clock(g.t);
   const pen = $('#penalty');
   pen.hidden = !g.penalty;

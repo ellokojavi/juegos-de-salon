@@ -630,6 +630,16 @@ export const SOLO_LEVELS = {
  */
 export const GAME_VARIANTS = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'], sudoku: ['easy', 'hard'], croc: ['normal', 'hard'] };
 
+/**
+ * The versions a duel locks for both players, one per round (the owner, 2026-11-28): every game whose page
+ * lets the player choose how to play it brings its choices here, so a duel picks one when it is declared and
+ * the round's page cannot change it. The variants above, plus Toque y Fama's 🔤 Palabra / 🔢 Número,
+ * which is a duel's choice only (La Copa and the game's own page keep them as two games).
+ */
+export const DUEL_VERSIONS = { ...GAME_VARIANTS, letras: ['word', 'number'] };
+/** The game a duel round's version is played in: Toque y Fama's 🔢 Número is La Copa's `numero`. */
+export const DUEL_VERSION_GAME = { letras: { number: 'numero' } };
+
 export const FIRST_VARIANT_TABLES = { sudoku: 'sudoku_easy' };
 
 /**
@@ -767,6 +777,7 @@ export const idDeSlug = s => (Object.hasOwn(SLUG_DE, s) ? s : Object.hasOwn(ID_D
  * when a game sends signals with an id that has no name.
  */
 export const LAB_NAMES = {
+  'cosmic-marble': { emoji: '🔮', name: { es: 'Canica Cósmica', en: 'Cosmic Marble', pt: 'Bolinha Cósmica' } },
   'drift': { emoji: '🏁', name: { es: 'Derrape', en: 'Drift', pt: 'Derrapagem' } },
   twins: { emoji: '🔢', name: { es: 'Gemelos', en: 'Twins', pt: 'Gêmeos' } },
   'cryptic': { emoji: '🗝️', name: { es: 'Críptico', en: 'Cryptic', pt: 'Críptico' } },

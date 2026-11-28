@@ -18,7 +18,7 @@ in the other files.
 | 1.0 | Concept sign-off | done | [#1926](https://github.com/ellokojavi/juegos-de-salon/pull/1926) |
 | 1.1 | Grey-box drive in the lab | done (the owner drove it, 2026-11-26) | [#1928](https://github.com/ellokojavi/juegos-de-salon/pull/1928) |
 | 1.2 | The feel round | done (the owner, 2026-11-26: «Me gusta») | [#1940](https://github.com/ellokojavi/juegos-de-salon/pull/1940) |
-| 1.3 | Stages | not started | |
+| 1.3 | Stages | in progress: closed circuits of about a minute, their standards, the generator and the weekly rotation | |
 | 1.4 | The look and the sound | in progress, before 1.3 (the owner's order): the look, crashes and lives in [#1941](https://github.com/ellokojavi/juegos-de-salon/pull/1941); forks, ramps, pads | [#1946](https://github.com/ellokojavi/juegos-de-salon/pull/1946) |
 | 1.5 | Ghost, ranking, share, memory | not started | |
 | 1.6 | The lab verdict | not started | |
@@ -42,15 +42,17 @@ answer and its date here; a decision that sets a policy someone could undo also 
 | 1 | The name the player reads, in es, en and pt, and its emoji. The folder and id follow it (C-20). | before 1.1 | «Rally» in all three (then it joins `SAME_NAME`), 🏁. A name of our own, like Aletazo, is more in the site's voice if the owner has one. | **Derrape** (es), **Drift** (en), **Derrapagem** (pt), 🏁; id `drift`. 2026-11-25 |
 | 2 | Where the clip came from, so the cover can credit the game that inspired it. | before 1.1 | Ask for the link. Unknown is an acceptable answer: then no credit. | Unknown: the cover credits nothing. 2026-11-25 |
 | 3 | Stage length. | before 1.1 | 8 to 10 gates, 60 to 90 seconds. The clip's is 20 gates and about three and a half minutes. | The recommended: 8 to 10 gates, 60 to 90 seconds. 2026-11-25 |
-| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26 |
+| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26. **Then the fixed map** by default: «que la cámara esté con mapa fijo», the owner, 2026-11-27 |
 | 5 | Controls: two halves with auto-throttle, or something else. | in 1.2, by playing | Two halves, auto-throttle. | Not auto-throttle (the owner, 2026-11-26: it pulls all the time and braking into a bend is impossible). **Wheel and pedal** (default), with one finger in 🔧; the brake held when stopped reverses. «Me gusta», 2026-11-26 |
 | 6 | Penalties: a missed gate and a reset. | in 1.3 | +10 s and +5 s. | The recommended: +10 s and +5 s. 2026-11-26 |
-| 7 | How often the stage changes. | before 1.3 | One stage a week, the same for everyone. | |
-| 8 | Does the game record scores in Rankings? | before 1.5 | Yes: the table `drift`, score 0 to 100 against par, then time. | |
+| 7 | How often the stage changes. | before 1.3 | One stage a week, the same for everyone. | **One circuit a week**, the same for everyone. 2026-11-27 |
+| 8 | Does the game record scores in Rankings? | before 1.5 | Yes: the table `drift`, score 0 to 100 against par, then time. | **Yes, by time** (the week's circuit). 2026-11-27 |
 | 9 | The bar for the lab verdict. | before 1.6 | Half or more of the testers who finish a run start a second one in the same visit, over at least 10 testers. | |
 | 10 | After 1.6: launch, iterate, park, or path 2. | at 1.6 | Depends on the number. | |
 | 11 | The renderer for path 2: our own small WebGL renderer, or Three.js vendored. | at 2.0, with measurements | Our own. | |
 | 12 | After 2.5: is 3D the default, an option, or parked. | at 2.5 | Depends on the number. | |
+| 13 | The ghost raced by default. | before 1.5 | The next one up the ranking. | **The next one up the ranking**; the leader races their own record made faster. 2026-11-27 |
+| 14 | How much faster the leader's ghost is than their record. | before 1.5 | 2 %. | **1 %**. 2026-11-27 |
 
 ## Later (ideas that came up and are not in the current phase)
 
@@ -65,6 +67,13 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner: relief on the road (hills, crests that throw the car, dips, whoops: `relief.js`), gravel as fast as asphalt but slower to get there, the fixed map by default, and the road drawn in one piece (2D ribbons, hairpins widening smoothly, no seams at forks or the start line).
+- **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
+
+- **2026-11-27** · The crowd comes alive (the owner: «movimiento al público … serpentina»): fans jump and throw their arms up as the car nears, grandstands rise in a wave, and each crowd bursts into confetti and streamers once per pass (`cheer.js`, both views; none with reduced motion).
+- **2026-11-27** · A small map in the race's corner (the owner: «cuánto va quedando para terminar el circuito»): the circuit, what is driven in yellow, the car as a dot; 2D and 3D.
+- **2026-11-27** · The car becomes a rally car (the owner: «una especie de auto de rally», before the track gets relief): `car3d.js` and the 2D sprite; the fans, trees, bales, rocks, bushes and grandstands get more detail (`props3d.js`, heights above a `z` for the relief). Positions and solids unchanged.
+- **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
 - **2026-11-27** · More definition everywhere (the owner: «Mejora notoriamente la calidad de todas las gráficas»): textured ground, shoulder and road and a detailed car sprite in 2D; lighting with highlights, grain, a modelled car and roadside tufts in 3D.
 - **2026-11-27** · The owner on the 3D view: the camera no longer turns in reverse; one finger by default and acceleration 18 (3D only: each view now has its own values and controls, as path 2 allows); a top-speed control whose default sits at a quarter of its bar; the wheels turn as the car runs.
 

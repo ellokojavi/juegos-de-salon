@@ -129,6 +129,19 @@ const ES = {
       ],
       puntaje: 'Cada nivel resuelto vale 10 puntos.',
       desempate: 'Si empatas, gana quien resolvió su último nivel antes.',
+      // Hard mode, with walls: only on its own page, while its flag is on (lab: #seccion-zip-hard)
+      variantes: {
+        normal: { nombre: '🟢 Normal', sub: 'De 4×4 a 7×7' },
+        hard: {
+          nombre: '🔴 Difícil', sub: 'Con muros, de 5×5 a 7×7',
+          como: [
+            'Une los números en orden con un solo trazo que parta en el 1, pase una vez por cada casilla y termine en el último número.',
+            'El trazo no puede cruzar los muros, las rayas gruesas entre casillas.',
+            'Arrastra el dedo desde el 1. Para corregir, retrocede por el mismo camino.',
+            'Tienes 3 minutos para resolver 10 niveles, cada uno con más muros y menos números.',
+          ],
+        },
+      },
     },
     desenredo: {
       nombre: 'Desenredo', habilidad: 'espacial',
@@ -1074,6 +1087,18 @@ const EN = {
       ],
       puntaje: 'Each level you solve is worth 10 points.',
       desempate: 'On a tie, whoever solved their last level sooner wins.',
+      variantes: {
+        normal: { nombre: '🟢 Normal', sub: 'From 4×4 to 7×7' },
+        hard: {
+          nombre: '🔴 Hard', sub: 'With walls, from 5×5 to 7×7',
+          como: [
+            'Connect the numbers in order with a single line that starts at 1, goes through every square once and ends on the last number.',
+            'The line cannot cross the walls, the thick bars between squares.',
+            'Drag your finger from the 1. To fix a mistake, go back along the same path.',
+            'You have 3 minutes to solve 10 levels, each with more walls and fewer numbers.',
+          ],
+        },
+      },
     },
     desenredo: {
       nombre: 'Untangle', habilidad: 'spatial',
@@ -1998,6 +2023,18 @@ const PT = {
       ],
       puntaje: 'Cada nível resolvido vale 10 pontos.',
       desempate: 'Se empatar, ganha quem resolveu o último nível antes.',
+      variantes: {
+        normal: { nombre: '🟢 Normal', sub: 'De 4×4 a 7×7' },
+        hard: {
+          nombre: '🔴 Difícil', sub: 'Com muros, de 5×5 a 7×7',
+          como: [
+            'Ligue os números em ordem com um só traço que comece no 1, passe uma vez por cada casa e termine no último número.',
+            'O traço não pode cruzar os muros, as barras grossas entre as casas.',
+            'Arraste o dedo a partir do 1. Para corrigir, volte pelo mesmo caminho.',
+            'Você tem 3 minutos para resolver 10 níveis, cada um com mais muros e menos números.',
+          ],
+        },
+      },
     },
     desenredo: {
       nombre: 'Desenrola', habilidad: 'espacial',

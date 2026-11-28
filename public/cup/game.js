@@ -18,7 +18,7 @@ import { message } from '../assets/js/share-templates.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameIcon, withIcon, textWithIcon } from '../assets/js/game-icon.js';
-import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo, FIRST_VARIANT_TABLES } from '../assets/js/games.js';
+import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo, FIRST_VARIANT_TABLES, DUEL_VERSIONS, DUEL_VERSION_GAME } from '../assets/js/games.js';
 import { flag, labHere } from '../assets/js/flags.js';
 import { factsLine } from '../assets/js/how-to-play-facts.js';
 import { shareGrid } from '../assets/js/share-grid.js';
@@ -2155,12 +2155,28 @@ function varianteSuelta(id) {
   try { guardada = localStorage.getItem(claveVariante(id)); } catch (_) { /* sin almacenamiento: la de siempre */ }
   return vs.includes(guardada) ? guardada : vs[0];
 }
-/** The locked level's line in a duel round's waiting room, in place of the picker (texts in duels-texts.js). */
+/**
+ * A duel round's waiting room says the game counts for the duel (round i of n, against whom) and the version
+ * its challenger locked, in place of any picker: both players get the same (the owner, 2026-11-28; texts in duels-texts.js).
+ * `v`: the locked version (the link's `mode`), or null when the game has one way to play.
+ */
 function nivelDuelo(v) {
-  const p = el('p', { class: 'notice', id: 'duelo-nivel' });
-  import('../assets/js/duels-texts.js').then(({ TEXTS }) => { const TD = TEXTS[LANG] || TEXTS.es; p.textContent = fmt(TD.duelLevel, { v: TD.levels[v] || v }); }).catch(() => {});
+  const p = el('p', { class: 'notice', id: 'duelo-nivel', hidden: true });
+  Promise.all([import('../assets/js/duels-texts.js'), import('../assets/js/duels.js')]).then(async ([{ TEXTS }, duelos]) => {
+    const TD = TEXTS[LANG] || TEXTS.es;
+    const nivel = v ? fmt(TD.duelLevel, { v: TD.levels[v] || v }) : '';
+    p.textContent = nivel;
+    p.hidden = !nivel;
+    const Jg = await jugador(), d = await (await Jg.duelos()).leer(DUELO.did), yo = Jg.yo()?.jid;
+    if (!d || !yo) return;
+    const cuenta = fmt(TD.duelCounts, { i: DUELO.i + 1, n: duelos.rondas(d), r: duelos.nombreDe(d, duelos.otro(d, yo)) });
+    p.textContent = nivel ? `${cuenta} ${nivel}` : cuenta;
+    p.hidden = false;
+  }).catch(() => {});
   return p;
 }
+/** The version of a duel round: the link's when the game has it (DUEL_VERSIONS), else the first one. */
+const versionDuelo = id => { const vs = DUEL_VERSIONS[id]; return vs ? (vs.includes(param('mode')) ? param('mode') : vs[0]) : null; };
 /** A duel round's level: the link's, else the default one (a duel from before levels were locked). Never remembered. */
 function varianteDuelo(id) {
   const vs = JUEGOS[id]?.variantes;
@@ -2249,10 +2265,10 @@ function practica(id, varianteElegida = null) {
       tituloAntesala(id, J),
       el('div', { style: 'margin-top:6px' }, coverLangToggle())),
     // The variant is picked here, before the steps, which are the variant's (D-331)
-    variante && DUELO ? nivelDuelo(variante) : null,
+    DUELO ? nivelDuelo(variante || versionDuelo(PRACTICA)) : null,
     variante && !HOY && !DUELO ? selectorVariante(id, variante, v => { guardarVariante(id, v); SFX.tap(); practica(id, v); }) : null,
     // Toque y Fama: Palabra shares Toque y Fama's home card (#767): 🔢 Número goes back to it
-    id === 'letras' && SUELTO && !HOY ? selectorTyf() : null,
+    id === 'letras' && SUELTO && !HOY && !DUELO ? selectorTyf() : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'notice uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     delDia ? el('p', { class: 'notice uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
@@ -2761,7 +2777,8 @@ async function demo(nombre) {
   await abrirCopa(e.code, { recienCreada: e.recien, pantalla: e.pantalla });
 }
 
-if (SUELTO) practica(PRACTICA);
+// A duel round of a version played in another game (Toque y Fama's 🔢 Número on /word/) plays that game here
+if (SUELTO) practica((DUELO && DUEL_VERSION_GAME[PRACTICA]?.[versionDuelo(PRACTICA)]) || PRACTICA);
 else if (PRACTICA) { if (LABS) practica(PRACTICA); }
 else if (DEMO) demo(DEMO);
 else if (codigoUrl && esCodigo(codigoUrl)) abrirCopa(codigoUrl);

@@ -14,6 +14,12 @@
  * no crash in the air; the landing costs nothing) and boost pads (`g.boost`: a short burst well past
  * the top speed).
  *
+ * The road rises and falls (relief.js: hills, crests, dips, whoops): uphill pulls the car back and
+ * downhill pushes it on (`slope`), and over a crest taken fast enough the ground drops away faster than
+ * the car falls, so it flies (`car.air`, the same flight as off a ramp). `car.z` is always the height
+ * above the ground under the car and `car.e` the ground's height there; in the air `car.vz` is the
+ * car's own vertical speed.
+ *
  * Each stretch of road has its surface (`zones` in tracks.js: gravel or asphalt, so a stage can change
  * from one to the other), and a wet stage (`weather: 'wet'`) holds less on both.
  *
@@ -26,6 +32,8 @@
  * run on a 60 Hz and a 120 Hz screen, and a slow phone plays in slow motion, never a different time.
  */
 
+import { relief, heightAt, gradeAt } from './relief.js';
+
 /** The fixed step: 1/120 s. */
 export const STEP = 1 / 120;
 
@@ -35,8 +43,9 @@ export const STEP = 1 / 120;
  */
 export const TUNING = {
   steerTime: 0.15,        // s from centre to full lock
-  topGravel: 52,          // m/s (30, then 42 for vertigo, then 52: the owner asked for more, 2026-11-27)
+  topGravel: 62,          // m/s (30, 42, 52; then as fast as asphalt, only slower to get there: the owner, 2026-11-27)
   topAsphalt: 62,
+  gravelAccel: 0.75,      // acceleration × this on gravel (the top speed is the same, it takes longer)
   topOff: 18,             // off the road
   accel: 10,              // m/s²
   brake: 20,
@@ -62,6 +71,7 @@ export const TUNING = {
   crashBounce: 0.3,       // the share of the speed into an obstacle the car bounces back with
   rampLift: 0.18,         // a ramp throws the car up at this share of its forward speed, m/s per m/s
   gravity: 12,            // m/s² in the air (a little more than the Earth's: shorter, livelier jumps)
+  slope: 9.8,             // m/s² per unit of grade: what a hill takes from the car going up and gives going down
   boostTime: 1.2,         // s of boost after a pad
   boostTop: 1.7,          // top speed × this while boosting
   boostAccel: 26,         // m/s² of extra push while boosting
@@ -77,7 +87,7 @@ export const CAR_LENGTH = 4.2;
 export const CAR_WIDTH = 1.8;
 /** The centreline is sampled every this many metres. */
 export const SAMPLE = 2;
-const ROAD_WIDTH = 7, HAIRPIN_WIDTH = 9, HAIRPIN_RADIUS = 22;
+const ROAD_WIDTH = 7, HAIRPIN_WIDTH = 9, HAIRPIN_RADIUS = 22, WIDEN = 14;
 /** How far the car is searched for along the centreline each step, in points either side. */
 const SEARCH = 12;
 
@@ -116,13 +126,31 @@ export function buildTrack(stage) {
     }
   }
   const length = s;
+  // A circuit (`loop`) ends where it starts: its pieces turn a whole 360° and the generator solved
+  // their straights so the road closes; what rounding leaves open (centimetres) is spread along the lap
+  if (stage.loop) {
+    const gx = x - pts[0].x, gy = y - pts[0].y;
+    for (const p of pts) { p.x -= gx * p.s / length; p.y -= gy * p.s / length; }
+  }
+  // A hairpin's wider road eases in and out over WIDEN m either side, never in a step (the owner,
+  // 2026-11-27: a road that looks cut where it changes width)
+  const reachI = Math.ceil(WIDEN / SAMPLE) + 1, own = pts.map(p => p.w);
+  pts.forEach((p, i) => {
+    for (let j = Math.max(0, i - reachI); j <= Math.min(pts.length - 1, i + reachI); j++) {
+      if (own[j] <= ROAD_WIDTH) continue;
+      const u = Math.max(0, 1 - Math.abs(pts[j].s - p.s) / WIDEN), ease = u * u * (3 - 2 * u);
+      p.w = Math.max(p.w, ROAD_WIDTH + (own[j] - ROAD_WIDTH) * ease);
+    }
+    p.w = Math.round(p.w * 100) / 100;
+  });
   // The surface of each point: the stage's own, changed along the zones it lists
   const base = stage.surface || 'gravel';
   for (const p of pts) p.sf = base;
   for (const z of stage.zones || []) for (const p of pts) if (p.s >= z.from && p.s < z.to) p.sf = z.surface;
   const gates = [];
   for (let i = 1; i <= stage.gates; i++) {
-    const at = (length - 6) * i / stage.gates;  // the finish sits a little before the end of the road
+    // The finish sits a little before the end of the road; on a circuit it is the start line itself
+    const at = (stage.loop ? length : length - 6) * i / stage.gates;
     let idx = 0;
     while (idx < pts.length - 1 && pts[idx].s < at) idx++;
     const p = pts[idx];
@@ -151,7 +179,10 @@ export function buildTrack(stage) {
   };
   const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
   const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
-  return { id: stage.id, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
+  const track = { id: stage.id, loop: !!stage.loop, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
+  // The relief last: it keeps its jumps away from the forks, the ramps and the pads
+  if (stage.relief !== false) relief(track); else track.relief = [];
+  return track;
 }
 
 /** The sideways grip and the top speed of a surface ('gravel', 'asphalt' or 'off') on a dry or wet stage. */
@@ -188,7 +219,7 @@ function frame(p, x, y) {
  */
 export function newGame({ track, mode = 'ready' }) {
   const p = track.pts[0];
-  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: p.sf, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0 };
+  const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: p.sf, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0, air: false, e: heightAt(track, 0), w: 0 };
   return {
     track, car, mode,
     t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
@@ -215,14 +246,19 @@ export function step(g, input = IDLE) {
   car.steer += clamp(clamp(steer, -1, 1) - car.steer, -rate, rate);
   car.throttle = clamp(throttle, 0, 1); car.brake = clamp(brake, 0, 1);
 
-  // In the air: it flies on as it left the ramp, falls, and lands where it lands (no harm done)
-  if (car.z > 0 || car.vz > 0) {
-    car.z += car.vz * dt; car.vz -= T.gravity * dt;
-    if (car.z <= 0) { car.z = 0; car.vz = 0; g.events.push({ type: 'land' }); }
+  // In the air: it flies on as it left the ramp or the crest, falls, and lands where it lands (no harm done)
+  if (car.air) {
     car.x += car.vx * dt; car.y += car.vy * dt;
     car.slip = 0; car.speed = Math.hypot(car.vx, car.vy);
     g.boost = Math.max(0, g.boost - dt);
     locate(g, dt);
+    const e = heightAt(track, g.progress);
+    car.z += car.vz * dt - (e - car.e); car.vz -= T.gravity * dt; car.e = e; car.airT = (car.airT || 0) + dt;
+    if (car.z <= 0) {
+      const w = groundSpeed(g);
+      g.events.push({ type: 'land', impact: Math.round(Math.max(0, w - car.vz) * 10) / 10, t: Math.round(car.airT * 100) / 100 });
+      car.z = 0; car.vz = 0; car.air = false; car.w = w; car.airT = 0;
+    }
     gates(g);
     if (g.mode === 'play') g.t += dt * 1000;
     return;
@@ -237,14 +273,19 @@ export function step(g, input = IDLE) {
   const boosting = g.boost > 0;
   const surface = off ? 'off' : car.surface === 'off' ? track.pts[g.idx].sf : car.surface;
   const top = topOf(surface) * (boosting ? T.boostTop : 1);
-  const acc = T.accel * (off ? T.offAccel : 1) + (boosting && vf >= 0 ? T.boostAccel : 0);
+  // Gravel pulls slower than asphalt to the same top speed: its drag scales with it (below)
+  const pull = T.accel * (surface === 'gravel' ? T.gravelAccel : 1);
+  const acc = pull * (off ? T.offAccel : 1) + (boosting && vf >= 0 ? T.boostAccel : 0);
   vf += clamp(throttle, 0, 1) * acc * dt;
+  // The hill: its grade along the car's nose, uphill taking speed and downhill giving it
+  const p0 = track.pts[g.idx];
+  vf -= T.slope * gradeAt(track, g.progress) * Math.cos(car.h - p0.h) * dt;
   // Reverse: the brake held once the car has stopped (or is already rolling back) drives it backwards
   const backing = g.mode === 'play' && brake > 0 && !(throttle > 0) && vf <= 0;
   if (backing) vf -= clamp(brake, 0, 1) * T.reverseAccel * (off ? T.offAccel : 1) * dt;
   const sign = vf > 0 ? 1 : vf < 0 ? -1 : 0;
   const topNow = vf < 0 ? T.topReverse : top;
-  let drag = T.roll + (T.accel - T.roll) * (vf / topNow) * (vf / topNow);
+  let drag = T.roll + (pull - T.roll) * (vf / topNow) * (vf / topNow);
   if (off) drag = Math.min(drag, T.maxOffDrag);
   // Past the top speed with the boost spent (after a pad): back down within a second or two
   if (!boosting && vf > top) drag += (vf - top) * 2;
@@ -291,6 +332,14 @@ export function step(g, input = IDLE) {
   car.speed = Math.hypot(car.vx, car.vy);
 
   locate(g, dt);
+  // Over a crest: when the ground falls away faster than the car can fall, the car leaves it
+  car.e = heightAt(track, g.progress);
+  const w = groundSpeed(g);
+  if (car.w - w > T.gravity * dt * 1.02 && car.speed > 8) {
+    car.air = true; car.z = 0; car.vz = car.w - T.gravity * dt;
+    g.events.push({ type: 'jump', speed: car.speed, crest: true });
+  }
+  car.w = w;
   features(g, dt);
   gates(g);
   if (g.mode === 'play') g.t += dt * 1000;
@@ -305,7 +354,7 @@ function features(g, dt) {
     const fwd = car.vx * Math.cos(r.h) + car.vy * Math.sin(r.h);
     // Over its crest going forward: up it goes
     if (before.along < 0 && now.along >= 0 && Math.abs(now.side) <= r.half && fwd > 5) {
-      car.vz = fwd * T.rampLift; car.z = 0.01;
+      car.vz = car.w + fwd * T.rampLift; car.z = 0.01; car.air = true;
       g.events.push({ type: 'jump', speed: fwd });
     }
   }
@@ -316,6 +365,12 @@ function features(g, dt) {
       g.boost = T.boostTime;
     }
   }
+}
+
+/** How fast the ground under the car rises (m/s): the road's grade times the car's speed along it. */
+function groundSpeed(g) {
+  const car = g.car, p = g.track.pts[g.idx];
+  return gradeAt(g.track, g.progress) * (car.vx * Math.cos(p.h) + car.vy * Math.sin(p.h));
 }
 
 /** The car as two circles along its length, against the solids near it (a grid built once per list of solids). */
@@ -444,7 +499,7 @@ export const needsReset = g => g.mode === 'play' && (g.off >= TUNING.resetAfter 
 export function reset(g) {
   if (g.mode !== 'play') return;
   const p = g.track.pts[g.lastRoad], car = g.car;
-  Object.assign(car, { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, z: 0, vz: 0 });
+  Object.assign(car, { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, z: 0, vz: 0, air: false, e: heightAt(g.track, p.s), w: 0 });
   g.boost = 0;
   g.idx = g.lastRoad; g.onRoad = true; g.off = 0; g.back = 0; g.wrongWay = false;
   g.progress = p.s; g.side = 0;
@@ -511,7 +566,10 @@ export function snapshot(g) {
 /** The run back from a snapshot, on its track. */
 export function restore(json, track) {
   const { trackId, ...rest } = json;
-  return { ...JSON.parse(JSON.stringify(rest)), track, events: [] };
+  const g = { ...JSON.parse(JSON.stringify(rest)), track, events: [] };
+  // A run saved before the relief: on a ramp's flight if it was in the air, on the ground's height
+  if (g.car.air === undefined) Object.assign(g.car, { air: g.car.z > 0 || g.car.vz > 0, e: heightAt(track, g.progress || 0), w: 0 });
+  return g;
 }
 
 /** The clock as the player reads it: m:ss.mmm. */

@@ -49,10 +49,12 @@ export const SETTINGS = {
 };
 export const SETTING_NAMES = Object.keys(SETTINGS);
 
-/** The crowd's colours, the same in every setting: shirts, skin, the straw bales, the grandstands. */
+/** The crowd's colours, the same in every setting: shirts, skin, hair, caps, flags, the straw bales, the grandstands. */
 export const CROWD = {
   shirts: ['#ff2e88', '#ffd23f', '#3ad1ff', '#ffffff', '#ff7a1a', '#7ee06a', '#b38cff', '#e8443a'],
   skin: ['#f1c9a5', '#d9a47a', '#a8724c', '#6e4a32'],
+  hair: ['#2a1e16', '#5a3a22', '#c8a060', '#1a1a1a', '#8a8a8a'], caps: ['#e8443a', '#ffffff', '#1c1c22', '#3ad1ff', '#ffd23f'],
+  flags: ['#ff2e88', '#ffd23f', '#3ad1ff', '#7ee06a'],
   bale: ['#d8b860', '#b8963e'], tape: 'rgba(255, 60, 60, 0.9)',
   stand: '#5b6270', step: '#7a8291', roof: '#c8323c', rail: '#e8e8ea',
 };
@@ -112,7 +114,8 @@ export function people(track, edge = edgeDistance(track)) {
   const at = (p, side, d, along = 0) => ({ x: p.x - Math.sin(p.h) * side * d + Math.cos(p.h) * along, y: p.y + Math.cos(p.h) * side * d + Math.sin(p.h) * along });
   // The grandstands: by the start line and by the finish, on the side with room for them
   const LEN = 22, DEP = 7;
-  for (const s0 of [24, track.gates[track.gates.length - 1].s - 4]) {
+  // (on a circuit the finish is the start line: the second one goes halfway round)
+  for (const s0 of [24, track.loop ? track.length / 2 : track.gates[track.gates.length - 1].s - 4]) {
     const p = P.reduce((a, q) => (Math.abs(q.s - s0) < Math.abs(a.s - s0) ? q : a), P[0]);
     for (const side of [1, -1]) {
       const d = p.w / 2 + 6 + DEP / 2, c = at(p, side, d);

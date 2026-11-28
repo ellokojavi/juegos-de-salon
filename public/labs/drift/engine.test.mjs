@@ -5,16 +5,20 @@
  */
 import assert from 'node:assert/strict';
 import * as E from './engine.js';
-import { TRACKS, STAGES } from './tracks.js';
+import { TRACKS, STAGES, weekOf, circuitFor } from './tracks.js';
+import { CIRCUITS } from './circuits.js';
 
 let n = 0;
 const ok = (name, fn) => { fn(); n++; console.log('✓', name); };
 const test = () => E.buildTrack(TRACKS.test);
-const first = () => E.buildTrack(TRACKS.first);
+const first = () => E.buildTrack(TRACKS[STAGES[0]]);
+const all = () => STAGES.map(id => E.buildTrack(TRACKS[id]));
+/** How far apart two distances are along a track (the short way round on a circuit). */
+const apart = (t, a, b) => { const d = Math.abs(b - a); return t.loop ? Math.min(d, t.length - d) : d; };
 const FULL = { steer: 0, throttle: 1, brake: 0, handbrake: false };
 const steps = (g, input, k) => { for (let i = 0; i < k; i++) { E.step(g, typeof input === 'function' ? input(g) : input); } return g; };
 /** A car on a flat, endless straight: the first stage turned into one long road. */
-const straight = () => E.buildTrack({ id: 'flat', gates: 1, pieces: [['S', 3000]] });
+const straight = () => E.buildTrack({ id: 'flat', gates: 1, relief: false, pieces: [['S', 3000]] });
 const drive = (track, k = 120 * 300) => { const g = E.newGame({ track }); while (g.mode !== 'done' && k--) { E.step(g, E.autopilot(g)); g.events.length = 0; } return g; };
 
 ok('the track: starts at the origin facing north, points every 2 m, gates on the road, the last near the end', () => {
@@ -31,7 +35,7 @@ ok('every stage stays clear of itself (25 m) and the real ones are 8 to 10 gates
   for (const t of Object.values(TRACKS).map(E.buildTrack)) {
     for (let i = 0; i < t.pts.length; i++) for (let j = i + 1; j < t.pts.length; j++) {
       const a = t.pts[i], b = t.pts[j];
-      if (b.s - a.s > 80) assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 25, `${t.id} comes near itself at ${a.s} m`);
+      if (apart(t, a.s, b.s) > 80) assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 25, `${t.id} comes near itself at ${a.s} m`);
     }
   }
   assert.equal(TRACKS.test.gates, 3);
@@ -39,15 +43,13 @@ ok('every stage stays clear of itself (25 m) and the real ones are 8 to 10 gates
 });
 
 ok('a fork leaves the main road and meets it again, clear of the rest of the stage, with no gate inside', () => {
-  const t = first();
-  assert.equal(t.branches.length, 2);
-  for (const b of t.branches) {
+  for (const t of all()) for (const b of t.branches) {
     const a0 = b.pts[0], a1 = b.pts[b.pts.length - 1], m0 = t.pts[a0.i], m1 = t.pts[a1.i];
     assert.ok(Math.hypot(a0.x - m0.x, a0.y - m0.y) < 0.5 && Math.hypot(a1.x - m1.x, a1.y - m1.y) < 0.5, 'it starts and ends on the main road');
     const far = Math.max(...b.pts.map(q => Math.hypot(q.x - t.pts[q.i].x, q.y - t.pts[q.i].y)));
     assert.ok(far > 10, `it really splits (${far.toFixed(1)} m apart)`);
     for (const q of b.pts) for (const p of t.pts) {
-      if (p.s < b.from - 40 || p.s > b.to + 40) assert.ok(Math.hypot(q.x - p.x, q.y - p.y) >= 14, `fork ${b.n} comes near the road at ${p.s} m`);
+      if (apart(t, p.s, b.from) > 40 && apart(t, p.s, b.to) > 40 && (p.s < b.from || p.s > b.to)) assert.ok(Math.hypot(q.x - p.x, q.y - p.y) >= 14, `fork ${b.n} comes near the road at ${p.s} m`);
     }
     for (const g of t.gates) assert.ok(g.s < b.from || g.s > b.to, `gate at ${g.s} m inside fork ${b.n}`);
   }
@@ -65,11 +67,12 @@ ok('on a fork the car on the branch is on the road, and its progress runs as on 
 
 ok('a boost pad pushes the car well past its top speed for a moment', () => {
   const track = straight();
-  track.pads = [{ x: 0, y: 30, h: Math.PI / 2, s: 30, half: 1.7, len: 8 }];
+  // Where the car is near its top speed (gravel gets there slowly: about 15 s)
+  track.pads = [{ x: 0, y: 600, h: Math.PI / 2, s: 600, half: 1.7, len: 8 }];
   const g = E.newGame({ track });
   const events = [];
   let best = 0;
-  for (let i = 0; i < 120 * 8; i++) { E.step(g, FULL); best = Math.max(best, g.car.speed); events.push(...g.events.splice(0)); }
+  for (let i = 0; i < 120 * 22; i++) { E.step(g, FULL); best = Math.max(best, g.car.speed); events.push(...g.events.splice(0)); }
   assert.ok(events.some(e => e.type === 'boost'));
   assert.ok(best > E.TUNING.topGravel * 1.15, `peak ${best.toFixed(1)} against top ${E.TUNING.topGravel}`);
   assert.ok(g.car.speed < E.TUNING.topGravel * 1.05, `and then back near its top speed (${g.car.speed.toFixed(1)})`);
@@ -93,7 +96,7 @@ ok('a ramp throws the car up; it lands where it lands, without losing a life, an
 ok('every boost pad has a long straight after it, so a boosted car is not thrown at a bend', () => {
   // About how far a boosted car goes before it is back to its top speed (the owner, 2026-11-27)
   const PAD_RUN = 130;
-  for (const t of [test(), first()]) for (const p of t.pads) {
+  for (const t of [test(), ...all()]) for (const p of t.pads) {
     const path = p.fork !== undefined ? t.branches[p.fork].pts : t.pts;
     const run = path.filter(q => q.s >= p.s && q.s <= p.s + PAD_RUN);
     assert.ok(run.length && run[run.length - 1].s >= p.s + PAD_RUN - 2 * E.SAMPLE, `${t.id}: the road ends ${PAD_RUN} m after the pad at ${p.s}`);
@@ -237,25 +240,52 @@ ok('the caller: one 1-second frame (clamped to 0.1 s ten times) and 120 steps en
   assert.ok(Math.abs(c.t - 100) < 9);
 });
 
-ok('the autopilot finishes the test stage with every gate, in about 12 seconds, and the first stage in 60 to 90', () => {
+ok('the autopilot laps the test stage in about 12 seconds, and every circuit in about a minute, at its par', () => {
   const g = drive(test());
   assert.equal(g.mode, 'done'); assert.equal(g.missed, 0); assert.equal(g.splits.length, 3);
   assert.ok(g.t > 9000 && g.t < 16000, `test ${g.t}`);
-  const f = drive(first());
-  assert.equal(f.mode, 'done'); assert.equal(f.missed, 0); assert.equal(f.splits.length, TRACKS.first.gates);
-  assert.ok(f.t > 60000 && f.t < 90000, `first ${f.t}`);
   for (const id of STAGES) {
     const r = drive(E.buildTrack(TRACKS[id]));
-    assert.equal(r.mode, 'done', id); assert.equal(r.missed, 0, id);
-    assert.ok(r.t > 60000 && r.t < 90000, `${id} ${r.t}`);
+    assert.equal(r.mode, 'done', id); assert.equal(r.missed, 0, id); assert.equal(r.splits.length, TRACKS[id].gates, id);
+    assert.ok(r.t >= 55000 && r.t <= 65000, `${id} ${r.t}`);
+    assert.ok(Math.abs(r.t - TRACKS[id].par) < 1000, `${id}: lapped in ${r.t} against its par ${TRACKS[id].par}`);
   }
 });
 
+ok('a circuit is closed: it ends where it starts, facing the same way, and its finish is the start line', () => {
+  assert.ok(CIRCUITS.length >= 12);
+  for (const t of all()) {
+    assert.ok(t.loop, t.id);
+    const a = t.pts[0], z = t.pts.at(-1);
+    assert.ok(Math.hypot(a.x - z.x, a.y - z.y) < 0.05, `${t.id} closes within ${Math.hypot(a.x - z.x, a.y - z.y).toFixed(3)} m`);
+    assert.ok(Math.abs(Math.cos(z.h - a.h) - 1) < 1e-9, `${t.id} ends facing the start`);
+    assert.ok(Math.hypot(t.gates.at(-1).x - a.x, t.gates.at(-1).y - a.y) < 0.05, `${t.id}: the finish is the start line`);
+    assert.equal(a.k, 0, `${t.id} starts on a straight`);
+    assert.ok(t.gates.length >= 8 && t.gates.length <= 10);
+    assert.ok(t.pts.every(p => !p.k || 1 / Math.abs(p.k) >= 16 - 1e-9), `${t.id}: no bend under 16 m`);
+    assert.ok(t.pads.length >= 1 && t.ramps.length >= 1 && t.branches.length >= 1, `${t.id} has a pad, a ramp and a fork`);
+    for (const f of [...t.pads, ...t.ramps]) assert.ok(t.gates.every(g => apart(t, g.s, f.s) >= 25), `${t.id}: a ramp or a pad 25 m from every gate`);
+  }
+});
+
+ok('one circuit a week for everyone: weeks start on Monday at midnight in the Rankings\' zone, the pool in turn', () => {
+  // Sunday 23:59 and Monday 00:01 in Chile (UTC-3 in November)
+  const sun = Date.UTC(2026, 10, 30, 2, 59), mon = Date.UTC(2026, 10, 30, 3, 1);
+  assert.equal(weekOf(mon) - weekOf(sun), 1);
+  assert.equal(weekOf(mon), weekOf(mon + 6 * 864e5 + 20 * 36e5));
+  // Across a year's end the count goes on
+  assert.equal(weekOf(Date.UTC(2027, 0, 4, 12)) - weekOf(Date.UTC(2026, 11, 28, 12)), 1);
+  const seen = new Set();
+  for (let w = 0; w < STAGES.length; w++) seen.add(circuitFor(mon + w * 7 * 864e5));
+  assert.equal(seen.size, STAGES.length, 'every circuit once in as many weeks');
+  assert.equal(circuitFor(mon), circuitFor(mon + 3 * 864e5));
+});
+
 ok('surfaces: a stage changes surface along its zones, its forks take the main road\'s, and the car reads the one under it', () => {
-  const t = E.buildTrack(TRACKS.split);
-  const z = TRACKS.split.zones[0];
+  const id = STAGES.find(i => TRACKS[i].zones), t = E.buildTrack(TRACKS[id]);
+  const z = TRACKS[id].zones[0];
   for (const p of t.pts) assert.equal(p.sf, p.s >= z.from && p.s < z.to ? 'asphalt' : 'gravel', `${p.s} m`);
-  for (const b of first().branches) for (const q of b.pts) assert.equal(q.sf, 'gravel');
+  for (const b of t.branches) for (const q of b.pts) assert.equal(q.sf, t.pts[q.i].sf);
   // Driven by the autopilot: on asphalt before the change, on gravel after it
   const g = E.newGame({ track: t }); let before = null, after = null;
   while (g.mode !== 'done') { E.step(g, E.autopilot(g)); g.events.length = 0; if (g.onRoad) { if (g.progress < z.to - 20) before = g.car.surface; else if (g.progress > z.to + 20) after = g.car.surface; } }
@@ -268,13 +298,13 @@ ok('rain: wet asphalt holds less than dry gravel, and a car at full lock on it r
   assert.equal(E.gripOf('off', true), E.gripOf('off', false));
   // How far the car's travel turns in half a second at full lock, from 30 m/s
   const turn = wet => {
-    const g = E.newGame({ track: E.buildTrack({ id: 'flat', gates: 1, surface: 'asphalt', weather: wet ? 'wet' : undefined, pieces: [['S', 3000]] }) });
+    const g = E.newGame({ track: E.buildTrack({ id: 'flat', gates: 1, relief: false, surface: 'asphalt', weather: wet ? 'wet' : undefined, pieces: [['S', 3000]] }) });
     while (g.car.speed < 30) E.step(g, FULL);
     const a0 = Math.atan2(g.car.vy, g.car.vx);
     steps(g, { steer: 1, throttle: 1 }, 60);
     return Math.abs(Math.atan2(g.car.vy, g.car.vx) - a0);
   };
-  assert.ok(E.buildTrack(TRACKS.rain).wet && !first().wet);
+  assert.ok(STAGES.some(i => E.buildTrack(TRACKS[i]).wet) && !first().wet);
   const wet = turn(true), dry = turn(false);
   assert.ok(wet < dry * 0.8, `wet ${wet.toFixed(2)} rad, dry ${dry.toFixed(2)} rad`);
 });

@@ -17,6 +17,15 @@
  * `loadGame(id)` first; a game's screen that has its own stylesheet loads it itself (load-css.js).
  */
 import { LETRAS, VARIANTES } from '../engine.js';
+import { flag, flagGuess } from '../../assets/js/flags.js';
+
+/**
+ * Zip's hard mode, with walls (lab: #seccion-zip-hard): read with no wait from what this phone saw
+ * last, so the waiting room draws its picker from the first frame; `flag()` asks the network too,
+ * so the tester tab lists it and the next visit knows.
+ */
+const ZIP_HARD = flagGuess('zip-hard');
+flag('zip-hard').catch(() => {});
 
 /**
  * El código con que se arma la sesión de prueba (D-103): otro, derivado del de la copa, para que
@@ -99,7 +108,14 @@ const BUILD = {
     for (let k = 0; ; k++) { const p = letras.generar(codigoEnsayo(c), d, { ...o, sal: `ensayo-${k}` }); if (p.secreto !== real) return p; }
   }),
   // Zip se arma nivel por nivel dentro de la pantalla: lo generado es solo la semilla del día (D-103)
-  zip: ([, ui]) => ({ generar: (codigo, dia) => ({ codigo, dia }), montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) }),
+  // Hard mode, with walls, only on its own page and only while its flag is on (lab: #seccion-zip-hard):
+  // La Copa never offers it (GAME_VARIANTS has no zip), and with the flag off nothing changes
+  zip: ([, ui]) => ({
+    generar: (codigo, dia, o = {}) => ({ codigo, dia, variante: o.variante === 'hard' ? 'hard' : null }),
+    montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo,
+    ensayo: (c, d, o = {}) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000, variante: o.variante === 'hard' ? 'hard' : null }),
+    variantes: ZIP_HARD ? ['normal', 'hard'] : null,
+  }),
   // Como Zip: los niveles se arman dentro de la pantalla y lo generado es solo la semilla del día (D-179)
   desenredo: ([, ui]) => ({ generar: (codigo, dia) => ({ codigo, dia }), montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, ensayo: (c, d) => ({ codigo: codigoEnsayo(c), dia: d, tiempo: 60 * 1000 }) }),
   tango: ([tango, ui]) => juego(tango, ui, (c, d, o = {}) => tango.generar(codigoEnsayo(c), d, { sal: 'ensayo', variante: o.variante })),

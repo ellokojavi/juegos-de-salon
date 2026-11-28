@@ -25,10 +25,19 @@
  * With reduced motion it is damped twice as much, and there is half the dust.
  */
 import { SETTINGS, CROWD, scenery, near, settingOf, seeded } from './scenery.js';
+import { cheer } from './cheer.js';
 import { tile, pattern } from './textures.js';
 import { carSprite, shadowSprite } from './car2d.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
+/** The heading from (x, y) to the nearest point of the road: where a fan looks. */
+function faceRoad(track, x, y) {
+  let best = Infinity, p = track.pts[0];
+  for (let i = 0; i < track.pts.length; i += 2) { const q = track.pts[i], d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < best) { best = d; p = q; } }
+  return Math.atan2(p.y - y, p.x - x);
+}
+const faces = new WeakMap();
+
 const COLOURS = {
   gateNext: '#ffd23f', gateLater: 'rgba(255, 255, 255, 0.5)', gatePast: 'rgba(255, 255, 255, 0.15)', gatePost: '#1b1b22',
   chequerDark: '#15151a', chequerLight: '#f4f4f0', label: '#ffffff',
@@ -67,6 +76,44 @@ function puddlesOf(track) {
   return out;
 }
 
+/** Where the sun stands, seen from above (north-west, as the props' shadows fall): lights the slopes. */
+const SUN = [-0.6, 0.8];
+
+/**
+ * Which points of road `r` (0 the main one, 1… its forks) have their line `off` m to the side
+ * (from the edge with `edge`) lying on another road's surface, where it must not show: the main
+ * road's edge across a fork's mouth, a fork's lines over the main road. Worked out once per track.
+ */
+const hiddenCache = new WeakMap();
+function hidden(track, r, off, edge) {
+  let byKey = hiddenCache.get(track);
+  if (!byKey) hiddenCache.set(track, byKey = new Map());
+  const key = `${r}:${off}:${edge}`;
+  if (byKey.has(key)) return byKey.get(key);
+  const roads = [track.pts, ...(track.branches || []).map(b => b.pts)];
+  const P = roads[r], out = new Uint8Array(P.length);
+  // The other roads near this one: a fork against the main road; the main road against its forks
+  const others = r ? [{ Q: track.pts, from: track.branches[r - 1].from - 30, to: track.branches[r - 1].to + 30 }]
+    : track.branches.map(b => ({ Q: b.pts, from: b.from - 30, to: b.to + 30 }));
+  P.forEach((p, i) => {
+    const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
+    const x = p.x - Math.sin(p.h) * o, y = p.y + Math.cos(p.h) * o;
+    for (const { Q, from, to } of others) {
+      if (p.s < from || p.s > to) continue;
+      for (const q of Q) {
+        if (q.s < from || q.s > to) continue;
+        const dx = x - q.x, dy = y - q.y;
+        if (dx * dx + dy * dy > 36) continue;
+        const along = dx * Math.cos(q.h) + dy * Math.sin(q.h), side = -dx * Math.sin(q.h) + dy * Math.cos(q.h);
+        if (Math.abs(along) <= 1.2 && Math.abs(side) < q.w / 2 - 0.05) { out[i] = 1; break; }
+      }
+      if (out[i]) break;
+    }
+  });
+  byKey.set(key, out);
+  return out;
+}
+
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const quiet = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -81,7 +128,7 @@ function canvasOf(w, h) {
  * One prop's sprite, drawn in metres around its centre for a prop of radius 1 (the scene scales it),
  * shadow included. Returns { img, E }: the sprite covers E × radius around the prop's centre.
  */
-function propSprite(kind, v, S, ppm) {
+function propSprite(kind, v, S, ppm, cheering = false) {
   const sun = S.sun, E = 1 + Math.hypot(sun[0], sun[1]) + 0.1;
   const rRef = { tree: 4.2, dead: 3, bush: 1.8, rock: 1.4, hay: 1.1, stump: 0.8, fan: 0.5, bale: 0.6 }[kind] || 2;
   const px = Math.min(768, Math.max(8, 2 * E * rRef * ppm));
@@ -141,14 +188,45 @@ function propSprite(kind, v, S, ppm) {
     disc(0, 0, 1, CROWD.bale[v % 2]);
     x.strokeStyle = CROWD.bale[(v + 1) % 2]; x.lineWidth = 0.12;
     for (const r of [0.65, 0.35]) { x.beginPath(); x.arc(0, 0, r, 0.5 * v, 0.5 * v + 5); x.stroke(); }
+    // The rim's darker edge, and two strands of twine across it
+    x.strokeStyle = 'rgba(60, 40, 10, 0.4)'; x.lineWidth = 0.08; x.beginPath(); x.arc(0, 0, 0.96, 0, Math.PI * 2); x.stroke();
+    x.strokeStyle = '#c9a248'; x.lineWidth = 0.05;
+    for (const o of [-0.4, 0.4]) { const h = Math.sqrt(1 - o * o) * 0.97; x.beginPath(); x.moveTo(o, -h); x.lineTo(o, h); x.stroke(); }
   } else if (kind === 'fan') {
-    // A person seen from above: shoulders in a bright shirt, a head; some with their arms up
+    // A person seen from above: a shadow, the shoulders in a jacket with a collar, the arms in one of
+    // the five poses the 3D fans have (down, both up, a flag, a phone, hands on hips), a head with
+    // hair or a cap whose peak points up the sprite (−y), the side the scene turns toward the road
     const shirt = CROWD.shirts[v % CROWD.shirts.length], skin = CROWD.skin[(v >> 3) % CROWD.skin.length];
-    disc(sx * 0.7, sy * 0.7, 0.95, S.shadow);
-    x.fillStyle = shirt; x.beginPath(); x.ellipse(0, 0, 1, 0.62, 0, 0, Math.PI * 2); x.fill();
-    if (v % 3 === 0) { disc(-0.95, 0.55, 0.26, skin); disc(0.95, 0.55, 0.26, skin); }
-    disc(0, 0, 0.48, skin);
-    disc(0, -0.08, 0.3, v % 2 ? '#2a1a10' : '#c9a050');
+    // Cheering (the car near): whoever had their arms down or on their hips throws them up, as in 3D
+    const calm = (v >> 2) % 5, pose = cheering && calm !== 2 && calm !== 3 ? 1 : calm, edge = 'rgba(20, 10, 20, 0.45)';   // its shadow: drawn by the scene, unturned
+    const arm = (ax, ay, bx, by) => {
+      x.strokeStyle = shirt; x.lineCap = 'round'; x.lineWidth = 0.3;
+      x.beginPath(); x.moveTo(ax, ay); x.lineTo(bx, by); x.stroke();
+      disc(bx, by, 0.17, skin);
+    };
+    if (pose === 1 || pose === 2) {
+      arm(-0.75, 0.2, -1.0, 0.75);
+      if (pose === 1) arm(0.75, 0.2, 1.0, 0.75);
+      else { x.fillStyle = CROWD.flags[v % CROWD.flags.length]; x.fillRect(-1.05, 0.75, 0.9, 0.55); x.fillStyle = 'rgba(255, 255, 255, 0.7)'; x.fillRect(-1.05, 0.95, 0.9, 0.12); }
+    } else if (pose === 3) {
+      arm(-0.7, 0.1, -0.25, -0.75); arm(0.7, 0.1, 0.25, -0.75);
+      x.fillStyle = '#15151a'; x.fillRect(-0.2, -0.95, 0.4, 0.22); x.fillStyle = '#bfe8ff'; x.fillRect(-0.15, -0.92, 0.3, 0.14);
+    } else if (pose === 4) {
+      arm(-0.8, 0.05, -0.95, 0.45); arm(0.8, 0.05, 0.95, 0.45);
+    }
+    x.fillStyle = shirt; x.beginPath(); x.ellipse(0, 0.1, 0.95, 0.55, 0, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = edge; x.lineWidth = 0.06; x.stroke();
+    x.fillStyle = 'rgba(0, 0, 0, 0.22)'; x.beginPath(); x.ellipse(0, 0.08, 0.5, 0.3, 0, 0, Math.PI * 2); x.fill();
+    if (pose === 0) { disc(-0.9, 0.15, 0.17, skin); disc(0.9, 0.15, 0.17, skin); }
+    disc(0, 0, 0.42, skin);
+    if (v % 3 === 0) {
+      const cap = CROWD.caps[(v >> 2) % CROWD.caps.length];
+      disc(0, 0.04, 0.4, cap);
+      x.fillStyle = cap; x.beginPath(); x.ellipse(0, -0.38, 0.3, 0.18, 0, Math.PI, Math.PI * 2); x.fill();
+      x.strokeStyle = edge; x.lineWidth = 0.04; x.beginPath(); x.arc(0, 0.04, 0.4, 0, Math.PI * 2); x.stroke();
+    } else {
+      disc(0, 0.1, 0.36, CROWD.hair[(v >> 1) % CROWD.hair.length]);
+    }
   }
   return { img: c, E };
 }
@@ -171,6 +249,7 @@ export function escena(canvas) {
   let lastNow = 0;
   // What is built once per stage and setting, and once per scale
   let world = null;          // { track, setting, S, patches, cells }
+  const crowd = cheer();      // the people's jumps, confetti and streamers (cheer.js)
   let sprites = new Map(), spritePpm = 0, dust = null, spray = null;
   // The car's body and its soft shadow, drawn again only when the scale changes
   let carArt = null;
@@ -207,13 +286,14 @@ export function escena(canvas) {
     world.grain = { ground: pattern(ctx, tile('ground', S, setting)), gravel: pattern(ctx, tile('gravel', S, setting)), asphalt: pattern(ctx, tile('asphalt', S, setting)) };
     carArt = null;
     sprites = new Map(); spritePpm = 0; dust = dustSprite(S.dust); spray = dustSprite([205, 215, 230]);
+    crowd.setup([...world.cells.values()].flat().filter(it => it.kind === 'fan'), world.stands);
     return world;
   }
-  function sprite(kind, v, ppm) {
+  function sprite(kind, v, ppm, cheering = false) {
     // Drawn again only when the scale changes by more than a tenth (the panel's zoom, a rotated phone)
     if (Math.abs(ppm - spritePpm) > spritePpm * 0.1) { sprites = new Map(); spritePpm = ppm; }
-    const k = kind + v;
-    if (!sprites.has(k)) sprites.set(k, propSprite(kind, v, world.S, spritePpm));
+    const k = kind + v + (cheering ? '!' : '');
+    if (!sprites.has(k)) sprites.set(k, propSprite(kind, v, world.S, spritePpm, cheering));
     return sprites.get(k);
   }
 
@@ -230,9 +310,11 @@ export function escena(canvas) {
       lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; rings.length = 0;
       seenHits = car.hits?.length || 0;
       for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
+      crowd.reset();
     }
     // The car between the last two steps
     const x = car.px + (car.x - car.px) * alpha, y = car.py + (car.y - car.py) * alpha;
+    crowd.update({ x, y, vx: car.vx, vy: car.vy }, dt, quiet());
     const h = car.ph + wrap(car.h - car.ph) * alpha;
 
     // The camera: the direction of travel, eased
@@ -340,17 +422,25 @@ export function escena(canvas) {
     const ppm = zoom * dpr;
     const still = quiet();
     for (const it of near(world.cells, cam.x, cam.y, reach, seen)) {
-      const { img, E } = sprite(it.kind, it.v, ppm);
+      const fan = it.kind === 'fan', up = fan && !still && crowd.excite(it.x, it.y) > 0.25;
+      const { img, E } = sprite(it.kind, it.v, ppm, up);
       let e = E * it.r;
-      // The people jump as the car goes by (never with reduced motion)
-      if (it.kind === 'fan' && !still) {
-        const d = Math.hypot(it.x - x, it.y - y);
-        if (d < 35) e *= 1 + 0.14 * Math.abs(Math.sin(now / 160 + it.ph)) * (1 - d / 35);
-      }
-      ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
+      // The people jump as the car goes by, their arms up (never with reduced motion): seen from above, a jump grows them
+      if (fan) e *= 1 + 0.4 * crowd.lift(it, now);
+      if (it.kind === 'fan') {
+        // Each fan turned toward the road, as in 3D (its heading found once, then kept)
+        let h = faces.get(it);
+        if (h === undefined) faces.set(it, (h = faceRoad(g.track, it.x, it.y)));
+        // Its shadow first, unturned, so every shadow still falls away from the sun
+        ctx.fillStyle = S.shadow; ctx.beginPath(); ctx.arc(it.x + S.sun[0] * 0.7 * it.r, it.y + S.sun[1] * 0.7 * it.r, 0.95 * it.r, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(h + Math.PI / 2);
+        ctx.drawImage(img, -e, -e, 2 * e, 2 * e);
+        ctx.restore();
+      } else ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
+    confetti();
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
@@ -386,70 +476,91 @@ export function escena(canvas) {
     labels(g, { zoom, anchorY });
   }
 
-  /** The road: the points near the camera, stroked wide with round joins, the shoulder first. */
+  /**
+   * The road as ribbons: each road near the camera (the main one and its forks) a filled strip
+   * between its two edges, worked out point by point, so it widens into a hairpin smoothly, a fork
+   * leaves and joins it with no seam, and a change of surface meets edge to edge (the owner,
+   * 2026-11-27: «que la pista tenga un trazado continuo»). A closed circuit wraps past its start.
+   * Then its slopes in light and shade, then its lines, each hidden where it crosses another road.
+   */
   function road(track, S, cx, cy, reach) {
     const r2 = reach * reach;
+    const roads = [track.pts, ...(track.branches || []).map(b => b.pts)];
     const runs = [];
-    // The main road and its forks, each cut to the stretches near the camera
-    for (const P of [track.pts, ...(track.branches || []).map(b => b.pts)]) {
+    roads.forEach((P, r) => {
       let run = null;
+      const mine = [];
       for (let i = 0; i < P.length; i++) {
         const p = P[i], dx = p.x - cx, dy = p.y - cy;
-        if (dx * dx + dy * dy <= r2) { if (!run) runs.push(run = []); run.push(p); } else run = null;
+        if (dx * dx + dy * dy <= r2) { if (!run) mine.push(run = { r, pts: [], at: [] }); run.pts.push(p); run.at.push(i); } else run = null;
       }
-    }
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      // A circuit's road runs on through the start line (its last point is its first): one stretch, no ends at the seam
+      if (r === 0 && track.loop && mine.length > 1 && mine[0].at[0] === 0 && run && run.at[run.at.length - 1] === P.length - 1) {
+        const first = mine.shift();
+        run.pts.push(...first.pts.slice(1)); run.at.push(...first.at.slice(1));
+      }
+      runs.push(...mine);
+    });
+    // The two edges of a stretch, `extra` m wider than the road each side: one closed path
+    const ribbon = (pts, from, to, extra) => {
+      ctx.moveTo(pts[from].x - Math.sin(pts[from].h) * (pts[from].w / 2 + extra), pts[from].y + Math.cos(pts[from].h) * (pts[from].w / 2 + extra));
+      for (let i = from + 1; i <= to; i++) { const p = pts[i], o = p.w / 2 + extra; ctx.lineTo(p.x - Math.sin(p.h) * o, p.y + Math.cos(p.h) * o); }
+      for (let i = to; i >= from; i--) { const p = pts[i], o = p.w / 2 + extra; ctx.lineTo(p.x + Math.sin(p.h) * o, p.y - Math.cos(p.h) * o); }
+      ctx.closePath();
+    };
+    const fill = (style, extra, pick = () => true) => {
+      ctx.fillStyle = style;
+      ctx.beginPath();
+      for (const rn of runs) {
+        const P = rn.pts;
+        // Each stretch the pick keeps, reaching one point into the next so two surfaces meet edge to edge
+        for (let i = 0; i < P.length; i++) {
+          if (!pick(P[i])) continue;
+          let j = i; while (j + 1 < P.length && pick(P[j + 1])) j++;
+          const a = i, b = Math.min(P.length - 1, j + 1);
+          if (b > a) ribbon(P, a, b, extra);
+          i = j;
+        }
+      }
+      ctx.fill();
+    };
     // Each stretch in the look of its surface: the setting's own road for the surface it was made for,
     // the other surface's usual look where the stage changes (a gravel meadow that turns to asphalt)
     const native = S.lines ? 'asphalt' : 'gravel';
     const lookOf = sf => (sf === native ? S : SETTINGS[sf === 'asphalt' ? 'plain' : 'meadow']);
-    const surfaces = [...new Set(runs.flat().map(p => p.sf))];
-    // Wider where the bend is a hairpin: each width its own stroke
-    // Where the surface changes, each stretch reaches one point into the next and ends square, so the
-    // two meet edge to edge (a round end would bulge over the other surface)
-    const stroke = (keep, width) => {
-      for (const w of [7, 9]) {
-        // (the hairpin's wider stroke keeps its round ends: it widens the road gently)
-        ctx.lineCap = surfaces.length > 1 && width === 0 && w === 7 ? 'butt' : 'round';
-        ctx.lineWidth = w + width;
-        ctx.beginPath();
-        for (const rn of runs) {
-          let open = false;
-          for (let i = 0; i < rn.length; i++) {
-            const p = rn[i];
-            if (p.w < w || !(keep(p) || (i > 0 && keep(rn[i - 1])))) { open = false; continue; }
-            if (!open) { ctx.moveTo(p.x, p.y); open = true; } else ctx.lineTo(p.x, p.y);
-          }
-        }
-        ctx.stroke();
-      }
-    };
-    // A dark rim where the shoulder meets the grass, the shoulder with its grit, then each surface with its grain
-    ctx.strokeStyle = COLOURS.verge; stroke(() => true, 3.2);
-    ctx.strokeStyle = S.shoulder; stroke(() => true, 2.4);
-    if (world.grain.gravel) { ctx.strokeStyle = world.grain.gravel; stroke(() => true, 2.4); }
-    ctx.lineCap = 'round';
+    const surfaces = [...new Set(runs.flatMap(rn => rn.pts.map(p => p.sf)))];
+    // A dark rim where the shoulder meets the grass, the shoulder with its grit
+    fill(COLOURS.verge, 1.6);
+    fill(S.shoulder, 1.2);
+    if (world.grain.gravel) fill(world.grain.gravel, 1.2);
+    // The road: first all of it in its first surface's look, then each other surface over its stretches
+    const first = surfaces[0];
     for (const sf of surfaces) {
-      ctx.strokeStyle = lookOf(sf).road; stroke(p => p.sf === sf, 0);
+      const pick = sf === first ? () => true : p => p.sf === sf;
+      fill(lookOf(sf).road, 0, pick);
       const grain = world.grain[sf === 'asphalt' ? 'asphalt' : 'gravel'];
-      if (grain) { ctx.strokeStyle = grain; stroke(p => p.sf === sf, 0); }
+      if (grain) fill(grain, 0, pick);
     }
     // The rain darkens the road
-    if (track.wet) { ctx.strokeStyle = COLOURS.wetSheen; stroke(() => true, 0); }
-    // A line along the road, `off` metres to its left (a negative one, to its right), on one surface
+    if (track.wet) fill(COLOURS.wetSheen, 0);
+    slopes(runs);
+    // A line along the road, `off` metres to its left (a negative one, to its right), on one surface;
+    // broken where it would run over another road (a fork's mouth)
     const along = (off, edge, sf) => {
       ctx.beginPath();
       for (const rn of runs) {
+        const hide = hidden(track, rn.r, off, edge);
         let open = false;
-        for (const p of rn) {
-          if (p.sf !== sf) { open = false; continue; }
+        rn.pts.forEach((p, k) => {
+          if (p.sf !== sf || hide[rn.at[k]]) { open = false; return; }
           const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
           const px = p.x - Math.sin(p.h) * o, py = p.y + Math.cos(p.h) * o;
           if (open) ctx.lineTo(px, py); else { ctx.moveTo(px, py); open = true; }
-        }
+        });
       }
       ctx.stroke();
     };
+    ctx.lineJoin = 'round'; ctx.lineCap = 'butt';
     // The road's edges a shade darker, where it wears into the shoulder
     for (const sf of surfaces) { ctx.strokeStyle = COLOURS.edge; ctx.lineWidth = 0.45; along(0.22, true, sf); along(-0.22, true, sf); }
     // Gravel: the two ruts the cars before you dug; asphalt: the edge lines and the centre dashes
@@ -459,6 +570,42 @@ export function escena(canvas) {
       if (L.lines) { ctx.strokeStyle = L.lines; ctx.lineWidth = 0.18; along(0.45, true, sf); along(-0.45, true, sf); }
       if (L.centre) { ctx.strokeStyle = L.centre; ctx.lineWidth = 0.2; ctx.setLineDash([3, 5]); along(0, false, sf); ctx.setLineDash([]); }
     }
+    ctx.lineCap = 'round';
+  }
+
+  /**
+   * The relief seen from above: each stretch of road lit or shaded by how its slope faces the sun
+   * (from the north-west, as the props' shadows), lighter climbing toward it, darker away; a crest's
+   * far side shows as a dark band, a dip as a dark then a light one.
+   */
+  function slopes(runs) {
+    const LEVELS = 5, buckets = [[], []];
+    for (const rn of runs) {
+      const P = rn.pts;
+      for (let i = 0; i + 1 < P.length; i++) {
+        const p = P[i], q = P[i + 1], gr = ((p.g || 0) + (q.g || 0)) / 2;
+        if (Math.abs(gr) < 0.004) continue;
+        // The surface's tilt toward the sun: the grade along the road's heading against the sun's direction
+        const lit = -gr * (Math.cos(p.h) * SUN[0] + Math.sin(p.h) * SUN[1]);
+        const level = Math.min(LEVELS, Math.round(Math.abs(lit) * 70));
+        if (!level) continue;
+        (buckets[lit > 0 ? 0 : 1][level] ||= []).push(p, q);
+      }
+    }
+    buckets.forEach((byLevel, dark) => byLevel.forEach((list, level) => {
+      if (!list?.length) return;
+      ctx.fillStyle = dark ? `rgba(20, 10, 0, ${level * 0.045})` : `rgba(255, 250, 225, ${level * 0.04})`;
+      ctx.beginPath();
+      for (let k = 0; k < list.length; k += 2) {
+        const p = list[k], q = list[k + 1], a = p.w / 2 + 1.2, b = q.w / 2 + 1.2;
+        ctx.moveTo(p.x - Math.sin(p.h) * a, p.y + Math.cos(p.h) * a);
+        ctx.lineTo(q.x - Math.sin(q.h) * b, q.y + Math.cos(q.h) * b);
+        ctx.lineTo(q.x + Math.sin(q.h) * b, q.y - Math.cos(q.h) * b);
+        ctx.lineTo(p.x + Math.sin(p.h) * a, p.y - Math.cos(p.h) * a);
+        ctx.closePath();
+      }
+      ctx.fill();
+    }));
   }
 
   /** The puddles of a wet stage: pale ellipses on the road that catch the sky. */
@@ -477,6 +624,30 @@ export function escena(canvas) {
    * A grandstand beside the road: a stepped stand along it, full of people facing the road, with a
    * roof over the back rows and a rail at the front. The front rows stand up as the car goes by.
    */
+  /**
+   * The crowd's confetti and streamers from above: little rectangles turning (a higher one is drawn a
+   * little bigger), and ribbons along the streamers' tails.
+   */
+  function confetti() {
+    for (const p of crowd.parts) {
+      ctx.globalAlpha = Math.min(1, (p.life - p.age) / (p.life * 0.25));
+      const k = 1 + p.z * 0.06;
+      if (p.kind === 'confetti') {
+        const w = p.w * 1.4 * k, cs = Math.cos(p.spin), sn = Math.sin(p.spin), t = Math.abs(Math.cos(p.spin * 1.3)) * 0.6 + 0.15;
+        ctx.fillStyle = p.col; ctx.beginPath();
+        ctx.moveTo(p.x + cs * w - sn * w * t, p.y + sn * w + cs * w * t); ctx.lineTo(p.x - cs * w - sn * w * t, p.y - sn * w + cs * w * t);
+        ctx.lineTo(p.x - cs * w + sn * w * t, p.y - sn * w - cs * w * t); ctx.lineTo(p.x + cs * w + sn * w * t, p.y + sn * w - cs * w * t);
+        ctx.closePath(); ctx.fill();
+      } else if (p.tail.length > 1) {
+        ctx.strokeStyle = p.col; ctx.lineWidth = p.w * 1.6 * k; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(p.x, p.y);
+        for (const [tx, ty] of p.tail) ctx.lineTo(tx, ty);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function stand(st, S, carX, carY, now, still) {
     ctx.save();
     // In the stand's own frame: x along the road, y away from it (its front rows and rail toward the road)
@@ -495,8 +666,16 @@ export function escena(canvas) {
       const sz = 0.34 + jump;
       ctx.fillStyle = CROWD.shirts[v % CROWD.shirts.length];
       ctx.beginPath(); ctx.ellipse(a, py, sz, sz * 0.62, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(20, 10, 20, 0.4)'; ctx.lineWidth = 0.05; ctx.stroke();
+      // Some cheer with both arms up, toward the road
+      if (v % 4 === 0) {
+        ctx.fillStyle = CROWD.skin[(v >> 3) % CROWD.skin.length];
+        for (const o of [-1, 1]) { ctx.beginPath(); ctx.arc(a + o * sz * 0.9, py - sz * 0.6, sz * 0.2, 0, Math.PI * 2); ctx.fill(); }
+      }
       ctx.fillStyle = CROWD.skin[(v >> 3) % CROWD.skin.length];
       ctx.beginPath(); ctx.arc(a, py, sz * 0.45, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = v % 3 === 0 ? CROWD.caps[v % CROWD.caps.length] : CROWD.hair[v % CROWD.hair.length];
+      ctx.beginPath(); ctx.arc(a, py + sz * 0.08, sz * 0.36, 0, Math.PI * 2); ctx.fill();
     }
     // The roof over the back, and the rail at the front
     ctx.fillStyle = CROWD.roof; ctx.fillRect(-L - 0.3, D - st.dep * 0.28, st.len + 0.6, st.dep * 0.28 + 0.3);

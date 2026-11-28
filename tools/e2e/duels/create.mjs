@@ -122,7 +122,8 @@ try {
   await b.go(`${SITE}/duels/`, 1500);
   await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
   await click('#dl-rivales .chip-btn');
-  ok(await ev(`!document.querySelector('.dl-juego.on[data-g="pintaminas"]') && !document.getElementById('dl-niveles')`), 'a game without levels shows no level step');
+  await click('#dl-hoja [data-g="reinas"]'); await sleep(150);
+  ok(await ev(`!!document.querySelector('.dl-juego.on[data-g="reinas"]') && !document.getElementById('dl-niveles')`), 'a game without levels shows no level step');
   await click('#dl-hoja [data-g="pintaminas"]'); await sleep(150);
   ok(await ev(`JSON.stringify([...document.querySelectorAll('#dl-niveles [data-nivel]')].map(x=>x.dataset.nivel))`) === '["easy","hard"]', 'Pintaminas: 🟢 easy or 🔴 hard, under the game');
   ok(await ev(`!document.querySelector('#dl-niveles .on') && document.getElementById('dl-enviar').disabled && /nivel/i.test(document.getElementById('dl-enviar').textContent)`), 'none is picked for the player: the button asks for the level');
@@ -137,6 +138,26 @@ try {
   await b.until(`/Difícil/.test(document.getElementById('duelo-nivel')?.textContent || '')`, 6000);
   ok(await ev(`/🔒.*Difícil/.test(document.getElementById('duelo-nivel')?.textContent || '') && !document.getElementById('selector-variante')`), 'the round says its level, 🔴 Difícil, and offers no picker');
   await b.shot('round-level-390');
+  ok(await ev(`/cuenta para tu duelo: ronda 1 de 3 contra Cata/.test(document.getElementById('duelo-nivel').textContent)`), 'the round says it counts for the duel, which round and against whom');
+
+  // Toque y Fama (the owner, 2026-11-28): 🔤 Palabra or 🔢 Número is picked when the duel is declared,
+  // and the round's page plays that one, with no Número/Palabra switch
+  await b.go(`${SITE}/duels/`, 1500);
+  await b.until(`!!document.getElementById('dl-nuevo')`, 6000);
+  await click('#dl-nuevo');
+  await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
+  await click('#dl-rivales .chip-btn');
+  await click('#dl-hoja [data-g="letras"]'); await sleep(150);
+  ok(await ev(`JSON.stringify([...document.querySelectorAll('#dl-niveles [data-nivel]')].map(x=>x.dataset.nivel))`) === '["word","number"]', 'Toque y Fama: 🔤 word or 🔢 number, under the game');
+  await click('#dl-niveles [data-nivel="number"]'); await sleep(150);
+  await click('#dl-enviar');
+  await b.until(`!!document.getElementById('dl-jugar')`, 6000);
+  const tyf = await ev(`document.getElementById('dl-jugar').getAttribute('href')`);
+  ok(/\/word\/\?.*&mode=number$/.test(tyf), `round 1's link carries the version (${tyf.replace(/^.*\?/, '?')})`);
+  await b.go(tyf, 2500);
+  await b.until(`/Número/.test(document.getElementById('duelo-nivel')?.textContent || '')`, 6000);
+  ok(await ev(`!document.getElementById('selector-variante') && /Número/.test(document.getElementById('chip-juego')?.textContent || '')`), 'the round plays 🔢 Número, with no Número/Palabra switch');
+  await b.shot('round-tyf-number-390');
 } catch (e) {
   console.log('✗', e.message); process.exitCode = 1;
 } finally {

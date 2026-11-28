@@ -120,7 +120,25 @@ grip × 0.85 on gravel, × 0.6 on asphalt), both added from the owner's track id
 - The generator's other models in this repo: `tools/generators/artifacts-levels.mjs`,
   `tools/generators/bridges.mjs`.
 
-**Which stage is played** is an owner decision (PROGRESS.md). The recommendation is **one stage a
+**Circuits, and their standards (the owner, 2026-11-27).** The real stages are closed circuits of
+about a minute: «el circuito debe durar aproximadamente 1 minuto… un circuito cerrado». A circuit
+(`loop: true`) has pieces that turn exactly 360°; the generator solves two of its straights so it
+ends where it starts, and `buildTrack` spreads the centimetres rounding leaves open along the lap.
+The start and the finish are one line, on a straight: the car starts on it, and the last gate is
+the same line a lap later. `tools/generators/drift-tracks.mjs` writes the pool to `circuits.js`
+(12 circuits; `--check` and `drift-tracks.test.mjs` keep the file what the generator writes), and
+every circuit meets the standards at the top of that file: a par of 55 to 65 s, 8 to 10 gates,
+30 m clear of itself, bends of 16 m or more and two hairpins at most, one or two pads each with
+130 m of straight after it, one or two ramps on straights, one or two forks on gentle stretches,
+two grandstands and at least two crowds, the settings in turn (one in four wet, some gravel ones
+with an asphalt stretch), and a clean lap by the autopilot with the setting's own scenery. A
+standard is changed in the generator and in `engine.test.mjs` together. The owner can veto a
+circuit after driving it: it is dropped and the pool regenerated.
+
+**Which stage is played** is an owner decision (PROGRESS.md): **one circuit a week, the same for
+everyone** (decision 7, 2026-11-27). `circuitFor(ms)` in tracks.js takes the pool in turn; the week
+starts on Monday at midnight in the Rankings' zone (`ZONA_SEMANA`, records.js), not Pacific, so a
+week's ranking table holds one circuit. The recommendation is **one stage a
 week**: the ranking's week period then compares like with like, players learn the stage and come
 back to beat a time, and the pool lasts (52 stages a year). The stage for a date is a pure function
 of the date in Pacific time (D-561), so it needs no server. The all-time table then mixes stages,
@@ -252,6 +270,13 @@ A record is `{ s, ms }`, higher `s` first, then lower `ms`.
   avoids blocking them (a 0 to 100 score, a pure date-to-stage function, a fixed-length run).
 
 ## 9. Ghost
+
+**The owner's design (2026-11-27), replacing the paragraph below where they differ**: the ghost is
+someone to beat. Every run's ghost is recorded; by default the player races **the next one up the
+week's ranking**, and climbs by beating them. The leader races **their own record made 1 % faster**
+by an algorithm that stays within what the car can do (the same line, a speed profile retimed under
+the grip and braking limits). A switch on the cover picks «Mi récord» or no ghost instead. Uploading
+ghosts is new stored data: Firebase rules and the privacy page (gated on the launch, D-617), a 🔴 PR.
 
 The player's best run on this stage, drawn as a faint car. Cheap and the strongest reason to play
 again.

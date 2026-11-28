@@ -2,12 +2,12 @@
 // Run: node public/labs/drift/scenery.test.mjs
 import assert from 'node:assert/strict';
 import { buildTrack, newGame, step, autopilot } from './engine.js';
-import { TRACKS } from './tracks.js';
+import { TRACKS, STAGES } from './tracks.js';
 import { SETTINGS, SETTING_NAMES, scenery, near, seeded, people, solids } from './scenery.js';
 
 let n = 0;
 const ok = (name, fn) => { fn(); n++; console.log('✓ ' + name); };
-const track = buildTrack(TRACKS.first);
+const track = buildTrack(TRACKS[STAGES[0]]);
 const all = map => [...map.values()].flat();
 
 ok('the three settings the plan names, each with its palette and props', () => {
@@ -54,7 +54,7 @@ ok('near() returns only the cells around a point', () => {
 });
 
 ok('people: a grandstand by the start and the finish, a crowd behind bales on the outside of every tight bend', () => {
-  for (const id of ['first', 'split', 'rain']) {
+  for (const id of STAGES) {
     const t = buildTrack(TRACKS[id]), { stands, crowd } = people(t);
     assert.equal(stands.length, 2, `${id}: two grandstands`);
     const fans = crowd.filter(c => c.kind === 'fan'), bales = crowd.filter(c => c.kind === 'bale');

@@ -6,7 +6,7 @@
 import { el } from './ui.js';
 import { gameIcon } from './game-icon.js';
 import { getLang } from './i18n.js';
-import { SUELTOS, GAME_VARIANTS } from './games.js';
+import { SUELTOS, DUEL_VERSIONS } from './games.js';
 import { jugador, leerYo } from './jugador.js';
 import { estado, record, nemesis, archirrival, rivalidades, estadisticas, sugeridos, linkRonda, roundGame, roundLevel, FORMATOS, esPuntos, formatoDe, DURACION } from './duels.js';
 import { TEXTS } from './duels-texts.js';
@@ -22,7 +22,7 @@ export const DUEL_GAMES = SUELTOS.filter(g => !g.labs && g.available !== false &
 export const duelGame = id => DUEL_GAMES.find(g => g.id === id) || null;
 const nombreJuego = g => g.name?.[lang] || g.name?.es || g.id;
 /** A game's levels (its variants, D-331: Sudoku 🟢 easy / 🔴 hard…), or null: a duel locks one per round (the owner, 2026-11-25). */
-export const levelsOf = id => GAME_VARIANTS[id] || null;
+export const levelsOf = id => DUEL_VERSIONS[id] || null;
 /** A level's name, explicit: «🔴 Difícil». */
 export const nombreNivel = v => T.levels?.[v] || v;
 /** A level as its dot and its word, the word hidden by CSS when the row has no room for it: «🔴 Difícil» → «🔴». */
