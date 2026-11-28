@@ -68,6 +68,20 @@ ok('the road eases from one piece into the next: its curvature never jumps, a be
   for (const c of all().filter(t => t.loop)) assert.ok(Math.abs(c.pts.at(-1).h - c.pts[0].h - 2 * Math.PI) < 1e-6, `${c.id} turns 360°`);
 });
 
+ok('technical stretches: every circuit has a narrow stretch, easing in and out, and a bend whose grip changes halfway round', () => {
+  for (const t of all()) {
+    const st = TRACKS[t.id];
+    assert.ok(st.narrow?.length >= 1, `${t.id} has a narrow stretch`);
+    for (const z of st.narrow) {
+      const inside = t.pts.filter(p => p.s >= z.from && p.s <= z.to);
+      assert.ok(inside.every(p => Math.abs(p.w - E.NARROW) < 0.01), `${t.id}: ${E.NARROW} m wide inside`);
+      for (let i = 1; i < t.pts.length; i++) assert.ok(Math.abs(t.pts[i].w - t.pts[i - 1].w) < 0.5, `${t.id}: the width steps at ${t.pts[i].s.toFixed(0)} m`);
+    }
+    // A change of surface where the road is bending (|k| over 1/90 m)
+    assert.ok((st.zones || []).some(z => [z.from, z.to].some(s => Math.abs(t.pts.find(p => p.s >= s)?.k || 0) > 1 / 90)), `${t.id}: the grip changes mid-bend`);
+  }
+});
+
 ok('a gate inside a fork counts on the branch too', () => {
   const t = all().find(t => t.gates.some(g => g.alt)), gi = t.gates.findIndex(g => g.alt), b = t.branches[t.gates[gi].alt.fork];
   const j = b.pts.findIndex(q => q.s >= t.gates[gi].s) - 6, q = b.pts[j];

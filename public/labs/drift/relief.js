@@ -12,7 +12,7 @@
  *   whoops  three small bumps in a row (0.45 m, 12 m each): little hops at speed
  *
  * The jumps (crests, whoops) go first, wherever the road runs nearly straight from a little before
- * them to 90 m after (a crest at top speed throws the car some 60 m, and it must land with room) (the car cannot steer in the air), never on a fork, a ramp or a pad, nor near the start or the end.
+ * them to 90 m after (a crest at top speed throws the car some 60 m, and it must land with room) (the car cannot steer in the air), never on a fork, a ramp or a pad, nor on a gate or within 25 m before one, nor near the start or the end.
  * The other kinds never throw the car, even boosted: their sharpest downward bend is capped (CALM),
  * so their height is lowered where their length would make them too sharp.
  *
@@ -101,7 +101,9 @@ export function relief(track) {
   for (let s = FLAT_START; s < L - FLAT_END;) {
     s = Math.round(s * 10) / 10;
     const kind = jumps % 2 ? 'whoops' : 'crest', K = KINDS[kind], len = Math.round(between(K.len) * 10) / 10, to = s + len;
-    if (to <= L - FLAT_END && straight(s - STRAIGHT_BEFORE, to + STRAIGHT_AFTER) && free(s, to + STRAIGHT_AFTER)) {
+    // …and no gate on it or just past it: a car hopping cannot steer through the posts
+    const gateFree = (track.gates || []).every(g => g.s < s - 10 || g.s > to + 25);
+    if (to <= L - FLAT_END && gateFree && straight(s - STRAIGHT_BEFORE, to + STRAIGHT_AFTER) && free(s, to + STRAIGHT_AFTER)) {
       add(kind, s, len, between(K.a));
       jumps++;
       s = to + JUMP_GAP + rnd() * JUMP_GAP;

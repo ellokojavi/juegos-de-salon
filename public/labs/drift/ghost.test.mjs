@@ -44,7 +44,8 @@ assert.equal(recorder().ghost({ ...g, wrecked: true }), null);
 const p0 = poseAt(ghost, 0);
 assert.ok(Math.hypot(p0.x - track.pts[0].x, p0.y - track.pts[0].y) < 3);
 const pEnd = poseAt(ghost, ghost.clock + 5000);
-assert.ok(pEnd.done && Math.hypot(pEnd.x - g.car.x, pEnd.y - g.car.y) < 3, 'it stays where it finished');
+// (within one sample of travel: at 60 m/s the car runs 6 m between two poses)
+assert.ok(pEnd.done && Math.hypot(pEnd.x - g.car.x, pEnd.y - g.car.y) < g.car.speed * SAMPLE_MS / 1000 + 1, 'it stays where it finished');
 const t = 20000, a = poseAt(ghost, t), b = poseAt(ghost, t, 1.01);
 assert.ok(Math.hypot(b.x - a.x, b.y - a.y) > 1, '1 % faster is a few metres ahead after 20 s');
 

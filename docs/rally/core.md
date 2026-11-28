@@ -133,7 +133,7 @@ the same line a lap later. `tools/generators/drift-tracks.mjs` writes the pool t
 every circuit meets the standards at the top of that file: a par of 55 to 65 s, 8 to 10 gates,
 30 m clear of itself, bends of 16 m or more and two hairpins at most, one or two pads each with
 130 m of straight after it, one or two ramps on straights with room to fly and land after them
-(about 155 m: a ramp at top speed throws the car some 115 m), most long straights bending gently on the way (sweepers of 300 to 500 m), one or two forks of 220 to 400 m round a bend (a gravel cut inside it or an asphalt sweep outside it),
+(about 155 m: a ramp at top speed throws the car some 115 m), most long straights bending gently on the way (sweepers of 300 to 500 m), one or two forks of 220 to 400 m round a bend (a gravel cut inside it or an asphalt sweep outside it), technical stretches for skilled players (the owner, 2026-11-28: chicanes, bends that tighten halfway round, a narrow stretch of 5.2 m and a bend whose grip drops at its apex),
 two grandstands and at least two crowds, the settings in turn (one in four wet, some gravel ones
 with an asphalt stretch), and a clean lap by the autopilot with the setting's own scenery. A
 standard is changed in the generator and in `engine.test.mjs` together. The owner can veto a
