@@ -59,4 +59,9 @@ const st = cheer();
 st.setup([], [{ x: 50, y: 20, h: 0, side: 1, len: 24, dep: 6 }]);
 st.update({ x: 30, y: 0, vx: 30, vy: 0 }, 1 / 60, false);
 assert.ok(st.parts.length > 0, 'a grandstand bursts');
+// Confetti leaves from the hands, above the ground the fan stands on
+const hz = cheer(); hz.setup([{ x: 100, y: 10, z: 3, ph: 0 }]);
+hz.update({ x: 60, y: 0, vx: 30, vy: 0 }, 1 / 600, false);
+assert.ok(hz.parts.length && hz.parts.every(p => p.z > 4.5), 'from 1.9 m above a fan on 3 m of ground');
+
 console.log('cheer: jumps near the car, one burst a pass, none slow or with reduced motion, grandstands too');
