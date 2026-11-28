@@ -78,7 +78,7 @@ Each step:
    progressively, and the rear pulls the nose back toward the direction of travel at `align`
    (*starting value* 2.5 per second, now 3.0, less with the handbrake), which ends a slide within about half a
    second of letting go. Both are in `TUNING`. To turn harder (the owner, 2026-11-27) the lock, the
-   cap and the grip went up together (gravel grip 9 → 11 m/s², asphalt 14 → 16), and `align` with
+   cap and the grip went up together (gravel grip 9 → 11 m/s², then 14 on 2026-11-28; asphalt 14 → 16), and `align` with
    them so a bigger slide still ends within half a second.
 6. Rebuild the velocity from the new heading, move the car.
 7. `car.slip = |vl|` drives the tyre tracks, the dust and the skid sound.
@@ -173,8 +173,8 @@ centre (on or off the road), and the direction of travel (the wrong way).
     grippier), with its own `surface`.
   - A **token** (the owner, 2026-11-27: «premiar al usuario que toma la bifurcación … −10 en 3
     dimensiones y que gire, y que al momento de capturarla explote»): a «−10» halfway along each
-    fork's other road and a «−5» in the air 45 m past each ramp, 3.5 m up, where only a car leaving the
-    ramp at about 44 m/s or more flies through it. Caught (3.2 m), it takes its seconds off the time
+    fork's other road and a «−5» in the air 45 m past each ramp, 4.2 m up, where only a car leaving the
+    ramp from about 45 m/s up to the top speed flies through it. Caught (3.2 m), it takes its seconds off the time
     that counts (`g.bonus`, `total` = clock + penalties − bonus) once a run, with a gold burst, a chime
     and «−10 s» rising; the HUD shows the penalties less the bonus. In 2D the number turns on its
     upright axis over a glow; in 3D it is a solid seven-segment number rocking to and fro toward the
