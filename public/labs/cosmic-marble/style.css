@@ -1,0 +1,68 @@
+/* ==========================================================
+   Canica Cósmica (Cosmic Marble): the game's own styles (lab). The shell (screens, the cover's hero,
+   the result's hero, panels, buttons) lives once in base.css (DESIGN.md §2); this file keeps only the
+   run's HUD, toasts and pause card over the canvas, on the tokens (DESIGN.md §1). What is drawn inside
+   the canvas is declared in course.js.
+   ========================================================== */
+:root { --cm-shade: rgba(0, 0, 0, 0.55); --cm-late: #ff9a3d; }
+
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: var(--s-6); }
+
+/* ---------- The run: the screen under the top bar ---------- */
+#screen-play.active { display: block; }
+.cm-stage {
+  position: relative; height: calc(100svh - 136px); min-height: 360px; overflow: hidden;
+  border-radius: var(--r-22); border: 1px solid var(--glass-border); box-shadow: var(--shadow-panel);
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.cm-wrap { position: absolute; left: 0; right: 0; top: var(--s-32); bottom: 0; }
+.cm-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* The HUD: stage on the left, hearts in the middle, the stage's clock and par on the right */
+.cm-hud {
+  position: absolute; top: 0; left: 0; right: var(--s-32); padding: 0 var(--s-12); height: var(--s-32);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s-8); pointer-events: none;
+  font-weight: 900; text-shadow: var(--shadow-text);
+}
+.cm-stage-label { font-size: var(--fs-85); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-stage-label b { margin-left: var(--s-6); color: var(--cyan); }
+.cm-hearts { display: flex; gap: var(--s-4); }
+.cm-hearts svg { width: var(--s-20); height: var(--s-18); fill: var(--pink); stroke: var(--pink); stroke-width: 1.5; overflow: visible; transition: fill 0.3s; }
+.cm-hearts svg.lost { fill: transparent; stroke: var(--glass-border); }
+.cm-hearts svg.breaking { animation: cm-crack 0.7s ease-out; }
+@keyframes cm-crack { 20% { transform: scale(1.5) rotate(-12deg); } 45% { transform: scale(1.2) rotate(10deg); } }
+.cm-clock { justify-self: end; font: 900 var(--fs-140)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-align: right; }
+.cm-clock small { display: block; font: 800 var(--fs-75) var(--font-body); color: var(--muted); }
+.cm-clock.late { color: var(--cm-late); }
+.cm-pause { position: absolute; top: 0; right: 0; background: var(--cm-shade); }
+
+/* A word over the course: «¡Al hoyo!», the world's name */
+.cm-toast {
+  position: absolute; left: 0; right: 0; top: 38%; text-align: center; pointer-events: none; opacity: 0;
+  font: 400 var(--fs-200)/1 var(--font-display); color: var(--yellow); text-shadow: var(--shadow-text);
+}
+.cm-toast small { display: block; margin-top: var(--s-8); font: 800 var(--fs-100) var(--font-body); color: var(--ink); }
+.cm-toast.pop { animation: cm-pop 1.2s ease-out forwards; }
+.cm-toast.hold { animation: cm-pop-in 0.25s ease-out forwards; }
+@keyframes cm-pop { 0% { opacity: 0; transform: scale(0.6); } 15% { opacity: 1; transform: scale(1.08); } 25% { transform: scale(1); } 75% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes cm-pop-in { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
+
+/* The hint along the bottom */
+.cm-hint {
+  position: absolute; left: var(--s-12); right: var(--s-12); bottom: calc(var(--s-12) + env(safe-area-inset-bottom)); pointer-events: none;
+  padding: var(--s-6) var(--s-14); border-radius: var(--r-pill); background: var(--cm-shade); border: 1px solid var(--glass-border);
+  font: 800 var(--fs-85) var(--font-body); text-align: center; transition: opacity 0.5s;
+}
+.cm-hint.off { opacity: 0; }
+
+/* Paused: a card over the course */
+.cm-card { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--s-14); background: var(--cm-shade); }
+.cm-card-in { width: 100%; text-align: center; }
+.cm-card-emoji { font-size: var(--fs-200); }
+.cm-card-body { color: var(--muted); font-weight: 700; }
+
+/* ---------- The result ---------- */
+.cm-score { color: var(--yellow); }
+.cm-breakdown { list-style: none; margin: 0; display: grid; gap: var(--s-6); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) { .cm-hearts svg, .cm-toast { animation: none !important; } }
