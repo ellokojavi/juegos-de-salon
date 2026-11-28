@@ -1,3 +1,3 @@
-level: minor
+level: patch
 
-- **Zip gets a 🔴 Hard mode in the lab**: on its own page, walls between squares that the line cannot cross, bigger boards from the first level (5×5 to 7×7) and more walls with fewer numbers every level. La Copa and Uno al día do not change; it is behind its flag `zip-hard`.
+- **Zip's 🔴 Hard mode (lab) is harder and has the lever**: boards from 6×6 to 8×8, hard from the first one, more walls on every level (9 to 37); Normal or Hard is chosen with the lab's electric lever, like Sudoku and Croc.

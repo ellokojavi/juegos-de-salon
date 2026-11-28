@@ -133,7 +133,7 @@ const ES = {
       variantes: {
         normal: { nombre: '🟢 Normal', sub: 'De 4×4 a 7×7' },
         hard: {
-          nombre: '🔴 Difícil', sub: 'Con muros, de 5×5 a 7×7',
+          nombre: '🔴 Difícil', sub: 'Con muros, de 6×6 a 8×8',
           como: [
             'Une los números en orden con un solo trazo que parta en el 1, pase una vez por cada casilla y termine en el último número.',
             'El trazo no puede cruzar los muros, las rayas gruesas entre casillas.',
@@ -786,6 +786,7 @@ const ES = {
   trialDone: 'En la prueba sacaste {resumen}. No cuenta para la copa, y el juego de verdad tiene otro contenido.',
   trialBack: 'Volver para jugar de verdad',
   zipHint: 'Arrastra el dedo desde el 1 por todas las casillas.',
+  zipModo: { normal: { titulo: 'NORMAL', sub: 'De 4×4 a 7×7, sin muros' }, hard: { titulo: 'DIFÍCIL', sub: 'Con muros, de 6×6 a 8×8' } },
   zipLevel: 'Nivel {k} de {total}',
   zipDone: 'Resueltos: {n}',
   zipTime: 'Se acabó el tiempo. Resolviste {n} niveles.',
@@ -1090,7 +1091,7 @@ const EN = {
       variantes: {
         normal: { nombre: '🟢 Normal', sub: 'From 4×4 to 7×7' },
         hard: {
-          nombre: '🔴 Hard', sub: 'With walls, from 5×5 to 7×7',
+          nombre: '🔴 Hard', sub: 'With walls, 6×6 to 8×8',
           como: [
             'Connect the numbers in order with a single line that starts at 1, goes through every square once and ends on the last number.',
             'The line cannot cross the walls, the thick bars between squares.',
@@ -1726,6 +1727,7 @@ const EN = {
   trialDone: 'In the trial you got {resumen}. It doesn\'t count for the cup, and the real game has different content.',
   trialBack: 'Back to play for real',
   zipHint: 'Drag your finger from the 1 through every square.',
+  zipModo: { normal: { titulo: 'NORMAL', sub: '4×4 to 7×7, no walls' }, hard: { titulo: 'HARD', sub: 'With walls, 6×6 to 8×8' } },
   zipLevel: 'Level {k} of {total}',
   zipDone: 'Solved: {n}',
   zipTime: 'Time\'s up. You solved {n} levels.',
@@ -2026,7 +2028,7 @@ const PT = {
       variantes: {
         normal: { nombre: '🟢 Normal', sub: 'De 4×4 a 7×7' },
         hard: {
-          nombre: '🔴 Difícil', sub: 'Com muros, de 5×5 a 7×7',
+          nombre: '🔴 Difícil', sub: 'Com muros, de 6×6 a 8×8',
           como: [
             'Ligue os números em ordem com um só traço que comece no 1, passe uma vez por cada casa e termine no último número.',
             'O traço não pode cruzar os muros, as barras grossas entre as casas.',
@@ -2662,6 +2664,7 @@ const PT = {
   trialDone: 'No teste você fez {resumen}. Não conta para a copa, e o jogo de verdade tem outro conteúdo.',
   trialBack: 'Voltar para jogar de verdade',
   zipHint: 'Arraste o dedo a partir do 1 por todas as casas.',
+  zipModo: { normal: { titulo: 'NORMAL', sub: 'De 4×4 a 7×7, sem muros' }, hard: { titulo: 'DIFÍCIL', sub: 'Com muros, de 6×6 a 8×8' } },
   zipLevel: 'Nível {k} de {total}',
   zipDone: 'Resolvidos: {n}',
   zipTime: 'Acabou o tempo. Você resolveu {n} níveis.',

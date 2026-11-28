@@ -20,10 +20,11 @@ The texts the player reads (how to play, scoring, tiebreak) are its entry in `JU
 
 ## Hard mode (lab, flag `zip-hard`)
 
-On its own page only, while the flag is on (`#seccion-zip-hard` in /labs/): a 🟢 Normal / 🔴 Hard
-picker (`?mode=hard`), its own ranking table `zip_hard`. Walls sit on edges the solution does not
-use, so the line cannot cross them; boards go 5×5 to 7×7 and the share of free edges walled grows
-level by level (`MUROS_DIFICIL` in the engine), so each board keeps fewer numbers. La Copa never
+On its own page only, while the flag is on (`#seccion-zip-hard` in /labs/): the lab's Normal / Hard
+lever (`zip/lever.js`, `?mode=hard`), its own ranking table `zip_hard`. Walls sit on edges the
+solution does not use, so the line cannot cross them. Hard from the first board: boards go 6×6 to
+8×8 and never shrink, and every level has more walls than the last (9 to 37, `MUROS_DIFICIL` in the
+engine), so each board keeps fewer numbers. La Copa never
 offers it (no zip in `GAME_VARIANTS`).
 
 ## Modes

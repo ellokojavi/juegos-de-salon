@@ -1,0 +1,74 @@
+/* Zip's Normal / Hard lever (lever.js, lab: #seccion-zip-hard): the standard lever of the lab's hard modes. Classes start with `zl-`. */
+
+:root {
+  /* The lever's metal and knobs: the standard lever (Pintaminas', Sudoku's), green for Normal, red for Hard */
+  --zl-plate-light: #4a4f5c;
+  --zl-plate-dark: #23262e;
+  --zl-plate-edge: #6b7180;
+  --zl-axle-light: #d9dde5;
+  --zl-axle-dark: #7b8190;
+  --zl-arm-1: #aeb4c0;
+  --zl-arm-2: #e6e9ef;
+  --zl-arm-3: #9aa0ad;
+  --zl-knob-easy: #c8ff8a;
+  --zl-knob-hard: #ff8a8a;
+  --zl-knob-shade-easy: #3f8f12;
+  --zl-knob-shade-hard: #c4142b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zl-arm, .zl-lever { transition: none; }
+  .zl-lever.on .zl-bolt { animation: none; opacity: 1; }
+  .zl-lever.zap .zl-plate { animation: none; }
+}
+
+/* ---------------- The lever: the standard lever (Pintaminas', Sudoku's). Down and green is Normal, up and red is Hard ---------------- */
+.zl-lever { position: relative; display: grid; grid-template-columns: 74px 1fr; gap: var(--s-14); align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: var(--s-10) var(--s-14); border-radius: var(--r-16); border: 2px solid rgb(var(--lime-rgb) / 0.6); background: rgb(var(--lime-rgb) / 0.08);
+  box-shadow: 0 0 14px rgb(var(--lime-rgb) / 0.25); color: var(--ink); font: inherit; -webkit-tap-highlight-color: transparent; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+/* On, the whole rectangle glows and flickers at random like a bad contact: ui.js moves --glow (0 to 1) */
+.zl-lever.on { --glow: 0.7; border-color: rgb(var(--red-rgb) / calc(0.4 + 0.6 * var(--glow))); background: rgb(var(--red-rgb) / calc(0.06 + 0.1 * var(--glow)));
+  box-shadow: 0 0 calc(4px + 26px * var(--glow)) rgb(var(--red-rgb) / calc(0.2 + 0.6 * var(--glow))), 0 0 calc(2px + 6px * var(--glow)) rgb(var(--yellow-rgb) / calc(0.4 * var(--glow))) inset;
+  transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
+.zl-label { display: grid; gap: var(--s-2); min-width: 0; }
+.zl-label b { font: var(--fs-120) var(--font-display); letter-spacing: 0.05em; color: var(--lime); }
+.zl-lever.on .zl-label b { color: var(--zl-knob-hard); }
+.zl-label .muted { font-size: var(--fs-85); }
+.zl-plate { position: relative; width: 74px; height: 64px; border-radius: var(--r-12); background: linear-gradient(160deg, var(--zl-plate-light), var(--zl-plate-dark));
+  border: 2px solid var(--zl-plate-edge); box-shadow: inset 0 2px 4px rgb(var(--ink-rgb) / 0.15), inset 0 -3px 6px rgb(var(--well-rgb) / 0.5); }
+/* The groove is an arc around the lever's base with the ball's radius (39 px), as in Pintaminas */
+.zl-track { position: absolute; inset: 0; pointer-events: none; }
+.zl-track svg { width: 100%; height: 100%; display: block; }
+.zl-groove { fill: none; stroke: rgb(var(--well-rgb) / 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgb(var(--ink-rgb) / 0.18)); }
+.zl-axle { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--zl-axle-light), var(--zl-axle-dark)); box-shadow: 0 1px 2px rgb(var(--well-rgb) / 0.6); }
+.zl-arm { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--zl-arm-1), var(--zl-arm-2), var(--zl-arm-3)); transform-origin: 50% 100%; transform: rotate(-38deg);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.zl-knob { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--zl-knob-easy), var(--zl-knob-shade-easy)); box-shadow: 0 2px 3px rgb(var(--well-rgb) / 0.5); }
+.zl-lever.on .zl-arm { transform: rotate(38deg); }
+.zl-lever.on .zl-knob { background: radial-gradient(circle at 35% 35%, var(--zl-knob-hard), var(--zl-knob-shade-hard)); }
+.zl-lever:active { transform: scale(0.98); }
+.zl-lever:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+/* The sparks on the plate, while Hard is on */
+.zl-bolt { position: absolute; font-size: var(--fs-100); opacity: 0; pointer-events: none; z-index: 1; }
+.zl-bolt.b1 { top: -10px; left: -8px; } .zl-bolt.b2 { top: 6px; right: -12px; } .zl-bolt.b3 { bottom: -8px; left: 6px; }
+.zl-lever.on .zl-bolt { animation: zl-spark 1.6s ease-out infinite; }
+.zl-lever.on .b2 { animation-delay: 0.45s; } .zl-lever.on .b3 { animation-delay: 0.9s; }
+.zl-lever.on .zl-plate { border-color: var(--zl-knob-hard); }
+@keyframes zl-spark { 0% { opacity: 0; transform: scale(0.4) rotate(-20deg); } 10% { opacity: 1; transform: scale(1.2) rotate(10deg); } 25%, 100% { opacity: 0; transform: scale(0.8); } }
+
+/* The electric wave: a ring that leaves the plate on every flip (green to Normal, red and yellow to Hard), and the plate jolts */
+.zl-wave { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; pointer-events: none;
+  border: 3px solid var(--zl-knob-easy); box-shadow: 0 0 16px var(--zl-knob-easy), inset 0 0 12px var(--zl-knob-easy); animation: zl-wave 0.85s ease-out forwards; }
+.zl-wave.hard { border-color: var(--zl-knob-hard); box-shadow: 0 0 18px var(--zl-knob-hard), 0 0 6px var(--yellow), inset 0 0 14px var(--yellow); }
+@keyframes zl-wave { 0% { opacity: 1; transform: scale(0.6); } 100% { opacity: 0; transform: scale(5.5); } }
+.zl-lever.zap .zl-plate { animation: zl-jolt 0.5s ease-out; }
+@keyframes zl-jolt { 0% { transform: translateX(-2px); } 20% { transform: translateX(3px); } 40% { transform: translateX(-2px); } 100% { transform: none; } }
+
+/* The flash over the whole view when switching to Hard */
+.zl-flash { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: zl-flash 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgb(var(--ink-rgb) / 0.95), rgb(var(--red-rgb) / 0.7) 45%, rgb(var(--yellow-rgb) / 0.3)); }
+@keyframes zl-flash { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
