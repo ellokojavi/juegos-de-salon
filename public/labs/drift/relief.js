@@ -12,7 +12,7 @@
  *   whoops  three small bumps in a row (0.45 m, 12 m each): little hops at speed
  *
  * The jumps (crests, whoops) go first, wherever the road runs nearly straight from a little before
- * them to 60 m after (the car cannot steer in the air), never on a fork, a ramp or a pad, nor near the start or the end.
+ * them to 90 m after (a crest at top speed throws the car some 60 m, and it must land with room) (the car cannot steer in the air), never on a fork, a ramp or a pad, nor near the start or the end.
  * The other kinds never throw the car, even boosted: their sharpest downward bend is capped (CALM),
  * so their height is lowered where their length would make them too sharp.
  *
@@ -30,7 +30,7 @@ const KINDS = {
   dip: { a: [-2.5, -1.5], len: [60, 80], jumps: false },
   whoops: { a: [0.45, 0.45], len: [36, 36], jumps: true },
 };
-const FLAT_START = 70, FLAT_END = 50, STRAIGHT_BEFORE = 20, STRAIGHT_AFTER = 60, STRAIGHT_K = 1 / 90;
+const FLAT_START = 70, FLAT_END = 50, STRAIGHT_BEFORE = 20, STRAIGHT_AFTER = 90, STRAIGHT_K = 1 / 90;
 /** Room between two jumps, m (and up to twice that). */
 const JUMP_GAP = 160;
 /**
@@ -90,14 +90,17 @@ export function relief(track) {
     ...(track.branches || []).map(b => [b.from - 30, b.to + 30]),
     ...[...(track.ramps || []), ...(track.pads || [])].map(r => [r.s - 40, r.s + 60]),
   ];
-  const straight = (from, to) => P.every(p => p.s < from || p.s > to || Math.abs(p.k) <= STRAIGHT_K);
+  // Whether the road runs nearly straight from `from` to `to` m (round the start line on a circuit)
+  const inside = (x, from, to) => (x >= from && x <= to) || (track.loop && (x + L <= to || x - L >= from));
+  const straight = (from, to) => P.every(p => !inside(p.s, from, to) || Math.abs(p.k) <= STRAIGHT_K);
   const free = (from, to) => busy.every(([a, b]) => to < a || from > b);
   const features = [];
   const add = (kind, from, len, a) => features.push({ kind, from: Math.round(from * 10) / 10, len: Math.round(len * 10) / 10, a: Math.round(a * 100) / 100 });
   // First the jumps, wherever the road runs straight enough, crests and whoops in turn, apart from each other
   let jumps = Math.floor(rnd() * 2);
   for (let s = FLAT_START; s < L - FLAT_END;) {
-    const kind = jumps % 2 ? 'whoops' : 'crest', K = KINDS[kind], len = between(K.len), to = s + len;
+    s = Math.round(s * 10) / 10;
+    const kind = jumps % 2 ? 'whoops' : 'crest', K = KINDS[kind], len = Math.round(between(K.len) * 10) / 10, to = s + len;
     if (to <= L - FLAT_END && straight(s - STRAIGHT_BEFORE, to + STRAIGHT_AFTER) && free(s, to + STRAIGHT_AFTER)) {
       add(kind, s, len, between(K.a));
       jumps++;

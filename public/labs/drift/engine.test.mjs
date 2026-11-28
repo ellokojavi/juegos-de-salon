@@ -105,6 +105,17 @@ ok('every boost pad has a long straight after it, so a boosted car is not thrown
   }
 });
 
+ok('every ramp of a circuit has a straight after it long enough to fly and land, so a jump never ends in a bend', () => {
+  // Its flight at the top speed (2 v² lift / gravity, about 115 m) and 40 m to land and brake (drift-humans.mjs)
+  const RUN = Math.round(2 * E.TUNING.topAsphalt ** 2 * E.TUNING.rampLift / E.TUNING.gravity + 40);
+  for (const t of all()) for (const r of t.ramps) {
+    const path = r.fork !== undefined ? t.branches[r.fork].pts : t.pts;
+    const run = path.filter(q => q.s >= r.s && q.s <= r.s + RUN);
+    assert.ok(run.length && run[run.length - 1].s >= r.s + RUN - 2 * E.SAMPLE, `${t.id}: the road ends ${RUN} m after the ramp at ${r.s}`);
+    assert.ok(run.every(q => q.k === 0), `${t.id}: a bend within ${RUN} m of the ramp at ${r.s.toFixed(0)} m`);
+  }
+});
+
 ok('boosted, the car still turns as well as at its top speed', () => {
   const turnAt = speed => { const g = E.newGame({ track: straight() }); g.mode = 'play'; g.car.vy = speed; g.boost = 1; const h0 = g.car.h; steps(g, { steer: 1, throttle: 1, brake: 0, handbrake: false }, 60); return h0 - g.car.h; };
   const top = E.TUNING.topGravel;

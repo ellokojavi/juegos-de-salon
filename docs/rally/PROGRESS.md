@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The calibration (the owner: an expert in a reasonable time, an intermediate in 1.5× with no crash, a novice in 2× with no crash): simulated people on every circuit (`drift-humans.mjs`, held by its test). The steering got a curve (half as much turn for small thumb movements), ramps need about 155 m of straight after them, and crests 90 m.
 - **2026-11-27** · The owner: relief on the road (hills, crests that throw the car, dips, whoops: `relief.js`), gravel as fast as asphalt but slower to get there, the fixed map by default, and the road drawn in one piece (2D ribbons, hairpins widening smoothly, no seams at forks or the start line).
 - **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
 
