@@ -8106,7 +8106,11 @@
       "error": "ERROR · appeared modules: public/labs/drift/car2d.js, public/labs/drift/textures.js",
       "signature": "8c416e410d",
       "date": "2026-11-28T00:19:29.533Z",
-      "fix": null,
+      "fix": {
+        "commit": "11fa5dd3f0ae6e35464e9692e492c342c7995e7c",
+        "date": "2026-11-28T00:21:43.974Z",
+        "stat": "1 file(s) +2 −0: docs/facts.json"
+      },
       "flaky": false
     }
   ]
