@@ -23,8 +23,10 @@
 .dc-nombre { font-family: var(--font-display); font-size: clamp(32px, 10vw, 42px); letter-spacing: 1px; text-shadow: 3px 3px 0 var(--dc-sombra); overflow-wrap: anywhere; line-height: 1; }
 .dc-vs { position: absolute; left: 50%; top: 45%; width: 0; height: 0; }
 .dc-vs span { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); padding: 0 0.1em; font-family: var(--font-display); font-size: clamp(110px, 36vw, 150px); line-height: 1; white-space: nowrap; color: var(--yellow); -webkit-text-stroke: 4px var(--dc-noche); text-shadow: 6px 6px 0 var(--pink), 0 0 40px rgb(var(--yellow-rgb) / 0.6); }
-.dc-vs-a { clip-path: polygon(-20% -20%, 120% -20%, 120% 28%, -20% 72%); }
-.dc-vs-b { clip-path: polygon(-20% 72%, 120% 28%, 120% 120%, -20% 120%); }
+/* Each half is cut along the sword's own line: through the VS centre at 28° (tan 28° = 0.5317), measured in em so
+   it holds at every font size; the box is wide, so % would flatten the angle */
+.dc-vs-a { clip-path: polygon(calc(50% - 1.5em) -1.5em, calc(50% + 1.5em) -1.5em, calc(50% + 1.5em) calc(50% - 0.7976em), calc(50% - 1.5em) calc(50% + 0.7976em)); }
+.dc-vs-b { clip-path: polygon(calc(50% - 1.5em) calc(50% + 0.7976em), calc(50% + 1.5em) calc(50% - 0.7976em), calc(50% + 1.5em) calc(100% + 1.5em), calc(50% - 1.5em) calc(100% + 1.5em)); }
 .dc-corte { position: absolute; left: 50%; top: 45%; width: 160%; height: 7px; background: var(--dc-luz); transform: translate(-50%, -50%) rotate(-28deg) scaleX(0); box-shadow: 0 0 16px var(--dc-luz), 0 0 40px var(--yellow), 0 0 80px var(--pink); }
 .dc-espada { position: absolute; left: 0; top: 45%; width: 170px; height: 22px; opacity: 0; }
 .dc-espada svg { width: 100%; height: 100%; display: block; }
@@ -50,8 +52,8 @@
 @keyframes dc-tajo { 0% { opacity: 1; transform: translate(-40%, calc(-50% + 140px)) rotate(-28deg); } 100% { opacity: 0; transform: translate(120vw, calc(-50% - 120px)) rotate(-28deg); } }
 @keyframes dc-corta { to { transform: translate(-50%, -50%) rotate(-28deg) scaleX(1); } }
 @keyframes dc-flash { 0% { opacity: 0.85; } 100% { opacity: 0; } }
-@keyframes dc-arriba { to { transform: translate(calc(-50% - 10px), calc(-50% - 9px)) rotate(-3deg); } }
-@keyframes dc-abajo { to { transform: translate(calc(-50% + 10px), calc(-50% + 9px)) rotate(-3deg); } }
+@keyframes dc-arriba { to { transform: translate(calc(-50% - 5px), calc(-50% - 9px)); } }
+@keyframes dc-abajo { to { transform: translate(calc(-50% + 5px), calc(-50% + 9px)); } }
 @keyframes dc-temblor { 20% { transform: translate(-6px, 4px); } 40% { transform: translate(5px, -5px); } 60% { transform: translate(-4px, 2px); } 80% { transform: translate(3px, -2px); } }
 @keyframes dc-sube { from { opacity: 0; transform: translateY(16px); } }
 /* Reduced motion: the last frame at once, the VS already cut */

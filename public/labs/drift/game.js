@@ -33,6 +33,7 @@ import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
 import { minimap } from './minimap.js';
+import { pacerGhost } from './pacer.js';
 import { recorder, load as loadGhost, keep as keepGhost, better, poseAt, gapAt, lapProgress } from './ghost.js';
 import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
@@ -57,7 +58,17 @@ const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.st
 const S = { g: null, track: null, acc: 0, last: 0, live: false, paused: false, auto: false, frameMs: 0, raf: 0, tuned: false };
 let sc = null, input = null;
 /** The ghost: this run's recorder (none for a resumed run, which lost its start) and the record it races. */
-const G = { rec: recorder(), ghost: null, recording: false, newRecord: false };
+const G = { rec: recorder(), ghost: null, own: null, recording: false, newRecord: false };
+/**
+ * The pace driver's ghost (pacer.js): until a circuit has a record on this phone, the run races the
+ * intermediate driver's lap of it (the owner, 2026-11-27). Driven once per circuit, view and controls.
+ */
+const pacers = new Map();
+function pacerFor(track) {
+  const scheme = view[schemeKey(view)] === 'stick' ? 'stick' : 'wheel', key = `${track.id}:${view.scene}:${scheme}:${view.reach}`;
+  if (!pacers.has(key)) pacers.set(key, pacerGhost(track, { view: view.scene === '3d' ? '3d' : '2d', reach: view.reach || 75, scheme }));
+  return pacers.get(key);
+}
 
 function showScreen(id) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
@@ -88,7 +99,8 @@ function begin(g, track) {
   S.g = g;
   S.acc = 0; S.live = false; S.paused = false; S.tuned = isTuned(view);
   // The ghost of this circuit's record on this phone; a run is recorded only from its start
-  G.ghost = TEST ? null : loadGhost(g.track.id, g.track.length);
+  G.own = TEST ? null : loadGhost(g.track.id, g.track.length);
+  G.ghost = TEST ? null : G.own || pacerFor(g.track);
   G.rec.reset(); G.recording = !g.t; G.newRecord = false;
   showScreen('screen-play');
   sc = sceneFor(view.scene);
@@ -225,6 +237,7 @@ function play(e) {
   else if (e.type === 'reset') SFX.tap();
   else if (e.type === 'crash') crashed();
   else if (e.type === 'boost') { SFX.pass(); vibrate(30); }
+  else if (e.type === 'token') caught(e);
   // A hop over a small bump makes no noise: only a real flight (off a ramp, over a crest) does
   else if (e.type === 'jump' && !e.crest) SFX.flip();
   else if (e.type === 'land' && e.t > 0.25) { SFX.dice(); vibrate(40); }
@@ -241,14 +254,26 @@ function crashed() {
   if (S.g.mode !== 'done') save();
 }
 
+/** A token caught: a chime, a buzz, and «−10 s» rising in gold (the scene bursts the token itself). */
+function caught(e) {
+  SFX.win(); vibrate([20, 30, 20]);
+  const tag = el('div', { class: 'dr-hit dr-hit--bonus', 'aria-hidden': 'true' }, fmt(T.tokenTag, { s: Math.round(e.ms / 1000) }));
+  $('#stage').append(tag);
+  setTimeout(() => tag.remove(), 1200);
+  if (S.g.mode !== 'done') save();
+}
+
 let map = null;
 function paintHud(ghost = null) {
   const g = S.g;
   (map ||= minimap($('#map'))).draw(g, ghost);
   $('#clock').textContent = E.clock(g.t);
   const pen = $('#penalty');
-  pen.hidden = !g.penalty;
-  if (g.penalty) pen.textContent = fmt(T.penalty, { s: Math.round(g.penalty / 1000) });
+  // The penalties less the tokens caught: «+5 s» in yellow, «−10 s» in green
+  const net = g.penalty - (g.bonus || 0);
+  pen.hidden = !net;
+  if (net) pen.textContent = fmt(net > 0 ? T.penalty : T.bonus, { s: Math.round(Math.abs(net) / 1000) });
+  pen.classList.toggle('dr-penalty--bonus', net < 0);
   const total = g.track.gates.length;
   $('#gate').textContent = fmt(T.gateOf, { n: Math.min(g.gate + 1, total), total });
   // The gap to the ghost at this point of the lap: green ahead, plain behind
@@ -296,7 +321,8 @@ function finish() {
   const time = E.clock(E.total(g));
   // A clean run faster than the record becomes the ghost (not the autopilot's, nor the test stage's)
   const run = G.recording && !S.auto && !TEST ? G.rec.ghost(g) : null;
-  if (better(run, G.ghost)) G.newRecord = keepGhost(run);
+  // (the pace driver's ghost is never kept: a first clean run is the player's own record)
+  if (better(run, G.own)) G.newRecord = keepGhost(run);
   save(true);
   trackFinish({ ganador: null, detalle: time });
   SFX.win(); vibrate([20, 40, 60]);
@@ -311,12 +337,16 @@ function renderResult() {
   $('#result-title').textContent = g.wrecked ? T.wreckedTitle : T.resultTitle;
   $('#result-time').textContent = time;
   $('#result-time').hidden = !!g.wrecked;
+  const p = Math.round(g.penalty / 1000), b = Math.round((g.bonus || 0) / 1000), clock = E.clock(g.t);
   $('#result-detail').textContent = g.wrecked ? fmt(T.wreckedDetail, at)
-    : g.penalty ? fmt(T.withPenalty, { clock: E.clock(g.t), s: Math.round(g.penalty / 1000) }) : T.clean;
+    : p && b ? fmt(T.withBoth, { clock, p, b }) : b ? fmt(T.withBonus, { clock, b }) : p ? fmt(T.withPenalty, { clock, s: p }) : T.clean;
   // The record: a new one, or the one still standing
   const rec = $('#result-ghost');
   rec.hidden = g.wrecked || (!G.newRecord && !G.ghost);
-  rec.textContent = G.newRecord ? T.ghostRecord : G.ghost ? fmt(T.ghostBest, { clock: E.clock(G.ghost.time) }) : '';
+  // Against the pace driver: by how much the run beat it or was beaten
+  const vs = G.ghost?.sim ? E.total(g) - G.ghost.time : null;
+  const pacer = vs === null ? '' : fmt(vs < 0 ? T.pacerBeat : T.pacerLost, { s: GAP.format(Math.abs(vs) / 1000).replace(/^[+−-]/, '') });
+  rec.textContent = [pacer, G.newRecord ? T.ghostRecord : !G.ghost?.sim && G.ghost ? fmt(T.ghostBest, { clock: E.clock(G.ghost.time) }) : ''].filter(Boolean).join(' ');
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); startRun(); } }, T.again),
     botonCompartir({
