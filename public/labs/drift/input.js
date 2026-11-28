@@ -23,6 +23,15 @@
 export const SCHEMES = ['wheel', 'stick', 'auto'];
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+/**
+ * The steering's curve (the owner, 2026-11-27: «Calibra los controles…»): a thumb's offset x in
+ * [−1, 1] steers x × (SOFT + (1 − SOFT) x²), so the first part of its travel turns half as much as
+ * before and full travel is still full lock. A steady thumb places the car finely; a shaky one wanders
+ * less (tools/generators/drift-humans.mjs: with the straight line, a novice's tremor ran them off the road).
+ */
+export const SOFT = 0.5;
+export const curve = x => x * (SOFT + (1 - SOFT) * x * x);
+
 /** The gap between the thumb and the near edge of its gauge, px (about 1.5 cm: clear of the thumb's pad). */
 const LIFT = 56;
 
@@ -141,7 +150,7 @@ export function controls(stage, { scheme = 'wheel', reach = 75, onFirst = () => 
     let steer = 0, throttle = 0, brake = 0;
     for (const t of all) {
       const dx = (t.x - t.x0) / reach, dy = (t.y - t.y0) / reach;
-      if (t.role === 'steer' || t.role === 'stick') steer = clamp(dx, -1, 1);
+      if (t.role === 'steer' || t.role === 'stick') steer = curve(clamp(dx, -1, 1));
       if (t.role === 'pedal') {
         // Held: full throttle; slid down: the throttle eases off over the first third, then the brake comes in
         throttle = clamp(1 - dy * 3, 0, 1);

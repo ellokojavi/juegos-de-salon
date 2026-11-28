@@ -16,7 +16,9 @@
  *   4. Clear of itself: the road never comes within 30 m of another part of itself (80 m apart along it).
  *   5. Bends of 16 m radius or more; at most two hairpins (under 22 m).
  *   6. One or two boost pads, each at the start of a straight with 130 m of straight after it.
- *   7. One or two ramps, on straights, 30 m from any bend.
+ *   7. One or two ramps, on straights, 30 m after a bend and with RAMP_RUN m of straight after them: a
+ *      ramp at top speed throws the car about 115 m, and it must land with room to brake (the
+ *      calibration, tools/generators/drift-humans.mjs: ramps 30 m from a hairpin crashed every expert).
  *   8. One or two forks on gentle stretches (radius 60 m or more), bulging 12 to 16 m, 14 m clear of
  *      the rest of the road.
  *   9. The settings take turns (meadow, forest, plain); a plain is asphalt, the others gravel, some
@@ -36,6 +38,8 @@ const POOL = 12;
 const DEG = Math.PI / 180;
 const PAR = [55000, 65000];
 const SETTINGS = ['meadow', 'forest', 'plain'];
+/** The straight a ramp needs after it: its flight at the top speed (2 v² lift / gravity) and 40 m to land and brake. */
+export const RAMP_RUN = Math.round(2 * E.TUNING.topAsphalt ** 2 * E.TUNING.rampLift / E.TUNING.gravity + 40);
 
 /** Where a list of pieces ends, from the origin facing north: { x, y, h }. */
 function end(pieces) {
@@ -135,12 +139,12 @@ function features(stage, rnd) {
     if (st.to > L - 2 || nearGate(s, 25) || !free(s, s + 130)) continue;
     pads.push({ s }); used.push({ from: s - 10, to: s + 130 });
   }
-  // Ramps: on a straight, 30 m from either bend
+  // Ramps: on a straight, 30 m after its bend, with RAMP_RUN m of it ahead to fly and land
   const ramps = [];
-  for (const st of S.filter(st => st.to - st.from >= 70).sort(() => rnd() - 0.5)) {
+  for (const st of S.filter(st => st.to - st.from >= 30 + RAMP_RUN).sort(() => rnd() - 0.5)) {
     if (ramps.length >= 1 + (rnd() < 0.4 ? 1 : 0)) break;
-    const s = Math.round(st.from + 30 + rnd() * (st.to - st.from - 60));
-    if (nearGate(s, 25) || !free(s - 10, s + 30)) continue;
+    const s = Math.round(st.from + 30 + rnd() * (st.to - st.from - 30 - RAMP_RUN));
+    if (st.to > L - 2 || nearGate(s, 25) || !free(s - 10, s + 30)) continue;
     ramps.push({ s }); used.push({ from: s - 10, to: s + 30 });
   }
   // Forks: a gentle stretch of 100 to 140 m (radius 60 m or more), no gate in it, bulging to the side with room
