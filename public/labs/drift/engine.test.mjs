@@ -90,6 +90,38 @@ ok('on a fork the car on the branch is on the road, and its progress runs as on 
   assert.ok(Math.abs(g.progress - q.s) < 4, `progress ${g.progress.toFixed(1)} against ${q.s}`);
 });
 
+ok('a token on a fork\'s other road: driven through, it takes 10 s off the time that counts, once', () => {
+  const t = first(), k = t.tokens.find(k => k.fork !== undefined), b = t.branches[k.fork], q = b.pts[k.j - 8];
+  const g = E.newGame({ track: t });
+  g.mode = 'play'; g.idx = q.i; g.t = 30000;
+  Object.assign(g.car, { x: q.x, y: q.y, h: q.h, px: q.x, py: q.y, vx: Math.cos(q.h) * 15, vy: Math.sin(q.h) * 15 });
+  const seen = [];
+  for (let i = 0; i < 120 * 2; i++) { E.step(g, { steer: 0, throttle: 0.2, brake: 0, handbrake: false }); seen.push(...g.events); g.events.length = 0; }
+  assert.deepEqual(seen.filter(e => e.type === 'token').map(e => e.ms), [E.TUNING.forkBonus]);
+  assert.equal(E.total(g), Math.round(g.t) + g.penalty - 10000);
+  // Driven back through it, nothing more
+  Object.assign(g.car, { x: q.x, y: q.y, px: q.x, py: q.y });
+  for (let i = 0; i < 120 * 2; i++) { E.step(g, { steer: 0, throttle: 0.2, brake: 0, handbrake: false }); assert.ok(!g.events.some(e => e.type === 'token')); g.events.length = 0; }
+  assert.equal(g.bonus, 10000);
+});
+
+ok('every fork carries a −10 token and every ramp a −5 in the air: flown fast it is caught, slow it is not', () => {
+  for (const t of all()) {
+    assert.equal(t.tokens.filter(k => k.fork !== undefined).length, t.branches.length, t.id);
+    assert.equal(t.tokens.filter(k => k.air).length, t.ramps.filter(r => r.fork === undefined).length, t.id);
+  }
+  const fly = v => {
+    const t = E.buildTrack({ id: 'jump', gates: 1, relief: false, pieces: [['S', 600]], ramps: [{ s: 200 }] });
+    const g = E.newGame({ track: t }); g.mode = 'play';
+    const p = t.pts.find(p => p.s >= 150);
+    Object.assign(g.car, { x: p.x, y: p.y, px: p.x, py: p.y, vy: v }); g.idx = t.pts.indexOf(p);
+    for (let i = 0; i < 120 * 4; i++) { E.step(g, { steer: 0, throttle: 1, brake: 0, handbrake: false }); g.events.length = 0; }
+    return g.bonus;
+  };
+  assert.equal(fly(58), E.TUNING.airBonus, 'fast: caught');
+  assert.equal(fly(30), 0, 'slow: under it');
+});
+
 ok('a boost pad pushes the car well past its top speed for a moment', () => {
   const track = straight();
   // Where the car is near its top speed (gravel gets there slowly: about 15 s)
