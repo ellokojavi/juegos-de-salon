@@ -88,6 +88,9 @@ export const CAR_WIDTH = 1.8;
 /** The centreline is sampled every this many metres. */
 export const SAMPLE = 2;
 const ROAD_WIDTH = 7, HAIRPIN_WIDTH = 9, HAIRPIN_RADIUS = 22, WIDEN = 14;
+/** How far the road eases from one piece's curvature into the next: two passes of a box this many
+ *  points either side (about 2 × 2 × EASE × SAMPLE m from the first change to the full bend). */
+export const EASE = 6;
 /** How far the car is searched for along the centreline each step, in points either side. */
 const SEARCH = 12;
 
@@ -98,6 +101,41 @@ const DEG = Math.PI / 180;
 /* ------------------------------------------------------------------ */
 /* The track                                                           */
 /* ------------------------------------------------------------------ */
+
+/**
+ * Eases the road from one piece into the next (the owner, 2026-11-27: «pedazos que no están
+ * orgánicamente conectados»): a straight met a bend at once, at its full curvature, like two cards laid
+ * end to end. The turn of each step (k × ds) is spread by two passes of a box EASE points either side,
+ * so the curvature ramps in and out as a driver's line does (close to a clothoid); every bend still
+ * turns what its piece turns, a straight far from a bend stays exactly straight, and on a circuit the
+ * spread wraps round the start. Then the road is laid again from those turns.
+ */
+function ease(pts, loop) {
+  const n = pts.length, first = 1, N = n - 1;   // the steps are points 1..n-1 (each from the one before)
+  const ds = pts.map((p, i) => (i ? p.s - pts[i - 1].s : 0));
+  let dh = pts.map((p, i) => p.k * ds[i]);
+  for (let pass = 0; pass < 2; pass++) {
+    const out = dh.slice();
+    for (let i = first; i < n; i++) {
+      let sum = 0, w = 0;
+      for (let d = -EASE; d <= EASE; d++) {
+        let j = i + d;
+        if (loop) j = first + (((j - first) % N) + N) % N;
+        else if (j < first || j >= n) continue;
+        sum += dh[j]; w++;
+      }
+      out[i] = sum / w;
+    }
+    dh = out;
+  }
+  let x = pts[0].x, y = pts[0].y, h = pts[0].h;
+  for (let i = first; i < n; i++) {
+    const p = pts[i], d = dh[i], k = ds[i] > 0 ? d / ds[i] : 0;
+    if (d === 0) { x += Math.cos(h) * ds[i]; y += Math.sin(h) * ds[i]; }
+    else { const hm = h + d / 2, chord = 2 * Math.sin(d / 2) / k; x += Math.cos(hm) * chord; y += Math.sin(hm) * chord; h += d; }
+    Object.assign(p, { x, y, h, k });
+  }
+}
 
 /**
  * Expands a stage's pieces (tracks.js) into its centreline: points every SAMPLE metres, each
@@ -126,10 +164,12 @@ export function buildTrack(stage) {
     }
   }
   const length = s;
+  ease(pts, !!stage.loop);
   // A circuit (`loop`) ends where it starts: its pieces turn a whole 360° and the generator solved
-  // their straights so the road closes; what rounding leaves open (centimetres) is spread along the lap
+  // their straights so the road closes; what rounding and the easing leave open (a few metres in two
+  // kilometres) is spread along the lap
   if (stage.loop) {
-    const gx = x - pts[0].x, gy = y - pts[0].y;
+    const gx = pts.at(-1).x - pts[0].x, gy = pts.at(-1).y - pts[0].y;
     for (const p of pts) { p.x -= gx * p.s / length; p.y -= gy * p.s / length; }
   }
   // A hairpin's wider road eases in and out over WIDEN m either side, never in a step (the owner,
@@ -163,15 +203,27 @@ export function buildTrack(stage) {
     const i0 = at(f.from), i1 = at(f.to), side = f.side === 'R' ? -1 : 1, bp = [];
     for (let i = i0; i <= i1; i++) {
       const p = pts[i], u = (p.s - pts[i0].s) / (pts[i1].s - pts[i0].s), o = side * f.offset * Math.sin(Math.PI * u) ** 2;
-      bp.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h, s: p.s, k: 0, w: ROAD_WIDTH, i, sf: p.sf });
+      bp.push({ x: p.x - Math.sin(p.h) * o, y: p.y + Math.cos(p.h) * o, h: p.h, s: p.s, k: 0, w: ROAD_WIDTH, i, sf: f.surface || p.sf });
     }
     // Headings along the branch itself
     for (let j = 0; j < bp.length; j++) {
       const a = bp[Math.max(0, j - 1)], b = bp[Math.min(bp.length - 1, j + 1)];
       bp[j].h = Math.atan2(b.y - a.y, b.x - a.x);
     }
+    // And its own curvature, from those headings (the autopilot and the relief read it)
+    for (let j = 0; j < bp.length; j++) {
+      const a = bp[Math.max(0, j - 1)], b = bp[Math.min(bp.length - 1, j + 1)], d = Math.hypot(b.x - a.x, b.y - a.y);
+      bp[j].k = d > 0 ? wrap(b.h - a.h) / d : 0;
+    }
     return { n, from: pts[i0].s, to: pts[i1].s, pts: bp, f };
   });
+  // A gate that falls inside a fork stands across both roads (`alt`: the same gate on the branch), so
+  // a fork can be as long as the player needs to feel it is another road (the owner, 2026-11-27)
+  for (const gt of gates) for (const b of branches) {
+    if (gt.s <= b.from || gt.s >= b.to) continue;
+    const j = b.pts.reduce((m, q, j) => (Math.abs(q.s - gt.s) < Math.abs(b.pts[m].s - gt.s) ? j : m), 0), q = b.pts[j];
+    gt.alt = { x: q.x, y: q.y, h: q.h, half: q.w / 2 + 0.6, fork: b.n, j };
+  }
   // A ramp or a pad: a rectangle across the road, on the main road at `s` m or on a branch at a share `u` of it
   const place = (where, half, len) => {
     const p = where.fork !== undefined ? (b => b.pts[Math.round(where.u * (b.pts.length - 1))])(branches[where.fork]) : pts[at(where.s)];
@@ -457,9 +509,9 @@ function locate(g, dt) {
 function gates(g) {
   if (g.mode === 'done' || g.gate >= g.track.gates.length) return;
   const gate = g.track.gates[g.gate], car = g.car;
-  const now = frame(gate, car.x, car.y), before = frame(gate, car.px, car.py);
-  // Crossed between the posts, going forward
-  if (before.along < 0 && now.along >= 0 && Math.abs(now.side) <= gate.half) {
+  const crossed = at => { const now = frame(at, car.x, car.y), before = frame(at, car.px, car.py); return before.along < 0 && now.along >= 0 && Math.abs(now.side) <= at.half; };
+  // Crossed between the posts, going forward (on the main road, or on the branch for a gate in a fork)
+  if (crossed(gate) || (gate.alt && crossed(gate.alt))) {
     const split = Math.round(g.t);
     g.splits.push(split);
     const last = g.gate === g.track.gates.length - 1;

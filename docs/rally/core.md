@@ -123,14 +123,17 @@ grip × 0.85 on gravel, × 0.6 on asphalt), both added from the owner's track id
 **Circuits, and their standards (the owner, 2026-11-27).** The real stages are closed circuits of
 about a minute: «el circuito debe durar aproximadamente 1 minuto… un circuito cerrado». A circuit
 (`loop: true`) has pieces that turn exactly 360°; the generator solves two of its straights so it
-ends where it starts, and `buildTrack` spreads the centimetres rounding leaves open along the lap.
+ends where it starts, and `buildTrack` spreads what rounding and the easing leave open (a few metres) along the lap. It
+eases every piece into the next (the owner, 2026-11-27: «pedazos que no están orgánicamente
+conectados»): the turn of each 2 m step is spread over about 25 m either side (`EASE`), so the
+curvature ramps in and out as a driver's line does; every bend still turns what its pieces turn.
 The start and the finish are one line, on a straight: the car starts on it, and the last gate is
 the same line a lap later. `tools/generators/drift-tracks.mjs` writes the pool to `circuits.js`
 (12 circuits; `--check` and `drift-tracks.test.mjs` keep the file what the generator writes), and
 every circuit meets the standards at the top of that file: a par of 55 to 65 s, 8 to 10 gates,
 30 m clear of itself, bends of 16 m or more and two hairpins at most, one or two pads each with
 130 m of straight after it, one or two ramps on straights with room to fly and land after them
-(about 155 m: a ramp at top speed throws the car some 115 m), one or two forks on gentle stretches,
+(about 155 m: a ramp at top speed throws the car some 115 m), most long straights bending gently on the way (sweepers of 300 to 500 m), one or two forks of 220 to 400 m round a bend (a gravel cut inside it or an asphalt sweep outside it),
 two grandstands and at least two crowds, the settings in turn (one in four wet, some gravel ones
 with an asphalt stretch), and a clean lap by the autopilot with the setting's own scenery. A
 standard is changed in the generator and in `engine.test.mjs` together. The owner can veto a
@@ -162,10 +165,12 @@ centre (on or off the road), and the direction of travel (the wrong way).
 - **Forks, ramps and boost pads** (the owner, 2026-11-27, in `tracks.js` on top of the pieces):
   - A **fork** is a second road from `from` to `to` m, bulging `offset` m to one side with a
     sin² profile so it leaves and meets the main road tangentially (a Y at each end). Its points
-    carry the main road's distance, so progress, misses and gates read the same on both; no gate
-    sits inside a fork. The car is located on whichever road is nearer; ↺ brings it back to the
-    main one. Each branch should trade something: the first stage's hairpin fork is tight and
-    short or wide and fast; its sweeper fork is smooth or has a jump.
+    carry the main road's distance, so progress, misses and gates read the same on both; a gate
+    inside a fork stands across both roads (`gate.alt`). The car is located on whichever road is
+    nearer; ↺ brings it back to the main one. Each branch trades something (the owner, 2026-11-27:
+    «la bifurcación no sirve de mucho porque es muy breve»): a fork is 220 to 400 m round a bend,
+    a cut inside it on gravel (shorter, tighter) or a sweep outside it on asphalt (longer, wider,
+    grippier), with its own `surface`.
   - A **ramp** throws the car up at `rampLift` (0.18) of its forward speed under `gravity` 12 m/s²
     (about a second in the air at speed, 2 m high): no steering, no grip, no throttle and no
     crash in the air, and the landing costs nothing (`car.z`, `car.vz`; the scene grows the car a

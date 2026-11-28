@@ -769,10 +769,10 @@ export function escena(canvas) {
     ctx.lineCap = 'round';
   }
 
-  /** Two posts and a bar across the road; the next one bright; the last one, the finish, chequered. */
+  /** Two posts and a bar across the road (across both roads in a fork); the next one bright; the last one, the finish, chequered. */
   function gates(g, zoom) {
     const last = g.track.gates.length - 1;
-    g.track.gates.forEach((gt, i) => {
+    g.track.gates.forEach((one, i) => [one, one.alt].filter(Boolean).forEach(gt => {
       const lx = -Math.sin(gt.h) * gt.half, ly = Math.cos(gt.h) * gt.half;
       const colour = i === g.gate ? COLOURS.gateNext : i < g.gate ? COLOURS.gatePast : COLOURS.gateLater;
       if (i === last) {
@@ -795,7 +795,7 @@ export function escena(canvas) {
         ctx.fillStyle = COLOURS.gatePost; ctx.beginPath(); ctx.arc(gt.x + s * lx, gt.y + s * ly, 0.85, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = colour; ctx.beginPath(); ctx.arc(gt.x + s * lx, gt.y + s * ly, 0.6, 0, Math.PI * 2); ctx.fill();
       }
-    });
+    }));
   }
 
   /** The car: its shadow, the wheels (the front pair turned), the body, the roof and its stripes, the glass, the lights. */
@@ -901,7 +901,7 @@ export function escena(canvas) {
     const ca = Math.cos(Math.PI / 2 - cam.a), sa = Math.sin(Math.PI / 2 - cam.a);
     ctx.font = `900 ${Math.round(Math.max(12, Math.min(18, zoom * 2.6)))}px Nunito, system-ui, sans-serif`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    g.track.gates.forEach((gt, i) => {
+    g.track.gates.forEach((one, i) => [one, one.alt].filter(Boolean).forEach(gt => {
       if (i < g.gate) return;
       const px = gt.x + Math.sin(gt.h) * (gt.half + 2.2), py = gt.y - Math.cos(gt.h) * (gt.half + 2.2);
       const dx = px - cam.x, dy = py - cam.y;
@@ -909,7 +909,7 @@ export function escena(canvas) {
       if (sx < -20 || sx > W + 20 || sy < -20 || sy > H + 20) return;
       ctx.fillStyle = i === g.gate ? COLOURS.gateNext : COLOURS.label;
       ctx.fillText(String(i + 1), sx, sy);
-    });
+    }));
   }
 
   return { draw, resize, dispose() { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); } };

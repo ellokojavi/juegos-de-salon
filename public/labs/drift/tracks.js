@@ -8,8 +8,9 @@
  *
  * and, on top of the pieces (the owner, 2026-11-27):
  *
- *   forks: [{ from, to, side, offset, … }]   a second road from `from` to `to` m that bulges
- *          `offset` m to the left (L) or right (R) and meets the main one again: the player picks
+ *   forks: [{ from, to, side, offset, surface }]   a second road from `from` to `to` m that bulges
+ *          `offset` m to the left (L) or right (R) and meets the main one again: the player picks;
+ *          on its own `surface` if it has one, else the main road's
  *   ramps: [{ s } | { fork, u }]   a ramp at `s` m on the main road, or a share `u` along fork n
  *   pads:  [{ s } | { fork, u }]   a boost pad, the same way
  *   zones: [{ from, to, surface }]   the road changes surface between `from` and `to` m (gravel, asphalt)
@@ -18,7 +19,7 @@
  *   loop: true                       a closed circuit: the pieces turn 360° and end where they start, and
  *                                    the finish is the start line
  *
- * No gate sits inside a fork, so both roads pass the same gates.
+ * A gate inside a fork stands across both roads (`gate.alt` on the branch), so both pass the same gates.
  *
  * The real ones are circuits of about a minute (the owner, 2026-11-27), generated with their standards
  * by tools/generators/drift-tracks.mjs into circuits.js, one a week for everyone (decision 7). Only the

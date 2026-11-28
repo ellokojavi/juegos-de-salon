@@ -42,17 +42,42 @@ ok('every stage stays clear of itself (25 m) and the real ones are 8 to 10 gates
   for (const id of STAGES) assert.ok(TRACKS[id].gates >= 8 && TRACKS[id].gates <= 10, id);
 });
 
-ok('a fork leaves the main road and meets it again, clear of the rest of the stage, with no gate inside', () => {
+ok('a fork is another road: it leaves the main one and meets it again, long, apart, clear of the rest, its gates across both', () => {
   for (const t of all()) for (const b of t.branches) {
     const a0 = b.pts[0], a1 = b.pts[b.pts.length - 1], m0 = t.pts[a0.i], m1 = t.pts[a1.i];
     assert.ok(Math.hypot(a0.x - m0.x, a0.y - m0.y) < 0.5 && Math.hypot(a1.x - m1.x, a1.y - m1.y) < 0.5, 'it starts and ends on the main road');
     const far = Math.max(...b.pts.map(q => Math.hypot(q.x - t.pts[q.i].x, q.y - t.pts[q.i].y)));
-    assert.ok(far > 10, `it really splits (${far.toFixed(1)} m apart)`);
+    assert.ok(far >= 18, `it really splits (${far.toFixed(1)} m apart)`);
+    assert.ok(b.to - b.from >= 220 - 2 * E.SAMPLE, `long enough to be another road (${(b.to - b.from).toFixed(0)} m)`);
+    assert.ok(b.pts.every(q => Math.abs(q.k) <= 1 / 24 + 1e-9), 'no bend on it under 24 m');
     for (const q of b.pts) for (const p of t.pts) {
       if (apart(t, p.s, b.from) > 40 && apart(t, p.s, b.to) > 40 && (p.s < b.from || p.s > b.to)) assert.ok(Math.hypot(q.x - p.x, q.y - p.y) >= 14, `fork ${b.n} comes near the road at ${p.s} m`);
     }
-    for (const g of t.gates) assert.ok(g.s < b.from || g.s > b.to, `gate at ${g.s} m inside fork ${b.n}`);
+    for (const g of t.gates) if (g.s > b.from && g.s < b.to) {
+      assert.ok(g.alt && g.alt.fork === b.n, `gate at ${g.s} m inside fork ${b.n} stands on the branch too`);
+      assert.ok(g.s > b.from + 30 && g.s < b.to - 30, `gate at ${g.s} m not where the roads part or meet`);
+    }
   }
+});
+
+ok('the road eases from one piece into the next: its curvature never jumps, a bend still turns what its pieces turn', () => {
+  // Laid piece to piece, a 16 m bend into its opposite jumped 2/16 in one step; eased, a thirteenth of it at most
+  for (const t of [test(), ...all()]) {
+    for (let i = 1; i < t.pts.length; i++) assert.ok(Math.abs(t.pts[i].k - t.pts[i - 1].k) <= 2 / 16 / (2 * E.EASE + 1) + 1e-9, `${t.id}: the curvature jumps at ${t.pts[i].s.toFixed(0)} m`);
+  }
+  for (const c of all().filter(t => t.loop)) assert.ok(Math.abs(c.pts.at(-1).h - c.pts[0].h - 2 * Math.PI) < 1e-6, `${c.id} turns 360°`);
+});
+
+ok('a gate inside a fork counts on the branch too', () => {
+  const t = all().find(t => t.gates.some(g => g.alt)), gi = t.gates.findIndex(g => g.alt), b = t.branches[t.gates[gi].alt.fork];
+  const j = b.pts.findIndex(q => q.s >= t.gates[gi].s) - 6, q = b.pts[j];
+  const g = E.newGame({ track: t });
+  g.mode = 'play'; g.idx = q.i; g.gate = gi;
+  Object.assign(g.car, { x: q.x, y: q.y, h: q.h, px: q.x, py: q.y, vx: Math.cos(q.h) * 15, vy: Math.sin(q.h) * 15 });
+  const seen = [];
+  // Straight on along the branch, a second (about 15 m): through the gate's twin
+  for (let i = 0; i < 120; i++) { E.step(g, { steer: 0, throttle: 0.2, brake: 0, handbrake: false }); seen.push(...g.events.map(e => e.type)); g.events.length = 0; }
+  assert.ok(seen.includes('gate') && !seen.includes('miss'), seen.join(' '));
 });
 
 ok('on a fork the car on the branch is on the road, and its progress runs as on the main one', () => {
@@ -292,11 +317,11 @@ ok('one circuit a week for everyone: weeks start on Monday at midnight in the Ra
   assert.equal(circuitFor(mon), circuitFor(mon + 3 * 864e5));
 });
 
-ok('surfaces: a stage changes surface along its zones, its forks take the main road\'s, and the car reads the one under it', () => {
+ok('surfaces: a stage changes surface along its zones, a fork has its own or the main road\'s, and the car reads the one under it', () => {
   const id = STAGES.find(i => TRACKS[i].zones), t = E.buildTrack(TRACKS[id]);
   const z = TRACKS[id].zones[0];
   for (const p of t.pts) assert.equal(p.sf, p.s >= z.from && p.s < z.to ? 'asphalt' : 'gravel', `${p.s} m`);
-  for (const b of t.branches) for (const q of b.pts) assert.equal(q.sf, t.pts[q.i].sf);
+  for (const b of t.branches) for (const q of b.pts) assert.equal(q.sf, b.f.surface || t.pts[q.i].sf);
   // Driven by the autopilot: on asphalt before the change, on gravel after it
   const g = E.newGame({ track: t }); let before = null, after = null;
   while (g.mode !== 'done') { E.step(g, E.autopilot(g)); g.events.length = 0; if (g.onRoad) { if (g.progress < z.to - 20) before = g.car.surface; else if (g.progress > z.to + 20) after = g.car.surface; } }
