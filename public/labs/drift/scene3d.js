@@ -22,7 +22,8 @@
 import { SETTINGS, scenery, settingOf, seeded } from './scenery.js';
 import { renderer, Mesh, mat4, rgb } from './gl3d.js';
 import { carMeshes } from './car3d.js';
-import { addProp, addStand } from './props3d.js';
+import { addProp, addStand, personMesh } from './props3d.js';
+import { cheer } from './cheer.js';
 
 /** Per setting: the sky (top, horizon = fog), the sun's direction (x, y, z, unit-ish), the fog's start and end, m. */
 const SKY = {
@@ -219,11 +220,13 @@ function buildWorld(track, settingName, wet) {
     for (let i = 0; i < track.pts.length; i += 2) { const q = track.pts[i], d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < best) { best = d; p = q; } }
     return Math.atan2(p.y - y, p.x - x);
   };
-  const ctx = { S, wetK, shadow, face, trackId: track.id, z: 0 };
+  // The fans and the grandstands' tiers are listed, not baked: they jump and cheer (cheer.js)
+  const fans = [], rows = [];
+  const ctx = { S, wetK, shadow, face, trackId: track.id, z: 0, fans, rows, newMesh: () => new Mesh() };
   for (const it of [...cells.values()].flat()) addProp(at(it.x, it.y), it, ctx);
   for (const st of stands) addStand(at(st.x, st.y), st, ctx);
 
-  return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], bufs: null };
+  return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], fans, rows, stands, bufs: null };
 }
 
 /** One gate: two posts and a banner across the road (the finish's is chequered). */
@@ -250,16 +253,17 @@ function gateMesh(gt, finish) {
 
 /* ---------------- The scene ---------------- */
 export function escena3d(canvas) {
-  let world = null, carBufs = null, gateBufs = null, dyn = null;
+  let world = null, carBufs = null, gateBufs = null, dyn = null, fanBufs = null;
+  const crowd = cheer();
   const R = renderer(canvas, {
-    lost: () => { world = null; carBufs = null; gateBufs = null; dyn = null; },
+    lost: () => { world = null; carBufs = null; gateBufs = null; dyn = null; fanBufs = null; },
     restored: () => {},
   });
   if (!R) return null;
   let W = 0, H = 0, dpr = 1, lastNow = 0;
   const cam = { a: Math.PI / 2, ready: false, x: 0, y: 0, z: 0 };
   const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0, spin: 0 };
-  const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create();
+  const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create(), MF = mat4.create();
   // Tyre tracks: a ring of segments [x1, y1, x2, y2]; dust, sparks and smoke: fixed pools
   const marks = new Float32Array(TRACKS * 4);
   let head = 0, count = 0, prevRear = null, lastG = null, lastCar = null, seenHits = 0, owed = 0, smokeOwed = 0;
@@ -279,13 +283,17 @@ export function escena3d(canvas) {
   function settle(track, pick) {
     const setting = settingOf(track, pick);
     if (world && world.track === track && world.setting === setting) return world;
-    if (world) world.chunks.forEach(c => R.free(c.buf));
+    if (world) { world.chunks.forEach(c => R.free(c.buf)); world.rows.forEach(r => { R.free(r.calm); R.free(r.up); }); }
     world = buildWorld(track, setting, !!track.wet);
     for (const c of world.chunks) { c.buf = R.buffer(c.mesh); c.mesh = null; }
+    for (const r of world.rows) { r.calm = R.buffer(r.calm); r.up = R.buffer(r.up); }
+    crowd.setup(world.fans, world.stands);
+    // Every fan variant, calm and cheering: 32 × 2 small meshes drawn where each fan stands
+    if (!fanBufs) fanBufs = Array.from({ length: 32 }, (_, v) => [R.buffer(personMesh(new Mesh(), v, false)), R.buffer(personMesh(new Mesh(), v, true))]);
     gateBufs?.forEach(b => R.free(b));
     gateBufs = track.gates.map((gt, i) => R.buffer(gateMesh(gt, i === track.gates.length - 1)));
     if (!carBufs) carBufs = Object.fromEntries(Object.entries(carMeshes()).map(([k, m]) => [k, R.buffer(m)]));
-    if (!dyn) dyn = { marks: R.buffer(null, true), parts: R.buffer(null, true) };
+    if (!dyn) dyn = { marks: R.buffer(null, true), parts: R.buffer(null, true), confetti: R.buffer(null, true) };
     return world;
   }
 
@@ -299,11 +307,13 @@ export function escena3d(canvas) {
       lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; cam.ready = false;
       seenHits = car.hits?.length || 0;
       for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
+      crowd.reset();
     }
     const x = car.px + (car.x - car.px) * alpha, y = car.py + (car.y - car.py) * alpha;
     const h = car.ph + wrap(car.h - car.ph) * alpha;
     const c = Math.cos(h), s = Math.sin(h);
     const z = Math.max(0, car.z || 0);
+    crowd.update({ x, y, vx: car.vx, vy: car.vy }, dt, quiet());
 
     // The body leans: it rolls out of a turn and pitches under braking, a few degrees, eased
     const vf = car.vx * c + car.vy * s, vs = -car.vx * s + car.vy * c;
@@ -408,6 +418,23 @@ export function escena3d(canvas) {
       if (d > CHUNK && (dx * ca + dy * sa) / d < -0.3) continue;
       R.draw(ch.buf, { grain: 1 });
     }
+    // The people: each fan near the camera where it stands, lifted while it jumps, its arms up when the
+    // car is near; each grandstand tier rises to its feet in a wave
+    const FAN_REACH = 110, F = MF;
+    for (const f of world.fans) {
+      const dx = f.x - eye[0], dy = f.y - eye[1], d = Math.hypot(dx, dy);
+      if (d > FAN_REACH || (d > 20 && (dx * ca + dy * sa) / d < 0)) continue;
+      const e = crowd.excite(f.x, f.y);
+      mat4.pose(F, f.x, f.y, f.z + crowd.lift(f, now), f.h);
+      R.draw(fanBufs[f.v % 32][e > 0.25 && !quiet() ? 1 : 0], { m: F });
+    }
+    for (const r of world.rows) {
+      const dx = r.x - eye[0], dy = r.y - eye[1];
+      if (Math.hypot(dx, dy) > reach) continue;
+      const e = quiet() ? 0 : crowd.excite(r.x, r.y), wave = e * Math.abs(Math.sin(now / 170 - r.t * 0.9));
+      mat4.pose(F, 0, 0, wave * 0.3, 0);
+      R.draw(wave > 0.2 ? r.up : r.calm, { m: F });
+    }
     // The tyre tracks, rebuilt from the ring
     if (count) {
       const m = new Mesh(), col = [0, 0, 0, 0.32];
@@ -465,10 +492,35 @@ export function escena3d(canvas) {
       for (let i = 0; i < 4; i++) square(bx - c * i * 0.45, by - s * i * 0.45, z + 0.6, 0.35 - i * 0.06 + Math.random() * 0.08, [...fl, 0.8 - i * 0.18]);
     }
     if (m.count) { R.upload(dyn.parts, m); R.draw(dyn.parts, { lit: 0, depth: false }); }
+    confetti(rx, ry);
+  }
+
+  /** The crowd's confetti (small squares turning as they flutter) and streamers (ribbons along their tails). */
+  function confetti(rx, ry) {
+    if (!crowd.parts.length) return;
+    const m = new Mesh();
+    for (const p of crowd.parts) {
+      const fade = Math.min(1, (p.life - p.age) / (p.life * 0.25)), col = rgb(p.col), sh = 0.55 + 0.45 * Math.abs(Math.cos(p.spin));
+      const tint = [col[0] * sh, col[1] * sh, col[2] * sh, fade];
+      if (p.kind === 'confetti') {
+        const w = p.w, cs = Math.cos(p.spin), sn = Math.sin(p.spin);
+        const A = [rx * w * cs, ry * w * cs, w * sn], B = [-ry * w * 0.7 * sn, rx * w * 0.7 * sn, w * 0.7 * cs];
+        const P = (a, b) => [p.x + A[0] * a + B[0] * b, p.y + A[1] * a + B[1] * b, p.z + A[2] * a + B[2] * b];
+        m.quad(P(-1, -1), P(1, -1), P(1, 1), P(-1, 1), tint);
+      } else if (p.tail.length > 1) {
+        const pts = [[p.x, p.y, p.z], ...p.tail];
+        for (let j = 0; j + 1 < pts.length; j++) {
+          const w0 = p.w * (0.35 + 0.65 * Math.abs(Math.sin(p.spin + j * 0.8))), w1 = p.w * (0.35 + 0.65 * Math.abs(Math.sin(p.spin + (j + 1) * 0.8)));
+          const [a, b] = [pts[j], pts[j + 1]];
+          m.quad([a[0] - rx * w0, a[1] - ry * w0, a[2]], [a[0] + rx * w0, a[1] + ry * w0, a[2]], [b[0] + rx * w1, b[1] + ry * w1, b[2]], [b[0] - rx * w1, b[1] - ry * w1, b[2]], tint);
+        }
+      }
+    }
+    if (m.count) { R.upload(dyn.confetti, m); R.draw(dyn.confetti, { lit: 0 }); }
   }
 
   function dispose() {
-    if (world && !R.lost) world.chunks.forEach(ch => R.free(ch.buf));
+    if (world && !R.lost) { world.chunks.forEach(ch => R.free(ch.buf)); world.rows.forEach(r => { R.free(r.calm); R.free(r.up); }); }
     R.dispose();
   }
 

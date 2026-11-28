@@ -25,6 +25,7 @@
  * With reduced motion it is damped twice as much, and there is half the dust.
  */
 import { SETTINGS, CROWD, scenery, near, settingOf, seeded } from './scenery.js';
+import { cheer } from './cheer.js';
 import { tile, pattern } from './textures.js';
 import { carSprite, shadowSprite } from './car2d.js';
 
@@ -89,7 +90,7 @@ function canvasOf(w, h) {
  * One prop's sprite, drawn in metres around its centre for a prop of radius 1 (the scene scales it),
  * shadow included. Returns { img, E }: the sprite covers E × radius around the prop's centre.
  */
-function propSprite(kind, v, S, ppm) {
+function propSprite(kind, v, S, ppm, cheering = false) {
   const sun = S.sun, E = 1 + Math.hypot(sun[0], sun[1]) + 0.1;
   const rRef = { tree: 4.2, dead: 3, bush: 1.8, rock: 1.4, hay: 1.1, stump: 0.8, fan: 0.5, bale: 0.6 }[kind] || 2;
   const px = Math.min(768, Math.max(8, 2 * E * rRef * ppm));
@@ -158,7 +159,8 @@ function propSprite(kind, v, S, ppm) {
     // the five poses the 3D fans have (down, both up, a flag, a phone, hands on hips), a head with
     // hair or a cap whose peak points up the sprite (−y), the side the scene turns toward the road
     const shirt = CROWD.shirts[v % CROWD.shirts.length], skin = CROWD.skin[(v >> 3) % CROWD.skin.length];
-    const pose = (v >> 2) % 5, edge = 'rgba(20, 10, 20, 0.45)';   // its shadow: drawn by the scene, unturned
+    // Cheering (the car near): whoever had their arms down or on their hips throws them up, as in 3D
+    const calm = (v >> 2) % 5, pose = cheering && calm !== 2 && calm !== 3 ? 1 : calm, edge = 'rgba(20, 10, 20, 0.45)';   // its shadow: drawn by the scene, unturned
     const arm = (ax, ay, bx, by) => {
       x.strokeStyle = shirt; x.lineCap = 'round'; x.lineWidth = 0.3;
       x.beginPath(); x.moveTo(ax, ay); x.lineTo(bx, by); x.stroke();
@@ -209,6 +211,7 @@ export function escena(canvas) {
   let lastNow = 0;
   // What is built once per stage and setting, and once per scale
   let world = null;          // { track, setting, S, patches, cells }
+  const crowd = cheer();      // the people's jumps, confetti and streamers (cheer.js)
   let sprites = new Map(), spritePpm = 0, dust = null, spray = null;
   // The car's body and its soft shadow, drawn again only when the scale changes
   let carArt = null;
@@ -245,13 +248,14 @@ export function escena(canvas) {
     world.grain = { ground: pattern(ctx, tile('ground', S, setting)), gravel: pattern(ctx, tile('gravel', S, setting)), asphalt: pattern(ctx, tile('asphalt', S, setting)) };
     carArt = null;
     sprites = new Map(); spritePpm = 0; dust = dustSprite(S.dust); spray = dustSprite([205, 215, 230]);
+    crowd.setup([...world.cells.values()].flat().filter(it => it.kind === 'fan'), world.stands);
     return world;
   }
-  function sprite(kind, v, ppm) {
+  function sprite(kind, v, ppm, cheering = false) {
     // Drawn again only when the scale changes by more than a tenth (the panel's zoom, a rotated phone)
     if (Math.abs(ppm - spritePpm) > spritePpm * 0.1) { sprites = new Map(); spritePpm = ppm; }
-    const k = kind + v;
-    if (!sprites.has(k)) sprites.set(k, propSprite(kind, v, world.S, spritePpm));
+    const k = kind + v + (cheering ? '!' : '');
+    if (!sprites.has(k)) sprites.set(k, propSprite(kind, v, world.S, spritePpm, cheering));
     return sprites.get(k);
   }
 
@@ -268,9 +272,11 @@ export function escena(canvas) {
       lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; rings.length = 0;
       seenHits = car.hits?.length || 0;
       for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
+      crowd.reset();
     }
     // The car between the last two steps
     const x = car.px + (car.x - car.px) * alpha, y = car.py + (car.y - car.py) * alpha;
+    crowd.update({ x, y, vx: car.vx, vy: car.vy }, dt, quiet());
     const h = car.ph + wrap(car.h - car.ph) * alpha;
 
     // The camera: the direction of travel, eased
@@ -378,13 +384,11 @@ export function escena(canvas) {
     const ppm = zoom * dpr;
     const still = quiet();
     for (const it of near(world.cells, cam.x, cam.y, reach, seen)) {
-      const { img, E } = sprite(it.kind, it.v, ppm);
+      const fan = it.kind === 'fan', up = fan && !still && crowd.excite(it.x, it.y) > 0.25;
+      const { img, E } = sprite(it.kind, it.v, ppm, up);
       let e = E * it.r;
-      // The people jump as the car goes by (never with reduced motion)
-      if (it.kind === 'fan' && !still) {
-        const d = Math.hypot(it.x - x, it.y - y);
-        if (d < 35) e *= 1 + 0.14 * Math.abs(Math.sin(now / 160 + it.ph)) * (1 - d / 35);
-      }
+      // The people jump as the car goes by, their arms up (never with reduced motion): seen from above, a jump grows them
+      if (fan) e *= 1 + 0.4 * crowd.lift(it, now);
       if (it.kind === 'fan') {
         // Each fan turned toward the road, as in 3D (its heading found once, then kept)
         let h = faces.get(it);
@@ -398,6 +402,7 @@ export function escena(canvas) {
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
+    confetti();
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
@@ -529,6 +534,30 @@ export function escena(canvas) {
    * A grandstand beside the road: a stepped stand along it, full of people facing the road, with a
    * roof over the back rows and a rail at the front. The front rows stand up as the car goes by.
    */
+  /**
+   * The crowd's confetti and streamers from above: little rectangles turning (a higher one is drawn a
+   * little bigger), and ribbons along the streamers' tails.
+   */
+  function confetti() {
+    for (const p of crowd.parts) {
+      ctx.globalAlpha = Math.min(1, (p.life - p.age) / (p.life * 0.25));
+      const k = 1 + p.z * 0.06;
+      if (p.kind === 'confetti') {
+        const w = p.w * 1.4 * k, cs = Math.cos(p.spin), sn = Math.sin(p.spin), t = Math.abs(Math.cos(p.spin * 1.3)) * 0.6 + 0.15;
+        ctx.fillStyle = p.col; ctx.beginPath();
+        ctx.moveTo(p.x + cs * w - sn * w * t, p.y + sn * w + cs * w * t); ctx.lineTo(p.x - cs * w - sn * w * t, p.y - sn * w + cs * w * t);
+        ctx.lineTo(p.x - cs * w + sn * w * t, p.y - sn * w - cs * w * t); ctx.lineTo(p.x + cs * w + sn * w * t, p.y + sn * w - cs * w * t);
+        ctx.closePath(); ctx.fill();
+      } else if (p.tail.length > 1) {
+        ctx.strokeStyle = p.col; ctx.lineWidth = p.w * 1.6 * k; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(p.x, p.y);
+        for (const [tx, ty] of p.tail) ctx.lineTo(tx, ty);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function stand(st, S, carX, carY, now, still) {
     ctx.save();
     // In the stand's own frame: x along the road, y away from it (its front rows and rail toward the road)
