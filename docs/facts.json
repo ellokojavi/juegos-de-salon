@@ -1900,6 +1900,7 @@
     "tools/firebase/unnoted-rooms.test.mjs",
     "tools/generators/clues/clues.test.mjs",
     "tools/generators/clues/judge.test.mjs",
+    "tools/generators/drift-humans.test.mjs",
     "tools/generators/drift-tracks.test.mjs",
     "tools/generators/manifests.test.mjs",
     "tools/generators/new-game.test.mjs",

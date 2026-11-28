@@ -12,15 +12,20 @@
  *   1. Closed: the pieces turn exactly 360° and two straights are solved so the road meets its start;
  *      the start and the finish are one line, on a straight.
  *   2. About a minute: the autopilot (par) laps it in 55 to 65 s, on its own surface and weather.
- *   3. 8 to 10 gates, evenly spaced; none inside a fork, none within 25 m of a ramp or a pad.
+ *   3. 8 to 10 gates, evenly spaced; none within 25 m of a ramp or a pad, none within 30 m of where a
+ *      fork parts or meets the main road (a gate inside a fork stands across both roads).
  *   4. Clear of itself: the road never comes within 30 m of another part of itself (80 m apart along it).
- *   5. Bends of 16 m radius or more; at most two hairpins (under 22 m).
+ *   5. Bends of 16 m radius or more; at most two hairpins (under 22 m). Most long straights bend
+ *      gently on the way (sweepers: a wide S of 300 to 500 m radius, nearly flat out on gravel), and
+ *      the engine eases every piece into the next (`EASE`), so no bend starts at once.
  *   6. One or two boost pads, each at the start of a straight with 130 m of straight after it.
  *   7. One or two ramps, on straights, 30 m after a bend and with RAMP_RUN m of straight after them: a
  *      ramp at top speed throws the car about 115 m, and it must land with room to brake (the
  *      calibration, tools/generators/drift-humans.mjs: ramps 30 m from a hairpin crashed every expert).
- *   8. One or two forks on gentle stretches (radius 60 m or more), bulging 12 to 16 m, 14 m clear of
- *      the rest of the road.
+ *   8. One or two forks, each another road round a bend (radius 40 m or more, turning 35° or more),
+ *      220 to 400 m long and 18 to 40 m from the main road at its widest: a cut inside the bend on
+ *      gravel (shorter, tighter) or a sweep outside it on asphalt (longer, wider); no bend on it under
+ *      24 m, 12 m from the main road in its middle third, 20 m clear of the rest of the road.
  *   9. The settings take turns (meadow, forest, plain); a plain is asphalt, the others gravel, some
  *      with an asphalt stretch; one circuit in four is wet.
  *  10. People: two grandstands (by the start, and halfway round) and at least two crowds, which stand
@@ -72,7 +77,18 @@ function pieces(rnd) {
     if (arcs.filter(a => a[1] < 22).length > 2) continue;
     // Straights: one before each arc and one after the last (with the first, the start straight)
     const S = Array.from({ length: arcs.length + 1 }, () => Math.round(15 + Math.pow(rnd(), 1.6) * 230));
-    const seq = () => { const out = []; arcs.forEach((a, i) => { out.push(['S', S[i]], a); }); out.push(['S', S[arcs.length]]); return out; };
+    // Sweepers: a long straight (not the start's, not a solved one) often bends gently on its way, a
+    // wide S that leaves it where it was heading (the owner, 2026-11-27: «más curvas suaves»)
+    const sweep = S.map(() => (rnd() < 0.75 ? { r: pick([300, 400, 500]), wave: rnd() < 0.5, left: rnd() < 0.5, lead: rnd() } : null));
+    const straightOf = (m, out) => {
+      const L = S[m], w = sweep[m];
+      const arcs4 = w && w.wave ? 4 : 2, d = w ? Math.min(14, Math.floor(0.6 * L / (arcs4 * w.r * DEG))) : 0;
+      if (!w || m === 0 || m === arcs.length || L < 100 || d < 3) { out.push(['S', L]); return; }
+      const A = arcs4 * w.r * d * DEG, a = Math.round((L - A) * (0.2 + 0.6 * w.lead));
+      const [one, two] = w.left ? ['L', 'R'] : ['R', 'L'];
+      out.push(['S', a], [one, w.r, d], ...(w.wave ? [[two, w.r, 2 * d], [one, w.r, d]] : [[two, w.r, d]]), ['S', Math.round((L - A - a) * 10) / 10]);
+    };
+    const seq = () => { const out = []; arcs.forEach((a, i) => { straightOf(i, out); out.push(a); }); straightOf(arcs.length, out); return out; };
     // Solve two straights (not the start's ones) whose headings differ enough, so the road closes
     const heads = []; let h = Math.PI / 2;
     arcs.forEach((a, i) => { heads.push(h); h += (a[0] === 'L' ? 1 : -1) * a[2] * DEG; });
@@ -80,6 +96,7 @@ function pieces(rnd) {
     for (let i = 1; i < arcs.length; i++) for (let j = i + 1; j < arcs.length; j++) if (Math.abs(Math.sin(heads[j] - heads[i])) > 0.6) cand.push([i, j]);
     if (!cand.length) continue;
     const [i, j] = pick(cand);
+    sweep[i] = sweep[j] = null;
     S[i] = 0; S[j] = 0;
     const g = end(seq());
     // g + Li·ui + Lj·uj = 0
@@ -141,27 +158,47 @@ function features(stage, rnd) {
   }
   // Ramps: on a straight, 30 m after its bend, with RAMP_RUN m of it ahead to fly and land
   const ramps = [];
-  for (const st of S.filter(st => st.to - st.from >= 30 + RAMP_RUN).sort(() => rnd() - 0.5)) {
+  for (const st of S.filter(st => st.to - st.from >= 34 + RAMP_RUN).sort(() => rnd() - 0.5)) {
     if (ramps.length >= 1 + (rnd() < 0.4 ? 1 : 0)) break;
-    const s = Math.round(st.from + 30 + rnd() * (st.to - st.from - 30 - RAMP_RUN));
+    // (4 m short of the bend: the ramp sits on the nearest point of the road, up to a step further on)
+    const s = Math.round(st.from + 30 + rnd() * (st.to - st.from - 34 - RAMP_RUN));
     if (st.to > L - 2 || nearGate(s, 25) || !free(s - 10, s + 30)) continue;
     ramps.push({ s }); used.push({ from: s - 10, to: s + 30 });
   }
-  // Forks: a gentle stretch of 100 to 140 m (radius 60 m or more), no gate in it, bulging to the side with room
+  // Forks: another road round a bend (the owner, 2026-11-27: «la bifurcación no sirve de mucho porque
+  // es muy breve»), 220 to 400 m long, so the player sees two ways and picks one. A cut runs inside the
+  // bend on gravel: shorter, tighter. A sweep runs outside it on asphalt: longer, wider, faster.
   const forks = [];
-  for (let tries = 0; tries < 60 && forks.length < 1 + (rnd() < 0.5 ? 1 : 0); tries++) {
-    const len = 100 + Math.round(rnd() * 40), from = Math.round(40 + rnd() * (L - len - 80)), to = from + len;
-    if (!free(from, to) || gates.some(g => g >= from - 10 && g <= to + 10)) continue;
-    if (t.pts.some(p => p.s >= from && p.s <= to && Math.abs(p.k) > 1 / 60)) continue;
-    const side = rnd() < 0.5 ? 'L' : 'R', offset = 12 + Math.round(rnd() * 4);
-    const trial = E.buildTrack({ ...stage, forks: [{ from, to, side, offset }] });
+  const bends = [];
+  for (let i = 0, from = null, turn = 0, kmax = 0; i < t.pts.length; i++) {
+    const p = t.pts[i], k = Math.abs(p.k) > 1 / 400 ? p.k : 0;
+    if (k && from === null) { from = p.s; turn = 0; kmax = 0; }
+    if (from !== null) { turn += p.k * (p.s - (t.pts[i - 1]?.s ?? p.s)); kmax = Math.max(kmax, Math.abs(p.k)); }
+    if (from !== null && (!k || Math.sign(k) !== Math.sign(turn))) { bends.push({ from, to: p.s, turn, kmax }); from = null; }
+  }
+  const want = 1 + (rnd() < 0.4 ? 1 : 0);
+  for (const bd of bends.filter(b => Math.abs(b.turn) >= 35 * DEG && b.kmax <= 1 / 40).sort(() => rnd() - 0.5)) {
+    if (forks.length >= want) break;
+    const len = Math.min(400, Math.max(220, Math.round(bd.to - bd.from + 100 + rnd() * 80)));
+    const mid = (bd.from + bd.to) / 2, from = Math.round(mid - len / 2), to = from + len;
+    if (from < 40 || to > L - 40 || !free(from, to)) continue;
+    // No gate where the roads part or meet
+    if (gates.some(g => (g >= from - 10 && g <= from + 30) || (g >= to - 30 && g <= to + 10))) continue;
+    const cut = rnd() < 0.5, inside = bd.turn > 0 ? 'L' : 'R', side = cut ? inside : (inside === 'L' ? 'R' : 'L');
+    const offset = Math.round(cut ? Math.min(40, 1 / bd.kmax - 26, 22 + rnd() * 18) : 18 + rnd() * 12);
+    if (offset < 18) continue;
+    const fork = { from, to, side, offset, surface: cut ? 'gravel' : 'asphalt' };
+    const trial = E.buildTrack({ ...stage, forks: [fork] });
     const b = trial.branches[0];
+    // Gentle enough to drive (no bend under 24 m), apart from the main road in its middle, clear of the rest
+    if (b.pts.some(q => Math.abs(q.k) > 1 / 24)) continue;
     const ok = b.pts.every(q => trial.pts.every(p => {
-      const ds = Math.min(Math.abs(p.s - q.s), L - Math.abs(p.s - q.s));
-      return ds < 60 || Math.hypot(q.x - p.x, q.y - p.y) >= 20;
+      const ds = Math.min(Math.abs(p.s - q.s), L - Math.abs(p.s - q.s)), d = Math.hypot(q.x - p.x, q.y - p.y);
+      const middle = q.s > from + len * 0.3 && q.s < to - len * 0.3;
+      return (middle && d < 12) ? false : ds < 60 || d >= 20;
     }));
     if (!ok) continue;
-    forks.push({ from, to, side, offset }); used.push({ from, to });
+    forks.push(fork); used.push({ from, to });
   }
   return { pads, ramps, forks };
 }

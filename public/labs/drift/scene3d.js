@@ -260,9 +260,9 @@ function buildWorld(track, settingName, wet) {
   return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], fans, rows, stands, bufs: null, elev };
 }
 
-/** One gate: two posts and a banner across the road (the finish's is chequered). */
-function gateMesh(gt, finish, e = 0) {
-  const m = new Mesh(), c = Math.cos(gt.h), s = Math.sin(gt.h);
+/** One gate: two posts and a banner across the road (the finish's is chequered), into `m`. */
+function gateMesh(gt, finish, e = 0, m = new Mesh()) {
+  const c = Math.cos(gt.h), s = Math.sin(gt.h);
   const P = (a, o, z) => [gt.x + c * a - s * o, gt.y + s * a + c * o, z + e];
   for (const o of [-gt.half - 0.3, gt.half + 0.3]) m.box(gt.x - s * o, gt.y + c * o, 1.95 + e, 0.14, 0.14, 1.95, gt.h, rgb(COLOURS.post));
   const o0 = -gt.half - 0.3, o1 = gt.half + 0.3, z0 = 3.4, z1 = 3.9;
@@ -322,7 +322,12 @@ export function escena3d(canvas) {
     // Every fan variant, calm and cheering: 32 × 2 small meshes drawn where each fan stands
     if (!fanBufs) fanBufs = Array.from({ length: 32 }, (_, v) => [R.buffer(personMesh(new Mesh(), v, false)), R.buffer(personMesh(new Mesh(), v, true))]);
     gateBufs?.forEach(b => R.free(b));
-    gateBufs = track.gates.map((gt, i) => R.buffer(gateMesh(gt, i === track.gates.length - 1, track.pts[gt.i]?.e || 0)));
+    // A gate inside a fork stands across the branch too: both in one buffer
+    gateBufs = track.gates.map((gt, i) => {
+      const finish = i === track.gates.length - 1, m = gateMesh(gt, finish, track.pts[gt.i]?.e || 0);
+      if (gt.alt) gateMesh(gt.alt, finish, track.branches[gt.alt.fork].pts[gt.alt.j]?.e || 0, m);
+      return R.buffer(m);
+    });
     if (!carBufs) carBufs = Object.fromEntries(Object.entries(carMeshes()).map(([k, m]) => [k, R.buffer(m)]));
     if (!dyn) dyn = { marks: R.buffer(null, true), parts: R.buffer(null, true), confetti: R.buffer(null, true) };
     return world;
