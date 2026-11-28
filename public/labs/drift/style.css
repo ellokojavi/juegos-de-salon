@@ -24,6 +24,10 @@
 .dr-gate { font: 900 var(--fs-90) var(--font-body); color: var(--muted); }
 .dr-lives { font: 900 var(--fs-90) var(--font-body); }
 .dr-lives--low { color: rgb(var(--red-rgb)); }
+/* The gap to the ghost (ghost.js): green while ahead of it */
+.dr-ghost { font: 900 var(--fs-90) var(--font-body); font-variant-numeric: tabular-nums; color: var(--ink); }
+.dr-ghost--ahead { color: var(--lime); }
+.dr-ghost-line { margin: 0; font-weight: 700; }
 
 /* A crash: «−1 ❤️» rises from the car and fades (the scene draws the impact and the damage) */
 .dr-hit {

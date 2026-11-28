@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The ghost, first part (the owner: «seguir la mejor versión de uno mismo»): your record on each circuit races you, see-through, with the gap on the clock and a dot on the minimap (`ghost.js`). Uploading, the ranking's next one up and the leader's 1 % faster ghost come next.
 - **2026-11-27** · The owner: the forks were too short, pieces were not organically joined, and gentler bends were missing. The road now eases from piece to piece (`EASE`), most long straights bend into wide sweepers, and each fork is a second road of 220 to 400 m round a bend (a gravel cut or an asphalt sweep), its gates standing on both roads. Pool regenerated; the calibration holds.
 
 - **2026-11-27** · The calibration (the owner: an expert in a reasonable time, an intermediate in 1.5× with no crash, a novice in 2× with no crash): simulated people on every circuit (`drift-humans.mjs`, held by its test). The steering got a curve (half as much turn for small thumb movements), ramps need about 155 m of straight after them, and crests 90 m.
