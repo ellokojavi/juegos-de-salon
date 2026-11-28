@@ -112,7 +112,8 @@ export function people(track, edge = edgeDistance(track)) {
   const at = (p, side, d, along = 0) => ({ x: p.x - Math.sin(p.h) * side * d + Math.cos(p.h) * along, y: p.y + Math.cos(p.h) * side * d + Math.sin(p.h) * along });
   // The grandstands: by the start line and by the finish, on the side with room for them
   const LEN = 22, DEP = 7;
-  for (const s0 of [24, track.gates[track.gates.length - 1].s - 4]) {
+  // (on a circuit the finish is the start line: the second one goes halfway round)
+  for (const s0 of [24, track.loop ? track.length / 2 : track.gates[track.gates.length - 1].s - 4]) {
     const p = P.reduce((a, q) => (Math.abs(q.s - s0) < Math.abs(a.s - s0) ? q : a), P[0]);
     for (const side of [1, -1]) {
       const d = p.w / 2 + 6 + DEP / 2, c = at(p, side, d);

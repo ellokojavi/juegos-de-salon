@@ -12,7 +12,7 @@ import { TUNING, DEFAULT_TUNING } from './engine.js';
 import { TUNING_KEY } from './rules.js';
 import { SCHEMES } from './input.js';
 import { SETTING_NAMES } from './scenery.js';
-import { STAGES, DEFAULT_TRACK } from './tracks.js';
+import { STAGES, DEFAULT_TRACK, TRACKS } from './tracks.js';
 
 /** The camera's defaults (starting values, path-1-top-down.md). */
 export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d', scheme3d: 'stick' });
@@ -67,7 +67,7 @@ export function loadTuning() {
   if (!SCHEMES.includes(view.scheme3d)) view.scheme3d = DEFAULT_VIEW.scheme3d;
   if (!Number.isFinite(view.reach)) view.reach = DEFAULT_VIEW.reach;
   if (view.setting !== 'stage' && !SETTING_NAMES.includes(view.setting)) view.setting = DEFAULT_VIEW.setting;
-  if (!STAGES.includes(view.stage)) view.stage = DEFAULT_VIEW.stage;
+  if (view.stage !== 'week' && !STAGES.includes(view.stage)) view.stage = DEFAULT_VIEW.stage;
   if (!SCENES.includes(view.scene)) view.scene = DEFAULT_VIEW.scene;
   applyScene(view);
   return view;
@@ -101,10 +101,12 @@ export function openTuning({ T, view, frameMs, onClose = () => {} }) {
     el('button', { type: 'button', class: view[schemeKey(view)] === m ? 'on' : '', 'aria-pressed': String(view[schemeKey(view)] === m), onClick: () => { view[schemeKey(view)] = m; save(view); paintSchemes(); } }, label)));
   paintSchemes();
   // The stage: a new one starts a new run on it when the panel closes (the owner's track ideas, 2026-11-27)
-  const stages = el('div', { class: 'seg dr-tune-schemes', role: 'group', 'aria-label': T.tuneStage });
-  const STAGE_LABEL = { first: T.stageFirst, split: T.stageSplit, rain: T.stageRain };
-  const paintStages = () => stages.replaceChildren(...STAGES.map(m =>
-    el('button', { type: 'button', class: view.stage === m ? 'on' : '', 'aria-pressed': String(view.stage === m), onClick: () => { view.stage = m; save(view); paintStages(); } }, STAGE_LABEL[m])));
+  // The circuit: this week's (the default, the one everyone drives), or any of the pool to try it
+  const stages = el('div', { class: 'chips', role: 'group', 'aria-label': T.tuneStage });
+  const EMOJI = { meadow: '🌿', forest: '🔥', plain: '🌙' };
+  const label = id => id === 'week' ? T.stageWeek : `${TRACKS[id].weather === 'wet' ? '🌧️' : EMOJI[TRACKS[id].setting]} ${Number(id.slice(1))}`;
+  const paintStages = () => stages.replaceChildren(...['week', ...STAGES].map(m =>
+    el('button', { type: 'button', class: 'chip-btn' + (view.stage === m ? ' on' : ''), 'aria-pressed': String(view.stage === m), onClick: () => { view.stage = m; save(view); paintStages(); } }, label(m))));
   paintStages();
   // The setting: the stage's own, or any of the three to look at it (the scene redraws at once)
   const settings = el('div', { class: 'seg dr-tune-schemes', role: 'group', 'aria-label': T.tuneSetting });
