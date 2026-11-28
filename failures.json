@@ -8112,6 +8112,19 @@
         "stat": "1 file(s) +2 −0: docs/facts.json"
       },
       "flaky": false
+    },
+    {
+      "run": 46089073187,
+      "check": "tests",
+      "pr": 1954,
+      "branch": "ccr-4d29fc85-axwu2o",
+      "commit": "efcdb40f36aab05618642805168c7bdcc91e198a",
+      "test": "tools/e2e/groups.test.mjs",
+      "error": "",
+      "signature": "14fef58185",
+      "date": "2026-11-28T00:42:52.157Z",
+      "fix": null,
+      "flaky": false
     }
   ]
 }
