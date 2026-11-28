@@ -24,7 +24,7 @@ export const EXPERT_PACE = { grip: 0.78, top: 1 };
  * the lap times asked for: what drift-humans.test.mjs holds the game to. Solve them again with this
  * tool when the car or the circuits change, and write them here.
  */
-export const PACES = { '2d': { intermediate: 0.39, novice: 0.27 }, '3d': { intermediate: 0.41, novice: 0.29 } };
+export const PACES = { '2d': { intermediate: 0.43, novice: 0.31 }, '3d': { intermediate: 0.44, novice: 0.30 } };
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const DEG = Math.PI / 180;

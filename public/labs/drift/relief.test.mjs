@@ -86,15 +86,17 @@ ok('uphill takes speed, downhill gives it', () => {
   const flatAt = s => { const g = E.newGame({ track: flatWith(null) }); Object.assign(g.car, { vy: 30 }); g.mode = 'play';
     for (let i = 0; i < 120 * 60 && g.progress < s; i++) { E.step(g, { throttle: 1 }); g.events.length = 0; } return g.car.speed; };
   const top = speedAt(340) - flatAt(340), foot = speedAt(640) - flatAt(640);
-  assert.ok(top < -1, `slower at the top (${top.toFixed(1)} m/s)`);
+  // Half a m/s: the car pulls hard nearly to its top speed (dragPower 3), so the flat run is not far ahead
+  assert.ok(top < -0.5, `slower at the top (${top.toFixed(1)} m/s)`);
   assert.ok(foot > top + 1, `it gains it back down the far side (${foot.toFixed(1)} m/s)`);
 });
 
-ok('gravel reaches asphalt\'s top speed, only later', () => {
+// Gravel pulls as hard as asphalt since the owner found it too slow (2026-11-28); it differs in grip
+ok('gravel reaches asphalt\'s top speed, as soon', () => {
   const run = (surface, sec) => drive(flatWith(null, surface), 0, sec).g.car.speed;
   assert.equal(E.TUNING.topGravel, E.TUNING.topAsphalt);
   assert.ok(run('gravel', 40) > E.TUNING.topAsphalt * 0.99, 'gravel gets there');
-  assert.ok(run('gravel', 8) < run('asphalt', 8) - 3, 'but slower');
+  assert.ok(Math.abs(run('gravel', 8) - run('asphalt', 8)) < 1, 'as soon as asphalt');
 });
 
 ok('relief.js never reads a clock, a random number or the page', async () => {

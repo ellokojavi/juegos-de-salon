@@ -50,7 +50,8 @@ export const TUNING = {
   steerTime: 0.15,        // s from centre to full lock
   topGravel: 62,          // m/s (30, 42, 52; then as fast as asphalt, only slower to get there: the owner, 2026-11-27)
   topAsphalt: 62,
-  gravelAccel: 0.75,      // acceleration × this on gravel (the top speed is the same, it takes longer)
+  gravelAccel: 1,         // acceleration × this on gravel (0.75 until the owner, 2026-11-28: «sigue estando demasiado lento en camino de tierra»)
+  dragPower: 3,           // how the drag grows toward the top speed: (v / top)^this (2 until 2026-11-28: the car crept toward the top and never reached it)
   topOff: 18,             // off the road
   accel: 10,              // m/s²
   brake: 20,
@@ -60,7 +61,7 @@ export const TUNING = {
   lockSlow: 40,           // degrees of steering when slow…
   lockFast: 14,           // …and from `lockSpeed` up
   lockSpeed: 42,          // m/s where the lock reaches lockFast (the old top speed, so the steering feels as before)
-  gripGravel: 11,         // m/s² of sideways grip
+  gripGravel: 14,         // m/s² of sideways grip (11 until 2026-11-28: bends on gravel were too slow)
   gripAsphalt: 16,
   gripOff: 5,
   wetGravel: 0.85,        // grip × this on a wet stage: mud…
@@ -240,10 +241,11 @@ export function buildTrack(stage) {
   const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
   const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
   // The tokens: a «−10» halfway along each fork's other road, a «−5» in the air past each ramp of the
-  // main road (45 m on and 3.5 m up: a car leaving the ramp at about 44 m/s or more flies through it)
+  // main road (45 m on and 4.2 m up: a car leaving the ramp from about 45 m/s up to the top speed flies
+  // through it; at 3.5 m a car at the top speed passed over it)
   const tokens = [
     ...branches.map(b => { const q = b.pts[Math.floor(b.pts.length / 2)]; return { x: q.x, y: q.y, s: q.s, z: 1.4, ms: TUNING.forkBonus, fork: b.n, j: Math.floor(b.pts.length / 2) }; }),
-    ...ramps.filter(r => r.fork === undefined).map(r => { const q = pts[at(r.s + 45)]; return { x: q.x, y: q.y, s: q.s, z: 3.5, ms: TUNING.airBonus, air: true }; }),
+    ...ramps.filter(r => r.fork === undefined).map(r => { const q = pts[at(r.s + 45)]; return { x: q.x, y: q.y, s: q.s, z: 4.2, ms: TUNING.airBonus, air: true }; }),
   ];
   const track = { id: stage.id, loop: !!stage.loop, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads, tokens };
   // The relief last: it keeps its jumps away from the forks, the ramps and the pads
@@ -340,7 +342,7 @@ export function step(g, input = IDLE) {
   const boosting = g.boost > 0;
   const surface = off ? 'off' : car.surface === 'off' ? track.pts[g.idx].sf : car.surface;
   const top = topOf(surface) * (boosting ? T.boostTop : 1);
-  // Gravel pulls slower than asphalt to the same top speed: its drag scales with it (below)
+  // Gravel may pull slower than asphalt to the same top speed (`gravelAccel`): its drag scales with it (below)
   const pull = T.accel * (surface === 'gravel' ? T.gravelAccel : 1);
   const acc = pull * (off ? T.offAccel : 1) + (boosting && vf >= 0 ? T.boostAccel : 0);
   vf += clamp(throttle, 0, 1) * acc * dt;
@@ -352,7 +354,7 @@ export function step(g, input = IDLE) {
   if (backing) vf -= clamp(brake, 0, 1) * T.reverseAccel * (off ? T.offAccel : 1) * dt;
   const sign = vf > 0 ? 1 : vf < 0 ? -1 : 0;
   const topNow = vf < 0 ? T.topReverse : top;
-  let drag = T.roll + (pull - T.roll) * (vf / topNow) * (vf / topNow);
+  let drag = T.roll + (pull - T.roll) * Math.pow(Math.abs(vf / topNow), T.dragPower);
   if (off) drag = Math.min(drag, T.maxOffDrag);
   // Past the top speed with the boost spent (after a pad): back down within a second or two
   if (!boosting && vf > top) drag += (vf - top) * 2;

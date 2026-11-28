@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-28** · Gravel faster (the owner: «sigue estando demasiado lento en camino de tierra»): gravel pulls as hard as asphalt (`gravelAccel` 1), the drag only bites near the top speed (`dragPower` 3: 9 s to 58 m/s instead of 15), and its bends hold more (`gripGravel` 14); the autopilot's gravel speed is about 10 % higher on average and 13 % at the top. The circuits regenerated (still about a minute), the simulated drivers' paces solved again, and the air token raised to 4.2 m (a car at the top speed flew over it).
 - **2026-11-27** · The owner: reward the player who takes a fork (a spinning «−10» that bursts and takes 10 s off), other such paths, and a ghost of an intermediate run to follow. Tokens on every fork (−10) and in the air past every ramp (−5, only flown fast); the pace driver's ghost until the player has a record. More challenge for skilled players: options proposed to the owner.
 
 - **2026-11-27** · The car modelled like a real one (the owner: «Pule más el diseño del jeep: más realista»): `car3d.js` lofts the body through sixty sections with the arches cut in, a cabin with tumblehome and real glass areas, lamps, grille, exhaust, mirrors, wipers, a roof wing, a livery with the number 17 readable from both sides and rounded tyres with five-spoke rims and brakes; the 2D sprite follows its layout. Only the look.
