@@ -4,6 +4,7 @@
  * end-to-end scripts of every page (D-515). A new flag is a row here and its card in /labs/.
  */
 export const FLAGS = {
+  'zip-hard': '〰️ Zip: a 🔴 Hard mode on its own page, with walls the line cannot cross, more walls and fewer numbers each level',
   'badge-details': '🎖️ Profile: a tap on a badge whose card hides something opens a sheet with it (the games left, the premiere, the month as a calendar…)',
   'profile-chips': '🎖️ Profile: «Jugando desde…» and the badges count as two chips under the name, not a sentence; a player\'s sheet: since when and the overall place',
   'podium-shine': '🥇 A player\'s sheet: 1st, 2nd and 3rd place in a shining medal of its metal (rays turning behind, the card framed in it), only the number inside',
