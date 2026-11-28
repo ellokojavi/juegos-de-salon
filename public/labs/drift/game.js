@@ -26,7 +26,7 @@ import { result } from '../../assets/js/share-templates.js';
 import { cuentaRegresiva, CUENTA_SALE_MS } from '../../assets/js/cuenta-regresiva.js';
 import { labAccess } from '../../assets/js/lab-access.js';
 import { GAME_ID, LOCALES } from './rules.js';
-import { TRACKS, STAGES, DEFAULT_TRACK } from './tracks.js';
+import { TRACKS, STAGES, circuitFor } from './tracks.js';
 import * as E from './engine.js';
 import { escena } from './scene.js';
 import { escena3d } from './scene3d.js';
@@ -47,8 +47,8 @@ const C = COMMON[lang] || COMMON.es;
 const fmt = (s, vars = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{' + k + '}'));
 const TEST = new URLSearchParams(location.search).has('test');
 const view = loadTuning();
-/** The stage a run plays: the test one with `?test`, else the lab panel's pick (the first stage by default). */
-const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.stage : DEFAULT_TRACK];
+/** The circuit a run plays: the test stage with `?test`, else the lab panel's pick, by default this week's. */
+const stage = () => TRACKS[TEST ? 'test' : STAGES.includes(view.stage) ? view.stage : circuitFor(Date.now())];
 
 /** The run on screen: the engine's state and the loop's own. */
 const S = { g: null, track: null, acc: 0, last: 0, live: false, paused: false, auto: false, frameMs: 0, raf: 0, tuned: false };

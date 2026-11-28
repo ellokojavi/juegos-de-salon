@@ -397,6 +397,11 @@ export function escena(canvas) {
         const p = P[i], dx = p.x - cx, dy = p.y - cy;
         if (dx * dx + dy * dy <= r2) { if (!run) runs.push(run = []); run.push(p); } else run = null;
       }
+      // A circuit's road runs on through the start line: its last stretch and its first are one, with no ends at the seam
+      if (track.loop && P === track.pts) {
+        const first = runs.find(rn => rn[0] === P[0]), last = runs.find(rn => rn[rn.length - 1] === P[P.length - 1]);
+        if (first && last && first !== last) { last.push(...first.slice(1)); runs.splice(runs.indexOf(first), 1); }
+      }
     }
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     // Each stretch in the look of its surface: the setting's own road for the surface it was made for,
