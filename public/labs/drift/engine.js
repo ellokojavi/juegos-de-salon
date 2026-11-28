@@ -116,13 +116,20 @@ export function buildTrack(stage) {
     }
   }
   const length = s;
+  // A circuit (`loop`) ends where it starts: its pieces turn a whole 360° and the generator solved
+  // their straights so the road closes; what rounding leaves open (centimetres) is spread along the lap
+  if (stage.loop) {
+    const gx = x - pts[0].x, gy = y - pts[0].y;
+    for (const p of pts) { p.x -= gx * p.s / length; p.y -= gy * p.s / length; }
+  }
   // The surface of each point: the stage's own, changed along the zones it lists
   const base = stage.surface || 'gravel';
   for (const p of pts) p.sf = base;
   for (const z of stage.zones || []) for (const p of pts) if (p.s >= z.from && p.s < z.to) p.sf = z.surface;
   const gates = [];
   for (let i = 1; i <= stage.gates; i++) {
-    const at = (length - 6) * i / stage.gates;  // the finish sits a little before the end of the road
+    // The finish sits a little before the end of the road; on a circuit it is the start line itself
+    const at = (stage.loop ? length : length - 6) * i / stage.gates;
     let idx = 0;
     while (idx < pts.length - 1 && pts[idx].s < at) idx++;
     const p = pts[idx];
@@ -151,7 +158,7 @@ export function buildTrack(stage) {
   };
   const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
   const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
-  return { id: stage.id, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
+  return { id: stage.id, loop: !!stage.loop, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
 }
 
 /** The sideways grip and the top speed of a surface ('gravel', 'asphalt' or 'off') on a dry or wet stage. */
