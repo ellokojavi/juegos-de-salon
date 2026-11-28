@@ -90,17 +90,28 @@ function buildWorld(track, settingName, wet) {
   // Distance to the road, coarse: the centreline every 8 m, in a 40 m grid searched outward
   const coarse = new Map();
   all.forEach((p, i) => { if (i % 4) return; const k = `${Math.floor(p.x / 40)},${Math.floor(p.y / 40)}`; if (!coarse.has(k)) coarse.set(k, []); coarse.get(k).push(p); });
+  let nearP = null;
   const dist = (x, y) => {
     const cx = Math.floor(x / 40), cy = Math.floor(y / 40);
-    let best = Infinity;
+    let best = Infinity; nearP = null;
     for (let r = 0; r <= 5; r++) {
       for (let i = -r; i <= r; i++) for (let j = -r; j <= r; j++) {
         if (Math.max(Math.abs(i), Math.abs(j)) !== r) continue;
-        for (const p of coarse.get(`${cx + i},${cy + j}`) || []) best = Math.min(best, Math.hypot(p.x - x, p.y - y));
+        for (const p of coarse.get(`${cx + i},${cy + j}`) || []) { const d = Math.hypot(p.x - x, p.y - y); if (d < best) { best = d; nearP = p; } }
       }
       if (best < (r) * 40) break;
     }
     return best;
+  };
+  // The height of the ground at (x, y) near the roads: the nearest road point's (relief.js)
+  const fine = new Map();
+  for (const p of all) { const k = `${Math.floor(p.x / 10)},${Math.floor(p.y / 10)}`; if (!fine.has(k)) fine.set(k, []); fine.get(k).push(p); }
+  const elev = (x, y) => {
+    const cx = Math.floor(x / 10), cy = Math.floor(y / 10);
+    let best = Infinity, e = null;
+    for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const p of fine.get(`${cx + i},${cy + j}`) || []) { const d = (p.x - x) ** 2 + (p.y - y) ** 2; if (d < best) { best = d; e = p.e || 0; } }
+    if (e === null) { dist(x, y); e = nearP?.e || 0; }
+    return e;
   };
   const hill = hills(`${track.id}:hills`);
   const rnd = seeded(`${track.id}:${settingName}:ground`);
@@ -108,8 +119,19 @@ function buildWorld(track, settingName, wet) {
   const H = [];
   for (let i = 0; i <= nx; i++) {
     H.push([]);
-    for (let j = 0; j <= ny; j++) { const x = x0 + i * G, y = y0 + j * G; H[i].push(hill(x, y) * smooth(70, 190, dist(x, y)) - 0.02); }
+    // The road's own height near it (sunk a little under the road's skirt), the hills far from it
+    for (let j = 0; j <= ny; j++) {
+      const x = x0 + i * G, y = y0 + j * G, d = dist(x, y), far = smooth(70, 190, d), e = nearP?.e || 0;
+      H[i].push(e * (1 - far) + hill(x, y) * far - 0.02 - 0.35 * (1 - smooth(10, 28, d)));
+    }
   }
+  // The ground's height at (x, y) exactly as its mesh has it: the same two triangles per cell
+  const groundZ = (x, y) => {
+    const fi = (x - x0) / G, fj = (y - y0) / G, i = Math.max(0, Math.min(nx - 1, Math.floor(fi))), j = Math.max(0, Math.min(ny - 1, Math.floor(fj)));
+    const u = fi - i, v = fj - j;
+    return u >= v ? H[i][j] + (H[i + 1][j] - H[i][j]) * u + (H[i + 1][j + 1] - H[i + 1][j]) * v
+      : H[i][j] + (H[i + 1][j + 1] - H[i][j + 1]) * u + (H[i][j + 1] - H[i][j]) * v;
+  };
   const ground = rgb(S.ground, wetK);
   const patchCols = S.patches.map(p => { const m = p.match(/[\d.]+/g).map(Number); return [m[0] / 255, m[1] / 255, m[2] / 255, m[3]]; });
   for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
@@ -126,10 +148,15 @@ function buildWorld(track, settingName, wet) {
   for (const P of roads) {
     for (let i = 0; i + 1 < P.length; i++) {
       const p = P[i], q = P[i + 1], m = at(p.x, p.y);
-      const edge = (o, z, u) => { const r = u ? q : p; return [r.x - Math.sin(r.h) * o, r.y + Math.cos(r.h) * o, z]; };
+      const edge = (o, z, u) => { const r = u ? q : p; return [r.x - Math.sin(r.h) * o, r.y + Math.cos(r.h) * o, z + (r.e || 0)]; };
       const strip = (o0, o1, z, col) => m.quad(edge(o0, z, 0), edge(o0, z, 1), edge(o1, z, 1), edge(o1, z, 0), col);
       const L = roadLook(S, p.sf);
       strip(-(p.w / 2 + 1.6), p.w / 2 + 1.6, 0.02, shoulder);
+      // A skirt of ground falling from the shoulder's edge: no gap between the road and the ground over the relief
+      for (const sd of [-1, 1]) {
+        const a = sd * (p.w / 2 + 1.6), b = sd * (p.w / 2 + 4.5);
+        m.quad(edge(a, 0.02, 0), edge(a, 0.02, 1), edge(b, -0.7, 1), edge(b, -0.7, 0), ground);
+      }
       strip(-p.w / 2, p.w / 2, 0.04, rgb(L.road, wetK * (i % 2 ? 1 : 0.985)));
       if (L.ruts) for (const o of [-1.25, 1.25]) strip(o - 0.35, o + 0.35, 0.05, rgb(L.road, wetK * 0.86));
       if (L.lines) {
@@ -145,8 +172,6 @@ function buildWorld(track, settingName, wet) {
   const pebbleCols = [rgb(S.rock[0], wetK), rgb(S.rock[1], wetK), rgb(S.shoulder, wetK * 0.8)];
   const rt = seeded(`${track.id}:${settingName}:tufts`);
   // How far (x, y) is from the edge of any road, m: none may land on another road where two pass close
-  const fine = new Map();
-  for (const p of all) { const k = `${Math.floor(p.x / 10)},${Math.floor(p.y / 10)}`; if (!fine.has(k)) fine.set(k, []); fine.get(k).push(p); }
   const offRoad = (x, y) => {
     const cx = Math.floor(x / 10), cy = Math.floor(y / 10);
     let best = Infinity;
@@ -161,18 +186,20 @@ function buildWorld(track, settingName, wet) {
         const d = p.w / 2 + 0.3 + rt() * 1.4, a = (rt() - 0.5) * 4, r = 0.06 + rt() * 0.12;
         const x = p.x + nxp * side * d + Math.cos(p.h) * a, y = p.y + nyp * side * d + Math.sin(p.h) * a;
         const col = pebbleCols[Math.floor(rt() * 3)], tw = rt() * 6;
-        if (offRoad(x, y) > 0.15) at(x, y).blob(x, y, 0.01, r, r * 1.2, 5, col, tw);
+        if (offRoad(x, y) > 0.15) at(x, y).blob(x, y, 0.01 + (p.e || 0), r, r * 1.2, 5, col, tw);
       }
       // Tufts in the grass beyond it: three or four blades leaning out
       for (let k = 0; k < 3; k++) {
         const d = p.w / 2 + 1.9 + Math.pow(rt(), 1.5) * 9, a = (rt() - 0.5) * 4, hgt = 0.25 + rt() * 0.35;
         const x = p.x + nxp * side * d + Math.cos(p.h) * a, y = p.y + nyp * side * d + Math.sin(p.h) * a;
         const m = at(x, y), col = tuftCols[Math.floor(rt() * tuftCols.length)], blades = 3 + Math.floor(rt() * 2), turn = rt() * 6;
-        const keep = offRoad(x, y) > 1.8;
+        // On the skirt falling from the shoulder, or on the ground beyond it, whichever is higher
+        const keep = offRoad(x, y) > 1.8, skirt = (p.e || 0) + 0.02 - 0.72 * Math.min(1, Math.max(0, (d - p.w / 2 - 1.6) / 2.9));
+        const ez = Math.max(groundZ(x, y), d < p.w / 2 + 4.5 ? skirt : -Infinity);
         for (let b = 0; b < blades; b++) {
           const ang = turn + b * Math.PI * 2 / blades, lean = 0.12 + rt() * 0.12, wb = 0.05;
-          const tip = [x + Math.cos(ang) * lean, y + Math.sin(ang) * lean, hgt * (0.7 + rt() * 0.3)];
-          if (keep) m.tri([x - Math.sin(ang) * wb, y + Math.cos(ang) * wb, 0.02], [x + Math.sin(ang) * wb, y - Math.cos(ang) * wb, 0.02], tip, col);
+          const tip = [x + Math.cos(ang) * lean, y + Math.sin(ang) * lean, ez + hgt * (0.7 + rt() * 0.3)];
+          if (keep) m.tri([x - Math.sin(ang) * wb, y + Math.cos(ang) * wb, ez + 0.02], [x + Math.sin(ang) * wb, y - Math.cos(ang) * wb, ez + 0.02], tip, col);
         }
       }
     }
@@ -180,8 +207,8 @@ function buildWorld(track, settingName, wet) {
 
   // The ramps (a wedge up to the crest) and the pads (a glowing plate with arrows)
   for (const r of track.ramps || []) {
-    const m = at(r.x, r.y), c = Math.cos(r.h), s = Math.sin(r.h);
-    const P = (a, o, z) => [r.x + c * a - s * o, r.y + s * a + c * o, z];
+    const m = at(r.x, r.y), c = Math.cos(r.h), s = Math.sin(r.h), e = elev(r.x, r.y);
+    const P = (a, o, z) => [r.x + c * a - s * o, r.y + s * a + c * o, z + e];
     const top = 0.9, col = rgb(COLOURS.ramp), side = rgb(COLOURS.ramp, 0.7);
     m.quad(P(-r.len, -r.half, 0.05), P(0, -r.half, top), P(0, r.half, top), P(-r.len, r.half, 0.05), col);
     m.tri(P(-r.len, -r.half, 0.05), P(0, -r.half, 0.05), P(0, -r.half, top), side);
@@ -193,8 +220,8 @@ function buildWorld(track, settingName, wet) {
     }
   }
   for (const p of track.pads || []) {
-    const m = at(p.x, p.y), c = Math.cos(p.h), s = Math.sin(p.h);
-    const P = (a, o, z = 0.06) => [p.x + c * a - s * o, p.y + s * a + c * o, z];
+    const m = at(p.x, p.y), c = Math.cos(p.h), s = Math.sin(p.h), e = elev(p.x, p.y);
+    const P = (a, o, z = 0.06) => [p.x + c * a - s * o, p.y + s * a + c * o, z + e];
     m.quad(P(-p.len / 2, -p.half), P(p.len / 2, -p.half), P(p.len / 2, p.half), P(-p.len / 2, p.half), rgb(COLOURS.pad));
     for (let a = -p.len / 2 + 0.5; a < p.len / 2 - 0.9; a += 2) {
       m.tri(P(a, -1.2, 0.07), P(a + 0.9, 0, 0.07), P(a + 0.45, 0, 0.07), rgb(COLOURS.padArrow));
@@ -223,17 +250,21 @@ function buildWorld(track, settingName, wet) {
   // The fans and the grandstands' tiers are listed, not baked: they jump and cheer (cheer.js)
   const fans = [], rows = [];
   const ctx = { S, wetK, shadow, face, trackId: track.id, z: 0, fans, rows, newMesh: () => new Mesh() };
-  for (const it of [...cells.values()].flat()) addProp(at(it.x, it.y), it, ctx);
-  for (const st of stands) addStand(at(st.x, st.y), st, ctx);
+  // Each on the ground where it stands (the relief): built from 0 and lifted (Mesh.lift; a fan and a
+  // tier take the lift of the mesh they were added with)
+  const lifted = (m, x, y, add) => { m.lift = groundZ(x, y); add(m); m.lift = 0; };
+  for (const it of [...cells.values()].flat()) lifted(at(it.x, it.y), it.x, it.y, m => addProp(m, it, ctx));
+  for (const st of stands) lifted(at(st.x, st.y), st.x, st.y, m => addStand(m, st, ctx));
 
-  return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], fans, rows, stands, bufs: null };
+  for (const m of chunks.values()) m.mesh.lift = 0;
+  return { track, setting: settingName, wet, S, sky, chunks: [...chunks.values()], fans, rows, stands, bufs: null, elev };
 }
 
 /** One gate: two posts and a banner across the road (the finish's is chequered). */
-function gateMesh(gt, finish) {
+function gateMesh(gt, finish, e = 0) {
   const m = new Mesh(), c = Math.cos(gt.h), s = Math.sin(gt.h);
-  const P = (a, o, z) => [gt.x + c * a - s * o, gt.y + s * a + c * o, z];
-  for (const o of [-gt.half - 0.3, gt.half + 0.3]) m.box(gt.x - s * o, gt.y + c * o, 1.95, 0.14, 0.14, 1.95, gt.h, rgb(COLOURS.post));
+  const P = (a, o, z) => [gt.x + c * a - s * o, gt.y + s * a + c * o, z + e];
+  for (const o of [-gt.half - 0.3, gt.half + 0.3]) m.box(gt.x - s * o, gt.y + c * o, 1.95 + e, 0.14, 0.14, 1.95, gt.h, rgb(COLOURS.post));
   const o0 = -gt.half - 0.3, o1 = gt.half + 0.3, z0 = 3.4, z1 = 3.9;
   if (finish) {
     const n = 14;
@@ -262,10 +293,10 @@ export function escena3d(canvas) {
   if (!R) return null;
   let W = 0, H = 0, dpr = 1, lastNow = 0;
   const cam = { a: Math.PI / 2, ready: false, x: 0, y: 0, z: 0 };
-  const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0, spin: 0 };
+  const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0, spin: 0, grade: 0 };
   const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create(), MF = mat4.create();
   // Tyre tracks: a ring of segments [x1, y1, x2, y2]; dust, sparks and smoke: fixed pools
-  const marks = new Float32Array(TRACKS * 4);
+  const marks = new Float32Array(TRACKS * 4), markZ = new Float32Array(TRACKS);
   let head = 0, count = 0, prevRear = null, lastG = null, lastCar = null, seenHits = 0, owed = 0, smokeOwed = 0;
   const puffs = Array.from({ length: DUST }, () => ({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 1, life: 1, r: 1, col: null }));
   const bits = Array.from({ length: BITS }, () => ({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 1, life: 1, r: 0.15, col: null }));
@@ -291,7 +322,7 @@ export function escena3d(canvas) {
     // Every fan variant, calm and cheering: 32 × 2 small meshes drawn where each fan stands
     if (!fanBufs) fanBufs = Array.from({ length: 32 }, (_, v) => [R.buffer(personMesh(new Mesh(), v, false)), R.buffer(personMesh(new Mesh(), v, true))]);
     gateBufs?.forEach(b => R.free(b));
-    gateBufs = track.gates.map((gt, i) => R.buffer(gateMesh(gt, i === track.gates.length - 1)));
+    gateBufs = track.gates.map((gt, i) => R.buffer(gateMesh(gt, i === track.gates.length - 1, track.pts[gt.i]?.e || 0)));
     if (!carBufs) carBufs = Object.fromEntries(Object.entries(carMeshes()).map(([k, m]) => [k, R.buffer(m)]));
     if (!dyn) dyn = { marks: R.buffer(null, true), parts: R.buffer(null, true), confetti: R.buffer(null, true) };
     return world;
@@ -314,6 +345,10 @@ export function escena3d(canvas) {
     const c = Math.cos(h), s = Math.sin(h);
     const z = Math.max(0, car.z || 0);
     crowd.update({ x, y, vx: car.vx, vy: car.vy }, dt, quiet());
+    // The ground under the car (relief.js), and its slope along the car's nose
+    const ge = car.e || 0, rp = g.track.pts[g.idx] || g.track.pts[0];
+    const slopeA = z > 0 ? 0 : Math.atan((rp.g || 0) * Math.cos(h - rp.h));
+    if (dt > 0) pose.grade += (slopeA - pose.grade) * (1 - Math.exp(-dt / 0.08)); else pose.grade = slopeA;
 
     // The body leans: it rolls out of a turn and pitches under braking, a few degrees, eased
     const vf = car.vx * c + car.vy * s, vs = -car.vx * s + car.vy * c;
@@ -339,10 +374,12 @@ export function escena3d(canvas) {
     if (!cam.ready) cam.a = h;
     else if (!reversing) cam.a = wrap(cam.a + wrap(travel - cam.a) * k);
     const ca = Math.cos(cam.a), sa = Math.sin(cam.a);
-    const tz = z * 0.5;
-    cam.z = cam.ready ? cam.z + (tz - cam.z) * k : tz;
+    // Up and down with the road (half a jump's height), never under the ground behind the car
+    const tz = ge + z * 0.5;
+    cam.z = cam.ready ? cam.z + (tz - cam.z) * Math.min(1, k * 2) : tz;
     cam.ready = true;
-    const eye = [x - ca * CAM.back, y - sa * CAM.back, CAM.up + cam.z];
+    const ex = x - ca * CAM.back, ey = y - sa * CAM.back;
+    const eye = [ex, ey, Math.max(CAM.up + cam.z, world.elev(ex, ey) + 1.6)];
     const target = [x + ca * CAM.look, y + sa * CAM.look, 0.6 + cam.z];
     mat4.perspective(proj, CAM.fov, W / H, 1, sky.fog[1] + 40);
     mat4.lookAt(view, eye, target, [0, 0, 1]);
@@ -357,7 +394,7 @@ export function escena3d(canvas) {
       if (marking && prevRear) {
         for (let w = 0; w < 2; w++) {
           const o = head * 4;
-          marks[o] = prevRear[w][0]; marks[o + 1] = prevRear[w][1]; marks[o + 2] = rear[w][0]; marks[o + 3] = rear[w][1];
+          marks[o] = prevRear[w][0]; marks[o + 1] = prevRear[w][1]; marks[o + 2] = rear[w][0]; marks[o + 3] = rear[w][1]; markZ[head] = ge;
           head = (head + 1) % TRACKS; count = Math.min(TRACKS, count + 1);
         }
       }
@@ -372,7 +409,7 @@ export function escena3d(canvas) {
         owed -= 1;
         const p = puffs[nextPuff]; nextPuff = (nextPuff + 1) % DUST;
         const [wx, wy] = rear[nextPuff % 2];
-        Object.assign(p, { x: wx, y: wy, z: 0.3, vx: car.vx * 0.15 + (Math.random() - 0.5) * 2, vy: car.vy * 0.15 + (Math.random() - 0.5) * 2, vz: 0.6 + Math.random() * 0.8, age: 0, life: 0.8 + Math.random() * 0.8, r: 0.3 + Math.random() * 0.25, col: dustCol, grow: 1.6, alpha: 0.24 });
+        Object.assign(p, { x: wx, y: wy, z: 0.3 + ge, vx: car.vx * 0.15 + (Math.random() - 0.5) * 2, vy: car.vy * 0.15 + (Math.random() - 0.5) * 2, vz: 0.6 + Math.random() * 0.8, age: 0, life: 0.8 + Math.random() * 0.8, r: 0.3 + Math.random() * 0.25, col: dustCol, grow: 1.6, alpha: 0.24 });
       }
     }
     // A new crash: sparks and bits where it struck
@@ -383,7 +420,7 @@ export function escena3d(canvas) {
       for (let i = 0; i < 16; i++) {
         const b = bits[nextBit]; nextBit = (nextBit + 1) % BITS;
         const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 8, spark = i % 2 === 0;
-        Object.assign(b, { x: wx, y: wy, z: 0.7, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vz: 2 + Math.random() * 4, age: 0, life: 0.35 + Math.random() * 0.5, r: spark ? 0.1 : 0.16, col: spark ? rgb(COLOURS.spark) : rgb(COLOURS.car, 0.8), grow: 0, alpha: 1, fall: true });
+        Object.assign(b, { x: wx, y: wy, z: 0.7 + ge + z, floor: ge, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vz: 2 + Math.random() * 4, age: 0, life: 0.35 + Math.random() * 0.5, r: spark ? 0.1 : 0.16, col: spark ? rgb(COLOURS.spark) : rgb(COLOURS.car, 0.8), grow: 0, alpha: 1, fall: true });
       }
     }
     // Smoke from the bonnet from the seventh crash, black near the end
@@ -393,14 +430,14 @@ export function escena3d(canvas) {
         smokeOwed -= 1;
         const p = smoke[nextSmoke]; nextSmoke = (nextSmoke + 1) % SMOKE;
         const dark = g.wrecked || damage >= 9;
-        Object.assign(p, { x: x + c * CAR_L * 0.35, y: y + s * CAR_L * 0.35, z: z + 1, vx: car.vx * 0.3 + (Math.random() - 0.5) * 0.6, vy: car.vy * 0.3 + (Math.random() - 0.5) * 0.6, vz: 1.2 + Math.random(), age: 0, life: 1 + Math.random(), r: 0.4, col: dark ? [0.14, 0.13, 0.13] : [0.6, 0.6, 0.62], grow: 2.5, alpha: 0.55 });
+        Object.assign(p, { x: x + c * CAR_L * 0.35, y: y + s * CAR_L * 0.35, z: ge + z + 1, vx: car.vx * 0.3 + (Math.random() - 0.5) * 0.6, vy: car.vy * 0.3 + (Math.random() - 0.5) * 0.6, vz: 1.2 + Math.random(), age: 0, life: 1 + Math.random(), r: 0.4, col: dark ? [0.14, 0.13, 0.13] : [0.6, 0.6, 0.62], grow: 2.5, alpha: 0.55 });
       }
     }
     for (const p of [...puffs, ...bits, ...smoke]) {
       if (p.age >= p.life) continue;
       p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
       p.vx *= 0.95; p.vy *= 0.95;
-      if (p.fall) { p.vz -= 12 * dt; if (p.z < 0.05) { p.z = 0.05; p.vz *= -0.3; } }
+      if (p.fall) { p.vz -= 12 * dt; const f = (p.floor || 0) + 0.05; if (p.z < f) { p.z = f; p.vz *= -0.3; } }
     }
 
     // Drawing
@@ -441,8 +478,8 @@ export function escena3d(canvas) {
       for (let i = 0; i < count; i++) {
         const o = ((head - 1 - i + TRACKS) % TRACKS) * 4;
         const ax = marks[o], ay = marks[o + 1], bx = marks[o + 2], by = marks[o + 3];
-        const l = Math.hypot(bx - ax, by - ay) || 1, nx = -(by - ay) / l * 0.12, ny = (bx - ax) / l * 0.12;
-        m.quad([ax - nx, ay - ny, 0.065], [bx - nx, by - ny, 0.065], [bx + nx, by + ny, 0.065], [ax + nx, ay + ny, 0.065], col);
+        const l = Math.hypot(bx - ax, by - ay) || 1, nx = -(by - ay) / l * 0.12, ny = (bx - ax) / l * 0.12, mz = 0.065 + markZ[o / 4];
+        m.quad([ax - nx, ay - ny, mz], [bx - nx, by - ny, mz], [bx + nx, by + ny, mz], [ax + nx, ay + ny, mz], col);
       }
       R.upload(dyn.marks, m);
       R.draw(dyn.marks, { lit: 0, depth: false });
@@ -457,9 +494,9 @@ export function escena3d(canvas) {
 
     // The car: its shadow on the ground (further below while it flies), then its body and parts
     const darken = g.wrecked ? 0.3 : 1 - Math.min(0.45, damage * 0.045);
-    mat4.pose(M, x, y, 0, h);
+    mat4.pose(M, x, y, ge + 0.02, h, -pose.grade);
     R.draw(carBufs.shadow, { m: M, lit: 0, tint: [1, 1, 1, Math.max(0.25, 1 - z * 0.25)], depth: false });
-    mat4.pose(M, x, y, z, h, pose.pitch + (car.vz ? -car.vz * 0.02 : 0), pose.roll);
+    mat4.pose(M, x, y, ge + z, h, pose.pitch - pose.grade + (z > 0 && car.vz ? -car.vz * 0.02 : 0), pose.roll);
     R.draw(carBufs.body, { m: M, tint: [darken, darken, darken, 1], shine: g.wrecked ? 0 : 0.55 * darken });
     R.draw(carBufs.trim, { m: M, tint: [darken, darken, darken, 1], shine: 0.25 });
     R.draw(carBufs.glass, { m: M, tint: damage >= 3 ? [1.6, 1.6, 1.7, 1] : [1, 1, 1, 1], shine: 1 });
@@ -489,7 +526,7 @@ export function escena3d(canvas) {
     }
     if (g.boost > 0) {
       const fl = rgb(COLOURS.boost), bx = x - c * (CAR_L / 2 + 0.4), by = y - s * (CAR_L / 2 + 0.4);
-      for (let i = 0; i < 4; i++) square(bx - c * i * 0.45, by - s * i * 0.45, z + 0.6, 0.35 - i * 0.06 + Math.random() * 0.08, [...fl, 0.8 - i * 0.18]);
+      for (let i = 0; i < 4; i++) square(bx - c * i * 0.45, by - s * i * 0.45, ge + z + 0.6, 0.35 - i * 0.06 + Math.random() * 0.08, [...fl, 0.8 - i * 0.18]);
     }
     if (m.count) { R.upload(dyn.parts, m); R.draw(dyn.parts, { lit: 0, depth: false }); }
     confetti(rx, ry);

@@ -18,7 +18,7 @@ const apart = (t, a, b) => { const d = Math.abs(b - a); return t.loop ? Math.min
 const FULL = { steer: 0, throttle: 1, brake: 0, handbrake: false };
 const steps = (g, input, k) => { for (let i = 0; i < k; i++) { E.step(g, typeof input === 'function' ? input(g) : input); } return g; };
 /** A car on a flat, endless straight: the first stage turned into one long road. */
-const straight = () => E.buildTrack({ id: 'flat', gates: 1, pieces: [['S', 3000]] });
+const straight = () => E.buildTrack({ id: 'flat', gates: 1, relief: false, pieces: [['S', 3000]] });
 const drive = (track, k = 120 * 300) => { const g = E.newGame({ track }); while (g.mode !== 'done' && k--) { E.step(g, E.autopilot(g)); g.events.length = 0; } return g; };
 
 ok('the track: starts at the origin facing north, points every 2 m, gates on the road, the last near the end', () => {
@@ -67,11 +67,12 @@ ok('on a fork the car on the branch is on the road, and its progress runs as on 
 
 ok('a boost pad pushes the car well past its top speed for a moment', () => {
   const track = straight();
-  track.pads = [{ x: 0, y: 30, h: Math.PI / 2, s: 30, half: 1.7, len: 8 }];
+  // Where the car is near its top speed (gravel gets there slowly: about 15 s)
+  track.pads = [{ x: 0, y: 600, h: Math.PI / 2, s: 600, half: 1.7, len: 8 }];
   const g = E.newGame({ track });
   const events = [];
   let best = 0;
-  for (let i = 0; i < 120 * 8; i++) { E.step(g, FULL); best = Math.max(best, g.car.speed); events.push(...g.events.splice(0)); }
+  for (let i = 0; i < 120 * 22; i++) { E.step(g, FULL); best = Math.max(best, g.car.speed); events.push(...g.events.splice(0)); }
   assert.ok(events.some(e => e.type === 'boost'));
   assert.ok(best > E.TUNING.topGravel * 1.15, `peak ${best.toFixed(1)} against top ${E.TUNING.topGravel}`);
   assert.ok(g.car.speed < E.TUNING.topGravel * 1.05, `and then back near its top speed (${g.car.speed.toFixed(1)})`);
@@ -297,7 +298,7 @@ ok('rain: wet asphalt holds less than dry gravel, and a car at full lock on it r
   assert.equal(E.gripOf('off', true), E.gripOf('off', false));
   // How far the car's travel turns in half a second at full lock, from 30 m/s
   const turn = wet => {
-    const g = E.newGame({ track: E.buildTrack({ id: 'flat', gates: 1, surface: 'asphalt', weather: wet ? 'wet' : undefined, pieces: [['S', 3000]] }) });
+    const g = E.newGame({ track: E.buildTrack({ id: 'flat', gates: 1, relief: false, surface: 'asphalt', weather: wet ? 'wet' : undefined, pieces: [['S', 3000]] }) });
     while (g.car.speed < 30) E.step(g, FULL);
     const a0 = Math.atan2(g.car.vy, g.car.vx);
     steps(g, { steer: 1, throttle: 1 }, 60);

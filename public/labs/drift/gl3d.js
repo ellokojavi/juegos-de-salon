@@ -65,10 +65,12 @@ export function rgb(hex, k = 1) {
  * faces) and a colour [r, g, b, a?]. `vertices()` packs it as 6 floats + 4 bytes per vertex.
  */
 export class Mesh {
-  constructor() { this.p = []; this.c = []; }
+  /** `lift`: metres added to every z from now on (a prop stands on the ground's height: its own z stay from 0). */
+  constructor() { this.p = []; this.c = []; this.lift = 0; }
   get count() { return this.p.length / 9; }
   tri(a, b, c, col) {
-    this.p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    const l = this.lift;
+    this.p.push(a[0], a[1], a[2] + l, b[0], b[1], b[2] + l, c[0], c[1], c[2] + l);
     this.c.push(col);
     return this;
   }

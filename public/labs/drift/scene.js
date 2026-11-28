@@ -76,6 +76,44 @@ function puddlesOf(track) {
   return out;
 }
 
+/** Where the sun stands, seen from above (north-west, as the props' shadows fall): lights the slopes. */
+const SUN = [-0.6, 0.8];
+
+/**
+ * Which points of road `r` (0 the main one, 1… its forks) have their line `off` m to the side
+ * (from the edge with `edge`) lying on another road's surface, where it must not show: the main
+ * road's edge across a fork's mouth, a fork's lines over the main road. Worked out once per track.
+ */
+const hiddenCache = new WeakMap();
+function hidden(track, r, off, edge) {
+  let byKey = hiddenCache.get(track);
+  if (!byKey) hiddenCache.set(track, byKey = new Map());
+  const key = `${r}:${off}:${edge}`;
+  if (byKey.has(key)) return byKey.get(key);
+  const roads = [track.pts, ...(track.branches || []).map(b => b.pts)];
+  const P = roads[r], out = new Uint8Array(P.length);
+  // The other roads near this one: a fork against the main road; the main road against its forks
+  const others = r ? [{ Q: track.pts, from: track.branches[r - 1].from - 30, to: track.branches[r - 1].to + 30 }]
+    : track.branches.map(b => ({ Q: b.pts, from: b.from - 30, to: b.to + 30 }));
+  P.forEach((p, i) => {
+    const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
+    const x = p.x - Math.sin(p.h) * o, y = p.y + Math.cos(p.h) * o;
+    for (const { Q, from, to } of others) {
+      if (p.s < from || p.s > to) continue;
+      for (const q of Q) {
+        if (q.s < from || q.s > to) continue;
+        const dx = x - q.x, dy = y - q.y;
+        if (dx * dx + dy * dy > 36) continue;
+        const along = dx * Math.cos(q.h) + dy * Math.sin(q.h), side = -dx * Math.sin(q.h) + dy * Math.cos(q.h);
+        if (Math.abs(along) <= 1.2 && Math.abs(side) < q.w / 2 - 0.05) { out[i] = 1; break; }
+      }
+      if (out[i]) break;
+    }
+  });
+  byKey.set(key, out);
+  return out;
+}
+
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
 const quiet = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -438,75 +476,91 @@ export function escena(canvas) {
     labels(g, { zoom, anchorY });
   }
 
-  /** The road: the points near the camera, stroked wide with round joins, the shoulder first. */
+  /**
+   * The road as ribbons: each road near the camera (the main one and its forks) a filled strip
+   * between its two edges, worked out point by point, so it widens into a hairpin smoothly, a fork
+   * leaves and joins it with no seam, and a change of surface meets edge to edge (the owner,
+   * 2026-11-27: «que la pista tenga un trazado continuo»). A closed circuit wraps past its start.
+   * Then its slopes in light and shade, then its lines, each hidden where it crosses another road.
+   */
   function road(track, S, cx, cy, reach) {
     const r2 = reach * reach;
+    const roads = [track.pts, ...(track.branches || []).map(b => b.pts)];
     const runs = [];
-    // The main road and its forks, each cut to the stretches near the camera
-    for (const P of [track.pts, ...(track.branches || []).map(b => b.pts)]) {
+    roads.forEach((P, r) => {
       let run = null;
+      const mine = [];
       for (let i = 0; i < P.length; i++) {
         const p = P[i], dx = p.x - cx, dy = p.y - cy;
-        if (dx * dx + dy * dy <= r2) { if (!run) runs.push(run = []); run.push(p); } else run = null;
+        if (dx * dx + dy * dy <= r2) { if (!run) mine.push(run = { r, pts: [], at: [] }); run.pts.push(p); run.at.push(i); } else run = null;
       }
-      // A circuit's road runs on through the start line: its last stretch and its first are one, with no ends at the seam
-      if (track.loop && P === track.pts) {
-        const first = runs.find(rn => rn[0] === P[0]), last = runs.find(rn => rn[rn.length - 1] === P[P.length - 1]);
-        if (first && last && first !== last) { last.push(...first.slice(1)); runs.splice(runs.indexOf(first), 1); }
+      // A circuit's road runs on through the start line (its last point is its first): one stretch, no ends at the seam
+      if (r === 0 && track.loop && mine.length > 1 && mine[0].at[0] === 0 && run && run.at[run.at.length - 1] === P.length - 1) {
+        const first = mine.shift();
+        run.pts.push(...first.pts.slice(1)); run.at.push(...first.at.slice(1));
       }
-    }
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      runs.push(...mine);
+    });
+    // The two edges of a stretch, `extra` m wider than the road each side: one closed path
+    const ribbon = (pts, from, to, extra) => {
+      ctx.moveTo(pts[from].x - Math.sin(pts[from].h) * (pts[from].w / 2 + extra), pts[from].y + Math.cos(pts[from].h) * (pts[from].w / 2 + extra));
+      for (let i = from + 1; i <= to; i++) { const p = pts[i], o = p.w / 2 + extra; ctx.lineTo(p.x - Math.sin(p.h) * o, p.y + Math.cos(p.h) * o); }
+      for (let i = to; i >= from; i--) { const p = pts[i], o = p.w / 2 + extra; ctx.lineTo(p.x + Math.sin(p.h) * o, p.y - Math.cos(p.h) * o); }
+      ctx.closePath();
+    };
+    const fill = (style, extra, pick = () => true) => {
+      ctx.fillStyle = style;
+      ctx.beginPath();
+      for (const rn of runs) {
+        const P = rn.pts;
+        // Each stretch the pick keeps, reaching one point into the next so two surfaces meet edge to edge
+        for (let i = 0; i < P.length; i++) {
+          if (!pick(P[i])) continue;
+          let j = i; while (j + 1 < P.length && pick(P[j + 1])) j++;
+          const a = i, b = Math.min(P.length - 1, j + 1);
+          if (b > a) ribbon(P, a, b, extra);
+          i = j;
+        }
+      }
+      ctx.fill();
+    };
     // Each stretch in the look of its surface: the setting's own road for the surface it was made for,
     // the other surface's usual look where the stage changes (a gravel meadow that turns to asphalt)
     const native = S.lines ? 'asphalt' : 'gravel';
     const lookOf = sf => (sf === native ? S : SETTINGS[sf === 'asphalt' ? 'plain' : 'meadow']);
-    const surfaces = [...new Set(runs.flat().map(p => p.sf))];
-    // Wider where the bend is a hairpin: each width its own stroke
-    // Where the surface changes, each stretch reaches one point into the next and ends square, so the
-    // two meet edge to edge (a round end would bulge over the other surface)
-    const stroke = (keep, width) => {
-      for (const w of [7, 9]) {
-        // (the hairpin's wider stroke keeps its round ends: it widens the road gently)
-        ctx.lineCap = surfaces.length > 1 && width === 0 && w === 7 ? 'butt' : 'round';
-        ctx.lineWidth = w + width;
-        ctx.beginPath();
-        for (const rn of runs) {
-          let open = false;
-          for (let i = 0; i < rn.length; i++) {
-            const p = rn[i];
-            if (p.w < w || !(keep(p) || (i > 0 && keep(rn[i - 1])))) { open = false; continue; }
-            if (!open) { ctx.moveTo(p.x, p.y); open = true; } else ctx.lineTo(p.x, p.y);
-          }
-        }
-        ctx.stroke();
-      }
-    };
-    // A dark rim where the shoulder meets the grass, the shoulder with its grit, then each surface with its grain
-    ctx.strokeStyle = COLOURS.verge; stroke(() => true, 3.2);
-    ctx.strokeStyle = S.shoulder; stroke(() => true, 2.4);
-    if (world.grain.gravel) { ctx.strokeStyle = world.grain.gravel; stroke(() => true, 2.4); }
-    ctx.lineCap = 'round';
+    const surfaces = [...new Set(runs.flatMap(rn => rn.pts.map(p => p.sf)))];
+    // A dark rim where the shoulder meets the grass, the shoulder with its grit
+    fill(COLOURS.verge, 1.6);
+    fill(S.shoulder, 1.2);
+    if (world.grain.gravel) fill(world.grain.gravel, 1.2);
+    // The road: first all of it in its first surface's look, then each other surface over its stretches
+    const first = surfaces[0];
     for (const sf of surfaces) {
-      ctx.strokeStyle = lookOf(sf).road; stroke(p => p.sf === sf, 0);
+      const pick = sf === first ? () => true : p => p.sf === sf;
+      fill(lookOf(sf).road, 0, pick);
       const grain = world.grain[sf === 'asphalt' ? 'asphalt' : 'gravel'];
-      if (grain) { ctx.strokeStyle = grain; stroke(p => p.sf === sf, 0); }
+      if (grain) fill(grain, 0, pick);
     }
     // The rain darkens the road
-    if (track.wet) { ctx.strokeStyle = COLOURS.wetSheen; stroke(() => true, 0); }
-    // A line along the road, `off` metres to its left (a negative one, to its right), on one surface
+    if (track.wet) fill(COLOURS.wetSheen, 0);
+    slopes(runs);
+    // A line along the road, `off` metres to its left (a negative one, to its right), on one surface;
+    // broken where it would run over another road (a fork's mouth)
     const along = (off, edge, sf) => {
       ctx.beginPath();
       for (const rn of runs) {
+        const hide = hidden(track, rn.r, off, edge);
         let open = false;
-        for (const p of rn) {
-          if (p.sf !== sf) { open = false; continue; }
+        rn.pts.forEach((p, k) => {
+          if (p.sf !== sf || hide[rn.at[k]]) { open = false; return; }
           const o = edge ? Math.sign(off) * (p.w / 2 - Math.abs(off)) : off;
           const px = p.x - Math.sin(p.h) * o, py = p.y + Math.cos(p.h) * o;
           if (open) ctx.lineTo(px, py); else { ctx.moveTo(px, py); open = true; }
-        }
+        });
       }
       ctx.stroke();
     };
+    ctx.lineJoin = 'round'; ctx.lineCap = 'butt';
     // The road's edges a shade darker, where it wears into the shoulder
     for (const sf of surfaces) { ctx.strokeStyle = COLOURS.edge; ctx.lineWidth = 0.45; along(0.22, true, sf); along(-0.22, true, sf); }
     // Gravel: the two ruts the cars before you dug; asphalt: the edge lines and the centre dashes
@@ -516,6 +570,42 @@ export function escena(canvas) {
       if (L.lines) { ctx.strokeStyle = L.lines; ctx.lineWidth = 0.18; along(0.45, true, sf); along(-0.45, true, sf); }
       if (L.centre) { ctx.strokeStyle = L.centre; ctx.lineWidth = 0.2; ctx.setLineDash([3, 5]); along(0, false, sf); ctx.setLineDash([]); }
     }
+    ctx.lineCap = 'round';
+  }
+
+  /**
+   * The relief seen from above: each stretch of road lit or shaded by how its slope faces the sun
+   * (from the north-west, as the props' shadows), lighter climbing toward it, darker away; a crest's
+   * far side shows as a dark band, a dip as a dark then a light one.
+   */
+  function slopes(runs) {
+    const LEVELS = 5, buckets = [[], []];
+    for (const rn of runs) {
+      const P = rn.pts;
+      for (let i = 0; i + 1 < P.length; i++) {
+        const p = P[i], q = P[i + 1], gr = ((p.g || 0) + (q.g || 0)) / 2;
+        if (Math.abs(gr) < 0.004) continue;
+        // The surface's tilt toward the sun: the grade along the road's heading against the sun's direction
+        const lit = -gr * (Math.cos(p.h) * SUN[0] + Math.sin(p.h) * SUN[1]);
+        const level = Math.min(LEVELS, Math.round(Math.abs(lit) * 70));
+        if (!level) continue;
+        (buckets[lit > 0 ? 0 : 1][level] ||= []).push(p, q);
+      }
+    }
+    buckets.forEach((byLevel, dark) => byLevel.forEach((list, level) => {
+      if (!list?.length) return;
+      ctx.fillStyle = dark ? `rgba(20, 10, 0, ${level * 0.045})` : `rgba(255, 250, 225, ${level * 0.04})`;
+      ctx.beginPath();
+      for (let k = 0; k < list.length; k += 2) {
+        const p = list[k], q = list[k + 1], a = p.w / 2 + 1.2, b = q.w / 2 + 1.2;
+        ctx.moveTo(p.x - Math.sin(p.h) * a, p.y + Math.cos(p.h) * a);
+        ctx.lineTo(q.x - Math.sin(q.h) * b, q.y + Math.cos(q.h) * b);
+        ctx.lineTo(q.x + Math.sin(q.h) * b, q.y - Math.cos(q.h) * b);
+        ctx.lineTo(p.x + Math.sin(p.h) * a, p.y - Math.cos(p.h) * a);
+        ctx.closePath();
+      }
+      ctx.fill();
+    }));
   }
 
   /** The puddles of a wet stage: pale ellipses on the road that catch the sky. */

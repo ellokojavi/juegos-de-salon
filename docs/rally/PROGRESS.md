@@ -42,7 +42,7 @@ answer and its date here; a decision that sets a policy someone could undo also 
 | 1 | The name the player reads, in es, en and pt, and its emoji. The folder and id follow it (C-20). | before 1.1 | «Rally» in all three (then it joins `SAME_NAME`), 🏁. A name of our own, like Aletazo, is more in the site's voice if the owner has one. | **Derrape** (es), **Drift** (en), **Derrapagem** (pt), 🏁; id `drift`. 2026-11-25 |
 | 2 | Where the clip came from, so the cover can credit the game that inspired it. | before 1.1 | Ask for the link. Unknown is an acceptable answer: then no credit. | Unknown: the cover credits nothing. 2026-11-25 |
 | 3 | Stage length. | before 1.1 | 8 to 10 gates, 60 to 90 seconds. The clip's is 20 gates and about three and a half minutes. | The recommended: 8 to 10 gates, 60 to 90 seconds. 2026-11-25 |
-| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26 |
+| 4 | The view: the world turns so the car points up, or the map stays fixed. | in 1.2, by playing both | The world turns, damped. | **The world turns** (the follow view): the fixed map «no anda bien», the owner, 2026-11-26. **Then the fixed map** by default: «que la cámara esté con mapa fijo», the owner, 2026-11-27 |
 | 5 | Controls: two halves with auto-throttle, or something else. | in 1.2, by playing | Two halves, auto-throttle. | Not auto-throttle (the owner, 2026-11-26: it pulls all the time and braking into a bend is impossible). **Wheel and pedal** (default), with one finger in 🔧; the brake held when stopped reverses. «Me gusta», 2026-11-26 |
 | 6 | Penalties: a missed gate and a reset. | in 1.3 | +10 s and +5 s. | The recommended: +10 s and +5 s. 2026-11-26 |
 | 7 | How often the stage changes. | before 1.3 | One stage a week, the same for everyone. | **One circuit a week**, the same for everyone. 2026-11-27 |
@@ -66,6 +66,9 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 ## Log
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
+
+- **2026-11-27** · The owner: relief on the road (hills, crests that throw the car, dips, whoops: `relief.js`), gravel as fast as asphalt but slower to get there, the fixed map by default, and the road drawn in one piece (2D ribbons, hairpins widening smoothly, no seams at forks or the start line).
+- **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
 
 - **2026-11-27** · The crowd comes alive (the owner: «movimiento al público … serpentina»): fans jump and throw their arms up as the car nears, grandstands rise in a wave, and each crowd bursts into confetti and streamers once per pass (`cheer.js`, both views; none with reduced motion).
 - **2026-11-27** · A small map in the race's corner (the owner: «cuánto va quedando para terminar el circuito»): the circuit, what is driven in yellow, the car as a dot; 2D and 3D.

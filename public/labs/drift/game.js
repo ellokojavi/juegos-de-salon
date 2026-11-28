@@ -216,8 +216,9 @@ function play(e) {
   else if (e.type === 'reset') SFX.tap();
   else if (e.type === 'crash') crashed();
   else if (e.type === 'boost') { SFX.pass(); vibrate(30); }
-  else if (e.type === 'jump') SFX.flip();
-  else if (e.type === 'land') { SFX.dice(); vibrate(40); }
+  // A hop over a small bump makes no noise: only a real flight (off a ramp, over a crest) does
+  else if (e.type === 'jump' && !e.crest) SFX.flip();
+  else if (e.type === 'land' && e.t > 0.25) { SFX.dice(); vibrate(40); }
   else if (e.type === 'wrecked') wreck();
   else if (e.type === 'finish') finish();
 }
