@@ -28,6 +28,7 @@ import { SETTINGS, CROWD, scenery, near, settingOf, seeded } from './scenery.js'
 import { cheer } from './cheer.js';
 import { tile, pattern } from './textures.js';
 import { carSprite, shadowSprite } from './car2d.js';
+import { ghostLabel } from './ghost-label.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
 /** The heading from (x, y) to the nearest point of the road: where a fan looks. */
@@ -246,6 +247,7 @@ function dustSprite([r, g, b]) {
 export function escena(canvas) {
   const ctx = canvas.getContext('2d');
   let W = 0, H = 0, dpr = 1;
+  const label = ghostLabel(canvas);
   const cam = { x: 0, y: 0, a: Math.PI / 2, ox: 0, oy: 0, ready: false };
   let lastNow = 0;
   // What is built once per stage and setting, and once per scale
@@ -457,11 +459,18 @@ export function escena(canvas) {
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
     // The ghost (ghost.js) under the real car: the record's body, see-through, where it was at this time
+    // and over it the driver's name when it is a real player's run (ghost-label.js), on the screen above it
+    let named = false;
     if (ghost && carArt) {
       ctx.save(); ctx.globalAlpha = 0.42; ctx.translate(ghost.x, ghost.y); ctx.rotate(ghost.h);
       ctx.drawImage(carArt.body.img, -carArt.body.hx, -carArt.body.hy, 2 * carArt.body.hx, 2 * carArt.body.hy);
       ctx.restore();
+      if (ghost.name && Math.hypot(ghost.x - x, ghost.y - y) > 0.5) {
+        const p = ctx.getTransform().transformPoint({ x: ghost.x, y: ghost.y });
+        label.show(ghost.name, p.x / dpr, p.y / dpr - CAR_L * 0.6 * zoom, 1); named = true;
+      }
     }
+    if (!named) label.hide();
     drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
     confetti();
     for (const p of puffs) {
@@ -976,5 +985,5 @@ export function escena(canvas) {
     }));
   }
 
-  return { draw, resize, dispose() { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); } };
+  return { draw, resize, dispose() { label.dispose(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); } };
 }

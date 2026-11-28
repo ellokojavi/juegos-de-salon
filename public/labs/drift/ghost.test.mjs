@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import * as E from './engine.js';
 import { CIRCUITS } from './circuits.js';
-import { recorder, load, keep, better, poseAt, gapAt, lapProgress, SAMPLE_MS } from './ghost.js';
+import { recorder, load, keep, better, poseAt, gapAt, lapProgress, SAMPLE_MS, ghostName, playerName } from './ghost.js';
 
 const mem = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };
 const track = E.buildTrack(Object.values(CIRCUITS)[0]);
@@ -57,4 +57,14 @@ assert.ok(gapAt(ghost, at, g2.t + 1500) > 1.3, 'a second and a half later: behin
 assert.ok(gapAt(ghost, at, g2.t - 1500) < -1.3, 'a second and a half earlier: ahead');
 assert.ok(gapAt(ghost, at, g2.t, 1.01) > 0.05, 'against the 1 % faster ghost the same lap is behind');
 assert.equal(gapAt(ghost, 0, 0), null, 'nothing on the start line');
-console.log('ghost: recorded, kept, beaten, replayed, timed');
+// The name over it: a real player's (kept with the run, else this phone's player), never a simulated driver's
+const store = data => ({ getItem: k => data[k] ?? null, setItem: (k, v) => { data[k] = v; } });
+const me = store({ 'juegos-de-salon:jugador': JSON.stringify({ jid: 'abcd1234', n: '  Javi ' }) }), nobody = store({});
+assert.equal(playerName(me), 'Javi');
+assert.equal(playerName(nobody), null, 'no profile, no name');
+assert.equal(ghostName({ ...ghost, name: 'Ana' }, me), 'Ana', 'the run keeps its driver');
+assert.equal(ghostName({ ...ghost, name: undefined }, me), 'Javi', 'a record from before names: this phone\'s player');
+assert.equal(ghostName({ ...ghost, name: undefined }, nobody), null);
+assert.equal(ghostName({ ...ghost, sim: 'intermediate', name: 'Ana' }, me), null, 'a simulated driver has no name');
+assert.equal(ghostName(null, me), null);
+console.log('ghost: recorded, kept, beaten, replayed, timed, named');

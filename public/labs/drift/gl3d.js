@@ -217,6 +217,7 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
     gl.bindBuffer(gl.ARRAY_BUFFER, skyBuf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW);
     gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);   // a second pass over the same faces still draws (the ghost: its depth first, then its colour)
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   }
@@ -272,8 +273,12 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
       gl.enableVertexAttribArray(prog.a.aPos); gl.enableVertexAttribArray(prog.a.aNor); gl.enableVertexAttribArray(prog.a.aCol);
       frameState = { boundM: null };
     },
-    /** Draws a buffer with a model matrix (null: as built), a tint, lit or not, how glossy and how grainy, writing depth or not. */
-    draw(b, { m = null, tint = WHITE, lit = 1, shine = 0, grain = 0, depth = true } = {}) {
+    /**
+     * Draws a buffer with a model matrix (null: as built), a tint, lit or not, how glossy and how grainy,
+     * writing depth or not, writing colour or not (`colour: false` lays only its depth, so a see-through
+     * body drawn again over it shows only its nearest faces).
+     */
+    draw(b, { m = null, tint = WHITE, lit = 1, shine = 0, grain = 0, depth = true, colour = true } = {}) {
       if (!b || !b.count) return;
       gl.bindBuffer(gl.ARRAY_BUFFER, b.buf);
       gl.vertexAttribPointer(prog.a.aPos, 3, gl.FLOAT, false, 28, 0);
@@ -286,8 +291,10 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
       gl.uniform1f(prog.u.uShine, shine);
       gl.uniform1f(prog.u.uGrain, grain);
       if (!depth) gl.depthMask(false);
+      if (!colour) gl.colorMask(false, false, false, false);
       gl.drawArrays(gl.TRIANGLES, 0, b.count);
       if (!depth) gl.depthMask(true);
+      if (!colour) gl.colorMask(true, true, true, true);
     },
     free(b) { if (b) gl.deleteBuffer(b.buf); },
     dispose() {

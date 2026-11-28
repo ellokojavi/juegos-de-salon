@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-28** · The ghost's name and one ghost car (the owner: «un nombre arriba de él … si es que es una ruta real de un jugador real»; «me parece ver dos»): a real player's ghost shows their name in a pill over it, a simulated driver's none; in 3D the ghost was drawn see-through in one pass, so its far side and wheels showed through it like a second car, and it filled the screen when just behind the car: now one clean body, fading between the camera and the car.
 - **2026-11-28** · Gravel faster (the owner: «sigue estando demasiado lento en camino de tierra»): gravel pulls as hard as asphalt (`gravelAccel` 1), the drag only bites near the top speed (`dragPower` 3: 9 s to 58 m/s instead of 15), and its bends hold more (`gripGravel` 14); the autopilot's gravel speed is about 10 % higher on average and 13 % at the top. The circuits regenerated (still about a minute), the simulated drivers' paces solved again, and the air token raised to 4.2 m (a car at the top speed flew over it).
 - **2026-11-27** · The owner: reward the player who takes a fork (a spinning «−10» that bursts and takes 10 s off), other such paths, and a ghost of an intermediate run to follow. Tokens on every fork (−10) and in the air past every ramp (−5, only flown fast); the pace driver's ghost until the player has a record. More challenge for skilled players: options proposed to the owner.
 

@@ -24,6 +24,7 @@ import { renderer, Mesh, mat4, rgb } from './gl3d.js';
 import { carMeshes } from './car3d.js';
 import { addProp, addStand, personMesh } from './props3d.js';
 import { cheer } from './cheer.js';
+import { ghostLabel } from './ghost-label.js';
 
 /** Per setting: the sky (top, horizon = fog), the sun's direction (x, y, z, unit-ish), the fog's start and end, m. */
 const SKY = {
@@ -318,6 +319,7 @@ export function escena3d(canvas) {
   });
   if (!R) return null;
   let W = 0, H = 0, dpr = 1, lastNow = 0;
+  const label = ghostLabel(canvas);
   const cam = { a: Math.PI / 2, ready: false, x: 0, y: 0, z: 0 };
   const pose = { roll: 0, pitch: 0, lastVf: 0, lastVs: 0, spin: 0, grade: 0 };
   const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create(), MF = mat4.create();
@@ -565,18 +567,34 @@ export function escena3d(canvas) {
       R.draw(front ? carBufs.wheelFront : carBufs.wheelBack, { m: MW, shine: 0.3 });
     }
 
-    // The ghost (ghost.js): the record's car, see-through and pale, where it was at this time; drawn
-    // after everything solid without writing depth, so the road and the real car show through it
+    // The ghost (ghost.js): the record's car, see-through and pale, where it was at this time. One clean
+    // body: its depth is laid first and its colour drawn over it, so only its nearest faces show (drawn
+    // see-through in one pass, its far side and wheels showed through it, like a second car). It fades
+    // as it comes between the camera and the car, so it never fills the screen just behind the car.
+    // Over it, the driver's name when it is a real player's run (ghost-label.js).
+    let named = false;
     if (ghost && Math.hypot(ghost.x - x, ghost.y - y) > 0.5) {
-      const GT = [1.35, 1.35, 1.55, 0.32];
-      mat4.pose(MF, ghost.x, ghost.y, ghost.z, ghost.h, ghost.pitch);
-      for (const part of ['body', 'trim', 'glass']) R.draw(carBufs[part], { m: MF, tint: GT, depth: false });
-      for (const [fx, front] of [[CAR_L * 0.31, true], [-CAR_L * 0.3, false]]) for (const side of [-1, 1]) {
-        mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, 0, 0);
-        mat4.multiply(MW, MF, MW);
-        R.draw(front ? carBufs.wheelFront : carBufs.wheelBack, { m: MW, tint: GT, depth: false });
+      const tx = x - eye[0], ty = y - eye[1], d2 = tx * tx + ty * ty || 1;
+      const along = ((ghost.x - eye[0]) * tx + (ghost.y - eye[1]) * ty) / d2;   // 1 at the car, 0 at the camera
+      const fade = Math.min(1, Math.max(0, (along - 0.45) / 0.4));
+      if (fade > 0) {
+        const GT = [1.35, 1.35, 1.55, 0.36 * fade];
+        mat4.pose(MF, ghost.x, ghost.y, ghost.z, ghost.h, ghost.pitch);
+        const wheels = fn => { for (const [fx, front] of [[CAR_L * 0.31, true], [-CAR_L * 0.3, false]]) for (const side of [-1, 1]) {
+          mat4.pose(MW, fx, side * (CAR_W / 2 - 0.05), 0.36, 0, 0); mat4.multiply(MW, MF, MW); fn(front ? carBufs.wheelFront : carBufs.wheelBack);
+        } };
+        for (const part of ['body', 'trim', 'glass']) R.draw(carBufs[part], { m: MF, colour: false });
+        wheels(b => R.draw(b, { m: MW, colour: false }));
+        for (const part of ['body', 'trim', 'glass']) R.draw(carBufs[part], { m: MF, tint: GT, depth: false });
+        wheels(b => R.draw(b, { m: MW, tint: GT, depth: false }));
+        if (ghost.name) {
+          const p = [ghost.x, ghost.y, ghost.z + 2.1, 1], q = [0, 0, 0, 0];
+          for (let r = 0; r < 4; r++) q[r] = vp[r] * p[0] + vp[4 + r] * p[1] + vp[8 + r] * p[2] + vp[12 + r] * p[3];
+          if (q[3] > 0.1) { label.show(ghost.name, (q[0] / q[3] + 1) / 2 * W, (1 - q[1] / q[3]) / 2 * H, fade); named = true; }
+        }
       }
     }
+    if (!named) label.hide();
 
     // The particles last: camera-facing squares, with the boost's flame behind the car
     const rx = -sa, ry = ca;                       // the camera's right, flat
@@ -624,6 +642,7 @@ export function escena3d(canvas) {
   }
 
   function dispose() {
+    label.dispose();
     if (world && !R.lost) { world.chunks.forEach(ch => R.free(ch.buf)); world.rows.forEach(r => { R.free(r.calm); R.free(r.up); }); }
     R.dispose();
   }
