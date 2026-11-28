@@ -67,6 +67,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · The owner: reward the player who takes a fork (a spinning «−10» that bursts and takes 10 s off), other such paths, and a ghost of an intermediate run to follow. Tokens on every fork (−10) and in the air past every ramp (−5, only flown fast); the pace driver's ghost until the player has a record. More challenge for skilled players: options proposed to the owner.
+
 - **2026-11-27** · The ghost, first part (the owner: «seguir la mejor versión de uno mismo»): your record on each circuit races you, see-through, with the gap on the clock and a dot on the minimap (`ghost.js`). Uploading, the ranking's next one up and the leader's 1 % faster ghost come next.
 - **2026-11-27** · The owner: the forks were too short, pieces were not organically joined, and gentler bends were missing. The road now eases from piece to piece (`EASE`), most long straights bend into wide sweepers, and each fork is a second road of 220 to 400 m round a bend (a gravel cut or an asphalt sweep), its gates standing on both roads. Pool regenerated; the calibration holds.
 

@@ -14,6 +14,11 @@
  * no crash in the air; the landing costs nothing) and boost pads (`g.boost`: a short burst well past
  * the top speed).
  *
+ * Tokens (`track.tokens`, the owner, 2026-11-27: «premiar al usuario que toma la bifurcación»): a
+ * «−10» floating halfway along each fork's other road and a «−5» in the air past each ramp, where only
+ * a car flying it fast passes. Caught, a token takes its `ms` off the time that counts (`g.bonus`) and
+ * pushes a `token` event; each is caught once a run (`g.taken`).
+ *
  * The road rises and falls (relief.js: hills, crests, dips, whoops): uphill pulls the car back and
  * downhill pushes it on (`slope`), and over a crest taken fast enough the ground drops away faster than
  * the car falls, so it flies (`car.air`, the same flight as off a ramp). `car.z` is always the height
@@ -76,6 +81,9 @@ export const TUNING = {
   boostTop: 1.7,          // top speed × this while boosting
   boostAccel: 26,         // m/s² of extra push while boosting
   missPenalty: 10000,     // ms
+  forkBonus: 10000,       // ms off for the token on a fork's other road (the owner, 2026-11-27)
+  airBonus: 5000,         // ms off for the token in the air past a ramp, caught only flying it fast
+  tokenReach: 3.2,        // m from a token's centre that catches it
   resetPenalty: 5000,
   resetAfter: 3,          // s off the road or the wrong way before ↺ is offered
 };
@@ -231,7 +239,13 @@ export function buildTrack(stage) {
   };
   const ramps = (stage.ramps || []).map(r => place(r, ROAD_WIDTH / 2 - 0.4, 5));
   const pads = (stage.pads || []).map(r => place(r, 1.7, 8));
-  const track = { id: stage.id, loop: !!stage.loop, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads };
+  // The tokens: a «−10» halfway along each fork's other road, a «−5» in the air past each ramp of the
+  // main road (45 m on and 3.5 m up: a car leaving the ramp at about 44 m/s or more flies through it)
+  const tokens = [
+    ...branches.map(b => { const q = b.pts[Math.floor(b.pts.length / 2)]; return { x: q.x, y: q.y, s: q.s, z: 1.4, ms: TUNING.forkBonus, fork: b.n, j: Math.floor(b.pts.length / 2) }; }),
+    ...ramps.filter(r => r.fork === undefined).map(r => { const q = pts[at(r.s + 45)]; return { x: q.x, y: q.y, s: q.s, z: 3.5, ms: TUNING.airBonus, air: true }; }),
+  ];
+  const track = { id: stage.id, loop: !!stage.loop, surface: base, wet: stage.weather === 'wet', setting: stage.setting || 'meadow', pts, length, gates, branches, ramps, pads, tokens };
   // The relief last: it keeps its jumps away from the forks, the ramps and the pads
   if (stage.relief !== false) relief(track); else track.relief = [];
   return track;
@@ -274,7 +288,7 @@ export function newGame({ track, mode = 'ready' }) {
   const car = { x: p.x, y: p.y, h: p.h, vx: 0, vy: 0, steer: 0, throttle: 0, brake: 0, surface: p.sf, slip: 0, speed: 0, px: p.x, py: p.y, ph: p.h, hits: [], z: 0, vz: 0, air: false, e: heightAt(track, 0), w: 0 };
   return {
     track, car, mode,
-    t: 0, gate: 0, splits: [], penalty: 0, missed: 0, resets: 0,
+    t: 0, gate: 0, splits: [], penalty: 0, bonus: 0, taken: [], missed: 0, resets: 0,
     idx: 0, progress: 0, side: 0, onRoad: true, lastRoad: 0,
     off: 0, back: 0, wrongWay: false, events: [],
     lives: TUNING.lives, hitCool: 0, wrecked: false, boost: 0, branch: -1,
@@ -311,6 +325,7 @@ export function step(g, input = IDLE) {
       g.events.push({ type: 'land', impact: Math.round(Math.max(0, w - car.vz) * 10) / 10, t: Math.round(car.airT * 100) / 100 });
       car.z = 0; car.vz = 0; car.air = false; car.w = w; car.airT = 0;
     }
+    tokens(g);
     gates(g);
     if (g.mode === 'play') g.t += dt * 1000;
     return;
@@ -393,6 +408,7 @@ export function step(g, input = IDLE) {
   }
   car.w = w;
   features(g, dt);
+  tokens(g);
   gates(g);
   if (g.mode === 'play') g.t += dt * 1000;
 }
@@ -505,6 +521,23 @@ function locate(g, dt) {
   g.back = wrong ? g.back + dt : 0;
 }
 
+/** The tokens the car passes through: each once a run, its time off the total. */
+function tokens(g) {
+  const car = g.car, list = g.track.tokens || [];
+  if (g.mode !== 'play' || !list.length) return;
+  g.taken ||= [];
+  list.forEach((k, i) => {
+    if (g.taken.includes(i) || Math.abs(k.s - g.progress) > 12) return;
+    // Its height over the ground under it, against the car's (in the air, the car's own)
+    const ground = k.fork !== undefined ? g.track.branches[k.fork].pts[k.j].e || 0 : heightAt(g.track, k.s);
+    const dz = car.e + car.z + 0.7 - (ground + k.z);
+    if (Math.hypot(car.x - k.x, car.y - k.y) > TUNING.tokenReach || Math.abs(dz) > (k.air ? 1.8 : 2.5)) return;
+    g.taken.push(i);
+    g.bonus = (g.bonus || 0) + k.ms;
+    g.events.push({ type: 'token', i, ms: k.ms });
+  });
+}
+
 /** Passing, missing and finishing. */
 function gates(g) {
   if (g.mode === 'done' || g.gate >= g.track.gates.length) return;
@@ -538,8 +571,8 @@ function finish(g) {
   g.events.push({ type: 'finish', ms: total(g) });
 }
 
-/** The time that counts: the clock plus the penalties, in ms. */
-export const total = g => Math.round(g.t) + g.penalty;
+/** The time that counts: the clock plus the penalties, less the tokens caught, in ms. */
+export const total = g => Math.max(0, Math.round(g.t) + g.penalty - (g.bonus || 0));
 
 /** Whether the ↺ button should be offered on its own: long off the road or the wrong way. */
 export const needsReset = g => g.mode === 'play' && (g.off >= TUNING.resetAfter || g.back >= TUNING.resetAfter);
@@ -620,6 +653,7 @@ export function restore(json, track) {
   const { trackId, ...rest } = json;
   const g = { ...JSON.parse(JSON.stringify(rest)), track, events: [] };
   // A run saved before the relief: on a ramp's flight if it was in the air, on the ground's height
+  g.bonus ??= 0; g.taken ??= [];
   if (g.car.air === undefined) Object.assign(g.car, { air: g.car.z > 0 || g.car.vz > 0, e: heightAt(track, g.progress || 0), w: 0 });
   return g;
 }
