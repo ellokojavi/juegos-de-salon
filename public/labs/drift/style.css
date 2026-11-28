@@ -36,9 +36,11 @@
 }
 
 /* The edge: ↺ always, 🔧 with a lab key; clear of the bottom bar */
-.dr-edge { position: absolute; top: var(--s-10); right: var(--s-10); display: grid; gap: var(--s-8); }
+.dr-edge { position: absolute; top: var(--s-10); right: var(--s-10); display: grid; justify-items: end; gap: var(--s-8); }
 .dr-edge .icon-btn { background: var(--drift-shade); }
 .dr-edge .dr-offer { box-shadow: 0 0 0 3px var(--yellow); }
+/* The small map under the buttons: the circuit, what is left of it, the car (minimap.js) */
+.dr-map { width: 76px; height: 76px; border-radius: var(--r-14); background: var(--drift-shade); pointer-events: none; }
 
 /* The first-run hint, until the first touch */
 .dr-hint {

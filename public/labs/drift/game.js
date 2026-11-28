@@ -32,6 +32,7 @@ import { escena } from './scene.js';
 import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
+import { minimap } from './minimap.js';
 import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
@@ -230,8 +231,10 @@ function crashed() {
   if (S.g.mode !== 'done') save();
 }
 
+let map = null;
 function paintHud() {
   const g = S.g;
+  (map ||= minimap($('#map'))).draw(g);
   $('#clock').textContent = E.clock(g.t);
   const pen = $('#penalty');
   pen.hidden = !g.penalty;
