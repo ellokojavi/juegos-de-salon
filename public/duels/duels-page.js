@@ -86,7 +86,8 @@ export async function drawDuels(root, { sub }) {
     }
     const nuevo = el('button', { type: 'button', class: 'btn btn--yellow', id: 'dl-nuevo', onClick: () => { tap(); abrirNuevo({ lista, alTocar: tap }); } }, `⚔️ ${T.newDuel}`);
     let lista = [], leida = false;
-    root.replaceChildren(nuevo);
+    // While the duels load, the button and grey shapes where they will be (no blank, no pop-in)
+    root.replaceChildren(nuevo, el('div', { class: 'dl-hueso dl-hueso--panel', 'aria-hidden': 'true' }), el('div', { class: 'dl-hueso dl-hueso--panel', 'aria-hidden': 'true' }));
     try { lista = await (await J.duelos()).mios(); leida = true; } catch (_) { /* offline: nothing to show */ }
     const otros = await recientes();
     if (mine !== turn) return;

@@ -382,7 +382,8 @@ export async function abrirNuevo({ rival = null, juego = null, formato: f0 = nul
    */
   let vista = null, alto = null;
   function pintar() {
-    const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches && panel.isConnected;
+    // The first paint is not eased: the sheet opens at its full size (the owner, 2026-11-28: it grew as it opened)
+    const suave = vista !== null && !matchMedia('(prefers-reduced-motion: reduce)').matches && panel.isConnected;
     const h0 = suave ? panel.getBoundingClientRect().height : 0;
     cuerpo.removeAttribute('aria-busy');
     titulo.textContent = centrado ? `⚔️ ${T.challenge}` : modo === 'custom' ? T.customTitle : `⚔️ ${T.newDuel}`;
