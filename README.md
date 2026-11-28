@@ -710,6 +710,8 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [🔗 Connections (Conexiones)](docs/games/connections.md)
+- [🔮 Cosmic Marble (lab, in Juegos en prueba)](docs/games/cosmic-marble.md)
+- [Bolita: how courses are generated](docs/games/cosmic-marble/generation-rules.md)
 - [🐸 Croc! (La Copa game, launched 2026-11-22)](docs/games/croc.md)
 - [🗝️ Cryptic (Críptico; lab, in Juegos en prueba)](docs/games/cryptic.md)
 - [La Copa](docs/games/cup.md)

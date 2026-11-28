@@ -176,6 +176,7 @@ const TYF_RESULT = [
 ];
 
 export const PATHS = {
+  'cosmic-marble': { intro: [] },
   // Derrape (lab, docs/rally/): its cover (landing-fold.mjs, D-579), the stage after the 3, 2, 1, and the result
   'drift': {
     intro: [],
