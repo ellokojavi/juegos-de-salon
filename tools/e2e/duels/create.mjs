@@ -40,6 +40,9 @@ try {
   ok(await ev(`!!document.querySelector('#dl-hoja [data-v="bo3"]') && !!document.querySelector('#dl-hoja .dl-juego')`), 'the sheet opens on the quick duel: format and game');
   ok(await ev(`document.getElementById('dl-enviar').nextElementSibling?.id === 'dl-medida'`), '🛠️ the custom duel is the link right under the button');
   await b.shot('quick-390');
+  // Opening does not grow from empty (the owner, 2026-11-28): the first paint is not eased, and the page behind is locked
+  ok(await ev(`document.querySelector('#dl-hoja .hoja').getAnimations().filter(a => !(a instanceof CSSAnimation)).length === 0`), 'the sheet opens at its size, with no height easing');
+  ok(await ev(`getComputedStyle(document.documentElement).overflow === 'hidden'`), 'the page behind the sheet does not scroll');
   await click('#dl-medida');
   await b.until(`!!document.querySelector('#dl-rivales .chip-btn')`, 6000);
   await click('#dl-rivales .chip-btn');

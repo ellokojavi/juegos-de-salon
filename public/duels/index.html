@@ -64,7 +64,12 @@
       <h1 class="display display--lg rainbow" id="dl-h1">Duelos</h1>
       <p class="sub muted" id="dl-sub"></p>
     </header>
-    <div class="stack" id="dl-page"></div>
+    <div class="stack" id="dl-page">
+      <!-- Grey shapes until the duels load, so the page does not pop in or jump (the owner, 2026-11-28) -->
+      <div class="dl-hueso dl-hueso--btn" aria-hidden="true"></div>
+      <div class="dl-hueso dl-hueso--panel" aria-hidden="true"></div>
+      <div class="dl-hueso dl-hueso--panel" aria-hidden="true"></div>
+    </div>
   </main>
   <script type="module">
     // All of a player's duels (lab flag rivals, lab: #seccion-rivals). With the flag off, the page is the profile

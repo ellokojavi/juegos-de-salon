@@ -127,6 +127,10 @@
 /* While the sheet loads: grey chips where the rivals will be (the owner, 2026-11-23: no jumping) */
 .dl-hueso { display: block; width: 72px; height: 36px; border-radius: var(--r-pill); background: var(--well); animation: dl-latido 1.2s ease-in-out infinite alternate; }
 .dl-hueso--btn { width: 100%; height: 48px; border-radius: var(--r-14); }
+.dl-hueso--panel { width: 100%; height: 180px; border-radius: var(--r-22); }
+/* The page's subtitle (your record) keeps its line while it loads, so nothing under it moves down */
+#dl-sub { min-height: 1lh; }
+#dl-page > .dl-hueso--btn { height: 60px; }
 @keyframes dl-latido { from { opacity: 1; } to { opacity: .45; } }
 @media (prefers-reduced-motion: reduce) { .dl-hueso { animation: none; } }
 
@@ -364,3 +368,7 @@ a.dl-card-g { text-decoration: none; }
 .dl-pj-barra { height: 8px; }
 #dl-page .panel.dl-destacado.arch { border-color: var(--yellow); }
 #dl-page .panel.dl-destacado.nemesis { border-color: var(--dl-l); }
+
+/* While the new-duel sheet is open the page behind it does not scroll (the owner, 2026-11-28);
+   the gutter stays, so the page does not shift sideways where scrollbars take room */
+html:has(#dl-hoja) { overflow: hidden; scrollbar-gutter: stable; }
