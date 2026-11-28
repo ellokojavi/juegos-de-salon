@@ -6,11 +6,13 @@
 .aw-titulo { font-size: clamp(1.9rem, 9vw, 2.5rem); }
 .aw-capa .me-tarjeta { transform: rotate(2deg); animation-name: aw-pop; }
 @keyframes aw-pop { from { transform: rotate(2deg) scale(0.6); opacity: 0; } }
-.aw-franjas { position: fixed; inset: -50%; pointer-events: none;
+.aw-franjas { position: fixed; inset: -50%; pointer-events: none; overflow: hidden;
+  mask: radial-gradient(circle, var(--ink) 20%, transparent 65%); -webkit-mask: radial-gradient(circle, var(--ink) 20%, transparent 65%); }
+/* The stripes move under a still mask, one exact period per loop: 70px across the -35deg stripes is 70/sin(35deg) = 122.04px along x. */
+.aw-franjas::before { content: ''; position: absolute; inset: 0 -130px 0 -130px;
   background: repeating-linear-gradient(-35deg, color-mix(in srgb, var(--m2) 40%, transparent) 0 28px, transparent 28px 70px);
-  mask: radial-gradient(circle, var(--ink) 20%, transparent 65%); -webkit-mask: radial-gradient(circle, var(--ink) 20%, transparent 65%);
   animation: aw-corre 2.4s linear infinite; }
-@keyframes aw-corre { to { transform: translate(70px, 0); } }
+@keyframes aw-corre { from { transform: translateX(-122.04px); } to { transform: translateX(0); } }
 .aw-medalla { width: 120px; height: 120px; margin-top: calc(var(--s-32) * -2.6); filter: drop-shadow(0 10px 14px var(--me-sombra));
   transform-origin: 50% 50%; animation: aw-tiembla 0.45s ease-in-out 0.25s 2, aw-flota 3s ease-in-out 2s infinite; }
 @keyframes aw-tiembla { 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
@@ -43,7 +45,7 @@
   .aw-medalla { width: 96px; height: 96px; margin-top: calc(var(--s-32) * -2.1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .aw-medalla, .aw-cara, .aw-franjas, .aw-puntos i, .aw-tarjeta::after { animation: none; }
+  .aw-medalla, .aw-cara, .aw-franjas::before, .aw-puntos i, .aw-tarjeta::after { animation: none; }
   .aw-dorso { animation: none; opacity: 0; }
   .aw-capa .me-tarjeta { animation: none; }
 }

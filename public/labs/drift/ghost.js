@@ -40,7 +40,7 @@ export function recorder() {
     /** The finished run as a ghost: null for a wreck or a run that did not finish. */
     ghost(g) {
       if (g.mode !== 'done' || g.wrecked) return null;
-      return { v: 1, track: g.track.id, len: Math.round(g.track.length), time: Math.round(g.t + g.penalty), clock: Math.round(g.t), s: s.slice() };
+      return { v: 1, track: g.track.id, len: Math.round(g.track.length), time: Math.max(0, Math.round(g.t) + g.penalty - (g.bonus || 0)), clock: Math.round(g.t), s: s.slice() };
     },
     reset() { s = []; next = 0; },
   };

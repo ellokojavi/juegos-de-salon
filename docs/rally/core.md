@@ -171,6 +171,14 @@ centre (on or off the road), and the direction of travel (the wrong way).
     «la bifurcación no sirve de mucho porque es muy breve»): a fork is 220 to 400 m round a bend,
     a cut inside it on gravel (shorter, tighter) or a sweep outside it on asphalt (longer, wider,
     grippier), with its own `surface`.
+  - A **token** (the owner, 2026-11-27: «premiar al usuario que toma la bifurcación … −10 en 3
+    dimensiones y que gire, y que al momento de capturarla explote»): a «−10» halfway along each
+    fork's other road and a «−5» in the air 45 m past each ramp, 3.5 m up, where only a car leaving the
+    ramp at about 44 m/s or more flies through it. Caught (3.2 m), it takes its seconds off the time
+    that counts (`g.bonus`, `total` = clock + penalties − bonus) once a run, with a gold burst, a chime
+    and «−10 s» rising; the HUD shows the penalties less the bonus. In 2D the number turns on its
+    upright axis over a glow; in 3D it is a solid seven-segment number rocking to and fro toward the
+    camera (a full turn showed it edge-on and backwards).
   - A **ramp** throws the car up at `rampLift` (0.18) of its forward speed under `gravity` 12 m/s²
     (about a second in the air at speed, 2 m high): no steering, no grip, no throttle and no
     crash in the air, and the landing costs nothing (`car.z`, `car.vz`; the scene grows the car a
@@ -291,7 +299,13 @@ the race clock, rounded to decimetres (about 10 KB a lap). A ghost is kept with 
 so a circuit drawn again drops it. In both views it is drawn see-through, as a pale dot on the
 minimap, and as the gap on the clock («👻 +1,2 s», green while ahead), with «¡Nuevo récord!» or the
 standing record on the result screen. `poseAt` and `gapAt` take a pace (1.01: 1 % faster), ready for
-the leader's ghost. Still to come with the ranking: uploading runs, the next one up as the default,
+the leader's ghost. **The pace driver** (the owner, 2026-11-27: «ahora implementar uno que simule una
+carrera intermedia para que el usuario la pueda seguir»): until a circuit has a record on this phone,
+the run races the intermediate driver of the calibration (`pacer.js`, shared with
+`tools/generators/drift-humans.mjs`), driven through the real engine when the run starts (about
+10 000 steps, some 30 ms) with the view's tuning and controls, recorded as a ghost marked `sim`. It
+is never kept: a first clean run is the player's own record, and the result says by how much the run
+beat it or was beaten. Still to come with the ranking: uploading runs, the next one up as the default,
 the leader's retimed ghost, and the cover's switch («Mi récord» or no ghost).
 
 The player's best run on this stage, drawn as a faint car. Cheap and the strongest reason to play

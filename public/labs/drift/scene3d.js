@@ -39,14 +39,14 @@ const COLOURS = {
   car: '#ff2e88', carRoof: '#d81f70', stripe: '#ffffff', glass: '#2e2a40', wheel: '#14141a', rim: '#9a9aa4',
   headlight: '#fff6c8', brakeOn: '#ff3b30', brakeOff: '#5a1020', reverse: '#ffffff',
   ramp: '#8a5a2b', rampEdge: '#c58a4a', pad: '#28e6dc', padArrow: '#fff36b', boost: '#6ee7ff',
-  spark: '#ffd23f', mark: '#000000',
+  spark: '#ffd23f', mark: '#000000', token: '#ffd23f', tokenSide: '#b8861f',
 };
 const CAR_L = 4.2, CAR_W = 1.8;
 /** The camera, starting values (path-2-3d.md): metres behind and above the car, and how far ahead it looks. */
 const CAM = { back: 8.5, up: 3.8, look: 10, fov: 62 * Math.PI / 180, ease: 0.22 };
 /** The world's chunks, m a side, and how far around the camera they are drawn. */
 const CHUNK = 120;
-const TRACKS = 500, MARK_SLIP = 1.4, DUST = 90, BITS = 48, SMOKE = 40;
+const TRACKS = 500, MARK_SLIP = 1.4, DUST = 90, BITS = 96, SMOKE = 40;
 const MAX_DPR = 2;
 const quiet = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
@@ -282,12 +282,38 @@ function gateMesh(gt, finish, e = 0, m = new Mesh()) {
   return m;
 }
 
+/**
+ * A token's number in 3D (the owner, 2026-11-27: «que diga menos 10 en 3 dimensiones y que gire»): the
+ * glyphs as solid bars, seven-segment style, 2 m tall and 0.6 m thick, centred on the origin, facing
+ * along y; the scene turns it about its upright axis.
+ */
+function tokenMesh(text) {
+  const m = new Mesh(), top = rgb(COLOURS.token), side = rgb(COLOURS.tokenSide);
+  // Segments of a 1 × 2 cell: a top, b top right, c bottom right, d bottom, e bottom left, f top left, g middle
+  const SEG = { a: [0, 1, 1, 0], b: [0.5, 0.5, 0, 1], c: [0.5, -0.5, 0, 1], d: [0, -1, 1, 0], e: [-0.5, -0.5, 0, 1], f: [-0.5, 0.5, 0, 1], g: [0, 0, 1, 0] };
+  SEG.h = [0, 0.5, 0, 1]; SEG.i = [0, -0.5, 0, 1];   // a 1: one bar up the middle of its cell
+  const DIGIT = { '0': 'abcdef', '1': 'hi', '2': 'abged', '3': 'abgcd', '5': 'afgcd', '−': 'g' };
+  // Each glyph's width, so a 1 and the minus sit as close to their neighbours as the others
+  const t = 0.2, WIDE = { '1': 0.4 + 2 * t }, wide = ch => WIDE[ch] ?? 1 + 2 * t, gap = 0.4;
+  const chars = [...text], total = chars.reduce((w, ch) => w + wide(ch), 0) + gap * (chars.length - 1);
+  let at = -total / 2;
+  for (const ch of chars) {
+    const cxm = at + wide(ch) / 2;
+    for (const k of DIGIT[ch] || '') {
+      const [cx, cz, wx, wz] = SEG[k];
+      m.box(cxm + cx, 0, cz, wx ? 0.5 + t : t, 0.3, wz ? 0.5 + t : t, 0, [top, side]);
+    }
+    at += wide(ch) + gap;
+  }
+  return m;
+}
+
 /* ---------------- The scene ---------------- */
 export function escena3d(canvas) {
-  let world = null, carBufs = null, gateBufs = null, dyn = null, fanBufs = null;
+  let world = null, carBufs = null, gateBufs = null, dyn = null, fanBufs = null, tokenBufs = null;
   const crowd = cheer();
   const R = renderer(canvas, {
-    lost: () => { world = null; carBufs = null; gateBufs = null; dyn = null; fanBufs = null; },
+    lost: () => { world = null; carBufs = null; gateBufs = null; dyn = null; fanBufs = null; tokenBufs = null; },
     restored: () => {},
   });
   if (!R) return null;
@@ -297,7 +323,7 @@ export function escena3d(canvas) {
   const vp = mat4.create(), proj = mat4.create(), view = mat4.create(), M = mat4.create(), MW = mat4.create(), MF = mat4.create();
   // Tyre tracks: a ring of segments [x1, y1, x2, y2]; dust, sparks and smoke: fixed pools
   const marks = new Float32Array(TRACKS * 4), markZ = new Float32Array(TRACKS);
-  let head = 0, count = 0, prevRear = null, lastG = null, lastCar = null, seenHits = 0, owed = 0, smokeOwed = 0;
+  let head = 0, count = 0, prevRear = null, lastG = null, lastCar = null, seenHits = 0, seenTaken = 0, owed = 0, smokeOwed = 0;
   const puffs = Array.from({ length: DUST }, () => ({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 1, life: 1, r: 1, col: null }));
   const bits = Array.from({ length: BITS }, () => ({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 1, life: 1, r: 0.15, col: null }));
   const smoke = Array.from({ length: SMOKE }, () => ({ x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 1, life: 1, r: 1, col: null }));
@@ -341,7 +367,7 @@ export function escena3d(canvas) {
     const car = g.car, { S, sky } = settle(g.track, viewOpts.setting);
     if (g !== lastG) {
       lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; cam.ready = false;
-      seenHits = car.hits?.length || 0;
+      seenHits = car.hits?.length || 0; seenTaken = g.taken?.length || 0;
       for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
       crowd.reset();
     }
@@ -428,6 +454,16 @@ export function escena3d(canvas) {
         Object.assign(b, { x: wx, y: wy, z: 0.7 + ge + z, floor: ge, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vz: 2 + Math.random() * 4, age: 0, life: 0.35 + Math.random() * 0.5, r: spark ? 0.1 : 0.16, col: spark ? rgb(COLOURS.spark) : rgb(COLOURS.car, 0.8), grow: 0, alpha: 1, fall: true });
       }
     }
+    // A token caught: it bursts into gold shards flying up and out
+    const taken = g.taken || [];
+    while (seenTaken < taken.length) {
+      const k = g.track.tokens[taken[seenTaken++]], kz = world.elev(k.x, k.y) + k.z;
+      for (let i = 0; i < (quiet() ? 12 : 40); i++) {
+        const b = bits[nextBit]; nextBit = (nextBit + 1) % BITS;
+        const a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 10;
+        Object.assign(b, { x: k.x, y: k.y, z: kz, floor: world.elev(k.x, k.y), vx: Math.cos(a) * v + car.vx * 0.5, vy: Math.sin(a) * v + car.vy * 0.5, vz: 2 + Math.random() * 7, age: 0, life: 0.6 + Math.random() * 0.6, r: 0.14 + Math.random() * 0.14, col: rgb(i % 3 ? COLOURS.token : '#ffffff'), grow: 0, alpha: 1, fall: true });
+      }
+    }
     // Smoke from the bonnet from the seventh crash, black near the end
     if (damage >= 7 && dt > 0) {
       smokeOwed += (g.wrecked ? 14 : (damage - 6) * 3) * dt * (quiet() ? 0.5 : 1);
@@ -495,6 +531,19 @@ export function escena3d(canvas) {
       if (i < g.gate) return;
       const finish = i === g.track.gates.length - 1;
       R.draw(gateBufs[i], { tint: finish ? [1, 1, 1, 1] : i === g.gate ? [...rgb(COLOURS.gateNext), 1] : [1, 1, 1, 0.85], lit: 0 });
+    });
+
+    // The tokens not caught yet: their number turning above the road, bobbing a little
+    tokenBufs ||= new Map();
+    (g.track.tokens || []).forEach((k, i) => {
+      if (taken.includes(i) || Math.hypot(k.x - x, k.y - y) > 260) return;
+      const text = `−${Math.round(k.ms / 1000)}`;
+      if (!tokenBufs.has(text)) tokenBufs.set(text, R.buffer(tokenMesh(text)));
+      // It turns to and fro about its upright axis, always facing the camera enough to read (a full
+      // turn showed it edge-on, a thin pole, and backwards half the time)
+      const still = quiet(), turn = Math.atan2(ey - k.y, ex - k.x) + Math.PI / 2 + (still ? 0 : Math.sin(now / 1000 * 2.6 + i) * 1);
+      mat4.pose(MF, k.x, k.y, world.elev(k.x, k.y) + k.z + (still ? 0 : Math.sin(now / 1000 * 2 + i) * 0.2), turn);
+      R.draw(tokenBufs.get(text), { m: MF, shine: 0.9, lit: 0.35 });
     });
 
     // The car: its shadow on the ground (further below while it flies), then its body and parts

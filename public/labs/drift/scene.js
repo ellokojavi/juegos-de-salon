@@ -43,6 +43,7 @@ const COLOURS = {
   chequerDark: '#15151a', chequerLight: '#f4f4f0', label: '#ffffff',
   car: '#ff2e88', carRoof: '#d81f70', carStripe: '#ffffff', carGlass: '#2a0a1c', wheel: '#14141a',
   dent: 'rgba(30, 0, 10, 0.7)', scratch: 'rgba(255, 255, 255, 0.55)', crack: 'rgba(255, 255, 255, 0.8)', scorch: 'rgba(20, 10, 10, 0.55)',
+  token: '#ffd23f', tokenEdge: '#1b1b22', tokenGlow: 'rgba(255, 210, 63, 0.35)', tokenBack: '#c9952a', tokenShadow: 'rgba(0, 0, 0, 0.25)',
   spark: '#ffd23f', flash: 'rgba(255, 255, 255, 0.85)', flameOuter: '#ff7a1a', flameInner: '#ffe066', bumper: '#b81a5e',
   ramp: '#8a5a2b', rampEdge: '#c58a4a', rampShade: 'rgba(0, 0, 0, 0.35)', pad: 'rgba(40, 230, 220, 0.75)', padArrow: '#fff36b',
   boostFlame: '#6ee7ff', streak: 'rgba(255, 255, 255, 0.35)',
@@ -265,7 +266,8 @@ export function escena(canvas) {
   // A crash: the ring where it struck, the debris, and the smoke the damage gives off
   const bits = Array.from({ length: DEBRIS }, () => ({ x: 0, y: 0, vx: 0, vy: 0, age: 1, life: 1, spark: false, size: 0.2 }));
   const smoke = Array.from({ length: SMOKE }, () => ({ x: 0, y: 0, vx: 0, vy: 0, age: 1, life: 1, r: 1, dark: false }));
-  let nextBit = 0, nextSmoke = 0, smokeOwed = 0, seenHits = 0;
+  let nextBit = 0, nextSmoke = 0, smokeOwed = 0, seenHits = 0, seenTaken = 0;
+  const booms = [];   // a token caught: a gold ring opening where it was
   const rings = [];   // { x, y, age }
   const greySmoke = dustSprite([150, 150, 155]), blackSmoke = dustSprite([35, 32, 32]);
 
@@ -308,7 +310,7 @@ export function escena(canvas) {
     const { S } = settle(g.track, view.setting);
     if (g !== lastG) {
       lastG = g; head = 0; count = 0; prevRear = null; lastCar = null; rings.length = 0;
-      seenHits = car.hits?.length || 0;
+      seenHits = car.hits?.length || 0; seenTaken = g.taken?.length || 0; booms.length = 0;
       for (const p of [...puffs, ...bits, ...smoke]) p.age = p.life;
       crowd.reset();
     }
@@ -376,9 +378,23 @@ export function escena(canvas) {
         const b = bits[nextBit]; nextBit = (nextBit + 1) % DEBRIS;
         const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 9;
         b.x = wx; b.y = wy; b.vx = Math.cos(a) * v; b.vy = Math.sin(a) * v;
-        b.age = 0; b.life = 0.35 + Math.random() * 0.5; b.spark = i % 2 === 0; b.size = b.spark ? 0.12 : 0.18 + Math.random() * 0.2;
+        b.age = 0; b.life = 0.35 + Math.random() * 0.5; b.spark = i % 2 === 0; b.gold = false; b.size = b.spark ? 0.12 : 0.18 + Math.random() * 0.2;
       }
     }
+    // A token caught: it bursts into gold shards and a ring (the owner, 2026-11-27: «que al capturarla explote»)
+    const taken = g.taken || [];
+    while (seenTaken < taken.length) {
+      const k = g.track.tokens[taken[seenTaken++]];
+      booms.push({ x: k.x, y: k.y, age: 0 });
+      for (let i = 0; i < (quiet() ? 10 : 28); i++) {
+        const b = bits[nextBit]; nextBit = (nextBit + 1) % DEBRIS;
+        const a = Math.random() * Math.PI * 2, v = 6 + Math.random() * 14;
+        b.x = k.x; b.y = k.y; b.vx = Math.cos(a) * v + car.vx * 0.6; b.vy = Math.sin(a) * v + car.vy * 0.6;
+        b.age = 0; b.life = 0.5 + Math.random() * 0.6; b.spark = true; b.gold = true; b.size = 0.3 + Math.random() * 0.35;
+      }
+    }
+    for (const r of booms) r.age += dt;
+    while (booms.length && booms[0].age > 0.6) booms.shift();
     for (const r of rings) r.age += dt;
     while (rings.length && rings[0].age > 0.4) rings.shift();
     for (const b of bits) if (b.age < b.life) { b.age += dt; b.x += b.vx * dt; b.y += b.vy * dt; b.vx *= 0.9; b.vy *= 0.9; }
@@ -418,6 +434,7 @@ export function escena(canvas) {
     features(g.track, now);
     tyreMarks(S, zoom);
     gates(g, zoom);
+    tokens(g, zoom, now);
     // The props, then the car over them (a crown must never hide it), then its dust
     const ppm = zoom * dpr;
     const still = quiet();
@@ -462,8 +479,14 @@ export function escena(canvas) {
     for (const b of bits) {
       if (b.age >= b.life) continue;
       ctx.globalAlpha = 1 - b.age / b.life;
-      ctx.fillStyle = b.spark ? COLOURS.spark : b.size > 0.28 ? S.shoulder : COLOURS.car;
+      ctx.fillStyle = b.gold ? COLOURS.token : b.spark ? COLOURS.spark : b.size > 0.28 ? S.shoulder : COLOURS.car;
       ctx.fillRect(b.x - b.size / 2, b.y - b.size / 2, b.size, b.size);
+    }
+    for (const r of booms) {
+      const f = r.age / 0.6;
+      ctx.globalAlpha = 1 - f;
+      ctx.strokeStyle = COLOURS.token; ctx.lineWidth = 0.6;
+      ctx.beginPath(); ctx.arc(r.x, r.y, 1 + f * 9, 0, Math.PI * 2); ctx.stroke();
     }
     for (const r of rings) {
       const f = r.age / 0.4;
@@ -900,6 +923,41 @@ export function escena(canvas) {
       ctx.beginPath(); ctx.arc(CAR_L * 0.32, 0, 0.28 * flick, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
+  }
+
+  /**
+   * The tokens not caught yet: the number itself (−10 on a fork, −5 in the air past a ramp), upright on
+   * the screen and turning about its upright axis, over a glow, with its shadow on the ground (further
+   * off for one up in the air). With reduced motion it stands still.
+   */
+  function tokens(g, zoom, now) {
+    const taken = g.taken || [];
+    (g.track.tokens || []).forEach((k, i) => {
+      if (taken.includes(i) || Math.hypot(k.x - cam.x, k.y - cam.y) > Math.hypot(W, H) / zoom + 10) return;
+      const spin = quiet() ? 1 : Math.cos(now / 1000 * 3 + i), size = k.air ? 4.4 : 3.6;
+      const lift = k.z * 0.35;
+      // Its shadow on the ground, away from the sun
+      ctx.fillStyle = COLOURS.tokenShadow;
+      ctx.beginPath(); ctx.ellipse(k.x + lift, k.y - lift, size * 0.55 * Math.max(0.25, Math.abs(spin)), size * 0.3, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.save();
+      ctx.translate(k.x, k.y);
+      ctx.rotate(-(Math.PI / 2 - cam.a));
+      ctx.scale(1 / zoom, -1 / zoom);
+      const px = size * zoom;
+      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, px * 0.9);
+      glow.addColorStop(0, COLOURS.tokenGlow); glow.addColorStop(1, 'rgba(255, 210, 63, 0)');
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(0, 0, px * 0.9, 0, Math.PI * 2); ctx.fill();
+      ctx.scale(Math.max(0.12, Math.abs(spin)), 1);
+      ctx.font = `900 ${Math.round(px)}px Nunito, system-ui, sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(3, px * 0.14); ctx.strokeStyle = COLOURS.tokenEdge;
+      const text = `−${Math.round(k.ms / 1000)}`;
+      ctx.strokeText(text, 0, 0);
+      // Its back, as it turns, a darker gold
+      ctx.fillStyle = spin < 0 ? COLOURS.tokenBack : COLOURS.token;
+      ctx.fillText(text, 0, 0);
+      ctx.restore();
+    });
   }
 
   /** Each gate's number beside its right post, written in screen space so it never turns. */
