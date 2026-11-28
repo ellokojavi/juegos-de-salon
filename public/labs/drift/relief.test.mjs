@@ -52,10 +52,11 @@ ok('the grade is the height\'s slope', () => {
   }
 });
 
-ok('a jump only where the road runs nearly straight on after it, never on a fork, a ramp or a pad', () => {
+ok('a jump only where the road runs nearly straight on after it, never on a fork, a ramp, a pad or a gate', () => {
   for (const t of tracks()) for (const f of t.relief.filter(f => f.kind === 'crest' || f.kind === 'whoops')) {
     for (const p of t.pts) if ([p.s, p.s + t.length].some(x => x >= f.from - 20 && x <= f.from + f.len + 90)) assert.ok(Math.abs(p.k) <= 1 / 90, `${t.id} ${f.kind} at ${f.from}`);
     for (const b of t.branches) assert.ok(f.from + f.len + 90 < b.from - 30 || f.from > b.to + 30, `${t.id} fork`);
+    for (const g of t.gates) assert.ok(g.s < f.from - 10 || g.s > f.from + f.len + 25, `${t.id} ${f.kind} at ${f.from}: a gate on it`);
     for (const r of [...t.ramps, ...t.pads]) assert.ok(f.from + f.len + 90 < r.s - 40 || f.from > r.s + 60, `${t.id} ramp or pad`);
   }
 });
