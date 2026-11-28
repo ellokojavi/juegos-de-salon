@@ -14,8 +14,8 @@ import { SCHEMES } from './input.js';
 import { SETTING_NAMES } from './scenery.js';
 import { STAGES, DEFAULT_TRACK, TRACKS } from './tracks.js';
 
-/** The camera's defaults (starting values, path-1-top-down.md). */
-export const DEFAULT_VIEW = Object.freeze({ mode: 'follow', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d', scheme3d: 'stick' });
+/** The camera's defaults (starting values, path-1-top-down.md; the fixed map since the owner asked, 2026-11-27). */
+export const DEFAULT_VIEW = Object.freeze({ mode: 'fixed', ahead: 40, scheme: 'wheel', reach: 75, setting: 'stage', stage: DEFAULT_TRACK, scene: '2d', scheme3d: 'stick' });
 /** The two views the cover offers: from above (scene.js) and from behind the car (scene3d.js). */
 export const SCENES = ['2d', '3d'];
 
@@ -28,6 +28,8 @@ const SCENE_TUNING = { '2d': {}, '3d': { accel: 18 } };
 export const defaultsFor = scene => ({ ...DEFAULT_TUNING, ...(SCENE_TUNING[scene] || {}) });
 /** The key of the view's control scheme: `scheme` from above, `scheme3d` from behind. */
 export const schemeKey = view => (view.scene === '3d' ? 'scheme3d' : 'scheme');
+/** The save's version: 2 since the fixed map became the default, so an older save takes it once. */
+const VIEW_VERSION = 2;
 /** What each view's panel changed, as saved: { '2d': {…}, '3d': {…} }. */
 let changes = { '2d': {}, '3d': {} };
 
@@ -60,7 +62,9 @@ export function loadTuning() {
   const old = saved.tuning || {};
   changes = { '2d': { ...old }, '3d': saved.tuning3d || Object.fromEntries(Object.entries(old).filter(([k]) => !(k in SCENE_TUNING['3d']))) };
   const view = { ...DEFAULT_VIEW, ...(saved.view || {}) };
-  if (view.mode !== 'fixed') view.mode = 'follow';
+  // A save from before the fixed map was the default held the old default, not a choice: it takes the new one
+  if (!(saved.v >= VIEW_VERSION)) view.mode = DEFAULT_VIEW.mode;
+  if (view.mode !== 'follow') view.mode = 'fixed';
   // 70 m was the default until the owner asked for more zoom (2026-11-26): an old save holding it takes the new one
   if (!Number.isFinite(view.ahead) || view.ahead === 70) view.ahead = DEFAULT_VIEW.ahead;
   if (!SCHEMES.includes(view.scheme)) view.scheme = DEFAULT_VIEW.scheme;
@@ -81,7 +85,7 @@ export const isTuned = view => { const d = defaultsFor(view.scene); return Objec
 export function save(view) {
   const d = defaultsFor(view.scene);
   changes[view.scene] = Object.fromEntries(Object.keys(d).filter(k => TUNING[k] !== d[k]).map(k => [k, TUNING[k]]));
-  try { globalThis.localStorage?.setItem(TUNING_KEY, JSON.stringify({ tuning: changes['2d'], tuning3d: changes['3d'], view })); } catch (_) { /* private mode: lasts this visit */ }
+  try { globalThis.localStorage?.setItem(TUNING_KEY, JSON.stringify({ v: VIEW_VERSION, tuning: changes['2d'], tuning3d: changes['3d'], view })); } catch (_) { /* private mode: lasts this visit */ }
 }
 
 /**
