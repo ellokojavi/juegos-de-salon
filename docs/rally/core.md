@@ -133,7 +133,7 @@ the same line a lap later. `tools/generators/drift-tracks.mjs` writes the pool t
 every circuit meets the standards at the top of that file: a par of 55 to 65 s, 8 to 10 gates,
 30 m clear of itself, bends of 16 m or more and two hairpins at most, one or two pads each with
 130 m of straight after it, one or two ramps on straights with room to fly and land after them
-(about 155 m: a ramp at top speed throws the car some 115 m), most long straights bending gently on the way (sweepers of 300 to 500 m), one or two forks of 220 to 400 m round a bend (a gravel cut inside it or an asphalt sweep outside it),
+(about 155 m: a ramp at top speed throws the car some 115 m), most long straights bending gently on the way (sweepers of 300 to 500 m), one or two forks of 220 to 400 m round a bend (a gravel cut inside it or an asphalt sweep outside it), technical stretches for skilled players (the owner, 2026-11-28: chicanes, bends that tighten halfway round, a narrow stretch of 5.2 m and a bend whose grip drops at its apex),
 two grandstands and at least two crowds, the settings in turn (one in four wet, some gravel ones
 with an asphalt stretch), and a clean lap by the autopilot with the setting's own scenery. A
 standard is changed in the generator and in `engine.test.mjs` together. The owner can veto a
@@ -305,7 +305,12 @@ the run races the intermediate driver of the calibration (`pacer.js`, shared wit
 `tools/generators/drift-humans.mjs`), driven through the real engine when the run starts (about
 10 000 steps, some 30 ms) with the view's tuning and controls, recorded as a ghost marked `sim`. It
 is never kept: a first clean run is the player's own record, and the result says by how much the run
-beat it or was beaten. Still to come with the ranking: uploading runs, the next one up as the default,
+beat it or was beaten. **Who you race** (the owner, 2026-11-28, option C): the cover picks «👻 Mi
+récord» (the record, the intermediate driver until there is one), «Intermedio» or «Experto» (the
+calibration's expert at its own pace, `pacerGhost(track, { level: 'expert' })`), kept as `view.ghost`.
+**Medals** (option B): gold at the expert's lap, bronze at the intermediate's, silver halfway
+(`medalsOf`, `medalFor`), in the chosen view, on the time that counts; the result shows the medal and
+the time of the next one up. Still to come with the ranking: uploading runs, the next one up as the default,
 the leader's retimed ghost, and the cover's switch («Mi récord» or no ghost).
 
 The player's best run on this stage, drawn as a faint car. Cheap and the strongest reason to play

@@ -18,6 +18,11 @@
  *   5. Bends of 16 m radius or more; at most two hairpins (under 22 m). Most long straights bend
  *      gently on the way (sweepers: a wide S of 300 to 500 m radius, nearly flat out on gravel), and
  *      the engine eases every piece into the next (`EASE`), so no bend starts at once.
+ *  5b. Technical (the owner, 2026-11-28, option A, «más desafío» for skilled players): at least one
+ *      chicane (a left-right-left of 30 to 45 m on a straight) and one more technical bend (a chicane,
+ *      or a bend that tightens to 0.6 of its radius halfway round); a narrow stretch (NARROW, 5.2 m,
+ *      140 to 220 m, 50 m from any bend under 30 m and from a hairpin's widening); and a bend whose
+ *      grip drops halfway round (on asphalt, gravel from its apex; on gravel, asphalt up to it).
  *   6. One or two boost pads, each at the start of a straight with 130 m of straight after it.
  *   7. One or two ramps, on straights, 30 m after a bend and with RAMP_RUN m of straight after them: a
  *      ramp at top speed throws the car about 115 m, and it must land with room to brake (the
@@ -79,16 +84,33 @@ function pieces(rnd) {
     const S = Array.from({ length: arcs.length + 1 }, () => Math.round(15 + Math.pow(rnd(), 1.6) * 230));
     // Sweepers: a long straight (not the start's, not a solved one) often bends gently on its way, a
     // wide S that leaves it where it was heading (the owner, 2026-11-27: «más curvas suaves»)
-    const sweep = S.map(() => (rnd() < 0.75 ? { r: pick([300, 400, 500]), wave: rnd() < 0.5, left: rnd() < 0.5, lead: rnd() } : null));
+    // Chicanes (the owner, 2026-11-28, option A: «tramos técnicos»): one long straight in four becomes a
+    // quick left-right-left (or right-left-right) of 30 to 45 m that leaves the car on its line
+    const sweep = S.map(() => {
+      const u = rnd();
+      if (u < 0.25) return { r: pick([30, 38, 45]), wave: true, left: rnd() < 0.5, lead: rnd(), chicane: 22 + Math.floor(rnd() * 12) };
+      return u < 0.85 ? { r: pick([300, 400, 500]), wave: rnd() < 0.5, left: rnd() < 0.5, lead: rnd() } : null;
+    });
     const straightOf = (m, out) => {
       const L = S[m], w = sweep[m];
-      const arcs4 = w && w.wave ? 4 : 2, d = w ? Math.min(14, Math.floor(0.6 * L / (arcs4 * w.r * DEG))) : 0;
+      const arcs4 = w && w.wave ? 4 : 2, d = !w ? 0 : w.chicane ? (arcs4 * w.r * w.chicane * DEG <= 0.7 * L ? w.chicane : 0) : Math.min(14, Math.floor(0.6 * L / (arcs4 * w.r * DEG)));
       if (!w || m === 0 || m === arcs.length || L < 100 || d < 3) { out.push(['S', L]); return; }
       const A = arcs4 * w.r * d * DEG, a = Math.round((L - A) * (0.2 + 0.6 * w.lead));
       const [one, two] = w.left ? ['L', 'R'] : ['R', 'L'];
+      if (w.chicane) out.chicanes = (out.chicanes || 0) + 1;
       out.push(['S', a], [one, w.r, d], ...(w.wave ? [[two, w.r, 2 * d], [one, w.r, d]] : [[two, w.r, d]]), ['S', Math.round((L - A - a) * 10) / 10]);
     };
-    const seq = () => { const out = []; arcs.forEach((a, i) => { straightOf(i, out); out.push(a); }); straightOf(arcs.length, out); return out; };
+    // Tightening bends: some long bends close up halfway round (their second half at 0.6 of the radius),
+    // so the line taken at the entry runs wide at the exit
+    const tighten = arcs.map(a => a[1] >= 45 && a[2] >= 50 && rnd() < 0.35);
+    const arcOf = (i, out) => {
+      const [k, r, d] = arcs[i];
+      if (!tighten[i]) { out.push(arcs[i]); return; }
+      out.tightens = (out.tightens || 0) + 1;
+      const d1 = 5 * Math.round(d / 2 / 5);
+      out.push([k, r, d1], [k, Math.round(r * 0.6), d - d1]);
+    };
+    const seq = () => { const out = []; arcs.forEach((a, i) => { straightOf(i, out); arcOf(i, out); }); straightOf(arcs.length, out); return out; };
     // Solve two straights (not the start's ones) whose headings differ enough, so the road closes
     const heads = []; let h = Math.PI / 2;
     arcs.forEach((a, i) => { heads.push(h); h += (a[0] === 'L' ? 1 : -1) * a[2] * DEG; });
@@ -114,7 +136,10 @@ function pieces(rnd) {
     const Li2 = (-g2.x * uj[1] + g2.y * uj[0]) / det, Lj2 = (-ui[0] * g2.y + ui[1] * g2.x) / det;
     if (!(Li2 >= 20 && Li2 <= 420 && Lj2 >= 20 && Lj2 <= 420)) continue;
     S[i] = Math.round(Li2 * 10) / 10; S[j] = Math.round(Lj2 * 10) / 10;
-    return seq();
+    // At least one chicane and one more technical bend (a chicane or a tightening bend)
+    const out = seq();
+    if (!out.chicanes || (out.chicanes || 0) + (out.tightens || 0) < 2) continue;
+    return [...out];
   }
   return null;
 }
@@ -153,7 +178,7 @@ function features(stage, rnd) {
   for (const st of S.filter(st => st.to - st.from >= 150).sort(() => rnd() - 0.5)) {
     if (pads.length >= 1 + (rnd() < 0.5 ? 1 : 0)) break;
     const s = Math.round(st.from + 8);
-    if (st.to > L - 2 || nearGate(s, 25) || !free(s, s + 130)) continue;
+    if (st.to > L - 2 || nearGate(s, 28) || !free(s, s + 130)) continue;
     pads.push({ s }); used.push({ from: s - 10, to: s + 130 });
   }
   // Ramps: on a straight, 30 m after its bend, with RAMP_RUN m of it ahead to fly and land
@@ -162,7 +187,7 @@ function features(stage, rnd) {
     if (ramps.length >= 1 + (rnd() < 0.4 ? 1 : 0)) break;
     // (4 m short of the bend: the ramp sits on the nearest point of the road, up to a step further on)
     const s = Math.round(st.from + 30 + rnd() * (st.to - st.from - 34 - RAMP_RUN));
-    if (st.to > L - 2 || nearGate(s, 25) || !free(s - 10, s + 30)) continue;
+    if (st.to > L - 2 || nearGate(s, 28) || !free(s - 10, s + 30)) continue;
     ramps.push({ s }); used.push({ from: s - 10, to: s + 30 });
   }
   // Forks: another road round a bend (the owner, 2026-11-27: «la bifurcación no sirve de mucho porque
@@ -203,6 +228,41 @@ function features(stage, rnd) {
   return { pads, ramps, forks };
 }
 
+/**
+ * The technical stretches (the owner, 2026-11-28, option A): a narrow stretch (NARROW m wide, 140 to
+ * 220 m, never on a hairpin, a fork, a ramp or a pad), and on most circuits a bend whose grip drops
+ * halfway round (asphalt into it, gravel from its apex on).
+ */
+function technical(stage, rnd) {
+  const t = E.buildTrack(stage), L = t.length;
+  const taken = [...(stage.forks || []).map(f => [f.from - 40, f.to + 40]), ...[...(stage.ramps || []), ...(stage.pads || [])].map(r => [r.s - 40, r.s + 200])];
+  const free = (a, b) => taken.every(([x, y]) => b < x || a > y);
+  const narrow = [];
+  for (let tries = 0; tries < 80 && !narrow.length; tries++) {
+    const len = 140 + Math.round(rnd() * 80), from = Math.round(80 + rnd() * (L - len - 160)), to = from + len;
+    if (!free(from, to) || t.pts.some(p => p.s >= from - 50 && p.s <= to + 50 && (Math.abs(p.k) > 1 / 30 || p.w > 7))) continue;
+    narrow.push({ from, to }); taken.push([from - 20, to + 20]);
+  }
+  // The grip dropping mid-bend: from the apex of a bend of 30 to 90 m, 80 m of gravel (on a gravel
+  // circuit, the bend's entry is asphalt instead, up to its apex)
+  const zones = [...(stage.zones || [])];
+  const bends = [];
+  for (let i = 1, from = null; i < t.pts.length; i++) {
+    const p = t.pts[i], k = Math.abs(p.k);
+    if (k > 1 / 90 && from === null) from = p.s;
+    if (from !== null && k <= 1 / 90) { if (p.s - from > 30) bends.push({ from, to: p.s }); from = null; }
+  }
+  const clearOfZones = (a, b) => zones.every(z => b < z.from - 30 || a > z.to + 30);
+  for (const b of bends.sort(() => rnd() - 0.5)) {
+    const apex = Math.round((b.from + b.to) / 2), mm = Math.max(...t.pts.filter(p => p.s >= b.from && p.s <= b.to).map(p => Math.abs(p.k)));
+    if (mm > 1 / 30 || mm < 1 / 90) continue;
+    const z = stage.surface === 'asphalt' ? { from: apex, to: apex + 80, surface: 'gravel' } : { from: Math.round(b.from - 80), to: apex, surface: 'asphalt' };
+    if (z.from < 60 || z.to > L - 60 || !free(z.from, z.to) || !clearOfZones(z.from, z.to)) continue;
+    zones.push(z); z.mid = true; break;
+  }
+  return { mid: zones.some(z => z.mid), narrow, ...(zones.length ? { zones: zones.sort((a, b) => a.from - b.from) } : {}) };
+}
+
 /** Circuit number `slot` of the pool, drawn from seed n, or null if no draw meets every standard. */
 function circuit(slot, n, tries = 400) {
   const setting = SETTINGS[slot % 3];
@@ -223,6 +283,10 @@ function circuit(slot, n, tries = 400) {
     }
     Object.assign(stage, features(stage, rnd));
     if (!stage.pads.length || !stage.ramps.length || !stage.forks.length) continue;
+    const tech = technical(stage, rnd);
+    if (!tech.narrow.length || !tech.mid) continue;
+    stage.narrow = tech.narrow;
+    if (tech.zones) stage.zones = tech.zones.map(({ mid, ...z }) => z);
     t = E.buildTrack(stage);
     const { stands, crowd } = people(t);
     if (stands.length < 2 || crowd.filter(c => c.kind === 'fan').length < 30 || crowd.filter(c => c.kind === 'bale').length < 15) continue;

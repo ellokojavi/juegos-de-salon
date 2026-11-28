@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import * as E from './engine.js';
 import { TRACKS, STAGES } from './tracks.js';
 import { scenery, solids } from './scenery.js';
-import { pacerGhost, PACES } from './pacer.js';
+import { pacerGhost, PACES, medalsOf, medalFor } from './pacer.js';
 import { better, poseAt } from './ghost.js';
 import { defaultsFor, DEFAULT_VIEW } from './tuning.js';
 
@@ -38,6 +38,19 @@ ok('a player\'s lap faster than the pace driver beats it', () => {
   const gh = pacerGhost(armed(STAGES[0]));
   assert.ok(better({ time: gh.time - 1 }, gh) && !better({ time: gh.time + 1 }, gh));
   assert.ok(PACES['2d'].intermediate < 1);
+});
+
+ok('the expert driver laps every circuit faster than the intermediate, and their laps set the medals', () => {
+  for (const id of STAGES) {
+    const t = armed(id), ex = pacerGhost(t, { level: 'expert' }), mid = pacerGhost(t);
+    assert.ok(ex && ex.sim === 'expert', `${id}: the expert finishes`);
+    assert.ok(ex.time < mid.time * 0.8, `${id}: the expert ${ex.time} against ${mid.time}`);
+    const m = medalsOf(ex, mid);
+    assert.ok(m.gold === ex.time && m.bronze === mid.time && m.gold < m.silver && m.silver < m.bronze, id);
+    assert.equal(medalFor(m.gold, m), 'gold'); assert.equal(medalFor(m.silver, m), 'silver');
+    assert.equal(medalFor(m.bronze, m), 'bronze'); assert.equal(medalFor(m.bronze + 1, m), null);
+  }
+  assert.equal(medalsOf(null, {}), null);
 });
 
 console.log(`\n${n} tests, all green`);

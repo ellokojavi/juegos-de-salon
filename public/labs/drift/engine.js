@@ -100,6 +100,8 @@ const ROAD_WIDTH = 7, HAIRPIN_WIDTH = 9, HAIRPIN_RADIUS = 22, WIDEN = 14;
 /** How far the road eases from one piece's curvature into the next: two passes of a box this many
  *  points either side (about 2 × 2 × EASE × SAMPLE m from the first change to the full bend). */
 export const EASE = 6;
+/** A narrow stretch's width, m (`narrow` in a stage: the owner, 2026-11-28, «tramos técnicos»). */
+export const NARROW = 5.2;
 /** How far the car is searched for along the centreline each step, in points either side. */
 const SEARCH = 12;
 
@@ -190,8 +192,15 @@ export function buildTrack(stage) {
       const u = Math.max(0, 1 - Math.abs(pts[j].s - p.s) / WIDEN), ease = u * u * (3 - 2 * u);
       p.w = Math.max(p.w, ROAD_WIDTH + (own[j] - ROAD_WIDTH) * ease);
     }
-    p.w = Math.round(p.w * 100) / 100;
   });
+  // A narrow stretch closes in over WIDEN m at either end (never under a hairpin's widening)
+  for (const z of stage.narrow || []) for (const p of pts) {
+    const inn = Math.min(p.s - z.from, z.to - p.s);
+    if (inn <= -WIDEN) continue;
+    const u = Math.min(1, (inn + WIDEN) / WIDEN), ease = u * u * (3 - 2 * u);
+    p.w = Math.min(p.w, ROAD_WIDTH - (ROAD_WIDTH - NARROW) * ease);
+  }
+  for (const p of pts) p.w = Math.round(p.w * 100) / 100;
   // The surface of each point: the stage's own, changed along the zones it lists
   const base = stage.surface || 'gravel';
   for (const p of pts) p.sf = base;
@@ -203,7 +212,8 @@ export function buildTrack(stage) {
     let idx = 0;
     while (idx < pts.length - 1 && pts[idx].s < at) idx++;
     const p = pts[idx];
-    gates.push({ i: idx, s: p.s, x: p.x, y: p.y, h: p.h, half: p.w / 2 + 0.6 });
+    // A gate on a narrow stretch keeps a full road's width between its posts (the road narrows, not the gate)
+    gates.push({ i: idx, s: p.s, x: p.x, y: p.y, h: p.h, half: Math.max(p.w, ROAD_WIDTH) / 2 + 0.6 });
   }
   // Forks: a second road from `from` to `to` (m), bulging `offset` m to one side, meeting the main one
   // again; it carries the main road's distance (`s`), so the progress and the gates read the same

@@ -92,7 +92,8 @@ function edgeDistance(track) {
     let best = Infinity;
     for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
       for (const p of grid.get(`${cx + i},${cy + j}`) || []) {
-        const d = Math.hypot(p.x - x, p.y - y) - p.w / 2;
+        // A narrow stretch narrows the road, not the clearing: the trees stand where a full road's would
+        const d = Math.hypot(p.x - x, p.y - y) - Math.max(p.w, 7) / 2;
         if (d < best) best = d;
       }
     }

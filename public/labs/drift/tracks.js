@@ -13,6 +13,7 @@
  *          on its own `surface` if it has one, else the main road's
  *   ramps: [{ s } | { fork, u }]   a ramp at `s` m on the main road, or a share `u` along fork n
  *   pads:  [{ s } | { fork, u }]   a boost pad, the same way
+ *   narrow: [{ from, to }]           the road narrows to NARROW m (engine.js) between `from` and `to` m
  *   zones: [{ from, to, surface }]   the road changes surface between `from` and `to` m (gravel, asphalt)
  *   weather: 'wet'                   the whole stage holds less (wet asphalt, mud)
  *
