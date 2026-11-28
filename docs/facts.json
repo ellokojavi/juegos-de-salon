@@ -1547,6 +1547,7 @@
     "public/labs/drift/circuits.js",
     "public/labs/drift/engine.js",
     "public/labs/drift/game.js",
+    "public/labs/drift/ghost-label.js",
     "public/labs/drift/ghost.js",
     "public/labs/drift/gl3d.js",
     "public/labs/drift/input.js",

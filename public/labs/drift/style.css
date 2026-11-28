@@ -29,6 +29,12 @@
 .dr-ghost { font: 900 var(--fs-90) var(--font-body); font-variant-numeric: tabular-nums; color: var(--ink); }
 .dr-ghost--ahead { color: var(--lime); }
 .dr-ghost-line { margin: 0; font-weight: 700; }
+/* The name over a real player's ghost (ghost-label.js): placed by the scene each frame, pale like the ghost */
+.dr-ghost-name {
+  position: absolute; left: 0; top: 0; pointer-events: none; white-space: nowrap; max-width: 40%; overflow: hidden; text-overflow: ellipsis;
+  font: 800 var(--fs-85) var(--font-body); color: var(--ink); text-shadow: var(--shadow-text);
+  padding: var(--s-2) var(--s-8); border-radius: var(--r-pill); background: var(--drift-shade);
+}
 
 /* A crash: «−1 ❤️» rises from the car and fades (the scene draws the impact and the damage) */
 .dr-hit {

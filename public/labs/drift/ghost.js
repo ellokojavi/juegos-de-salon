@@ -8,16 +8,19 @@
  * A run is recorded as the car's pose every SAMPLE_MS of the race clock (`g.t`, which leaves out the
  * penalty seconds): x, y, heading, height and progress along the lap. Poses, not the thumb's inputs, so
  * a ghost stays right when the car's handling is tuned. It is kept per circuit, with the circuit's
- * length, so a circuit drawn again drops its old ghost.
+ * length, so a circuit drawn again drops its old ghost. A real player's run keeps their profile's name
+ * (`name`), drawn over the ghost (ghost-label.js); a simulated driver's ghost (`sim`) has no name.
  *
  *   recorder() → { add(g), ghost(g) }      add a pose each frame; the finished run's ghost
  *   load(trackId, length) / keep(ghost)     the saved record of a circuit (localStorage)
  *   better(ghost, saved)                    whether a run beats the saved one
- *   poseAt(ghost, tMs, pace = 1)            where the ghost is at the race clock tMs (pace 1.01: 1 % faster)
+ *   poseAt(ghost, tMs, pace = 1)            where the ghost is at the race clock tMs (pace 1.01: 1 % faster),
+ *                                           with the name to show over it (`ghostName`: none for a simulated driver)
  *   gapAt(ghost, progress, tMs, pace = 1)   seconds behind the ghost (negative: ahead) at this progress
  *   lapProgress(g)                          the car's progress (m), 0 on the start line until the first gate
  */
 import { doneShare } from './minimap.js';
+import { leerYo } from '../../assets/js/jugador.js';
 
 export const SAMPLE_MS = 100;
 /** How far along the lap the car is (m), the start line counted as 0 until the first gate (as the minimap). */
@@ -40,11 +43,30 @@ export function recorder() {
     /** The finished run as a ghost: null for a wreck or a run that did not finish. */
     ghost(g) {
       if (g.mode !== 'done' || g.wrecked) return null;
-      return { v: 1, track: g.track.id, len: Math.round(g.track.length), time: Math.max(0, Math.round(g.t) + g.penalty - (g.bonus || 0)), clock: Math.round(g.t), s: s.slice() };
+      const name = playerName();
+      return { v: 1, track: g.track.id, len: Math.round(g.track.length), time: Math.max(0, Math.round(g.t) + g.penalty - (g.bonus || 0)), clock: Math.round(g.t), s: s.slice(), ...(name ? { name } : {}) };
     },
     reset() { s = []; next = 0; },
   };
 }
+
+/** The name of the player on this phone (their profile's), or null. */
+export function playerName(storage = globalThis.localStorage) {
+  try { const n = leerYo(storage)?.n; return typeof n === 'string' && n.trim() ? n.trim().slice(0, 20) : null; } catch (_) { return null; }
+}
+
+/**
+ * The name to show over a ghost: a real player's run carries its driver's name; a record kept on this
+ * phone before names were kept is this phone's player. A simulated driver's ghost (`sim`) has none.
+ */
+export function ghostName(ghost, storage = globalThis.localStorage) {
+  if (!ghost || ghost.sim) return null;
+  return ghost.name || playerName(storage);
+}
+
+/** Each ghost's name, worked out once (the scenes ask every frame). */
+const names = new WeakMap();
+const nameOf = ghost => { if (!names.has(ghost)) names.set(ghost, ghostName(ghost)); return names.get(ghost); };
 
 export function load(trackId, length, storage = globalThis.localStorage) {
   try {
@@ -72,7 +94,7 @@ export function poseAt(ghost, tMs, pace = 1) {
   // Its nose follows the slope between the two samples
   const run = Math.hypot(s[b] - s[a], s[b + 1] - s[a + 1]);
   const pitch = run > 0.3 ? -Math.atan2(s[b + 3] - s[a + 3], run) : 0;
-  return { x, y, h, z, pitch, done: f >= n - 1 };
+  return { x, y, h, z, pitch, done: f >= n - 1, name: nameOf(ghost) };
 }
 
 /**

@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-28** · The ghost's name and one ghost car (the owner: «un nombre arriba de él … si es que es una ruta real de un jugador real»; «me parece ver dos»): a real player's ghost shows their name in a pill over it, a simulated driver's none; in 3D the ghost was drawn see-through in one pass, so its far side and wheels showed through it like a second car, and it filled the screen when just behind the car: now one clean body, fading between the camera and the car.
 - **2026-11-28** · Options B and C: medals per circuit (gold at the simulated expert's lap, bronze at the intermediate's, silver halfway) and a picker on the cover for who you race (my record, the intermediate driver, the expert).
 
 - **2026-11-28** · The owner picked option A for more challenge: technical stretches. Every circuit now has chicanes, bends that tighten halfway round, a narrow stretch (5.2 m) and a bend whose grip drops at its apex; the pool was regenerated and recalibrated.
