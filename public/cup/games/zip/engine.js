@@ -9,15 +9,23 @@
  */
 import { azar } from '../semilla.js';
 
-const vecinos = (n, i) => {
+/**
+ * Hard mode's walls (lab: #seccion-zip-hard): a wall sits on the edge between two neighbouring
+ * squares and the line cannot cross it. A board keeps them as `muros: [[a, b], …]` with a < b;
+ * `bloqueos` turns that list into a Set for the checks.
+ */
+const claveMuro = (a, b) => (a < b ? `${a}-${b}` : `${b}-${a}`);
+export const bloqueos = muros => new Set((muros || []).map(([a, b]) => claveMuro(a, b)));
+
+const vecinos = (n, i, bloq = null) => {
   const r = Math.floor(i / n), c = i % n, out = [];
   if (r > 0) out.push(i - n);
   if (r < n - 1) out.push(i + n);
   if (c > 0) out.push(i - 1);
   if (c < n - 1) out.push(i + 1);
-  return out;
+  return bloq && bloq.size ? out.filter(j => !bloq.has(claveMuro(i, j))) : out;
 };
-export const adyacentes = (n, a, b) => vecinos(n, a).includes(b);
+export const adyacentes = (n, a, b, muros = null) => vecinos(n, a, muros ? bloqueos(muros) : null).includes(b);
 
 /** Un camino que pasa por todas las casillas (Warnsdorff al azar: siempre hacia la vecina con menos salidas). */
 function caminoAlAzar(a, n) {
@@ -43,7 +51,10 @@ function caminoAlAzar(a, n) {
  * Cuenta caminos válidos hasta `tope`. `numeros` es { casilla: número }. Se poda cuando las
  * casillas libres quedan partidas en dos (no se podrían recorrer todas).
  */
-export function resolver({ n, numeros }, tope = 2) {
+export function resolver({ n, numeros, muros }, tope = 2) {
+  const bloq = bloqueos(muros);
+  // Each square's open neighbours, worked out once: the search asks them millions of times
+  const ady = Array.from({ length: n * n }, (_, i) => vecinos(n, i, bloq));
   const porNumero = {};
   for (const [i, k] of Object.entries(numeros)) porNumero[k] = Number(i);
   const ultimo = Math.max(...Object.values(numeros));
@@ -56,7 +67,7 @@ export function resolver({ n, numeros }, tope = 2) {
     let vistas = 0;
     while (pila.length) {
       const x = pila.pop();
-      for (const y of vecinos(n, x)) if (!visto[y] && !ok[y]) { ok[y] = 1; vistas++; pila.push(y); }
+      for (const y of ady[x]) if (!visto[y] && !ok[y]) { ok[y] = 1; vistas++; pila.push(y); }
     }
     return vistas === libres;
   };
@@ -65,7 +76,7 @@ export function resolver({ n, numeros }, tope = 2) {
     if (largo === n * n) { if (siguiente > ultimo) cuantas++; return; }
     if (siguiente > ultimo) return;   // el último número cierra el trazo: no se sigue después
     if (!conexo(i, n * n - largo)) return;
-    for (const j of vecinos(n, i)) {
+    for (const j of ady[i]) {
       if (visto[j]) continue;
       const k = numeros[j];
       if (k !== undefined && k !== siguiente) continue;
@@ -79,9 +90,24 @@ export function resolver({ n, numeros }, tope = 2) {
   return cuantas;
 }
 
-export function generar(codigo, dia, { n = 6, sal = 'zip' } = {}) {
+/**
+ * Hard mode: a share `fraccion` of the edges the solution does not use becomes a wall. The walls
+ * never cut the solution, so it still exists; they close the easy shortcuts, and with them the
+ * board keeps fewer numbers (the second loop below takes out every one it can), so there is far
+ * more to work out from far less.
+ */
+function murosAlAzar(a, n, camino, fraccion) {
+  const usadas = new Set();
+  for (let k = 1; k < camino.length; k++) usadas.add(claveMuro(camino[k - 1], camino[k]));
+  const libres = [];
+  for (let i = 0; i < n * n; i++) for (const j of vecinos(n, i)) if (i < j && !usadas.has(claveMuro(i, j))) libres.push([i, j]);
+  return a.barajar(libres).slice(0, Math.round(libres.length * fraccion)).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+}
+
+export function generar(codigo, dia, { n = 6, sal = 'zip', muros: fraccion = 0 } = {}) {
   const a = azar(codigo, dia, sal);
   const camino = caminoAlAzar(a, n);
+  const muros = fraccion > 0 ? murosAlAzar(a, n, camino, fraccion) : undefined;
   // Siempre el principio y el final; en el medio, se suman en orden hasta que sea único
   const posiciones = [0, camino.length - 1];
   const medio = a.barajar([...Array(camino.length - 2).keys()].map(x => x + 1));
@@ -91,7 +117,7 @@ export function generar(codigo, dia, { n = 6, sal = 'zip' } = {}) {
   };
   let numeros = numerar();
   for (const pos of medio) {
-    if (resolver({ n, numeros }) === 1) break;
+    if (resolver({ n, numeros, muros }) === 1) break;
     posiciones.push(pos);
     numeros = numerar();
   }
@@ -99,9 +125,9 @@ export function generar(codigo, dia, { n = 6, sal = 'zip' } = {}) {
   for (const pos of a.barajar(posiciones.filter(x => x !== 0 && x !== camino.length - 1))) {
     posiciones.splice(posiciones.indexOf(pos), 1);
     numeros = numerar();
-    if (resolver({ n, numeros }) !== 1) { posiciones.push(pos); numeros = numerar(); }
+    if (resolver({ n, numeros, muros }) !== 1) { posiciones.push(pos); numeros = numerar(); }
   }
-  return { n, numeros, sol: camino };
+  return muros ? { n, numeros, muros, sol: camino } : { n, numeros, sol: camino };
 }
 
 /**
@@ -113,11 +139,12 @@ export function valido(p, trazo) {
   let siguiente = 2;
   const ultimo = ultimoNumero(p);
   const visto = new Set([trazo[0]]);
+  const bloq = bloqueos(p.muros);
   for (let k = 1; k < trazo.length; k++) {
     const i = trazo[k];
     // El último número cierra el trazo: después de él no se sigue
     if (siguiente > ultimo) return false;
-    if (visto.has(i) || !adyacentes(p.n, trazo[k - 1], i)) return false;
+    if (visto.has(i) || !vecinos(p.n, trazo[k - 1], bloq).includes(i)) return false;
     const num = p.numeros[i];
     if (num !== undefined) { if (num !== siguiente) return false; siguiente++; }
     visto.add(i);
@@ -150,11 +177,26 @@ export const TAMANOS = [4, 4, 5, 5, 5, 6, 6, 6, 6, 7];
 export const NIVELES = TAMANOS.length;
 export const tamanoDe = k => TAMANOS[Math.min(k, TAMANOS.length - 1)];
 
+/**
+ * Hard mode (lab: #seccion-zip-hard): bigger boards from the first level and walls on every one,
+ * more of them each level (a share of the edges the solution leaves free), so each board keeps
+ * fewer numbers than the last. Same ten levels and the same three minutes.
+ */
+export const TAMANOS_DIFICIL = [5, 5, 6, 6, 6, 7, 7, 7, 7, 7];
+export const MUROS_DIFICIL = [0.2, 0.3, 0.25, 0.32, 0.4, 0.3, 0.36, 0.42, 0.48, 0.55];
+const dificil = v => v === 'hard';
+export const tamanoDeVariante = (k, v) => (dificil(v) ? TAMANOS_DIFICIL : TAMANOS)[Math.min(k, NIVELES - 1)];
+
 /** El nivel `k` (desde 0) de ese día: el mismo para todos. Se guarda el último armado: el siguiente se prepara antes de llegar. */
 const hechos = new Map();
-export function nivel(codigo, dia, k) {
-  const clave = `${codigo}:${dia}:${k}`;
-  if (!hechos.has(clave)) { if (hechos.size > 20) hechos.clear(); hechos.set(clave, generar(codigo, dia, { n: tamanoDe(k), sal: `zip-${k}` })); }
+export function nivel(codigo, dia, k, variante = null) {
+  const v = dificil(variante) ? 'hard' : '';
+  const clave = `${codigo}:${dia}:${k}:${v}`;
+  if (!hechos.has(clave)) {
+    if (hechos.size > 20) hechos.clear();
+    hechos.set(clave, v ? generar(codigo, dia, { n: tamanoDeVariante(k, v), sal: `zip-hard-${k}`, muros: MUROS_DIFICIL[Math.min(k, NIVELES - 1)] })
+      : generar(codigo, dia, { n: tamanoDe(k), sal: `zip-${k}` }));
+  }
   return hechos.get(clave);
 }
 

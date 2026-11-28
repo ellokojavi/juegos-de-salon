@@ -450,6 +450,21 @@ test('tango: solución única, reglas y puntaje', () => {
   assert.equal(dejado.errores, 1 + (dejado.pendiente >= 0 ? 1 : 0)); assert.notEqual(dejado.pendiente, paso);
 });
 
+test('zip hard: walls block the line, still one solution, more walls each level', () => {
+  let antes = -1;
+  for (let k = 0; k < zip.NIVELES; k++) {
+    const p = zip.nivel('KQRST', 4, k, 'hard');
+    assert.equal(p.n, zip.TAMANOS_DIFICIL[k]);
+    assert.ok(p.muros.length > antes, `level ${k} has more walls`); antes = p.muros.length;
+    assert.equal(zip.resolver(p, 3), 1);
+    assert.ok(zip.valido(p, p.sol));
+    // no wall cuts the solution, and a step across a wall is refused
+    const [a, b] = p.muros[0];
+    assert.ok(!zip.adyacentes(p.n, a, b, p.muros) && zip.adyacentes(p.n, a, b));
+  }
+  assert.equal(zip.nivel('KQRST', 4, 0).muros, undefined);   // the normal mode has none
+});
+
 test('zip: solución única, trazo y niveles', () => {
   for (const c of CODIGOS) {
     const p = zip.generar(c, 4);
