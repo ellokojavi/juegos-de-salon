@@ -130,7 +130,8 @@ export const TEXTS = {
     pickLevel: 'Elige el nivel',
     levelNote: 'Los dos juegan en este nivel. No se puede cambiar después.',
     duelLevel: '🔒 Nivel del duelo: {v}. El mismo para los dos.',
-    levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Servicios' },
+    duelCounts: '⚔️ Esta partida cuenta para tu duelo: ronda {i} de {n} contra {r}.',
+    levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Servicios', word: '🔤 Palabra', number: '🔢 Número' },
   },
   en: {
     statsTitle: '📊 Your numbers',
@@ -262,7 +263,8 @@ export const TEXTS = {
     pickLevel: 'Pick the level',
     levelNote: 'You both play at this level. It cannot be changed later.',
     duelLevel: '🔒 Duel level: {v}. The same for both of you.',
-    levels: { easy: '🟢 Easy', normal: '🟢 Easy', hard: '🔴 Hard', numbers: '🔢 Numbers', utilities: '⚡💧 Utilities' },
+    duelCounts: '⚔️ This game counts for your duel: round {i} of {n} against {r}.',
+    levels: { easy: '🟢 Easy', normal: '🟢 Easy', hard: '🔴 Hard', numbers: '🔢 Numbers', utilities: '⚡💧 Utilities', word: '🔤 Word', number: '🔢 Number' },
   },
   pt: {
     statsTitle: '📊 Seus números',
@@ -394,6 +396,7 @@ export const TEXTS = {
     pickLevel: 'Escolha o nível',
     levelNote: 'Os dois jogam neste nível. Não dá para mudar depois.',
     duelLevel: '🔒 Nível do duelo: {v}. O mesmo para os dois.',
-    levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Serviços' },
+    duelCounts: '⚔️ Esta partida conta para o seu duelo: rodada {i} de {n} contra {r}.',
+    levels: { easy: '🟢 Fácil', normal: '🟢 Fácil', hard: '🔴 Difícil', numbers: '🔢 Números', utilities: '⚡💧 Serviços', word: '🔤 Palavra', number: '🔢 Número' },
   },
 };
