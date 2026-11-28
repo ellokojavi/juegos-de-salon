@@ -48,7 +48,8 @@ export function cheer() {
       const a = Math.random() * Math.PI * 2, out = 1.5 + Math.random() * 3;
       parts.push({
         kind: streamer ? 'streamer' : 'confetti',
-        x: f.x, y: f.y, z: f.z ?? 1.9,
+        // From the hands: a fan's are 1.9 m above the ground it stands on (z), a grandstand's are given
+        x: f.x, y: f.y, z: f.hand ?? (f.z || 0) + 1.9,
         vx: Math.cos(a) * out + toward[0] * 4.5, vy: Math.sin(a) * out + toward[1] * 4.5,
         vz: (streamer ? 10 : 7) + Math.random() * 4,
         spin: Math.random() * 6, rate: 4 + Math.random() * 8, w: streamer ? 0.12 : 0.16 + Math.random() * 0.08,
@@ -69,7 +70,7 @@ export function cheer() {
         const c = Math.cos(st.h), s = Math.sin(st.h), from = [];
         for (let t = 0; t < 3; t++) for (let a = -st.len / 2 + 1; a < st.len / 2 - 0.5; a += 1.5) {
           const o = (-st.dep / 2 + st.dep / 6 + t * st.dep / 3) * st.side;
-          from.push({ x: st.x + c * a - s * o, y: st.y + s * a + c * o, z: 2 + t * 1.2 });
+          from.push({ x: st.x + c * a - s * o, y: st.y + s * a + c * o, hand: (st.z || 0) + 2 + t * 1.2 });
         }
         groups.push({ x: st.x, y: st.y, r: st.len / 2, fans: from, armed: true });
       }
