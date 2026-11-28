@@ -25,6 +25,8 @@
  * With reduced motion it is damped twice as much, and there is half the dust.
  */
 import { SETTINGS, CROWD, scenery, near, settingOf, seeded } from './scenery.js';
+import { tile, pattern } from './textures.js';
+import { carSprite, shadowSprite } from './car2d.js';
 
 // The colours that are the same in every setting (DESIGN.md §4: what is drawn inside the canvas is the game's)
 const COLOURS = {
@@ -36,9 +38,11 @@ const COLOURS = {
   ramp: '#8a5a2b', rampEdge: '#c58a4a', rampShade: 'rgba(0, 0, 0, 0.35)', pad: 'rgba(40, 230, 220, 0.75)', padArrow: '#fff36b',
   boostFlame: '#6ee7ff', streak: 'rgba(255, 255, 255, 0.35)',
   wetSheen: 'rgba(15, 25, 45, 0.3)', puddle: 'rgba(175, 195, 225, 0.22)', rain: 'rgba(200, 215, 240, 0.35)', wetTint: 'rgba(30, 45, 80, 0.18)',
+  verge: 'rgba(20, 15, 5, 0.28)', edge: 'rgba(30, 20, 10, 0.2)', tread: '#2c2c34', rim: '#8c8c96', lens: '#fff8d8', chrome: '#d8d8e0',
   headlight: '#fff6c8', brakeLight: '#ff3b30', reverseLight: '#ffffff', brakeOff: '#5a1020',
 };
-const MAX_DPR = 2;
+/** Up to the phone's own density (3 on most): the owner asked for definition (2026-11-27). */
+const MAX_DPR = 3;
 const CAR_L = 4.2, CAR_W = 1.8;
 /** Where the car sits on the stage, from the top (the lower third, so the road ahead shows). */
 const CAR_AT = 0.7;
@@ -80,7 +84,7 @@ function canvasOf(w, h) {
 function propSprite(kind, v, S, ppm) {
   const sun = S.sun, E = 1 + Math.hypot(sun[0], sun[1]) + 0.1;
   const rRef = { tree: 4.2, dead: 3, bush: 1.8, rock: 1.4, hay: 1.1, stump: 0.8, fan: 0.5, bale: 0.6 }[kind] || 2;
-  const px = Math.min(256, Math.max(8, 2 * E * rRef * ppm));
+  const px = Math.min(768, Math.max(8, 2 * E * rRef * ppm));
   const c = canvasOf(px, px), x = c.getContext('2d');
   x.translate(px / 2, px / 2); x.scale(px / (2 * E), px / (2 * E));
   const disc = (cx, cy, r, colour) => { x.fillStyle = colour; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); };
@@ -168,6 +172,8 @@ export function escena(canvas) {
   // What is built once per stage and setting, and once per scale
   let world = null;          // { track, setting, S, patches, cells }
   let sprites = new Map(), spritePpm = 0, dust = null, spray = null;
+  // The car's body and its soft shadow, drawn again only when the scale changes
+  let carArt = null;
   // The rain: drops in screen space, falling at a slant
   const drops = Array.from({ length: RAIN }, () => ({ x: Math.random(), y: Math.random(), v: 0.8 + Math.random() * 0.5 }));
   const seen = [];
@@ -197,6 +203,9 @@ export function escena(canvas) {
     if (world && world.track === track && world.setting === setting) return world;
     const S = SETTINGS[setting];
     world = { track, setting, S, ...scenery(track, setting), puddles: track.wet ? puddlesOf(track) : [] };
+    // The grain of the ground, the shoulder and each road surface: tiles drawn once, repeated in metres
+    world.grain = { ground: pattern(ctx, tile('ground', S, setting)), gravel: pattern(ctx, tile('gravel', S, setting)), asphalt: pattern(ctx, tile('asphalt', S, setting)) };
+    carArt = null;
     sprites = new Map(); spritePpm = 0; dust = dustSprite(S.dust); spray = dustSprite([205, 215, 230]);
     return world;
   }
@@ -317,6 +326,7 @@ export function escena(canvas) {
     ctx.translate(-cam.x, -cam.y);
     const reach = Math.hypot(W, H) / zoom + 20;
 
+    if (world.grain.ground) { ctx.fillStyle = world.grain.ground; ctx.fillRect(cam.x - reach, cam.y - reach, 2 * reach, 2 * reach); }
     for (const p of near(world.patches, cam.x, cam.y, reach, seen)) {
       ctx.fillStyle = S.patches[p.v % S.patches.length];
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
@@ -340,7 +350,7 @@ export function escena(canvas) {
       ctx.drawImage(img, it.x - e, it.y - e, 2 * e, 2 * e);
     }
     for (const st of world.stands) if (Math.hypot(st.x - cam.x, st.y - cam.y) < reach + st.len) stand(st, S, x, y, now, still);
-    drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0);
+    drawCar(car, S, x, y, h, g.wrecked, now, g.boost > 0, ppm);
     for (const p of puffs) {
       if (p.age >= p.life) continue;
       const f = p.age / p.life, r = p.r * (1 + f * 2.5);
@@ -414,9 +424,16 @@ export function escena(canvas) {
         ctx.stroke();
       }
     };
+    // A dark rim where the shoulder meets the grass, the shoulder with its grit, then each surface with its grain
+    ctx.strokeStyle = COLOURS.verge; stroke(() => true, 3.2);
     ctx.strokeStyle = S.shoulder; stroke(() => true, 2.4);
+    if (world.grain.gravel) { ctx.strokeStyle = world.grain.gravel; stroke(() => true, 2.4); }
     ctx.lineCap = 'round';
-    for (const sf of surfaces) { ctx.strokeStyle = lookOf(sf).road; stroke(p => p.sf === sf, 0); }
+    for (const sf of surfaces) {
+      ctx.strokeStyle = lookOf(sf).road; stroke(p => p.sf === sf, 0);
+      const grain = world.grain[sf === 'asphalt' ? 'asphalt' : 'gravel'];
+      if (grain) { ctx.strokeStyle = grain; stroke(p => p.sf === sf, 0); }
+    }
     // The rain darkens the road
     if (track.wet) { ctx.strokeStyle = COLOURS.wetSheen; stroke(() => true, 0); }
     // A line along the road, `off` metres to its left (a negative one, to its right), on one surface
@@ -433,6 +450,8 @@ export function escena(canvas) {
       }
       ctx.stroke();
     };
+    // The road's edges a shade darker, where it wears into the shoulder
+    for (const sf of surfaces) { ctx.strokeStyle = COLOURS.edge; ctx.lineWidth = 0.45; along(0.22, true, sf); along(-0.22, true, sf); }
     // Gravel: the two ruts the cars before you dug; asphalt: the edge lines and the centre dashes
     for (const sf of surfaces) {
       const L = lookOf(sf);
@@ -601,7 +620,7 @@ export function escena(canvas) {
   }
 
   /** The car: its shadow, the wheels (the front pair turned), the body, the roof and its stripes, the glass, the lights. */
-  function drawCar(car, S, x, y, h, wrecked, now, boosting) {
+  function drawCar(car, S, x, y, h, wrecked, now, boosting, ppm) {
     const hits = car.hits || [], damage = hits.length;
     // In the air the car grows a little (nearer the eye) and its shadow drifts away with the sun
     const z = car.z || 0, lift = 1 + z * 0.12;
@@ -610,12 +629,14 @@ export function escena(canvas) {
       if (ctx.roundRect) ctx.roundRect(bx, by, w, hh, r); else ctx.rect(bx, by, w, hh);
       ctx.fill();
     };
+    // The body and its soft shadow, drawn once at this scale (car2d.js)
+    if (!carArt || Math.abs(carArt.ppm - ppm) > carArt.ppm * 0.1) carArt = { ppm, body: carSprite(ppm), shadow: shadowSprite(ppm, S.shadow) };
+    const sprite = (art, ox, oy) => ctx.drawImage(art.img, ox - art.hx, oy - art.hy, 2 * art.hx, 2 * art.hy);
     // The shadow falls the way the setting's sun says, in the world (drawn before turning to the car)
-    ctx.fillStyle = S.shadow;
     ctx.save();
     ctx.translate(x + S.sun[0] * (0.35 + z * 0.9), y + S.sun[1] * (0.35 + z * 0.9));
     ctx.rotate(h);
-    box(-CAR_L / 2, -CAR_W / 2, CAR_L, CAR_W, 0.5);
+    sprite(carArt.shadow, 0, 0);
     ctx.restore();
     ctx.save();
     ctx.translate(x, y);
@@ -627,27 +648,20 @@ export function escena(canvas) {
       ctx.fillStyle = COLOURS.boostFlame;
       ctx.beginPath(); ctx.moveTo(-CAR_L / 2, -0.35); ctx.lineTo(-CAR_L / 2 - 1.8 * flick, 0); ctx.lineTo(-CAR_L / 2, 0.35); ctx.fill();
     }
-    // The wheels, the front pair turned as far as the steering is (so the player sees the thumb on the car)
-    ctx.fillStyle = COLOURS.wheel;
+    // The wheels, the front pair turned as far as the steering is (so the player sees the thumb on the car):
+    // a tyre with its tread blocks and a glint of rim at the hub
     const WL = 0.95, WW = 0.45, turn = -(car.steer || 0) * 0.5;
     for (const [wx, wy, front] of [[CAR_L * 0.3, CAR_W / 2, 1], [CAR_L * 0.3, -CAR_W / 2, 1], [-CAR_L * 0.3, CAR_W / 2, 0], [-CAR_L * 0.3, -CAR_W / 2, 0]]) {
       ctx.save();
       ctx.translate(wx, wy);
       if (front) ctx.rotate(turn);
-      ctx.fillRect(-WL / 2, -WW / 2, WL, WW);
+      ctx.fillStyle = COLOURS.wheel; box(-WL / 2, -WW / 2, WL, WW, 0.12);
+      ctx.fillStyle = COLOURS.tread;
+      for (let k = -3; k <= 3; k++) ctx.fillRect(k * 0.12 - 0.03, -WW / 2 + 0.04, 0.06, WW - 0.08);
+      ctx.fillStyle = COLOURS.rim; ctx.fillRect(-0.18, Math.sign(wy) * (WW / 2 - 0.07) - 0.04, 0.36, 0.08);
       ctx.restore();
     }
-    ctx.fillStyle = COLOURS.car;
-    box(-CAR_L / 2, -CAR_W / 2 + 0.05, CAR_L, CAR_W - 0.1, 0.5);
-    ctx.fillStyle = COLOURS.carRoof;
-    box(-CAR_L * 0.24, -CAR_W / 2 + 0.28, CAR_L * 0.42, CAR_W - 0.56, 0.25);
-    // The rally stripes, nose to tail
-    ctx.fillStyle = COLOURS.carStripe;
-    ctx.fillRect(-CAR_L / 2 + 0.1, -0.3, CAR_L - 0.2, 0.18);
-    ctx.fillRect(-CAR_L / 2 + 0.1, 0.12, CAR_L - 0.2, 0.18);
-    ctx.fillStyle = COLOURS.carGlass;
-    ctx.fillRect(CAR_L * 0.08, -CAR_W / 2 + 0.25, CAR_L * 0.12, CAR_W - 0.5);
-    ctx.fillRect(-CAR_L * 0.3, -CAR_W / 2 + 0.3, CAR_L * 0.07, CAR_W - 0.6);
+    sprite(carArt.body, 0, 0);
     // The windscreen cracks from the third crash
     if (damage >= 3) {
       ctx.strokeStyle = COLOURS.crack; ctx.lineWidth = 0.05;
@@ -656,16 +670,21 @@ export function escena(canvas) {
       for (const [a, b] of [[0.35, 0.45], [-0.3, 0.5], [0.05, -0.55], [0.4, -0.2]]) { ctx.moveTo(gx, 0.05); ctx.lineTo(gx + a * 0.6, b); }
       ctx.stroke();
     }
-    // The headlights at the front: the left one dies at the fifth crash
-    ctx.fillStyle = COLOURS.headlight;
-    ctx.fillRect(CAR_L / 2 - 0.22, -CAR_W / 2 + 0.14, 0.18, 0.36);
-    ctx.fillStyle = damage >= 5 ? COLOURS.wheel : COLOURS.headlight;
-    ctx.fillRect(CAR_L / 2 - 0.22, CAR_W / 2 - 0.5, 0.18, 0.36);
-    // The lights at the back: white while going backwards (reverse), red while braking
+    // The headlights at the front, in chrome: the left one dies at the fifth crash
+    for (const [side, dead] of [[-1, false], [1, damage >= 5]]) {
+      const ly = side * (CAR_W / 2 - 0.36);
+      ctx.fillStyle = COLOURS.chrome; box(CAR_L / 2 - 0.3, ly - 0.22, 0.26, 0.44, 0.1);
+      ctx.fillStyle = dead ? COLOURS.wheel : COLOURS.lens; box(CAR_L / 2 - 0.27, ly - 0.18, 0.2, 0.36, 0.08);
+    }
+    // The lights at the back: white while going backwards (reverse), red while braking, with a glow when lit
     const backwards = car.vx * Math.cos(car.h) + car.vy * Math.sin(car.h) < -0.3;
-    ctx.fillStyle = backwards ? COLOURS.reverseLight : car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
-    ctx.fillRect(-CAR_L / 2 + 0.02, CAR_W / 2 - 0.5, 0.22, 0.36);
-    ctx.fillRect(-CAR_L / 2 + 0.02, -CAR_W / 2 + 0.14, 0.22, 0.36);
+    const lit = backwards || car.brake > 0.05;
+    const tail = backwards ? COLOURS.reverseLight : car.brake > 0.05 ? COLOURS.brakeLight : COLOURS.brakeOff;
+    for (const side of [-1, 1]) {
+      const ly = side * (CAR_W / 2 - 0.34);
+      if (lit) { ctx.globalAlpha = 0.35; ctx.fillStyle = tail; ctx.beginPath(); ctx.ellipse(-CAR_L / 2 - 0.15, ly, 0.45, 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.fillStyle = tail; box(-CAR_L / 2 + 0.02, ly - 0.2, 0.2, 0.4, 0.07);
+    }
     // The dents, where each crash struck (kept inside the body), each with a scratch
     for (const hit of hits) {
       const fx = Math.max(-CAR_L / 2 + 0.35, Math.min(CAR_L / 2 - 0.35, hit.f)), lx = Math.max(-CAR_W / 2 + 0.3, Math.min(CAR_W / 2 - 0.3, hit.l));

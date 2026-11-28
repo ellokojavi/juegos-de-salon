@@ -1,0 +1,143 @@
+/**
+ * Drift: the car seen from above, drawn once at the screen's scale (the owner, 2026-11-27: «más
+ * definición … al vehículo mismo»). What never changes goes in one sprite: the body with its volume
+ * (lit along its spine, darker at its flanks), the fenders over the wheels, the bonnet and its vents,
+ * the windscreen with its reflection, the roof with its scoop, the rear window, the mirrors, the
+ * spoiler, the stripes and the panel lines. The scene draws on top, every frame, what changes: the
+ * wheels (under the body), the lights, the dents, the flame.
+ *
+ *   carSprite(ppm) → { img, hx, hy }   the sprite and the half sizes it covers, m (car frame: x forward)
+ *   shadowSprite(ppm) → { img, hx, hy } a soft shadow, darker under the middle
+ */
+export const CAR = {
+  body: '#ff2e88', light: '#ff8fc0', dark: '#b0175c', deep: '#7a0d3e', roof: '#e0206f',
+  stripe: '#ffffff', stripeEdge: 'rgba(0, 0, 0, 0.22)', glass: '#1d0a16', glassLight: '#5a3550',
+  reflect: 'rgba(255, 255, 255, 0.38)', seam: 'rgba(60, 0, 25, 0.45)', outline: 'rgba(40, 0, 18, 0.85)',
+  vent: '#2a0a1c', spoiler: '#c81a66', mirror: '#d81f70',
+};
+const L = 4.2, W = 1.8;
+const PAD = 0.35;
+
+function canvasOf(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h));
+  return c;
+}
+
+/** The body's outline in the car frame: a long rounded shape, a little narrower at the nose and the tail. */
+function bodyPath(x) {
+  const hl = L / 2, hw = W / 2 - 0.05;
+  x.beginPath();
+  x.moveTo(hl - 0.5, -hw + 0.06);
+  x.quadraticCurveTo(hl - 0.04, -hw + 0.1, hl, -hw + 0.45);
+  x.lineTo(hl, hw - 0.45);
+  x.quadraticCurveTo(hl - 0.04, hw - 0.1, hl - 0.5, hw - 0.06);
+  x.quadraticCurveTo(0, hw + 0.02, -hl + 0.4, hw - 0.04);
+  x.quadraticCurveTo(-hl, hw - 0.08, -hl, hw - 0.4);
+  x.lineTo(-hl, -hw + 0.4);
+  x.quadraticCurveTo(-hl, -hw + 0.08, -hl + 0.4, -hw + 0.04);
+  x.quadraticCurveTo(0, -hw - 0.02, hl - 0.5, -hw + 0.06);
+  x.closePath();
+}
+
+const rrect = (x, bx, by, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(bx, by, w, h, r); else x.rect(bx, by, w, h); };
+
+/** The sprite of the body, at `ppm` pixels a metre. Drawn in the car frame, x forward and y to its left. */
+export function carSprite(ppm) {
+  const hx = L / 2 + PAD, hy = W / 2 + PAD;
+  const c = canvasOf(2 * hx * ppm, 2 * hy * ppm), x = c.getContext('2d');
+  // Row 0 is the car's −y: the scene draws the sprite from (−hx, −hy) in the car's frame, so it lands right
+  x.translate(hx * ppm, hy * ppm); x.scale(ppm, ppm);
+
+  // The fenders: a bulge over each wheel, a shade darker than the body
+  x.fillStyle = CAR.body;
+  for (const fx of [L * 0.3, -L * 0.3]) for (const s of [-1, 1]) { rrect(x, fx - 0.62, s * (W / 2 - 0.02) - 0.2, 1.24, 0.4, 0.2); x.fill(); }
+
+  // The body, lit along its spine and dark at its flanks: the volume
+  const side = x.createLinearGradient(0, -W / 2, 0, W / 2);
+  side.addColorStop(0, CAR.dark); side.addColorStop(0.12, CAR.body); side.addColorStop(0.4, CAR.body);
+  side.addColorStop(0.5, CAR.light); side.addColorStop(0.6, CAR.body); side.addColorStop(0.88, CAR.body); side.addColorStop(1, CAR.dark);
+  bodyPath(x); x.fillStyle = side; x.fill();
+  // Nose and tail a touch darker, where the body curves down
+  const ends = x.createLinearGradient(-L / 2, 0, L / 2, 0);
+  ends.addColorStop(0, 'rgba(60, 0, 25, 0.25)'); ends.addColorStop(0.1, 'rgba(60, 0, 25, 0)');
+  ends.addColorStop(0.9, 'rgba(60, 0, 25, 0)'); ends.addColorStop(1, 'rgba(60, 0, 25, 0.3)');
+  bodyPath(x); x.fillStyle = ends; x.fill();
+
+  // The rally stripes, nose to tail, with a hairline shadow so they sit on the paint
+  for (const o of [-0.21, 0.21]) {
+    x.fillStyle = CAR.stripeEdge; x.fillRect(-L / 2 + 0.08, o - 0.1, L - 0.16, 0.2);
+    x.fillStyle = CAR.stripe; x.fillRect(-L / 2 + 0.08, o - 0.085, L - 0.16, 0.17);
+  }
+
+  // The bonnet: its seam, two vents and the bulge between them
+  x.strokeStyle = CAR.seam; x.lineWidth = 0.03;
+  x.beginPath(); x.moveTo(L * 0.2, -W / 2 + 0.18); x.lineTo(L * 0.2, W / 2 - 0.18); x.stroke();
+  x.fillStyle = CAR.vent;
+  for (const s of [-1, 1]) {
+    rrect(x, L * 0.3, s * 0.55 - 0.09, 0.45, 0.18, 0.06); x.fill();
+    x.strokeStyle = 'rgba(255, 255, 255, 0.25)'; x.lineWidth = 0.02;
+    for (let k = 0; k < 4; k++) { x.beginPath(); x.moveTo(L * 0.3 + 0.07 + k * 0.1, s * 0.55 - 0.07); x.lineTo(L * 0.3 + 0.07 + k * 0.1, s * 0.55 + 0.07); x.stroke(); }
+  }
+
+  // The windscreen: wider at its foot, dark glass, the sky caught in a diagonal
+  const ws = [[L * 0.19, -0.74], [L * 0.19, 0.74], [L * 0.06, 0.62], [L * 0.06, -0.62]];
+  const glass = x.createLinearGradient(L * 0.19, 0, L * 0.06, 0);
+  glass.addColorStop(0, CAR.glassLight); glass.addColorStop(1, CAR.glass);
+  x.fillStyle = glass; x.beginPath(); ws.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); x.fill();
+  x.fillStyle = CAR.reflect;
+  x.beginPath(); x.moveTo(L * 0.18, -0.5); x.lineTo(L * 0.18, -0.28); x.lineTo(L * 0.075, 0.2); x.lineTo(L * 0.075, -0.02); x.closePath(); x.fill();
+
+  // The roof, its own curve of light, and a scoop on top
+  const roof = x.createLinearGradient(0, -0.62, 0, 0.62);
+  roof.addColorStop(0, CAR.roof); roof.addColorStop(0.5, CAR.light); roof.addColorStop(1, CAR.roof);
+  x.fillStyle = roof; rrect(x, -L * 0.25, -0.62, L * 0.31, 1.24, 0.22); x.fill();
+  for (const o of [-0.21, 0.21]) { x.fillStyle = CAR.stripe; x.fillRect(-L * 0.25 + 0.05, o - 0.085, L * 0.31 - 0.1, 0.17); }
+  x.fillStyle = CAR.vent; rrect(x, -L * 0.05, -0.16, 0.3, 0.32, 0.08); x.fill();
+  x.fillStyle = 'rgba(255, 255, 255, 0.18)'; rrect(x, -L * 0.05 + 0.04, -0.12, 0.12, 0.24, 0.05); x.fill();
+  // Side windows: thin dark strips along the roof's edges
+  x.fillStyle = CAR.glass;
+  for (const s of [-1, 1]) { x.beginPath(); x.moveTo(L * 0.06, s * 0.62); x.lineTo(-L * 0.25, s * 0.6); x.lineTo(-L * 0.25, s * 0.7); x.lineTo(L * 0.06, s * 0.74); x.closePath(); x.fill(); }
+
+  // The rear window
+  const rw = [[-L * 0.25, -0.6], [-L * 0.25, 0.6], [-L * 0.33, 0.52], [-L * 0.33, -0.52]];
+  x.fillStyle = CAR.glass; x.beginPath(); rw.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); x.fill();
+  x.fillStyle = 'rgba(255, 255, 255, 0.16)'; x.fillRect(-L * 0.32, -0.45, 0.06, 0.9);
+
+  // Door seams and the boot lid
+  x.strokeStyle = CAR.seam; x.lineWidth = 0.025;
+  x.beginPath(); x.moveTo(-L * 0.36, -W / 2 + 0.2); x.lineTo(-L * 0.36, W / 2 - 0.2); x.stroke();
+  for (const s of [-1, 1]) { x.beginPath(); x.moveTo(L * 0.05, s * (W / 2 - 0.08)); x.lineTo(-L * 0.26, s * (W / 2 - 0.08)); x.stroke(); }
+
+  // The mirrors, sticking out by the windscreen's foot
+  for (const s of [-1, 1]) {
+    x.fillStyle = CAR.mirror; x.beginPath(); x.ellipse(L * 0.13, s * (W / 2 + 0.06), 0.1, 0.14, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = CAR.glass; x.beginPath(); x.ellipse(L * 0.11, s * (W / 2 + 0.06), 0.04, 0.09, 0, 0, Math.PI * 2); x.fill();
+  }
+
+  // The spoiler across the tail, on two struts, with its end plates
+  x.fillStyle = CAR.deep; for (const o of [-0.5, 0.5]) x.fillRect(-L / 2 + 0.2, o - 0.05, 0.25, 0.1);
+  const wing = x.createLinearGradient(-L / 2 - 0.05, 0, -L / 2 + 0.3, 0);
+  wing.addColorStop(0, CAR.deep); wing.addColorStop(1, CAR.spoiler);
+  x.fillStyle = wing; rrect(x, -L / 2 - 0.08, -W / 2 + 0.02, 0.36, W - 0.04, 0.06); x.fill();
+  x.fillStyle = CAR.deep; for (const s of [-1, 1]) x.fillRect(-L / 2 - 0.1, s * (W / 2 - 0.02) - (s > 0 ? 0.08 : 0), 0.4, 0.08);
+
+  // A crisp outline around the body for definition at any zoom
+  bodyPath(x); x.strokeStyle = CAR.outline; x.lineWidth = 0.045; x.stroke();
+  return { img: c, hx, hy };
+}
+
+/** A soft shadow: layers of a rounded shape, wider and fainter outward (no canvas filter: Safari has none). */
+export function shadowSprite(ppm, colour = 'rgba(0, 0, 0, 1)') {
+  const hx = L / 2 + 0.9, hy = W / 2 + 0.9;
+  const c = canvasOf(2 * hx * ppm, 2 * hy * ppm), x = c.getContext('2d');
+  x.translate(hx * ppm, hy * ppm); x.scale(ppm, ppm);
+  x.fillStyle = colour;
+  for (let k = 7; k >= 0; k--) {
+    const g = k * 0.1;
+    x.globalAlpha = k === 0 ? 0.35 : 0.07;
+    rrect(x, -L / 2 - g, -W / 2 - g, L + 2 * g, W + 2 * g, 0.5 + g);
+    x.fill();
+  }
+  return { img: c, hx, hy };
+}

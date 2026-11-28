@@ -3,6 +3,11 @@
  * mesh builder for flat-shaded low-poly shapes, and one shader (a colour per vertex, one sun, fog).
  * No textures, no model files, no library. scene3d.js builds the world with it.
  *
+ * The shader's light (the owner, 2026-11-27: «más definición»): a sky-and-ground ambient that tells
+ * up from down, the sun, a glossy highlight and a rim of light for what shines (`shine`: the car's
+ * paint, its glass), and a fine grain computed from the world position (`grain`: the ground, the road,
+ * the leaves) so surfaces show texture without any texture.
+ *
  * Axes are the engine's: x east, y north, and z up. Matrices are column-major Float32Arrays, as
  * WebGL wants them.
  */
@@ -124,22 +129,54 @@ export class Mesh {
 /* ---------------- The shader ---------------- */
 const VS = `
 attribute vec3 aPos; attribute vec3 aNor; attribute vec4 aCol;
-uniform mat4 uVP; uniform mat4 uM; uniform vec3 uSun; uniform vec3 uEye; uniform vec4 uTint;
-uniform float uLit; uniform vec2 uFog;
-varying vec4 vCol; varying float vFog;
+uniform mat4 uVP; uniform mat4 uM; uniform vec3 uEye; uniform vec4 uTint;
+uniform vec2 uFog;
+varying vec4 vCol; varying float vFog; varying vec3 vNor; varying vec3 vW;
 void main() {
   vec4 w = uM * vec4(aPos, 1.0);
-  vec3 n = normalize((uM * vec4(aNor, 0.0)).xyz);
-  float light = mix(1.0, 0.58 + 0.55 * max(dot(n, uSun), 0.0), uLit);
-  vCol = vec4(aCol.rgb * uTint.rgb * light, aCol.a * uTint.a);
+  vNor = normalize((uM * vec4(aNor, 0.0)).xyz);
+  vW = w.xyz;
+  vCol = vec4(aCol.rgb * uTint.rgb, aCol.a * uTint.a);
   vFog = clamp((distance(w.xyz, uEye) - uFog.x) / (uFog.y - uFog.x), 0.0, 1.0);
   gl_Position = uVP * w;
 }`;
 const FS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
-uniform vec3 uFogColour;
-varying vec4 vCol; varying float vFog;
-void main() { gl_FragColor = vec4(mix(vCol.rgb, uFogColour, vFog * vFog), vCol.a); }`;
+#endif
+uniform vec3 uFogColour; uniform vec3 uSun; uniform vec3 uEye; uniform vec3 uSky; uniform vec3 uGround;
+uniform float uLit; uniform float uShine; uniform float uGrain;
+varying vec4 vCol; varying float vFog; varying vec3 vNor; varying vec3 vW;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+void main() {
+  vec3 n = normalize(vNor);
+  vec3 col = vCol.rgb;
+  // The grain: two scales of noise in the world, strongest on what faces up, gone in the fog
+  if (uGrain > 0.0) {
+    vec2 q = mod(vW.xy, 4096.0);
+    float g = noise(q * 7.3) * 0.35 + noise(q * 2.1) * 0.35 + noise(q * 0.45) * 0.3;
+    col *= 1.0 + (g - 0.5) * 0.42 * uGrain * (0.4 + 0.6 * abs(n.z)) * (1.0 - vFog);
+  }
+  // Ambient from the sky above and the ground below, then the sun
+  vec3 amb = mix(uGround, uSky, n.z * 0.5 + 0.5);
+  float sun = max(dot(n, uSun), 0.0);
+  vec3 lit = col * (amb + vec3(0.62) * sun);
+  // What shines: a highlight where the sun reflects to the eye, and a rim at grazing angles
+  if (uShine > 0.0) {
+    vec3 v = normalize(uEye - vW);
+    float spec = pow(max(dot(n, normalize(uSun + v)), 0.0), 48.0);
+    float rim = pow(1.0 - max(dot(n, v), 0.0), 3.0);
+    lit += vec3(spec * 0.9 + rim * 0.18) * uShine;
+  }
+  vec3 c = mix(col, lit, uLit);
+  gl_FragColor = vec4(mix(c, uFogColour, vFog * vFog), vCol.a);
+}`;
 // The sky: a gradient over the whole screen, from the horizon's colour up
 const SKY_VS = `attribute vec2 aPos; varying float vY; void main() { vY = aPos.y; gl_Position = vec4(aPos, 0.9999, 1.0); }`;
 const SKY_FS = `precision mediump float; uniform vec3 uTop; uniform vec3 uLow; uniform float uHorizon; varying float vY;
@@ -207,7 +244,7 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
     gl, buffer, upload,
     get lost() { return gl.isContextLost(); },
     /** Clears to the sky and sets what every draw of this frame shares. */
-    begin({ vp, eye, sun, fog, fogColour, skyTop, horizon = 0 }) {
+    begin({ vp, eye, sun, fog, fogColour, skyTop, horizon = 0, ambient = [[0.62, 0.64, 0.7], [0.42, 0.4, 0.36]] }) {
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(fogColour[0], fogColour[1], fogColour[2], 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -227,13 +264,14 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
       gl.uniformMatrix4fv(prog.u.uVP, false, vp);
       gl.uniform3fv(prog.u.uEye, eye);
       gl.uniform3fv(prog.u.uSun, sun);
+      gl.uniform3fv(prog.u.uSky, ambient[0]); gl.uniform3fv(prog.u.uGround, ambient[1]);
       gl.uniform2fv(prog.u.uFog, fog);
       gl.uniform3fv(prog.u.uFogColour, fogColour);
       gl.enableVertexAttribArray(prog.a.aPos); gl.enableVertexAttribArray(prog.a.aNor); gl.enableVertexAttribArray(prog.a.aCol);
       frameState = { boundM: null };
     },
-    /** Draws a buffer with a model matrix (null: as built), a tint, lit or not, writing depth or not. */
-    draw(b, { m = null, tint = WHITE, lit = 1, depth = true } = {}) {
+    /** Draws a buffer with a model matrix (null: as built), a tint, lit or not, how glossy and how grainy, writing depth or not. */
+    draw(b, { m = null, tint = WHITE, lit = 1, shine = 0, grain = 0, depth = true } = {}) {
       if (!b || !b.count) return;
       gl.bindBuffer(gl.ARRAY_BUFFER, b.buf);
       gl.vertexAttribPointer(prog.a.aPos, 3, gl.FLOAT, false, 28, 0);
@@ -243,6 +281,8 @@ export function renderer(canvas, { lost = () => {}, restored = () => {} } = {}) 
       if (frameState.boundM !== mm || m) { gl.uniformMatrix4fv(prog.u.uM, false, mm); frameState.boundM = mm; }
       gl.uniform4fv(prog.u.uTint, tint.length === 4 ? tint : [...tint, 1]);
       gl.uniform1f(prog.u.uLit, lit);
+      gl.uniform1f(prog.u.uShine, shine);
+      gl.uniform1f(prog.u.uGrain, grain);
       if (!depth) gl.depthMask(false);
       gl.drawArrays(gl.TRIANGLES, 0, b.count);
       if (!depth) gl.depthMask(true);
