@@ -74,6 +74,8 @@
         <div id="resume-slot"></div>
         <!-- How the race is seen, from above or from behind the car (the owner, 2026-11-27: both in one test) -->
         <div class="seg" id="scene-pick" role="group"></div>
+        <!-- Who the run races (the owner, 2026-11-28): my record, the intermediate driver or the expert -->
+        <div class="seg" id="ghost-pick" role="group"></div>
         <button type="button" class="btn btn--yellow" id="btn-play" data-i18n="play"></button>
         <!-- The rules go after the main action (U-39): the goal first and three points (U-18) -->
         <div class="panel">
@@ -113,6 +115,7 @@
         <p class="lead" id="result-title" data-i18n="resultTitle"></p>
         <div class="display display--xl dr-time" id="result-time">—</div>
         <p class="muted center" id="result-detail"></p>
+        <p class="center dr-medal" id="result-medal" hidden></p>
         <p class="center dr-ghost-line" id="result-ghost" hidden></p>
       </div>
       <div class="stack" id="result-actions"></div>

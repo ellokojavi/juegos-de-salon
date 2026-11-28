@@ -92,8 +92,10 @@ export function driver({ delay, hand, shake, look, guess = 0 }, pace, { reach, s
  * TUNING as it stands (the view's own); null if it did not finish clean. About 10 000 steps.
  */
 export function pacerGhost(track, { view = '2d', reach = 75, scheme = 'wheel', level = 'intermediate' } = {}) {
+  // The expert drives at its own pace; the others at the pace solved for their lap times
   const m = PACES[view]?.[level] ?? PACES['2d'].intermediate;
-  const drive = driver(LEVELS[level], { grip: EXPERT_PACE.grip * m, top: m }, { reach, scheme, seed: `pacer:${track.id}` });
+  const pace = level === 'expert' ? EXPERT_PACE : { grip: EXPERT_PACE.grip * m, top: m };
+  const drive = driver(LEVELS[level], pace, { reach, scheme, seed: `pacer:${level === 'intermediate' ? '' : level + ':'}${track.id}` });
   const g = E.newGame({ track }), rec = recorder();
   for (let i = 0; i < 120 * 240 && g.mode !== 'done'; i++) {
     E.step(g, drive(g)); g.events.length = 0;
@@ -101,5 +103,19 @@ export function pacerGhost(track, { view = '2d', reach = 75, scheme = 'wheel', l
     rec.add(g);
   }
   const ghost = rec.ghost(g);
-  return ghost && !g.missed && g.lives === E.TUNING.lives ? { ...ghost, sim: level } : null;
+  // The expert may knock a tree (it is brave, not perfect: the calibration allows it); nobody may miss a gate
+  return ghost && !g.missed && (level === 'expert' || g.lives === E.TUNING.lives) ? { ...ghost, sim: level } : null;
 }
+
+/**
+ * A circuit's medals (the owner, 2026-11-28, option B): gold at the expert's lap, bronze at the
+ * intermediate's, silver halfway between, as times that count (ms). Null if a driver did not finish.
+ */
+export function medalsOf(expert, intermediate) {
+  if (!expert || !intermediate) return null;
+  const gold = Math.min(expert.time, intermediate.time), bronze = Math.max(expert.time, intermediate.time);
+  return { gold, silver: Math.round((gold + bronze) / 2), bronze };
+}
+
+/** The medal a time that counts earns: 'gold', 'silver', 'bronze' or null. */
+export const medalFor = (ms, medals) => !medals ? null : ms <= medals.gold ? 'gold' : ms <= medals.silver ? 'silver' : ms <= medals.bronze ? 'bronze' : null;

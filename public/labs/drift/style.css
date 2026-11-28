@@ -90,3 +90,8 @@
   position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%;
   background: rgb(var(--ink-rgb) / 0.85); box-shadow: var(--shadow-text);
 }
+
+/* The medal on the result (option B): the line above the ghost's */
+.dr-medal { font: 900 var(--fs-110) var(--font-body); }
+/* The ghost picker: three short choices on one line, even at 320 px */
+#ghost-pick button { flex: 1 1 auto; padding-inline: var(--s-6); white-space: nowrap; }

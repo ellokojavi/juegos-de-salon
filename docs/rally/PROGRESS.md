@@ -67,6 +67,8 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-28** · Options B and C: medals per circuit (gold at the simulated expert's lap, bronze at the intermediate's, silver halfway) and a picker on the cover for who you race (my record, the intermediate driver, the expert).
+
 - **2026-11-28** · The owner picked option A for more challenge: technical stretches. Every circuit now has chicanes, bends that tighten halfway round, a narrow stretch (5.2 m) and a bend whose grip drops at its apex; the pool was regenerated and recalibrated.
 
 - **2026-11-28** · Gravel faster (the owner: «sigue estando demasiado lento en camino de tierra»): gravel pulls as hard as asphalt (`gravelAccel` 1), the drag only bites near the top speed (`dragPower` 3: 9 s to 58 m/s instead of 15), and its bends hold more (`gripGravel` 14); the autopilot's gravel speed is about 10 % higher on average and 13 % at the top. The circuits regenerated (still about a minute), the simulated drivers' paces solved again, and the air token raised to 4.2 m (a car at the top speed flew over it).

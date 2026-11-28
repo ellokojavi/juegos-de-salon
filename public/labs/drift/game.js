@@ -33,9 +33,9 @@ import { escena3d } from './scene3d.js';
 import { scenery, solids, settingOf } from './scenery.js';
 import { controls } from './input.js';
 import { minimap } from './minimap.js';
-import { pacerGhost } from './pacer.js';
+import { pacerGhost, medalsOf, medalFor } from './pacer.js';
 import { recorder, load as loadGhost, keep as keepGhost, better, poseAt, gapAt, lapProgress } from './ghost.js';
-import { loadTuning, openTuning, isTuned, save as saveView, SCENES, applyScene, schemeKey } from './tuning.js';
+import { loadTuning, openTuning, isTuned, save as saveView, SCENES, GHOSTS, applyScene, schemeKey } from './tuning.js';
 // Its game.json as a module (node tools/generators/manifests.mjs): the facts are read from there
 import manifest from '../../assets/js/manifests/labs/drift.js';
 
@@ -64,11 +64,13 @@ const G = { rec: recorder(), ghost: null, own: null, recording: false, newRecord
  * intermediate driver's lap of it (the owner, 2026-11-27). Driven once per circuit, view and controls.
  */
 const pacers = new Map();
-function pacerFor(track) {
-  const scheme = view[schemeKey(view)] === 'stick' ? 'stick' : 'wheel', key = `${track.id}:${view.scene}:${scheme}:${view.reach}`;
-  if (!pacers.has(key)) pacers.set(key, pacerGhost(track, { view: view.scene === '3d' ? '3d' : '2d', reach: view.reach || 75, scheme }));
+function pacerFor(track, level = 'intermediate') {
+  const scheme = view[schemeKey(view)] === 'stick' ? 'stick' : 'wheel', key = `${track.id}:${level}:${view.scene}:${scheme}:${view.reach}`;
+  if (!pacers.has(key)) pacers.set(key, pacerGhost(track, { view: view.scene === '3d' ? '3d' : '2d', reach: view.reach || 75, scheme, level }));
   return pacers.get(key);
 }
+/** The medals of a circuit in the chosen view (option B): the expert's and the intermediate's laps. */
+const medalsFor = track => medalsOf(pacerFor(track, 'expert'), pacerFor(track, 'intermediate'));
 
 function showScreen(id) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === id));
@@ -100,7 +102,8 @@ function begin(g, track) {
   S.acc = 0; S.live = false; S.paused = false; S.tuned = isTuned(view);
   // The ghost of this circuit's record on this phone; a run is recorded only from its start
   G.own = TEST ? null : loadGhost(g.track.id, g.track.length);
-  G.ghost = TEST ? null : G.own || pacerFor(g.track);
+  // Who it races (the cover's pick, option C): the record (the intermediate until there is one), or a driver
+  G.ghost = TEST ? null : view.ghost === 'mine' ? G.own || pacerFor(g.track) : pacerFor(g.track, view.ghost) || G.own;
   G.rec.reset(); G.recording = !g.t; G.newRecord = false;
   showScreen('screen-play');
   sc = sceneFor(view.scene);
@@ -142,6 +145,18 @@ function renderScenePick() {
     type: 'button', class: view.scene === k ? 'on' : '', 'aria-pressed': String(view.scene === k), 'data-scene': k,
     onClick: () => { SFX.tap(); view.scene = k; applyScene(view); saveView(view); paint(); renderHow(); },
   }, k === '3d' ? T.scene3d : T.scene2d)));
+  paint();
+}
+
+/** The cover's choice of ghost: my record, the intermediate driver or the expert, kept on this phone. */
+function renderGhostPick() {
+  const pick = $('#ghost-pick');
+  pick.setAttribute('aria-label', T.ghostLabel);
+  const name = { mine: T.ghostMine, intermediate: T.ghostIntermediate, expert: T.ghostExpert };
+  const paint = () => pick.replaceChildren(...GHOSTS.map(k => el('button', {
+    type: 'button', class: view.ghost === k ? 'on' : '', 'aria-pressed': String(view.ghost === k), 'data-ghost': k,
+    onClick: () => { SFX.tap(); view.ghost = k; saveView(view); paint(); },
+  }, name[k])));
   paint();
 }
 
@@ -343,9 +358,15 @@ function renderResult() {
   // The record: a new one, or the one still standing
   const rec = $('#result-ghost');
   rec.hidden = g.wrecked || (!G.newRecord && !G.ghost);
-  // Against the pace driver: by how much the run beat it or was beaten
-  const vs = G.ghost?.sim ? E.total(g) - G.ghost.time : null;
-  const pacer = vs === null ? '' : fmt(vs < 0 ? T.pacerBeat : T.pacerLost, { s: GAP.format(Math.abs(vs) / 1000).replace(/^[+−-]/, '') });
+  // Against a driver's ghost: by how much the run beat it or was beaten
+  const vs = G.ghost?.sim ? E.total(g) - G.ghost.time : null, expert = G.ghost?.sim === 'expert';
+  const pacer = vs === null ? '' : fmt(vs < 0 ? (expert ? T.expertBeat : T.pacerBeat) : (expert ? T.expertLost : T.pacerLost), { s: GAP.format(Math.abs(vs) / 1000).replace(/^[+−-]/, '') });
+  // The medal it earned, and the time of the next one up (option B; none on the test stage)
+  const medals = TEST || g.wrecked ? null : medalsFor(g.track), medal = medalFor(E.total(g), medals);
+  const m = $('#result-medal');
+  m.hidden = !medals;
+  if (medals) m.textContent = medal === 'gold' ? T.medalGold
+    : fmt({ silver: T.medalSilver, bronze: T.medalBronze }[medal] || T.medalNone, { clock: E.clock(medals[{ silver: 'gold', bronze: 'silver' }[medal] || 'bronze']) });
   rec.textContent = [pacer, G.newRecord ? T.ghostRecord : !G.ghost?.sim && G.ghost ? fmt(T.ghostBest, { clock: E.clock(G.ghost.time) }) : ''].filter(Boolean).join(' ');
   $('#result-actions').replaceChildren(
     el('button', { class: 'btn btn--yellow', id: 'btn-again', onClick: () => { SFX.tap(); startRun(); } }, T.again),
@@ -400,6 +421,7 @@ function init() {
   addEventListener('pagehide', pause);
   addEventListener('resize', () => sc?.resize());
   renderScenePick();
+  renderGhostPick();
   renderResumeSlot();
 }
 
