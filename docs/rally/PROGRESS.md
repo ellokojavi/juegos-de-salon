@@ -67,6 +67,7 @@ A feature that tempts a phase beyond its exit list is written here instead of bu
 
 Newest first. One or two lines: the date (Pacific), what happened, what changed in the design.
 
+- **2026-11-27** · A small map in the race's corner (the owner: «cuánto va quedando para terminar el circuito»): the circuit, what is driven in yellow, the car as a dot; 2D and 3D.
 - **2026-11-27** · The owner: circuits of about a minute, closed; the generation and rotation with written standards; then a ghost to beat (the next one up the ranking, or the leader's record made 1 % faster). Decisions 7 (one circuit a week), 8 (a ranking by time), 13 and 14 answered. Built: 12 generated circuits replace the three hand-made stages (core section 4 holds the standards).
 
 - **2026-11-27** · More definition everywhere (the owner: «Mejora notoriamente la calidad de todas las gráficas»): textured ground, shoulder and road and a detailed car sprite in 2D; lighting with highlights, grain, a modelled car and roadside tufts in 3D.
